@@ -24,9 +24,17 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#define LITTLE_ENDIAN 1
-#define BIG_ENDIAN 0
+#ifndef  LITTLE_ENDIAN 
+#define LITTLE_ENDIAN 1234
+#endif
+
+#ifndef BIG_ENDIAN
+#define BIG_ENDIAN 4321
+#endif
+
+#ifndef BYTE_ORDER
 #define BYTE_ORDER LITTLE_ENDIAN
+#endif
 const int signSizeMax=120;
 const int pubKeySize=176;
 const int CALL_SIZE=10;
@@ -97,8 +105,8 @@ extern "C"
   int tqslWriteCert(const char *fname,TqslCert *);
   int tqslReadPub(const char *fname,TqslPublicKey *);
   int tqslWritePub(const char *fname,TqslPublicKey *);
-  int tqslGenNewKeys(const char *callSign,const char *privFile,
-		    const char *pubFile);
+  int tqslGenNewKeys(const char *callSign,char **,
+		     TqslPublicKey *);
   int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
   int tqslSignCert(TqslCert *cert,const char *caPrivKey,
                  const char *caId,TqslPublicKey *pubKey,

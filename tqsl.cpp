@@ -111,8 +111,8 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
 // return 0 on error.  Even if 1 file was successful written.
 //
 
-int tqslGenNewKeys(const char *callSign,const char *privFile,
-	       const char *pubFile)
+int tqslGenNewKeys(const char *callSign,char **privKey,
+	      TqslPublicKey  *pubKey)
 {
   DSA    *dsa;
   char	*p;
@@ -148,40 +148,20 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
   rc = DSA_generate_key(dsa);
   if (rc == 0)
     return(0);
-  FILE *fp;
 
-  // save public key file
-  fp = fopen(pubFile,"w");
-  if (fp)
-    {
-      TqslPublicKey pk;
-      initPublicKey(&pk);
+  initPublicKey(pubKey);
+  
+  pubKey->pkType = '1';
+  p = BN_bn2hex(dsa->pub_key);
 
-      pk.pkType = '1';
-      p = BN_bn2hex(dsa->pub_key);
-      // using memcpy instead of strcpy to avoid coping nulls
-      memcpy(&pk.callSign,newCall,strlen(callSign));
-      memcpy(&pk.pkey,p,strlen(p));
-      pk.pubkeyNum[0] = '1';
+  // using memcpy instead of strcpy to avoid coping nulls
+  memcpy(&pubKey->callSign,newCall,strlen(callSign));
+  memcpy(&pubKey->pkey,p,strlen(p));
+  pubKey->pubkeyNum[0] = '1';
 
-      // should be move to fileio
 
-      fwrite(&pk,sizeof(pk),1,fp);
-      fclose(fp);
-    }
-  else
-    return(0);
-
-  fp = fopen(privFile,"w");
-  if (fp)
-    {
-      p = BN_bn2hex(dsa->priv_key);
-      fwrite (p,strlen(p),1,fp);
-      fclose(fp);
-    }     
-  else
-    return(0);
-
+  // get private Key
+  *privKey = BN_bn2hex(dsa->priv_key);
   return(1);
 
 }
