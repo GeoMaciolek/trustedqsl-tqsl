@@ -76,7 +76,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 		goto err;
 	}
 	adif->sentinel = 0x3345;
-	if ((adif->fp = fopen(filename, "r")) == NULL) {
+	if ((adif->fp = fopen(filename, "rb")) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
