@@ -5,19 +5,23 @@
 The <i>TQSL</i> utility program is used to prepare files for
 the <a href="tqsl.htm"><I>TrustedQSL</i></a> system.
 <P>
-Preparing a TrustedQSL file requires associating one of more QSO data records with
-station locations, then digitally signing the associated records and
-formatting the result into TrustedQSL records.
+<I>TQSL</I> requires an input log file in either <A HREF="glossary.htm#adif">ADIF</a>
+or <A HREF="glossary.htm#cabrillo">Cabrillo</a> format. Many logging programs
+can export log data in one or the other of these formats. <I>TQSL</I> also provides a rudimentary
+QSO data editor that can be used to create small ADIF files.
+See <A HREF="qsodata.htm"><b>Managing QSO Data</b></a>.
 <P>
-<i>TQSL</i> allows you to:
+Along with the QSO data in the log file, <I>TQSL</I> needs to know your station location.
+<I>TQSL</I> provides a mechanism to describe one or more station locations and save them for
+association with log files. (Even if information is present in the log file that describes
+your station location, it isn't used by <i>TQSL</i>.) See <A HREF="stnloc.htm"><b>Managing Station
+Locations</b></A>.
 <P>
-<UL>
-	<LI> Add, delete and modify <a href="stnloc.htm">station locations</a>, based on the
-		TrustedQSL signing certificates you have available.<P>
-	<LI> <a href="qsodata.htm">Enter and edit QSO data</a> records as <A HREF="glossary.htm#adif">ADIF</A> files.<P>
-	<LI> <a href="signing.htm">Sign the data</a> contained in <A HREF="glossary.htm#adif">ADIF</a> or
-		<A HREF="glossary.htm#cabrillo">Cabrillo</a> log files to produce
-		TrustedQSL files.
-</UL>
+Once you have prepared a log file and specified the station location, you are ready
+to <i>sign</i> the data, which produces a TrustedQSL file containing the digitally
+signed records, ready to be sent to their destination, such as ARRL's <I>Logbook
+of the World</i> system. See <A HREF="signing.htm"><b>Preparing TrustedQSL Files (Signing)</b></a>.
+<P>
+<I>TQSL</I> has several configuration options you can set. See <A HREF="pref.htm"><b>Preferences</b></a>.
 <P>
 </BODY></HEAD>

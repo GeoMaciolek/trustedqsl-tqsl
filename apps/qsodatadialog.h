@@ -39,10 +39,11 @@
 
 class QSORecord {
 public:
-	QSORecord() { _mode = "CW"; _band = "160M"; }
+	QSORecord() { _mode = "CW"; _band = "160M"; _rxband = ""; }
 
-	wxString _call, _freq;
-	wxString _mode, _band;
+	wxString _call, _freq, _rxfreq;
+	wxString _mode, _band, _rxband;
+	wxString _propmode, _satellite;
 	tQSL_Date _date;
 	tQSL_Time _time;
 };
@@ -78,7 +79,7 @@ private:
 	wxStaticText *_recno_label_ctrl;
 	wxBitmapButton *_recdown_ctrl, *_recup_ctrl, *_recbottom_ctrl, *_rectop_ctrl;
 	QSORecordList *_reclist;
-	int _mode, _band;
+	int _mode, _band, _rxband, _propmode, _satellite;
 	int _recno;
 	DECLARE_EVENT_TABLE()
 	bool _isend;

@@ -45,6 +45,7 @@ enum {		// Window IDs
 	ID_PREF_FILE_CABRILLO = (wxID_HIGHEST+1),
 	ID_PREF_FILE_ADIF,
 	ID_PREF_FILE_BADCALLS,
+	ID_PREF_FILE_DATERANGE,
 	ID_PREF_MODE_MAP,
 	ID_PREF_MODE_ADIF,
 	ID_PREF_MODE_DELETE,
@@ -71,7 +72,7 @@ public:
 	virtual bool TransferDataFromWindow();
 private:
 	wxTextCtrl *cabrillo, *adif;
-	wxCheckBox *badcalls;
+	wxCheckBox *badcalls, *daterange;
 };
 
 typedef std::map <wxString, wxString> ModeSet;

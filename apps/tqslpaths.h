@@ -13,7 +13,9 @@
 #endif
 
 #include <wx/filefn.h>
-#include <windows.h>
+#if defined(__WIN32__)
+	#include <windows.h>
+#endif
 
 class DocPaths : public wxPathList {
 public:

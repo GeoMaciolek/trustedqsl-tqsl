@@ -22,6 +22,30 @@
 		<param name="Name" value="Preparing TrustedQSL Files">
 		<param name="Local" value="signing.htm">
 	     </OBJECT>
+		<UL>
+			<LI><OBJECT>
+			<param name="Name" value="Setting a Signing Date Range">
+			<param name="Local" value="daterng.htm">
+	    	 </OBJECT>
+		</UL>
+	<LI> <OBJECT>
+		<param name="Name" value="Preferences">
+		<param name="Local" value="pref.htm">
+	     </OBJECT>
+		 <UL>
+			<LI> <OBJECT>
+				<param name="Name" value="Preferences - Options">
+				<param name="Local" value="pref-opt.htm">
+			 	</OBJECT>
+			<LI> <OBJECT>
+				<param name="Name" value="Preferences - ADIF Modes">
+				<param name="Local" value="pref-adi.htm">
+			 	</OBJECT>
+			<LI> <OBJECT>
+				<param name="Name" value="Preferences - Cabrillo Specs">
+				<param name="Local" value="pref-cab.htm">
+			 	</OBJECT>
+		 </UL>
 	<LI> <OBJECT>
 		<param name="Name" value="About TrustedQSL">
 		<param name="Local" value="tqsl.htm">

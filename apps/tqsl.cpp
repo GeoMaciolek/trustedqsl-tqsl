@@ -46,7 +46,7 @@ using namespace std;
 #include "dxcc.h"
 #include "tqsl_prefs.h"
 
-#define VERSION "1.04rc"
+#define VERSION "1.06"
 
 #undef ALLOW_UNCOMPRESSED
 
@@ -120,6 +120,90 @@ ConvertingDialog::ConvertingDialog(wxWindow *parent, const char *filename)
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
 	CenterOnParent();
+}
+
+#define TQSL_DR_START TQSL_ID_LOW
+#define TQSL_DR_END TQSL_ID_LOW+1
+#define TQSL_DR_OK TQSL_ID_LOW+2
+#define TQSL_DR_CAN TQSL_ID_LOW+3
+#define TQSL_DR_MSG TQSL_ID_LOW+4
+
+class DateRangeDialog : public wxDialog {
+public:
+	DateRangeDialog(wxWindow *parent = 0);
+	tQSL_Date start, end;
+private:
+	void OnOk(wxCommandEvent&);	
+	void OnCancel(wxCommandEvent&);
+	virtual bool TransferDataFromWindow();
+	wxTextCtrl *start_tc, *end_tc;
+	wxStaticText *msg;
+	DECLARE_EVENT_TABLE()
+};
+
+BEGIN_EVENT_TABLE(DateRangeDialog, wxDialog)
+	EVT_BUTTON(TQSL_DR_OK, DateRangeDialog::OnOk)
+	EVT_BUTTON(TQSL_DR_CAN, DateRangeDialog::OnCancel)
+END_EVENT_TABLE()
+
+DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxString("QSO Date Range")) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+	sizer->Add(new wxStaticText(this, -1,
+		"You may set the starting and/or ending QSO dates.\n\n"
+		"QSOs prior to the starting date or after the ending\n"
+		"date will not be signed or included in the output file."), 0, wxALL|wxALIGN_CENTER, 10);
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "Start Date:"), 0, wxRIGHT, 5);
+	start_tc = new wxTextCtrl(this, TQSL_DR_START);
+	hsizer->Add(start_tc, 0, 0, 0);
+	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "End Date:"), 0, wxRIGHT, 5);
+	end_tc = new wxTextCtrl(this, TQSL_DR_END);
+	hsizer->Add(end_tc, 0, 0, 0);
+	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
+	msg = new wxStaticText(this, TQSL_DR_MSG, "");
+	sizer->Add(msg, 0, wxALL, 5);
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxButton(this, TQSL_DR_OK, "Ok"), 0, wxRIGHT, 5);
+	hsizer->Add(new wxButton(this, TQSL_DR_CAN, "Cancel"), 0, wxLEFT, 10);
+	sizer->Add(hsizer, 0, wxALIGN_CENTER|wxALL, 10);
+	SetAutoLayout(TRUE);
+	SetSizer(sizer);
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
+	CenterOnParent();
+}
+
+bool
+DateRangeDialog::TransferDataFromWindow() {
+	wxString text = start_tc->GetValue();
+	if (text.Trim() == "")
+		start.year = start.month = start.day = 0;
+	else if (tqsl_initDate(&start, text.c_str()) || !tqsl_isDateValid(&start)) {
+		msg->SetLabel("Start date is invalid");
+		return false;
+	}
+	text = end_tc->GetValue();
+	if (text.Trim() == "")
+		end.year = end.month = end.day = 0;
+	else if (tqsl_initDate(&end, text.c_str()) || !tqsl_isDateValid(&end)) {
+		msg->SetLabel("End date is invalid");
+		return false;
+	}
+	return true;
+}
+
+void
+DateRangeDialog::OnOk(wxCommandEvent&) {
+	if (TransferDataFromWindow())
+		EndModal(wxOK);
+}
+
+void
+DateRangeDialog::OnCancel(wxCommandEvent&) {
+	EndModal(wxCANCEL);
 }
 
 static void
@@ -414,8 +498,26 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 		dtstr.Printf("%02d%02d", it->_time.hour, it->_time.minute);
 		tqsl_adifMakeField("TIME_ON", 0, (const unsigned char*)dtstr.c_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		tqsl_adifMakeField("FREQ", 0, (const unsigned char*)it->_freq.c_str(), -1, buf, sizeof buf);
-		out << "   " << buf << endl;
+		if (it->_freq != "") {
+			tqsl_adifMakeField("FREQ", 0, (const unsigned char*)it->_freq.c_str(), -1, buf, sizeof buf);
+			out << "   " << buf << endl;
+		}
+		if (it->_rxband != "") {
+			tqsl_adifMakeField("BAND_RX", 0, (const unsigned char*)it->_rxband.c_str(), -1, buf, sizeof buf);
+			out << "   " << buf << endl;
+		}
+		if (it->_rxfreq != "") {
+			tqsl_adifMakeField("FREQ_RX", 0, (const unsigned char*)it->_rxfreq.c_str(), -1, buf, sizeof buf);
+			out << "   " << buf << endl;
+		}
+		if (it->_propmode != "") {
+			tqsl_adifMakeField("PROP_MODE", 0, (const unsigned char*)it->_propmode.c_str(), -1, buf, sizeof buf);
+			out << "   " << buf << endl;
+		}
+		if (it->_satellite != "") {
+			tqsl_adifMakeField("SAT_NAME", 0, (const unsigned char*)it->_satellite.c_str(), -1, buf, sizeof buf);
+			out << "   " << buf << endl;
+		}
 		out << "<EOR>" << endl;
 	}
 	out.close();
@@ -423,12 +525,16 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 }
 
 static tqsl_adifFieldDefinitions fielddefs[] = {
-	{ "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, 13, 0, 0, 0, 0 },
-	{ "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, 0, 0 },
-	{ "MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, 0, 0 },
-	{ "FREQ", "", TQSL_ADIF_RANGE_TYPE_NONE, 20, 0, 0, 0, 0 },
+	{ "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_CALLSIGN_MAX, 0, 0, 0, 0 },
+	{ "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, 0, 0 },
+	{ "BAND_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, 0, 0 },
+	{ "MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, 0, 0 },
+	{ "FREQ", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, 0, 0 },
+	{ "FREQ_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, 0, 0 },
 	{ "QSO_DATE", "", TQSL_ADIF_RANGE_TYPE_NONE, 8, 0, 0, 0, 0 },
 	{ "TIME_ON", "", TQSL_ADIF_RANGE_TYPE_NONE, 6, 0, 0, 0, 0 },
+	{ "SAT_NAME", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_SATNAME_MAX, 0, 0, 0, 0 },
+	{ "PROP_MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_PROPMODE_MAX, 0, 0, 0, 0 },
 	{ "EOR", "", TQSL_ADIF_RANGE_TYPE_NONE, 0, 0, 0, 0, 0 },
 	{ "", "", TQSL_ADIF_RANGE_TYPE_NONE, 0, 0, 0, 0, 0 },
 };
@@ -461,6 +567,8 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 				rec._call = (const char *)field.data;
 			else if (!strcasecmp(field.name, "BAND"))
 				rec._band = (const char *)field.data;
+			else if (!strcasecmp(field.name, "BAND_RX"))
+				rec._rxband = (const char *)field.data;
 			else if (!strcasecmp(field.name, "MODE")) {
 				rec._mode = (const char *)field.data;
 				char amode[40];
@@ -468,6 +576,12 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 					rec._mode = amode;
 			} else if (!strcasecmp(field.name, "FREQ"))
 				rec._freq = (const char *)field.data;
+			else if (!strcasecmp(field.name, "FREQ_RX"))
+				rec._rxfreq = (const char *)field.data;
+			else if (!strcasecmp(field.name, "PROP_MODE"))
+				rec._propmode = (const char *)field.data;
+			else if (!strcasecmp(field.name, "SAT_NAME"))
+				rec._satellite = (const char *)field.data;
 			else if (!strcasecmp(field.name, "QSO_DATE")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) == 8) {
@@ -555,12 +669,23 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 	int n = 0;
 	bool cancelled = false;
 	int lineno = 0;
+	int out_of_range = 0;
    	try {
    		if (tqsl_beginCabrilloConverter(&conv, infile.c_str(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
 	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.c_str(), certlist, ncerts, loc));
+		}
+		bool range = true;
+		config->Read("DateRange", &range);
+		if (range) {
+			DateRangeDialog dial(this);
+			if (dial.ShowModal() != wxOK) {
+				wxLogMessage("Cancelled");
+				return false;
+			}
+			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
 		}
 		bool allow = false;
 		config->Read("BadCalls", &allow);
@@ -597,6 +722,10 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
    				check_tqsl_error(tqsl_beginSigning(cert, 0, getPassword, 0));
    				continue;
    			}
+			if (tQSL_Error == TQSL_DATE_OUT_OF_RANGE) {
+				out_of_range++;
+				continue;
+			}
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
 				try {
@@ -651,6 +780,9 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 		wxLogError("Signing aborted due to errors");
    		throw TQSLException(msg.c_str());
    	}
+	if (out_of_range > 0)
+		wxLogMessage(wxString::Format("%s: %d QSO records were outside the selected date range",
+			infile.c_str(), out_of_range));
 	if (cancelled || n == 0)
 		wxLogMessage("No records output");
 	else
