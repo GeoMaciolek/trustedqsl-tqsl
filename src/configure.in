@@ -7,6 +7,8 @@ AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_RANLIB
 
+AC_MINGW32
+
 AC_ARG_WITH(openssl,
   [  --with-openssl=DIR      location of OPENSSL files],
   [ OPENSSL="$withval" ],
@@ -16,16 +18,8 @@ AC_SUBST(OPENSSL)
 
 export LIBRARY_PATH="$OPENSSL/lib"
 
-dnl Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS(windows.h,
-	[ WINDOWS=1; AC_CHECK_LIB(gdi32, main) ]
-)
-AC_SUBST(OBJSUF)
-AC_SUBST(WINDOWS)
-
 dnl Checks for libraries.
-dnl Replace `main' with a function in -lcrypto:
+AC_CHECK_LIB(gdi32, main)
 AC_CHECK_LIB(crypto, MD5_Init)
 
 dnl Checks for typedefs, structures, and compiler characteristics.

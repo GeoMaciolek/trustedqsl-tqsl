@@ -26,6 +26,9 @@
 #ifdef LOTW_SERVER
 #include "testharness.h"
 #include "certificate.h"
+#include "lotw-db.h"
+#include "lotw-dberror.h"
+#include "verify.h"
 #endif
 #include "tqsllib.h"
 #include "openssl_cert.h"
@@ -34,6 +37,10 @@
 
 static bool query = false;
 static bool printem = false;
+
+#define TESTCA_ROOTCERT "TestCArootcert.pem"
+#define TESTCA_CERT "TestCAproductioncert.pem"
+#define TESTCA_KEY "TestCAproductionkeys.pem"
 
 #ifndef LOTW_SERVER
 #undef logError
@@ -54,6 +61,10 @@ int harness_main(int argc, char *argv[]);
 #define test_issuer "/C=US/ST=CT/L=Newington/O=American Radio Relay League/OU=Logbook of the World/CN=Logbook of the World Production CA/DC=arrl.org/Email=lotw@arrl.org"
 // static int cb(int ok, X509_STORE_CTX *ctx);
 static int tqsl_callback(int type, const char *msg);
+static int password_callback(char *pwbuf, int pwbuflen);
+static int write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned char *value, int len);
+static char *hexit(char *str, char *buf);
+static unsigned char * fakealloc(size_t size);
 
 int
 main(int argc, char *argv[]) {
@@ -267,11 +278,11 @@ harness_main(int argc, char *argv[]) {
 	logError(stdlog, "Cleaning out old keys from " + certs_dir);
 	system((string("rm -rf ") + certs_dir).c_str());
 	logError(stdlog, "Loading certificates from file");
-	if (tqsl_importCertFile("adif_CERT_test", &tqsl_callback))
+/*	if (tqsl_importCertFile("adif_CERT_test", &tqsl_callback))
 		logError(errlog, tqsl_getErrorString());
 	else
 		logError(stdlog, "Load succeeded");
-	logError(stdlog, "Loading certificates from file with bad user cert (signed by unknown CA)");
+*/	logError(stdlog, "Loading certificates from file with bad user cert (signed by unknown CA)");
 	if (tqsl_importCertFile("adif_CERT_test_bad_user", NULL))
 		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
 	else
@@ -279,15 +290,86 @@ harness_main(int argc, char *argv[]) {
 	logError(stdlog, "Creating certificate request");
 	TQSL_CERT_REQ apireq = {
 		"W1AW", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
-		"06111", "USA", "jbloom@arrl.org", 104 };
-	if (tqsl_createCertRequest("reqtmp", &apireq, 0))
-		logError(errlog, string("Failed: ") + tqsl_getErrorString());
+		"06111", "USA", "jbloom@arrl.org", 291, {1998, 1, 1}, {1999, 1, 1} };
+	int (*pwcb)(char *, int) = 0;
+	if (query)
+		pwcb = &password_callback;
 	else
+		apireq.password = "snarky";
+	if (tqsl_createCertRequest("reqtmp", &apireq, pwcb))
+		logError(errlog, string("Failed: ") + tqsl_getErrorString());
+	else {
 		logError(stdlog, "Succeeded");
+		// Make like a CA to get a cert that can be imported
+		FILE *in = fopen("reqtmp", "r");
+		if (in == NULL)
+			logError(errlog, "Failed to open reqtmp for input");
+		adifFieldResults af_res;
+		adifFieldDefinitions af_defs[] = { {"TQSL_CRQ_REQUEST","",ADIF_RANGE_TYPE_NONE,2000}, {""} };
+		char *af_types[] = { "" };
+		bool ok = false;
+		while (adifGetField(&af_res, in, af_defs, (const char **)af_types, &fakealloc) != ADIF_GET_FIELD_EOF) {
+			if (!strcasecmp(af_res.name, "TQSL_CRQ_REQUEST")) {
+				FILE *out = fopen("reqtmp.x509", "w");
+				if (out == NULL) {
+					logError(errlog, "Failed to open reqtmp.x509 for output");
+					break;
+				}
+				fputs((char *)af_res.data, out);
+				fclose(out);
+				ok = true;
+				break;
+			}
+		}
+		fclose(in);
+		if (!ok)
+			logError(errlog, "Failed to obtain X.509 request from reqtmp");
+		char buf[4000];
+		FILE *out = fopen("certtmp.tq6", "w");
+		if (out == NULL)
+			logError(errlog, "Failed to open certtmp for output");
+		write_adif_field(out, "TQSL_CERT", 0, 0, 0);
+		if ((in = fopen(TESTCA_ROOTCERT, "r")) == NULL)
+			logError(errlog, "Failed to open " TESTCA_ROOTCERT " for input");
+		int n = fread(buf, 1, sizeof buf-1, in);
+		buf[n] = 0;
+		write_adif_field(out, "TQSL_CERT_ROOT", 0, (unsigned char *)buf, -1);
+		fclose(in);
+		if ((in = fopen(TESTCA_CERT, "r")) == NULL)
+			logError(errlog, "Failed to open " TESTCA_CERT " for input");
+		n = fread(buf, 1, sizeof buf-1, in);
+		buf[n] = 0;
+		write_adif_field(out, "TQSL_CERT_CA", 0, (unsigned char *)buf, -1);
+		fclose(in);
+		// Use openssl to sign the cert
+#ifdef __WIN32__
+		char hexbuf[500] = "test-sign.bat ";
+#else
+		char hexbuf[500] = "./test-sign.sh ";
+#endif
+		tqsl_convertDateToText(&(apireq.qsoNotBefore), buf, sizeof buf);
+		hexit(buf, hexbuf+strlen(hexbuf));
+		tqsl_convertDateToText(&(apireq.qsoNotAfter), buf, sizeof buf);
+		strcat(hexbuf, " ");
+		hexit(buf, hexbuf+strlen(hexbuf));
+		sprintf(buf, "%d", apireq.dxccEntity);
+		strcat(hexbuf, " ");
+		hexit(buf, hexbuf+strlen(hexbuf));
+		logError(stdlog, hexbuf);
+		system(hexbuf);
+		if ((in = fopen("certtmp", "r")) == NULL)
+			logError(errlog, "Failed to open certtmp for input");
+		n = fread(buf, 1, sizeof buf-1, in);
+		buf[n] = 0;
+		write_adif_field(out, "TQSL_CERT_USER", 0, (unsigned char *)buf, -1);
+		fclose(in);
+		write_adif_field(out, "eor", 0, 0, 0);
+		fclose(out);
+	}
 	logError(stdlog, "Creating certificate request w/missing call sign");
 	TQSL_CERT_REQ badapireq1 =  {
 		"", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
-		"06111", "USA", "jbloom@arrl.org", 104 };
+		"06111", "USA", "jbloom@arrl.org", 104, {1998, 1, 1} };
 	if (tqsl_createCertRequest("reqtmp", &badapireq1, 0))
 		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
 	else
@@ -295,12 +377,118 @@ harness_main(int argc, char *argv[]) {
 	logError(stdlog, "Creating certificate request w/bad email address");
 	TQSL_CERT_REQ badapireq2 = {
 		"W1AW", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
-		"06111", "USA", "jbloom!arrl.org", 104 };
+		"06111", "USA", "jbloom!arrl.org", 104, {1998, 1, 1} };
 	if (tqsl_createCertRequest("reqtmp", &badapireq2, 0))
 		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
 	else
 		logError(errlog, "Succeeded, SHOULDN'T HAVE");
+	logError(stdlog, "Creating certificate request w/bad QSO not-before date");
+	TQSL_CERT_REQ badapireq3 = {
+		"W1AW", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
+		"06111", "USA", "jbloom@arrl.org", 104, {1998, 1, 32} };
+	if (tqsl_createCertRequest("reqtmp", &badapireq3, 0))
+		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
+	else
+		logError(errlog, "Succeeded, SHOULDN'T HAVE");
+	logError(stdlog, "Creating certificate request w/bad QSO not-after date");
+	TQSL_CERT_REQ badapireq4 = {
+		"W1AW", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
+		"06111", "USA", "jbloom@arrl.org", 104, {1998, 1, 31}, {1998, 13, 1} };
+	if (tqsl_createCertRequest("reqtmp", &badapireq4, 0))
+		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
+	else
+		logError(errlog, "Succeeded, SHOULDN'T HAVE");
+	logError(stdlog, "Creating certificate request with early QSO not-after date");
+	TQSL_CERT_REQ badapireq5 = {
+		"W1AW", "Hiram P. Maxim", "225 Main Street", "", "Newington", "CT",
+		"06111", "USA", "jbloom@arrl.org", 104, {1998, 1, 31}, {1997, 12, 31} };
+	if (tqsl_createCertRequest("reqtmp", &badapireq5, 0))
+		logError(stdlog, string("Failed as expected: ") + tqsl_getErrorString());
+	else
+		logError(errlog, "Succeeded, SHOULDN'T HAVE");
+	logError(stdlog, "Loading new cert");
+	if (tqsl_importCertFile("certtmp.tq6", tqsl_callback))
+		logError(errlog, string("Failed: ") + tqsl_getErrorString());
+	logError(stdlog, "Fetching list of certs via API");
+	tQSL_Cert *certs;
+	int ncerts;
+	if (tqsl_selectCertificates(&certs, &ncerts, 0, 0, 0, 0))
+		logError(errlog, string("Failed: ") + tqsl_getErrorString());
+	else {
+		char buf[80];
+		sprintf(buf, "Succeeded, loaded %d certs", ncerts);
+		logError(stdlog, buf);
+		for (int i = 0; i < ncerts; i++) {
+			sprintf(buf, "Certificate %d", i);
+			logError(stdlog, buf);
+			if (tqsl_getCertificateCallSign(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get cert callsign: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   callsign: ") + buf);
+			if (tqsl_getCertificateAROName(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get cert name: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("    name: ") + buf);
+			if (tqsl_getCertificateRequestAddress1(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq address1: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   addr1: ") + buf);
+			if (tqsl_getCertificateRequestAddress2(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq address2: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   addr2: ") + buf);
+			if (tqsl_getCertificateRequestCity(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq city: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("    city: ") + buf);
+			if (tqsl_getCertificateRequestState(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq state: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   state: ") + buf);
+			if (tqsl_getCertificateRequestPostalCode(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq postalCode: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("     ZIP: ") + buf);
+			if (tqsl_getCertificateRequestCountry(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get crq country: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   cntry: ") + buf);
+			if (tqsl_getCertificateIssuer(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get cert issuer: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   issuer: ") + buf);
+			if (tqsl_getCertificateIssuerOrganization(certs[i], buf, sizeof buf))
+				logError(errlog, string("Failed to get cert issuer organization: ") + tqsl_getErrorString());
+			else
+				logError(stdlog, string("   issuer organization: ") + buf);
+			tqsl_freeCertificate(certs[i]);
+		}
+	}
 	logError(stdlog, "Finished testing the public API");
+#ifdef LOTW_SERVER
+	logError(stdlog, "Loading certs into database");
+	CACertificate cacert;
+	cacert.loadFromFile(TESTCA_CERT);
+	cacert.parseCert();
+//	cacert.IsCA(true);
+//	cacert.Status("Approved");
+	DBStatus stat;
+	if ((stat = putCACertificate(cacert)) != NO_ERROR)
+		logError(stdlog, string("WARNING: ") + getDBStatusString(stat));
+	Certificate cert;
+	cert.loadFromFile("certtmp");
+	cert.parseCert();
+	cert.Status("Approved");
+	if ((stat = putCertificate(cert)) != NO_ERROR)
+		logError(stdlog, string("WARNING: ") + getDBStatusString(stat));
+	logError(stdlog, "Verifying certificate chain");
+	const char *erm;
+	if ((erm = verifyCertificateChain(cert)) != 0)
+		logError(errlog, string("Verification failed: ") + erm);
+	else
+		logError(stdlog, "Verification successful");
+	commitDBWork();
+#endif
 	logError(stdlog, "Tests Completed");
 	return 0;
 }
@@ -329,6 +517,63 @@ static int tqsl_callback(int type, const char *msg) {
 			return 1;
 	}
 	return 0;
+}
+
+static int password_callback(char *pwbuf, int pwbuflen) {
+	char *cp;
+
+	printf("Password: ");
+	fgets(pwbuf, pwbuflen, stdin);
+	pwbuf[pwbuflen] = 0;
+	if ((cp = strchr(pwbuf, '\n')) != NULL)
+		*cp = 0;
+	return 0;
+}
+
+static int
+write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned char *value, int len) {
+	if (fieldname == NULL)	/* Silly caller */
+		return 0;
+	if (fputc('<', fp) == EOF)
+		return 1;
+	if (fputs(fieldname, fp) == EOF)
+		return 1;
+	if (type && type != ' ' && type != '\0') {
+		if (fputc(':', fp) == EOF)
+			return 1;
+		if (fputc(type, fp) == EOF)
+			return 1;
+	}
+	if (value != NULL && len != 0) {
+		if (len < 0)
+			len = strlen((const char *)value);
+		if (fputc(':', fp) == EOF)
+			return 1;
+		fprintf(fp, "%d>", len);
+		if (fwrite(value, 1, len, fp) != (unsigned int) len)
+			return 1;
+	} else if (fputc('>', fp) == EOF)
+			return 1;
+	if (fputs("\n\n", fp) == EOF)
+		return 1;
+	return 0;
+}
+
+static char *
+hexit(char *str, char *buf) {
+	char *cp = buf;
+	while (*str) {
+		sprintf(cp, "%02x", *str++);
+		cp += 2;
+	}
+	*cp = 0;
+	return buf;
+}
+
+static unsigned char *fakealloc(size_t size) {
+	static unsigned char buf[4000];
+
+	return buf;
 }
 
 /*

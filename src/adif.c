@@ -50,7 +50,11 @@ strCmpNoCase( const char *cs, const char *ct )
 	result = 0;
 
 	/* until ASCIIZ terminator, compares as if cs & ct were all UPPER CASE */
-	while( ( 0 != *cs ) && ( 0 == ( result = ( toupper( *cs++ ) - toupper(*ct++) ) ) ) );
+	while( ( 0 == ( result = ( toupper( *cs ) - toupper( *ct ) ) ) ) && ( 0 != *cs ) )
+	{
+		cs++;
+		ct++;
+	}
 
 	return( result );
 }
@@ -230,44 +234,41 @@ adifGetField( adifFieldResults *field, FILE *filehandle, const adifFieldDefiniti
 							dataLength = 0;
 						}
 
-						if( dataLength != 0 )
-						{
-     					if( ':' == currentCharacter )
-     					{
-								/* get the type */
-     						adifState = ADIF_STATE_GET_TYPE;
-     		      }
-        			else
-         	   	{
-								/* no explicit type, set to LoTW default */
-	           		strcpy( field->type, adifFields[( field->adifNameIndex )].type );
-								/* get the data */
- 								adifState = ADIF_STATE_GET_DATA;
-     	     		}
+   					if( ':' == currentCharacter )
+   					{
+							/* get the type */
+   						adifState = ADIF_STATE_GET_TYPE;
+   		      }
+      			else
+       	   	{
+							/* no explicit type, set to LoTW default */
+           		strcpy( field->type, adifFields[( field->adifNameIndex )].type );
+							/* get the data */
+ 							adifState = ADIF_STATE_GET_DATA;
+   	     		}
 
-							/* only allocate if we care about the data */
-							if( recordData )
-							{
-      					if( dataLength <= adifFields[( field->adifNameIndex )].max_length )
-   	  					{
-	 	           		/* allocate space for data results, and ASCIIZ */
-	    	         	if( NULL == ( field->data = (*allocator)( dataLength + 1 ) ) )
-	   	         		{
-		   	       			status = ADIF_GET_FIELD_NO_RESULT_ALLOCATION;
-      							adifState = ADIF_STATE_DONE;
-	   	  	      	}
-   							}
-    						else
-    						{
-            	 		status = 	ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW;
-      						adifState = ADIF_STATE_DONE;
-    	 					}
-							}
-	          }
-						else
+						/* only allocate if we care about the data */
+						if( recordData )
 						{
-							/* no data, done */
-  	 					adifState = ADIF_STATE_DONE;
+    					if( dataLength <= adifFields[( field->adifNameIndex )].max_length )
+ 	  					{
+ 	           		/* allocate space for data results, and ASCIIZ */
+    	         	if( NULL != ( field->data = (*allocator)( dataLength + 1 ) ) )
+								{
+									/* ASCIIZ terminator */
+			  	   	 		field->data[dataIndex] = 0;
+								}
+								else
+   	         		{
+	   	       			status = ADIF_GET_FIELD_NO_RESULT_ALLOCATION;
+    							adifState = ADIF_STATE_DONE;
+   	  	      	}
+ 							}
+  						else
+  						{
+          	 		status = 	ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW;
+    						adifState = ADIF_STATE_DONE;
+  	 					}
 						}
 					}
      			else if( strlen( field->size ) < ADIF_FIELD_SIZE_LENGTH_MAX )

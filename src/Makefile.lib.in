@@ -2,7 +2,6 @@ LIBS=@LIBS@
 OPENSSL=@OPENSSL@
 CXXFLAGS = -O0 -g3 -Wall -I. -I../include -I$(OPENSSL)/include $(INCDIR) @DEFS@
 LDFLAGS = -L. -L$(OPENSSL)/lib $(LIBS) -lstdc++
-WINDOWS=@WINDOWS@
 
 OBJS = tqsllib.o openssl_cert.o adif.o
 
@@ -19,17 +18,10 @@ MYLIB = tqsllib
 
 all: $(TARGETS)
 
-tqsllib.o: tqsllib.cpp tqsllib.h
-
-adif.o: adif.c adif.h
-
-openssl_cert.o: openssl_cert.cpp openssl_cert.h tqsllib.h
-
 test_openssl$(OBJSUF): test_openssl.o lib$(MYLIB).a
 	gcc -o test_openssl$(OBJSUF) test_openssl.o -l$(MYLIB) $(LDFLAGS)
 	
-test_openssl.o: test_openssl.cpp
-	g++ $(CXXFLAGS) -c -o $@ test_openssl.cpp
+include tqsllib.depends
 
 lib$(MYLIB).a: $(OBJS)
 	rm -f lib$(MYLIB).a
@@ -45,11 +37,3 @@ tqsllib.dll: lib$(MYLIB).a
 
 %.o: %.c
 	gcc $(CXXFLAGS) -c -o $@ $*.c
-
-clean:
-	rm -f $(TARGETS) *.o *.a *~ xxx.*
-
-distclean:
-	$(MAKE) -f Makefile.lib clean
-	rm -rf config.status config.cache config.log doxygen \
-		reqtmp Makefile Makefile.lib

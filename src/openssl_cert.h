@@ -38,12 +38,6 @@ typedef struct {
 	int value_buf_size;
 } TQSL_X509_NAME_ITEM;
 
-typedef struct {
-	int year;
-	int month;
-	int day;
-} TQSL_DATE;
-
 #if defined(LOTW_SERVER) || defined(OPENSSL_CERT_SOURCE)
 
 #ifdef __cplusplus
@@ -94,7 +88,7 @@ CLIENT_STATIC int tqsl_cert_get_subject_name_index(X509 *cert, int index, TQSL_X
 CLIENT_STATIC int tqsl_cert_get_subject_name_entry(X509 *cert, const char *obj_name, TQSL_X509_NAME_ITEM *name_item);
 
 /// Retrieve a name entry date from an X509 cert's subject name by name
-CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, TQSL_DATE *date);
+CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, tQSL_Date *date);
 
 /// Filter a list (stack) of certs based on (optional) call sign, qso date and issuer criteria
 /** Returns a (possibly empty) stack of certificates that match the criteria. Returns NULL
@@ -104,25 +98,7 @@ CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, T
   * stack is not altered.
   */
 CLIENT_STATIC TQSL_X509_STACK *tqsl_filter_cert_list(TQSL_X509_STACK *sk, const char *callsign,
-	const TQSL_DATE *date, const char *issuer, int isvalid);
-
-/// Initialize a TQSL_DATE object from a date string
-/** The date string must be YYYY-MM-DD or YYYYMMDD format. */
-CLIENT_STATIC int tqsl_date_init(TQSL_DATE *date, const char *str);
-
-/// Compare two TQSL_DATE objects
-/** Returns:
-  * - -1 if \c a < \c b
-  *
-  * - 0 if \c a == \c b
-  *
-  * - 1 if \c a > \c b
-  */
-CLIENT_STATIC int tqsl_date_compare(const TQSL_DATE *a, const TQSL_DATE *b);
-
-/// Converts a TQSL_DATE object to a YYYY-MM-DD string
-/** Returns a pointer to \c buf or NULL on error */
-CLIENT_STATIC char *tqsl_date_to_text(TQSL_DATE *date, char *buf, int bufsiz);
+	const tQSL_Date *date, const char *issuer, int isvalid);
 
 CLIENT_STATIC EVP_PKEY *tqsl_new_rsa_key(int nbits);
 
@@ -136,9 +112,5 @@ CLIENT_STATIC int tqsl_write_adif_field(FILE *fp, const char *fieldname, char ty
 #endif
 
 #endif /* defined(LOTW_SERVER) || defined(OPENSSL_CERT_SOURCE) */
-
-#define TQSL_OBJ_TO_API(x) ((void *)(x))
-#define TQSL_API_TO_OBJ(x,type) ((type)(x))
-#define TQSL_API_TO_CERT(x) TQSL_API_TO_OBJ((x), tQSL_Cert)
 
 #endif /* OPENSSL_CERT_H */

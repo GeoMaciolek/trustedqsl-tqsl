@@ -11,16 +11,12 @@ TARGETS = test_openssl
 
 all: lib$(MYLIB).a
 
-tqsllib.o: tqsllib.c tqsllib.h
-
-adif.o: adif.c adif.h
-
-openssl_cert.o: openssl_cert.c openssl_cert.h tqsllib.h
-
 lib$(MYLIB).a: $(OBJS)
 	rm -f lib$(MYLIB).a
 	ar q lib$(MYLIB).a $(OBJS)
 	ranlib lib$(MYLIB).a
+
+include tqsllib.depends
 
 %.o: %.cpp
 	g++ $(CXXFLAGS) -c -o $@ $*.cpp

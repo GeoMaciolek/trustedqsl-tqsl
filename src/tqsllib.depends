@@ -1,0 +1,10 @@
+adif.o: adif.c sysconfig.h adif.h
+
+openssl_cert.o: openssl_cert.c tqsllib.h tqslerrno.h openssl_cert.h \
+	 sysconfig.h adif.h
+
+test_openssl.o: test_openssl.cpp sysconfig.h tqsllib.h openssl_cert.h \
+	 adif.h
+
+tqsllib.o: tqsllib.c tqsllib.h tqslerrno.h adif.h sysconfig.h
+
