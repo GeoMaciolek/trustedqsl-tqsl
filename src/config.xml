@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="1" minorversion="0">
+<tqslconfig majorversion="1" minorversion="1">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -450,6 +450,7 @@
     <band spectrum="HF" low="7000" high="7300">40M</band>
     <band spectrum="VHF" low="70" high="71">4M</band>
     <band spectrum="UHF" low="75500" high="81000">4MM</band>
+    <band spectrum="HF" low="5250" high="5405">60M</band>
     <band spectrum="UHF" low="5650" high="5925">6CM</band>
     <band spectrum="VHF" low="50" high="54">6M</band>
     <band spectrum="UHF" low="47000" high="47200">6MM</band>
