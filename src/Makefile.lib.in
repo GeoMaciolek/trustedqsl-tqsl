@@ -19,11 +19,11 @@ MYLIB = tqsllib
 
 all: $(TARGETS)
 
-tqsllib.o: tqsllib.c tqsllib.h
+tqsllib.o: tqsllib.cpp tqsllib.h
 
 adif.o: adif.c adif.h
 
-openssl_cert.o: openssl_cert.c openssl_cert.h tqsllib.h
+openssl_cert.o: openssl_cert.cpp openssl_cert.h tqsllib.h
 
 test_openssl$(OBJSUF): test_openssl.o lib$(MYLIB).a
 	gcc -o test_openssl$(OBJSUF) test_openssl.o -l$(MYLIB) $(LDFLAGS)
