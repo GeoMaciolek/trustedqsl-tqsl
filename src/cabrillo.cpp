@@ -10,7 +10,6 @@
 
 #define TQSLLIB_DEF
 
-#include "cabrillo.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include <cstdio>
@@ -31,7 +30,7 @@ snprintf(char *str, int, const char *fmt, ...) {
 
 #define TQSL_CABRILLO_MAX_RECORD_LENGTH 120
 
-DLLEXPORT TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
+DLLEXPORTDATA TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
 
 static char errmsgbuf[256];
 static char errmsgdata[40];

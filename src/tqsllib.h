@@ -11,18 +11,17 @@
 #ifndef TQSLLIB_H
 #define TQSLLIB_H
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 #ifdef __WIN32__
 	#ifdef TQSLLIB_DEF
-		#define DLLEXPORT __declspec(dllexport)
+		#define DLLEXPORT __stdcall __declspec(dllexport)
+		#define DLLEXPORTDATA __declspec(dllexport)
 	#else
-		#define DLLEXPORT __declspec(dllimport)
+		#define DLLEXPORT __stdcall __declspec(dllimport)
+		#define DLLEXPORTDATA __declspec(dllimport)
 	#endif
 #else
 	#define DLLEXPORT
+	#define DLLEXPORTDATA
 #endif
 
 #include "adif.h"
@@ -139,21 +138,21 @@ extern "C" {
 /// Error code from most recent tQSL library call.
 /**
   * The values for the error code are defined in tqslerrno.h */
-DLLEXPORT extern int tQSL_Error;
+DLLEXPORTDATA extern int tQSL_Error;
 /// The ADIF error code
-DLLEXPORT extern TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
+DLLEXPORTDATA extern TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
 /// The ADIF error code
-DLLEXPORT extern TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
+DLLEXPORTDATA extern TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
 /// File name of file giving error. (May be empty.)
-DLLEXPORT extern char tQSL_ErrorFile[256];
+DLLEXPORTDATA extern char tQSL_ErrorFile[256];
 /// Custom error message string
-DLLEXPORT extern char tQSL_CustomError[256];
+DLLEXPORTDATA extern char tQSL_CustomError[256];
 
 /** Initialize the tQSL library
   *
   * This function should be called prior to calling any other library functions.
   */
-int tqsl_init();
+DLLEXPORT int tqsl_init();
 
 /** Set the directory where the TQSL files are kept.
   * May be called either before of after tqsl_init(), but should be called
@@ -164,18 +163,18 @@ int tqsl_init();
   * some particular need to set the directory explicitly, programs should
   * refrain from doing so.
   */
-int tqsl_setDirectory(const char *dir);
+DLLEXPORT int tqsl_setDirectory(const char *dir);
 
 /** Gets the error string for the current tQSL library error and resets the error status.
   * See tqsl_getErrorString_v().
   */
-const char *tqsl_getErrorString();
+DLLEXPORT const char *tqsl_getErrorString();
 
 /** Gets the error string corresponding to the given error number.
   * The error string is available only until the next call to
   * tqsl_getErrorString_v or tqsl_getErrorString.
   */
-const char *tqsl_getErrorString_v(int err);
+DLLEXPORT const char *tqsl_getErrorString_v(int err);
 
 /** Encode a block of data into Base64 text.
   *
@@ -184,7 +183,7 @@ const char *tqsl_getErrorString_v(int err);
   * \li \c output = pointer to output buffer
   * \li \c outputlen = size of output buffer in bytes
   */
-int tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outputlen);
+DLLEXPORT int tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outputlen);
 
 /** Decode Base64 text into binary data.
   *
@@ -194,7 +193,7 @@ int tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int 
   *
   * Places the number of resulting data bytes into \c *datalen.
   */
-int tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen);
+DLLEXPORT int tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen);
 
 /** Initialize a tQSL_Date object from a date string.
   *
@@ -202,7 +201,7 @@ int tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen);
   *
   * Returns 0 on success, nonzero on failure
   */
-int tqsl_initDate(tQSL_Date *date, const char *str);
+DLLEXPORT int tqsl_initDate(tQSL_Date *date, const char *str);
 
 /** Initialize a tQSL_Time object from a time string.
   *
@@ -210,7 +209,7 @@ int tqsl_initDate(tQSL_Date *date, const char *str);
   *
   * Returns 0 on success, nonzero on failure
   */
-int tqsl_initTime(tQSL_Time *time, const char *str);
+DLLEXPORT int tqsl_initTime(tQSL_Time *time, const char *str);
 
 /** Compare two tQSL_Date objects.
   *
@@ -221,45 +220,45 @@ int tqsl_initTime(tQSL_Time *time, const char *str);
   *
   * - 1 if \c a > \c b
   */
-int tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b);
+DLLEXPORT int tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b);
 
 /** Converts a tQSL_Date object to a YYYY-MM-DD string.
   *
   * Returns a pointer to \c buf or NULL on error
   */
-char *tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz);
+DLLEXPORT char *tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz);
 
 /** Test whether a tQSL_Date contains a valid date value
   *
   * Returns 1 if the date is valid
   */
-int tqsl_isDateValid(const tQSL_Date *d);
+DLLEXPORT int tqsl_isDateValid(const tQSL_Date *d);
 
 /** Test whether a tQSL_Date is empty (contains all zeroes)
   *
   * Returns 1 if the date is null
   */
-int tqsl_isDateNull(const tQSL_Date *d);
+DLLEXPORT int tqsl_isDateNull(const tQSL_Date *d);
 
 /** Test whether a tQSL_Time contains a valid time value
   *
   * Returns 1 if the time is valid
   */
-int tqsl_isTimeValid(const tQSL_Time *t);
+DLLEXPORT int tqsl_isTimeValid(const tQSL_Time *t);
 
 /** Converts a tQSL_Time object to a HH:MM:SSZ string.
   *
   * Returns a pointer to \c buf or NULL on error
   */
-char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
+DLLEXPORT char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
 
 /** Returns the library version. \c major and/or \c minor may be NULL.
   */
-int tqsl_getVersion(int *major, int *minor);
+DLLEXPORT int tqsl_getVersion(int *major, int *minor);
 
 /** Returns the configuration-file version. \c major and/or \c minor may be NULL.
   */
-int tqsl_getConfigVersion(int *major, int *minor);
+DLLEXPORT int tqsl_getConfigVersion(int *major, int *minor);
 
 /** @} */
 
@@ -318,20 +317,20 @@ int tqsl_getConfigVersion(int *major, int *minor);
   * by calling tqsl_freeCertificate().
   *
   */
-int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
+DLLEXPORT int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flag);
 
 /** Find out if the "certificate" is just a key pair.
   */
-int tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly);
+DLLEXPORT int tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly);
 
 /** Get the encoded certificate for inclusion in a GABBI file.
   */
-int tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz);
 
 /** Get the issuer's serial number of the certificate.
   */
-int tqsl_getCertificateSerial(tQSL_Cert cert, long *serial);
+DLLEXPORT int tqsl_getCertificateSerial(tQSL_Cert cert, long *serial);
 
 /** Get the issuer (DN) string from a tQSL_Cert.
   *
@@ -342,7 +341,7 @@ int tqsl_getCertificateSerial(tQSL_Cert cert, long *serial);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz);
 
 /** Get the issuer's organization name from a tQSL_Cert.
   *
@@ -353,7 +352,7 @@ int tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz);
 /** Get the issuer's organizational unit name from a tQSL_Cert.
   *
   * \li \c cert - a tQSL_Cert object, normally one returned from
@@ -363,7 +362,7 @@ int tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz)
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int bufsiz);
 /** Get the ARO call sign string from a tQSL_Cert.
   *
   * \li \c cert - a tQSL_Cert object, normally one returned from
@@ -373,7 +372,7 @@ int tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int b
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz);
 /** Get the ARO name string from a tQSL_Cert.
   *
   * \li \c cert - a tQSL_Cert object, normally one returned from
@@ -383,7 +382,7 @@ int tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateAROName(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateAROName(tQSL_Cert cert, char *buf, int bufsiz);
 
 /** Get the email address from a tQSL_Cert.
   *
@@ -394,7 +393,7 @@ int tqsl_getCertificateAROName(tQSL_Cert cert, char *buf, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateEmailAddress(tQSL_Cert cert, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getCertificateEmailAddress(tQSL_Cert cert, char *buf, int bufsiz);
 
 /** Get the QSO not-before date from a tQSL_Cert.
   *
@@ -404,7 +403,7 @@ int tqsl_getCertificateEmailAddress(tQSL_Cert cert, char *buf, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateQSONotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
+DLLEXPORT int tqsl_getCertificateQSONotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
 
 /** Get the QSO not-after date from a tQSL_Cert.
   *
@@ -414,7 +413,7 @@ int tqsl_getCertificateQSONotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateQSONotAfterDate(tQSL_Cert cert, tQSL_Date *date);
+DLLEXPORT int tqsl_getCertificateQSONotAfterDate(tQSL_Cert cert, tQSL_Date *date);
 
 /** Get the certificate's not-before date from a tQSL_Cert.
   *
@@ -424,7 +423,7 @@ int tqsl_getCertificateQSONotAfterDate(tQSL_Cert cert, tQSL_Date *date);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
+DLLEXPORT int tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
 
 /** Get the certificate's not-after date from a tQSL_Cert.
   *
@@ -434,7 +433,7 @@ int tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date);
+DLLEXPORT int tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date);
 
 /** Get the DXCC entity number from a tQSL_Cert.
   *
@@ -444,7 +443,7 @@ int tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc);
+DLLEXPORT int tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc);
 
 /** Get the first address line from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -456,7 +455,7 @@ int tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestAddress1(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestAddress1(tQSL_Cert cert, char *str, int bufsiz);
 
 /** Get the second address line from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -468,7 +467,7 @@ int tqsl_getCertificateRequestAddress1(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestAddress2(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestAddress2(tQSL_Cert cert, char *str, int bufsiz);
 
 /** Get the city from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -480,7 +479,7 @@ int tqsl_getCertificateRequestAddress2(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestCity(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestCity(tQSL_Cert cert, char *str, int bufsiz);
 
 /** Get the state from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -492,7 +491,7 @@ int tqsl_getCertificateRequestCity(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestState(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestState(tQSL_Cert cert, char *str, int bufsiz);
 
 /** Get the postal (ZIP) code from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -504,7 +503,7 @@ int tqsl_getCertificateRequestState(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestPostalCode(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestPostalCode(tQSL_Cert cert, char *str, int bufsiz);
 
 /** Get the country from the certificate request used in applying
   * for a tQSL_Cert certificate.
@@ -516,7 +515,7 @@ int tqsl_getCertificateRequestPostalCode(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns 0 on success, nonzero on failure.
   */
-int tqsl_getCertificateRequestCountry(tQSL_Cert cert, char *str, int bufsiz);
+DLLEXPORT int tqsl_getCertificateRequestCountry(tQSL_Cert cert, char *str, int bufsiz);
 
 #define TQSL_PK_TYPE_ERR	0
 #define TQSL_PK_TYPE_NONE	1
@@ -537,13 +536,13 @@ int tqsl_getCertificateRequestCountry(tQSL_Cert cert, char *str, int bufsiz);
   * \li \c TQSL_PK_TYPE_ENC - The matching private key is encrypted
   * (password protected).
   */
-int tqsl_getCertificatePrivateKeyType(tQSL_Cert cert);
+DLLEXPORT int tqsl_getCertificatePrivateKeyType(tQSL_Cert cert);
 
 
 /** Free the memory used by the tQSL_Cert. Once this function is called,
   * \c cert should not be used again in any way.
   */
-void tqsl_freeCertificate(tQSL_Cert cert);
+DLLEXPORT void tqsl_freeCertificate(tQSL_Cert cert);
 
 /* int tqsl_checkCertificate(tQSL_Cert); */
 
@@ -564,17 +563,17 @@ void tqsl_freeCertificate(tQSL_Cert cert);
   *
   *  \c TQSL_CERT_CB_RESULT_TYPE() is meaningful only if \c TQSL_CERT_CB_CALL_TYPE() == \c TQSL_CERT_CB_RESULT
   */
-int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *message, void *userdata), void *user);
+DLLEXPORT int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *message, void *userdata), void *user);
 
 /** Get the number of certificate providers known to tqsllib.
   */
-int tqsl_getNumProviders(int *n);
+DLLEXPORT int tqsl_getNumProviders(int *n);
 
 /** Get the information for a certificate provider.
   *
   * \li \c idx is the index, 0 <= idx < tqsl_getNumProviders()
   */
-int tqsl_getProvider(int idx, TQSL_PROVIDER *provider);
+DLLEXPORT int tqsl_getProvider(int idx, TQSL_PROVIDER *provider);
 
 /** Create a certificate-request Gabbi file.
   *
@@ -588,7 +587,7 @@ int tqsl_getProvider(int idx, TQSL_PROVIDER *provider);
   * If req->signer is not zero and the signing certificate requires a password,
   * the password may be in req->signer_password, else signer_pwcb is called.
   */
-int tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *req,
+DLLEXPORT int tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *req,
 	int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user);
 
 /** Save a key pair and certificates to a file in PKCS12 format.
@@ -598,16 +597,16 @@ int tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *req,
   *
   * The supplied \c p12password is used to encrypt the PKCS12 data.
   */
-int tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password);
+DLLEXPORT int tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password);
 
 /** Load certificates and a private key from a PKCS12 file.
   */
-int tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
+DLLEXPORT int tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
 	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
 
 /** Delete a certificate and private key
   */
-int tqsl_deleteCertificate(tQSL_Cert cert);
+DLLEXPORT int tqsl_deleteCertificate(tQSL_Cert cert);
 
 /** @} */
 
@@ -631,32 +630,32 @@ int tqsl_deleteCertificate(tQSL_Cert cert);
   * \c pwcb parameters: \c pwbuf is a pointer to a buffer of \c pwsize chars.
   * The buffer should be NUL-terminated.
   */
-int tqsl_beginSigning(tQSL_Cert cert, char *password,  int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user);
+DLLEXPORT int tqsl_beginSigning(tQSL_Cert cert, char *password,  int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user);
 
 /** Test whether the tQSL_Cert object is initialized for signing.
   *
   * Returns 0 if initialized. Sets tQSL_Error to TQSL_SIGNINIT_ERROR if not.
   */
-int tqsl_checkSigningStatus(tQSL_Cert cert);
+DLLEXPORT int tqsl_checkSigningStatus(tQSL_Cert cert);
 
 /** Get the maximum size of a signature block that will be produced
   * when the tQSL_Cert is used to sign data. (Note that the size of the
   * signature block is unaffected by the size of the data block being signed.)
   */
-int tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize);
+DLLEXPORT int tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize);
 
 /** Sign a data block.
   *
   * tqsl_beginSigning() must have been called for
   * the tQSL_Cert object before calling this function.
   */
-int tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen);
+DLLEXPORT int tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen);
 
 /** Verify a signed data block.
   *
   * tqsl_beginSigning() need \em not have been called.
   */
-int tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen);
+DLLEXPORT int tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen);
 
 /** Sign a single QSO record
   *
@@ -665,13 +664,13 @@ int tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen,
   *
   * \c loc must be a valid tQSL_Location object. See \ref Data.
   */
-int tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *rec, unsigned char *sig, int *siglen);
+DLLEXPORT int tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *rec, unsigned char *sig, int *siglen);
 
 /** Terminate signing operations for this tQSL_Cert object.
   *
   * This zero-fills the unencrypted private key in memory.
   */
-int tqsl_endSigning(tQSL_Cert cert);
+DLLEXPORT int tqsl_endSigning(tQSL_Cert cert);
 
 /** @} */
 
@@ -785,39 +784,39 @@ int tqsl_endSigning(tQSL_Cert cert);
 #define TQSL_LOCATION_FIELD_INT 2
 
 /** Begin the process of generating a station record */
-int tqsl_initStationLocationCapture(tQSL_Location *locp);
+DLLEXPORT int tqsl_initStationLocationCapture(tQSL_Location *locp);
 
 /** Release the station-location resources. This should be called for
   * any tQSL_Location that was initialized via tqsl_initStationLocationCapture()
   * or tqsl_getStationLocation()
   */
-int tqsl_endStationLocationCapture(tQSL_Location *locp);
+DLLEXPORT int tqsl_endStationLocationCapture(tQSL_Location *locp);
 
 /** Update the pages based on the currently selected settings. */
-int tqsl_updateStationLocationCapture(tQSL_Location loc);
+DLLEXPORT int tqsl_updateStationLocationCapture(tQSL_Location loc);
 
 //int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);
 
 /** Get the current page number */
-int tqsl_getStationLocationCapturePage(tQSL_Location loc, int *page);
+DLLEXPORT int tqsl_getStationLocationCapturePage(tQSL_Location loc, int *page);
 
 /** Set the current page number.
   * Typically, the page number will be 1 (the starting page) or a value
   * obtained from tqsl_getStationLocationCapturePage().
   */
-int tqsl_setStationLocationCapturePage(tQSL_Location loc, int page);
+DLLEXPORT int tqsl_setStationLocationCapturePage(tQSL_Location loc, int page);
 
 /** Advance the page to the next one in the page sequence */
-int tqsl_nextStationLocationCapture(tQSL_Location loc);
+DLLEXPORT int tqsl_nextStationLocationCapture(tQSL_Location loc);
 
 /** Return the page to the previous one in the page sequence. */
-int tqsl_prevStationLocationCapture(tQSL_Location loc);
+DLLEXPORT int tqsl_prevStationLocationCapture(tQSL_Location loc);
 
 /** Returns 1 (in rval) if there is a next page */
-int tqsl_hasNextStationLocationCapture(tQSL_Location loc, int *rval);
+DLLEXPORT int tqsl_hasNextStationLocationCapture(tQSL_Location loc, int *rval);
 
 /** Returns 1 (in rval) if there is a previous page */
-int tqsl_hasPrevStationLocationCapture(tQSL_Location loc, int *rval);
+DLLEXPORT int tqsl_hasPrevStationLocationCapture(tQSL_Location loc, int *rval);
 
 /** Save the station location data. Note that the name must have been
   * set via tqsl_setStationLocationCaptureName if this is a new
@@ -825,62 +824,62 @@ int tqsl_hasPrevStationLocationCapture(tQSL_Location loc, int *rval);
   * station location of that name is already in existance, an error
   * occurs with tQSL_Error set to TQSL_NAME_EXISTS.
   */
-int tqsl_saveStationLocationCapture(tQSL_Location loc, int overwrite);
+DLLEXPORT int tqsl_saveStationLocationCapture(tQSL_Location loc, int overwrite);
 
 /** Get the name of the station location */
-int tqsl_getStationLocationCaptureName(tQSL_Location loc, char *namebuf, int bufsiz);
+DLLEXPORT int tqsl_getStationLocationCaptureName(tQSL_Location loc, char *namebuf, int bufsiz);
 
 /** Set the name of the station location */
-int tqsl_setStationLocationCaptureName(tQSL_Location loc, const char *name);
+DLLEXPORT int tqsl_setStationLocationCaptureName(tQSL_Location loc, const char *name);
 
 /** Get the number of saved station locations */
-int tqsl_getNumStationLocations(tQSL_Location loc, int *nloc);
+DLLEXPORT int tqsl_getNumStationLocations(tQSL_Location loc, int *nloc);
 
 /** Get the name of the specified (by \c idx) saved station location */
-int tqsl_getStationLocationName(tQSL_Location loc, int idx, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getStationLocationName(tQSL_Location loc, int idx, char *buf, int bufsiz);
 
 /** Get the call sign from the station location */
-int tqsl_getStationLocationCallSign(tQSL_Location loc, int idx, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getStationLocationCallSign(tQSL_Location loc, int idx, char *buf, int bufsiz);
 
 /** Retrieve a saved station location.
   * Once finished wih the station location, tqsl_endStationLocationCapture()
   * should be called to release resources.
   */
-int tqsl_getStationLocation(tQSL_Location *loc, const char *name);
+DLLEXPORT int tqsl_getStationLocation(tQSL_Location *loc, const char *name);
 
 /** Remove the stored station location by name. */
-int tqsl_deleteStationLocation(const char *name);
+DLLEXPORT int tqsl_deleteStationLocation(const char *name);
 
 /** Get the number of fields on the current station location page */
-int tqsl_getNumLocationField(tQSL_Location loc, int *numf);
+DLLEXPORT int tqsl_getNumLocationField(tQSL_Location loc, int *numf);
 
 /** Get the number of characters in the label for the specified field */
-int tqsl_getLocationFieldDataLabelSize(tQSL_Location loc, int field_num, int *rval);
+DLLEXPORT int tqsl_getLocationFieldDataLabelSize(tQSL_Location loc, int field_num, int *rval);
 
 /** Get the label for the specified field */
-int tqsl_getLocationFieldDataLabel(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getLocationFieldDataLabel(tQSL_Location loc, int field_num, char *buf, int bufsiz);
 
 /** Get the size of the GABBI name of the specified field */
-int tqsl_getLocationFieldDataGABBISize(tQSL_Location loc, int field_num, int *rval);
+DLLEXPORT int tqsl_getLocationFieldDataGABBISize(tQSL_Location loc, int field_num, int *rval);
 
 /** Get the GABBI name of the specified field */
-int tqsl_getLocationFieldDataGABBI(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getLocationFieldDataGABBI(tQSL_Location loc, int field_num, char *buf, int bufsiz);
 
 /** Get the input type of the input field.
   *
   * \c type will be one of TQSL_LOCATION_FIELD_TEXT, TQSL_LOCATION_FIELD_DDLIST
   * or TQSL_LOCATION_FIELD_LIST
   */
-int tqsl_getLocationFieldInputType(tQSL_Location loc, int field_num, int *type);
+DLLEXPORT int tqsl_getLocationFieldInputType(tQSL_Location loc, int field_num, int *type);
 
 /** Get the data type of the input field.
   *
   * \c type will be either TQSL_LOCATION_FIELD_CHAR or TQSL_LOCATION_FIELD_INT
   */
-int tqsl_getLocationFieldDataType(tQSL_Location loc, int field_num, int *type);
+DLLEXPORT int tqsl_getLocationFieldDataType(tQSL_Location loc, int field_num, int *type);
 
 /** Get the length of the input field data. */
-int tqsl_getLocationFieldDataLength(tQSL_Location loc, int field_num, int *rval);
+DLLEXPORT int tqsl_getLocationFieldDataLength(tQSL_Location loc, int field_num, int *rval);
 
 /** Get the character data from the specified field.
   *
@@ -888,66 +887,66 @@ int tqsl_getLocationFieldDataLength(tQSL_Location loc, int field_num, int *rval)
   * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, this will
   * return the text of the selected item.
   */
-int tqsl_getLocationFieldCharData(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getLocationFieldCharData(tQSL_Location loc, int field_num, char *buf, int bufsiz);
 
 /** Get the integer data from the specified field.
   *
   * This is only meaningful if the field data type (see tqsl_getLocationFieldDataType())
   * is TQSL_LOCATION_FIELD_INT.
   */
-int tqsl_getLocationFieldIntData(tQSL_Location loc, int field_num, int *dat);
+DLLEXPORT int tqsl_getLocationFieldIntData(tQSL_Location loc, int field_num, int *dat);
 
 /** If the field input type (see tqsl_getLocationFieldInputType()) is
   * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, gets the
   * index of the selected list item.
   */
-int tqsl_getLocationFieldIndex(tQSL_Location loc, int field_num, int *dat);
+DLLEXPORT int tqsl_getLocationFieldIndex(tQSL_Location loc, int field_num, int *dat);
 
 /** Get the number of items in the specified field's pick list. */
-int tqsl_getNumLocationFieldListItems(tQSL_Location loc, int field_num, int *rval);
+DLLEXPORT int tqsl_getNumLocationFieldListItems(tQSL_Location loc, int field_num, int *rval);
 
 /** Get the text of a specified item of a specified field */
-int tqsl_getLocationFieldListItem(tQSL_Location loc, int field_num, int item_idx, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getLocationFieldListItem(tQSL_Location loc, int field_num, int item_idx, char *buf, int bufsiz);
 
 /** Set the text data of a specified field. */
-int tqsl_setLocationFieldCharData(tQSL_Location loc, int field_num, const char *buf);
+DLLEXPORT int tqsl_setLocationFieldCharData(tQSL_Location loc, int field_num, const char *buf);
 
 /** Set the integer data of a specified field.
   */
-int tqsl_setLocationFieldIntData(tQSL_Location loc, int field_num, int dat);
+DLLEXPORT int tqsl_setLocationFieldIntData(tQSL_Location loc, int field_num, int dat);
 
 /** If the field input type (see tqsl_getLocationFieldInputType()) is
   * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, sets the
   * index of the selected list item.
   */
-int tqsl_setLocationFieldIndex(tQSL_Location loc, int field_num, int dat);
+DLLEXPORT int tqsl_setLocationFieldIndex(tQSL_Location loc, int field_num, int dat);
 
 /** Get the \e changed status of a field. The changed flag is set to 1 if the
   * field's pick list was changed during the last call to tqsl_updateStationLocationCapture
   * or zero if the list was not changed.
   */
-int tqsl_getLocationFieldChanged(tQSL_Location loc, int field_num, int *changed);
+DLLEXPORT int tqsl_getLocationFieldChanged(tQSL_Location loc, int field_num, int *changed);
 
 /** Get the call sign from the station location. */
-int tqsl_getLocationCallSign(tQSL_Location loc, char *buf, int bufsiz);
+DLLEXPORT int tqsl_getLocationCallSign(tQSL_Location loc, char *buf, int bufsiz);
 
 /** Get the DXCC entity from the station location. */
-int tqsl_getLocationDXCCEntity(tQSL_Location loc, int *dxcc);
+DLLEXPORT int tqsl_getLocationDXCCEntity(tQSL_Location loc, int *dxcc);
 
 /** Get the number of DXCC entities in the master DXCC list.
   */
-int tqsl_getNumDXCCEntity(int *number);
+DLLEXPORT int tqsl_getNumDXCCEntity(int *number);
 
 /** Get a DXCC entity from the list of DXCC entities by its index.
   */
-int tqsl_getDXCCEntity(int index, int *number, const char **name);
+DLLEXPORT int tqsl_getDXCCEntity(int index, int *number, const char **name);
 
 /** Get the name of a DXCC Entity by its DXCC number.
   */
-int tqsl_getDXCCEntityName(int number, const char **name);
+DLLEXPORT int tqsl_getDXCCEntityName(int number, const char **name);
 
 /** Get the number of Band entries in the Band list */
-int tqsl_getNumBand(int *number);
+DLLEXPORT int tqsl_getNumBand(int *number);
 
 /** Get a band by its index.
   *
@@ -958,10 +957,10 @@ int tqsl_getNumBand(int *number);
   *
   * Note: \c spectrum, \c low and/or \c high may be NULL.
   */
-int tqsl_getBand(int index, const char **name, const char **spectrum, int *low, int *high);
+DLLEXPORT int tqsl_getBand(int index, const char **name, const char **spectrum, int *low, int *high);
 
 /** Get the number of Mode entries in the Mode list */
-int tqsl_getNumMode(int *number);
+DLLEXPORT int tqsl_getNumMode(int *number);
 
 /** Get a mode by its index.
   *
@@ -970,10 +969,10 @@ int tqsl_getNumMode(int *number);
   *
   * Note: \c group may be NULL.
   */
-int tqsl_getMode(int index, const char **mode, const char **group);
+DLLEXPORT int tqsl_getMode(int index, const char **mode, const char **group);
 
 /** Get the number of Propagation Mode entries in the Propagation Mode list */
-int tqsl_getNumPropagationMode(int *number);
+DLLEXPORT int tqsl_getNumPropagationMode(int *number);
 
 /** Get a propagation mode by its index.
   *
@@ -982,10 +981,10 @@ int tqsl_getNumPropagationMode(int *number);
   *
   * Note: \c descrip may be NULL.
   */
-int tqsl_getPropagationMode(int index, const char **name, const char **descrip);
+DLLEXPORT int tqsl_getPropagationMode(int index, const char **name, const char **descrip);
 
 /** Get the number of Satellite entries in the Satellite list */
-int tqsl_getNumSatellite(int *number);
+DLLEXPORT int tqsl_getNumSatellite(int *number);
 
 /** Get a satellite by its index.
   *
@@ -996,12 +995,12 @@ int tqsl_getNumSatellite(int *number);
   *
   * Note: \c descrip, start and/or end may be NULL.
   */
-int tqsl_getSatellite(int index, const char **name, const char **descrip,
+DLLEXPORT int tqsl_getSatellite(int index, const char **name, const char **descrip,
 	tQSL_Date *start, tQSL_Date *end);
 
 /** Clear the map of Cabrillo contests.
   */
-int tqsl_clearCabrilloMap();
+DLLEXPORT int tqsl_clearCabrilloMap();
 
 /** Set the mapping of a Cabrillo contest name (as found in the
   * CONTEST line of a Cabrillo file) to the QSO line call-worked field number
@@ -1013,7 +1012,7 @@ int tqsl_clearCabrilloMap();
   * \c contest_type must be TQSL_CABRILLO_HF or TQSL_CABRILLO_VHF,
   * defined in cabrillo.h
   */
-int tqsl_setCabrilloMapEntry(const char *contest, int field, int contest_type);
+DLLEXPORT int tqsl_setCabrilloMapEntry(const char *contest, int field, int contest_type);
 
 /** Get the mapping of a Cabrillo contest name (as found in the
   * CONTEST line of a Cabrillo file) to a call-worked field number
@@ -1026,19 +1025,19 @@ int tqsl_setCabrilloMapEntry(const char *contest, int field, int contest_type);
   * \c contest_type may be NULL. If not, it is set to the Cabrillo contest
   * type (TQSL_CABRILLO_HF or TQSL_CABRILLO_VHF), defined in cabrillo.h.
   */
-int tqsl_getCabrilloMapEntry(const char *contest, int *fieldnum, int *contest_type);
+DLLEXPORT int tqsl_getCabrilloMapEntry(const char *contest, int *fieldnum, int *contest_type);
 
 /** Clear the map of ADIF modes
   */
-int tqsl_clearADIFModes();
+DLLEXPORT int tqsl_clearADIFModes();
 
 /** Set the mapping of an ADIF mode to a TQSL mode.
 */
-int tqsl_setADIFMode(const char *adif_item, const char *mode);
+DLLEXPORT int tqsl_setADIFMode(const char *adif_item, const char *mode);
 
 /** Map an ADIF mode to its TQSL equivalent.
   */
-int tqsl_getADIFMode(const char *adif_item, char *mode, int nmode);
+DLLEXPORT int tqsl_getADIFMode(const char *adif_item, char *mode, int nmode);
 
 /** Get a GABBI record that contains the certificate.
   *
@@ -1049,7 +1048,7 @@ int tqsl_getADIFMode(const char *adif_item, char *mode, int nmode);
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the GABBI records should be written in binary mode.
   */
-const char *tqsl_getGABBItCERT(tQSL_Cert cert, int uid);
+DLLEXPORT const char *tqsl_getGABBItCERT(tQSL_Cert cert, int uid);
 
 /** Get a GABBI record that contains the Staion Location data.
   *
@@ -1061,7 +1060,7 @@ const char *tqsl_getGABBItCERT(tQSL_Cert cert, int uid);
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the GABBI records should be written in binary mode.
   */
-const char *tqsl_getGABBItSTATION(tQSL_Location loc, int uid, int certuid);
+DLLEXPORT const char *tqsl_getGABBItSTATION(tQSL_Location loc, int uid, int certuid);
 
 /** Get a GABBI record that contains the QSO data.
   *
@@ -1075,7 +1074,7 @@ const char *tqsl_getGABBItSTATION(tQSL_Location loc, int uid, int certuid);
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the GABBI records should be written in binary mode.
   */
-const char *tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *qso,
+DLLEXPORT const char *tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *qso,
 	int stationuid);
 
 /** @} */

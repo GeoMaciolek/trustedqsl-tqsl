@@ -12,6 +12,10 @@
 #include "sysconfig.h"
 #endif
 
+#ifdef MAC
+#include "Carbon.h"
+#endif
+
 #define DXCC_TEST
 
 #define TQSLLIB_DEF
@@ -270,8 +274,21 @@ tqsl_load_xml_config() {
 		if (wval == ERROR_SUCCESS)
 			default_path = string(wpath) + "/config.xml";
 	}
+#elif defined(MAC)
+	CFURLRef mainBundleURL;
+	FSRef bundleFSRef;
+	char npath[1024];
+
+	mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath) - 1);
+	// if last char is not a /, append one
+	if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
+		strcat(npath,"/");
+	CFRelease(mainBundleURL);
+
+	default_path = string(npath) + "Contents/Resources/config.xml";
 #else
-	default_path = "/etc/tqsl/config.xml";
+	default_path = CONFDIR "/config.xml";
 #endif
 
 	string user_path = string(tQSL_BaseDir) + "/config.xml";
@@ -2009,9 +2026,9 @@ tqsl_getGABBItCERT(tQSL_Cert cert, int uid) {
 	s = "<Rec_Type:5>tCERT\n";
 	char sbuf[10], lbuf[40];
 	sprintf(sbuf, "%d", uid);
-	sprintf(lbuf, "<CERT_UID:%d>%s\n", strlen(sbuf), sbuf);
+	sprintf(lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	s += lbuf;
-	sprintf(lbuf, "<CERTIFICATE:%d>", strlen(cp));
+	sprintf(lbuf, "<CERTIFICATE:%d>", (int)strlen(cp));
 	s += lbuf;
 	s += cp;
 	s += "<eor>\n";
@@ -2028,10 +2045,10 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 	loc->tSTATION = "<Rec_Type:8>tSTATION\n";
 	char sbuf[10], lbuf[40];
 	sprintf(sbuf, "%d", uid);
-	sprintf(lbuf, "<STATION_UID:%d>%s\n", strlen(sbuf), sbuf);
+	sprintf(lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tSTATION += lbuf;
 	sprintf(sbuf, "%d", certuid);
-	sprintf(lbuf, "<CERT_UID:%d>%s\n", strlen(sbuf), sbuf);
+	sprintf(lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tSTATION += lbuf;
 	int old_page = loc->page;
 	tqsl_setStationLocationCapturePage(loc, 1);
@@ -2152,7 +2169,7 @@ tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, 
 	loc->tCONTACT = "<Rec_Type:8>tCONTACT\n";
 	char sbuf[10], lbuf[40];
 	sprintf(sbuf, "%d", stationuid);
-	sprintf(lbuf, "<STATION_UID:%d>%s\n", strlen(sbuf), sbuf);
+	sprintf(lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tCONTACT += lbuf;
 	char buf[256];
 	tqsl_adifMakeField("CALL", 0, (const unsigned char *)qso->callsign, -1, (unsigned char *)buf, sizeof buf);

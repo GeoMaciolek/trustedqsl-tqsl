@@ -10,6 +10,10 @@
 
 /* Routines to massage X.509 certs for tQSL. See openssl_cert.h for overview */
 
+/* 2004-04-10 Fixed tqsl_add_bag_attribute error for OpenSSL > 0.96
+   (Thanks to Kenji, JJ1BDX for the fix)
+*/
+
 /* Portions liberally copied from OpenSSL's apps source code */
 
 /* ====================================================================
@@ -1263,6 +1267,10 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 							sk_ASN1_TYPE_push(attrib->value.set, val);
 #if (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x00906000
 							attrib->set = 1;
+#elif (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x00907000
+							attrib->single = 0;
+#else
+#error "Unexpected OpenSSL version; check X509_ATTRIBUTE struct compatibility"
 #endif
 							if (bag->attrib) {
 								sk_X509_ATTRIBUTE_push(bag->attrib, attrib);
@@ -3122,13 +3130,14 @@ tqsl_get_cert_ext(X509 *cert, const char *ext, unsigned char *userbuf, int *bufl
 		data = X509_EXTENSION_get_data(xe);
 		if (data != NULL) {
 			datasiz = ASN1_STRING_length(data);
-			if (datasiz > *buflen) {
+			if (datasiz > *buflen-1) {
 				tQSL_Error = TQSL_BUFFER_ERROR;
 				return 1;
 			}
 			*buflen = datasiz;
 			if (datasiz)
 				memcpy(userbuf, ASN1_STRING_data(data), datasiz);
+			userbuf[datasiz] = '\0';
 		}
 		if (crit != NULL)
 			*crit = X509_EXTENSION_get_critical(xe);

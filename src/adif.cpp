@@ -17,7 +17,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "adif.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
 
@@ -233,7 +232,7 @@ tqsl_adifGetField( tqsl_adifFieldResults *field, FILE *filehandle,
 	int currentCharacter;
 	unsigned int iIndex;
 	unsigned int dataLength;
-	unsigned int dataIndex;
+	unsigned int dataIndex = 0;
   const char blankString[] = "";
 	TQSL_ADIF_BOOLEAN recordData;
 	signed long dataValue;

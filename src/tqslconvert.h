@@ -11,10 +11,6 @@
 #ifndef __tqslconvert_h
 #define __tqslconvert_h
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 #include "tqsllib.h"
 
 /** \file
