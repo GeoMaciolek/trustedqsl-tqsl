@@ -14,13 +14,13 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.03
 # ---------------------------------------------------------------------------
 PROJECT = tqsl.exe
-OBJFILES = tqsl.obj main.obj genkeys.obj
+OBJFILES = tqsl.obj main.obj genkeys.obj CaSign.obj
 RESFILES = tqsl.res
 DEFFILE =
-RESDEPEN = $(RESFILES) main.dfm genkeys.dfm
+RESDEPEN = $(RESFILES) main.dfm genkeys.dfm CaSign.dfm
 LIBFILES = ..\tqsllib.lib ..\libeay32.lib
-LIBRARIES =
-SPARELIBS = VCL35.lib
+LIBRARIES = IP40_C3.lib
+SPARELIBS = VCL35.lib vcldb35.lib IP40_C3.lib VCLX35.lib
 PACKAGES = vclx35.bpi VCL35.bpi vcldb35.bpi vcldbx35.bpi bcbsmp35.bpi dclocx35.bpi \
   Qrpt35.bpi teeui35.bpi VclSmp35.bpi teedb35.bpi tee35.bpi ibsmp35.bpi \
   NMFast35.bpi inetdb35.bpi inet35.bpi ProLib35.bpi ProLibDB35.bpi
