@@ -1,0 +1,38 @@
+OPENSSLDIR=@OPENSSL@
+TQSLLIBDIR=@TQSLLIB@
+EXTRALIBS = -L$(TQSLLIBDIR) -ltqsllib -L$(OPENSSLDIR)/lib -lcrypto 
+INCDIR = -I$(TQSLLIBDIR) -I$(OPENSSLDIR)/include
+#CXXFLAGS = -O0 -g3 -Wall $(INCDIR) -DHAVE_CONFIG_H `wx-config --cflags`
+CYYFLAGS = $(INCDIR) -DHAVE_CONFIG_H
+#LDLIBS = $(LIBS) -L../tqsllib -ltqsllib `wx-config --libs`
+TQSLLIBFILE=$(TQSLLIBDIR)/libtqsllib.a
+#EXTRALDFLAGS = $(LIBS)
+
+WXDIR=$(WXWIN)
+
+include $(WXDIR)/src/makeg95.env
+
+TARGETS = tqslcert
+
+all: $(TARGETS)
+
+TQSLCERT_OBJ = tqslcert.o crqwiz.o dxcc.o tqslcert-resources.o certtree.o \
+	 tqslcert_prefs.o
+
+tqslcert: $(TQSLCERT_OBJ) $(TQSLLIBFILE)
+	$(CC) $(LDFLAGS) -o $@ $(TQSLCERT_OBJ) $(LDLIBS) -lstdc++
+
+include apps.depends
+
+tqslcert-resources.o: tqslcert.rc
+	windres -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
+
+%.o: %.cpp
+	$(CC) $(CPPFLAGS) $(CYYFLAGS) -c -o $@ $*.cpp
+
+clean:
+	rm -f $(TARGETS) *.o *.a *~ xxx.*
+
+distclean:
+	$(MAKE) clean
+	rm -f Makefile

@@ -1,0 +1,14 @@
+certtree.o: certtree.cpp certtree.h tqslcertctrls.h util.h dxcc.h \
+	 sysconfig.h ../tqsllib/tqsllib.h ../tqsllib/adif.h
+
+crqwiz.o: crqwiz.cpp crqwiz.h dxcc.h util.h tqslcertctrls.h sysconfig.h \
+	 certtree.h ../tqsllib/tqsllib.h ../tqsllib/adif.h
+
+dxcc.o: dxcc.cpp dxcc.h sysconfig.h
+
+tqslcert.o: tqslcert.cpp tqslapp.h tqslcert.h crqwiz.h dxcc.h \
+	 ../tqsllib/tqsllib.h ../tqsllib/tqslerrno.h util.h sysconfig.h \
+	 certtree.h tqslcertctrls.h ../tqsllib/adif.h
+
+tqslcert_prefs.o: tqslcert_prefs.cpp tqslcert_prefs.h sysconfig.h
+
