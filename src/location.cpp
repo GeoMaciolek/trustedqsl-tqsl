@@ -25,6 +25,9 @@
 #include "tqslerrno.h"
 #include "xml.h"
 #include "openssl_cert.h"
+#ifdef __WIN32__
+	#include "windows.h"
+#endif
 
 #include <vector>
 
