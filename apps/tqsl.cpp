@@ -523,7 +523,7 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 		dtstr.Printf("%04d%02d%02d", it->_date.year, it->_date.month, it->_date.day);
 		tqsl_adifMakeField("QSO_DATE", 0, (const unsigned char*)dtstr.c_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		dtstr.Printf("%02d%02d", it->_time.hour, it->_time.minute);
+		dtstr.Printf("%02d%02d%02d", it->_time.hour, it->_time.minute, it->_time.second);
 		tqsl_adifMakeField("TIME_ON", 0, (const unsigned char*)dtstr.c_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
 		if (it->_freq != "") {
@@ -622,7 +622,7 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 			} else if (!strcasecmp(field.name, "TIME_ON")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) >= 4) {
-					rec._time.second = 0;
+					rec._time.second = (strlen(cp) > 4) ? atoi(cp+4) : 0;
 					*(cp+4) = 0;
 					rec._time.minute = atoi(cp+2);
 					*(cp+2) = '\0';
