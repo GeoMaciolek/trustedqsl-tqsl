@@ -1,10 +1,13 @@
 QUICK-START
 ===========
 
-Once the software is installed you'll find the programs TQSLCert and
-TQSL under the Start/Programs/TrustedQSL menu. (Unless you selected a
+In Windows, once the software is installed you'll find the programs TQSLCert
+and TQSL under the Start/Programs/TrustedQSL menu. (Unless you selected a
 different menu during installation.) The installer also lets you place
 shortcuts to these programs on your desktop.
+
+IT IS NOT NECESSARY TO PERFORM THE FOLLOWING STEPS IF YOU ARE SIMPLY
+UPGRADING TO A NEW VERSION OF THE SOFTWARE.
 
 1) CREATE A CERTIFICATE REQUEST. Run TQSLCert. You'll get a message
 reporting that you have no certificates and asking if you want to
@@ -12,63 +15,63 @@ request one. Say YES. Then proceed through the request wizard, saving
 the request into a file.
 
    a) The request wizard will ask you to supply a call sign. Use your
-   licensed call sign -- without any portable identifiers.
+   present call sign -- without any portable identifiers.
 
    b) The QSO start date is the first date for which you'll enter QSO
    records into the system using the call sign you supply. Normally this is
    the issue date for your license. Leave the QSO end date blank for a
    license that is current.
 
-   c) For US call signs, the mailing address should agree with the
-   address in the FCC database.
+   c) For US call signs, your mailing address should agree with the
+   address in the FCC database. If your address is different, you must
+   register your new address with the FCC.
 
    d) The request wizard includes a page that allows you to digitally
    sign the certificate request. On your initial request, you must choose
    "unsigned" since you have no certificate with which to sign.
 
-   e) Remember which directory you save the certificate request file into
-   for the next step!
+   e) Remember where on your computer you save the certificate
+   request file for the next step!
 
-2) SUBMIT THE CERTIFICATE REQUEST. Send the file created in step 1 as an
-attachment in an email message to lotw-logs@arrl.org, or upload it via the
-Web (https://www.arrl.org/lotw/). If you are a US licensee, you will
+2) SUBMIT THE CERTIFICATE REQUEST. Send the .TQ5 file created in step 1 as
+an attachment in an email message to lotw-logs@arrl.org, or upload it via
+the Web (https://www.arrl.org/lotw/). If you are a US licensee, you will
 then receive a post card in the mail with further instructions. (The
 post card will be sent to the address you have in the FCC database, so
 make sure that's correct!) If you are a non-US licensee, you must submit
-proof of license to receive your certificate. See
+proof of license and identity to receive your certificate. See
 http://www.arrl.org/lotw/ for details.
 
-NOTE! IT IS IMPORTANT that you do NOT delete the certificate request from
-TQSLCert once it has been sent. Each certificate request is unique and must
-match the certificate that will be returned to you by the issuer. If you
-delete the certificate request from TQSLCert, you will NEVER be able to
-load or use the received certificate!
+NOTE! IT IS IMPORTANT that you do NOT delete the certificate request (the 
+red-lined icon) from TQSLCert once it has been sent. Each certificate
+request is unique and must match the certificate that will be returned to
+you by the issuer. If you delete the certificate request from TQSLCert, you
+will NEVER be able to load or use the received certificate!
 
 3) LOAD THE CERTIFICATE. Once your certificate has been issued it will
-be sent to the email address you entered into the certificate request
-during step 1. You'll probably be able to double-click the attachment in
-the received message to launch TQSLCert to import the certificate. If
+be sent as a .TQ6 file to the email address you entered into the certificate
+request during step 1. You should be able to double-click the attachment
+in the received message to launch TQSLCert to load the .TQ6 file. If
 that doesn't work, save the attachment to disk, run TQSLCert and use its
-File menu's "Load Certificate File" command to load in the certificate
-file. Once that's done, TQSLCert should show your certificate in its
-certificate list.
+File menu's "Load Certificate File" command to find and load in the
+.TQ6 file. Once that's done, TQSLCert should show your certificate in its
+certificate list with a gold emblem next to your call.
 
-4) SAVE THE CERTIFICATE. This step isn't required but is a very good
-idea. If you do not perform this step and later lose your certificate
-(due to a hard-drive crash or system reinstall, for example), your
-certificate will be unrecoverable. Click on the certificate in the
-certificate list to select it, then choose the Certificate menu's Save
-command. Save the certificate file onto a floppy disk or other off-line
-medium.
+4) SAVE THE CERTIFICATE. This step is strongly recommended. If you do not
+perform this step and later lose your certificate (due to a hard-drive crash
+or system reinstall, for example), your certificate will be unrecoverable.
+Click on the certificate in the certificate list to select it, then choose
+the Certificate menu's Save command. Save the certificate file onto a floppy
+disk or other off-line medium.
 
 5) REQUEST ADDITIONAL CERTIFICATES. Logbook of the World treats a call
-sign with a portable identifier (e.g. NT1N/9 or OE/NT1N) as a separate
+sign with a portable identifier (e.g. NU1AW/4 or KP2/W1AW) as a separate
 call sign. To submit log data using such a call sign, you need a
 certificate with that call sign in it. Once you have received your
-initial certificate, repeat the process above, but in step 1d, sign the
-request with the certificate you received and loaded. This will speed
-the process of getting the certificate and will ensure that all of your
-certificates appear under your Web site user account.
+certificate for your present call sign, repeat the process above, but in
+step 1d, sign the request with the certificate for your present call sign.
+This will speed the process of getting the certificate and will ensure that
+all of your certificates appear under your Web site user account.
 
 6) CREATE A LOG FILE. If you have a logging program that can produce log
 files in ADIF or Cabrillo format, you can use those files directly. If
@@ -77,22 +80,21 @@ choose the File menu's "Create New ADIF file" command.
 
 7) CREATE A STATION LOCATION. In TQSL, select "Station/Add Location"
 from the menu. Step through the wizard to specify the location of the
-station used to make the contacts you'll be submitting. (All entries in
-the station location are optional, so you can leave them blank for
-testing if you wish.) At the end of the wizard, enter a name to use for
-this station location.
+station used to make the contacts you'll be submitting. At the end of the
+wizard, enter a name to use for this station location, e.g., "Home" or
+"Portable in EM29."
 
 8) CREATE A SIGNED LOG SUBMISSION. In TQSL, select "Sign existing ADIF
 or Cabrillo file" from the File menu. In the resulting "Select Station
 Location" dialog, select the station location and click "Ok." You'll
 then be asked to select the log file (a file in ADIF or Cabrillo format)
-to sign. Finally, you'll be asked to specify the file to write the
-signed log to.
+to sign. Finally, you'll be asked to name the file and select the location
+(directory) where TQSL will save the .TQ8 (signed log) file.
 
-9) SEND THE SUBMISSION. Send the file created in step 8 as an attachment
-via email to lotw-logs@arrl.org. You will receive an email response.
-(More than one file can be attached to an email message.) Or you can
-upload the file at https://www.arrl.org/lotw/
+9) SEND THE SUBMISSION. Send the .TQ8 file created in step 8 as an
+attachment via email to lotw-logs@arrl.org. You will receive an email
+response. (More than one file can be attached to an email message.) Or you
+can upload the file at https://www.arrl.org/lotw/
 
 10) Visit the LOTW Web site at https://www.arrl.org/lotw/ to view your
 submitted data and confirmations and apply for award credits. Submit any
