@@ -1,0 +1,1094 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=windows-1252">
+<META NAME="Generator" CONTENT="Microsoft Word 97">
+<META NAME="Template" CONTENT="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</HEAD>
+<BODY LINK="#0000ff" VLINK="#800080">
+
+<P><!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en"></P>
+<H1 ALIGN="CENTER">Trusted GAbbI</H1>
+<H1 ALIGN="CENTER">(<U>G</U>lobal <U>A</U>mateur <U>I</U>nterchange)</H1>
+<H1 ALIGN="CENTER">Format</H1>
+<H3 ALIGN="CENTER">May 6, 2002</H3>
+<P ALIGN="CENTER">Version 0.10 </P>
+<P ALIGN="CENTER">By Darryl Wagoner, WA1GON </P>
+<P ALIGN="CENTER">And </P>
+<P ALIGN="CENTER">Michael Keane, K1MK </P>
+<TT><P ALIGN="CENTER">k1mk@alum.mit.edu</P>
+</TT><P ALIGN="CENTER">&copy; 2002 Trusted QSL and the American Radio Relay League</P>
+<H2>Discussion:</H2>
+<P>A basic philosophy guiding data interchange is: Be conservative in what you generate; be liberal in what you accept. Following these guidelines the strict format requirements are levied upon the GAbbI writer. A GAbbI reader may be more generous and less absolutist when applying these rules and deciding what it is willing to accept. However acceptance of non-compliant data is entirely at the discretion of the receiver. In addition &nbsp;to &nbsp;generosity, a reader may also want to be keep in mind another principle when deciding how to dispose of malformed fields and records: First, do no harm. </P>
+<H2>1. Physical Specifications:</H2>
+<H3>Character Set:</H3>
+
+<UL>
+<LI>The "character set" shall be ISO/IEC 10646-1:2000 UCS ("Unicode v3.0") </LI>
+<LI>Default encoding of characters shall be UTF-8 </LI>
+<LI>Readers may support UTF-16 encoding [TBR] </LI>
+
+<UL>
+<LI>A GAbbI file object that is encoded in UTF-16 shall begin with a two octet signature of #xFEFF (Zero Width No-Break Space; Byte Order Mark) </LI>
+<LI>A compliant GAbbI reader shall check for the BOM signature. If the BOM signature is encountered indicating that the following file object is UTF-16 encoded and the reader cannot process UTF-16, the reader shall generate a fatal error </LI></UL>
+</UL>
+
+<H3>Fields:</H3>
+<BLOCKQUOTE><big><B><I><SAMP>&lt;</B>Field_Name<B>:</B>Field_Length[:Field_Type</big><big>]&gt;Field_Value</big></BLOCKQUOTE>
+</SAMP><FONT SIZE=4><BLOCKQUOTE>E.g., &lt;</I></FONT><A HREF="file:///C:/WINNT/Profiles/mkeane/Personal/My%20Documents/Ham%20Radio/tQSL/LoTW/Spec/GAbbI/gabbi.htm#StationCall"><FONT FACE="Courier New">Call</FONT></A><TT>:4&gt;K1MK</BLOCKQUOTE>
+</TT><B><I><BLOCKQUOTE>Field_Name </B></I>— A sequence of one (1) to thirty-two (32) [TBR] characters from the set: [<TT>A-Za-z0-9/.?_+:=!@#$%^&amp;*-</TT>] [TBR]. In determining equivalence and uniqueness&nbsp;<I>Field_Name</I>s are treated as case insensitive,&nbsp; <I>i.e. </I>the<TT>&nbsp;</TT><I>Field_Name</I><TT>s CALL,</TT> <TT>call, Call </TT>and <TT>CaLl </TT>are all equivalent. </BLOCKQUOTE>
+<B><I><BLOCKQUOTE>Field_Length </B></I>— Specification of the length of <I>Field_Value</I> in Unicode <B><I>characters</B></I> (not bytes or octets and not symbols or graphemes). The specification is a non-negative decimal integer with no leading zeros composed of the characters [0-9]. </BLOCKQUOTE>
+<B><I><BLOCKQUOTE>Field_Type — </B></I>(Optional) A specification of the type of the field value </BLOCKQUOTE>
+<B><I><BLOCKQUOTE>Field_Value </B></I>— A sequence of <I>Field_Length</I> characters that represent the value of the field.</BLOCKQUOTE>
+<H3>Separators:</H3>
+<BLOCKQUOTE><A NAME="EOH"></A><big><B><TT>&lt;eoh&gt;</big></B></TT> — End of header area. <TT>&lt;eoh&gt;</TT> shall be present in every GAbbI file object. <TT>&lt;eoh&gt;</TT> shall signal that the start of data (the first field of the first record) commences with the next ‘<TT>&lt;</TT>’ to be read. </BLOCKQUOTE>
+<BLOCKQUOTE><A NAME="EOR"></A><big><B><TT>&lt;eor&gt;</big></B></TT> — End of physical record. </BLOCKQUOTE>
+<BLOCKQUOTE><A NAME="EOF"></A><big><B><TT>&lt;eof&gt;</big><big></B></TT> </big>— End of logical file. <TT>&lt;eof&gt;</TT> shall be present in every GAbbI file object. Reader must reset its internal state; new GAbbI header may follow (or physical EOF may follow) </BLOCKQUOTE>
+<BLOCKQUOTE>As with field names, separator tags are case insensitive.</BLOCKQUOTE>
+<H2>2. Field Type Definitions:</H2>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=12 WIDTH="100%">
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Type</H4></TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<P><div align="Center"></P>
+<H4>Designator</H4>
+<P></div></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeDate"></A>Date</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">D</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Date in ISO 8601 format. Extended format i.e., <I>YYYY-MM-DD</I> , is preferred but basic format, <I>YYYYMMDD</I>, is permissible but its use is deprecated. Valid characters that may appear in the value field are [<TT>0-9-</TT>]<A NAME="ftnref1"></A><A HREF="#FootNote1"><SUP>[1]</SUP></A> .</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeTime"></A>Time</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">T</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Time in ISO 8601 format. Extended format i.e., <I>hh:mm:ss</I> Z is preferred, but basic format, <I>hhmmss</I>Z, and basic format with reduced precision, <I>hhmm</I>Z, are also permissible. Should the time zone designator ‘Z’ be omitted, UTC shall be assumed. Legal characters that may appear in the value field are [<TT>0-9A-Z:</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeCharacter"></A>Character</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">C</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Character string. Valid characters that may appear in the value field are the set of displayable characters (printable characters plus <TT>&lt;SP&gt;</TT> and <TT>&lt;HT&gt;</TT> ). [TBR]</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeEnumeration"></A>Enumeration</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">E</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>A character string from an enumerated list of character strings. The comparison of a <I>Field_Value</I> to an enumerated value is case insensitive. Valid characters that may appear in the value field are the set of displayable characters (printable characters plus <TT>&lt;SP&gt; </TT>and <TT>&lt;HT&gt;</TT> ). [TBR]</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P>Multi-Line</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">M</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Character string. Legal characters that may appear in the value field are displayable characters plus <TT>&lt;CR&gt;</TT> and <TT>&lt;NL&gt;</TT> . An implementation independent end-of-line delimiter (the two character sequence <TT>&lt;CR&gt;&lt;NL&gt;</TT> ) shall be employed to signal logical line breaks. [TBR]</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P>Hexadecimal</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">H</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Fixed point (integer) number in base 16<SUB>10</SUB> (hexadecimal) representation. Legal characters that may appear in the value field are [<TT>0-9A-F-</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P>Numeric</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">N</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>A general format number. Use of <TT>N</TT> is deprecated; field types <TT>I</TT>, <TT>B</TT>, <TT>O</TT>, <TT>H</TT> or <TT>F</TT> are the preferred alternatives.</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeInteger"></A>Integer</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">I</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Fixed point (integer) number in base 10<SUB>10</SUB> (decimal) representation. Legal characters that may appear in the value field are [<TT>0-9-</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P>Binary</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">B</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Fixed point (integer) number in base 2<SUB>10</SUB> (binary) representation. Written in big endian order, starting with most significant bit. Legal characters that may appear in the value field are [<TT>0-1-</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeFloat"></A>Floating Point</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">F</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Floating-point number in base 10<SUB>10</SUB> (decimal) representation. Legal characters that may appear in the value field are [<TT>0-9.-</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P>Octal</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">O</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Fixed-point (integer) number in base 8<SUB>10</SUB> (octal) representation. Legal characters that may appear in the value field are [<TT>0-7-</TT>].</TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><A NAME="TypeBase64"></A>Base64</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<TT><P ALIGN="CENTER">6</TT></TD>
+<TD WIDTH="75%" VALIGN="MIDDLE">
+<P>Base 64 encoded number (binary string). Line length of base64 encoded objects shall be limited to 72 characters and lines shall be broken by use of end-of-line character(s). Legal characters that may appear in the value field are [<TT>A-Za-z0-9./=</TT>].</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H2>3. Field Definitions:</H2>
+<H3>tCERT(Identity certificate) Record:</H3>
+<P>The <TT>tCERT</TT> record is optional but should be present contain.</P>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=12 WIDTH="100%">
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<H4 ALIGN="CENTER">Type</H4></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<H4 ALIGN="CENTER">Required</H4></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<H4 ALIGN="CENTER">Max Size (chars)</H4></TD>
+<TD WIDTH="61%" VALIGN="MIDDLE" COLSPAN=2>
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P>CERTIFICATE</TT></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER"><A HREF="#TypeBase64"><FONT FACE="Courier New">6</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">1300</TD>
+<TD WIDTH="61%" VALIGN="MIDDLE" COLSPAN=2>
+<P>X.509v3 identity certificate. Base64 encoded distinguished encoding representation (DER) of the certificate. </TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P>CERT_GUID</TT></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">TBD</TD>
+<TD WIDTH="61%" VALIGN="MIDDLE" COLSPAN=2>
+<P>Identity Certificate GUID. This could be CA DN &amp; certificate serial number. </TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P>REC_TYPE</TT></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">10</TD>
+<TD WIDTH="61%" VALIGN="MIDDLE" COLSPAN=2>
+<P>Always "<TT>tCERT</TT>". This declares the record to be an identity certificate record.</tbody></TD>
+</TR>
+</TABLE>
+
+<H3>tCONTACT (Trusted Contact) Record:</H3>
+<P>The <TT>tCONTACT</TT> record contains information that is unique to a specific contact. Note that most of the fields are required. This is because these fields are expected to be different for every contact. For efficiency, the information that is common to several contacts is grouped together and placed into a <TT>tSTATION</TT> record. The <TT>tSTATION</TT> record is logically included in the contact record by means of the <TT>STATION_GUID</TT> field.</P>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=6 WIDTH="100%">
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Type</H4></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Required</H4></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Category</H4></TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Max Size (chars)</H4></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactBand"></A>BAND</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>E</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">6</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>The band on which contact took place. Describes a two-way (non-crossband) contact<A NAME="ftnref2"></A><A HREF="#FootNote1"><SUP>[2]</SUP></A> . Format is the band designator in upper case See Table 1 for a list of the legal values for the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactCall"></A>CALL</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>C</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">15</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>The call sign of station contacted. Call sign is insensitive to case. Legal value for characters that may appear in a call sign are [<TT>A-Z0-9/</TT>].</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P>CERT_GUID</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>C</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">N</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">TBD</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Identity Certificate GUID. This could be CA DN &amp; Celt serial number. </TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactFreq"></A>FREQ</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeFloat"><FONT SIZE=2>F</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">N</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">8</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Frequency. Describes a two-way (non-crossband) contact<A NAME="ftnref3"></A><A HREF="#FootNote3"><SUP>[3]</SUP></A> . </P>
+<P>Canonical form shall be frequency in MHz with no greater than 100 mHz precision. A decimal point shall be included. There shall be no leading zeros; there shall be no trailing zeroes after the last significant digit. Only digits and decimal point may appear in the field; commas, plus, minus and alphabetic characters shall not appear. </P>
+<P>If the precise frequency is unknown use the Frequency listed in <A HREF="TableBand.html#TableBand">Table 1</A> for the band used.</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactMode"></A>MODE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>E</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">10</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Emission mode. Describes a two-way (non-crossmode) contact<A NAME="ftnref4"></A><A HREF="#FootNote4"><SUP>[4]</SUP></A> . Format is the mode identifier in upper case. See Table 3 for a list of the legal values for the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactDate"></A>QSO_DATE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeDate"><FONT SIZE=2>D</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">8</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Date in ISO 8601 format. Extended format <I>i.e.</I> ., <I>YYYY-MM-DD</I>, is preferred but basic format, <I>YYYYMMDD</I>, is permissible but its use is deprecated</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactTime"></A>QSO_TIME</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeTime"><FONT SIZE=2>T</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">9</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>UTC Time in ISO 8601 format. Extended format i.e., <I>hh:mm:ss</I>Z is preferred. However, basic format, <I>hhmmss</I> Z, and basic format with reduced precision, <I>hhmm</I>Z, are both permissible. In the event that the time zone designator ‘Z’ be omitted, UTC shall be assumed</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactRec_Type"></A>REC_TYPE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>E</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">10</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Always "<TT>tCONTACT</TT>". This declares the record to be a Trusted Contact record.</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactRST"></A>RST_SENT</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>C</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">N</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">8</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>Signal Report Sent. Comparison of values of <TT>RST_SENT</TT> is insensitive to case. </TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationSig"></A>SIGN_LOTW_V1.0</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeBase64"><FONT SIZE=2>6</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Signature</FONT></TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">172</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>This is the ARRL LOTW v1.0 digital signature of this record. See [TBD] for the specific signing rule. <BR>
+Maximum field size based on 1024-bit key and base64 encoding</TD>
+</TR>
+<TR><TD WIDTH="13%" VALIGN="MIDDLE">
+<TT><P><A NAME="ContactStation_GUID"></A>STATION_UID</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter"><FONT SIZE=2>C</FONT></A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">Y</FONT></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<FONT SIZE=2><P ALIGN="CENTER">TDB</FONT></TD>
+<TD WIDTH="56%" VALIGN="MIDDLE">
+<P>This is the Unique Identifier (UID) of the <TT>tSTATION</TT> record that is to be associated with this <TT>tCONTACT</TT> record. </P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H3>tHEADER (GAbbI Header) Record:</H3>
+<FONT SIZE=2><P>The </FONT><TT>tHEADER</TT><FONT SIZE=2> record is optional but should contain. </P></FONT>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=6 WIDTH="100%">
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Type</H4></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Required</H4></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Max Size (chars)</H4></TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderCategory"></A>CATEGORY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">4</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Declares category of data in this file. To indicate trusted (digitally signed) QSL data the value of <TT>CATEGORY</TT> shall be "<TT>tQSL</TT>"</TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderNContacts"></A>GAbbI_#_CONTACT_RECS</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">4</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Number of <TT>tCONTACT</TT> records that can be expected to follow in this logical file. Use is optional, but if present, the value shall be correct. Reader may issue an error message if the number of valid <TT>tCONTACT</TT> records received is different from the value declared in the header </TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderNStation"></A>GAbbI_#_STATION_RECS</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Number of <TT>tSTATION</TT> records that can be expected to follow in this logical file. Use is optional, but if present, the value shall be correct. Reader may issue an error message if the number of valid <TT>tSTATION</TT> records received is different from the value declared in the header </TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderCreated_By"></A>GAbbI_CREATED_BY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">64</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Name and version of program creating this file.</TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderCreated_On"></A>GAbbI_CREATED_ON</TT></TD>
+<TD WIDTH="6%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">20</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>ISO 8601 Date &amp; Time that file was created.</TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderVersion"></A>GAbbI_VERSION</TT></TD>
+<TD WIDTH="6%" VALIGN="TOP">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">4</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>GAbbI version</TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderSender"></A>GAbbI_SENDER</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">15</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>The call sign of station creating the file. <TT>SENDER</TT> may differ from the value of the <TT>CALL</TT> field in <TT>tSTATION</TT> records in certain cases, such as a QSL Manager</TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderSign"></A>GAbbI_SIGN_ALOGORITHM</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">5</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Digital signature key type algorithm: <TT>RSA</TT> (default), <TT>DSA</TT> or <TT>ECDSA<A NAME="ftnref5"></A></TT><A HREF="#FootNote5"><SUP>[5]</SUP></A></TD>
+</TR>
+<TR><TD WIDTH="21%" VALIGN="MIDDLE">
+<TT><P><A NAME="HeaderRec_Type"></A>REC_TYPE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">10</TD>
+<TD WIDTH="57%" VALIGN="MIDDLE">
+<P>Always "<TT>tHEADER</TT>". This declares the record to be a GAbbI header record.</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H3>tSTATION (Trusted Station) Record:</H3>
+<P>The <TT>tSTATION</TT> record contains information that is common to a set of logical QSL records; each logical record provides the trusted (signed) set of information needed to confirm a QSO. When a field appears in a <TT>tSTATION</TT> record, it specifies the default value for the field in each logical record, which references a <TT>tSTATION</TT> record via the <TT>STATION_GUID</TT> field. When constructing the logical record from the <TT>tSTATION</TT> and <TT>tCONTACT</TT> records, the order of precedence shall be: appearance of a field in the <TT>tCONTACT</TT> record supersedes any default value for the field that may have been established by the appearance of the same field in the liked <TT>tSTATION</TT> record.</P>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=6 WIDTH="98%">
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Type</H4></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Required</H4></TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Category</H4></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<H4 ALIGN="CENTER">Max Size (Chars)</H4></TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationCall"></A>CALL</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">15</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Sender’s (station reporting the contact) call sign. Call sign is insensitive to case. Legal value for call sign characters are [<TT>A-Z0-9/</TT>].</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>CA_PROVINCE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Canadian Province. Format shall be the two-letter abbreviation in upper case. See <A HREF="TableCA_Provinces.html#TableCA_Provinces">Table 8</A> for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationCert_Guid"></A>CERT_GUID</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">TBD</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Identity Certificate GUID. This could be CA DN &amp; certificate serial number.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationCH_Canton"></A>CH_CANTON</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="file:///C:/WINNT/Profiles/mkeane/Personal/My%20Documents/Ham%20Radio/tQSL/LoTW/Spec/GAbbI/gabbi.htm#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Swiss Canton. Format shall be the two-letter abbreviation in upper case. See [TBD] for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationCont"></A>CONT</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Continent. Format shall be the two-letter abbreviation in upper case. See <A HREF="TableContinents.html#TableContinents">Table 2</A> for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationCQZ"></A>CQZ</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>CQ Zone. Format shall be two numeric characters and must include any leading zero. (0<TT> &lt; CQZ &lt;</TT> 41)</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>DOK</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">4</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>DARC DOK #</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationDXCC"></A>DXCC</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">3</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Numeric identifiers from the ARRL. Format shall be three digits and must include any leading zeroes. See <A HREF="TableDXCC.html#TableDXCC">Table 6</A> for legal values.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>ES_PROVINCE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Spanish Province. Format shall be two characters containing the one or two letter abbreviation (from URE list) in upper case. See <A HREF="TableES_Provinces.html#TableES_Provinces">Table 9</A> for legal values of the enumeration</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationGridSquare"></A>GRIDSQUARE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">6</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Either the 4 character or the 6 character Maidenhead grid square designator is acceptable. Formats shall be AANN and AANNaa. Comparison of values of <TT>GRIDSQUARE</TT> is insensitive to case. For stations located on grid intersections, multiple instances of the <TT>GRIDSQUARE</TT> field may appear in a <TT>tSTATION</TT> record, up to a maximum of four.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>IE_COUNTY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">10</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>IE county in which the station was located at the time of the QSO. See <A HREF="TableIE_Counties.htm#TableIE_Counties">Table 13</A> for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>IOTA</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">6</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Islands on the Air designator. Format shall be six characters consisting of a two-letter continental abbreviation in upper case immediately followed by a hyphen immediately followed by three numeric characters that must include any leading zeroes. Comparison of IOTA designators shall be case insensitive.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationITUZ"></A>ITUZ</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>ITU Zone. Format shall be two numeric characters and must include any leading zero. (0 &lt; <TT>ITUZ</TT><FONT FACE="Symbol"> &lt;</FONT> 76)</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationJA_City"></A>JA_CITY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">4</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>JA City. Format is the JCC reference number for the city (from JARL list) as four numeric digits including any leading zeros. See [TBD] for legal values.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationJA_Gun"></A>JA_GUN</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">5</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>JA Gun. Format is the JCG reference number for the Gun (from JARL list) as five numeric digits including any leading zeros. See [TBD] for legal values.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationJA_Prefecture"></A>JA_PREFECTURE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>JA Prefecture. Format is the WAJA reference number for the prefecture (from JARL list) as two numeric digits including any leading zero. (0 &lt; <TT>JA_PREFECTURE &lt;</TT> 48)</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationMode"></A>NZ_COUNTY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">3</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>New Zealand County. Format is the NZ county reference number (from NZART list) as three numeric digits including any leading zeros. See [TBD] for legal values.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationRec_Type"></A>REC_TYPE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">10</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Always <TT>"tSTATION"</TT>. This declares the record to be a Trusted Station record.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>RU_OBLAST</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Russian Oblast. Format shall be the two-letter oblast designation (from Kernel CRC list) in upper case. See <A HREF="TableRU_Oblasts.htm#TableRU_Oblasts">Table 10</A> for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>REPEATER<A NAME="ftnref6"></A></TT><A HREF="#FootNote6"><SUP>[6]</SUP></A></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">15</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Call sign of terrestrial repeater used in making this contact. Call sign is insensitive to case. Legal values for call sign characters are [<TT>A-Z0-9/</TT>]. </TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>SAT_NAME</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">5</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Format shall be the designation of the satellite used in upper case (RS-10, AO-10, FO-20, <I>etc</I>.). See <A HREF="TableSatellites.html#TableSatellite">Table 5</A> legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>SAT_MODE<A NAME="ftnref7"></A></TT><A HREF="#FootNote7"><SUP>[7]</SUP></A></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">5</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Format shall be the designator for satellite transponder mode, e.g. A, B, J… See <A HREF="TableSatellites.html#TableSatellite">Table 5</A> for legal values of the enumeration. </P>
+<P>If the <TT>SAT_MODE</TT> field is present, the <TT>SAT_NAME </TT>field shall also be present.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationStation_GUID"></A>STATION_UID</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Y</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">TBD</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>This is the Unique ID of this <TT>tSTATION</TT> record.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P><A NAME="StationState"></A>STATION_TYPE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">12</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>See <A HREF="TableStation_Types.html#TableStation_Type">Table 4</A></TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>SUB_GOV1</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">64</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>The political/administrative division below sovereign nation-state. Examples of <TT>SUB_GOV1</TT> are <A HREF="#TableUS_States">State</A> (USA), Province (<A HREF="TableCA_Provinces.html#TableCA_Provinces"> Canada</A> ;<A HREF="TableES_Provinces.html#TableES_Provonces"> Spain</A> ), <A HREF="#TableRU_Oblasts">Oblast</A> (Russia), <A HREF="#StationCH_Canton">Canton</A> (Switzerland), County (UK; Republic of Ireland), <A HREF="#StationJA_Prefecture">Prefecture</A> (Japan), etc. Comparison of values of <TT>SUB_GOV1</TT> is insensitive to case. </TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>SUB_GOV2</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">64</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>The political/administrative division below the division in <TT>SUB_GOV1</TT>. Examples of <TT>SUB_GOV2</TT> are <A HREF="#TableUS_Counties">County/Parish</A> (USA), <A HREF="#StationJA_Gun">Gun</A> /<A HREF="#StationJA_City">City</A> (Japan). Comparison of values of <TT>SUB_GOV2</TT> is insensitive to case. </TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>SUB_GOV3</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">C</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov3</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">64</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>The political/administrative division below the division in <TT>SUB_GOV2</TT>. Comparison of values of <TT>SUB_GOV3</TT> is insensitive to case. </TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>TX_PWR</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeFloat">F</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">8</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Transmitter power. Format shall be transmitter output power in watts (W) with no greater than 1 mW precision. A decimal point shall be included. There shall be no leading zeros; there shall be no trailing zeroes after the last significant digit. Only digits and one decimal point may appear in the field, minus (hyphen) and alphabetic characters shall not appear.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>UK_COUNTY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">10</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>UK county in which the station was located at the time of the QSO. See [TBD] for legal values for the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>US_COUNTY</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">23</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>US County. Canonical form shall be the two- letter state abbreviation in upper case immediately followed by a comma, immediately followed by the county name in upper case. See <A HREF="TableUS_Counties.html#TableUS_Counties">Table 12</A> for legal values of enumeration. For stations located on a county line two instances of the <TT>CNTY</TT> field may appear in a <TT>tSTATION</TT> or <TT>tCONTACT</TT> record.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>US_STATE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">2</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>US state. Format shall be the two letter postal abbreviation in upper case. See <A HREF="TableUS_States.html#TableUS_States">Table 11</A> for legal values of the enumeration.</TD>
+</TR>
+<TR><TD WIDTH="15%" VALIGN="MIDDLE">
+<TT><P>WAE</TT></TD>
+<TD WIDTH="6%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeInteger">I</A></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P><BR>
+</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">3</TD>
+<TD WIDTH="52%" VALIGN="MIDDLE">
+<P>Numeric identifier (from DARC) for entities on the Worked All Europe Country list. See <A HREF="TableWAE.html#TableWAE">Table 7</A> for legal values.</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H3>Common Fields:</H3>
+<P>This field is common to all record types. The field is identical both in its name and its meaning to more than one record type..</P>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=12 WIDTH="100%">
+<TR><TD WIDTH="24%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<P><div align="Center"></P>
+<H4>Type</H4>
+<P></div></TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<div align="Center">
+<H4>Required</H4>
+<P></div></TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<div align="Center">
+<H4>Max Size (chars)</H4>
+<P></div></TD>
+<TD WIDTH="51%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="24%" VALIGN="MIDDLE">
+<TT><P>REC_TYPE</TT></TD>
+<TD WIDTH="7%" VALIGN="MIDDLE">
+<P ALIGN="CENTER"><A HREF="#TypeCharacter">E</A></TD>
+<TD WIDTH="10%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">N</TD>
+<TD WIDTH="8%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">15</TD>
+<TD WIDTH="51%" VALIGN="MIDDLE">
+<P>This defines the type of record. The default is QSO record</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H2>4. File Definition:</H2>
+<H3>Record Types:</H3>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=12 WIDTH="100%">
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Record </H4></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<H4>Description</H4></TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<TT><P>tCERT</TT></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<P>Identity certificate. This record shall be placed before the <TT>&lt;</TT><A HREF="#EOH"><FONT FACE="Courier New" SIZE=2>eoh</FONT></A><TT>&gt;</TT> tag. </TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<TT><P>tCONTACT</TT></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<P>This record contains the unique information describing a QSO. All <TT>tCONTACT</TT> records shall follow the <TT>&lt;</TT><A HREF="#EOH"><FONT FACE="Courier New" SIZE=2>eoh</FONT></A><TT>&gt;</TT> tag. </TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<TT><P>tHEADER</TT></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<P>This indicates a logical header record. This record shall be placed before the <TT>&lt;</TT><A HREF="#EOH"><FONT FACE="Courier New" SIZE=2>eoh</FONT></A><TT>&gt;</TT> tag. </TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<TT><P>tSTATION</TT></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<P>This record contains the common information describing a series of QSOs. Typically, this is information describing the sender and his/her station. All <TT>tSTATION</TT> records shall precede the <TT>&lt;</TT><A HREF="#EOH"><FONT FACE="Courier New" SIZE=2>eoh</FONT></A><TT>&gt;</TT> tag. </TD>
+</TR>
+<TR><TD WIDTH="14%" VALIGN="MIDDLE">
+<TT><P>QSO </TT></TD>
+<TD WIDTH="86%" VALIGN="MIDDLE">
+<P>This is also the standard logbook format. To maintain backward compatibility, this is the default record type.</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H3>Categories:</H3>
+<P>Implicit rules are associated with some fields; at least one extra parameter (in addition to Type, Signed, Required &amp; Maximum Size) must be provided in order to specify fields that fall into these categories:</P>
+<TABLE BORDER CELLSPACING=1 CELLPADDING=12 WIDTH="100%">
+<TR><TD WIDTH="12%" VALIGN="MIDDLE">
+<P><tbody></P>
+<H4>Name</H4></TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<H4 ALIGN="CENTER">Super-Category</H4></TD>
+<TD WIDTH="11%" VALIGN="TOP">
+<H4 ALIGN="CENTER">Sub-Category</H4></TD>
+<TD WIDTH="68%" VALIGN="MIDDLE">
+<H4>Parameters</H4></TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="MIDDLE">
+<P>Signature</TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">—</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">—</TD>
+<TD WIDTH="68%" VALIGN="MIDDLE">
+<P>A specific signing rule (which fields are signed; in what order do fields appear) must be specified.</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="MIDDLE">
+<P>Sub_Gov1</TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">DXCC</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="68%" VALIGN="MIDDLE">
+<P>The enumerated value in the super-category (parent) and a list of enumerated values in the sub-category (children) must be provided. The list of children may be null. A field &nbsp;in the Sub_Gov1 category will be of type Enumeration (E).</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="MIDDLE">
+<P>Sub_Gov2</TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">Sub_Gov1</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">Sub_Gov3</TD>
+<TD WIDTH="68%" VALIGN="MIDDLE">
+<P>The enumerated value in the super-category (parent) and a list of enumerated values in the sub-category (children) must be provided. The list of children may be null.&nbsp;A field &nbsp;in the Sub_Gov2 category will be of type Enumeration (E).</TD>
+</TR>
+<TR><TD WIDTH="12%" VALIGN="MIDDLE">
+<P>Sub_Gov3</TD>
+<TD WIDTH="9%" VALIGN="MIDDLE" COLSPAN=2>
+<P ALIGN="CENTER">Sub_Gov2</TD>
+<TD WIDTH="11%" VALIGN="MIDDLE">
+<P ALIGN="CENTER">—</TD>
+<TD WIDTH="68%" VALIGN="MIDDLE">
+<P>The enumerated value in the super-category (parent) must be provided.&nbsp;A field &nbsp;in the Sub_Gov3 category will be of type Enumeration (E).</P>
+<P></tbody></TD>
+</TR>
+</TABLE>
+
+<H4>Sub_Gov<I>#</I>:</H4>
+<P>An implicit hierarchy of fields exists starting with DXCC entity:</P>
+<TT><PRE>+---DXCC<BR>
+     |<BR>
+     +---Sub_Gov1<BR>
+            |<BR>
+            +---Sub_Gov2<BR>
+                   |<BR>
+                   +---Sub_Gov3</PRE>
+</TT><P><BR>
+If GAbbI writer specifies a value for a field under the "<TT>Sub_Gov</TT> " hierarchy, the writer shall also specify a fully consistent set of values for its superior fields in the hierarchy up to and including DXCC entity.</P>
+<P>A reader shall treat the appearance of a single field from the "<TT>Sub_Gov</TT> " hierarchy as an implicit specification for the value of its superior fields in the hierarchy up to and including DXCC entity. E.g., <TT>US_COUNTY == HI,HAWAII</TT> should be interpreted by a reader as specifying <TT>US_STATE == HI</TT> and <TT>DXCC == 110</TT> (Hawaii) in addition to the county; and <TT>JA_CITY == 2701</TT> (Kobe) should be read as specifying <TT>JA_PREFECTURE == 27 </TT>(Hyogo) and <TT>DXCC == 339</TT> (Japan) in addition to the city. When more than one field in the "<TT>Sub_Gov</TT>" hierarchy appears in a record, the values specified implicitly and explicitly at every level of the hierarchy shall be identical. In the event an inconsistency amongst the fields of the "<TT>Sub_Gov</TT> " hierarchy is detected, the reader shall issue an error message and may discard the record. </P>
+<H3><A HREF="GAbbISample.html">GAbbI Sample File</A></H3>
+<P><HR ALIGN="LEFT" WIDTH="20%" SIZE=0></P>
+<P><A NAME="FootNote1"></A><A HREF="#ftnref1"><SUP><FONT SIZE=2>[1]</SUP></FONT></A><FONT SIZE=2>Illegal characters encountered while scanning a field are to be ignored. The field length shall be interpreted as the number of valid characters to be read. If while scanning a field, the reader encounters an illegal character other than an end-of-line character </FONT><TT>(&lt;CR&gt;</TT><FONT SIZE=2> or </FONT><TT>&lt;NL&gt;</TT><FONT SIZE=2> ), the reader shall issue a warning. If a start of field delimiter ‘&lt;’ is encountered before the expected end of field, the reader shall reject the field being read and issue a warning. </P>
+<P>Note that GAbbI is only very weakly armored against line folding and provides no protection against gratuitous character re-mapping that can be introduced by the transport layer, especially e-mail. A prudent precaution would be to encode a GAbbI object using base64 prior to transport by e-mail. This encoding would be mandatory if UTF-8 characters beyond 7-bit ASCII character set are to be exchanged. </P>
+</FONT><P><A NAME="FootNote2"></A><A HREF="#ftnref3"><SUP><FONT SIZE=2>[2]</SUP></FONT></A><FONT SIZE=2> To indicate a cross-band contact the pair of fields: </FONT><TT>BAND_RX</TT><FONT SIZE=2> and </FONT><TT>BAND_TX</TT><FONT SIZE=2> shall be used. If the </FONT><TT>BAND</TT><FONT SIZE=2> field appears in a record then neither </FONT><TT>BAND_RX</TT><FONT SIZE=2> nor </FONT><TT>BAND_TX</TT><FONT SIZE=2> may appear. If either the </FONT><TT>BAND_RX</TT><FONT SIZE=2> or </FONT><TT>BAND_TX</TT><FONT SIZE=2> field appears, then both fields must appear. </P>
+</FONT><P><A NAME="FootNote3"></A><A HREF="#ftnref3"><SUP><FONT SIZE=2>[3]</SUP></FONT></A><FONT SIZE=2> To indicate a split-frequency (or cross-band) contact the pair of fields: </FONT><TT>FREQ_RX</TT><FONT SIZE=2> and </FONT><TT>FREQ_TX</TT><FONT SIZE=2> shall be used. If the </FONT><TT>FREQ</TT><FONT SIZE=2> field appears in a record then neither </FONT><TT>FREQ_RX</TT><FONT SIZE=2> nor </FONT><TT>FREQ_TX</TT><FONT SIZE=2> may appear. If either the </FONT><TT>FREQ_RX</TT><FONT SIZE=2> or </FONT><TT>FREQ_TX</TT><FONT SIZE=2> field appears, then both fields must appear. </P>
+</FONT><P><A NAME="FootNote4"></A><A HREF="#ftnref4"><SUP><FONT SIZE=2>[4]</SUP></FONT></A><FONT SIZE=2> To indicate a cross-mode contact the pair of fields: </FONT><TT>MODE_RX</TT><FONT SIZE=2> and </FONT><TT>MODE_TX</TT><FONT SIZE=2> shall be used. If the </FONT><TT>MODE</TT><FONT SIZE=2> field appears in a record then neither </FONT><TT>MODE_RX</TT><FONT SIZE=2> nor </FONT><TT>MODE_TX</TT><FONT SIZE=2> may appear. If either the </FONT><TT>MODE_RX</TT><FONT SIZE=2> or </FONT><TT>MODE_TX</TT><FONT SIZE=2> field appears, then both fields must appear. </P>
+</FONT><P><A NAME="FootNote5"></A><A HREF="#ftnref5"><SUP><FONT SIZE=2>[5]</SUP></FONT></A><FONT SIZE=2> A compliant GAbbI reader shall support RSA signatures. Readers may support DSA and ECDSA signatures. If a reader is presented with data signed using a public key algorithm that the reader does not support, the reader shall generate a fatal error. </P>
+</FONT><P><A NAME="FootNote6"></A><A HREF="#ftnref6"><SUP><FONT SIZE=2>[6]</SUP></FONT></A><FONT SIZE=2> If needed for an explicit declaration, the non-callsign value of </FONT><TT>NONE</TT><FONT SIZE=2> for </FONT><TT>REPEATER</TT><FONT SIZE=2> shall be permitted. </P>
+</FONT><P><A NAME="FootNote7"></A><A HREF="#ftnref7"><SUP><FONT SIZE=2>[7]</SUP></FONT></A><FONT SIZE=2> Setting&nbsp; </FONT><TT>SAT_MODE</TT><FONT SIZE=2> equal to </FONT><TT>EME</TT><FONT SIZE=2> may be used to&nbsp; indicate an Earth-Moon-Earth (moonbounce) contact. The corresponding </FONT><TT>SAT_NAME</TT><FONT SIZE=2> shall be </FONT><TT>MOON</TT><FONT SIZE=2>. <BR>
+<BR>
+<BR>
+<BR>
+</P></FONT></BODY>
+</HTML>
