@@ -94,7 +94,7 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
   int		rc;
   int		fd;
 
-  fd = open(fname,O_WRONLY);
+  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
   if (fd < 0)
     return(0);
 
@@ -351,7 +351,7 @@ int tqslWritePub(const char *fname,TqslPublicKey *pubkey)
   int		rc;
   int		fd;
 
-  fd = open(fname,O_WRONLY);
+  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
   if (fd < 0)
     return(0);
 
