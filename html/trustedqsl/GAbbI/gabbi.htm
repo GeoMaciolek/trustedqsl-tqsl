@@ -25,17 +25,17 @@ w\:* {behavior:url(#default#VML);}
   <o:Subject>Global Amateur Interchange Format</o:Subject>
   <o:Author>Darryl Wagoner, WA1GON &amp; Michael Keane, K1MK </o:Author>
   <o:LastAuthor>Michael Keane</o:LastAuthor>
-  <o:Revision>18</o:Revision>
-  <o:TotalTime>278</o:TotalTime>
+  <o:Revision>23</o:Revision>
+  <o:TotalTime>312</o:TotalTime>
   <o:Created>2002-05-16T14:03:00Z</o:Created>
-  <o:LastSaved>2002-05-16T20:09:00Z</o:LastSaved>
+  <o:LastSaved>2002-05-17T19:04:00Z</o:LastSaved>
   <o:Pages>8</o:Pages>
-  <o:Words>4927</o:Words>
-  <o:Characters>25129</o:Characters>
+  <o:Words>4526</o:Words>
+  <o:Characters>25803</o:Characters>
   <o:Company>Trusted QSL</o:Company>
-  <o:Lines>1142</o:Lines>
-  <o:Paragraphs>571</o:Paragraphs>
-  <o:CharactersWithSpaces>34490</o:CharactersWithSpaces>
+  <o:Lines>215</o:Lines>
+  <o:Paragraphs>51</o:Paragraphs>
+  <o:CharactersWithSpaces>31687</o:CharactersWithSpaces>
   <o:Version>9.3821</o:Version>
  </o:DocumentProperties>
 </xml><![endif]-->
@@ -666,8 +666,8 @@ physical EOF may follow). </p>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>Fixed-point (integer) number in base 8<sub>10</sub> (octal) representation.
-  Legal characters that may appear in the value field are [<span
+  <p>Fixed-point (integer) number in base 8<sub>10</sub> (octal)
+  representation. Legal characters that may appear in the value field are [<span
   style='font-size:10.0pt;font-family:"Courier New"'>0-7-</span>].</p>
   </td>
  </tr>
@@ -758,8 +758,9 @@ font-family:"Courier New"'>tCERT</span> record.&nbsp;</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
-  style='font-size:10.0pt'><a href="http://www.ietf.org/rfc/rfc3280.txt">X.509 v3</a> identity certificate. Base64 encoded
-  distinguished encoding representation (DER) of the certificate.&nbsp;</span> </p>
+  style='font-size:10.0pt'><a href="http://www.ietf.org/rfc/rfc3280.txt">X.509
+  v3</a> identity certificate. Base64 encoded distinguished encoding
+  representation (DER) of the certificate.&nbsp;</span> </p>
   </td>
  </tr>
  <tr>
@@ -832,157 +833,178 @@ font-family:"Courier New"'>tCERT</span> record.&nbsp;</p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 text-align:justify'>The&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>tCONTACT</span>
-record contains information that is unique to a specific contact. Note that
-most of the fields are required. This is because these fields can be expected
-to differ for each contact. For the sake of transmission and reception
-efficiency, the information that is shared in common by several contacts is
-grouped together and placed into a&nbsp;<span style='font-size:10.0pt;
-font-family:"Courier New"'>tSTATION</span> record. The information contained in
-the&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span>
-record is included in the virtual QSL record by means of the&nbsp;<span
-style='font-size:10.0pt;font-family:"Courier New"'>STATION_GUID</span> field.
-Each GAbbI file shall contain at least one&nbsp;<span style='font-size:10.0pt;
-font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
+record contains information that is unique to a specific contact. Note that most
+of the fields are required. This is because these fields can be expected to
+differ for each contact. For the sake of transmission and reception efficiency,
+the information that is shared in common by several contacts is grouped
+together and placed into a&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span>
+record. The information contained in the&nbsp;<span style='font-size:10.0pt;
+font-family:"Courier New"'>tSTATION</span> record is included in the virtual
+QSL record by means of the&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>STATION_GUID</span>
+field. Each GAbbI file shall contain at least one&nbsp;<span style='font-size:
+10.0pt;font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
 
-<table border=0 cellspacing=0 cellpadding=0 width="100%" style='width:100.0%;
- border-collapse:collapse;mso-padding-alt:0in 0in 0in 0in'>
+<table border=1 cellspacing=0 cellpadding=0 width="99%" style='width:99.68%;
+ margin-left:2.4pt;border-collapse:collapse;border:none;mso-border-alt:solid windowtext 1.5pt;
+ mso-padding-alt:0in 0in 0in 0in'>
  <thead>
   <tr>
-   <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;
-   padding:.05in .05in .05in .05in'>
+   <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;padding:
+   .05in .05in .05in .05in'>
    <h4>Name</h4>
    </td>
-   <td width="4%" style='width:4.02%;border:solid windowtext 1.5pt;border-left:
-   none;padding:.05in .05in .05in .05in'>
+   <td width="4%" style='width:4.24%;border:solid windowtext 1.5pt;border-left:
+   none;mso-border-left-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Type</h4>
    </td>
-   <td width="6%" style='width:6.52%;border:solid windowtext 1.5pt;border-left:
-   none;padding:.05in .05in .05in .05in'>
+   <td width="6%" style='width:6.86%;border:solid windowtext 1.5pt;border-left:
+   none;mso-border-left-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Required</h4>
    </td>
-   <td width="6%" style='width:6.66%;border:solid windowtext 1.5pt;border-left:
-   none;padding:.05in .05in .05in .05in'>
+   <td width="7%" style='width:7.0%;border:solid windowtext 1.5pt;border-left:
+   none;mso-border-left-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Category</h4>
    </td>
-   <td width="7%" style='width:7.8%;border:solid windowtext 1.5pt;border-left:
-   none;padding:.05in .05in .05in .05in'>
+   <td width="7%" style='width:7.06%;border:solid windowtext 1.5pt;border-left:
+   none;mso-border-left-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Max Size (chars)</h4>
    </td>
-   <td width="63%" style='width:63.86%;border:solid windowtext 1.5pt;
-   border-left:none;padding:.05in .05in .05in .05in'>
+   <td width="63%" style='width:63.14%;border:solid windowtext 1.5pt;
+   border-left:none;mso-border-left-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
    <h4>Description</h4>
    </td>
   </tr>
  </thead>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>BAND</span><a
   name=ContactBand></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'><a
-  href="#TypeCharacter">E</a></span></p>
+  href="#TypeCharacter">E</a></span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>6</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>The band on which contact took place.
   Describes a two-way (non-crossband) contact<a name=ftnref2></a><sup><a
-  href="#FootNote1">[2]</a></sup>. Format for interchange is the band
-  designation in upper case See <a href="TableBand.htm">Table 1</a> for a list
-  of the legal values for the enumeration.</span> </p>
+  href="#FootNote1">[2]</a></sup>. Format for interchange is the band designation
+  in upper case See <a href="TableBand.htm">Table 1</a> for a list of the legal
+  values for the enumeration.</span> </p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>CALL</span><a
   name=ContactCall></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'><a
-  href="#TypeCharacter">C</a></span></p>
+  href="#TypeCharacter">C</a></span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>15</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>The call sign of station contacted. Call
-  sign is insensitive to case. Legal values for characters that may appear in a
-  call sign are [</span><span style='font-size:10.0pt;font-family:"Courier New"'>A-Z0-9/</span><span
+  <p><span style='font-size:10.0pt'>The call sign of station contacted. Call sign
+  is insensitive to case. Legal values for characters that may appear in a call
+  sign are [</span><span style='font-size:10.0pt;font-family:"Courier New"'>A-Z0-9/</span><span
   style='font-size:10.0pt'>].</span> </p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>CERT_UID</span></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeInteger">I</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeInteger">I</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>1</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>This is a one digit locally unique
   identifier (UID) of&nbsp; the </span><span style='font-size:10.0pt;
@@ -992,36 +1014,43 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>FREQ</span><a
   name=ContactFreq></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeFloat">F</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeFloat">F</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>N</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>8</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>Frequency. Describes a two-way
   (non-crossband) contact<a name=ftnref3></a><sup><a href="#FootNote3">[3]</a></sup>
@@ -1030,81 +1059,139 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   zeros; there shall be no trailing zeroes after the last significant
   digit.&nbsp;</span> </p>
   <p><span style='font-size:10.0pt'>If the precise frequency is unknown use the
-  Frequency listed in <a href="TableBand.htm#TableBand">Table 1</a> for the
-  band may be used.</span></p>
+  Frequency listed in <a href="TableBand.htm">Table 1</a> for the band may be
+  used.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>MODE</span><a
   name=ContactMode></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">E</a></span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><o:p></o:p></span></p>
+  </td>
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
+  </td>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
+  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
+  </td>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt'>6</span></p>
+  </td>
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p><span style='font-size:10.0pt'>Mode. Describes a two-way (non-crossmode)
+  contact. Format for interchange is the mode identifier in upper case. See <a
+  href="TableModes.htm">Table 2</a> for a list of the legal values for the
+  enumeration.</span> </p>
+  </td>
+ </tr>
+ <tr>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+  style='font-size:10.0pt;font-family:"Courier New"'>QSL<o:p></o:p></span></p>
+  </td>
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'><a
   href="#TypeCharacter">E</a></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'>N<o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
+  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
-  </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'>10</span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'>3<o:p></o:p></span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Emission mode. Describes a two-way
-  (non-crossmode) contact<a name=ftnref4></a><sup><a href="#FootNote4">[4]</a></sup>
-  . Format for interchange is the mode identifier in upper case. See <a
-  href="TableBand.htm">Table 2</a> for a list of the legal values for the
-  enumeration.</span> </p>
+  <p><span style='font-size:10.0pt'>A value of &#8220;</span><tt><span
+  style='font-size:10.0pt;font-family:"Courier New"'>PSE</span></tt><span
+  style='font-size:10.0pt'>&#8221; shall indicate that a confirmation is requested in
+  reply; a value of &#8220;</span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>TNX</span></tt><span
+  style='font-size:10.0pt'>&#8221; shall indicate that a response is not necessary<o:p></o:p></span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>QSO_DATE</span><a
   name=ContactDate></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeDate">D</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeDate">D</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>8</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>Date in ISO 8601 format. Extended format <i>i.e.</i>,
   </span><i><span style='font-size:10.0pt;font-family:"Courier New"'>YYYY-MM-DD</span></i><span
@@ -1114,36 +1201,43 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>QSO_TIME</span><a
   name=ContactTime></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeTime">T</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeTime">T</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>9</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>UTC Time in ISO 8601 format. Extended
   format, </span><i><span style='font-size:10.0pt;font-family:"Courier New"'>hh:mm:ssZ</span></i><span
@@ -1160,37 +1254,44 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>REC_TYPE</span><a
   name="ContactRec_Type"></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'><a
-  href="#TypeCharacter">E</a></span></p>
+  href="#TypeCharacter">E</a></span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>10</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>Always &quot;</span><span style='font-size:
   10.0pt;font-family:"Courier New"'>tCONTACT</span><span style='font-size:10.0pt'>&quot;.
@@ -1198,37 +1299,85 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+  style='font-size:10.0pt;font-family:"Courier New"'>REMARKS<o:p></o:p></span></p>
+  </td>
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><a href="#TypeMulti_Line">M</a></span><span style='font-size:10.0pt'><o:p></o:p></span></p>
+  </td>
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt'>N<o:p></o:p></span></p>
+  </td>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
+  <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><![if !supportEmptyParas]>&nbsp;<![endif]><o:p></o:p></p>
+  </td>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
+  auto;text-align:center'><span style='font-size:10.0pt'>256<o:p></o:p></span></p>
+  </td>
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
+  <p><span style='font-size:10.0pt'>Operator remarks regarding this contact.<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>RST_SENT</span><a
   name=ContactRST></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'><a
-  href="#TypeCharacter">C</a></span></p>
+  href="#TypeCharacter">C</a></span><span style='font-size:10.0pt;mso-bidi-font-size:
+  12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>N</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>8</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>Signal Report Sent. Comparison of values
   of&nbsp;</span><span style='font-size:10.0pt;font-family:"Courier New"'>RST_SENT</span><span
@@ -1236,37 +1385,44 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>SIGN_LOTW_V1.0</span><a
   name=StationSig></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeBase64">6</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeBase64">6</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Signature</span></p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>172</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>This is the ARRL LOTW v1.0 digital
   signature of this record. See <a href="AppendixA.htm#AppendixA">Appendix A</a>
@@ -1275,36 +1431,43 @@ font-family:"Courier New"'>tCONTACT</span> record.&nbsp;</p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.14%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
+  <td width="11%" style='width:11.7%;border:solid windowtext 1.5pt;border-top:
+  none;mso-border-top-alt:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
   style='font-size:10.0pt;font-family:"Courier New"'>STATION_UID</span><a
   name="ContactStation_GUID"></a></p>
   </td>
-  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.24%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
-  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeInteger">I</a></span></p>
+  auto;text-align:center'><span style='font-size:10.0pt'><a href="#TypeInteger">I</a></span><span
+  style='font-size:10.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span></p>
   </td>
-  <td width="6%" style='width:6.52%;border-top:none;border-left:none;
+  <td width="6%" style='width:6.86%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>Y</span></p>
   </td>
-  <td width="6%" style='width:6.66%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.0%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;mso-border-top-alt:
+  solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;padding:
+  .05in .05in .05in .05in'>
   <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>&nbsp;</p>
   </td>
-  <td width="7%" style='width:7.8%;border-top:none;border-left:none;border-bottom:
-  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.06%;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
+  padding:.05in .05in .05in .05in'>
   <p class=MsoNormal align=center style='mso-margin-top-alt:auto;mso-margin-bottom-alt:
   auto;text-align:center'><span style='font-size:10.0pt'>2</span></p>
   </td>
-  <td width="63%" style='width:63.86%;border-top:none;border-left:none;
+  <td width="63%" style='width:63.14%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
+  mso-border-top-alt:solid windowtext 1.5pt;mso-border-left-alt:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>This is a two digit (locally) Unique
   Identifier (UID) of the&nbsp;</span><span style='font-size:10.0pt;font-family:
@@ -1735,9 +1898,9 @@ optional but one GAbbI header record should be present in each GAbbI file.</p>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
 text-align:justify'>The&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span>
-record contains information that is common to a set of logical QSL records;
-each logical QSL record provides the trusted (signed) set of information needed
-to confirm a QSO. Each GAbbI file shall contain at least one&nbsp;<span
+record contains information that is common to a set of logical QSL records; each
+logical QSL record provides the trusted (signed) set of information needed to
+confirm a QSO. Each GAbbI file shall contain at least one&nbsp;<span
 style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span> record </p>
 
 <p style='text-align:justify'>When a field appears in a&nbsp;<span
@@ -1749,10 +1912,10 @@ field.&nbsp; In constructing the logical QSL record from the&nbsp;<span
 style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span> and&nbsp;<span
 style='font-size:10.0pt;font-family:"Courier New"'>tCONTACT</span> records, the
 order of precedence shall be: appearance of a field in the&nbsp;<span
-style='font-size:10.0pt;font-family:"Courier New"'>tCONTACT</span> record will
-supersede any default value for that field that may have been established by
-the appearance of the same field in the linked&nbsp;<span style='font-size:
-10.0pt;font-family:"Courier New"'>tSTATION</span> record.&nbsp;</p>
+style='font-size:10.0pt;font-family:"Courier New"'>tCONTACT</span> record will supersede
+any default value for that field that may have been established by the
+appearance of the same field in the linked&nbsp;<span style='font-size:10.0pt;
+font-family:"Courier New"'>tSTATION</span> record.&nbsp;</p>
 
 <table border=0 cellspacing=0 cellpadding=0 width="99%" style='width:99.06%;
  margin-left:7.8pt;border-collapse:collapse;mso-padding-alt:0in 0in 0in 0in'>
@@ -1853,8 +2016,8 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>Chilean Municipality (&#8220;Comuna&#8221;). Format for
   interchange shall be the 5 or 6&nbsp; digit code for the municipality.
-  Consult <a href="http://www.federachi.cl/">list</a>. from Federachi for the legal
-  values of the enumeration.</span> </p>
+  Consult <a href="http://www.federachi.cl/">list</a>. from Federachi for the
+  legal values of the enumeration.</span> </p>
   </td>
  </tr>
  <tr>
@@ -2065,9 +2228,9 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>ARRL DX Century Club. Numeric identifiers
-  from the ARRL. Format for interchange shall be three digits and must include
-  any leading zeroes. See <a href="TableDXCC.htm#TableDXCC">Table 6</a> for
-  legal values.</span> </p>
+  from the ARRL. Format for interchange shall be three digits and must include any
+  leading zeroes. See <a href="TableDXCC.htm#TableDXCC">Table 6</a> for legal
+  values.</span> </p>
   </td>
  </tr>
  <tr>
@@ -2133,12 +2296,13 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Either the 4 character or the 6 character Maidenhead
-  grid square designator is acceptable. Format for interchanges shall be AANN
-  and AANNaa. Comparison of values of&nbsp;</span><span style='font-size:10.0pt;
-  font-family:"Courier New"'>GRIDSQUARE</span><span style='font-size:10.0pt'>
-  is insensitive to case. For stations located on grid intersections, multiple
-  instances of the&nbsp; </span><span style='font-size:10.0pt;font-family:"Courier New"'>GRIDSQUARE</span><span
+  <p><span style='font-size:10.0pt'>Either the 4 character or the 6 character
+  Maidenhead grid square designator is acceptable. Format for interchanges
+  shall be AANN and AANNaa. Comparison of values of&nbsp;</span><span
+  style='font-size:10.0pt;font-family:"Courier New"'>GRIDSQUARE</span><span
+  style='font-size:10.0pt'> is insensitive to case. For stations located on
+  grid intersections, multiple instances of the&nbsp; </span><span
+  style='font-size:10.0pt;font-family:"Courier New"'>GRIDSQUARE</span><span
   style='font-size:10.0pt'> field may appear in a single&nbsp; </span><span
   style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span><span
   style='font-size:10.0pt'> record, up to a maximum of four.</span> </p>
@@ -2174,11 +2338,11 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>RSGB Islands on the Air (IOTA) Program
-  reference number. Format for interchange shall be six characters consisting of
-  a two-letter continental abbreviation in upper case immediately followed by a
-  hyphen immediately followed by three numeric characters that must include any
-  leading zeroes. Comparison of IOTA designators shall be case insensitive.
-  Consult the RSGB IOTA Program reference numbers <a
+  reference number. Format for interchange shall be six characters consisting
+  of a two-letter continental abbreviation in upper case immediately followed
+  by a hyphen immediately followed by three numeric characters that must
+  include any leading zeroes. Comparison of IOTA designators shall be case
+  insensitive. Consult the RSGB IOTA Program reference numbers <a
   href="http://www.rsgbiota.org/refindex.htm">list</a> for legal values of the
   enumeration.</span> </p>
   </td>
@@ -2213,8 +2377,8 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>ITU Zone. Format for interchange shall be two
-  numeric characters and must include any leading zero. (01&nbsp; </span><span
+  <p><span style='font-size:10.0pt'>ITU Zone. Format for interchange shall be
+  two numeric characters and must include any leading zero. (01&nbsp; </span><span
   style='font-size:10.0pt;font-family:Symbol'>£</span><span style='font-size:
   10.0pt;font-family:"Courier New"'>ITUZ</span><span style='font-size:10.0pt;
   font-family:Symbol'>£</span><span style='font-size:10.0pt'> 75)</span> </p>
@@ -2397,8 +2561,8 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Postal Mailing address to contact this
-  station; should be internationalized</span> </p>
+  <p><span style='font-size:10.0pt'>Postal Mailing address to contact this station;
+  should be internationalized</span> </p>
   </td>
  </tr>
  <tr>
@@ -2470,11 +2634,12 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <p><span style='font-size:10.0pt'>Operator of the station given in&nbsp;</span><span
   style='font-size:10.0pt;font-family:"Courier New"'>CALL</span><span
   style='font-size:10.0pt'> field of the </span><span style='font-size:10.0pt;
-  font-family:"Courier New"'>tSTATION</span><span style='font-size:10.0pt'> record.
-  Typically this field would be used for a guest operator or multiple operators
-  using a single call sign. Call sign is insensitive to case. Legal value for
-  call sign characters are [</span><span style='font-size:10.0pt;font-family:
-  "Courier New"'>A-Z0-9/</span><span style='font-size:10.0pt'>].</span> </p>
+  font-family:"Courier New"'>tSTATION</span><span style='font-size:10.0pt'>
+  record. Typically this field would be used for a guest operator or multiple
+  operators using a single call sign. Call sign is insensitive to case. Legal
+  value for call sign characters are [</span><span style='font-size:10.0pt;
+  font-family:"Courier New"'>A-Z0-9/</span><span style='font-size:10.0pt'>].</span>
+  </p>
   </td>
  </tr>
  <tr>
@@ -2865,9 +3030,9 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   style='font-size:10.0pt;font-family:"Courier New"'>SUB_GOV3</span><span
   style='font-size:10.0pt'> field, then the&nbsp;</span><span style='font-size:
   10.0pt;font-family:"Courier New"'>SUB_GOV1</span><span style='font-size:10.0pt'>
-  field shall be present and one or more fields of category Sub_Gov2 may be present
-  in the record. One or more fields of category Sub_Gov3 may appear in a single
-  record.</span> </p>
+  field shall be present and one or more fields of category Sub_Gov2 may be
+  present in the record. One or more fields of category Sub_Gov3 may appear in
+  a single record.</span> </p>
   </td>
  </tr>
  <tr>
@@ -2900,8 +3065,8 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>See <a
-  href="TableStation_Types.htm#TableStation_Type">Table 8</a> for legal values of
-  the enumeration.</span> </p>
+  href="TableStation_Types.htm#TableStation_Type">Table 8</a> for legal values
+  of the enumeration.</span> </p>
   </td>
  </tr>
  <tr>
@@ -2968,11 +3133,10 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Transmitter power. Format for interchange
-  shall be transmitter output power in watts (W) with no greater than 1 mW
-  precision. A decimal point shall be included. There shall be no leading
-  zeros; there shall be no trailing zeroes after the last significant digit.&nbsp;</span>
-  </p>
+  <p><span style='font-size:10.0pt'>Transmitter power. Format for interchange shall
+  be transmitter output power in watts (W) with no greater than 1 mW precision.
+  A decimal point shall be included. There shall be no leading zeros; there
+  shall be no trailing zeroes after the last significant digit.&nbsp;</span> </p>
   </td>
  </tr>
  <tr>
@@ -3039,8 +3203,8 @@ the appearance of the same field in the linked&nbsp;<span style='font-size:
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>US County. The value is a five (5)
-  character&nbsp; code composed of the two-letter state alpha code from <a
+  <p><span style='font-size:10.0pt'>US County. The value is a five (5) character&nbsp;
+  code composed of the two-letter state alpha code from <a
   href="http://www.itl.nist.gov/fipspubs/fip5-2.htm">FIPS Pub. 5-2</a> followed
   by&nbsp; the three digit numeric code for the county (or independent city)
   from <a href="http://www.itl.nist.gov/fipspubs/fip6-4.htm">FIPS Pub. 6-4</a>.
@@ -3226,11 +3390,11 @@ and its meaning to more than one record type.&nbsp;</p>
   <td width="86%" style='width:86.0%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>This record contains the common information describing a series of QSOs. Typically,
-  this is information that describes the sender and his/her station. All&nbsp;<span
-  style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span> records
-  shall be placed in the header area preceding the&nbsp;<span style='font-size:
-  10.0pt;font-family:"Courier New"'>&lt;<a href="#EOH">eoh</a>&gt;</span>
+  <p>This record contains the common information describing a series of QSOs.
+  Typically, this is information that describes the sender and his/her station.
+  All&nbsp;<span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span>
+  records shall be placed in the header area preceding the&nbsp;<span
+  style='font-size:10.0pt;font-family:"Courier New"'>&lt;<a href="#EOH">eoh</a>&gt;</span>
   tag.&nbsp;</p>
   </td>
  </tr>
@@ -3255,9 +3419,10 @@ and its meaning to more than one record type.&nbsp;</p>
 <h3>Categories</h3>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
-text-align:justify'>Implicit rules are associated with some fields; at least one
-extra parameter (in addition to Type, Signed, Required &amp; Maximum Size) must
-be provided in order to specify fields that fall into these categories:&nbsp;</p>
+text-align:justify'>Implicit rules are associated with some fields; at least
+one extra parameter (in addition to Type, Signed, Required &amp; Maximum Size)
+must be provided in order to specify fields that fall into these
+categories:&nbsp;</p>
 
 <table border=0 cellspacing=0 cellpadding=0 width="99%" style='width:99.92%;
  margin-left:.6pt;border-collapse:collapse;mso-padding-alt:0in 0in 0in 0in'>
@@ -3300,8 +3465,8 @@ be provided in order to specify fields that fall into these categories:&nbsp;</p
   <td width="73%" style='width:73.64%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   mso-border-top-alt:solid windowtext 1.5pt;padding:.1in .1in .1in .1in'>
-  <p>If a field&nbsp; in the Sub_Gov2 category is of Enumeration (E) type, a
-  list of the enumerated values shall be provided. Each enumerated value for a
+  <p>If a field&nbsp; in the Sub_Gov2 category is of Enumeration (E) type, a list
+  of the enumerated values shall be provided. Each enumerated value for a
   field&nbsp; in the Sub_Gov2 category shall be associated with an enumerated
   value in a field of the superior category (Sub_Gov1).&nbsp;</p>
   </td>
@@ -3361,8 +3526,8 @@ be provided in order to specify fields that fall into these categories:&nbsp;</p
 <h4>Sub_Gov1, Sub_Gov2 &amp; Sub_Gov3</h4>
 
 <p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'>The
-fields which describe administrative subdivisions constitute an implicit
-hierarchy beginning at the level of DXCC entity: </p>
+fields which describe administrative subdivisions constitute an implicit hierarchy
+beginning at the level of DXCC entity: </p>
 
 <pre style='margin-left:228.95pt'>+---DXCC|</pre><pre style='margin-left:228.95pt'>&nbsp;&nbsp;&nbsp;&nbsp; +---Sub_Gov1</pre><pre
 style='margin-left:228.95pt'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |</pre><pre
@@ -3378,9 +3543,9 @@ all the superior fields in the hierarchy up to and including DXCC entity. </p>
 
 <p style='text-align:justify;tab-stops:45.8pt 91.6pt 137.4pt 183.2pt 229.0pt 274.8pt 320.6pt 366.4pt 412.2pt 458.0pt 503.8pt 549.6pt 595.4pt 641.2pt 687.0pt 732.8pt'>A
 reader shall treat the appearance of a single field from the &quot;<span
-style='font-size:10.0pt;font-family:"Courier New"'>Sub_Gov</span>&quot;
-hierarchy as an implicit specification of a value for each of the superior
-fields in the hierarchy up to and including DXCC entity. <i>E.g.</i>,&nbsp;<span
+style='font-size:10.0pt;font-family:"Courier New"'>Sub_Gov</span>&quot; hierarchy
+as an implicit specification of a value for each of the superior fields in the
+hierarchy up to and including DXCC entity. <i>E.g.</i>,&nbsp;<span
 style='font-size:10.0pt;font-family:"Courier New"'>US_COUNTY == HI001</span>(Hawaii
 County) should be interpreted by a reader as specifying&nbsp;<span
 style='font-size:10.0pt;font-family:"Courier New"'>SUB_GOV1 == US-HI</span>
@@ -3405,8 +3570,8 @@ fields&nbsp; are non-enumerated character strings. Enumerations for
 administrative subdivisions below the top-level are typically not found in
 standardized sources such as <a href="http://geotags.com/iso3166/countries.html">ISO
 3166-2</a> and <a href="http://www.nima.mil/gns/html/fips/fips_files.html">FIPS
-Pub. 10-4</a>. Field which are members of category Sub_Gov2 and category Sub_Gov3
-and which have an enumerated field value shall have a uniquely distinguished
+Pub. 10-4</a>. Field which are members of category Sub_Gov2 and category
+Sub_Gov3 and which have an enumerated field value shall have a uniquely distinguished
 field name that shall begin with the <a
 href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html">ISO
 3166-1:1997</a> alpha-2 (two-letter) code element followed by an underscore
