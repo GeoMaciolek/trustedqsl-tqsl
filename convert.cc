@@ -82,7 +82,7 @@ char *bin2hex(const unsigned char *binStr,int len)
 {
   char *tStr;
   char	value[4];
-  tStr = (char *) malloc(len*2);
+  tStr = (char *) malloc(len*3);
 
   if (tStr == NULL)
     return(tStr);

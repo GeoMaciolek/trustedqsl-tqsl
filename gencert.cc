@@ -119,14 +119,24 @@ int main(int argc, char *argv[])
 
   if (errFlg || optCnt != 7)
     {
-      printf("usage: gencert -a Amateur-cert -p amateur-PK -C "
-	     "CA-priv-key -n cert# -i issue-date (mm/dd/yyyy) "
-	     "-e expire-date (mm/dd/yyyy) -I CA ID (10 max)\n");
+      printf("usage: gencert -s -a Amateur-cert -p amateur-PK -C "
+	     "CA-priv-key -n cert# -i issue-date "
+	     "-e expire-date -I CA ID (10 max)\n\n");
+      printf("-s              - Self Signed Cert\n");
+      printf("-a Amateur-cert - a file containing the amateur's cert\n");
+      printf("-p Amateur-PK   - a file containing the amateur public key\n");
+      printf("-C CA-priv-key  - a file containing the CA's private key\n");
+      printf("-n number       - the cert number assigned by the CA\n");
+      printf("-i issue-date   - the date which the cert was created (mm/dd/yyyy)\n");
+      printf("-i expire-date  - the date which the cert will expire (mm/dd/yyyy)\n");
+      printf("-I CA ID        - The CA's ID string must be the same for all certs.\n");
+      printf("\n");
+
       return(-1);
     }
 
   pubkey = readPubKey(amPkFile,&typ);
-  if (pk == NULL)
+  if (pubkey == NULL)
     {
       fprintf(stderr,"Unable to read public key file %s\n",amPkFile);
       return(2);
@@ -135,6 +145,7 @@ int main(int argc, char *argv[])
   dsa = DSA_new();
   if (dsa == NULL)
     {
+      free(pubkey);
       return(1);
     }
 
@@ -203,7 +214,8 @@ int main(int argc, char *argv[])
       fwrite(&amCert,sizeof(amCert),1,fp);
       fclose(fp);
     }
- 
+
+  free(pubkey);
   return(0);
 
 }

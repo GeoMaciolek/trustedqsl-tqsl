@@ -108,6 +108,7 @@ int validateCert(TqslCert *caCert, TqslCert *amCert)
 	  break;
 	}
       sigsize[i] = amCert->sigSize[i];
+      sigsize[i+1] = '\0';
     }
 
   sigLen = atol(sigsize);
@@ -124,6 +125,7 @@ int validateCert(TqslCert *caCert, TqslCert *amCert)
     }
   rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
   DSA_free(dsa);
+  ERR_remove_state(0);  // clean up error queue
   return(rc);
 
 }
