@@ -138,3 +138,4 @@ void hex2bin(char *hexStr,unsigned char *binStr,int len)
       binStr[j]=0;
     }
 }
+
