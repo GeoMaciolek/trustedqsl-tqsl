@@ -86,6 +86,7 @@ struct signedQSL
   char			mode[10];
   char			itoa[10];
   qslSignature		signature;
+  AmCertExtern		cert;
 };
 
 

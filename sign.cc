@@ -26,14 +26,21 @@
 #include "sign.h"
 #include "amcert.h"
 
+#include <openssl/bio.h>
+#include <openssl/bn.h>
+#include <openssl/sha.h>
+#include <openssl/err.h>
+#include <openssl/dsa.h>
 // #include <openssl/engine.h>
 extern int errno;
 int debugLevel;
 
 static char cvsID[] = "$Id$";
 
+//int DSA_print(BIO *bp, DSA *x, int off);
 
-static BIO *bio_err = NULL;
+//static BIO *bio_err = NULL;
+#if 0
 static void  dsa_cb(int p, int n, void *arg)
 {
   char c='*';
@@ -70,15 +77,15 @@ static void  dsa_cb(int p, int n, void *arg)
 }
 
 static char  msg[] = "This is a test of signing";
+#endif
 int main(int argc, char *argv[])
 {
   unsigned char	hash[40];
   DSA    *dsa;
-  int    dsaSize;
-  int    count,rc	;
-  unsigned long h;
-  char	*p,*q;
 
+  int    rc;
+
+  cvsID;
 
   if (argc == 2)
     {
@@ -88,7 +95,7 @@ int main(int argc, char *argv[])
     }
 
 
-  bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
+  //  bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
 
   dsa = DSA_new();
 
@@ -102,10 +109,10 @@ int main(int argc, char *argv[])
       readBig("qfile.txt",&dsa->q);      
       readBig("privkey.txt",&dsa->priv_key);
       readBig("pubkey.txt",&dsa->pub_key);
-      DSA_print(bio_err,dsa,0);
+      //      DSA_print(bio_err,dsa,0);
       rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
       printf("rc = %d - sigLen = %d\n",rc,sigLen);
-      for(int i=0;i<sigLen;i++)
+      for(int i=0;i<(int)sigLen;i++)
 	printf("%02x",sigRet[i]);
       printf("\n");
       writeSign(argv[1],sigRet,sigLen);

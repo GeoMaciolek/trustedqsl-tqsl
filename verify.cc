@@ -17,12 +17,13 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <openssl/dsa.h>
+
 #include <openssl/bio.h>
 #include <openssl/bn.h>
 #include <stdio.h>
 #include <string.h>
 #include <openssl/sha.h>
+#include <openssl/dsa.h>
 #include "sign.h"
 #include "amcert.h"
 
@@ -33,6 +34,7 @@ static char cvsID[] = "$Id$";
 
 
 static BIO *bio_err = NULL;
+#if 0
 static void  dsa_cb(int p, int n, void *arg)
 {
   char c='*';
@@ -67,16 +69,16 @@ static void  dsa_cb(int p, int n, void *arg)
       return;
     }
 }
-
-static char  msg[] = "This is a test of signing";
+#endif
+//static char  msg[] = "This is a test of signing";
 int main(int argc, char *argv[])
 {
   unsigned char	hash[40];
   DSA    *dsa;
-  int    dsaSize;
-  int    count,rc	;
-  unsigned long h;
-  char	*p,*q;
+  //  int    dsaSize;
+  int    rc;
+  //  unsigned long h;
+  //  char	*p,*q;
 
 
   if (argc == 2)
@@ -92,7 +94,7 @@ int main(int argc, char *argv[])
   dsa = DSA_new();
 
   unsigned char sigRet[100];
-  unsigned char sigTest[100];
+  //  unsigned char sigTest[100];
   unsigned int	sigLen;
 
   if (dsa != NULL)

@@ -44,18 +44,15 @@ int main(int argc, char *argv[])
   PublicKey   	*pubkey;
   AmCertExtern	amCert;
 
-
   int		rc;
   FILE		*fp;
   char		tmpStr[50];
-
   char		amPkFile[100];
   char		caPrivFile[100];
   char		amCertFile[100];
   char		certNum[10];
-
   int 		optCnt=0;
-  int 		c,errFlg;
+  int 		c,errFlg=0;
   int		selfSign=0;
 
   while ((c = getopt(argc, argv, "sC:p:a:n:d:")) != EOF)

@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
   char		amCertFile[100];
   char		caCertFile[100];
   int 		optCnt=0;
-  int 		c,errFlg;
+  int 		c,errFlg=0;
 
   while ((c = getopt(argc, argv, "C:a:d:")) != EOF)
     switch (c) 

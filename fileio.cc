@@ -34,7 +34,9 @@
 
 static char cvsID[] = "$Id$";
 
+#ifndef __CYGWIN__
 extern int errno;
+#endif
 
 void *readQpub(char *fname,char *typ)
 {
@@ -63,6 +65,7 @@ void *readQpub(char *fname,char *typ)
 
       return((void*) retbuf);
     }
+  return(NULL);
 }
   
 int writeSign(char *fname,unsigned char *sig,int len)
@@ -94,13 +97,13 @@ int writeSignAsc(char *fname, unsigned char *sig,int len)
   if (fd < 0)
     return(-1);
 
-  int rc;
+
   char *t;
   t = bin2hex(sig,len);
   write(fd,t,len*2);
   close(fd);
   free(t);
-  
+  return(len*2);
 }
 int readSignAsc(char *fname,unsigned char *sig,int len)
 {
@@ -290,5 +293,9 @@ int readBig(const char *fname,BIGNUM **bn)
       fclose(fkey);
       return(rc);
     }
+#ifdef __CYGWIN__
+  return(-1);
+#else
   return(errno);
+#endif
 }

@@ -32,6 +32,8 @@ verify:	verify.o  $(COMOBJ)
 dsatest.o:	dsatest.cc
 	$(CXX) -c dsatest.cc
 
+clean:
+	rm -f sign verify qgenkey gencert chkcert dumpcert dumppk *.o *~ core *.exe
 
 # DO NOT DELETE
 
