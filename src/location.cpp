@@ -2333,7 +2333,7 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		int major = atoi(section.getAttribute("majorversion").first.c_str());
 		int minor = atoi(section.getAttribute("minorversion").first.c_str());
 		int curmajor, curminor;
-		if (tqsl_getConfigVersion(&major, &minor))
+		if (tqsl_getConfigVersion(&curmajor, &curminor))
 			return 1;
 		const char *msg =  "Newer config already present";
 		if (major == curmajor) {
