@@ -88,15 +88,19 @@ extern "C"
 {
 #endif
 
-int tqslReadCert(const char *fname,TqslCert *);
-int tqslWriteCert(const char *fname,TqslCert *);
-int tqslCheckCert(TqslCert *cert,TqslCert *CACert);
-int tqslSignCert(TqslCert *cert,const char *caPrivFName,
+  int tqslReadCert(const char *fname,TqslCert *);
+  int tqslWriteCert(const char *fname,TqslCert *);
+  int tqslGenNewKeys(const char *callSign,const char *privFile,
+		    const char *pubFile);
+  int tqslCheckCert(TqslCert *cert,TqslCert *CACert);
+  int tqslSignCert(TqslCert *cert,const char *caPrivFName,
 		 const char *caId,const char *pubKeyFName,
 		 const char *certNum,const char *issueDate,
 		 char *expireDate);
-int tqslSignData(const char *privKeyFname,const unsigned char *data,
+  int tqslSignData(const char *privKeyFname,const unsigned char *data,
 		 TqslCert *cert,TqslSignature *signature);
+  int tqslVerifyData(TqslCert *cert,unsigned char *data,
+		     TqslSignature *signature);
   
 #ifdef __cplusplus
 }
