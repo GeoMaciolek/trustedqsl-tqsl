@@ -1,6 +1,15 @@
 TQSLLIB changes
 ===============
 
+2.0
+---
+The Windows DLL has changed to use __stdcall. This makes it
+incompatible with previous versions of the DLL, necessitating
+a change in major version number.
+
+openssl 0.9.6 or 0.9.7 is now required; earlier versions are
+not supported.
+
 1.6
 ---
 Fixed a bug in the .p12 file generation under openssl 0.9.7.
