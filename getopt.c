@@ -51,7 +51,7 @@ int	optopt;
 char	*optarg;
 
 int
-lgetopt(int argc, char **argv, char *opts)
+lgetopt(int argc, char *argv[], char *opts)
 {
   static int sp = 1;
   register int c;

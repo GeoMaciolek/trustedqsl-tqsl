@@ -70,7 +70,7 @@ int validiteCert(AmCertExtern *caCert, AmCertExtern *amCert)
   char		certKeyFn[100];
 
 
-  if (amCert->type == '0')  // then selfsigned
+  if (amCert->data.certType == '0')  // then selfsigned
     caCert = amCert;
   else if (caCert == NULL)
     caCert = amCert;

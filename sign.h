@@ -32,5 +32,6 @@ void 	hex2bin(char *hexStr,unsigned char *binStr,int len);
 int 	readSignAsc(char *fname,unsigned char *sig,int len);
 void 	*readQpub(char *fname,char *typ);
 int 	readCert(char *fname,AmCertExtern *cert);
+int	lgetopt(int argc, char *argv[], char *opts);
 #endif SIGN_H
 
