@@ -1137,6 +1137,30 @@ tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsig
 }
 
 DLLEXPORT int
+tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen) {
+	EVP_MD_CTX ctx;
+	unsigned int slen = siglen;
+
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || data == NULL || sig == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert))) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (TQSL_API_TO_CERT(cert)->key == NULL) {
+		tQSL_Error = TQSL_SIGNINIT_ERROR;
+		return 1;
+	}
+	EVP_VerifyInit(&ctx, EVP_sha1());
+	EVP_VerifyUpdate(&ctx, data, datalen);
+	if (!EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key)) {
+		tQSL_Error = TQSL_OPENSSL_ERROR;
+		return 1;
+	}
+	return 0;
+}
+
+DLLEXPORT int
 tqsl_endSigning(tQSL_Cert cert) {
 	if (tqsl_init())
 		return 1;

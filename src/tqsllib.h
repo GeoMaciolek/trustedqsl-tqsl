@@ -652,6 +652,12 @@ int tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize);
   */
 int tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen);
 
+/** Verify a signed data block.
+  *
+  * tqsl_beginSigning() need \em not have been called.
+  */
+int tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen);
+
 /** Sign a single QSO record
   *
   * tqsl_beginSigning() must have been called for
