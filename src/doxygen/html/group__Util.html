@@ -22,6 +22,8 @@
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a16">tqsl_isDateNull</a> (const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *d)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a17">tqsl_isTimeValid</a> (const <a class="el" href="structtQSL__Time.html">tQSL_Time</a> *t)</td></tr>
 <tr><td nowrap align=right valign=top>char*&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a18">tqsl_convertTimeToText</a> (const <a class="el" href="structtQSL__Time.html">tQSL_Time</a> *time, char *buf, int bufsiz)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a19">tqsl_getVersion</a> (int *major, int *minor)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a20">tqsl_getConfigVersion</a> (int *major, int *minor)</td></tr>
 <tr><td colspan=2><br><h2>Variables</h2></td></tr>
 <tr><td nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a0">tQSL_Error</a></td></tr>
 <tr><td>&nbsp;</td><td><font size=-1><em>Error code from most recent tQSL library call.</em> <a href="#a0">More...</a><em></em></font><br><br></td></tr>
@@ -29,7 +31,7 @@
 DLLEXPORT <a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a>&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a1">tQSL_ADIF_Error</a></td></tr>
 <tr><td>&nbsp;</td><td><font size=-1><em>The ADIF error code.</em></font><br><br></td></tr>
 <tr><td nowrap align=right valign=top><a name="a2" doxytag="Util::tQSL_Cabrillo_Error"></a>
-DLLEXPORT <a class="el" href="group__Cabrillo.html#a10">TQSL_CABRILLO_ERROR_TYPE</a>&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a2">tQSL_Cabrillo_Error</a></td></tr>
+DLLEXPORT <a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a>&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a2">tQSL_Cabrillo_Error</a></td></tr>
 <tr><td>&nbsp;</td><td><font size=-1><em>The ADIF error code.</em></font><br><br></td></tr>
 <tr><td nowrap align=right valign=top><a name="a3" doxytag="Util::tQSL_ErrorFile"></a>
 DLLEXPORT char&nbsp;</td><td valign=bottom><a class="el" href="group__Util.html#a3">tQSL_ErrorFile</a> [256]</td></tr>
@@ -210,7 +212,7 @@ Decode Base64 text into binary data.
 <p>
 <ul>
 <li> <code>input</code> = NUL-terminated text string of Base64-encoded data <li> <code>data</code> = pointer to output buffer <li> <code>datalen</code> = pointer to int containing the size of the output buffer in bytes</ul>
-Returns 0 if successful and places the number of resulting data bytes into <code>*datalen</code>.     </td>
+Places the number of resulting data bytes into <code>*datalen</code>.     </td>
   </tr>
 </table>
 <a name="a9" doxytag="tqsllib.h::tqsl_encodeBase64"></a><p>
@@ -260,8 +262,43 @@ int <em>outputlen</em>&nbsp;)
 Encode a block of data into Base64 text.
 <p>
 <ul>
-<li> <code>data</code> = block of data to encode <li> <code>datalen</code> = length of <code>data</code> in bytes <li> <code>output</code> = pointer to output buffer <li> <code>outputlen</code> = size of output buffer in bytes</ul>
-Returns 0 if successful.     </td>
+<li> <code>data</code> = block of data to encode <li> <code>datalen</code> = length of <code>data</code> in bytes <li> <code>output</code> = pointer to output buffer <li> <code>outputlen</code> = size of output buffer in bytes </ul>
+    </td>
+  </tr>
+</table>
+<a name="a20" doxytag="tqsllib.h::tqsl_getConfigVersion"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getConfigVersion (
+          </b></td>
+          <td valign="bottom"><b>
+int * <em>major</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int * <em>minor</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Returns the configuration-file version. <code>major</code> and/or <code>minor</code> may be NULL.     </td>
   </tr>
 </table>
 <a name="a7" doxytag="tqsllib.h::tqsl_getErrorString"></a><p>
@@ -322,6 +359,41 @@ int <em>err</em>&nbsp;)
 Gets the error string corresponding to the given error number. The error string is available only until the next call to tqsl_getErrorString_v or tqsl_getErrorString.     </td>
   </tr>
 </table>
+<a name="a19" doxytag="tqsllib.h::tqsl_getVersion"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getVersion (
+          </b></td>
+          <td valign="bottom"><b>
+int * <em>major</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int * <em>minor</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Returns the library version. <code>major</code> and/or <code>minor</code> may be NULL.     </td>
+  </tr>
+</table>
 <a name="a5" doxytag="tqsllib.h::tqsl_init"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
@@ -348,7 +420,9 @@ int tqsl_init (
     <td>
 
 <p>
-Initialize the tQSL library     </td>
+Initialize the tQSL library
+<p>
+This function should be called prior to calling any other library functions.     </td>
   </tr>
 </table>
 <a name="a11" doxytag="tqsllib.h::tqsl_initDate"></a><p>
@@ -548,7 +622,9 @@ const char * <em>dir</em>&nbsp;)
     <td>
 
 <p>
-Set the directory where the TQSL files are kept. May be called either before of after <a class="el" href="tqsllib_8h.html#a5">tqsl_init</a>(), but should be called before calling any other functions in the library.     </td>
+Set the directory where the TQSL files are kept. May be called either before of after <a class="el" href="tqsllib_8h.html#a5">tqsl_init</a>(), but should be called before calling any other functions in the library.
+<p>
+Note that this is purely optional. The library will figure out an approriate directory if tqsl_setDirectory isn't called. Unless there is some particular need to set the directory explicitly, programs should refrain from doing so.     </td>
   </tr>
 </table>
 <hr><h2>Variable Documentation</h2>
@@ -580,7 +656,7 @@ Error code from most recent tQSL library call.
 The values for the error code are defined in <a class="el" href="tqslerrno_8h.html">tqslerrno.h</a>     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Fri May 30 10:03:30 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

@@ -8,7 +8,7 @@
 <a class="qindex" href="index.html">Main Page</a> &nbsp; <a class="qindex" href="modules.html">Modules</a> &nbsp; <a class="qindex" href="annotated.html">Compound List</a> &nbsp; <a class="qindex" href="files.html">File List</a> &nbsp; <a class="qindex" href="globals.html">File Members</a> &nbsp; </center>
 <hr><h1>Signing API</h1><table border=0 cellpadding=0 cellspacing=0>
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a0">tqsl_beginSigning</a> (tQSL_Cert cert, char *password, int(*pwcb)(char *pwbuf, int pwsize))</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a0">tqsl_beginSigning</a> (tQSL_Cert cert, char *password, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a1">tqsl_checkSigningStatus</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a> (tQSL_Cert cert, int *sigsize)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a3">tqsl_signDataBlock</a> (tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen)</td></tr>
@@ -39,7 +39,13 @@ char * <em>password</em>,
         <tr>
           <td></td>
           <td><b>
-int(* <em>pwcb</em>)(char *pwbuf, int pwsize)&nbsp;)
+int(* <em>pwcb</em>)(char *pwbuf, int pwsize, void *userdata), 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+void * <em>user</em>&nbsp;)
           </b></td>
         </tr>
 
@@ -273,7 +279,7 @@ Sign a single QSO record
 <code>loc</code> must be a valid tQSL_Location object. See <a href="group__Data.html">Data API</a>.     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Fri May 30 10:03:30 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

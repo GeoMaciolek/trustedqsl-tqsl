@@ -8,26 +8,22 @@
 <a class="qindex" href="index.html">Main Page</a> &nbsp; <a class="qindex" href="modules.html">Modules</a> &nbsp; <a class="qindex" href="annotated.html">Compound List</a> &nbsp; <a class="qindex" href="files.html">File List</a> &nbsp; <a class="qindex" href="globals.html">File Members</a> &nbsp; </center>
 <hr><h1>Certificate Handling API</h1><table border=0 cellpadding=0 cellspacing=0>
 <tr><td colspan=2><br><h2>Defines</h2></td></tr>
-<tr><td nowrap align=right valign=top><a name="a28" doxytag="CertStuff::TQSL_SELECT_CERT_WITHKEYS"></a>
+<tr><td nowrap align=right valign=top><a name="a30" doxytag="CertStuff::TQSL_SELECT_CERT_WITHKEYS"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_SELECT_CERT_WITHKEYS</b>&nbsp;&nbsp;&nbsp;1</td></tr>
-<tr><td nowrap align=right valign=top><a name="a29" doxytag="CertStuff::TQSL_SELECT_CERT_EXPIRED"></a>
+<tr><td nowrap align=right valign=top><a name="a31" doxytag="CertStuff::TQSL_SELECT_CERT_EXPIRED"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_SELECT_CERT_EXPIRED</b>&nbsp;&nbsp;&nbsp;2</td></tr>
-<tr><td nowrap align=right valign=top><a name="a30" doxytag="CertStuff::TQSL_SELECT_CERT_SUPERCEDED"></a>
+<tr><td nowrap align=right valign=top><a name="a32" doxytag="CertStuff::TQSL_SELECT_CERT_SUPERCEDED"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_SELECT_CERT_SUPERCEDED</b>&nbsp;&nbsp;&nbsp;4</td></tr>
-<tr><td nowrap align=right valign=top><a name="a31" doxytag="CertStuff::TQSL_PK_TYPE_ERR"></a>
+<tr><td nowrap align=right valign=top><a name="a33" doxytag="CertStuff::TQSL_PK_TYPE_ERR"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_PK_TYPE_ERR</b>&nbsp;&nbsp;&nbsp;0</td></tr>
-<tr><td nowrap align=right valign=top><a name="a32" doxytag="CertStuff::TQSL_PK_TYPE_NONE"></a>
+<tr><td nowrap align=right valign=top><a name="a34" doxytag="CertStuff::TQSL_PK_TYPE_NONE"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_PK_TYPE_NONE</b>&nbsp;&nbsp;&nbsp;1</td></tr>
-<tr><td nowrap align=right valign=top><a name="a33" doxytag="CertStuff::TQSL_PK_TYPE_UNENC"></a>
+<tr><td nowrap align=right valign=top><a name="a35" doxytag="CertStuff::TQSL_PK_TYPE_UNENC"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_PK_TYPE_UNENC</b>&nbsp;&nbsp;&nbsp;2</td></tr>
-<tr><td nowrap align=right valign=top><a name="a34" doxytag="CertStuff::TQSL_PK_TYPE_ENC"></a>
+<tr><td nowrap align=right valign=top><a name="a36" doxytag="CertStuff::TQSL_PK_TYPE_ENC"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_PK_TYPE_ENC</b>&nbsp;&nbsp;&nbsp;3</td></tr>
-<tr><td nowrap align=right valign=top>#define&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a35">TQSL_EXPORT_USER</a>&nbsp;&nbsp;&nbsp;1</td></tr>
-<tr><td nowrap align=right valign=top>#define&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a36">TQSL_EXPORT_CA</a>&nbsp;&nbsp;&nbsp;2</td></tr>
-<tr><td nowrap align=right valign=top>#define&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a37">TQSL_EXPORT_ROOT</a>&nbsp;&nbsp;&nbsp;4</td></tr>
-<tr><td nowrap align=right valign=top>#define&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a38">TQSL_EXPORT_PRIVATE</a>&nbsp;&nbsp;&nbsp;8</td></tr>
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *callsign, int dxcc, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const char *issuer, int flag)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *callsign, int dxcc, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a> (tQSL_Cert cert, int *keyonly)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a> (tQSL_Cert cert, long *serial)</td></tr>
@@ -50,114 +46,23 @@
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a20">tqsl_getCertificateRequestCountry</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a21">tqsl_getCertificatePrivateKeyType</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>void&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate</a> (tQSL_Cert cert)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a> (const char *file, int(*cb)(int type, const char *))</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a> (const char *file, int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a24">tqsl_getNumProviders</a> (int *n)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a25">tqsl_getProvider</a> (int idx, <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> *provider)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a> (const char *filename, <a class="el" href="tqsllib_8h.html#a45">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize))</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a27">tqsl_exportKeys</a> (tQSL_Cert cert, const char *filename, int certs_flag, const char *password)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a> (const char *filename, <a class="el" href="tqsllib_8h.html#a45">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a> (tQSL_Cert cert, const char *filename, const char *p12password)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a> (const char *filename, const char *p12password, const char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a> (tQSL_Cert cert)</td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
-Certificates are managed by manipulating tQSL_Cert objects. A tQSL_Cert contains:
+Certificates are managed by manipulating <code>tQSL_Cert</code> objects. A <code>tQSL_Cert</code> contains:
 <p>
 <ul>
-<li> The identity of the organization that issued the certificate (the "issuer"). <li> The name and call sign of the amateur radio operator (ARO). <li> The range of QSO dates for which this certificate can be used. <li> The resources needed to digitally sign and verify QSO records.</ul>
+<li> The identity of the organization that issued the certificate (the "issuer"). <li> The name and call sign of the amateur radio operator (ARO). <li> The DXCC entity number for which this certificate is valid. <li> The range of QSO dates for which this certificate can be used. <li> The resources needed to digitally sign and verify QSO records.</ul>
 The certificate management process consists of:
 <p>
 <ul>
-<li> Applying for a certificate. Certificate requests are produced via the <a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a>() function, which produces a certificate-request file to send to the issuer. <li> Importing the certificate file received from the issuer into the local "certificate store," a directory managed by the tQSL library, via tqsl_importCertFile(). <li> Selecting an appropriate certificate to use to sign a QSO record via <a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(). </ul>
-<hr><h2>Define Documentation</h2>
-<a name="a36" doxytag="tqsllib.h::TQSL_EXPORT_CA"></a><p>
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-  <tr>
-    <td class="md">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td nowrap valign="top"><b> 
-#define TQSL_EXPORT_CA&nbsp;&nbsp;&nbsp;2
-      </table>
-    </td>
-  </tr>
-</table>
-<table cellspacing=5 cellpadding=0 border=0>
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-    <td>
-
-<p>
-Export CA certificate (see <a class="el" href="group__CertStuff.html#a27">tqsl_exportKeys</a>() <code>certs_flag</code> parameter)     </td>
-  </tr>
-</table>
-<a name="a38" doxytag="tqsllib.h::TQSL_EXPORT_PRIVATE"></a><p>
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-  <tr>
-    <td class="md">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td nowrap valign="top"><b> 
-#define TQSL_EXPORT_PRIVATE&nbsp;&nbsp;&nbsp;8
-      </table>
-    </td>
-  </tr>
-</table>
-<table cellspacing=5 cellpadding=0 border=0>
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-    <td>
-
-<p>
-Export User's private key (see <a class="el" href="group__CertStuff.html#a27">tqsl_exportKeys</a>() <code>certs_flag</code> parameter)     </td>
-  </tr>
-</table>
-<a name="a37" doxytag="tqsllib.h::TQSL_EXPORT_ROOT"></a><p>
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-  <tr>
-    <td class="md">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td nowrap valign="top"><b> 
-#define TQSL_EXPORT_ROOT&nbsp;&nbsp;&nbsp;4
-      </table>
-    </td>
-  </tr>
-</table>
-<table cellspacing=5 cellpadding=0 border=0>
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-    <td>
-
-<p>
-Export Root certificate (see <a class="el" href="group__CertStuff.html#a27">tqsl_exportKeys</a>() <code>certs_flag</code> parameter)     </td>
-  </tr>
-</table>
-<a name="a35" doxytag="tqsllib.h::TQSL_EXPORT_USER"></a><p>
-<table width="100%" cellpadding="2" cellspacing="0" border="0">
-  <tr>
-    <td class="md">
-      <table cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td nowrap valign="top"><b> 
-#define TQSL_EXPORT_USER&nbsp;&nbsp;&nbsp;1
-      </table>
-    </td>
-  </tr>
-</table>
-<table cellspacing=5 cellpadding=0 border=0>
-  <tr>
-    <td>
-      &nbsp;
-    </td>
-    <td>
-
-<p>
-Export User certificate (see <a class="el" href="group__CertStuff.html#a27">tqsl_exportKeys</a>() <code>certs_flag</code> parameter)     </td>
-  </tr>
-</table>
+<li> <b>Applying for a certificate.</b> Certificate requests are produced via the <a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a>() function, which produces a certificate-request file to send to the issuer. <li> <b>Importing the certificate</b> file received from the issuer into the local "certificate store," a directory managed by the tQSL library, via <a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a>(). <li> <b>Selecting an appropriate certificate</b> to use to sign a QSO record via <a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(). </ul>
 <hr><h2>Function Documentation</h2>
 <a name="a26" doxytag="tqsllib.h::tqsl_createCertRequest"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
@@ -181,7 +86,13 @@ const char * <em>filename</em>,
         <tr>
           <td></td>
           <td><b>
-int(* <em>pwcb</em>)(char *pwbuf, int pwsize)&nbsp;)
+int(* <em>pwcb</em>)(char *pwbuf, int pwsize, void *userdata), 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+void * <em>user</em>&nbsp;)
           </b></td>
         </tr>
 
@@ -201,40 +112,22 @@ Create a certificate-request Gabbi file.
 <p>
 The <code>req</code> parameter must be properly populated with the required fields.
 <p>
-If <code>req-&gt;password</code> is NULL and <code>cb</code> is not NULL, the callback will be called to acquire the password. Otherwise <code>req-&gt;password</code> will be used as the password. * If the password is NULL or an empty string the generated private key will be stored unencrypted.
+If <code>req-&gt;password</code> is NULL and <code>cb</code> is not NULL, the callback will be called to acquire the password. Otherwise <code>req-&gt;password</code> will be used as the password. If the password is NULL or an empty string the generated private key will be stored unencrypted.
 <p>
 If req-&gt;signer is not zero and the signing certificate requires a password, the password may be in req-&gt;signer_password, else signer_pwcb is called.     </td>
   </tr>
 </table>
-<a name="a27" doxytag="tqsllib.h::tqsl_exportKeys"></a><p>
+<a name="a29" doxytag="tqsllib.h::tqsl_deleteCertificate"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
           <td nowrap valign="top"><b> 
-int tqsl_exportKeys (
+int tqsl_deleteCertificate (
           </b></td>
           <td valign="bottom"><b>
-tQSL_Cert <em>cert</em>, 
-          </b></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><b>
-const char * <em>filename</em>, 
-          </b></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><b>
-int <em>certs_flag</em>, 
-          </b></td>
-        </tr>
-        <tr>
-          <td></td>
-          <td><b>
-const char * <em>password</em>&nbsp;)
+tQSL_Cert <em>cert</em>&nbsp;)
           </b></td>
         </tr>
 
@@ -250,15 +143,52 @@ const char * <em>password</em>&nbsp;)
     <td>
 
 <p>
-Save a key pair and/or certificates to a file in PKCS12 format.
+Delete a certificate and private key     </td>
+  </tr>
+</table>
+<a name="a27" doxytag="tqsllib.h::tqsl_exportPKCS12File"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_exportPKCS12File (
+          </b></td>
+          <td valign="bottom"><b>
+tQSL_Cert <em>cert</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char * <em>filename</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char * <em>p12password</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
 <p>
-[This function is not yet implemented.]
+Save a key pair and certificates to a file in PKCS12 format.
 <p>
 The tQSL_Cert must be initialized for signing (see <a class="el" href="group__Sign.html#a0">tqsl_beginSigning</a>()) if the user certificate is being exported.
 <p>
-<code>certs_flag</code> determines which certificates will be included in the file. It is the logical 'or' of TQSL_EXPORT_USER TQSL_EXPORT_CA
-<p>
-The supplied <code>password</code> is used to encrypt the private key, if the private key is included in the export.     </td>
+The supplied <code>p12password</code> is used to encrypt the PKCS12 data.     </td>
   </tr>
 </table>
 <a name="a22" doxytag="tqsllib.h::tqsl_freeCertificate"></a><p>
@@ -786,7 +716,7 @@ Determine the nature of the private key associated with a certificate.
 Returns one of the following values:
 <p>
 <ul>
-<li> TQSL_PK_TYPE_ERR - An error occurred. Use <a class="el" href="tqsllib_8h.html#a7">tqsl_getErrorString</a>() to examine. <li> TQSL_PK_TYPE_NONE - No matching private key was found. <li> TQSL_PK_TYPE_UNENC - The matching private key is unencrypted. <li> TQSL_PK_TYPE_ENC - The matching private key is encrypted (password protected). </ul>
+<li> <code>TQSL_PK_TYPE_ERR</code> - An error occurred. Use <a class="el" href="tqsllib_8h.html#a7">tqsl_getErrorString</a>() to examine. <li> <code>TQSL_PK_TYPE_NONE</code> - No matching private key was found. <li> <code>TQSL_PK_TYPE_UNENC</code> - The matching private key is unencrypted. <li> <code>TQSL_PK_TYPE_ENC</code> - The matching private key is encrypted (password protected). </ul>
     </td>
   </tr>
 </table>
@@ -1241,6 +1171,65 @@ Get the information for a certificate provider.
     </td>
   </tr>
 </table>
+<a name="a28" doxytag="tqsllib.h::tqsl_importPKCS12File"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_importPKCS12File (
+          </b></td>
+          <td valign="bottom"><b>
+const char * <em>filename</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char * <em>p12password</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char * <em>password</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int(* <em>pwcb</em>)(char *buf, int bufsiz, void *userdata), 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int(* <em>cb</em>)(int type, const char *message, void *userdata), 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+void * <em>user</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Load certificates and a private key from a PKCS12 file.     </td>
+  </tr>
+</table>
 <a name="a23" doxytag="tqsllib.h::tqsl_importTQSLFile"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
@@ -1257,7 +1246,13 @@ const char * <em>file</em>,
         <tr>
           <td></td>
           <td><b>
-int(* <em>cb</em>)(int type, const char *)&nbsp;)
+int(* <em>cb</em>)(int type, const char *message, void *userdata), 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+void * <em>user</em>&nbsp;)
           </b></td>
         </tr>
 
@@ -1281,15 +1276,13 @@ cb(type, message);
 <p>
 <code>type</code> has several fields that can be accessed via macros:
 <p>
-TQSL_CERT_CB_CALL_TYPE(type) := TQSL_CERT_CB_MILESTONE | TQSL_CERT_CB_RESULT
+<code>TQSL_CERT_CB_CALL_TYPE(type)</code> := <code>TQSL_CERT_CB_MILESTONE</code> | <code>TQSL_CERT_CB_RESULT</code>
 <p>
-TQSL_CERT_CB_CERT_TYPE(type) := TQSL_CERT_CB_ROOT | TQSL_CERT_CB_CA | TQSL_CERT_CB_USER
+<code>TQSL_CERT_CB_CERT_TYPE(type)</code> := <code>TQSL_CERT_CB_ROOT</code> | <code>TQSL_CERT_CB_CA</code> | <code>TQSL_CERT_CB_USER</code>
 <p>
-TQSL_CERT_CB_RESULT_TYPE(type) := TQSL_CERT_CB_PROMPT | TQSL_CERT_CB_WARNING | TQSL_CERT_CB_ERROR
+<code>TQSL_CERT_CB_RESULT_TYPE(type)</code> := <code>TQSL_CERT_CB_PROMPT</code> | <code>TQSL_CERT_CB_WARNING</code> | <code>TQSL_CERT_CB_ERROR</code>
 <p>
-<a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_CERT_TYPE</a>() is meaningful only if <a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_CALL_TYPE</a>()==TQSL_CERT_CB_MILESTONE
-<p>
-<a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_RESULT_TYPE</a>() is meaningful only if <a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_CALL_TYPE</a>()==TQSL_CERT_CB_RESULT     </td>
+<code><a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_RESULT_TYPE</a>()</code> is meaningful only if <code><a class="el" href="tqsllib_8h.html">TQSL_CERT_CB_CALL_TYPE</a>()</code> == <code>TQSL_CERT_CB_RESULT</code>     </td>
   </tr>
 </table>
 <a name="a0" doxytag="tqsllib.h::tqsl_selectCertificates"></a><p>
@@ -1332,7 +1325,7 @@ const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> * <em>date</em>,
         <tr>
           <td></td>
           <td><b>
-const char * <em>issuer</em>, 
+const <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> * <em>issuer</em>, 
           </b></td>
         </tr>
         <tr>
@@ -1359,13 +1352,13 @@ Get a list of certificates
 Selects a set of certificates from the user's certificate store based on optional selection criteria. The function produces a list of tQSL_Cert objects.
 <p>
 <ul>
-<li> <code>certlist</code> - Pointer to a variable that is set by the function to point to the list of tQSL_Cert objects. <li> <code>ncerts</code> - Pointer to an int that is set to the number of objects in the <code>certlist</code> list. <li> <code>callsign</code> - Optional call sign to match. <li> <code>date</code> - Optional QSO date string in ISO format. Only certs that have a QSO date range that encompasses this date will be returned. <li> <code>issuer</code> - Optional issuer (DN) string to match. <li> <code>flag</code> - OR of TQSL_SELECT_CERT_EXPIRED (include expired certs), TQSL_SELECT_CERT_SUPERCEDED and TQSL_SELECT_CERT_WITHKEYS (keys that don't have associated certs will be returned).</ul>
+<li> <code>certlist</code> - Pointer to a variable that is set by the function to point to the list of tQSL_Cert objects. <li> <code>ncerts</code> - Pointer to an int that is set to the number of objects in the <code>certlist</code> list. <li> <code>callsign</code> - Optional call sign to match. <li> <code>date</code> - Optional QSO date string in ISO format. Only certs that have a QSO date range that encompasses this date will be returned. <li> <code>issuer</code> - Optional issuer (DN) string to match. <li> <code>flag</code> - OR of <code>TQSL_SELECT_CERT_EXPIRED</code> (include expired certs), <code>TQSL_SELECT_CERT_SUPERCEDED</code> and <code>TQSL_SELECT_CERT_WITHKEYS</code> (keys that don't have associated certs will be returned).</ul>
 Returns 0 on success, nonzero on failure.
 <p>
 Each of the tQSL_Cert objects in the list should be freed by calling <a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate</a>().     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Fri May 30 10:03:30 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,
