@@ -195,7 +195,7 @@ nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
 	licenses/LICENSE LICENSE TrustedQSL.spec.in TrustedQSL.spec \
-	Makefile.g95.in help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
+	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
 	touchver.pl *.ico setup.iss.in wpwd.bat tqslcert.rc
 
 subdir = .
@@ -248,10 +248,9 @@ DIST_SOURCES = $(tqsl_SOURCES) $(tqsl_app_SOURCES) $(tqslcert_SOURCES) \
 DATA = $(nobase_help_DATA)
 
 DIST_COMMON = README $(srcdir)/Makefile.in $(srcdir)/configure \
-	ChangeLog INSTALL Makefile.am NEWS TrustedQSL.spec.in \
-	aclocal.m4 config.guess config.sub configure configure.in \
-	depcomp install-sh missing mkinstalldirs setup.iss.in \
-	sysconfig.h.in
+	ChangeLog INSTALL Makefile.am TrustedQSL.spec.in aclocal.m4 \
+	config.guess config.sub configure configure.in depcomp \
+	install-sh missing mkinstalldirs setup.iss.in sysconfig.h.in
 SOURCES = $(tqsl_SOURCES) $(tqsl_app_SOURCES) $(tqslcert_SOURCES) $(tqslcert_app_SOURCES)
 
 all: $(BUILT_SOURCES) sysconfig.h

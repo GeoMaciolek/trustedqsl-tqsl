@@ -61,7 +61,7 @@ nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
 	licenses/LICENSE LICENSE TrustedQSL.spec.in TrustedQSL.spec \
-	Makefile.g95.in help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
+	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
 	touchver.pl *.ico setup.iss.in wpwd.bat tqslcert.rc
 
 tqslbuild.h: tqslbuild.h.in Makefile
