@@ -26,13 +26,16 @@ using namespace std;
 	#include "wx/wx.h"
 #endif
 
-#include <wx/resource.h>
 #include <wx/wxhtml.h>
 #include <wx/wfstream.h>
+#include "wxutil.h"
 
 #include <iostream>
 #include <fstream>
 #include <memory>
+#ifdef __WINDOWS__
+	#include <io.h>
+#endif
 #include <zlib.h>
 #include "tqslwiz.h"
 #include "qsodatadialog.h"
@@ -40,19 +43,15 @@ using namespace std;
 #include "tqslexcept.h"
 #include "tqslpaths.h"
 #include "stationdial.h"
-#include "tqslexcept.h"
 #include "tqslconvert.h"
-#include "adif.h"
 #include "dxcc.h"
 #include "tqsl_prefs.h"
-
-#include "version.h"
 
 #undef ALLOW_UNCOMPRESSED
 
 #include "tqslbuild.h"
 
-static DocPaths docpaths("tqslapp");
+static DocPaths docpaths(wxT("tqslapp"));
 
 enum {
 	tm_f_import = 7000,
@@ -72,7 +71,7 @@ enum {
 #define TQSL_CD_MSG TQSL_ID_LOW
 #define TQSL_CD_CANBUT TQSL_ID_LOW+1
 
-static char *ErrorTitle = "TQSL Error";
+static wxString ErrorTitle(wxT("TQSL Error"));
 
 /////////// Application //////////////
 
@@ -81,7 +80,7 @@ public:
 	QSLApp();
 	virtual ~QSLApp();
 	bool OnInit();
-	virtual wxLog *CreateLogTarget();
+//	virtual wxLog *CreateLogTarget();
 };
 
 IMPLEMENT_APP(QSLApp)
@@ -96,15 +95,15 @@ getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqsl_getCertificateDXCCEntity(cert, &dxcc);
 	tqsl_getDXCCEntityName(dxcc, &dxccname);
 	
-	wxString message = wxString::Format("Enter the password to unlock the private key for\n"
-		"%s -- %s\n(This is the password you made up when you\nrequested the certificate.)",
-		call, dxccname);
+	wxString message = wxString::Format(wxT("Enter the password to unlock the private key for\n"
+		"%s -- %s\n(This is the password you made up when you\nrequested the certificate.)"),
+		wxString(call, wxConvLocal).c_str(), wxString(dxccname, wxConvLocal).c_str());
 	
-	wxString pw = wxGetPasswordFromUser(message, "Enter password", "",
+	wxString pw = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""),
 		wxGetApp().GetTopWindow());
-	if (pw == "")
+	if (pw == wxT(""))
 		return 1;
-	strncpy(buf, pw.c_str(), bufsiz);
+	strncpy(buf, pw.mb_str(), bufsiz);
 	return 0;
 }
 
@@ -131,14 +130,14 @@ ConvertingDialog::OnCancel(wxCommandEvent&) {
 }
 
 ConvertingDialog::ConvertingDialog(wxWindow *parent, const char *filename)
-	: wxDialog(parent, -1, wxString("Signing QSO Data")),
+	: wxDialog(parent, -1, wxString(wxT("Signing QSO Data"))),
 	running(true) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxString label = wxString("Converting ") + filename + " to TQSL format";
+	wxString label = wxString(wxT("Converting ")) + wxString(filename, wxConvLocal) + wxT(" to TQSL format");
 	sizer->Add(new wxStaticText(this, -1, label), 0, wxALL|wxALIGN_CENTER, 10);
-	msg = new wxStaticText(this, TQSL_CD_MSG, "");
+	msg = new wxStaticText(this, TQSL_CD_MSG, wxT(""));
 	sizer->Add(msg, 0, wxALL|wxALIGN_CENTER, 10);
-	canbut = new wxButton(this, TQSL_CD_CANBUT, "Cancel");
+	canbut = new wxButton(this, TQSL_CD_CANBUT, wxT("Cancel"));
 	sizer->Add(canbut, 0, wxALL|wxEXPAND, 10);
 	SetAutoLayout(TRUE);
 	SetSizer(sizer);
@@ -171,31 +170,31 @@ BEGIN_EVENT_TABLE(DateRangeDialog, wxDialog)
 	EVT_BUTTON(TQSL_DR_CAN, DateRangeDialog::OnCancel)
 END_EVENT_TABLE()
 
-DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxString("QSO Date Range")) {
+DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxString(wxT("QSO Date Range"))) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1,
-		"You may set the starting and/or ending QSO dates\n"
+		wxT("You may set the starting and/or ending QSO dates\n"
 		"in order to select QSOs from the input file.\n\n"
 		"QSOs prior to the starting date or after the ending\n"
 		"date will not be signed or included in the output file.\n\n"
-		"You may leave either date (or both dates) blank."
+		"You may leave either date (or both dates) blank.")
 	), 0, wxALL|wxALIGN_CENTER, 10);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, "Start Date (YYYY-MM-DD)"), 0, wxRIGHT, 5);
+	hsizer->Add(new wxStaticText(this, -1, wxT("Start Date (YYYY-MM-DD)")), 0, wxRIGHT, 5);
 	start_tc = new wxTextCtrl(this, TQSL_DR_START);
 	hsizer->Add(start_tc, 0, 0, 0);
 	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, "End Date (YYYY-MM-DD)"), 0, wxRIGHT, 5);
+	hsizer->Add(new wxStaticText(this, -1, wxT("End Date (YYYY-MM-DD)")), 0, wxRIGHT, 5);
 	end_tc = new wxTextCtrl(this, TQSL_DR_END);
 	hsizer->Add(end_tc, 0, 0, 0);
 	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
-	msg = new wxStaticText(this, TQSL_DR_MSG, "");
+	msg = new wxStaticText(this, TQSL_DR_MSG, wxT(""));
 	sizer->Add(msg, 0, wxALL, 5);
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxButton(this, TQSL_DR_OK, "Ok"), 0, wxRIGHT, 5);
-	hsizer->Add(new wxButton(this, TQSL_DR_CAN, "Cancel"), 0, wxLEFT, 10);
+	hsizer->Add(new wxButton(this, TQSL_DR_OK, wxT("Ok")), 0, wxRIGHT, 5);
+	hsizer->Add(new wxButton(this, TQSL_DR_CAN, wxT("Cancel")), 0, wxLEFT, 10);
 	sizer->Add(hsizer, 0, wxALIGN_CENTER|wxALL, 10);
 	SetAutoLayout(TRUE);
 	SetSizer(sizer);
@@ -207,17 +206,17 @@ DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxStri
 bool
 DateRangeDialog::TransferDataFromWindow() {
 	wxString text = start_tc->GetValue();
-	if (text.Trim() == "")
+	if (text.Trim() == wxT(""))
 		start.year = start.month = start.day = 0;
-	else if (tqsl_initDate(&start, text.c_str()) || !tqsl_isDateValid(&start)) {
-		msg->SetLabel("Start date is invalid");
+	else if (tqsl_initDate(&start, text.mb_str()) || !tqsl_isDateValid(&start)) {
+		msg->SetLabel(wxT("Start date is invalid"));
 		return false;
 	}
 	text = end_tc->GetValue();
-	if (text.Trim() == "")
+	if (text.Trim() == wxT(""))
 		end.year = end.month = end.day = 0;
-	else if (tqsl_initDate(&end, text.c_str()) || !tqsl_isDateValid(&end)) {
-		msg->SetLabel("End date is invalid");
+	else if (tqsl_initDate(&end, text.mb_str()) || !tqsl_isDateValid(&end)) {
+		msg->SetLabel(wxT("End date is invalid"));
 		return false;
 	}
 	return true;
@@ -240,14 +239,14 @@ init_modes() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	long cookie;
 	wxString key, value;
-	config->SetPath("/modeMap");
+	config->SetPath(wxT("/modeMap"));
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
-		value = config->Read(key, "");
-		tqsl_setADIFMode(key.c_str(), value.c_str());
+		value = config->Read(key, wxT(""));
+		tqsl_setADIFMode(key.mb_str(), value.mb_str());
 		stat = config->GetNextEntry(key, cookie);
 	}
-	config->SetPath("/");
+	config->SetPath(wxT("/"));
 }
 
 static void
@@ -256,16 +255,16 @@ init_contests() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	long cookie;
 	wxString key, value;
-	config->SetPath("/cabrilloMap");
+	config->SetPath(wxT("/cabrilloMap"));
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
-		value = config->Read(key, "");
-		int contest_type = atoi(value.c_str());
-		int callsign_field = atoi(value.AfterFirst(';').c_str());
-		tqsl_setCabrilloMapEntry(key.c_str(), callsign_field, contest_type);
+		value = config->Read(key, wxT(""));
+		int contest_type = atoi(value.mb_str());
+		int callsign_field = atoi(value.AfterFirst(';').mb_str());
+		tqsl_setCabrilloMapEntry(key.mb_str(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
-	config->SetPath("/");
+	config->SetPath(wxT("/"));
 }
 
 static void
@@ -304,7 +303,8 @@ public:
 	void EnterQSOData(wxCommandEvent& event);
 	void EditQSOData(wxCommandEvent& event);
 	void ImportQSODataFile(wxCommandEvent& event);
-	void OnExit(wxCommandEvent& event);
+	void OnExit(TQ_WXCLOSEEVENT& event);
+	void DoExit(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 #ifdef ALLOW_UNCOMPRESSED
@@ -312,7 +312,7 @@ public:
 #endif
 	void OnPreferences(wxCommandEvent& event);
 	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false);
-	tQSL_Location SelectStationLocation(const wxString& title = "", bool editonly = false);
+	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), bool editonly = false);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	wxTextCtrl *logwin;
@@ -331,7 +331,7 @@ private:
 
 void LogList::DoLogString(const wxChar *szString, time_t) {
 	wxTextCtrl *_logwin = 0;
-	if (!strncmp(szString, "Debug:", 6))
+	if (!strncmp(wxString(szString).mb_str(), "Debug:", 6))
 		return;
 	if (_frame != 0)
 		_logwin = _frame->logwin;
@@ -340,7 +340,7 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 		return;
 	}
 	_logwin->AppendText(szString);
-	_logwin->AppendText("\n");
+	_logwin->AppendText(wxT("\n"));
 }
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
@@ -356,7 +356,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_f_compress, MyFrame::OnFileCompress)
 	EVT_MENU(tm_f_uncompress, MyFrame::OnFileCompress)
 #endif
-	EVT_MENU(tm_f_exit, MyFrame::OnExit)
+	EVT_MENU(tm_f_exit, MyFrame::DoExit)
 	EVT_MENU(tm_f_preferences, MyFrame::OnPreferences)
 	EVT_MENU(tm_h_contents, MyFrame::OnHelpContents)
 	EVT_MENU(tm_h_about, MyFrame::OnHelpAbout)
@@ -364,7 +364,12 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 END_EVENT_TABLE()
 
 void
-MyFrame::OnExit(wxCommandEvent& WXUNUSED(event)) {
+MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
+	Destroy();
+}
+
+void
+MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
@@ -373,55 +378,55 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
-	file_menu->Append(tm_f_import_compress, "&Sign existing ADIF or Cabrillo file...");
+	file_menu->Append(tm_f_import_compress, wxT("&Sign existing ADIF or Cabrillo file..."));
 #ifdef ALLOW_UNCOMPRESSED
-	file_menu->Append(tm_f_import, "Sign &Uncompressed...");
+	file_menu->Append(tm_f_import, wxT("Sign &Uncompressed..."));
 #endif
 	file_menu->AppendSeparator();
-	file_menu->Append(tm_f_new, "Create &New ADIF file...");
-	file_menu->Append(tm_f_edit, "&Edit existing ADIF file...");
+	file_menu->Append(tm_f_new, wxT("Create &New ADIF file..."));
+	file_menu->Append(tm_f_edit, wxT("&Edit existing ADIF file..."));
 	file_menu->AppendSeparator();
 #ifdef ALLOW_UNCOMPRESSED
-	file_menu->Append(tm_f_compress, "Co&mpress...");
-	file_menu->Append(tm_f_uncompress, "&Uncompress...");
+	file_menu->Append(tm_f_compress, wxT("Co&mpress..."));
+	file_menu->Append(tm_f_uncompress, wxT("&Uncompress..."));
 	file_menu->AppendSeparator();
 #endif
-	file_menu->Append(tm_f_preferences, "&Preferences...");
+	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
 	file_menu->AppendSeparator();
-	file_menu->Append(tm_f_exit, "E&xit");
+	file_menu->Append(tm_f_exit, wxT("E&xit"));
 
 	// Station menu
 	wxMenu *stn_menu = new wxMenu;
-	stn_menu->Append(tm_s_add, "&Add location");
-	stn_menu->Append(tm_s_edit, "&Edit locations");
+	stn_menu->Append(tm_s_add, wxT("&Add location"));
+	stn_menu->Append(tm_s_edit, wxT("&Edit locations"));
 
 	// Help menu
 	wxMenu *help_menu = new wxMenu;
 	help.UseConfig(wxConfig::Get());
-	wxString hhp = docpaths.FindAbsoluteValidPath("tqslapp.hhp");
-	if (wxFileNameFromPath(hhp) != "") {
+	wxString hhp = docpaths.FindAbsoluteValidPath(wxT("tqslapp.hhp"));
+	if (wxFileNameFromPath(hhp) != wxT("")) {
 		if (help.AddBook(hhp))
-		help_menu->Append(tm_h_contents, "&Contents");
+		help_menu->Append(tm_h_contents, wxT("&Contents"));
 		help_menu->AppendSeparator();
 	}
-	help_menu->Append(tm_h_about, "&About");
+	help_menu->Append(tm_h_about, wxT("&About"));
 
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
-	menu_bar->Append(file_menu, "&File");
-	menu_bar->Append(stn_menu, "&Station");
-	menu_bar->Append(help_menu, "&Help");
+	menu_bar->Append(file_menu, wxT("&File"));
+	menu_bar->Append(stn_menu, wxT("&Station"));
+	menu_bar->Append(help_menu, wxT("&Help"));
 
 	SetMenuBar(menu_bar);
 
-	logwin = new wxTextCtrl(this, -1, "", wxDefaultPosition, wxSize(400, 200),
+	logwin = new wxTextCtrl(this, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
 		wxTE_MULTILINE|wxTE_READONLY);
 }
 
 static wxString
 run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
-	wxString title = "Add Station Location", wxString dataname = "") {
-	wxString rval("");
+	wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
+	wxString rval(wxT(""));
 	get_certlist("", 0);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
@@ -440,39 +445,44 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	wiz->Destroy();
 	if (!okay)
 		return rval;
-	check_tqsl_error(tqsl_setStationLocationCaptureName(loc, rval.c_str()));
+	check_tqsl_error(tqsl_setStationLocationCaptureName(loc, rval.mb_str()));
 	check_tqsl_error(tqsl_saveStationLocationCapture(loc, 1));
 	return rval;
 }
 
 void
 MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
-	help.Display("main.htm");
+	help.Display(wxT("main.htm"));
 }
 
 void
 MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxString msg = "TQSL V" VERSION "." BUILD "\n(c) 2001-2003\nAmerican Radio Relay League\n\n";
+	wxString msg = wxT("TQSL V" VERSION "." BUILD "\n(c) 2001-2005\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(tqsl_getErrorString());
+		wxLogError(wxString(tqsl_getErrorString(), wxConvLocal));
 	else
-		msg += wxString::Format("TrustedQSL library V%d.%d\n", major, minor);
+		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(tqsl_getErrorString());
+		wxLogError(wxString(tqsl_getErrorString(), wxConvLocal));
 	else
-		msg += wxString::Format("Configuration data V%d.%d", major, minor);
-	wxMessageBox(msg, "About", wxOK|wxCENTRE|wxICON_INFORMATION, this);
+		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
+	msg += wxVERSION_STRING;
+#ifdef wxUSE_UNICODE
+	if (wxUSE_UNICODE)
+		msg += wxT(" (Unicode)");
+#endif
+	wxMessageBox(msg, wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
 static void
-AddEditStationLocation(tQSL_Location loc, const char *title = "Add Station Location") {
+AddEditStationLocation(tQSL_Location loc, const wxString& title = wxT("Add Station Location")) {
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
 		run_station_wizard(frame, loc, &(frame->help), title);
 	}
 	catch (TQSLException& x) {
-		wxLogError(x.what());
+		wxLogError(wxString(x.what(), wxConvLocal));
 	}
 }
 
@@ -486,75 +496,75 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 
 void
 MyFrame::EditStationLocation(wxCommandEvent& WXUNUSED(event)) {
-	SelectStationLocation("Edit Station Locations", true);
+	SelectStationLocation(wxT("Edit Station Locations"), true);
 }
 
 void
 MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 	if (recs.empty()) {
-		wxLogWarning("No QSO records");
+		wxLogWarning(wxT("No QSO records"));
 		return;
 	}
 	wxString s_fname;
 	if (fname)
-		s_fname = fname;
-	if (s_fname == "" || !force) {
+		s_fname = wxString(fname, wxConvLocal);
+	if (s_fname == wxT("") || !force) {
 		wxString path, basename, type;
-		wxSplitPath(s_fname.c_str(), &path, &basename, &type);
-		if (type != "")
-			basename += "." + type;
-		if (path == "")
-			path = wxConfig::Get()->Read("QSODataPath", "");
-		s_fname = wxFileSelector("Save File", path, basename, "adi",
-			"ADIF files (*.adi)|*.adi|All files (*.*)|*.*",
+		wxSplitPath(s_fname, &path, &basename, &type);
+		if (type != wxT(""))
+			basename += wxT(".") + type;
+		if (path == wxT(""))
+			path = wxConfig::Get()->Read(wxT("QSODataPath"), wxT(""));
+		s_fname = wxFileSelector(wxT("Save File"), path, basename, wxT("adi"),
+			wxT("ADIF files (*.adi)|*.adi|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
-		if (s_fname == "")
+		if (s_fname == wxT(""))
 			return;
-		wxConfig::Get()->Write("QSODataPath", wxPathOnly(s_fname));
+		wxConfig::Get()->Write(wxT("QSODataPath"), wxPathOnly(s_fname));
 	}
-	ofstream out(s_fname.c_str(), ios::out|ios::trunc|ios::binary);
+	ofstream out(s_fname.mb_str(), ios::out|ios::trunc|ios::binary);
 	if (!out.is_open())
 		return;
 	unsigned char buf[256];
 	QSORecordList::iterator it;
 	for (it = recs.begin(); it != recs.end(); it++) {
 		wxString dtstr;
-		tqsl_adifMakeField("CALL", 0, (const unsigned char*)it->_call.c_str(), -1, buf, sizeof buf);
+		tqsl_adifMakeField("CALL", 0, (const unsigned char*)(const char *)it->_call.mb_str(), -1, buf, sizeof buf);
 		out << buf << endl;
-		tqsl_adifMakeField("BAND", 0, (const unsigned char*)it->_band.c_str(), -1, buf, sizeof buf);
+		tqsl_adifMakeField("BAND", 0, (const unsigned char*)(const char *)it->_band.mb_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		tqsl_adifMakeField("MODE", 0, (const unsigned char*)it->_mode.c_str(), -1, buf, sizeof buf);
+		tqsl_adifMakeField("MODE", 0, (const unsigned char*)(const char *)it->_mode.mb_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		dtstr.Printf("%04d%02d%02d", it->_date.year, it->_date.month, it->_date.day);
-		tqsl_adifMakeField("QSO_DATE", 0, (const unsigned char*)dtstr.c_str(), -1, buf, sizeof buf);
+		dtstr.Printf(wxT("%04d%02d%02d"), it->_date.year, it->_date.month, it->_date.day);
+		tqsl_adifMakeField("QSO_DATE", 0, (const unsigned char*)(const char *)dtstr.mb_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		dtstr.Printf("%02d%02d%02d", it->_time.hour, it->_time.minute, it->_time.second);
-		tqsl_adifMakeField("TIME_ON", 0, (const unsigned char*)dtstr.c_str(), -1, buf, sizeof buf);
+		dtstr.Printf(wxT("%02d%02d%02d"), it->_time.hour, it->_time.minute, it->_time.second);
+		tqsl_adifMakeField("TIME_ON", 0, (const unsigned char*)(const char *)dtstr.mb_str(), -1, buf, sizeof buf);
 		out << "   " << buf << endl;
-		if (it->_freq != "") {
-			tqsl_adifMakeField("FREQ", 0, (const unsigned char*)it->_freq.c_str(), -1, buf, sizeof buf);
+		if (it->_freq != wxT("")) {
+			tqsl_adifMakeField("FREQ", 0, (const unsigned char*)(const char *)it->_freq.mb_str(), -1, buf, sizeof buf);
 			out << "   " << buf << endl;
 		}
-		if (it->_rxband != "") {
-			tqsl_adifMakeField("BAND_RX", 0, (const unsigned char*)it->_rxband.c_str(), -1, buf, sizeof buf);
+		if (it->_rxband != wxT("")) {
+			tqsl_adifMakeField("BAND_RX", 0, (const unsigned char*)(const char *)it->_rxband.mb_str(), -1, buf, sizeof buf);
 			out << "   " << buf << endl;
 		}
-		if (it->_rxfreq != "") {
-			tqsl_adifMakeField("FREQ_RX", 0, (const unsigned char*)it->_rxfreq.c_str(), -1, buf, sizeof buf);
+		if (it->_rxfreq != wxT("")) {
+			tqsl_adifMakeField("FREQ_RX", 0, (const unsigned char*)(const char *)it->_rxfreq.mb_str(), -1, buf, sizeof buf);
 			out << "   " << buf << endl;
 		}
-		if (it->_propmode != "") {
-			tqsl_adifMakeField("PROP_MODE", 0, (const unsigned char*)it->_propmode.c_str(), -1, buf, sizeof buf);
+		if (it->_propmode != wxT("")) {
+			tqsl_adifMakeField("PROP_MODE", 0, (const unsigned char*)(const char *)it->_propmode.mb_str(), -1, buf, sizeof buf);
 			out << "   " << buf << endl;
 		}
-		if (it->_satellite != "") {
-			tqsl_adifMakeField("SAT_NAME", 0, (const unsigned char*)it->_satellite.c_str(), -1, buf, sizeof buf);
+		if (it->_satellite != wxT("")) {
+			tqsl_adifMakeField("SAT_NAME", 0, (const unsigned char*)(const char *)it->_satellite.mb_str(), -1, buf, sizeof buf);
 			out << "   " << buf << endl;
 		}
 		out << "<EOR>" << endl;
 	}
 	out.close();
-	wxLogMessage("Wrote %d QSO records to %s", recs.size(), s_fname.c_str());
+	wxLogMessage(wxT("Wrote %d QSO records to %s"), recs.size(), s_fname.c_str());
 }
 
 static tqsl_adifFieldDefinitions fielddefs[] = {
@@ -582,39 +592,39 @@ adif_alloc(size_t n) {
 void
 MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	QSORecordList recs;
-	wxString file = wxFileSelector("Open File", wxConfig::Get()->Read("QSODataPath", ""), "", "adi",
-			"ADIF files (*.adi)|*.adi|All files (*.*)|*.*",
+	wxString file = wxFileSelector(wxT("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
+			wxT("ADIF files (*.adi)|*.adi|All files (*.*)|*.*"),
 			wxOPEN|wxFILE_MUST_EXIST, this);
-	if (file == "")
+	if (file == wxT(""))
 		return;
 	init_modes();
 	tqsl_adifFieldResults field;
 	TQSL_ADIF_GET_FIELD_ERROR stat;
 	tQSL_ADIF adif;
-	check_tqsl_error(tqsl_beginADIF(&adif, file.c_str()));
+	check_tqsl_error(tqsl_beginADIF(&adif, file.mb_str()));
 	QSORecord rec;
 	do {
 		check_tqsl_error(tqsl_getADIFField(adif, &field, &stat, fielddefs, defined_types, adif_alloc));
 		if (stat == TQSL_ADIF_GET_FIELD_SUCCESS) {
 			if (!strcasecmp(field.name, "CALL"))
-				rec._call = (const char *)field.data;
+				rec._call = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "BAND"))
-				rec._band = (const char *)field.data;
+				rec._band = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "BAND_RX"))
-				rec._rxband = (const char *)field.data;
+				rec._rxband = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "MODE")) {
-				rec._mode = (const char *)field.data;
+				rec._mode = wxString((const char *)field.data, wxConvLocal);
 				char amode[40];
-				if (tqsl_getADIFMode(rec._mode.c_str(), amode, sizeof amode) == 0 && amode[0] != '\0')
-					rec._mode = amode;
+				if (tqsl_getADIFMode(rec._mode.mb_str(), amode, sizeof amode) == 0 && amode[0] != '\0')
+					rec._mode = wxString(amode, wxConvLocal);
 			} else if (!strcasecmp(field.name, "FREQ"))
-				rec._freq = (const char *)field.data;
+				rec._freq = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "FREQ_RX"))
-				rec._rxfreq = (const char *)field.data;
+				rec._rxfreq = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "PROP_MODE"))
-				rec._propmode = (const char *)field.data;
+				rec._propmode = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "SAT_NAME"))
-				rec._satellite = (const char *)field.data;
+				rec._satellite = wxString((const char *)field.data, wxConvLocal);
 			else if (!strcasecmp(field.name, "QSO_DATE")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) == 8) {
@@ -645,9 +655,9 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	try {
 		QSODataDialog dial(this, &help, &recs);
 		if (dial.ShowModal() == wxID_OK)
-			WriteQSOFile(recs, file);
+			WriteQSOFile(recs, file.mb_str());
 	} catch (TQSLException& x) {
-		wxLogError(x.what());
+		wxLogError(wxString(x.what(), wxConvLocal));
 	}
 }
 
@@ -659,7 +669,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs);
 	} catch (TQSLException& x) {
-		wxLogError(x.what());
+		wxLogError(wxString(x.what(), wxConvLocal));
 	}
 }
 
@@ -680,65 +690,66 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 
 	get_certlist(callsign, dxcc);
 	if (ncerts == 0) {
-		wxMessageBox("No matching certs for QSO", ErrorTitle, wxOK|wxCENTRE, this);
+		wxMessageBox(wxT("No matching certs for QSO"), ErrorTitle, wxOK|wxCENTRE, this);
 		return false;
 	}
 
-	wxLogMessage("Signing using CALL=%s, DXCC=%d", callsign, dxcc);
+	wxLogMessage(wxT("Signing using CALL=%s, DXCC=%d"), wxString(callsign, wxConvLocal).c_str(),
+		dxcc);
 
 	init_modes();
 	init_contests();
 
 	if (compressed)
-		gout = gzopen(outfile, "wb9");
+		gout = gzopen(outfile.mb_str(), "wb9");
 	else
-		out.open(outfile, ios::out|ios::trunc|ios::binary);
+		out.open(outfile.mb_str(), ios::out|ios::trunc|ios::binary);
 
 	if ((compressed && !gout) || (!compressed && !out)) {
-		wxMessageBox(wxString("Unable to open ") + outfile, ErrorTitle, wxOK|wxCENTRE, this);
+		wxMessageBox(wxString(wxT("Unable to open ")) + outfile, ErrorTitle, wxOK|wxCENTRE, this);
 		return false;
 	}
 
-	ConvertingDialog *conv_dial = new ConvertingDialog(this, name.c_str());
+	ConvertingDialog *conv_dial = new ConvertingDialog(this, name.mb_str());
 	int n = 0;
 	bool cancelled = false;
 	int lineno = 0;
 	int out_of_range = 0;
    	try {
-   		if (tqsl_beginCabrilloConverter(&conv, infile.c_str(), certlist, ncerts, loc)) {
+   		if (tqsl_beginCabrilloConverter(&conv, infile.mb_str(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
-	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.c_str(), certlist, ncerts, loc));
+	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.mb_str(), certlist, ncerts, loc));
 		}
 		bool range = true;
-		config->Read("DateRange", &range);
+		config->Read(wxT("DateRange"), &range);
 		if (range) {
 			DateRangeDialog dial(this);
 			if (dial.ShowModal() != wxOK) {
-				wxLogMessage("Cancelled");
+				wxLogMessage(wxT("Cancelled"));
 				return false;
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
 		}
 		bool allow = false;
-		config->Read("BadCalls", &allow);
+		config->Read(wxT("BadCalls"), &allow);
 		tqsl_setConverterAllowBadCall(conv, allow);
-		wxSplitPath(infile.c_str(), 0, &name, &ext);
-		if (ext != "")
-			name += "." + ext;
+		wxSplitPath(infile, 0, &name, &ext);
+		if (ext != wxT(""))
+			name += wxT(".") + ext;
 		conv_dial->Show(TRUE);
 		this->Enable(FALSE);
 		bool ignore_err = false;
 		int major = 0, minor = 0, config_major = 0, config_minor = 0;
 		tqsl_getVersion(&major, &minor);
 		tqsl_getConfigVersion(&config_major, &config_minor);
-		wxString ident = wxString::Format("%s Lib: V%d.%d Config: V%d.%d", iam,
+		wxString ident = wxString::Format(wxT("%s Lib: V%d.%d Config: V%d.%d"), wxString(iam, wxConvLocal).c_str(),
 			major, minor, config_major, config_minor);
-		wxString gabbi_ident = wxString::Format("<TQSL_IDENT:%d>%s", ident.length(), ident.c_str());
-		gabbi_ident += "\n";
+		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), ident.length(), ident.c_str());
+		gabbi_ident += wxT("\n");
 		if (compressed)
-			gzwrite(gout, const_cast<char *>(gabbi_ident.c_str()), gabbi_ident.length());
+			gzwrite(gout, (const char *)gabbi_ident.mb_str(), gabbi_ident.length());
 		else
 			out << gabbi_ident << endl;
    		do {
@@ -748,7 +759,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
   						break;
 					++n;
 					if ((n % 10) == 0)
-		   	   			conv_dial->msg->SetLabel(wxString::Format("%d", n));
+		   	   			conv_dial->msg->SetLabel(wxString::Format(wxT("%d"), n));
 					if (compressed) {
 	  					gzwrite(gout, const_cast<char *>(cp), strlen(cp));
 						gzputs(gout, "\n");
@@ -769,7 +780,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 	   				if ((rval = tqsl_beginSigning(cert, 0, getPassword, cert)) == 0)
 						break;
 					if (tQSL_Error == TQSL_PASSWORD_ERROR)
-						wxLogMessage("Password error");
+						wxLogMessage(wxT("Password error"));
 				} while (tQSL_Error == TQSL_PASSWORD_ERROR);
    				check_tqsl_error(rval);
    				continue;
@@ -784,15 +795,15 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 					check_tqsl_error(1);
 				} catch (TQSLException& x) {
 					tqsl_getConverterLine(conv, &lineno);
-					wxString msg = x.what();
+					wxString msg = wxString(x.what(), wxConvLocal);
 					if (lineno)
-						msg += wxString::Format(" on line %d", lineno);
+						msg += wxString::Format(wxT(" on line %d"), lineno);
 					const char *bad_text = tqsl_getConverterRecordText(conv);
 					if (bad_text)
-						msg += wxString("\n") + bad_text;
+						msg += wxString(wxT("\n")) + wxString(bad_text, wxConvLocal);
 					wxLogError(msg);
 					if (!ignore_err) {
-						if (wxMessageBox(wxString("Error: ") + msg + "\n\nIgnore errors?", "Error", wxYES_NO, this) == wxNO)
+						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO)
 							throw x;
 					}
 					ignore_err = true;
@@ -810,7 +821,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 		else
 			out.close();
    		if (cancelled) {
-   			wxLogWarning("Signing cancelled");
+   			wxLogWarning(wxT("Signing cancelled"));
    		} else if (tQSL_Error != TQSL_NO_ERROR) {
    			check_tqsl_error(1);
 		}
@@ -827,23 +838,23 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 		tqsl_getConverterLine(conv, &lineno);
    		tqsl_endConverter(&conv);
 		if (lineno)
-			msg += wxString::Format(" on line %d", lineno);
-		unlink(outfile.c_str());
-		wxLogError("Signing aborted due to errors");
+			msg += wxString::Format(wxT(" on line %d"), lineno).mb_str();
+		unlink(outfile.mb_str());
+		wxLogError(wxT("Signing aborted due to errors"));
    		throw TQSLException(msg.c_str());
    	}
 	if (out_of_range > 0)
-		wxLogMessage(wxString::Format("%s: %d QSO records were outside the selected date range",
+		wxLogMessage(wxString::Format(wxT("%s: %d QSO records were outside the selected date range"),
 			infile.c_str(), out_of_range));
 	if (cancelled || n == 0)
-		wxLogMessage("No records output");
+		wxLogMessage(wxT("No records output"));
 	else
-	   	wxLogMessage(wxString::Format("%s: wrote %d records to %s", infile.c_str(), n,
+	   	wxLogMessage(wxString::Format(wxT("%s: wrote %d records to %s"), infile.c_str(), n,
 			outfile.c_str()));
 	if (!cancelled && n > 0)
-		wxLogMessage(outfile + " is ready to be emailed or uploaded");
+		wxLogMessage(outfile + wxT(" is ready to be emailed or uploaded"));
 	else
-		unlink(outfile.c_str());
+		unlink(outfile.mb_str());
 	return cancelled;
 }
 
@@ -854,7 +865,7 @@ MyFrame::SelectStationLocation(const wxString& title, bool editonly) {
    	wxString selname;
    	do {
    		TQSLGetStationNameDialog station_dial(this, &help, wxDefaultPosition, false, title, editonly);
-   		if (selname != "")
+   		if (selname != wxT(""))
    			station_dial.SelectName(selname);
    		rval = station_dial.ShowModal();
    		switch (rval) {
@@ -866,12 +877,12 @@ MyFrame::SelectStationLocation(const wxString& title, bool editonly) {
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_MORE:
-   		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().c_str()));
-   				selname = run_station_wizard(this, loc, &help, "Edit Station Location", station_dial.Selected());
+   		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
+   				selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_OK:
-   		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().c_str()));
+   		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
    				break;
    		}
    	} while (rval != wxID_OK);
@@ -884,13 +895,13 @@ wx_tokens(const wxString& str, vector<wxString> &toks) {
 	size_t newidx;
 	wxString tok;
 	do {
-		newidx = str.find(" ", idx);
+		newidx = str.find(wxT(" "), idx);
 		if (newidx != wxString::npos) {
 			toks.push_back(str.Mid(idx, newidx - idx));
 			idx = newidx + 1;
 		}
 	} while (newidx != wxString::npos);
-	if (str.Mid(idx) != "")
+	if (str.Mid(idx) != wxT(""))
 		toks.push_back(str.Mid(idx));
 }
 
@@ -899,61 +910,62 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 	try {
 		bool compressed = (event.m_id == tm_f_import_compress);
-		tQSL_Location loc = SelectStationLocation("Select Station Location for Signing");
+		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
 			return;
    		// Get input file
-		wxString path = wxConfig::Get()->Read("ImportPath", "");
+		wxString path = wxConfig::Get()->Read(wxT("ImportPath"), wxString(wxT("")));
 		// Construct filter string for file-open dialog
-		wxString filter = "All files (*.*)|*.*";
+		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
-		wxString file_exts = wxConfig::Get()->Read("ADIFFiles", DEFAULT_ADIF_FILES);
+		wxString file_exts = wxConfig::Get()->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
-			filter += "|ADIF files (*." + exts[i] + ")|*." + exts[i];
+			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
 		}
 		exts.clear();
-		file_exts = wxConfig::Get()->Read("CabrilloFiles", DEFAULT_CABRILLO_FILES);
+		file_exts = wxConfig::Get()->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
-			filter += "|Cabrillo files (*." + exts[i] + ")|*." + exts[i];
+			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
 		}
-		infile = wxFileSelector("Select file to Sign", path, "", "adi", filter,
+		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), wxT("adi"), filter,
 			wxOPEN|wxFILE_MUST_EXIST, this);
-   		if (infile == "")
+   		if (infile == wxT(""))
    			return;
-		wxConfig::Get()->Write("ImportPath", wxPathOnly(infile));
+		wxConfig::Get()->Write(wxT("ImportPath"), wxPathOnly(infile));
 		// Get output file
 		wxString basename;
 		wxSplitPath(infile.c_str(), 0, &basename, 0);
-		path = wxConfig::Get()->Read("ExportPath", "");
-		wxString deftype = compressed ? "tq8" : "tq7";
-		filter = compressed ? "TQSL compressed data files (*.tq8)|*.tq8"
-			: "TQSL data files (*.tq7)|*.tq7";
-   		wxString outfile = wxFileSelector("Select file to write to",
-   			path, basename, "tq7", filter + "|All files (*.*)|*.*",
+		path = wxConfig::Get()->Read(wxT("ExportPath"), wxString(wxT("")));
+		wxString deftype = compressed ? wxT("tq8") : wxT("tq7");
+		filter = compressed ? wxT("TQSL compressed data files (*.tq8)|*.tq8")
+			: wxT("TQSL data files (*.tq7)|*.tq7");
+   		wxString outfile = wxFileSelector(wxT("Select file to write to"),
+   			path, basename, wxT("tq7"), filter + wxT("|All files (*.*)|*.*"),
    			wxSAVE|wxOVERWRITE_PROMPT, this);
-   		if (outfile == "")
+   		if (outfile == wxT(""))
    			return;
-		wxConfig::Get()->Write("ExportPath", wxPathOnly(outfile));
+		wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(outfile));
 		char callsign[40];
 		int dxccnum;
 		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		if (wxMessageBox(wxString::Format("The file (%s) will be signed using:\n"
-			"Call sign: %s\nDXCC: %s\nIs this correct?", infile.c_str(),
-			callsign, dxcc.name()), "TQSL - Confirm signing", wxYES_NO, this) == wxYES)
+		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
+			"Call sign: %s\nDXCC: %s\nIs this correct?"), infile.c_str(),
+			wxString(callsign, wxConvLocal).c_str(), wxString(dxcc.name(), wxConvLocal).c_str()),
+			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			ConvertLogFile(loc, infile, outfile, compressed);
 		else
-			wxLogMessage("Signing abandoned");
+			wxLogMessage(wxT("Signing abandoned"));
 	}
 	catch (TQSLException& x) {
 		wxString s;
-		if (infile != "")
-			s = infile + ": ";
-		s += x.what();
+		if (infile != wxT(""))
+			s = infile + wxT(": ");
+		s += wxString(x.what(), wxConvLocal);
 		wxLogError(s);
 	}
 	free_certlist();
@@ -1038,7 +1050,8 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 		gzclose(gout);
 	}
 	wxLogMessage(wxString::Format("%s written to %s file %s", infile.c_str(),
-		(uncompress ? "uncompressed" : "compressed"), outfile.c_str()));
+		wxString(uncompress ? "uncompressed" : "compressed", wxConvLocal).c_str(),
+		outfile.c_str()));
 }
 
 #endif // ALLOW_UNCOMPRESSED
@@ -1049,7 +1062,7 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 }
 
 QSLApp::QSLApp() : wxApp() {
-	wxConfigBase::Set(new wxConfig("tqslapp"));
+	wxConfigBase::Set(new wxConfig(wxT("tqslapp")));
 }
 
 QSLApp::~QSLApp() {
@@ -1058,19 +1071,25 @@ QSLApp::~QSLApp() {
 		delete c;
 }
 
+/*
 wxLog *
 QSLApp::CreateLogTarget() {
+cerr << "called" << endl;
 	MyFrame *mf = (MyFrame *)GetTopWindow();
 	if (mf)
 		return new LogList(mf);
 	return 0;
 }
+*/
 
 bool
 QSLApp::OnInit() {
-	MyFrame *frame = new MyFrame("TQSL", 50, 50, 550, 400);
+	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400);
 	frame->Show(true);
 	SetTopWindow(frame);
+
+	LogList *log = new LogList(frame);
+	wxLog::SetActiveTarget(log);
 
 	tQSL_Location loc = 0;
 	bool locsw = false;
@@ -1078,32 +1097,32 @@ QSLApp::OnInit() {
 		if (locsw) {
 			if (loc)
 				tqsl_endStationLocationCapture(&loc);
-			if (tqsl_getStationLocation(&loc, argv[i])) {
-				wxMessageBox(tqsl_getErrorString(), ErrorTitle, wxOK|wxCENTRE, frame);
+			if (tqsl_getStationLocation(&loc, wxString(argv[i]).mb_str())) {
+				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), ErrorTitle, wxOK|wxCENTRE, frame);
 				return false;
 			}
 			locsw = false;
-		} else if (!strcasecmp(argv[i], "-l")) {
+		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-l")) {
 			locsw = true;
-		} else if (!strcasecmp(argv[i], "-s")) {
+		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-s")) {
 			// Add/Edit station location
 			if (loc == 0) {
 				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
 				AddEditStationLocation(loc);
 			} else
-				AddEditStationLocation(loc, "Edit Station Location");
-		} else if (!strcasecmp(argv[i], "-x")) {
+				AddEditStationLocation(loc, wxT("Edit Station Location"));
+		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-x")) {
 			return false;
 		} else {
 			if (loc == 0)
-				loc = frame->SelectStationLocation("Select Station Location for Signing");
+				loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 			if (loc == 0)
 				return false;
 			wxString path, name, ext;
 			wxSplitPath(argv[i], &path, &name, &ext);
-			if (path != "")
-				path += "/";
-			path += name + ".tq8";
+			if (path != wxT(""))
+				path += wxT("/");
+			path += name + wxT(".tq8");
 			wxString infile(argv[i]);
 			try {
 				if (frame->ConvertLogFile(loc, infile, path, true))
@@ -1111,8 +1130,8 @@ QSLApp::OnInit() {
 			} catch (TQSLException& x) {
 				wxString s;
 				if (infile)
-					s = infile + ": ";
-				s += x.what();
+					s = infile + wxT(": ");
+				s += wxString(x.what(), wxConvLocal);
 				wxLogError(s);
 			}
 		}

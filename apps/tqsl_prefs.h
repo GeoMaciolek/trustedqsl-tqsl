@@ -35,8 +35,8 @@
 
 #include <map>
 
-#define DEFAULT_CABRILLO_FILES "log cbr"
-#define DEFAULT_ADIF_FILES "adi"
+#define DEFAULT_CABRILLO_FILES wxT("log cbr")
+#define DEFAULT_ADIF_FILES wxT("adi")
 
 enum {		// Window IDs
 	ID_OK_BUT,
@@ -59,7 +59,7 @@ enum {		// Window IDs
 
 class PrefsPanel : public wxPanel {
 public:
-	PrefsPanel(wxWindow *parent, const wxString& helpfile = "prefs.htm") :
+	PrefsPanel(wxWindow *parent, const wxString& helpfile = wxT("prefs.htm")) :
 		wxPanel(parent), _helpfile(helpfile) {}
 	wxString HelpFile() { return _helpfile; }
 private:
@@ -139,7 +139,7 @@ private:
 
 class EditContest : public wxDialog {
 public:
-	EditContest(wxWindow *parent, wxString ctype = "Edit", wxString _contest = "",
+	EditContest(wxWindow *parent, wxString ctype = wxT("Edit"), wxString _contest = wxT(""),
 		int _contest_type = 0, int _callsign_field = 5);
 	void OnOK(wxCommandEvent&);
 	void OnCancel(wxCommandEvent &) { Close(true); }

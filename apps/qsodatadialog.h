@@ -39,7 +39,7 @@
 
 class QSORecord {
 public:
-	QSORecord() { _mode = "CW"; _band = "160M"; _rxband = ""; }
+	QSORecord() { _mode = wxT("CW"); _band = wxT("160M"); _rxband = wxT(""); }
 
 	wxString _call, _freq, _rxfreq;
 	wxString _mode, _band, _rxband;
@@ -53,7 +53,7 @@ typedef std::vector<QSORecord> QSORecordList;
 class QSODataDialog : public wxDialog  {
 public: 
 	QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist = 0,
-		wxWindowID id = -1, const wxString& title = "QSO Data");
+		wxWindowID id = -1, const wxString& title = wxT("QSO Data"));
 	~QSODataDialog();
 	wxString GetMode() const;
 	bool SetMode(const wxString&);

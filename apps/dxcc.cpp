@@ -64,6 +64,8 @@ DXCC::getNext() {
 
 bool
 DXCC::getByEntity(int e) {
+	_number = 0;
+	_name = "<NONE>";
 	if (!init())
 		return false;
 	for (int i = 0; i < num_entities; i++) {
@@ -74,8 +76,6 @@ DXCC::getByEntity(int e) {
 			return true;
 		}
 	}
-	_number = 0;
-	_name = "<NONE>";
 	return false;
 }
 

@@ -26,6 +26,16 @@
 	#include "wx/wx.h"
 #endif
 
+#if wxCHECK_VERSION(2, 5, 0)
+	#define TQ_WXCLOSEEVENT wxCloseEvent
+	#define TQ_WXTEXTEVENT wxCommandEvent
+	#define TQ_WXCOOKIE wxTreeItemIdValue
+#else
+	#define TQ_WXCLOSEEVENT wxCommandEvent
+	#define TQ_WXTEXTEVENT wxEvent
+	#define TQ_WXCOOKIE long
+#endif
+
 wxSize getTextSize(wxWindow *win);
 
 #endif	// __wxutil_h

@@ -12,6 +12,10 @@
 #include "sysconfig.h"
 #endif
 
+#ifdef MAC
+#include "Carbon.h"
+#endif
+
 #include <wx/filefn.h>
 #if defined(__WIN32__)
 	#include <windows.h>
@@ -20,7 +24,7 @@
 class DocPaths : public wxPathList {
 public:
 	DocPaths(wxString subdir) : wxPathList() {
-		Add(wxGetHomeDir() + "/help/" + subdir);
+		Add(wxGetHomeDir() + wxT("/help/") + subdir);
 #if defined(__WIN32__)
 		HKEY hkey;
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\TrustedQSL",
@@ -34,9 +38,27 @@ public:
 				Add(wxString(path) + "/" + subdir);
 			}
 		}
-		Add("help/" + subdir);
+		Add(wxT("help/") + subdir);
+#elif defined(MAC)
+                CFURLRef mainBundleURL;
+                FSRef bundleFSRef;
+                char npath[1024];
+
+                mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+                CFURLGetFSRef(mainBundleURL, &bundleFSRef);
+                FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath)
+ - 1);
+                // if last char is not a /, append one
+                if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
+                {
+                        strcat(npath,"/");
+                }
+
+                CFRelease(mainBundleURL);
+
+                Add(wxString(npath) + wxT("Contents/Resources/Help/"));
 #else
-		Add("/usr/share/TrustedQSL/help/" + subdir);
+		Add(wxT("/usr/share/TrustedQSL/help/") + subdir);
 		Add(subdir);
 #endif
 	}

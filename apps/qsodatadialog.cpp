@@ -34,6 +34,13 @@ using namespace std;
 	#define TEXT_POINTS 10
 	#define VSEP 3
 	#define GEOM1 4
+#elif defined(MAC)
+        #define TEXT_HEIGHT 24
+        #define LABEL_HEIGHT 18
+        #define TEXT_WIDTH 8
+        #define TEXT_POINTS 10
+        #define VSEP 3
+        #define GEOM1 4
 #else
 	#define TEXT_HEIGHT 18
 	#define LABEL_HEIGHT TEXT_HEIGHT
@@ -42,6 +49,9 @@ using namespace std;
 	#define VSEP 4
 	#define GEOM1 6
 #endif
+
+#undef TEXT_HEIGHT
+#define TEXT_HEIGHT -1
 
 #define SKIP_HEIGHT (TEXT_HEIGHT+VSEP)
 
@@ -82,9 +92,9 @@ static void set_font(wxWindow *w, wxFont& font) {
 
 class choice {
 public:
-	choice(const wxString& _value, const wxString& _display = "") {
+	choice(const wxString& _value, const wxString& _display = wxT("")) {
 		value = _value;
-		display = (_display == "") ? value : _display;
+		display = (_display == wxT("")) ? value : _display;
 	}
 	wxString value, display;
 	bool operator ==(const choice& other) { return other.value == value; }
@@ -99,7 +109,7 @@ public:
 
 valid_list::valid_list(const char **values, int nvalues) {
 	while(nvalues--)
-		push_back(choice(*(values++)));
+		push_back(choice(wxString(*(values++), wxConvLocal)));
 }
 
 wxString *
@@ -131,44 +141,45 @@ init_valid_lists() {
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getMode(i, &cp, 0))
 			return 1;
-		valid_modes.push_back(choice(cp));
+		valid_modes.push_back(choice(wxString(cp, wxConvLocal)));
 	}
-	valid_rxbands.push_back(choice("", "-NONE-"));
+	valid_rxbands.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumBand(&count))
 		return 1;
 	for (int i = 0; i < count; i++) {
 		int low, high;
 		if (tqsl_getBand(i, &cp, &cp1, &low, &high))
 			return 1;
-		wxString low_s = wxString::Format("%d", low);
-		wxString high_s = wxString::Format("%d", high);
+		wxString low_s = wxString::Format(wxT("%d"), low);
+		wxString high_s = wxString::Format(wxT("%d"), high);
 		const char *hz = !strcmp(cp1, "HF") ? "kHz" : "MHz";
 		if (low >= 1000) {
-			low_s = wxString::Format("%g", low / 1000.0);
-			high_s = wxString::Format("%g", high / 1000.0);
+			low_s = wxString::Format(wxT("%g"), low / 1000.0);
+			high_s = wxString::Format(wxT("%g"), high / 1000.0);
 			hz = !strcmp(cp1, "HF") ? "MHz" : "GHz";
 			if (high == 0)
-				high_s = "UP";
+				high_s = wxT("UP");
 		}
-		wxString display = wxString::Format("%s (%s-%s %s)", cp, low_s.c_str(), high_s.c_str(), hz);
-		valid_bands.push_back(choice(cp, display));
-		valid_rxbands.push_back(choice(cp, display));
+		wxString display = wxString::Format(wxT("%s (%s-%s %s)"), wxString(cp, wxConvLocal).c_str(),
+			low_s.c_str(), high_s.c_str(), wxString(hz, wxConvLocal).c_str());
+		valid_bands.push_back(choice(wxString(cp, wxConvLocal), display));
+		valid_rxbands.push_back(choice(wxString(cp, wxConvLocal), display));
 	}
-	valid_propmodes.push_back(choice("", "-NONE-"));
+	valid_propmodes.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumPropagationMode(&count))
 		return 1;
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getPropagationMode(i, &cp, &cp1))
 			return 1;
-		valid_propmodes.push_back(choice(cp, cp1));
+		valid_propmodes.push_back(choice(wxString(cp, wxConvLocal), wxString(cp1, wxConvLocal)));
 	}
-	valid_satellites.push_back(choice("", "-NONE-"));
+	valid_satellites.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumSatellite(&count))
 		return 1;
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getSatellite(i, &cp, &cp1, 0, 0))
 			return 1;
-		valid_satellites.push_back(choice(cp, cp1));
+		valid_satellites.push_back(choice(wxString(cp, wxConvLocal), wxString(cp1, wxConvLocal)));
 	}
 	return 0;
 }
@@ -191,7 +202,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	: wxDialog(parent, id, title), _reclist(reclist), _isend(false), _help(help) {
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
+//	font.SetPointSize(TEXT_POINTS);
 	set_font(this, font);
 
 #define QD_MARGIN 3
@@ -200,30 +211,30 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 		throw TQSLException(tqsl_getErrorString());
 	// Call sign
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, "Call Sign:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Call Sign:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	_call_ctrl = new wxTextCtrl (this, QD_CALL, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+	_call_ctrl = new wxTextCtrl (this, QD_CALL, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, wxTextValidator(wxFILTER_NONE, &rec._call));
 	sizer->Add(_call_ctrl, 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// Date
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, "UTC Date (YYYY-MM-DD):", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("UTC Date (YYYY-MM-DD):"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxTextCtrl (this, QD_DATE, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+	sizer->Add(new wxTextCtrl (this, QD_DATE, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, TQSLDateValidator(&rec._date)), 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// Time
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, "UTC Time (HHMM):", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("UTC Time (HHMM):"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxTextCtrl (this, QD_TIME, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+	sizer->Add(new wxTextCtrl (this, QD_TIME, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, TQSLTimeValidator(&rec._time)), 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// Mode
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	wxString *choices = valid_modes.GetChoices();
-	sizer->Add(new wxStaticText(this, -1, "Mode:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Mode:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxChoice(this, QD_MODE, wxDefaultPosition, wxDefaultSize,
 		valid_modes.size(), choices, 0, wxGenericValidator(&_mode)), 0, wxALL, QD_MARGIN);
@@ -232,7 +243,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	// Band
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	choices = valid_bands.GetChoices();
-	sizer->Add(new wxStaticText(this, -1, "Band:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Band:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxChoice(this, QD_BAND, wxDefaultPosition, wxDefaultSize,
 		valid_bands.size(), choices, 0, wxGenericValidator(&_band)), 0, wxALL, QD_MARGIN);
@@ -241,7 +252,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	// RX Band
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	choices = valid_rxbands.GetChoices();
-	sizer->Add(new wxStaticText(this, -1, "RX Band:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("RX Band:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxChoice(this, QD_BAND, wxDefaultPosition, wxDefaultSize,
 		valid_rxbands.size(), choices, 0, wxGenericValidator(&_rxband)), 0, wxALL, QD_MARGIN);
@@ -249,22 +260,22 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	topsizer->Add(sizer, 0);
 	// Frequency
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, "Frequency:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Frequency:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxTextCtrl (this, QD_FREQ, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+	sizer->Add(new wxTextCtrl (this, QD_FREQ, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, wxTextValidator(wxFILTER_NONE, &rec._freq)), 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// RX Frequency
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, "RX Frequency:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("RX Frequency:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxTextCtrl (this, QD_RXFREQ, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+	sizer->Add(new wxTextCtrl (this, QD_RXFREQ, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, wxTextValidator(wxFILTER_NONE, &rec._rxfreq)), 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// Propagation Mode
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	choices = valid_propmodes.GetChoices();
-	sizer->Add(new wxStaticText(this, -1, "Propagation Mode:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Propagation Mode:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxChoice(this, QD_PROPMODE, wxDefaultPosition, wxDefaultSize,
 		valid_propmodes.size(), choices, 0, wxGenericValidator(&_propmode)), 0, wxALL, QD_MARGIN);
@@ -273,7 +284,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	// Satellite
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	choices = valid_satellites.GetChoices();
-	sizer->Add(new wxStaticText(this, -1, "Satellite:", wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Satellite:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxChoice(this, QD_SATELLITE, wxDefaultPosition, wxDefaultSize,
 		valid_satellites.size(), choices, 0, wxGenericValidator(&_satellite)), 0, wxALL, QD_MARGIN);
@@ -284,7 +295,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 		if (_reclist->empty())
 			_reclist->push_back(QSORecord());
 		topsizer->Add(new wxStaticLine(this, -1), 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
-		_recno_label_ctrl = new wxStaticText(this, QD_RECNOLABEL, "", wxDefaultPosition,
+		_recno_label_ctrl = new wxStaticText(this, QD_RECNOLABEL, wxT(""), wxDefaultPosition,
 			wxSize(20*TEXT_WIDTH,TEXT_HEIGHT), wxST_NO_AUTORESIZE|wxALIGN_CENTER);
 		topsizer->Add(_recno_label_ctrl, 0, wxALIGN_CENTER|wxALL, 5);
 		_recno = 1;
@@ -293,7 +304,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 		sizer->Add(_recbottom_ctrl, 0, wxTOP|wxBOTTOM, 5);
 		_recdown_ctrl = new wxBitmapButton(this, QD_RECDOWN, wxBitmap(left), wxDefaultPosition, wxSize(18, TEXT_HEIGHT));
 		sizer->Add(_recdown_ctrl, 0, wxTOP|wxBOTTOM, 5);
-		_recno_ctrl = new wxTextCtrl(this, QD_RECNO, "1", wxDefaultPosition,
+		_recno_ctrl = new wxTextCtrl(this, QD_RECNO, wxT("1"), wxDefaultPosition,
 			wxSize(4*TEXT_WIDTH,TEXT_HEIGHT));
 		_recno_ctrl->Enable(FALSE);
 		sizer->Add(_recno_ctrl, 0, wxALL, 5);
@@ -305,16 +316,16 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 			rec = *(_reclist->begin());
 		topsizer->Add(sizer, 0, wxALIGN_CENTER);
 		sizer = new wxBoxSizer(wxHORIZONTAL);
-		sizer->Add(new wxButton(this, QD_RECNEW, "Add QSO"), 0, wxALL, 5);
-		sizer->Add(new wxButton(this, QD_RECDELETE, "Delete"), 0, wxALL, 5);
+		sizer->Add(new wxButton(this, QD_RECNEW, wxT("Add QSO")), 0, wxALL, 5);
+		sizer->Add(new wxButton(this, QD_RECDELETE, wxT("Delete")), 0, wxALL, 5);
 		topsizer->Add(sizer, 0, wxALIGN_CENTER);
 	}
 
 	topsizer->Add(new wxStaticLine(this, -1), 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxButton(this, QD_HELP, "Help"), 0, wxALL, 10);
-	sizer->Add(new wxButton(this, QD_CANCEL, "Cancel"), 0, wxALL, 10);
-	sizer->Add(new wxButton(this, QD_OK, "Ok"), 0, wxALL, 10);
+	sizer->Add(new wxButton(this, QD_HELP, wxT("Help")), 0, wxALL, 10);
+	sizer->Add(new wxButton(this, QD_CANCEL, wxT("Cancel")), 0, wxALL, 10);
+	sizer->Add(new wxButton(this, QD_OK, wxT("Ok")), 0, wxALL, 10);
 	topsizer->Add(sizer, 0, wxALIGN_CENTER);
 
 	UpdateControls();
@@ -346,18 +357,18 @@ QSODataDialog::TransferDataFromWindow() {
 	rec._rxfreq.Trim(FALSE).Trim(TRUE);
 	rec._propmode = valid_propmodes[_propmode].value;
 	rec._satellite = valid_satellites[_satellite].value;
-	if (!_isend && rec._call == "") {
-		wxMessageBox("Call Sign cannot be empty", "QSO Data Error",
+	if (!_isend && rec._call == wxT("")) {
+		wxMessageBox(wxT("Call Sign cannot be empty"), wxT("QSO Data Error"),
 			wxOK | wxICON_EXCLAMATION, this);
 		return false;
 	}
-	if (rec._propmode == "SAT" && rec._satellite == "") {
-		wxMessageBox("'Satellite' propagation mode selected, so\na a Satellite must be chosen", "QSO Data Error",
+	if (rec._propmode == wxT("SAT") && rec._satellite == wxT("")) {
+		wxMessageBox(wxT("'Satellite' propagation mode selected, so\na a Satellite must be chosen"), wxT("QSO Data Error"),
 			wxOK | wxICON_EXCLAMATION, this);
 		return false;
 	}
-	if (rec._propmode != "SAT" && rec._satellite != "") {
-		wxMessageBox("Satellite choice requires that\nPropagation Mode be 'Satellite'", "QSO Data Error",
+	if (rec._propmode != wxT("SAT") && rec._satellite != wxT("")) {
+		wxMessageBox(wxT("Satellite choice requires that\nPropagation Mode be 'Satellite'"), wxT("QSO Data Error"),
 			wxOK | wxICON_EXCLAMATION, this);
 		return false;
 	}
@@ -372,7 +383,7 @@ QSODataDialog::TransferDataToWindow() {
 	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
 	else
-		wxLogWarning(wxString("QSO Data: Invalid Mode ignored - ") + rec._mode.Upper());
+		wxLogWarning(wxString(wxT("QSO Data: Invalid Mode ignored - ")) + rec._mode.Upper());
 	if ((it = find(valid_bands.begin(), valid_bands.end(), rec._band.Upper())) != valid_bands.end())
 		_band = distance(valid_bands.begin(), it);
 	if ((it = find(valid_rxbands.begin(), valid_rxbands.end(), rec._rxband.Upper())) != valid_rxbands.end())
@@ -389,7 +400,7 @@ QSODataDialog::OnOk(wxCommandEvent&) {
 	_isend = true;
 	TransferDataFromWindow();
 	_isend = false;
-	if (rec._call == "" && _recno == (int)_reclist->size()) {
+	if (rec._call == wxT("") && _recno == (int)_reclist->size()) {
 		_reclist->erase(_reclist->begin() + _recno - 1);
 		EndModal(wxID_OK);
 	} else if (Validate() && TransferDataFromWindow())
@@ -404,7 +415,7 @@ QSODataDialog::OnCancel(wxCommandEvent&) {
 void
 QSODataDialog::OnHelp(wxCommandEvent&) {
 	if (_help)
-		_help->Display("qsodata.htm");
+		_help->Display(wxT("qsodata.htm"));
 }
 
 void
@@ -477,7 +488,7 @@ QSODataDialog::UpdateControls() {
 	_recbottom_ctrl->Enable(_recno > 1);
 	_recup_ctrl->Enable(_recno < (int)_reclist->size());
 	_rectop_ctrl->Enable(_recno < (int)_reclist->size());
-   	_recno_ctrl->SetValue(wxString::Format("%d", _recno));
-	_recno_label_ctrl->SetLabel(wxString::Format("%d QSO Record%s", _reclist->size(),
-		(_reclist->size() == 1) ? "" : "s"));
+   	_recno_ctrl->SetValue(wxString::Format(wxT("%d"), _recno));
+	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%s"), _reclist->size(),
+		(_reclist->size() == 1) ? wxT("") : wxT("s")));
 }

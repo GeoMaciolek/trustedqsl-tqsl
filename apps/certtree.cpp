@@ -20,6 +20,8 @@
 #include <errno.h>
 #include <wx/imaglist.h>
 
+#include <iostream>
+
 using namespace std;
 
 #include "cert.xpm"
@@ -74,7 +76,8 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	issmap issuers;
 
 	DeleteAllItems();
-	wxTreeItemId rootId = AddRoot("tQSL Certificates", 3);
+	wxTreeItemId rootId = AddRoot(wxT("tQSL Certificates"), 3);
+	tqsl_init();
 	tQSL_Cert *certs;
 	if (tqsl_selectCertificates(&certs, &_ncerts, 0, 0, 0, provider, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || errno != ENOENT)
@@ -107,7 +110,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 			entityName = "<UNKNOWN ENTITY>";
 		strncat(callsign, dxcc.name(), sizeof callsign - strlen(callsign));
 		callsign[sizeof callsign-1] = 0;
-		issuers[issname].push_back(make_pair(wxString(callsign),i));
+		issuers[wxString(issname, wxConvLocal)].push_back(make_pair(wxString(callsign, wxConvLocal),i));
 	}
 	// Sort each issuer's list and add items to tree
 	issmap::iterator iss_it;

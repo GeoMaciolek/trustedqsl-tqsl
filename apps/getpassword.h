@@ -29,9 +29,9 @@
 
 class GetPasswordDialog : public wxDialog {
 public:
-	GetPasswordDialog(wxWindow *parent, const wxString& title = "Enter password",
-		const wxString& message = "Enter password",
-		wxHtmlHelpController *help = 0, wxString helpfile = "");
+	GetPasswordDialog(wxWindow *parent, const wxString& title = wxT("Enter password"),
+		const wxString& message = wxT("Enter password"),
+		wxHtmlHelpController *help = 0, wxString helpfile = wxT(""));
 	wxString Password() { return _password; }
 	virtual bool TransferDataFromWindow();
 private:
@@ -48,9 +48,9 @@ private:
 
 class GetNewPasswordDialog : public wxDialog {
 public:
-	GetNewPasswordDialog(wxWindow *parent, const wxString& title = "New password",
-		const wxString& message = "Enter new password", bool blankok = false,
-		wxHtmlHelpController *help = 0, wxString helpfile = "");
+	GetNewPasswordDialog(wxWindow *parent, const wxString& title = wxT("New password"),
+		const wxString& message = wxT("Enter new password"), bool blankok = false,
+		wxHtmlHelpController *help = 0, wxString helpfile = wxT(""));
 	wxString Password() { return _password; }
 private:
 	void PWChange(wxCommandEvent&);

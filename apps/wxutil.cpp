@@ -18,7 +18,7 @@ wxSize
 getTextSize(wxWindow *win) {
 	wxClientDC dc(win);
 	wxCoord char_width, char_height;
-	dc.GetTextExtent(wxString("M"), &char_width, &char_height);
+	dc.GetTextExtent(wxString(wxT("M")), &char_width, &char_height);
 	return wxSize(char_width, char_height);
 }
 

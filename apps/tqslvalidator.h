@@ -55,7 +55,7 @@ protected:
 
 class TQSLDateValidator : public TQSLValidator {
 public:
-	TQSLDateValidator(tQSL_Date *date) : TQSLValidator(date) { _type = "Date"; }
+	TQSLDateValidator(tQSL_Date *date) : TQSLValidator(date) { _type = wxT("Date"); }
 	TQSLDateValidator(const TQSLDateValidator& val) : TQSLValidator(val) {}
 	virtual ~TQSLDateValidator() {}
 	virtual wxObject *Clone() const { return new TQSLDateValidator(*this); }
@@ -66,7 +66,7 @@ public:
 
 class TQSLTimeValidator : public TQSLValidator {
 public:
-	TQSLTimeValidator(tQSL_Time *time) : TQSLValidator(time) { _type = "Time"; }
+	TQSLTimeValidator(tQSL_Time *time) : TQSLValidator(time) { _type = wxT("Time"); }
 	TQSLTimeValidator(const TQSLTimeValidator& val) : TQSLValidator(val) {}
 	virtual ~TQSLTimeValidator() {}
 	virtual wxObject *Clone() const { return new TQSLTimeValidator(*this); }

@@ -1,60 +1,60 @@
 <HTML><HEAD></HEAD><BODY>
 <UL>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Managing Station Locations">
 		<param name="Local" value="stnloc.htm">
 	     </OBJECT>
 		 <UL>
-		 	<LI> <OBJECT>
+		 	<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Adding and Editing Station Locations">
 			<param name="Local" value="stnloc1.htm">
 			</OBJECT>
-		 	<LI> <OBJECT>
+		 	<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Saving the Station Location">
 			<param name="Local" value="stnloc2.htm">
 			</OBJECT>
 		</UL>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Managing QSO Data">
 		<param name="Local" value="qsodata.htm">
 	     </OBJECT>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Preparing TrustedQSL Files">
 		<param name="Local" value="signing.htm">
 	     </OBJECT>
 		<UL>
-			<LI><OBJECT>
+			<LI><OBJECT type="text/sitemap">
 			<param name="Name" value="Setting a Signing Date Range">
 			<param name="Local" value="daterng.htm">
 	    	 </OBJECT>
 		</UL>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="Preferences">
 		<param name="Local" value="pref.htm">
 	     </OBJECT>
 		 <UL>
-			<LI> <OBJECT>
+			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Preferences - Options">
 				<param name="Local" value="pref-opt.htm">
 			 	</OBJECT>
-			<LI> <OBJECT>
+			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Preferences - ADIF Modes">
 				<param name="Local" value="pref-adi.htm">
 			 	</OBJECT>
-			<LI> <OBJECT>
+			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Preferences - Cabrillo Specs">
 				<param name="Local" value="pref-cab.htm">
 			 	</OBJECT>
 		 </UL>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="TQSL Command Line">
 		<param name="Local" value="cmdline.htm">
 	     </OBJECT>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="About TrustedQSL">
 		<param name="Local" value="tqsl.htm">
 	     </OBJECT>
-	<LI> <OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="TrustedQSL Glossary">
 		<param name="Local" value="glossary.htm">
 	     </OBJECT>

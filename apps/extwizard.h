@@ -20,6 +20,7 @@
 #endif
 
 #include "wx/wxprec.h"
+#include "wxutil.h"
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
@@ -53,16 +54,16 @@ protected:
 
 class ExtWizard_Page : public wxWizardPageSimple {
 public:
-	ExtWizard_Page(ExtWizard *parent) : wxWizardPageSimple(parent), _parent(parent), _helpfile("") {}
+	ExtWizard_Page(ExtWizard *parent) : wxWizardPageSimple(parent), _parent(parent), _helpfile(wxT("")) {}
 
 	virtual const char *validate() { return NULL; }	// Returns error message string or NULL=no error
 	virtual void refresh() { }	// Updates page contents based on page-specific criteria
-	void check_valid(wxEvent&);
+	void check_valid(TQ_WXTEXTEVENT&);
 protected:
 	ExtWizard *_parent;
-	void AdjustPage(wxBoxSizer *sizer, const wxString& helpfile = "");
+	void AdjustPage(wxBoxSizer *sizer, const wxString& helpfile = wxT(""));
 private:
-	void OnHelp(wxCommandEvent&) { if (_helpfile != "") _parent->DisplayHelp(_helpfile); }
+	void OnHelp(wxCommandEvent&) { if (_helpfile != wxT("")) _parent->DisplayHelp(_helpfile); }
 	wxString _helpfile;
 
 	DECLARE_EVENT_TABLE();

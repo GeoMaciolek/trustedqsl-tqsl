@@ -63,7 +63,7 @@ public:
 	void OnPreferences(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
-	void DisplayHelp(const char *file = "main.htm") { help.Display(file); }
+	void DisplayHelp(const char *file = "main.htm") { help.Display(wxString(file, wxConvLocal)); }
 
 	CertTree *cert_tree;
 private:

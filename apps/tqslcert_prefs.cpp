@@ -21,7 +21,7 @@ BEGIN_EVENT_TABLE(Preferences, wxDialog)
 	EVT_BUTTON(ID_CAN_BUT, Preferences::OnCancel)
 END_EVENT_TABLE()
 
-Preferences::Preferences(wxWindow *parent) : wxDialog(parent, -1, wxString("Preferences")) {
+Preferences::Preferences(wxWindow *parent) : wxDialog(parent, -1, wxString(wxT("Preferences"))) {
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
 	wxNotebook *notebook = new wxNotebook(this, -1);
@@ -31,15 +31,15 @@ Preferences::Preferences(wxWindow *parent) : wxDialog(parent, -1, wxString("Pref
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
 
-	wxButton *button = new wxButton(this, ID_OK_BUT, "OK" );
+	wxButton *button = new wxButton(this, ID_OK_BUT, wxT("OK") );
 	butsizer->Add(button, 0, wxALIGN_RIGHT | wxALL, 10);
 
-	button = new wxButton(this, ID_CAN_BUT, "Cancel" );
+	button = new wxButton(this, ID_CAN_BUT, wxT("Cancel") );
 	butsizer->Add(button, 0, wxALIGN_LEFT | wxALL, 10);
 
 	topsizer->Add(butsizer, 0, wxALIGN_CENTER);
 
-	notebook->AddPage(keyprefs, "Import");
+	notebook->AddPage(keyprefs, wxT("Import"));
 
 	SetAutoLayout(TRUE);
 	SetSizer(topsizer);
@@ -60,19 +60,19 @@ KeyPrefs::KeyPrefs(wxWindow *parent) : wxPanel(parent, -1) {
 	bool b;
 	SetAutoLayout(TRUE);
 	wxBoxSizer *sizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, -1, "Import Notification"),
+		new wxStaticBox(this, -1, wxT("Import Notification")),
 		wxVERTICAL);
-	root_cb = new wxCheckBox(this, ID_PREF_ROOT_CB, "Trusted root certificates");
+	root_cb = new wxCheckBox(this, ID_PREF_ROOT_CB, wxT("Trusted root certificates"));
 	sizer->Add(root_cb);
-	config->Read("NotifyRoot", &b, true);
+	config->Read(wxT("NotifyRoot"), &b, true);
 	root_cb->SetValue(b);
-	ca_cb = new wxCheckBox(this, ID_PREF_CA_CB, "Certificate Authority certificates");
+	ca_cb = new wxCheckBox(this, ID_PREF_CA_CB, wxT("Certificate Authority certificates"));
 	sizer->Add(ca_cb);
-	config->Read("NotifyCA", &b, false);
+	config->Read(wxT("NotifyCA"), &b, false);
 	ca_cb->SetValue(b);
-	user_cb = new wxCheckBox(this, ID_PREF_USER_CB, "User certificates");
+	user_cb = new wxCheckBox(this, ID_PREF_USER_CB, wxT("User certificates"));
 	sizer->Add(user_cb);
-	config->Read("NotifyUser", &b, false);
+	config->Read(wxT("NotifyUser"), &b, false);
 	user_cb->SetValue(b);
 	SetSizer(sizer);
 	sizer->Fit(this);
@@ -81,8 +81,8 @@ KeyPrefs::KeyPrefs(wxWindow *parent) : wxPanel(parent, -1) {
 
 bool KeyPrefs::TransferDataFromWindow() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write("NotifyRoot", root_cb->GetValue());
-	config->Write("NotifyCA", ca_cb->GetValue());
-	config->Write("NotifyUser", user_cb->GetValue());
+	config->Write(wxT("NotifyRoot"), root_cb->GetValue());
+	config->Write(wxT("NotifyCA"), ca_cb->GetValue());
+	config->Write(wxT("NotifyUser"), user_cb->GetValue());
 	return TRUE;
 }

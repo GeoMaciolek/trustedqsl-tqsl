@@ -25,8 +25,10 @@
 	#include "wx/wx.h"
 #endif
 
-#include "wx/wizard.h"
+#include "extwizard.h"
 #include "wx/radiobox.h"
+
+#include "wx/wxhtml.h"
 
 #include "certtree.h"
 
@@ -37,11 +39,43 @@
 
 #include <vector>
 
-class CRQ_ProviderPage : public wxWizardPageSimple {
+class CRQ_Page;
+
+class CRQWiz : public ExtWizard {
 public:
-	CRQ_ProviderPage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
-	virtual bool TransferDataFromWindow();
+	CRQWiz(TQSL_CERT_REQ *crq, 	tQSL_Cert cert, wxWindow* parent, wxHtmlHelpController *help = 0,
+		const wxString& title = wxT("Generate Certificate Request"));
+	CRQ_Page *GetCurrentPage() { return (CRQ_Page *)wxWizard::GetCurrentPage(); }
+	bool RunWizard();
+	// ProviderPage data
 	TQSL_PROVIDER provider;
+	// IntroPage data
+	wxString callsign;
+	tQSL_Date qsonotbefore, qsonotafter;
+	int dxcc;
+	// NamePage data
+	wxString name, addr1, addr2, city, state, zip, country;
+	// EmailPage data
+	wxString email;
+	// PasswordPage data
+	wxString password;
+	// SignPage data
+	tQSL_Cert cert;
+	TQSL_CERT_REQ *_crq;
+private:
+	CRQ_Page *_first;
+};
+
+class CRQ_Page : public ExtWizard_Page {
+public:
+	CRQ_Page(CRQWiz* parent = NULL) : ExtWizard_Page(parent) {}
+	CRQWiz *Parent() { return (CRQWiz *)_parent; }
+};
+
+class CRQ_ProviderPage : public CRQ_Page {
+public:
+	CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	virtual bool TransferDataFromWindow();
 private:
 	void DoUpdateInfo();
 	void UpdateInfo(wxCommandEvent&);
@@ -52,58 +86,75 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-class CRQ_IntroPage : public wxWizardPageSimple {
+class CRQ_IntroPage : public CRQ_Page {
 public:
-	CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
+	CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
-	wxString callsign;
-	tQSL_Date qsonotbefore, qsonotafter;
-	int dxcc;
+	virtual const char *validate();
 private:
 	wxTextCtrl *tc_call;
 	wxComboBox *tc_qsobeginy, *tc_qsobeginm, *tc_qsobegind, *tc_dxcc;
 	wxComboBox *tc_qsoendy, *tc_qsoendm, *tc_qsoendd;
-};
-
-class CRQ_NamePage : public wxWizardPageSimple {
-public:
-	CRQ_NamePage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
-	virtual bool TransferDataFromWindow();
-	wxString name, addr1, addr2, city, state, zip, country;
-private:
-	wxTextCtrl *tc_name, *tc_addr1, *tc_addr2, *tc_city, *tc_state,
-		*tc_zip, *tc_country;
-};
-
-class CRQ_EmailPage : public wxWizardPageSimple {
-public:
-	CRQ_EmailPage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
-	virtual bool TransferDataFromWindow();
-	wxString email;
-private:
-	wxTextCtrl *tc_email;
-};
-
-class CRQ_PasswordPage : public wxWizardPageSimple {
-public:
-	CRQ_PasswordPage(wxWizard *parent);
-	virtual bool TransferDataFromWindow();
-	wxString password;
-private:
-	wxTextCtrl *tc_pw1, *tc_pw2;
-};
-
-class CRQ_SignPage : public wxWizardPageSimple {
-public:
-	CRQ_SignPage(wxWizard *parent, wxSize& size);
-	virtual bool TransferDataFromWindow();
-	void CertSelChanged(wxTreeEvent&);
-	tQSL_Cert cert;
-private:
-	wxRadioBox *choice;
-	CertTree *cert_tree;
+	wxStaticText *tc_status;
 
 	DECLARE_EVENT_TABLE()
 };
+
+class CRQ_NamePage : public CRQ_Page {
+public:
+	CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	virtual bool TransferDataFromWindow();
+	virtual const char *validate();
+private:
+	wxTextCtrl *tc_name, *tc_addr1, *tc_addr2, *tc_city, *tc_state,
+		*tc_zip, *tc_country;
+	wxStaticText *tc_status;
+
+	DECLARE_EVENT_TABLE()
+};
+
+class CRQ_EmailPage : public CRQ_Page {
+public:
+	CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	virtual bool TransferDataFromWindow();
+	virtual const char *validate();
+private:
+	wxTextCtrl *tc_email;
+	wxStaticText *tc_status;
+
+	DECLARE_EVENT_TABLE()
+};
+
+class CRQ_PasswordPage : public CRQ_Page {
+public:
+	CRQ_PasswordPage(CRQWiz *parent);
+	virtual bool TransferDataFromWindow();
+	virtual const char *validate();
+private:
+	wxTextCtrl *tc_pw1, *tc_pw2;
+	wxStaticText *tc_status;
+
+	DECLARE_EVENT_TABLE()
+};
+
+class CRQ_SignPage : public CRQ_Page {
+public:
+	CRQ_SignPage(CRQWiz *parent);
+	virtual bool TransferDataFromWindow();
+	void CertSelChanged(wxTreeEvent&);
+	virtual const char *validate();
+	virtual void refresh();
+private:
+	wxRadioBox *choice;
+	CertTree *cert_tree;
+	wxStaticText *tc_status;
+
+	DECLARE_EVENT_TABLE()
+};
+
+inline bool
+CRQWiz::RunWizard() {
+	return wxWizard::RunWizard(_first);
+}
 
 #endif // __crqwiz_h

@@ -36,14 +36,14 @@ GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
-	_pw = new wxTextCtrl(this, GPW_ID_PW1, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
+	_pw = new wxTextCtrl(this, GPW_ID_PW1, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	sizer->Add(_pw, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
-	butsizer->Add(new wxButton(this, GPW_ID_OK, "Ok"), 0, 0, 0);
-	butsizer->Add(new wxButton(this, GPW_ID_CAN, "Cancel"), 0, wxLEFT, 20);
-	if (_help && _helpfile != "")
-		butsizer->Add(new wxButton(this, GPW_ID_HELP, "Help"), 0, wxLEFT, 20);
+	butsizer->Add(new wxButton(this, GPW_ID_OK, wxT("Ok")), 0, 0, 0);
+	butsizer->Add(new wxButton(this, GPW_ID_CAN, wxT("Cancel")), 0, wxLEFT, 20);
+	if (_help && _helpfile != wxT(""))
+		butsizer->Add(new wxButton(this, GPW_ID_HELP, wxT("Help")), 0, wxLEFT, 20);
 
 	sizer->Add(butsizer, 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -74,7 +74,7 @@ GetPasswordDialog::OnCancel(wxCommandEvent&) {
 
 void
 GetPasswordDialog::OnHelp(wxCommandEvent&) {
-	if (_help && _helpfile != "")
+	if (_help && _helpfile != wxT(""))
 		_help->Display(_helpfile);
 }
 
@@ -92,22 +92,22 @@ GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& tit
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
-	sizer->Add(new wxStaticText(this, -1, "New password:"), 0, wxLEFT|wxRIGHT, 10);
-	_pw1 = new wxTextCtrl(this, GPW_ID_PW1, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
+	sizer->Add(new wxStaticText(this, -1, wxT("New password:")), 0, wxLEFT|wxRIGHT, 10);
+	_pw1 = new wxTextCtrl(this, GPW_ID_PW1, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	sizer->Add(_pw1, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
-	sizer->Add(new wxStaticText(this, -1, "Enter again to confirm:"), 0, wxLEFT|wxRIGHT, 10);
-	_pw2 = new wxTextCtrl(this, GPW_ID_PW2, "", wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
+	sizer->Add(new wxStaticText(this, -1, wxT("Enter again to confirm:")), 0, wxLEFT|wxRIGHT, 10);
+	_pw2 = new wxTextCtrl(this, GPW_ID_PW2, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	sizer->Add(_pw2, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
-	_pwstatus = new wxStaticText(this, -1, "");
+	_pwstatus = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(_pwstatus, 0, wxALL|wxEXPAND, 10);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
-	_okbut = new wxButton(this, GPW_ID_OK, "Ok");
+	_okbut = new wxButton(this, GPW_ID_OK, wxT("Ok"));
 	_okbut->Enable(_blankok);
 	butsizer->Add(_okbut, 0, 0, 0);
-	butsizer->Add(new wxButton(this, GPW_ID_CAN, "Cancel"), 0, wxLEFT, 20);
-	if (_help && _helpfile != "")
-		butsizer->Add(new wxButton(this, GPW_ID_HELP, "Help"), 0, wxLEFT, 20);
+	butsizer->Add(new wxButton(this, GPW_ID_CAN, wxT("Cancel")), 0, wxLEFT, 20);
+	if (_help && _helpfile != wxT(""))
+		butsizer->Add(new wxButton(this, GPW_ID_HELP, wxT("Help")), 0, wxLEFT, 20);
 
 	sizer->Add(butsizer, 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -121,23 +121,23 @@ GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& tit
 
 void
 GetNewPasswordDialog::PWChange(wxCommandEvent&) {
-	_password = "";
+	_password = wxT("");
 	wxString pw1 = _pw1->GetValue();
 	wxString pw2 = _pw2->GetValue();
 
 	if (pw1 != pw2) {
-		_pwstatus->SetLabel("Password entries do not match");
+		_pwstatus->SetLabel(wxT("Password entries do not match"));
 		_okbut->Enable(false);
 		return;
 	}
-	if (!_blankok && pw1 == "") {
-		_pwstatus->SetLabel("");
+	if (!_blankok && pw1 == wxT("")) {
+		_pwstatus->SetLabel(wxT(""));
 		_okbut->Enable(false);
 		return;
 	}
 	_password = pw1;
-	if (pw1 != "")
-		_pwstatus->SetLabel("Password confirmed");
+	if (pw1 != wxT(""))
+		_pwstatus->SetLabel(wxT("Password confirmed"));
 	_okbut->Enable(true);
 }
 
@@ -153,6 +153,6 @@ GetNewPasswordDialog::OnCancel(wxCommandEvent&) {
 
 void
 GetNewPasswordDialog::OnHelp(wxCommandEvent&) {
-	if (_help && _helpfile != "")
+	if (_help && _helpfile != wxT(""))
 		_help->Display(_helpfile);
 }

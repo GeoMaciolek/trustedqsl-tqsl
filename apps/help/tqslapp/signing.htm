@@ -1,18 +1,19 @@
 <HTML><HEAD><TITLE>Signing</TITLE></HEAD>
 <BODY>
-<H3>Preparing TrustedQSL Files</H3>
+<H3>Preparing TrustedQSL Files (Signing)</H3>
 <P>
 Once you've defined a station location you are ready to sign QSO records for that location.
 <P>
 <TABLE BORDER=1 CELLPADDING=10 CELLSPACING=0 BGCOLOR="#E0E0FF">
 <TR><TD><B>N.B.</B> All of the records in the ADIF or Cabrillo file
-you wish to sign must be for QSOs from the same station location. If the file
-contains records from multiple locations, use your logging software
+you wish to sign must be for QSOs from the same station location using
+the same call sign. If the file contains records from multiple locations
+or made using multiple call signs, use your logging software
 (or text editor) to change the file or create a new one that contains
-records from only one station location.
+records from only one station location and call sign.
 </TD></TR></TABLE>
 <P>
-Use the <B>File</B> menu's <B>Sign</B> command to convert an existing ADIF or
+Use the <B>File</B> menu's <B>Sign existing ADIF or Cabrillo file</B> command to convert an existing ADIF or
 Cabrillo QSO data file to a TrustedQSL file. The first step is to select the station
 location that matches the contents of the QSO data file:
 <P>
@@ -22,6 +23,10 @@ location that matches the contents of the QSO data file:
 files. Once you have done that, you'll be asked to confirm the signing operation:
 <P>
 <img src="signconf.bmp" width=387 height=157 border=2>
+<P>
+If you have elected to be prompted for the QSO date range, that will happen before
+the first QSO record is processed. See
+<A HREF="daterng.htm">Setting a Signing Date Range</A> for details.
 <P>
 After the operation is complete, <I>TQSL</I> will display the result:
 <P>
