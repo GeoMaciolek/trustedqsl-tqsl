@@ -104,7 +104,7 @@ extern "C"
 #endif
 
   char * 	tqslSigToStr(TqslSignature *);
-  int 		tqslStrToSig(TqslSignature *,const char *);
+  int 		tqslStrToSig(TqslSignature *,char *);
 
   char * 	tqslPubKeyToStr(TqslPublicKey *);
   int 		tqslStrToPubKey(TqslPublicKey *,const char *);

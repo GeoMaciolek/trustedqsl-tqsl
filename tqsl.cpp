@@ -109,13 +109,51 @@ static int getFileSize(const char *fname)
 }
 
 
-char *tqslSigToStr(TqslSignature *)
+char *tqslSigToStr(TqslSignature *sig)
 {
-  return(NULL);
+  char 	sigStr[800];
+  char	*certStr;
+  char 	*tStr;
+
+  certStr = tqslCertToStr(&sig->cert);
+  if (certStr == NULL)
+    return(NULL);
+
+  sprintf(sigStr,"%c^%s^%s",sig->sigType,
+	  sig->signature,certStr);
+
+  free(certStr);
+  
+  tStr = strdup(sigStr);
+  return(tStr);
 }
 
-int  tqslStrToSig(TqslSignature *,const char *)
+int  tqslStrToSig(TqslSignature *sig,char *buf)
 {
+  char	*tok;
+  stripNL((char *)buf);  // clean out any NL or CR lurking around
+
+  if (buf[0] == '1')  //  Type 1 Public key
+    {
+
+      tok = strtok((char *)buf,"^");
+      if (tok == NULL || strlen(tok) == 0)
+	  return(0);
+      sig->sigType = tok[0];
+
+      tok = strtok(NULL,"^");
+      if (tok == NULL || strlen(tok) == 0)
+	  return(0);
+      strcpy(sig->signature,tok);
+
+      tok = strtok(NULL,"^");
+      if (tok == NULL || strlen(tok) == 0)
+	  return(0);
+
+      int rc=tqslStrToCert(&sig->cert,tok);
+      
+      return(rc);
+    }
   return(0);
 }
 
@@ -668,10 +706,10 @@ int tqslSignData(const char *privKey,const unsigned char *data,
     return(0);
 
   hexSign = bin2hex(sigRet,sigLen);
-  memcpy(&signature->signature,hexSign,strlen(hexSign));
+  strcpy(signature->signature,hexSign);
   signature->sigType = '1';
   signature->cert = *cert;
-
+  free(hexSign);
   return(1);
 
   

@@ -41,11 +41,13 @@ int readFile(char *fName, unsigned char *buf,int len)
   int rc;
   rc = read(fd,buf,len);
   close(fd);
+#if 0
   if (rc == len)
     {
       return(0);
-    }     
-  return(1);
+    }
+#endif     
+  return(0);
      
 }
 
@@ -113,8 +115,9 @@ int main(int argc, char *argv[])
       free(msg);
       return(6);
     }     
-     
-  rc = readFile(signFile,(unsigned char *)&signature,sizeof(signature));
+
+  char sigStr[1000];
+  rc = readFile(signFile,(unsigned char *)sigStr,sizeof(sigStr));
   if (rc != 0)
     {
       fprintf(stderr,"Problem reading signature file %s\n",signFile);  
@@ -124,6 +127,9 @@ int main(int argc, char *argv[])
 
   // we could and should also validate the cert this was signed with
 
+  rc = tqslStrToSig(&signature,sigStr);
+  if (rc == 0)
+    return(3);
   rc = tqslVerifyData(msg,&signature,fs);
 
   if (rc >0)

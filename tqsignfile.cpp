@@ -135,8 +135,12 @@ int main(int argc, char *argv[])
       fprintf(stderr,"Problem writing signature file %s\n",outFile);  
       return(7);
     }
+  
+  char *sigStr;
+  sigStr = tqslSigToStr(&signature);
 
-  fwrite(&signature,sizeof(signature),1,fp);
+  fprintf(fp,"%s\n",sigStr);
+
   fclose(fp);
   return(0);
 
