@@ -311,7 +311,7 @@ public:
 	void OnFileCompress(wxCommandEvent& event);
 #endif
 	void OnPreferences(wxCommandEvent& event);
-	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false);
+	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), bool editonly = false);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
@@ -680,7 +680,8 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 }
 
 bool
-MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compressed) {
+MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
+	bool compressed, bool suppressdate) {
     static char *iam = "TQSL V" VERSION;
    	const char *cp;
 	tQSL_Converter conv = 0;
@@ -730,7 +731,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 		}
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
-		if (range) {
+		if (range && !suppressdate) {
 			DateRangeDialog dial(this);
 			if (dial.ShowModal() != wxOK) {
 				wxLogMessage(wxT("Cancelled"));
@@ -1105,6 +1106,7 @@ QSLApp::OnInit() {
 
 	tQSL_Location loc = 0;
 	bool locsw = false;
+	bool suppressdate = false;
 	for (int i = 1; i < argc; i++) {
 		if (locsw) {
 			if (loc)
@@ -1116,6 +1118,8 @@ QSLApp::OnInit() {
 			locsw = false;
 		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-l")) {
 			locsw = true;
+		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-d")) {
+			suppressdate = true;
 		} else if (!strcasecmp(wxString(argv[i]).mb_str(), "-s")) {
 			// Add/Edit station location
 			if (loc == 0) {
@@ -1137,7 +1141,7 @@ QSLApp::OnInit() {
 			path += name + wxT(".tq8");
 			wxString infile(argv[i]);
 			try {
-				if (frame->ConvertLogFile(loc, infile, path, true))
+				if (frame->ConvertLogFile(loc, infile, path, true, suppressdate))
 					break;
 			} catch (TQSLException& x) {
 				wxString s;

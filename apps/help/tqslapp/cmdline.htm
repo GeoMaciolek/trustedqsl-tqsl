@@ -17,6 +17,10 @@ appear on the command line - left to right. After processing the options (except
 <TR><TD COLSPAN=2 align="center"><B>TQSL Options</B></TD></TR>
 <TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
 
+<TR><TD><b>-d</b></TD>
+<TD>Suppress date-range dialog. If present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
+be shown for files that follow this option on the command line.</TD></TR>
+
 <TR><TD><b>-l</b> location_name</TD>
 <TD>Selects an existing station location. This location will be used for the commands that follow.
 If the station location doesn't exist, TQSL will just exit.</TD></TR>
@@ -58,9 +62,9 @@ Add a station location, then exit:
   tqsl -s -x
 </CODE>
 <P>
-Sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; station location, then exit:
+Sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; station location and without displaying the QSO date-range dialog, then exit:
 <BR>&nbsp;&nbsp;&nbsp;<CODE>
-  tqsl -l "CQWW Portable" "cqww log.adi" -x
+  tqsl -d -l "CQWW Portable" "cqww log.adi" -x
 </CODE>
 <P>
 Sign a set of log files using the &quot;Home&quot; station location, then exit:
