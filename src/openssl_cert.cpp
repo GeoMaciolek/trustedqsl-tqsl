@@ -460,7 +460,8 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	/* Write the key to the key store */
 
-	tqsl_make_key_path(req->callSign, path, sizeof path);
+	if (!tqsl_make_key_path(req->callSign, path, sizeof path))
+		goto end;
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		goto end;
@@ -538,6 +539,21 @@ end:
 		tqsl_free_cert_req(req, 0);
 	return rval;
 }
+
+DLLEXPORT int
+tqsl_getSelectedCertificate(tQSL_Cert *cert, tQSL_Cert **certlist,
+	int idx) {
+	
+	if (tqsl_init())
+		return 1;
+	if (certlist == NULL || cert == NULL || idx < 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	*cert = (*certlist)[idx];
+	return 0;
+}
+
 
 DLLEXPORT int
 tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
@@ -1763,7 +1779,8 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 		}
 	}
 
-	tqsl_make_key_path(key_callsign.c_str(), path, sizeof path);
+	if (!tqsl_make_key_path(key_callsign.c_str(), path, sizeof path))
+		goto imp_end;
 	newrecord["PUBLIC_KEY"] = public_key;
 	newrecord["PRIVATE_KEY"] = private_key;
 	newrecord["CALLSIGN"] = key_callsign;
@@ -1847,7 +1864,8 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 		key = 0;
 	}
 	rec["CALLSIGN"] = callsign;
-	tqsl_make_key_path(callsign, path, sizeof path);
+	if (!tqsl_make_key_path(callsign, path, sizeof path))
+		goto dc_end;
 
 	// Since there is no private key in "rec," tqsl_replace_key will just remove the
 	// existing private key.
@@ -2514,7 +2532,10 @@ static char *
 tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncpy(path, tQSL_BaseDir, size);
 	strncat(path, "/certs", size - strlen(path));
-	MKDIR(path, 0700);
+	if (MKDIR(path, 0700) && errno != EEXIST) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		return NULL;
+	}
 	strncat(path, "/", size - strlen(path));
 	strncat(path, filename, size - strlen(path));
 	return path;
@@ -2545,7 +2566,11 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 	tqsl_clean_call(callsign, fixcall, sizeof fixcall);
 	strncpy(path, tQSL_BaseDir, size);
 	strncat(path, "/keys", size - strlen(path));
-	MKDIR(path, 0700);
+	if (MKDIR(path, 0700) && errno != EEXIST) {
+		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		return 0;
+	}
 	strncat(path, "/", size - strlen(path));
 	strncat(path, fixcall, size - strlen(path));
 	return path;
@@ -2992,7 +3017,8 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 
 	if (!tqsl_cert_get_subject_name_entry(cert, "AROcallsign", &item))
 		return rval;
-	tqsl_make_key_path(aro, path, sizeof path);
+	if (!tqsl_make_key_path(aro, path, sizeof path))
+		goto end_nokey;
 	if (tqsl_open_key_file(path))
 		return rval;
 	if ((cert_key = X509_get_pubkey(cert)) == NULL)
@@ -3048,6 +3074,7 @@ err:
 	tQSL_Error = TQSL_OPENSSL_ERROR;
 end:
 	tqsl_close_key_file();
+end_nokey:
 	if (prsa != NULL)
 		RSA_free(prsa);
 	if (rsa != NULL)

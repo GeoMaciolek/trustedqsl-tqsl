@@ -10,9 +10,6 @@
 
 #define TQSLLIB_DEF
 
-#define TQSLLIB_VERSION_MAJOR 1
-#define TQSLLIB_VERSION_MINOR 4
-
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "adif.h"
@@ -34,11 +31,11 @@
 #define MKDIR(x,y) mkdir(x,y)
 #endif
 
-DLLEXPORT int tQSL_Error = 0;
-DLLEXPORT TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
+DLLEXPORTDATA int tQSL_Error = 0;
+DLLEXPORTDATA TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
 const char *tQSL_BaseDir = 0;
-DLLEXPORT char tQSL_ErrorFile[256];
-DLLEXPORT char tQSL_CustomError[256];
+DLLEXPORTDATA char tQSL_ErrorFile[256];
+DLLEXPORTDATA char tQSL_CustomError[256];
 
 #define TQSL_OID_BASE "1.3.6.1.4.1.12348.1."
 #define TQSL_OID_CALLSIGN TQSL_OID_BASE "1"
@@ -116,6 +113,12 @@ tqsl_init() {
 	int wval;
 #endif
 
+	/* OpenSSL API tends to change between minor version numbers, so make sure
+	 * we're using the right version */
+	if ((SSLeay() & 0xfffff000) != (OPENSSL_VERSION_NUMBER & 0xfffff000)) {
+		tQSL_Error = TQSL_OPENSSL_VERSION_ERROR;
+		return 1;
+	}
 	ERR_clear_error();
 	tqsl_getErrorString();	/* Clear the error status */
 	if (semaphore)
@@ -229,6 +232,13 @@ tqsl_getErrorString_v(int err) {
 			strncat(buf, ": ", sizeof buf - strlen(buf));
 		}
 		strncat(buf, tqsl_cabrilloGetError(tQSL_Cabrillo_Error), sizeof buf - strlen(buf));
+		return buf;
+	}
+	if (err == TQSL_OPENSSL_VERSION_ERROR) {
+		sprintf(buf, "Incompatible OpenSSL Library version %d.%d.%d; expected %d.%d.%d",
+			int(SSLeay() >> 28) & 0xff, int(SSLeay() >> 20) & 0xff, int(SSLeay() >> 12) & 0xff,
+			int(OPENSSL_VERSION_NUMBER >> 28) & 0xff, int(OPENSSL_VERSION_NUMBER >> 20) & 0xff,
+			int(OPENSSL_VERSION_NUMBER >> 12) & 0xff);
 		return buf;
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;

@@ -57,7 +57,7 @@ public:
       * \li \c getAttribute().first := the attribute's value
       * \li \c getAttribute().second := a bool, true if the atrtribute key exists
       */
-	pair<std::string,bool> getAttribute(const std::string& key);
+	std::pair<std::string,bool> getAttribute(const std::string& key);
 	/// Add an element to the list of contained subelements
 	XMLElementList::iterator addElement(const XMLElement& element);
 	XMLElementAttributeList& getAttributeList() { return _attributes; }

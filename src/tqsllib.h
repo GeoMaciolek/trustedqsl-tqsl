@@ -320,6 +320,17 @@ DLLEXPORT int tqsl_getConfigVersion(int *major, int *minor);
 DLLEXPORT int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flag);
 
+/** Get a particulat certificate from the list returnded by
+  * tqsl_selectCertificates. This function exists principally
+  * to make it easier for VB programs to access the list of
+  * certificates.
+  *
+  * It is the caller's responsibility to ensure that 0 <= idx < ncerts
+  * (where ncerts is the value returned by tqsl_selectCertificates)
+  */
+DLLEXPORT int tqsl_getSelectedCertificate(tQSL_Cert *cert, const tQSL_Cert **certlist,
+	int idx);
+
 /** Find out if the "certificate" is just a key pair.
   */
 DLLEXPORT int tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly);

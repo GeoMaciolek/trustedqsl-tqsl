@@ -25,6 +25,7 @@ enum {		// Menu items
 	tc_c_Renew,
 	tc_c_Import,
 	tc_c_Export,
+	tc_c_Delete,
 	tc_h_Contents,
 	tc_h_About,
 };
@@ -55,11 +56,14 @@ enum {		// Window IDs
 	ID_CRQ_CERT,
 	ID_CRQ_PW1,
 	ID_CRQ_PW2,
+	ID_LCW_P12,
+	ID_LCW_TQ6,
 	ID_PREF_ROOT_CB,
 	ID_PREF_CA_CB,
 	ID_PREF_USER_CB,
 	ID_OK_BUT,
-	ID_CAN_BUT
+	ID_CAN_BUT,
+	ID_HELP_BUT
 };
 
 
