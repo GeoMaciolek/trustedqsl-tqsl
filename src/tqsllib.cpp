@@ -11,7 +11,7 @@
 #define TQSLLIB_DEF
 
 #define TQSLLIB_VERSION_MAJOR 1
-#define TQSLLIB_VERSION_MINOR 0
+#define TQSLLIB_VERSION_MINOR 2
 
 #include "tqsllib.h"
 #include "tqslerrno.h"
@@ -80,6 +80,7 @@ static char *error_strings[] = {
 	"Certificate or private key not found",				/* TQSL_CERT_NOT_FOUND */
 	"PKCS#12 file not TQSL compatible",					/* TQSL_PKCS12_ERROR */
 	"Certificate not TQSL compatible",					/* TQSL_CERT_TYPE_ERROR */
+	"Date out of range",								/* TQSL_DATE_OUT_OF_RANGE */
 };
 
 static int pmkdir(const char *path, int perm) {

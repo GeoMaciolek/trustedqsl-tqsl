@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="0" minorversion="10">
+<tqslconfig majorversion="1" minorversion="0">
   <providers>
-    <provider organizationName="Test Certificate Authority">
-      <organizationalUnitName>TrustedQSL Test</organizationalUnitName>
-      <emailAddress>lotw-test@arrl.org</emailAddress>
-      <url>http://p1k.arrl.org/lotw/</url>
+    <provider organizationName="American Radio Relay League">
+      <organizationalUnitName>Logbook of the World</organizationalUnitName>
+      <emailAddress>lotw-logs@arrl.org</emailAddress>
+      <url>https://www.arrl.org/lotw/</url>
     </provider>
   </providers>
   <sigspecs>
-    <sigspec name="LOTW" version="0.92">
+    <sigspec name="LOTW" version="1.0">
       <tSTATION>
         <CA_PROVINCE />
         <CQZ method="int"/>
@@ -20,52 +20,67 @@
       </tSTATION>
       <tCONTACT>
         <BAND required="1" />
+	<BAND_RX />
         <CALL required="1" />
         <FREQ />
+	<FREQ_RX />
         <MODE required="1" />
+	<PROP_MODE />
         <QSO_DATE required="1" />
         <QSO_TIME required="1" />
+	<SAT_NAME />
       </tCONTACT>
     </sigspec>
   </sigspecs>
-  <dxcc date="2003-08-14">
+  <dxcc>
+    <entity arrlId="0">-NONE-</entity>
     <entity arrlId="1">CANADA</entity>
+    <entity arrlId="2">ABU AIL</entity>
     <entity arrlId="3">AFGHANISTAN</entity>
-    <entity arrlId="4">AGALEGA &amp; ST BRANDON</entity>
-    <entity arrlId="5">ALAND IS</entity>
+    <entity arrlId="4">AGALEGA &amp; ST BRANDON ISLANDS</entity>
+    <entity arrlId="5">ALAND ISLAND</entity>
     <entity arrlId="6">ALASKA</entity>
     <entity arrlId="7">ALBANIA</entity>
+    <entity arrlId="8">ALDABRA</entity>
     <entity arrlId="9">AMERICAN SAMOA</entity>
-    <entity arrlId="10">AMSTERDAM &amp; ST PAUL</entity>
-    <entity arrlId="11">ANDAMAN &amp; NICOBAR IS</entity>
+    <entity arrlId="10">AMSTERDAM &amp; ST PAUL ISLAND</entity>
+    <entity arrlId="11">ANDAMAN &amp; NICOBAR ISLAND</entity>
     <entity arrlId="12">ANGUILLA</entity>
     <entity arrlId="13">ANTARCTICA</entity>
     <entity arrlId="14">ARMENIA</entity>
     <entity arrlId="15">ASIATIC RUSSIA</entity>
-    <entity arrlId="16">AUCKLAND &amp; CAMPBELL</entity>
+    <entity arrlId="16">AUCKLAND &amp; CAMPBELL ISLAND</entity>
     <entity arrlId="17">AVES ISLAND</entity>
     <entity arrlId="18">AZERBAIJAN</entity>
-    <entity arrlId="20">BAKER, HOWLAND IS</entity>
-    <entity arrlId="21">BALEARIC IS</entity>
+    <entity arrlId="19">BAJO NUEVO</entity>
+    <entity arrlId="20">BAKER HOWLAND ISLAND</entity>
+    <entity arrlId="21">BALEARIC ISLAND</entity>
     <entity arrlId="22">PALAU</entity>
-    <entity arrlId="24">BOUVET</entity>
+    <entity arrlId="23">BLENHEIM REEF</entity>
+    <entity arrlId="24">BOUVET ISLAND</entity>
+    <entity arrlId="25">BRITISH NORTH BORNEO</entity>
+    <entity arrlId="26">BRITISH SOMALILAND</entity>
     <entity arrlId="27">BELARUS</entity>
     <entity arrlId="28">CANAL ZONE</entity>
-    <entity arrlId="29">CANARY IS</entity>
-    <entity arrlId="31">C KIRIBATI</entity>
+    <entity arrlId="29">CANARY ISLANDS</entity>
+    <entity arrlId="30">CELEBE &amp; MOLUCCA IS</entity>
+    <entity arrlId="31">CENT. KIRIBATI</entity>
     <entity arrlId="32">CEUTA &amp; MELILLA</entity>
-    <entity arrlId="33">CHAGOS</entity>
-    <entity arrlId="34">CHATHAM IS</entity>
-    <entity arrlId="35">CHRISTMAS IS</entity>
-    <entity arrlId="36">CLIPPERTON IS</entity>
+    <entity arrlId="33">CHAGOS ISLAND</entity>
+    <entity arrlId="34">CHATHAM ISLAND</entity>
+    <entity arrlId="35">CHRISTMAS ISLAND</entity>
+    <entity arrlId="36">CLIPPERTON ISLAND</entity>
     <entity arrlId="37">COCOS ISLAND</entity>
-    <entity arrlId="38">COCOS-KEELING IS</entity>
+    <entity arrlId="38">COCOS-KEELING ISLAND</entity>
+    <entity arrlId="39">COMORO ISLANDS</entity>
     <entity arrlId="40">CRETE</entity>
-    <entity arrlId="41">CROZET</entity>
-    <entity arrlId="43">DESECHEO IS</entity>
+    <entity arrlId="41">CROZET ISLAND</entity>
+    <entity arrlId="42">DAMAO, DIU</entity>
+    <entity arrlId="43">DESECHEO ISLAND</entity>
+    <entity arrlId="44">DESROCHES</entity>
     <entity arrlId="45">DODECANESE</entity>
     <entity arrlId="46">EAST MALAYSIA</entity>
-    <entity arrlId="47">EASTER IS</entity>
+    <entity arrlId="47">EASTER ISLAND</entity>
     <entity arrlId="48">EASTERN KIRIBATI</entity>
     <entity arrlId="49">EQUATORIAL GUINEA</entity>
     <entity arrlId="50">MEXICO</entity>
@@ -73,17 +88,23 @@
     <entity arrlId="52">ESTONIA</entity>
     <entity arrlId="53">ETHIOPIA</entity>
     <entity arrlId="54">EUROPEAN RUSSIA</entity>
+    <entity arrlId="55">FARQUHAR</entity>
     <entity arrlId="56">FERNANDO DE NORONHA</entity>
+    <entity arrlId="57">FRENCH EQUATORIAL AFRICA</entity>
+    <entity arrlId="58">FRENCH INDO-CHINA</entity>
+    <entity arrlId="59">FRENCH WEST AFRICA</entity>
     <entity arrlId="60">BAHAMAS</entity>
     <entity arrlId="61">FRANZ JOSEF LAND</entity>
     <entity arrlId="62">BARBADOS</entity>
     <entity arrlId="63">FRENCH GUIANA</entity>
     <entity arrlId="64">BERMUDA</entity>
-    <entity arrlId="65">BRITISH VIRGIN IS</entity>
+    <entity arrlId="65">BRITISH VIRGIN ISLANDS</entity>
     <entity arrlId="66">BELIZE</entity>
+    <entity arrlId="67">FRENCH INDIA</entity>
+    <entity arrlId="68">KUWAIT/SAUDI ARABIA NEUT. ZONE</entity>
     <entity arrlId="69">CAYMAN ISLANDS</entity>
     <entity arrlId="70">CUBA</entity>
-    <entity arrlId="71">GALAPAGOS</entity>
+    <entity arrlId="71">GALAPAGOS ISLANDS</entity>
     <entity arrlId="72">DOMINICAN REPUBLIC</entity>
     <entity arrlId="74">EL SALVADOR</entity>
     <entity arrlId="75">GEORGIA</entity>
@@ -95,159 +116,194 @@
     <entity arrlId="81">GERMANY</entity>
     <entity arrlId="82">JAMAICA</entity>
     <entity arrlId="84">MARTINIQUE</entity>
-    <entity arrlId="85">BONAIRE,CURACAO</entity>
+    <entity arrlId="85">NETH ANTILLES (BONAIRE, CURACO)</entity>
     <entity arrlId="86">NICARAGUA</entity>
     <entity arrlId="88">PANAMA</entity>
-    <entity arrlId="89">TURKS &amp; CAICOS IS</entity>
+    <entity arrlId="89">TURKS &amp; CAICOS ISLANDS</entity>
     <entity arrlId="90">TRINIDAD &amp; TOBAGO</entity>
     <entity arrlId="91">ARUBA</entity>
+    <entity arrlId="93">GEYSER REEF</entity>
     <entity arrlId="94">ANTIGUA &amp; BARBUDA</entity>
     <entity arrlId="95">DOMINICA</entity>
     <entity arrlId="96">MONTSERRAT</entity>
     <entity arrlId="97">ST LUCIA</entity>
     <entity arrlId="98">ST VINCENT</entity>
-    <entity arrlId="99">GLORIOSO IS</entity>
+    <entity arrlId="99">GLORIOSO ISLAND</entity>
     <entity arrlId="100">ARGENTINA</entity>
+    <entity arrlId="101">GOA</entity>
+    <entity arrlId="102">GOLD COAST TOGOLAND</entity>
     <entity arrlId="103">GUAM</entity>
     <entity arrlId="104">BOLIVIA</entity>
     <entity arrlId="105">GUANTANAMO BAY</entity>
     <entity arrlId="106">GUERNSEY</entity>
-    <entity arrlId="107">REPUBLIC OF GUINEA</entity>
+    <entity arrlId="107">GUINEA</entity>
     <entity arrlId="108">BRAZIL</entity>
     <entity arrlId="109">GUINEA-BISSAU</entity>
     <entity arrlId="110">HAWAII</entity>
-    <entity arrlId="111">HEARD IS</entity>
+    <entity arrlId="111">HEARD ISLAND</entity>
     <entity arrlId="112">CHILE</entity>
+    <entity arrlId="113">IFNI</entity>
     <entity arrlId="114">ISLE OF MAN</entity>
+    <entity arrlId="115">ITALIAN SOMALILAND</entity>
     <entity arrlId="116">COLOMBIA</entity>
-    <entity arrlId="117">ITU GENEVA</entity>
+    <entity arrlId="117">ITU HQ GENEVA</entity>
     <entity arrlId="118">JAN MAYEN</entity>
+    <entity arrlId="119">JAVA</entity>
     <entity arrlId="120">ECUADOR</entity>
     <entity arrlId="122">JERSEY</entity>
-    <entity arrlId="123">JOHNSTON IS</entity>
-    <entity arrlId="124">JUAN DE NOVA</entity>
-    <entity arrlId="125">JUAN FERNANDEZ</entity>
+    <entity arrlId="123">JOHNSTON ISLAND</entity>
+    <entity arrlId="124">JUAN DE NOVA and  EUROPA</entity>
+    <entity arrlId="125">JUAN FERNANDEZ ISLAND</entity>
     <entity arrlId="126">KALININGRAD</entity>
+    <entity arrlId="127">KAMARAN IS.</entity>
+    <entity arrlId="128">KARELO-FINNISH REP</entity>
     <entity arrlId="129">GUYANA</entity>
     <entity arrlId="130">KAZAKHSTAN</entity>
-    <entity arrlId="131">KERGUELEN</entity>
+    <entity arrlId="131">KERGUELEN IS</entity>
     <entity arrlId="132">PARAGUAY</entity>
-    <entity arrlId="133">KERMADEC</entity>
+    <entity arrlId="133">KERMADEC ISLAND</entity>
     <entity arrlId="134">KINGMAN REEF</entity>
     <entity arrlId="135">KYRGYZSTAN</entity>
     <entity arrlId="136">PERU</entity>
-    <entity arrlId="137">SOUTH KOREA</entity>
+    <entity arrlId="137">KOREA</entity>
     <entity arrlId="138">KURE ISLAND</entity>
+    <entity arrlId="139">KURIA MURIA ISLAND</entity>
     <entity arrlId="140">SURINAME</entity>
-    <entity arrlId="141">FALKLAND IS</entity>
-    <entity arrlId="142">LACCADIVE ISLANDS</entity>
+    <entity arrlId="141">FALKLAND ISLANDS</entity>
+    <entity arrlId="142">LAKSHADWEEP ISLANDS</entity>
     <entity arrlId="143">LAOS</entity>
     <entity arrlId="144">URUGUAY</entity>
     <entity arrlId="145">LATVIA</entity>
     <entity arrlId="146">LITHUANIA</entity>
-    <entity arrlId="147">LORD HOWE IS</entity>
+    <entity arrlId="147">LORD HOWE ISLAND</entity>
     <entity arrlId="148">VENEZUELA</entity>
     <entity arrlId="149">AZORES</entity>
     <entity arrlId="150">AUSTRALIA</entity>
-    <entity arrlId="151">MALYJ VYSOTSKI IS (R1MV)</entity>
+    <entity arrlId="151">MALYJ VYSOTSKIJ IS</entity>
     <entity arrlId="152">MACAO</entity>
-    <entity arrlId="153">MACQUARIE IS</entity>
+    <entity arrlId="153">MACQUARIE ISLAND</entity>
+    <entity arrlId="154">YEMEN (DELETED)</entity>
+    <entity arrlId="155">MALAYA</entity>
     <entity arrlId="157">NAURU</entity>
     <entity arrlId="158">VANUATU</entity>
-    <entity arrlId="159">MALDIVE IS</entity>
+    <entity arrlId="159">MALDIVE ISLANDS</entity>
     <entity arrlId="160">TONGA</entity>
-    <entity arrlId="161">MALPELO IS</entity>
+    <entity arrlId="161">MALPELO ISLAND</entity>
     <entity arrlId="162">NEW CALEDONIA</entity>
     <entity arrlId="163">PAPUA NEW GUINEA</entity>
-    <entity arrlId="165">MAURITIUS IS</entity>
-    <entity arrlId="166">MARIANA IS</entity>
+    <entity arrlId="164">MANCHURIA</entity>
+    <entity arrlId="165">MAURITIUS</entity>
+    <entity arrlId="166">MARIANA ISLANDS</entity>
     <entity arrlId="167">MARKET REEF</entity>
-    <entity arrlId="168">MARSHALL IS</entity>
+    <entity arrlId="168">MARSHALL ISLANDS</entity>
     <entity arrlId="169">MAYOTTE</entity>
     <entity arrlId="170">NEW ZEALAND</entity>
     <entity arrlId="171">MELLISH REEF</entity>
-    <entity arrlId="172">PITCAIRN IS</entity>
+    <entity arrlId="172">PITCAIRN ISLAND</entity>
     <entity arrlId="173">MICRONESIA</entity>
-    <entity arrlId="174">MIDWAY IS</entity>
+    <entity arrlId="174">MIDWAY ISLAND</entity>
     <entity arrlId="175">FRENCH POLYNESIA</entity>
-    <entity arrlId="176">FIJI</entity>
+    <entity arrlId="176">FIJI ISLANDS</entity>
     <entity arrlId="177">MINAMI TORISHIMA</entity>
     <entity arrlId="178">MINERVA REEF</entity>
-    <entity arrlId="179">MOLDAVIA</entity>
-    <entity arrlId="180">MT ATHOS (SY)</entity>
+    <entity arrlId="179">MOLDOVA</entity>
+    <entity arrlId="180">MOUNT ATHOS</entity>
     <entity arrlId="181">MOZAMBIQUE</entity>
-    <entity arrlId="182">NAVASSA IS</entity>
+    <entity arrlId="182">NAVASSA ISLAND</entity>
+    <entity arrlId="183">NETHERLANDS BORNEO</entity>
+    <entity arrlId="184">NETHERLANDS NORTH GUINEA</entity>
     <entity arrlId="185">SOLOMON ISLANDS</entity>
+    <entity arrlId="186">NEWFOUNDLAND and LABRADOR</entity>
     <entity arrlId="187">NIGER</entity>
     <entity arrlId="188">NIUE</entity>
-    <entity arrlId="189">NORFOLK IS</entity>
-    <entity arrlId="190">WESTERN SAMOA</entity>
-    <entity arrlId="191">N COOK IS</entity>
+    <entity arrlId="189">NORFOLK ISLAND</entity>
+    <entity arrlId="190">SAMOA</entity>
+    <entity arrlId="191">NORTH COOK ISLANDS</entity>
     <entity arrlId="192">OGASAWARA</entity>
-    <entity arrlId="195">PAGALU (ANNOBAR IS)</entity>
+    <entity arrlId="193">OKINAWA</entity>
+    <entity arrlId="194">OKINO TORI-SHIMA</entity>
+    <entity arrlId="195">ANNOBON</entity>
     <entity arrlId="196">PALESTINE</entity>
-    <entity arrlId="197">PALMYRA &amp; JARVIS IS</entity>
-    <entity arrlId="199">PETER I IS</entity>
-    <entity arrlId="201">PRINCE EDWARD &amp; MARION</entity>
+    <entity arrlId="197">PALMYRA,  JARVIS ISLANDS</entity>
+    <entity arrlId="198">PAPUA TERRITORY</entity>
+    <entity arrlId="199">PETER 1 ISLAND</entity>
+    <entity arrlId="200">PORTUGUESE TIMOR</entity>
+    <entity arrlId="201">PRINCE EDWARD &amp; MARION ISLANDS</entity>
     <entity arrlId="202">PUERTO RICO</entity>
     <entity arrlId="203">ANDORRA</entity>
     <entity arrlId="204">REVILLA GIGEDO</entity>
     <entity arrlId="205">ASCENSION ISLAND</entity>
     <entity arrlId="206">AUSTRIA</entity>
-    <entity arrlId="207">RODRIGUEZ IS</entity>
+    <entity arrlId="207">RODRIGUES ISLAND</entity>
+    <entity arrlId="208">RUANDA-URUNDI</entity>
     <entity arrlId="209">BELGIUM</entity>
+    <entity arrlId="210">SAAR</entity>
     <entity arrlId="211">SABLE ISLAND</entity>
     <entity arrlId="212">BULGARIA</entity>
-    <entity arrlId="213">SAINT MARTIN (FJ)</entity>
+    <entity arrlId="213">SAINT MARTIN</entity>
     <entity arrlId="214">CORSICA</entity>
     <entity arrlId="215">CYPRUS</entity>
-    <entity arrlId="216">SAN ANDREAS &amp; PROVIDENCIA</entity>
-    <entity arrlId="217">SAN FELIX</entity>
+    <entity arrlId="216">SAN ANDRES ISLAND</entity>
+    <entity arrlId="217">SAN FELIX ISLAND</entity>
+    <entity arrlId="218">CZECHOSLOVAKIA</entity>
     <entity arrlId="219">SAO TOME &amp; PRINCIPE</entity>
+    <entity arrlId="220">SARAWAK</entity>
     <entity arrlId="221">DENMARK</entity>
-    <entity arrlId="222">FAROE IS</entity>
+    <entity arrlId="222">FAROE ISLANDS</entity>
     <entity arrlId="223">ENGLAND</entity>
     <entity arrlId="224">FINLAND</entity>
     <entity arrlId="225">SARDINIA</entity>
+    <entity arrlId="226">SAUDI ARABIA/IRAQ NEUT ZONE</entity>
     <entity arrlId="227">FRANCE</entity>
-    <entity arrlId="230">FED REP OF GERMANY</entity>
-    <entity arrlId="232">SOMALI</entity>
+    <entity arrlId="228">SERRANA BANK &amp; RONCADOR CAY</entity>
+    <entity arrlId="229">GERMAN DEMOCRATIC REP.</entity>
+    <entity arrlId="230">FEDERAL REPUBLIC OF GERMANY</entity>
+    <entity arrlId="231">SIKKIM</entity>
+    <entity arrlId="232">SOMALIA</entity>
     <entity arrlId="233">GIBRALTAR</entity>
-    <entity arrlId="234">S COOK IS</entity>
-    <entity arrlId="235">SOUTH GEORGIA IS</entity>
+    <entity arrlId="234">SOUTH COOK ISLANDS</entity>
+    <entity arrlId="235">SOUTH GEORGIA ISLAND</entity>
     <entity arrlId="236">GREECE</entity>
     <entity arrlId="237">GREENLAND</entity>
-    <entity arrlId="238">SOUTH ORKNEY IS</entity>
+    <entity arrlId="238">SOUTH ORKNEY ISLANDS</entity>
     <entity arrlId="239">HUNGARY</entity>
     <entity arrlId="240">SOUTH SANDWICH ISLANDS</entity>
     <entity arrlId="241">SOUTH SHETLAND ISLANDS</entity>
     <entity arrlId="242">ICELAND</entity>
+    <entity arrlId="243">PEOPLE DEM REP YEMEN (S YEMEN)</entity>
+    <entity arrlId="244">SOUTHERN SUDAN</entity>
     <entity arrlId="245">IRELAND</entity>
-    <entity arrlId="246">MALTA, SOVERIGN</entity>
-    <entity arrlId="247">SPRATLY IS</entity>
+    <entity arrlId="246">SOVEREIGN MILITARY ORDER OF MALTA</entity>
+    <entity arrlId="247">SPRATLY ISLANDS</entity>
     <entity arrlId="248">ITALY</entity>
     <entity arrlId="249">ST KITTS &amp; NEVIS</entity>
-    <entity arrlId="250">ST HELENA IS</entity>
+    <entity arrlId="250">ST HELENA</entity>
     <entity arrlId="251">LIECHTENSTEIN</entity>
     <entity arrlId="252">ST PAUL ISLAND</entity>
-    <entity arrlId="253">ST PETER &amp; ST PAUL RKS</entity>
+    <entity arrlId="253">ST PETER AND PAUL ROCKS</entity>
     <entity arrlId="254">LUXEMBOURG</entity>
-    <entity arrlId="255">ST MAARTEN</entity>
-    <entity arrlId="256">MADEIRA IS</entity>
+    <entity arrlId="255">ST MAARTEN, SABA, ST EUSTATIUS</entity>
+    <entity arrlId="256">MADEIRA ISLANDS</entity>
     <entity arrlId="257">MALTA</entity>
-    <entity arrlId="259">SVALBARD IS</entity>
+    <entity arrlId="258">SUMATRA</entity>
+    <entity arrlId="259">SVALBARD</entity>
     <entity arrlId="260">MONACO</entity>
-    <entity arrlId="262">TADZHIKISTAN</entity>
+    <entity arrlId="261">SWAN ISLAND</entity>
+    <entity arrlId="262">TAJIKISTAN</entity>
     <entity arrlId="263">NETHERLANDS</entity>
+    <entity arrlId="264">TANGIER</entity>
     <entity arrlId="265">NORTHERN IRELAND</entity>
     <entity arrlId="266">NORWAY</entity>
+    <entity arrlId="267">TERRITORY OF  NEW GUINEA</entity>
+    <entity arrlId="268">TIBET</entity>
     <entity arrlId="269">POLAND</entity>
-    <entity arrlId="270">TOKELAU IS</entity>
+    <entity arrlId="270">TOKELAU ISLANDS</entity>
+    <entity arrlId="271">TRIESTE</entity>
     <entity arrlId="272">PORTUGAL</entity>
-    <entity arrlId="273">TRINDADE &amp; MARTIN</entity>
-    <entity arrlId="274">TRISTAN DA CUNHA</entity>
+    <entity arrlId="273">TRINDADE &amp; MARTIN VAZ ISLANDS</entity>
+    <entity arrlId="274">TRISTAN DA CUNHA &amp; GOUGH IS</entity>
     <entity arrlId="275">ROMANIA</entity>
-    <entity arrlId="276">TROMELIN</entity>
+    <entity arrlId="276">TROMELIN ISLAND</entity>
     <entity arrlId="277">ST PIERRE &amp; MIQUELON</entity>
     <entity arrlId="278">SAN MARINO</entity>
     <entity arrlId="279">SCOTLAND</entity>
@@ -256,29 +312,30 @@
     <entity arrlId="282">TUVALU</entity>
     <entity arrlId="283">UK BASES ON CYPRUS</entity>
     <entity arrlId="284">SWEDEN</entity>
-    <entity arrlId="285">VIRGIN IS</entity>
+    <entity arrlId="285">US VIRGIN ISLANDS</entity>
     <entity arrlId="286">UGANDA</entity>
     <entity arrlId="287">SWITZERLAND</entity>
     <entity arrlId="288">UKRAINE</entity>
-    <entity arrlId="289">UNITED NATIONS HQ</entity>
-    <entity arrlId="291">UNITED STATES</entity>
+    <entity arrlId="289">UNITED NATIONS HEADQUARTERS</entity>
+    <entity arrlId="291">UNITED STATES OF AMERICA</entity>
     <entity arrlId="292">UZBEKISTAN</entity>
     <entity arrlId="293">VIETNAM</entity>
     <entity arrlId="294">WALES</entity>
-    <entity arrlId="295">VATICAN</entity>
+    <entity arrlId="295">VATICAN CITY</entity>
     <entity arrlId="296">YUGOSLAVIA</entity>
-    <entity arrlId="297">WAKE IS</entity>
-    <entity arrlId="298">WALLIS &amp; FUTUNA</entity>
+    <entity arrlId="297">WAKE ISLAND</entity>
+    <entity arrlId="298">WALLIS &amp; FUTUNA IS</entity>
     <entity arrlId="299">WEST MALAYSIA</entity>
-    <entity arrlId="301">W KIRIBATI</entity>
+    <entity arrlId="301">WESTERN KIRIBATI</entity>
     <entity arrlId="302">WESTERN SAHARA</entity>
-    <entity arrlId="303">WILLIS IS</entity>
+    <entity arrlId="303">WILLIS ISLAND</entity>
     <entity arrlId="304">BAHRAIN</entity>
     <entity arrlId="305">BANGLADESH</entity>
     <entity arrlId="306">BHUTAN</entity>
+    <entity arrlId="307">ZANZIBAR</entity>
     <entity arrlId="308">COSTA RICA</entity>
     <entity arrlId="309">MYANMAR</entity>
-    <entity arrlId="312">KAMPUCHEA (CAMBODIA)</entity>
+    <entity arrlId="312">CAMBODIA</entity>
     <entity arrlId="315">SRI LANKA</entity>
     <entity arrlId="318">CHINA</entity>
     <entity arrlId="321">HONG KONG</entity>
@@ -289,6 +346,7 @@
     <entity arrlId="336">ISRAEL</entity>
     <entity arrlId="339">JAPAN</entity>
     <entity arrlId="342">JORDAN</entity>
+    <entity arrlId="344">Dem. Peoples Rep. of Korea</entity>
     <entity arrlId="345">BRUNEI</entity>
     <entity arrlId="348">KUWAIT</entity>
     <entity arrlId="354">LEBANON</entity>
@@ -312,20 +370,19 @@
     <entity arrlId="402">BOTSWANA</entity>
     <entity arrlId="404">BURUNDI</entity>
     <entity arrlId="406">CAMEROON</entity>
-    <entity arrlId="408">CENTRAL AFRICAN</entity>
-    <entity arrlId="409">CAPE VERDE</entity>
+    <entity arrlId="408">CENTRAL AFRICAN REPUBLIC</entity>
+    <entity arrlId="409">CAPE VERDE ISLANDS</entity>
     <entity arrlId="410">CHAD</entity>
-    <entity arrlId="411">COMOROS (D6)</entity>
+    <entity arrlId="411">COMOROS</entity>
     <entity arrlId="412">CONGO</entity>
-    <entity arrlId="414">ZAIRE</entity>
+    <entity arrlId="414">PEOPLES DEM REP OF CONGO</entity>
     <entity arrlId="416">BENIN</entity>
     <entity arrlId="420">GABON</entity>
-    <entity arrlId="422">THE GAMBIA</entity>
+    <entity arrlId="422">GAMBIA</entity>
     <entity arrlId="424">GHANA</entity>
     <entity arrlId="428">IVORY COAST</entity>
     <entity arrlId="430">KENYA</entity>
     <entity arrlId="432">LESOTHO</entity>
-    <entity arrlId="433">NORTH KOREA (HP)</entity>
     <entity arrlId="434">LIBERIA</entity>
     <entity arrlId="436">LIBYA</entity>
     <entity arrlId="438">MADAGASCAR</entity>
@@ -335,39 +392,41 @@
     <entity arrlId="446">MOROCCO</entity>
     <entity arrlId="450">NIGERIA</entity>
     <entity arrlId="452">ZIMBABWE</entity>
-    <entity arrlId="453">REUNION</entity>
+    <entity arrlId="453">REUNION ISLAND</entity>
     <entity arrlId="454">RWANDA</entity>
     <entity arrlId="456">SENEGAL</entity>
     <entity arrlId="458">SIERRA LEONE</entity>
-    <entity arrlId="460">ROTUMA IS</entity>
-    <entity arrlId="462">SOUTH AFRICA</entity>
+    <entity arrlId="460">ROTUMA</entity>
+    <entity arrlId="462">REPUBLIC OF SOUTH AFRICA</entity>
     <entity arrlId="464">NAMIBIA</entity>
     <entity arrlId="466">SUDAN</entity>
     <entity arrlId="468">SWAZILAND</entity>
     <entity arrlId="470">TANZANIA</entity>
     <entity arrlId="474">TUNISIA</entity>
     <entity arrlId="478">EGYPT</entity>
-    <entity arrlId="480">BURKINA-FASO</entity>
+    <entity arrlId="480">BURKINA FASO</entity>
     <entity arrlId="482">ZAMBIA</entity>
     <entity arrlId="483">TOGO</entity>
+    <entity arrlId="488">WALVIS BAY</entity>
     <entity arrlId="489">CONWAY REEF</entity>
-    <entity arrlId="490">BANABA ISLAND</entity>
+    <entity arrlId="490">BANABA</entity>
     <entity arrlId="492">YEMEN</entity>
+    <entity arrlId="493">PENGUIN ISLANDS</entity>
     <entity arrlId="497">CROATIA</entity>
     <entity arrlId="499">SLOVENIA</entity>
     <entity arrlId="501">BOSNIA-HERZEGOVINA</entity>
     <entity arrlId="502">MACEDONIA</entity>
     <entity arrlId="503">CZECH REPUBLIC</entity>
     <entity arrlId="504">SLOVAK REPUBLIC</entity>
-    <entity arrlId="505">PRATAS IS</entity>
+    <entity arrlId="505">PRATAS ISLAND</entity>
     <entity arrlId="506">SCARBOROUGH REEF</entity>
-    <entity arrlId="507">TEMOTU IS</entity>
-    <entity arrlId="508">AUSTRAL IS</entity>
-    <entity arrlId="509">MARQUESAS IS</entity>
-    <entity arrlId="510">PALESTINE (E4)</entity>
-    <entity arrlId="511">EAST TIMOR (4W)</entity>
-    <entity arrlId="512">CHESTERFIELD IS (TX0)</entity>
-    <entity arrlId="513">DUCIE IS (VP6)</entity>
+    <entity arrlId="507">TEMOTU PROVINCE</entity>
+    <entity arrlId="508">AUSTRAL ISLAND</entity>
+    <entity arrlId="509">MARQUESAS ISLANDS</entity>
+    <entity arrlId="510">PALESTINE</entity>
+    <entity arrlId="511">TIMOR - LESTE</entity>
+    <entity arrlId="512">CHESTERFIELD IS</entity>
+    <entity arrlId="513">DUCIE IS</entity>
   </dxcc>
   <bands>
     <band spectrum="UHF" low="24000" high="24250">1.25CM</band>
@@ -381,6 +440,7 @@
     <band spectrum="UHF" low="241000" high="250000">1MM</band>
     <band spectrum="UHF" low="119980" high="120020">2.5MM</band>
     <band spectrum="HF" low="14000" high="14350">20M</band>
+    <band spectrum="HF" low="136" high="137">2190M</band>
     <band spectrum="UHF" low="1240" high="1300">23CM</band>
     <band spectrum="VHF" low="144" high="148">2M</band>
     <band spectrum="UHF" low="142000" high="149000">2MM</band>
@@ -388,6 +448,7 @@
     <band spectrum="UHF" low="902" high="928">33CM</band>
     <band spectrum="UHF" low="10000" high="10500">3CM</band>
     <band spectrum="HF" low="7000" high="7300">40M</band>
+    <band spectrum="VHF" low="70" high="71">4M</band>
     <band spectrum="UHF" low="75500" high="81000">4MM</band>
     <band spectrum="UHF" low="5650" high="5925">6CM</band>
     <band spectrum="VHF" low="50" high="54">6M</band>
@@ -481,6 +542,57 @@
     <cabrillocontest field="9" type="HF">TARA-RTTY</cabrillocontest>
     <cabrillocontest field="8" type="HF">WAEDC</cabrillocontest>
   </cabrillomap>
+  <propmodes>
+    <propmode name="AUE">Aurora-E</propmode>
+    <propmode name="AUR">Aurora</propmode>
+    <propmode name="BS">Back scatter</propmode>
+    <propmode name="ECH">EchoLink</propmode>
+    <propmode name="EME">Earth-Moon-Earth</propmode>
+    <propmode name="ES">Sporadic E</propmode>
+    <propmode name="F2">F2 Reflection</propmode>
+    <propmode name="FAI">Field Aligned Irregularities</propmode>
+    <propmode name="ION">Ionoscatter</propmode>
+    <propmode name="IRL">IRLP</propmode>
+    <propmode name="MS">Meteor scatter</propmode>
+    <propmode name="RS">Rain scatter</propmode>
+    <propmode name="SAT">Satellite</propmode>
+    <propmode name="TEP">Trans-equatorial</propmode>
+    <propmode name="TR">Tropospheric ducting</propmode>
+  </propmodes>
+  <satellites>
+    <satellite name="AO-10" startDate="1983-06-06">AMSAT-OSCAR 10</satellite>
+    <satellite name="AO-13" startDate="1988-06-15" endDate="1996-12-07">AMSAT-OSCAR 13</satellite>
+    <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
+    <satellite name="AO-21" startDate="1991-01-29" endDate="1994-09-16">OSCAR 21/RS-14</satellite>
+    <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
+    <satellite name="AO-3" startDate="1965-03-18" endDate="1965-03-27">AMSAT-OSCAR 3</satellite>
+    <satellite name="AO-4" startDate="1965-12-21" endDate="1966-03-16">AMSAT-OSCAR 4</satellite>
+    <satellite name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
+    <satellite name="AO-6" startDate="1972-10-15" endDate="1977-06-21">AMSAT-OSCAR 6</satellite>
+    <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
+    <satellite name="AO-8" startDate="1978-03-15" endDate="1983-06-24">AMSAT-OSCAR 8</satellite>
+    <satellite name="Arsene" startDate="1993-05-13" endDate="1993-09-10">OSCAR 24</satellite>
+    <satellite name="FO-12" startDate="1986-08-12" endDate="1989-11-05">Fuji-OSCAR 12</satellite>
+    <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
+    <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
+    <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
+    <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
+    <satellite name="RS-1" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 1</satellite>
+    <satellite name="RS-10" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 10</satellite>
+    <satellite name="RS-11" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 11</satellite>
+    <satellite name="RS-12" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 12</satellite>
+    <satellite name="RS-13" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 13</satellite>
+    <satellite name="RS-15" startDate="1994-12-16">Radio Sputnik 15</satellite>
+    <satellite name="RS-2" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 2</satellite>
+    <satellite name="RS-5" startDate="1981-12-17" endDate="1987-05-10">Radio Sputnik 5</satellite>
+    <satellite name="RS-6" startDate="1981-12-17" endDate="1984-12-09">Radio Sputnik 6</satellite>
+    <satellite name="RS-7" startDate="1981-12-18" endDate="1987-06-01">Radio Sputnik 7</satellite>
+    <satellite name="RS-8" startDate="1981-12-17" endDate="1985-12-16">Radio Sputnik 8</satellite>
+    <satellite name="SO-35" startDate="1999-02-23" endDate="2001-06-10">Sunsat-OSCAR 35</satellite>
+    <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
+    <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
+    <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
+  </satellites>
   <locpages>
     <page Id="1" follows="0">
       <pageField>CALL</pageField>

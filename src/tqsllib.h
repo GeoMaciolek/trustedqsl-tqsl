@@ -44,10 +44,11 @@
 #define TQSL_CRQ_POSTAL_MAX          20
 #define TQSL_CRQ_COUNTRY_MAX         80
 #define TQSL_CRQ_EMAIL_MAX           180
-#define TQSL_BAND_MAX                10
+#define TQSL_BAND_MAX                6
 #define TQSL_MODE_MAX                16
 #define TQSL_FREQ_MAX                20
-
+#define TQSL_SATNAME_MAX             6
+#define TQSL_PROPMODE_MAX            6
 
 #define TQSL_CERT_CB_USER            0
 #define TQSL_CERT_CB_CA              1
@@ -112,12 +113,16 @@ typedef struct tqsl_cert_req_st {
 
 /** QSO data */
 typedef struct {
-	char callsign[TQSL_CALLSIGN_MAX];
-	char band[TQSL_BAND_MAX];
-	char mode[TQSL_MODE_MAX];
+	char callsign[TQSL_CALLSIGN_MAX+1];
+	char band[TQSL_BAND_MAX+1];
+	char mode[TQSL_MODE_MAX+1];
 	tQSL_Date date;
 	tQSL_Time time;
-	char freq[TQSL_FREQ_MAX];
+	char freq[TQSL_FREQ_MAX+1];
+	char rxfreq[TQSL_FREQ_MAX+1];
+	char rxband[TQSL_BAND_MAX+1];
+	char propmode[TQSL_PROPMODE_MAX+1];
+	char satname[TQSL_SATNAME_MAX+1];
 } TQSL_QSO_RECORD;
 
 /// Base directory for tQSL library working files.
@@ -960,6 +965,33 @@ int tqsl_getNumMode(int *number);
   * Note: \c group may be NULL.
   */
 int tqsl_getMode(int index, const char **mode, const char **group);
+
+/** Get the number of Propagation Mode entries in the Propagation Mode list */
+int tqsl_getNumPropagationMode(int *number);
+
+/** Get a propagation mode by its index.
+  *
+  * \c name - The GAABI propagation mode name
+  * \c descrip - Text description of the propagation mode
+  *
+  * Note: \c descrip may be NULL.
+  */
+int tqsl_getPropagationMode(int index, const char **name, const char **descrip);
+
+/** Get the number of Satellite entries in the Satellite list */
+int tqsl_getNumSatellite(int *number);
+
+/** Get a satellite by its index.
+  *
+  * \c name - The GAABI satellite name
+  * \c descrip - Text description of the satellite
+  * \c start - The date the satellite entered service
+  * \c end - The last date the satellite was in service
+  *
+  * Note: \c descrip, start and/or end may be NULL.
+  */
+int tqsl_getSatellite(int index, const char **name, const char **descrip,
+	tQSL_Date *start, tQSL_Date *end);
 
 /** Clear the map of Cabrillo contests.
   */

@@ -118,6 +118,21 @@ public:
 	string mode, group;
 };
 
+class PropMode {
+public:
+	string descrip, name;
+};
+
+class Satellite {
+public:
+	Satellite() {
+		start.year = start.month = start.day = 0;
+		end.year = end.month = end.day = 0;
+	}
+	string descrip, name;
+ 	tQSL_Date start, end;
+};
+
 bool
 operator< (const Band& o1, const Band& o2) {
 	static char *suffixes[] = { "M", "CM", "MM"};
@@ -138,6 +153,24 @@ operator< (const Band& o1, const Band& o2) {
 		return b1_idx < b2_idx;
 	}
 	return atof(o1.name.c_str()) > atof(o2.name.c_str());
+}
+
+bool
+operator< (const PropMode& o1, const PropMode& o2) {
+	if (o1.descrip < o2.descrip)
+		return true;
+	if (o1.descrip == o2.descrip)
+		return (o1.name < o2.name);
+	return false;
+}
+
+bool
+operator< (const Satellite& o1, const Satellite& o2) {
+	if (o1.descrip < o2.descrip)
+		return true;
+	if (o1.descrip == o2.descrip)
+		return (o1.name < o2.name);
+	return false;
 }
 
 bool
@@ -180,6 +213,8 @@ static IntMap DXCCMap;
 static vector< pair<int,string> > DXCCList;
 static vector<Band> BandList;
 static vector<Mode> ModeList;
+static vector<PropMode> PropModeList;
+static vector<Satellite> SatelliteList;
 static map<int, XMLElement> tqsl_page_map;
 static map<string, XMLElement> tqsl_field_map;
 static map<string, string> tqsl_adif_map;
@@ -540,6 +575,51 @@ init_mode() {
 	return 0;
 }
 	
+static int
+init_propmode() {
+	if (PropModeList.size() > 0)
+		return 0;
+	XMLElement propmodes;
+	if (tqsl_get_xml_config_section("propmodes", propmodes))
+		return 1;
+	XMLElement config_mode;
+	bool ok = propmodes.getFirstElement("propmode", config_mode);
+	while (ok) {
+		PropMode p;
+		p.descrip = config_mode.getText();
+		p.name = config_mode.getAttribute("name").first;
+		PropModeList.push_back(p);
+		ok = propmodes.getNextElement(config_mode);
+	}
+	sort(PropModeList.begin(), PropModeList.end());
+	return 0;
+}
+	
+static int
+init_satellite() {
+	if (SatelliteList.size() > 0)
+		return 0;
+	XMLElement satellites;
+	if (tqsl_get_xml_config_section("satellites", satellites))
+		return 1;
+	XMLElement config_sat;
+	bool ok = satellites.getFirstElement("satellite", config_sat);
+	while (ok) {
+		Satellite s;
+		s.descrip = config_sat.getText();
+		s.name = config_sat.getAttribute("name").first;
+		tQSL_Date d;
+		if (!tqsl_initDate(&d, config_sat.getAttribute("startDate").first.c_str()))
+			s.start = d;
+		if (!tqsl_initDate(&d, config_sat.getAttribute("endDate").first.c_str()))
+			s.end = d;
+		SatelliteList.push_back(s);
+		ok = satellites.getNextElement(config_sat);
+	}
+	sort(SatelliteList.begin(), SatelliteList.end());
+	return 0;
+}
+	
 DLLEXPORT int
 tqsl_getNumMode(int *number) {
 	if (tqsl_init())
@@ -617,6 +697,75 @@ tqsl_getDXCCEntityName(int number, const char **name) {
 		return 1;
 	}
 	*name = it->second.c_str();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getNumPropagationMode(int *number) {
+	if (tqsl_init())
+		return 1;
+	if (number == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_propmode())
+		return 1;
+	*number = PropModeList.size();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getPropagationMode(int index, const char **name, const char **descrip) {
+	if (index < 0 || name == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_propmode())
+		return 1;
+	if (index >= (int)PropModeList.size()) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	*name = PropModeList[index].name.c_str();
+	if (descrip)
+		*descrip = PropModeList[index].descrip.c_str();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getNumSatellite(int *number) {
+	if (tqsl_init())
+		return 1;
+	if (number == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_satellite())
+		return 1;
+	*number = SatelliteList.size();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getSatellite(int index, const char **name, const char **descrip,
+	tQSL_Date *start, tQSL_Date *end) {
+	if (index < 0 || name == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_satellite())
+		return 1;
+	if (index >= (int)SatelliteList.size()) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	*name = SatelliteList[index].name.c_str();
+	if (descrip)
+		*descrip = SatelliteList[index].descrip.c_str();
+	if (start)
+		*start = SatelliteList[index].start;
+	if (end)
+		*end = SatelliteList[index].end;
 	return 0;
 }
 
@@ -1792,10 +1941,18 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 			value = rec->callsign;
 		else if (!strcmp(elname, "BAND"))
 			value = rec->band;
+		else if (!strcmp(elname, "BAND_RX"))
+			value = rec->rxband;
 		else if (!strcmp(elname, "MODE"))
 			value = rec->mode;
 		else if (!strcmp(elname, "FREQ"))
 			value = rec->freq;
+		else if (!strcmp(elname, "FREQ_RX"))
+			value = rec->rxfreq;
+		else if (!strcmp(elname, "PROP_MODE"))
+			value = rec->propmode;
+		else if (!strcmp(elname, "SAT_NAME"))
+			value = rec->satname;
 		else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(rec->date)))
 				value = tqsl_convertDateToText(&(rec->date), buf, sizeof buf);
@@ -1937,10 +2094,18 @@ tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, 
 			value = qso->callsign;
 		else if (!strcmp(elname, "BAND"))
 			value = qso->band;
+		else if (!strcmp(elname, "BAND_RX"))
+			value = qso->rxband;
 		else if (!strcmp(elname, "MODE"))
 			value = qso->mode;
 		else if (!strcmp(elname, "FREQ"))
 			value = qso->freq;
+		else if (!strcmp(elname, "FREQ_RX"))
+			value = qso->rxfreq;
+		else if (!strcmp(elname, "PROP_MODE"))
+			value = qso->propmode;
+		else if (!strcmp(elname, "SAT_NAME"))
+			value = qso->satname;
 		else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(qso->date)))
 				value = tqsl_convertDateToText(&(qso->date), buf, sizeof buf);
@@ -1996,11 +2161,33 @@ tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, 
 	tqsl_adifMakeField("MODE", 0, (const unsigned char *)qso->mode, -1, (unsigned char *)buf, sizeof buf);
 	loc->tCONTACT += buf;
 	loc->tCONTACT += "\n";
-	if (qso->freq && *(qso->freq) != 0) {
+	// Optional fields
+	if (qso->freq[0] != 0) {
 		tqsl_adifMakeField("FREQ", 0, (const unsigned char *)qso->freq, -1, (unsigned char *)buf, sizeof buf);
 		loc->tCONTACT += buf;
 		loc->tCONTACT += "\n";
 	}
+	if (qso->rxfreq[0] != 0) {
+		tqsl_adifMakeField("FREQ_RX", 0, (const unsigned char *)qso->rxfreq, -1, (unsigned char *)buf, sizeof buf);
+		loc->tCONTACT += buf;
+		loc->tCONTACT += "\n";
+	}
+	if (qso->propmode[0] != 0) {
+		tqsl_adifMakeField("PROP_MODE", 0, (const unsigned char *)qso->propmode, -1, (unsigned char *)buf, sizeof buf);
+		loc->tCONTACT += buf;
+		loc->tCONTACT += "\n";
+	}
+	if (qso->satname[0] != 0) {
+		tqsl_adifMakeField("SAT_NAME", 0, (const unsigned char *)qso->satname, -1, (unsigned char *)buf, sizeof buf);
+		loc->tCONTACT += buf;
+		loc->tCONTACT += "\n";
+	}
+	if (qso->rxband[0] != 0) {
+		tqsl_adifMakeField("BAND_RX", 0, (const unsigned char *)qso->rxband, -1, (unsigned char *)buf, sizeof buf);
+		loc->tCONTACT += buf;
+		loc->tCONTACT += "\n";
+	}
+	// Date and Time
 	char date_buf[40] = "";
 	tqsl_convertDateToText(&(qso->date), date_buf, sizeof date_buf);
 	tqsl_adifMakeField("QSO_DATE", 0, (const unsigned char *)date_buf, -1, (unsigned char *)buf, sizeof buf);
@@ -2013,6 +2200,7 @@ tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, 
 	loc->tCONTACT += "\n";
 	tqsl_adifMakeField(loc->sigspec.c_str(), '6', (const unsigned char *)b64, -1, (unsigned char *)buf, sizeof buf);
 	loc->tCONTACT += buf;
+	// Signature
 	tqsl_adifMakeField("SIGNDATA", 0, (const unsigned char *)rec_sign_data.c_str(), -1, (unsigned char *)buf, sizeof buf);
 	loc->tCONTACT += buf;
 	loc->tCONTACT += "\n";

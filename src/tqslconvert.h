@@ -43,7 +43,8 @@ extern "C" {
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs, int ncerts, tQSL_Location loc);
+int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs,
+	int ncerts, tQSL_Location loc);
 
 /** Initiates the conversion process for a Cabrillo file.
   *
@@ -54,15 +55,39 @@ int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename, tQSL_Cer
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-int tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs, int ncerts, tQSL_Location loc);
+int tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs,
+	int ncerts, tQSL_Location loc);
 
 /** End the conversion process by freeing the used resources. */
 int tqsl_endConverter(tQSL_Converter *conv);
 
+/** Configure the converter to allow (allow != 0) or disallow (allow == 0)
+  * nonamateur call signs in the CALL field. (Note: the test for
+  * validity is fairly trivial and will allow some nonamateur calls to
+  * get through, but it does catch most common errors.)
+  *
+  * \c allow defaults to 0 when tqsl_beginADIFConverter or
+  * tqsl_beginCabrilloConverter is called.
+  */
+int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
+
+/** Set QSO date filtering in the converter.
+  *
+  * If \c start points to a valid date, QSOs prior to that date will be ignored
+  * by the converter. Similarly, if \c end points to a valid date, QSOs after
+  * that date will be ignored. Either or both may be NULL (or point to an
+  * invalid date) to disable date filtering for the respective range.
+  */
+int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start, tQSL_Date *end);
+
 /** This is the main converter function. It returns a single GABBI
   * record.
   *
-  * Returns the NULL pointer of error or EOF. (Test tQSL_Error to determine which.)
+  * Returns the NULL pointer on error or EOF. (Test tQSL_Error to determine which.)
+  *
+  * tQSL_Error is set to TQSL_DATE_OUT_OF_RANGE if QSO date range checking
+  * is active (see ::tqsl_useADIFConverterDateFilter) and the QSO date is
+  * outside the specified range. This is a non-fatal error.
   *
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the GABBI records should be written in binary mode.
@@ -81,6 +106,12 @@ int tqsl_getConverterCert(tQSL_Converter conv, tQSL_Cert *certp);
 /** Get the input-file line number last read by the converter, starting
   * at line 1. */
 int tqsl_getConverterLine(tQSL_Converter conv, int *lineno);
+
+/** Get the text of the last record read by the converter.
+  *
+  * Returns NULL on error.
+  */
+const char *tqsl_getConverterRecordText(tQSL_Converter conv);
 
 /** @} */
 
