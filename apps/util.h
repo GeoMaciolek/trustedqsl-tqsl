@@ -16,7 +16,7 @@
 #endif
 
 void displayCertProperties(CertTreeItemData *item, wxWindow *parent = 0);
-int getPassword(char *buf, int bufsiz);
+int getPassword(char *buf, int bufsiz, void *);
 void displayTQSLError(const char *pre);
 wxMenu *makeCertificateMenu(bool enable, bool keyonly = false);
 

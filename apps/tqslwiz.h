@@ -61,7 +61,7 @@ private:
 	wxString sl_name;
 	tQSL_Location loc;
 	int _curpage;
-	map<int, TQSLWizPage *> _pages;
+	std::map<int, TQSLWizPage *> _pages;
 	TQSLWizPage *final;
 
 	DECLARE_EVENT_TABLE()
@@ -87,7 +87,7 @@ public:
 	virtual TQSLWizPage *GetNext() const;
 	void OnSize(wxSizeEvent&);
 private:
-	vector<void *> controls;
+	std::vector<void *> controls;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -104,7 +104,7 @@ private:
 	wxListBox *namelist;
 	wxTextCtrl *newname;
 	wxBoxSizer *sizer;
-	vector<wxString> item_data;
+	std::vector<wxString> item_data;
 
 	DECLARE_EVENT_TABLE()
 };
