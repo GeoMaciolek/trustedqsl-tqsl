@@ -28,6 +28,7 @@
 #include <unistd.h>
 #endif
 #include <ctype.h>
+#pragma hdrstop
 
 #include <openssl/bio.h>
 #include <openssl/bn.h>
@@ -248,6 +249,7 @@ static void packCert(TqslCert *cert,char *certStr)
   if (debugLevel > 4 && dbFile != NULL)
     fprintf(dbFile,"pkey len is %d\n",
 	    strlen((char *)cert->data.publicKey.pkey));
+
   strcat(certStr,(char *)cert->data.publicKey.pkey);
 }
 
@@ -260,8 +262,9 @@ static void stripNL(char *buf)
   j=0;
   for(i=0;i< (int)strlen(buf);i++)
     {
-      if (buf[i] == '\n' || buf[i] ==  '\r')
-	continue;
+      // clean up cert
+      if (buf[i] == '\n' || buf[i] ==  '\r' || buf[i] == ' ')
+	      continue;
       buf[j] = buf[i];
       j++;
 
@@ -308,7 +311,7 @@ int  tqslStrToSig(TqslSignature *sig,char *buf)
   char	*tok;
   stripNL((char *)buf);  // clean out any NL or CR lurking around
 
-  if (buf[0] == '1')  //  Type 1 Public key
+  if (buf[0] == TQSL_USER_SIGN_HEX)  //  Type 1 Public key
     {
 
       tok = strtok((char *)buf,"^");
@@ -347,7 +350,7 @@ int tqslStrToPubKey(TqslPublicKey *pubkey,const char *buf)
   char	*tok;
   stripNL((char *)buf);  // clean out any NL or CR lurking around
 
-  if (buf[0] == '1')  //  Type 1 Public key
+  if (buf[0] == TQSL_PUBLIC_KEY_HEX)  //  Type 1 Public key
     {
 
       tok = strtok((char *)buf,"|");
@@ -396,8 +399,8 @@ int tqslStrToCert(TqslCert *cert,const char *buf)
 {
   char *tok;
 
-  // make sure it is the correct type
-  if (buf[0] != '0' && buf[0] != '1')
+  // make sure it is the correct type   -- Base 64 not supported yet
+  if (buf[0] != TQSL_CA_CERT_HEX && buf[0] != TQSL_USER_CERT_HEX )
       return(0);
 
   // cert type
@@ -581,7 +584,7 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
     callLen = strlen(callSign);
 
   for(i=0;i < callLen;i++)
-    newCall[i] = toupper(callSign[i]);
+    newCall[i] = (char )toupper(callSign[i]);
 
   dsa = DSA_new();
   if (dsa == NULL)
@@ -599,15 +602,13 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
   if (rc == 0)
     return(0);
 
-  //  initPublicKey(pubKey);
-
-  pubKey->pkType = '1';
+  pubKey->pkType = TQSL_PUBLIC_KEY_HEX;
   p = BN_bn2hex(dsa->pub_key);
 
 
   strcpy(pubKey->callSign,newCall);
   strcpy((char *)pubKey->pkey,p);
-  pubKey->pubkeyNum[0] = '1';
+  pubKey->pubkeyNum[0] = TQSL_PUBLIC_KEY_HEX;
 
 
   // get private Key
@@ -626,7 +627,8 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
   int    len;
 
 
-  if (cert->data.certType == '0' || CACert == NULL)  // then selfsigned
+  if (cert->data.certType == TQSL_CA_CERT_HEX ||
+   CACert == NULL)  // then selfsigned
     CACert = cert;
 
 
@@ -719,9 +721,9 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   memset(certStr,0,sizeof(certStr));
   
   if (selfSign == 1)
-    cert->data.certType = '0';
+    cert->data.certType = TQSL_CA_CERT_HEX;
   else
-    cert->data.certType = '1';
+    cert->data.certType = TQSL_USER_CERT_HEX;
 
   cert->data.publicKey = *pubKey;
 
@@ -891,7 +893,7 @@ int tqslSignData(const char *privKey,const unsigned char *data,
 
   hexSign = tqslBin2Hex(sigRet,sigLen);
   strcpy(signature->signature,hexSign);
-  signature->sigType = '1';
+  signature->sigType = TQSL_USER_SIGN_HEX;
   if (cert != NULL)
    signature->cert = *cert;
   free(hexSign);
@@ -939,4 +941,5 @@ int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len)
   return(1);
 
 }
+
 

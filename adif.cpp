@@ -48,56 +48,66 @@ void AdifBase::init()
   timeOn=NULL;
   txPwr=NULL;
   veProv=NULL;
+
+  // tqsl data members
+
+  privKey=NULL;
+  myCert=NULL;
+  signature=NULL;
 };
 void AdifBase::clearQSO()
 {
-
-  // need to free memory first
-
-  init();
 
   // these must be changed to free if null
   delete address;
   delete age;
   delete arrlSect;
-  band=NULL;
-  call=NULL;
-  cnty=NULL;
-  comment=NULL;
-  cont=NULL;
-  contestId=NULL;
-  cqz=NULL;
-  dxcc=NULL;
-  freq=NULL;
-  gridSquare=NULL;
-  iota=NULL;
-  ituz=NULL;
-  mode=NULL;
-  name=NULL;
-  notes=NULL;
-  oper=NULL;
-  pfx=NULL;
-  propMode=NULL;
-  qslMsg=NULL;
-  qslRDate=NULL;
-  qslSDate=NULL;
-  qslRcvd=NULL;
-  qslSent=NULL;
-  qslVia=NULL;
-  qsoDate=NULL;
-  qth=NULL;
-  rstRcvd=NULL;
-  rstSent=NULL;
-  rxPwr=NULL;
-  satMode=NULL;
-  satName=NULL;
-  srx=NULL;
-  stx=NULL;
-  tenTen=NULL;
-  timeOff=NULL;
-  timeOn=NULL;
-  txPwr=NULL;
-  veProv=NULL;
+  delete band;
+  delete call;
+  delete cnty;
+  delete comment;
+  delete cont;
+  delete contestId;
+  delete cqz;
+  delete dxcc;
+  delete freq;
+  delete gridSquare;
+  delete iota;
+  delete ituz;
+  delete mode;
+  delete name;
+  delete notes;
+  delete oper;
+  delete pfx;
+  delete propMode;
+  delete qslMsg;
+  delete qslRDate;
+  delete qslSDate;
+  delete qslRcvd;
+  delete qslSent;
+  delete qslVia;
+  delete qsoDate;
+  delete qth;
+  delete rstRcvd;
+  delete rstSent;
+  delete rxPwr;
+  delete satMode;
+  delete satName;
+  delete srx;
+  delete stx;
+  delete tenTen;
+  delete timeOff;
+  delete timeOn;
+  delete txPwr;
+  delete veProv;
+  // tqsl data members
+  delete privKey;
+  delete myCert;
+  delete signature;
+  
+  // need to free memory first
+
+  init();
 };
 
 AdifBase::AdifBase()
@@ -105,9 +115,7 @@ AdifBase::AdifBase()
   cvsID = cvsID;
 
   clearQSO();
-  privKey=NULL;
-  myCert=NULL;
-  signature=NULL;
+
 }
 
 // return value will point to the beginning of the next line

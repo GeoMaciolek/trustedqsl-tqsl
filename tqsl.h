@@ -38,6 +38,20 @@
 
 #include <stdio.h>
 
+#define TQSL_CA_CERT_HEX '0'         // self signed CA Cert (hex encoded)
+#define TQSL_USER_CERT_HEX '1'       // CA  Signed User Cert (hex encode)
+#define TQSL_CA_TEST_CERT_HEX '2'    // Test CA Cert.  Limited validation
+
+// not done yet
+
+#define TQSL_CA_CERT_B64 '3'         // self signed CA Cert (base 64 encoded)
+#define TQSL_USER_CERT_B64 '4'       // CA  Signed User Cert (base 64 encode)
+#define TQSL_CA_TEST_CERT_B64 '5'    // Test CA Cert.  Limited validation
+
+
+#define TQSL_USER_SIGN_HEX '1'       // CA  Signed User Cert (hex encode)
+#define TQSL_PUBLIC_KEY_HEX '1'      // standard hex encoded public
+
 const int signSizeMax=500;
 const int pubKeySize=200;
 const int tqslCALL_SIZE=13;
