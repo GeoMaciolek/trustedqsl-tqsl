@@ -1,0 +1,954 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+   <head>
+      <title>
+         Gabbi - Trusted Amateur Interchange Format
+      </title>
+   </head>
+   <body>
+      <h2 align=center>
+         Trusted Gabbi (Global Amateur Interchange)&nbsp; Formats<br>
+		 Sept. 04, 2001
+      </h2>
+      <h3>
+         Discussion:
+      </h3>
+<P>
+         <br>
+         There are currently many different interchange formats that are being
+         used by amateur radio today. By far the most popular is<a href= 
+         "http://www.hosenose.com/adif">ADIF (Amateur Data Interchange
+         Format)</a>  
+ &nbsp;for good reason. It is a very elegant, robust, and human readable. It has many of 
+the features found in XML without the need for heavy weight libraries and the 
+associated learning curve. Having said that <STRONG>ADIF</STRONG> does have a short comings. It doesn't 
+have any concept of record type. Discussions on the ADIF 
+development reflector  hasn't been fruitful. Therefore to meet the requires 
+of this <STRONG>TrustedQSL/LoTW</STRONG>    
+             
+         
+    projects the standard must be forked. The new 
+standard will be called <STRONG>Gabbi</STRONG> 
+(Global Amateur Interchange) . It is hoped that the two standards will be merged 
+at some point in the future. Therefore a design goal is for Gabbi format to be 
+backward compatible with ADIF. This turns out to be fairly easy to do by 
+declaring the QSO/Logbook record as the default record type.&nbsp; The QSO 
+record type will use the standard already defined by ADIF. </P>
+<P>        
+               
+              
+               
+             
+ Also see <A href="format_design.html">TrustedQSL High 
+Level Virtual Record Design Notes</A>&nbsp;by Michael Keane K1MK.&nbsp;&nbsp; This is 
+a very good conceptual of 
+digital signing canonical form 
+of TrustedQSLs. </P>
+<P><FONT size=3></FONT></FONT></P>
+      <h3>
+         Requirements:
+      </h3>
+<UL>
+         <li>
+            Record
+            Type Field. This field will determine the record 
+  type 
+         <li>
+            An algorithm for determining the signing order of the 
+  fields must conform to canonical parse rules.&nbsp;&nbsp; 
+         <li>
+            In addition the currently define QSO/Logbook record, 
+  QSL and Station Records must be defined. 
+         <li>
+            Field definitions is only significant to that 
+  record.&nbsp; For example a GRID_SQUARE field on a QSO would refer to the 
+  contact station grid square.&nbsp; GRID_SQUARE on a station record would refer 
+  to the grid square of the station submitting the QSL 
+         <li>
+            A new field or possibly as well define virtual field (ie: call and
+            number of seconds since epoch) which can be common to all records
+            and required for tCONTACT records will be the GUID
+            (<strong>G</strong>lobal<strong>U</strong>nique<strong>ID</strong>entifier).&nbsp; This is in order that 
+  different records can be uniquely connected to other records in a portable and 
+  database independent way. 
+         <li>
+            C/C++ functions that parse and create record strings.
+         </li></UL>
+<P>&nbsp;</P>
+<H3>New Terms:</H3>
+<P><STRONG>tCONTACT</STRONG> - Trusted Contact Record.&nbsp; This record 
+contains on the information about the contact and a pointer to the tSTATION 
+record. </P>
+<P><STRONG>tQSL</STRONG> - A Trusted QSL is a match set of a  tSTATION 
+record and a tCONTACT record.&nbsp; Many tCONTACT records can reference a single 
+tSTATION record.&nbsp; </P>
+<P><STRONG>tSTATION</STRONG> - Trusted Station Record.&nbsp; This record 
+contains information about the station used to make contacts.</P>
+<P>&nbsp;</P>
+      <p>
+         
+      </p>
+      <h3>
+         Record Types:
+      </h3>
+      <table cellspacing="2" cellpadding="2" border="2" frame="box" rules="all"
+      style="WIDTH: 482px; HEIGHT: 87px">
+         <tr>
+            <th>
+               Record Name
+            </th>
+            <th>
+               Description
+            </th>
+         </tr>
+         <tr>
+            <td>
+               QSO
+            </td>
+            <td>
+               This is also the standard logbook format.&nbsp; To maintain backward
+               compatibility with ADIF this is the default record type.&nbsp; For
+               details of this QSO Record type see<a href= 
+               "http:://www.hosenose.com/adif">http:://www.hosenose.com/adif</a> for details
+            </td>
+         </tr>
+         <tr>
+            <td>
+               tCONTACT
+            </td>
+            <td>
+               <p>
+                  This record will contain conformation information to be sent
+                  to the party the user had a QSO with along with the STATION
+                  record.
+               </p>
+            </td>
+         </tr>
+         <tr>
+            <td>
+               tSTATION
+            </td>
+            <td>
+               <p>
+                  This record will contain conformation information about the
+                  station that a QSO was made from.&nbsp;
+               </p>
+            </td>
+         </tr>
+      </table>
+      <p>
+         
+      </p>
+      <h3>
+         Common Fields:
+      </h3>
+      <p>
+         These are field that is common to all record types.&nbsp; These are fields
+         common both in name and mean to more than one record type.
+      </p>
+      <p>
+         
+      </p>
+      <table cellspacing="2" cellpadding="2" border="1" frame="box" rules=
+      "all">
+         <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (bytes)</th>
+            <th>Description</th>
+         </tr>
+         <tr>
+            <td>REC_TYPE</td>
+            <td>C</td>
+            <td>NZ</td>
+			<td>Y</td>
+			<td>15</td>
+            <td>This defines the type of record.&nbsp; The default is QSO record</td>
+         </tr>
+         <tr>
+            <td>SIGN</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>80</td>
+            <td>This is the digital signature of this record. Max size based on hex encoding</td>
+         </tr>
+         <tr>
+            <td>GUID</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>20</td>			
+            <td>Global Unique IDentifier.&nbsp; Exact description is TBD, but should
+               be something like callsign and date/time group.&nbsp; This maybe a
+               virtual field.</td>
+         </tr>
+      </table>
+      <h3>
+         tCONTACT (Trusted
+         Contact) Record:
+      </h3>
+      <p>
+         The tCONTACT record contains only the information that
+         is unique to that contact.&nbsp; Note that most of the fields are required.&nbsp;
+         This is because most of the fields are common to every contact.
+      </p>
+      <p>
+         
+      </p>
+      <table cellspacing="2" cellpadding="2" border="1" frame="box" rules=
+      "all">
+         <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (Bytes)</th>
+            <th>Description       </th>
+         </tr>
+         <tr>
+            <td>BAND</td>
+            <td>C</td>
+            <td>N</td>
+            <td>Y</td>		
+			<td>10</td>						
+            <td>The call sign of station contacted.</td>
+         </tr>	
+         <tr>
+            <td>CALL</td>
+            <td>C</td>
+            <td>Y</td>
+            <td>Y</td>		
+			<td>20</td>						
+            <td>The call sign of station contacted.</td>
+         </tr>	
+         <tr>
+            <td>CERT_GUID</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>20</td>					
+            <td>Digital Certificate GUID.&nbsp; This would be CA 
+      DN &amp; cert serial number.  Defaults to the tSTATION GUID</td>
+         </tr>	
+         <tr>
+            <td>DTG</td>
+            <td>D</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>8</td>					
+            <td>Date Time Group - In DD-MM-YYYY HH:MM:SS Format
+            </td>
+         </tr>	
+         <tr>
+            <td>FREQ</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>8</td>					
+            <td>in Megahertz.&nbsp; If unknown use Frequency from ADIF table for
+               the band.</td>
+         </tr>		 
+         <tr>
+            <td>MODE</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>					
+            <td>SSB, CW, RTTY, TOR= AMTOR, PKT, AM,FM, SSTV, ATV, PAC=     PACTOR,CLO=CLOVER 
+			Defaults to the mode defined in tSTATION record</td>
+         </tr>		 	 		 	
+
+         <tr>
+            <td>REC_TYPE</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>10</td>					
+            <td>Always "tCONTACT".&nbsp; This declares the record to be a Trusted Contact record.</td>
+         </tr>		 
+         <tr>
+            <td>RST_SENT</td>
+            <td>N</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>3</td>
+            <td>Signal Report Sent</td>
+         </tr>	
+         <tr>
+            <td>EXCHANGE_SENT</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>6</td>					
+            <td>Serial number of the event.</td>
+         </tr>		 	  		  
+         <tr>
+            <td>SIGN</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>80</td>					
+            <td>This is the digital signature of this record.&nbsp; Base64 encoded</td>
+         </tr>
+		 <tr>
+            <td>STATION_GUID</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>20</td>					
+            <td>This is the Station Record GUID (pointer) for the station that was used to make 
+			this contact.
+            </td>
+         </tr>
+      </table>
+	  
+      <h3>
+         tSTATION (Trusted Station) Record:
+      </h3>
+      <p>The tSTATION record contains information that is common to a set of tCONTACTs.
+      </p>
+      <p>
+         
+      </p>
+      <table cellspacing="2" cellpadding="2" border="1" frame="box" rules=
+      "all">
+         <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (Bytes)</th>
+            <th>Description       </th>
+         </tr><!--        Start of Table -->
+         <tr>
+            <td>CALL</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>N</td>
+			<td>10</td>					
+            <td>Station Call sign.</td>
+         </tr>		 
+         <tr>
+            <td>CERT_GUID</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>					
+            <td>Digital Certificate GUID</td>
+         </tr>		
+         <tr>
+            <td>CITY</td>
+            <td>C</td>
+            <td>N</td>
+			<td>N</td>
+			<td>20</td>
+            <td>City in which the station was located at the time of the QSO</td>
+         </tr>		
+
+         <tr>
+            <td>CONT</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>2</td>
+            <td>Continent: NA,SA,EU,AF,OC,AS,AN</td>
+         </tr>
+		 <tr>
+            <td>CQZ</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>2</td>
+            <td>CQ Zone</td>
+         </tr>	
+         <tr>
+            <td>DXCC</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>3</td>
+            <td> Numeric identifiers from ARRL. See ADIF web site for details</td>
+         </tr>	
+         <tr>
+            <td>FREQ</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>8</td>					
+            <td>in Megahertz.&nbsp; If unknown use Frequency from ADIF table for
+               the band.</td>
+         </tr>				 
+         <tr>
+            <td>GRIDSQUARE</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>6</td>
+            <td>4 or 6 characters</td>
+         </tr>	
+         <tr>
+            <td>IE_COUNTY</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>IE county in which the station was located at the time of the QSO
+            </td>
+         </tr>				 
+         <tr>
+            <td>IOTA</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>8</td>
+            <td>Hyphen must be included. Example: NA-001</td>
+         </tr>
+         <tr>
+            <td>ITUZ</td>
+            <td>N</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>2</td>
+            <td>ITU Zone</td>
+         </tr>	
+         <tr>
+            <td>JA_PREFECTURE</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>JA Prefecture in which the station was located at the time of the QSO
+            </td>
+         </tr>	
+         <tr>
+            <td>JA_GUN</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>JA Gun in which the station was located at the time of the QSO
+            </td>
+         </tr>			 			 
+		 <tr>
+            <td>MODE</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>					
+            <td>SSB, CW, RTTY, TOR= AMTOR, PKT, AM,FM, SSTV, ATV, PAC=     PACTOR,CLO=CLOVER</td>
+         </tr>				 
+         <tr>
+            <td>NAME</td>
+            <td>C</td>
+            <td>N</td>
+			<td>N</td>
+			<td>20</td>
+            <td>Operator's Name
+            </td>
+         </tr>
+         <tr>
+            <td>PFX</td>
+            <td>C</td>
+            <td>N</td>
+			<td>N</td>
+			<td>5</td>
+            <td>WPX Prefix</td>
+         </tr>		 	 	 	 	   
+         <tr>
+            <td>REC_TYPE</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>Always "tSTATION".&nbsp; This declares the record to be a QSL record.</td>
+         </tr>
+         <tr>
+            <td>SIGN</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>N</td>
+			<td>80</td>
+            <td>This is the digital signature of this record.</td>
+         </tr>
+		 <tr>
+            <td>STATION_GUID</td>
+            <td>C</td>
+            <td>Y</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>This is the Station Record GUID (pointer) for the station that was used to make 
+			this contact.
+            </td>
+         </tr>		  
+
+         <tr>
+            <td>TEN_TEN</td>
+            <td>N</td>
+            <td>N</td>
+			<td>N</td>
+			<td>7</td>
+            <td>International 10-10</td>
+         </tr>
+         <tr>
+            <td>UK_COUNTY</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>UK county in which the station was located at the time of the QSO
+            </td>
+         </tr>			 
+         <tr>
+            <td>US_COUNTY</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>US county in which the station was located at the time of the QSO
+            </td>
+         </tr>		 
+         <tr>
+            <td>US_STATE</td>
+            <td>C</td>
+            <td>N</td>
+			<td>Y</td>
+			<td>10</td>
+            <td>US state in which the station was located at the time of the QSO
+            </td>
+         </tr>
+		 	 		 
+      </table>
+<P>&nbsp;</P>
+<P>&nbsp;</P>	
+
+<B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Characters and Encoding
+<P></P>
+<OL></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>The "character set" shall be ISO/IEC 10646-1:2000 UCS 
+  ("Unicode v3.0")
+  <P></P>
+<P ALIGN="justify"></P><LI>Default encoding of characters shall be UTF-8
+  <P></P>
+<P ALIGN="justify"></P><LI>Optionally support UTF-16 encoding (TBR)
+  <P></P>
+
+<UL>
+<P ALIGN="justify"><LI>A GAbbI file object that is encoded in UTF-16 must 
+    begin with a two octet signature of #xFEFF (Zero Width No-Break Space; Byte 
+    Order Mark)
+    <P></P>
+<P ALIGN="justify"></P><LI>All implementations must check for the BOM 
+    signature. If the BOM signature is encountered indicating that the following 
+    file object is UTF-16 encoded and the reader cannot process UTF-16, the 
+    reader shall generate a fatal error 
+    <P></P>
+<P ALIGN="justify"></P><LI>Interoperability is not guaranteed when using 
+UTF-16
+    <P></P>
+<P ALIGN="justify"></P><LI>Support for other encodings (JIS, ISO 8859-1, ...)? 
+    (TBD) Would require a preamble or header 
+    <P></P>               </LI></UL>    </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Field Names
+  <P></P> </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Reserve all field names beginning with the character 
+  sequence "gabbi" for use by the specification
+  <P></P>
+<P ALIGN="justify"></P><LI>Any other restrictions on what would be permissible 
+  field names? (TBD)
+  <P></P>          </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>User-Defined Fields
+  <P></P> </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Default signing for all user-defined fields shall be 
+  unsigned
+  <P></P>
+<P ALIGN="justify"></P><LI>Unsigned default can be overridden for an individual 
+  field by means of the field type indicator 
+  <P></P>                </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Record Type
+  <P></P> </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Add </FONT><FONT FACE="Lucida Console">Header </FONT><FONT FACE="Lucida Sans Unicode">as a new </FONT><FONT FACE="Lucida Console">REC_TYPE 
+  <P></P>
+
+<UL>
+</FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Declares an optional GAbbI header record
+    <P></P>
+<P ALIGN="justify"></P><LI>Gathering "header" information in a GAbbI/ADIF compatible record permits multiple records being located within the ADIF header area (<I>e.g.</I> one </FONT><FONT FACE="Lucida Console">Header</FONT><FONT FACE="Lucida Sans Unicode"> record plus several </FONT><FONT FACE="Lucida Console">tSTATION </FONT><FONT FACE="Lucida Sans Unicode">records)
+
+</FONT><FONT FACE="Lucida Sans Unicode"></LI></UL></LI></UL>
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Field Type Indicator
+  <P></P>  </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Specify that presence of a field type indicator shall 
+  be treated as authoritative, overriding the default field type indicated by 
+  the specification
+  <P></P>
+<P ALIGN="justify"></P><LI>To permit overriding a field's default signing 
+  <P></P>
+
+<UL>
+<P ALIGN="justify"><LI>Extend the ADIF field type indicator via an 
+    optional post-fixed "+" to indicate the field is signed (included in the 
+    virtual record) and a post-fixed "-" to indicate the field is unsigned
+    <P></P>                               </LI></UL>
+
+<P ALIGN="justify"></P><LI>Expand the ADIF table of field type indicators to 
+  include
+  <P></P>
+
+<UL>
+<P ALIGN="justify"><LI>"O": octet stream, raw
+    <P></P>
+<P ALIGN="justify"></P><LI>"H": octet stream, hex encoded
+    <P></P>
+<P ALIGN="justify"></P><LI>"6": octet stream, base64 encoded
+    <P></P>    </LI></UL>         </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Construction of the Virtual Record
+  <P></P>    </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Values shall be placed in the virtual record in the 
+  same order as its corresponding field name appears in a list of fields names 
+  sorted by increasing Unicode (from lower to higher values) 
+  <P></P>
+<P ALIGN="justify"></P><LI>The virtual record shall contain no field delimiters 
+  (virtual record is write-only, is there ever a need to go back and parse it?)
+  <P></P>                      </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Digital Signature
+  <P></P> </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>The default digital signature (<I>ds</I>) algorithm shall be the Digital Signature 
+  Algorithm (DSA) of the Digital Signature Standard (FIPS&nbsp;186-2); all 
+  implementations shall provided for signing and signature validations using DSA 
+
+  <P></P>
+<P ALIGN="justify"></P><LI>Support for the ECDSA (ANSI&nbsp;X9.62) and the RSA&nbsp;<I>ds</I> algorithm<I> </I>(ANSI X9.31) may be provided. An indication of the signing algorithm used should be included in the GAbbI header. Interoperability is not guaranteed when using ECDSA or RSA <I>ds</I>. 
+  <P></P>
+<P ALIGN="justify"></P><LI>Values (TBR) of the public parameters: <I>p, q </I>&amp;<I> g </I>used in the 
+  DSA shall be provided in the specification.
+  <P></P>         </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Forwards Compatibility and Default Behavior
+  <P></P>    </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Unrecognized Record Types should handled gracefully 
+  <P></P>
+<P ALIGN="justify"></P><LI>Default behavior shall be to discard all information 
+  contained in any record of a type which the reader does not support (TBR)
+  <P></P>                     </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Procedures for Revising Specification
+  <P></P>   </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Typographical correction &amp; other fixes
+  <P></P>
+<P ALIGN="justify"></P><LI>Consideration of amendments, modification &amp; 
+  extensions
+  <P></P>
+<P ALIGN="justify"></P><LI>Version control &amp; formal release of the 
+  specification
+  <P></P>       </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Preferred Ordering of Fields within a Record
+  <P></P>      </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>Is preference for field names sorted by Unicode 
+  (virtual record order) 
+  <P></P>           </LI></UL>
+<DIR>
+
+<P ALIGN="center">- OR -</P></DIR>
+
+
+<UL>
+<P ALIGN="justify"><LI>Sorting by "significance" or "importance" (more human 
+  readable) (TBD)
+  <P></P>        </LI></UL>
+
+<OL>
+
+</FONT><B><FONT FACE="Lucida Sans Unicode" SIZE=4><P ALIGN="justify"><LI>Preferred Ordering of Records
+  <P></P>   </LI></OL>
+
+
+<UL>
+</B></FONT><FONT FACE="Lucida Sans Unicode"><P ALIGN="justify"><LI>File object may and should start with a GAbbI unique 
+  "signature"
+  <P></P>
+
+<UL>
+<P ALIGN="justify"><LI>BOM as the first two octets indicates an UTF-16 
+    encoded file to follow
+    <P></P>
+<P ALIGN="justify"></P><LI>TDB indicates GAbbI (UTF-8 default)
+    <P></P>
+<P ALIGN="justify"></P><LI>TDB for ASCII ?
+    <P></P>   </LI></UL>
+
+<P ALIGN="justify"></P><LI>... may include a GAbbI header record
+  <P></P>
+<P ALIGN="justify"></P><LI>... may and should place a GAbbI header record in the 
+  ADIF header area
+  <P></P>
+<P ALIGN="justify"></P><LI>... may and should place </FONT><FONT FACE="Lucida Console">tSTATION</FONT><FONT FACE="Lucida Sans Unicode"> records in ADIF header area
+  <P></P>
+<P ALIGN="justify"></P><LI>... may and should employ the ADIF end-of-header 
+  designator
+  <P></P>
+<P ALIGN="justify"></P><LI>... may and should employ the GAbbI end-of-file 
+  designator to partition octet stream into "file objects" 
+  <P></P>                </LI></UL>
+
+<P>GAbbI Sample:</P>
+</FONT><B><FONT FACE="Courier New"><P>/* Trusted Global Amateur Interchange Format Data */ </P></B></FONT>
+<TABLE CELLSPACING=0 BORDER=0 CELLPADDING=9 WIDTH=795>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Rec_Type:6&gt;Header</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>GAbbI header record, all fields are optional</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Version:4&gt;1.00 </B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Records-tSTATION:1&gt;1</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Optional, but shall be correct if present</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Records-tCONTACT:4&gt;1</B> 
+    </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Optional, but shall be correct if present</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Sender:4&gt;K1MK</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Created-By:12&gt;CT2LoTW 1.00</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Name and version of log program </FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Created-On:20&gt;2001-11-30 00:10:00Z</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>ISO 8601 Date &amp; Time</FONT><FONT FACE="Courier New"> </FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GAbbI-Signature-Algorithm:3&gt;DSA</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>DSA (default), ECDSA or RSA </FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;eor&gt;</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>End of GAbbI header record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<P>&nbsp;</P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Rec_Type:8&gt;tSTATION</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT FACE="Lucida Console" SIZE=2><P>tSTATION</FONT><FONT SIZE=2> record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Call:4&gt;K1MK</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>In the </FONT><FONT FACE="Lucida Console" SIZE=2>tSTATION</FONT><FONT SIZE=2> record, this field is "My" call</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;US_State:2&gt;CT</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>U.S. State</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;US_County:13&gt;CT-Litchfield </B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>U.S. County</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;CQZ:1&gt;5</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>CQ Zone</FONT><FONT FACE="Courier New"> </FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;ITUZ:1&gt;8</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>ITU Zone</FONT><FONT FACE="Courier New"> </FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;GridSquare:6&gt;FN31ko</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Maidenhead Grid Square</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Station_GUID:1&gt;1</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Format of UID/GUID is still TBD</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Sign:56:6&gt;ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqratuvwxyz01==</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Cert_GUID&gt;0123456789</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Format of Certifcate # is still TBD</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;eor&gt;</B></FONT><FONT FACE="Lucida Sans Unicode"> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>End of </FONT><FONT FACE="Lucida Console" SIZE=2>tSTATION</FONT><FONT SIZE=2> record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<P>&nbsp;</P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;eoh&gt;</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Backwards compatibility w/ADIF</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<P>&nbsp;</P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Rec_Type:8&gt;tCONTACT</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT FACE="Lucida Console" SIZE=2><P>tCONTACT</FONT><FONT SIZE=2> record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Call:5&gt;CN8WW</B> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>In a </FONT><FONT FACE="Lucida Console" SIZE=2>tCONTACT</FONT><FONT SIZE=2> record this field is "His" call</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Sender:4&gt;K1MK</FONT><FONT SIZE=2> </B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>LoTW spec requires sender's call in each record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Freq:6&gt;1.8271</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>MHz; alternatively </FONT><FONT FACE="Courier New" SIZE=2>&lt;BAND:4&gt;160M</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;QSO_Date:8&gt;20011127</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>YYYYMMDD</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;QSO_Time:4&gt;0001</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT FACE="Courier New" SIZE=2><P>HHMM[SS] UTC;</FONT><B><FONT FACE="Courier New"> </B></FONT><FONT SIZE=2>alternatively </FONT><FONT FACE="Courier New" SIZE=2>&lt;TIME_ON:4&gt;0001</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Mode:2&gt;CW</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Mode</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;RST_Sent:3&gt;599</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>RST</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Station_GUID:1&gt;1</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Format of UID/GUID still TBD</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Sign:56:6&gt;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRATUVWXYZ01==</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;Cert_GUID&gt;0123456789</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>Format of Certifcate # still TBD</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<P>&nbsp;</P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P>&lt;eor&gt;</B></FONT><FONT FACE="Lucida Sans Unicode"> </FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P>End of </FONT><FONT FACE="Lucida Console" SIZE=2>tCONTACT</FONT><FONT SIZE=2> record</FONT></P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<P>&nbsp;</P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<P>&nbsp;</P></TD>
+</TR>
+<TR><TD WIDTH="54%" VALIGN="top">
+<B><FONT FACE="Courier New"><P ALIGN="justify">&lt;eof&gt;</B></FONT></P></TD>
+<TD WIDTH="46%" VALIGN="top">
+<FONT SIZE=2><P ALIGN="justify">End of a logical file object</FONT></P></TD>
+</TR>
+</TABLE>
+
+<P ALIGN="justify"></P></LI>  
+   </body>
+</html>
+
