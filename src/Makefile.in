@@ -193,7 +193,7 @@ data_DATA = config.xml
 @NODOC_TRUE@docfiles = 
 doc_DATA = $(docfiles)
 
-EXTRA_DIST = configdir/config.xml config.xml licenses/LICENSE LICENSE tqsllib.spec.in tqsllib.spec \
+EXTRA_DIST = config.xml LICENSE tqsllib.spec.in tqsllib.spec \
 	tqsllib.depends doxygen Doxyfile tqsllib.css
 
 
@@ -267,7 +267,7 @@ DATA = $(data_DATA) $(doc_DATA)
 
 HEADERS = $(include_HEADERS)
 
-DIST_COMMON = README $(include_HEADERS) $(srcdir)/Makefile.in \
+DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.in \
 	$(srcdir)/configure ChangeLog INSTALL Makefile.am aclocal.m4 \
 	config.guess config.sub configure configure.in depcomp \
 	install-sh ltmain.sh missing mkinstalldirs sysconfig.h.in \
@@ -575,7 +575,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/configdir $(distdir)/licenses
+	$(mkinstalldirs) $(distdir)/.
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

@@ -52,7 +52,7 @@ docfiles = LICENSE ChangeLog
 endif
 doc_DATA = $(docfiles)
 
-EXTRA_DIST = configdir/config.xml config.xml licenses/LICENSE LICENSE tqsllib.spec.in tqsllib.spec \
+EXTRA_DIST = config.xml LICENSE tqsllib.spec.in tqsllib.spec \
 	tqsllib.depends doxygen Doxyfile tqsllib.css
 
 MOSTLYCLEANFILES = tqsllib$(DLLVER).dll tqsllib.def tqsllib.exports

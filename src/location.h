@@ -11,10 +11,6 @@
 #ifndef __location_h
 #define __location_h
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 // TQSL_LOCATION_FIELD flag bits
 #define TQSL_LOCATION_FIELD_UPPER	1
 #define TQSL_LOCATION_FIELD_MUSTSEL 2

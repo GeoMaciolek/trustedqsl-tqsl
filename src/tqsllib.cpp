@@ -10,6 +10,8 @@
 
 #define TQSLLIB_DEF
 
+#include "sysconfig.h"
+
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "adif.h"

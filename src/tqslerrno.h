@@ -8,10 +8,6 @@
     revision             : $Id$
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 #ifndef __TQSLERRNO_H
 #define __TQSLERRNO_H
 

@@ -15,10 +15,6 @@
   * OpenSSL X509 certificate interface functions.
   */
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 #define PERL5	// Hack for older openssl c++ conflict
 #include <openssl/x509.h>
 #undef PERL5

@@ -11,10 +11,6 @@
 #ifndef __xml_h
 #define __xml_h
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
-
 #include <string>
 #include <map>
 #include <vector>

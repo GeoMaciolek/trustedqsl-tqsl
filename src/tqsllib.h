@@ -11,7 +11,7 @@
 #ifndef TQSLLIB_H
 #define TQSLLIB_H
 
-#ifdef __WIN32__
+#if defined(__WIN32__) && !defined(TQSL_NODLL)
 	#ifdef TQSLLIB_DEF
 		#define DLLEXPORT __stdcall __declspec(dllexport)
 		#define DLLEXPORTDATA __declspec(dllexport)

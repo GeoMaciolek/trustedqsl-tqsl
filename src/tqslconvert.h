@@ -39,8 +39,8 @@ extern "C" {
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs,
-	int ncerts, tQSL_Location loc);
+DLLEXPORT int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename,
+	tQSL_Cert *certs, int ncerts, tQSL_Location loc);
 
 /** Initiates the conversion process for a Cabrillo file.
   *
@@ -51,11 +51,11 @@ int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename, tQSL_Cer
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-int tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename, tQSL_Cert *certs,
-	int ncerts, tQSL_Location loc);
+DLLEXPORT int tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename,
+	tQSL_Cert *certs, int ncerts, tQSL_Location loc);
 
 /** End the conversion process by freeing the used resources. */
-int tqsl_endConverter(tQSL_Converter *conv);
+DLLEXPORT int tqsl_endConverter(tQSL_Converter *conv);
 
 /** Configure the converter to allow (allow != 0) or disallow (allow == 0)
   * nonamateur call signs in the CALL field. (Note: the test for
@@ -65,7 +65,7 @@ int tqsl_endConverter(tQSL_Converter *conv);
   * \c allow defaults to 0 when tqsl_beginADIFConverter or
   * tqsl_beginCabrilloConverter is called.
   */
-int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
+DLLEXPORT int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
 
 /** Set QSO date filtering in the converter.
   *
@@ -74,7 +74,8 @@ int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
   * that date will be ignored. Either or both may be NULL (or point to an
   * invalid date) to disable date filtering for the respective range.
   */
-int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start, tQSL_Date *end);
+DLLEXPORT int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start,
+	tQSL_Date *end);
 
 /** This is the main converter function. It returns a single GABBI
   * record.
@@ -94,20 +95,20 @@ int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start, tQSL_
   * initialized for signing, and then this function can be called again. No
   * data records will be lost in this process.
   */
-const char *tqsl_getConverterGABBI(tQSL_Converter conv);
+DLLEXPORT const char *tqsl_getConverterGABBI(tQSL_Converter conv);
 
 /** Get the certificate used to sign the most recent QSO record. */
-int tqsl_getConverterCert(tQSL_Converter conv, tQSL_Cert *certp);
+DLLEXPORT int tqsl_getConverterCert(tQSL_Converter conv, tQSL_Cert *certp);
 
 /** Get the input-file line number last read by the converter, starting
   * at line 1. */
-int tqsl_getConverterLine(tQSL_Converter conv, int *lineno);
+DLLEXPORT int tqsl_getConverterLine(tQSL_Converter conv, int *lineno);
 
 /** Get the text of the last record read by the converter.
   *
   * Returns NULL on error.
   */
-const char *tqsl_getConverterRecordText(tQSL_Converter conv);
+DLLEXPORT const char *tqsl_getConverterRecordText(tQSL_Converter conv);
 
 /** @} */
 

@@ -11,6 +11,8 @@
 #ifndef __CABRILLO_H
 #define __CABRILLO_H
 
+#include "tqsllib.h"
+
 #undef CLIENT_STATIC
 #ifndef LOTW_SERVER
 #define CLIENT_STATIC static

@@ -10,6 +10,8 @@
 #ifndef __ADIF_H
 #define __ADIF_H
 
+#include "tqsllib.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 
