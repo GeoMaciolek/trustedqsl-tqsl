@@ -2,7 +2,7 @@
 #include "sign.h"
 
 #include <stdio.h>
-int debugLevel=1;
+extern int debugLevel;
 int main(int argc,char *argv[])
 {
 

@@ -2,7 +2,7 @@
 
 #include "tqsl.h"
 #include "sign.h"
-int debugLevel = 0;
+extern int debugLevel;
 int main(int argc,char *argv[])
 {
   if (argc != 2)

@@ -36,7 +36,7 @@ extern int errno;
 
 static char cvsID[] = "$Id$";
 
-int	debugLevel = 0;
+extern int	debugLevel;
 
 int main(int argc, char *argv[])
 {

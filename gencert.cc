@@ -31,22 +31,54 @@
 #include "tqsl.h"
 
 extern int errno;
-int debugLevel = 0;
+extern int debugLevel;
 static char cvsID[] = "$Id$";
+
+// private key should be stored encrypted.  But for this example it
+// is stored as an hex encoded string.
+
+char *readPrivKey(const char *fname)
+{
+  FILE *fkey;
+  char p[500];
+  char *retStr;
+  int rc;
+
+  fkey = fopen(fname,"r");
+  rc = -1;
+  if (fkey)
+    {
+      retStr = fgets(p,4999,fkey);
+      if (retStr != NULL)
+        {
+          //strip out eol
+          retStr = strchr(p,'\n');
+          if (retStr != NULL)
+            *retStr = '\0';
+          retStr = strchr(p,'\r');
+          if (retStr != NULL)
+            *retStr = '\0';  
+
+	  retStr = strdup(p);
+	  return(retStr);
+        }
+
+      fclose(fkey);
+      return(NULL);
+    }
+
+  return(NULL);
+
+}
 
 int main(int argc, char *argv[])
 {
 
-  DSA    	*dsa;
-
-  char  	*pk;
-  char		typ;
-  TqslPublicKey *pubkey;
+  char		*privKey;
+  TqslPublicKey pubkey;
   TqslCert	amCert;
 
   int		rc;
-  FILE		*fp;
-  char		tmpStr[50];
   char		amPkFile[100];
   char		caPrivFile[100];
   char		amCertFile[100];
@@ -135,87 +167,35 @@ int main(int argc, char *argv[])
       return(-1);
     }
 
-  pubkey = readPubKey(amPkFile,&typ);
-  if (pubkey == NULL)
+  rc = tqslReadPub(amPkFile,&pubkey);
+  if (rc == 0)
     {
       fprintf(stderr,"Unable to read public key file %s\n",amPkFile);
       return(2);
     }
 
-  dsa = DSA_new();
-  if (dsa == NULL)
+  privKey = readPrivKey(caPrivFile);
+  if (privKey == NULL)
+    return(-4);
+
+  rc = tqslSignCert(&amCert,privKey,caId,&pubkey,certNum,issueStr,
+		    expStr,selfSign);
+
+  
+  if (rc != 0)
     {
-      free(pubkey);
+      printf("Signed failed\n");
       return(1);
     }
 
-  // read common public values
+  printf("Signed successful\n");
 
-  BN_hex2bn(&dsa->p,pVal);
-  BN_hex2bn(&dsa->g,gVal);
-  BN_hex2bn(&dsa->q,qVal);
-
-  readBig(caPrivFile,&dsa->priv_key);
-
-  memset(&amCert,0,sizeof(amCert));
-  memset(&amCert,' ',sizeof(amCert));
-  
-  if (selfSign == 1)
-    amCert.data.certType = '0';
-  else
-    amCert.data.certType = '1';
-
-  amCert.data.publicKey = *pubkey;
-  sprintf(tmpStr,"%-10.10s       ",issueStr);
-  memcpy(&amCert.data.issueDate,tmpStr,10);
-
-  sprintf(tmpStr,"%-10.10s       ",expStr	);
-  memcpy(&amCert.data.expireDate,tmpStr,10);
-
-  
-  sprintf(tmpStr,"%-10.10s       ",caId);
-  memcpy(&amCert.data.caID,tmpStr,10);
-
-  sprintf(tmpStr,"%s      ",certNum);
-  memcpy(&amCert.data.caCertNum,tmpStr,6);
-
-  unsigned char hash[40];
-  SHA1((unsigned char *)&amCert.data,sizeof(amCert.data),hash);
-
-  unsigned char sigRet[500];
-  unsigned int sigLen;
-
-  if (debugLevel > 0)
+  rc = tqslWriteCert(amCertFile,&amCert);
+  if (rc <= 0)
     {
-      char *p;
-      p = bin2hex(hash,SHA_DIGEST_LENGTH);
-      printf("hash: %s\n",p); 
-      printf("amcert: %s\n", (char *)&amCert);
+      fprintf(stderr,"Couldn't write cert file for %s\n",amCertFile);
+      return(-2);
     }
-
-  rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
-
-  if (debugLevel > 3)
-    {
-      char *hv;
-      printf("siglen = %d\n",sigLen);
-      hv = bin2hex(sigRet,sigLen);
-      printf("sigret: %s\n",hv);
-    }
-
-  char *sigStr;
-  sigStr = bin2hex(sigRet,sigLen);
-  memcpy(&amCert.signature,sigStr,sigLen*2);
-  sprintf(tmpStr,"%03d",sigLen*2);
-  memcpy(&amCert.sigSize,tmpStr,3);
-  fp = fopen(amCertFile,"w");
-  if (fp)
-    {
-      fwrite(&amCert,sizeof(amCert),1,fp);
-      fclose(fp);
-    }
-
-  free(pubkey);
   return(0);
 
 }

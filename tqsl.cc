@@ -37,6 +37,7 @@
 
 
 static char cvsID[] = "$Id$";
+int debugLevel=0;
 
 int tqslReadCert(const char *fname,TqslCert *cert)
 {
@@ -230,5 +231,125 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
   rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
   DSA_free(dsa);
   ERR_remove_state(0);  // clean up error queue
+  return(rc);
+}
+int tqslSignCert(TqslCert *cert,const char *caPrivKey,
+                 const char *caId,TqslPublicKey *pubKey,
+                 const char *certNum,const char *issueDate,
+                 char *expireDate,int selfSign)
+{
+
+  DSA    	*dsa;
+  int		rc;
+  char		tmpStr[50];
+
+  dsa = DSA_new();
+  if (dsa == NULL)
+    {
+      return(1);
+    }
+
+  // read common public values
+
+  BN_hex2bn(&dsa->p,pVal);
+  BN_hex2bn(&dsa->g,gVal);
+  BN_hex2bn(&dsa->q,qVal);
+
+  //  readBig(caPrivFile,&dsa->priv_key);
+  rc = BN_hex2bn(&dsa->priv_key,caPrivKey);
+  if (rc == 0)
+    {
+      DSA_free(dsa);
+      return(-3);
+    }
+
+  memset(cert,0,sizeof(TqslCert));
+  memset(cert,' ',sizeof(TqslCert));
+  
+  if (selfSign == 1)
+    cert->data.certType = '0';
+  else
+    cert->data.certType = '1';
+
+  cert->data.publicKey = *pubKey;
+  sprintf(tmpStr,"%-10.10s       ",issueDate);
+  memcpy(cert->data.issueDate,tmpStr,10);
+
+  sprintf(tmpStr,"%-10.10s       ",expireDate);
+  memcpy(cert->data.expireDate,tmpStr,10);
+
+  
+  sprintf(tmpStr,"%-10.10s       ",caId);
+  memcpy(&cert->data.caID,tmpStr,10);
+
+  sprintf(tmpStr,"%s      ",certNum);
+  memcpy(&cert->data.caCertNum,tmpStr,6);
+
+  unsigned char hash[40];
+  SHA1((unsigned char *)&cert->data,sizeof(TqslCertData),hash);
+
+  unsigned char sigRet[500];
+  unsigned int sigLen;
+
+  if (debugLevel > 0)
+    {
+      char *p;
+      p = bin2hex(hash,SHA_DIGEST_LENGTH);
+      printf("hash: %s\n",p); 
+      printf("amcert: %s\n", (char *)cert);
+    }
+
+  rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
+
+  if (debugLevel > 3)
+    {
+      char *hv;
+      printf("siglen = %d\n",sigLen);
+      hv = bin2hex(sigRet,sigLen);
+      printf("sigret: %s\n",hv);
+    }
+
+  char *sigStr;
+  sigStr = bin2hex(sigRet,sigLen);
+  memcpy(cert->signature,sigStr,sigLen*2);
+  sprintf(tmpStr,"%03d",sigLen*2);
+  memcpy(cert->sigSize,tmpStr,3);
+  return(0);
+
+}
+
+int tqslReadPub(const char *fname,TqslPublicKey *pubkey)
+{
+
+  int		rc;
+  int		fd;
+
+  fd = open(fname,O_RDONLY);
+  if (fd < 0)
+    return(0);
+
+  rc = read(fd,pubkey,sizeof(TqslPublicKey));
+  close(fd);  // we are done with it.
+  if (rc <= 0)
+    {
+      return(rc);
+    }
+  
+  return(1);
+
+}
+
+int tqslWritePub(const char *fname,TqslPublicKey *pubkey)
+{
+
+  int		rc;
+  int		fd;
+
+  fd = open(fname,O_WRONLY);
+  if (fd < 0)
+    return(fd);
+
+  rc = write(fd,pubkey,sizeof(TqslPublicKey));
+  close(fd);  // we are done with it.
   return(rc);
 }

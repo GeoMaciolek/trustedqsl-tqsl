@@ -91,13 +91,15 @@ extern "C"
 
   int tqslReadCert(const char *fname,TqslCert *);
   int tqslWriteCert(const char *fname,TqslCert *);
+  int tqslReadPub(const char *fname,TqslPublicKey *);
+  int tqslWritePub(const char *fname,TqslPublicKey *);
   int tqslGenNewKeys(const char *callSign,const char *privFile,
 		    const char *pubFile);
   int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
-  int tqslSignCert(TqslCert *cert,const char *caPrivFName,
-		 const char *caId,const char *pubKeyFName,
-		 const char *certNum,const char *issueDate,
-		 char *expireDate);
+  int tqslSignCert(TqslCert *cert,const char *caPrivKey,
+                 const char *caId,TqslPublicKey *pubKey,
+                 const char *certNum,const char *issueDate,
+                 char *expireDate,int selfSign);
   int tqslSignData(const char *privKeyFname,const unsigned char *data,
 		 TqslCert *cert,TqslSignature *signature);
   int tqslVerifyData(TqslCert *cert,unsigned char *data,
