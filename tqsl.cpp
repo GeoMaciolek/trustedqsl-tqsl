@@ -885,7 +885,8 @@ int tqslSignData(const char *privKey,const unsigned char *data,
   hexSign = tqslBin2Hex(sigRet,sigLen);
   strcpy(signature->signature,hexSign);
   signature->sigType = '1';
-  signature->cert = *cert;
+  if (cert != NULL)
+   signature->cert = *cert;
   free(hexSign);
   return(1);
 
