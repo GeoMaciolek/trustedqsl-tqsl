@@ -36,4 +36,4 @@ AC_TYPE_SIZE_T
 dnl Checks for library functions.
 AC_CHECK_FUNCS(mkdir strerror)
 
-AC_OUTPUT(Makefile.g95)
+AC_OUTPUT(Makefile Makefile.g95)

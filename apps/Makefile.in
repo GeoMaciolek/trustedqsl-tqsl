@@ -1,8 +1,9 @@
+TQSLLIB=@TQSLLIB@
 LIBS=-lcrypto
-INCDIR = -I../tqsllib
+INCDIR = -I$(TQSLLIB)
 CXXFLAGS = -O0 -g3 -Wall $(INCDIR) @DEFS@ `wx-config --cflags`
-LDLIBS = $(LIBS) -L../tqsllib -ltqsllib `wx-config --libs`
-TQSLLIBFILE=../tqsllib/libtqsllib.a
+LDLIBS = $(LIBS) -L$(TQSLLIB) -ltqsllib `wx-config --libs`
+TQSLLIBFILE=$(TQSLLIB)/libtqsllib.a
 
 TARGETS = tqslcert
 
