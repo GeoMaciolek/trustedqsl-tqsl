@@ -24,19 +24,14 @@ associated learning curve. Having said that <STRONG>ADIF</STRONG> does have a
 short coming. It doesn't have any concept of record type. Discussions with the 
 ADIF development&nbsp;reflector hasn't been fruitful. Therefore to meet the 
 requires of this TrustedQSL/LoTW projects the standard must be forked. The new 
-standard will be called <STRONG>Gabbi</STRONG>           
-                       
-                  
-                     
-                  
-                   (Global
-         Amateur Interchange) . It is hoped that the two standards will be merged
-         at some point in the future. Therefore a design goal is for Gabbi format
-         to be backward compatible with ADIF. This turns out to
-         be fairly easy to do by declaring the QSO/Logbook record
-         as the default record type.&nbsp; The QSO record type will use the standard already
-         defined by ADIF.
+standard will be called <STRONG>Gabbi</STRONG> (Global Amateur Interchange) . It is hoped 
+that the two standards will be merged at some point in the future. Therefore a 
+design goal is for Gabbi format to be backward compatible with ADIF. This turns 
+out to be fairly easy to do by declaring the QSO/Logbook record as the default 
+record type.&nbsp; The QSO record type will use the standard already defined by 
+ADIF. Also see <a href="format_design.html">high level design notes</a> from Michael Keane K1MK.
       </p>
+<P><FONT size=3></FONT></FONT>&nbsp;</P>
       <h3>
          Requirements:
       </h3>
@@ -144,35 +139,35 @@ contains information about the station used to make contacts.</P>
       <table cellspacing="2" cellpadding="2" border="1" frame="box" rules=
       "all">
          <tr>
-            <th>
-               Name
-            </th>
-            <th>
-               Type
-            </th>
-            <th>
-               Required
-            </th>
-            <th>
-               Description
-            </th>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (bytes)</th>
+            <th>Description</th>
          </tr>
          <tr>
             <td>REC_TYPE</td>
             <td>C</td>
             <td>NZ</td>
+			<td>Y</td>
+			<td>15</td>
             <td>This defines the type of record.&nbsp; The default is QSO record</td>
          </tr>
          <tr>
             <td>SIGN</td>
             <td>C</td>
             <td>N</td>
-            <td>This is the digital signature of this record.</td>
+			<td>Y</td>
+			<td>80</td>
+            <td>This is the digital signature of this record. Max size based on hex encoding</td>
          </tr>
          <tr>
             <td>GUID</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>20</td>			
             <td>Global Unique IDentifier.&nbsp; Exact description is TBD, but should
                be something like callsign and date/time group.&nbsp; This maybe a
                viritual field.</td>
@@ -196,6 +191,8 @@ contains information about the station used to make contacts.</P>
             <th>Name</th>
             <th>Type</th>
             <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (Bytes)</th>
             <th>Description       </th>
          </tr>
 
@@ -203,18 +200,25 @@ contains information about the station used to make contacts.</P>
             <td>CALL</td>
             <td>C</td>
             <td>Y</td>
+            <td>Y</td>		
+			<td>10</td>						
             <td>The call sign of station contacted.</td>
          </tr>	
          <tr>
             <td>CERT_GUID</td>
             <td>C</td>
             <td>Y</td>
-            <td>Digital Certificate GUID</td>
+			<td>Y</td>
+			<td>20</td>					
+            <td>Digital Certificate GUID.&nbsp; This would be CA 
+      DN &amp; cert serial number.</td>
          </tr>	
          <tr>
             <td>DTG</td>
             <td>H</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>8</td>					
             <td>Date Time Group - 8 digit hex number of seconds since 1 Jan 1970 00:00:00
             </td>
          </tr>	
@@ -222,6 +226,8 @@ contains information about the station used to make contacts.</P>
             <td>FREQ</td>
             <td>N</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>8</td>					
             <td>in Megahertz.&nbsp; If unknown use Frequency from ADIF table for
                the band.</td>
          </tr>		 
@@ -229,48 +235,64 @@ contains information about the station used to make contacts.</P>
             <td>MODE</td>
             <td>C</td>
             <td>Y</td>
-            <td>SSB, CW, RTTY, TOR=    AMTOR, PKT,AM,FM,SSTV,ATV,PAC=PACTOR,CLO=CLOVER</td>
+			<td>Y</td>
+			<td>10</td>					
+            <td>SSB, CW, RTTY, TOR= AMTOR, PKT, AM,FM, SSTV, ATV, PAC=     PACTOR,CLO=CLOVER</td>
          </tr>		 	 		 	
          <tr>
             <td>MY_CALL</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>10</td>					
             <td>My Call sign.</td>
          </tr>
          <tr>
             <td>REC_TYPE</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>10</td>					
             <td>Always "tCONTACT".&nbsp; This declares the record to be a Trusted Contact record.</td>
          </tr>		 
          <tr>
             <td>RST_RCVD</td>
             <td>N</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>3</td>		
             <td>Signal Report Received</td>
          </tr>	
          <tr>
             <td>RST_SENT</td>
             <td>N</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>3</td>
             <td>Signal Report Sent</td>
          </tr>	
          <tr>
             <td>SERIAL_NUM</td>
             <td>N</td>
             <td>N</td>
+			<td>Y</td>
+			<td>6</td>					
             <td>Serial number of the event.</td>
          </tr>		 	  		  
          <tr>
             <td>SIGN</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>80</td>					
             <td>This is the digital signature of this record.&nbsp; Base64 encoded</td>
          </tr>
 		 <tr>
             <td>STATION_GUID</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>20</td>					
             <td>This is the Station Record GUID (pointer) for the station that was used to make 
 			this contact.
             </td>
@@ -278,12 +300,9 @@ contains information about the station used to make contacts.</P>
       </table>
 	  
       <h3>
-         tSTATION&nbsp;(Trusted
-         Station) Record:
+         tSTATION&nbsp;(Trusted Station) Record:
       </h3>
-      <p>
-                     
-          The tSTATION record contains information that is common to a .
+      <p>The tSTATION record contains information that is common to a set of tCONTACTs.
       </p>
       <p>
          
@@ -294,6 +313,8 @@ contains information about the station used to make contacts.</P>
             <th>Name</th>
             <th>Type</th>
             <th>Required</th>
+			<th>Signed</th>
+			<th>Max Size (Bytes)</th>
             <th>Description       </th>
          </tr><!--        Start of Table -->
 		 
@@ -301,12 +322,16 @@ contains information about the station used to make contacts.</P>
             <td>CERT_GUID</td>
             <td>N</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>10</td>					
             <td>Digital Certificate GUID</td>
          </tr>		
          <tr>
             <td>CITY</td>
             <td>C</td>
             <td>N</td>
+			<td>N</td>
+			<td>20</td>
             <td>City in which the station was located at the time of the QSL</td>
          </tr>		
 
@@ -314,44 +339,56 @@ contains information about the station used to make contacts.</P>
             <td>CONT</td>
             <td>N</td>
             <td>N</td>
+			<td>Y</td>
+			<td>2</td>
             <td>Continent: NA,SA,EU,AF,OC,AS</td>
          </tr>
 		 <tr>
             <td>CQZ</td>
             <td>C</td>
             <td>N</td>
-            <td>               
-			CQ Zone.
-            </td>
+			<td>Y</td>
+			<td>2</td>
+            <td>CQ Zone</td>
          </tr>	
          <tr>
             <td>DXCC</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>3</td>
             <td> Numeric identifiers from ARRL. See ADIF web site for details</td>
          </tr>	
          <tr>
             <td>GRIDSQUARE</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>6</td>
             <td>4 or 6 characters</td>
          </tr>	
          <tr>
             <td>IOTA</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>8</td>
             <td>Hyphen must be included. Example: NA-001</td>
          </tr>
          <tr>
             <td>ITUZ</td>
             <td>N</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>2</td>
             <td>ITU Zone</td>
          </tr>	
          <tr>
             <td>NAME</td>
             <td>C</td>
             <td>N</td>
+			<td>N</td>
+			<td>20</td>
             <td>Operator's Name
             </td>
          </tr>
@@ -359,30 +396,33 @@ contains information about the station used to make contacts.</P>
             <td>PFX</td>
             <td>C</td>
             <td>N</td>
+			<td>N</td>
+			<td>5</td>
             <td>WPX Prefix</td>
          </tr>		 	 	 	 	   
          <tr>
             <td>REC_TYPE</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>10</td>
             <td>Always "tSTATION".&nbsp; This declares the record to be a QSL record.</td>
          </tr>
-		          <tr>
-            <td>SERIAL_NUM</td>
-            <td>N</td>
-            <td>N</td>
-            <td>Serial number of the event.</td>
-         </tr>
+		 <tr>
          <tr>
             <td>SIGN</td>
             <td>C</td>
             <td>Y</td>
+			<td>N</td>
+			<td>80</td>
             <td>This is the digital signature of this record.</td>
          </tr>
 		 <tr>
             <td>STATION_GUID</td>
             <td>C</td>
             <td>Y</td>
+			<td>Y</td>
+			<td>10</td>
             <td>This is the Station Record GUID (pointer) for the station that was used to make 
 			this contact.
             </td>
@@ -391,6 +431,8 @@ contains information about the station used to make contacts.</P>
             <td>SUB_GOV1</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>10</td>
             <td>First subdivision of government such as State, province in which the station was located at the time of the QSL
             </td>
          </tr>
@@ -398,6 +440,8 @@ contains information about the station used to make contacts.</P>
             <td>SUB_GOV2</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>20</td>
             <td>Second subdivision of government such as US 
       County, province, JA district, etc in which the station was located at the time oftheQSL</td>
          </tr>
@@ -405,6 +449,8 @@ contains information about the station used to make contacts.</P>
             <td>SUB_GOV3</td>
             <td>C</td>
             <td>N</td>
+			<td>Y</td>
+			<td>20</td>
             <td>Third subdivision of government in which the station was located at the time of
                the QSL</td>
          </tr>	 
@@ -413,8 +459,9 @@ contains information about the station used to make contacts.</P>
             <td>TEN_TEN</td>
             <td>N</td>
             <td>N</td>
-            <td>            
-               International 10-10</td>
+			<td>N</td>
+			<td>7</td>
+            <td>International 10-10</td>
          </tr>
 
 		 
