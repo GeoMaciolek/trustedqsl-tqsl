@@ -280,6 +280,7 @@ tqsl_load_xml_config() {
 	char npath[1024];
 
 	mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
+	CFURLGetFSRef(mainBundleURL, &bundleFSRef);
 	FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath) - 1);
 	// if last char is not a /, append one
 	if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
