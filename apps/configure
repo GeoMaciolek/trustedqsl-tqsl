@@ -310,7 +310,7 @@ ac_includes_default="\
 # include <unistd.h>
 #endif"
 
-ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE am__leading_dot WINVER platform add_targets WINWD tqslcertresources CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE RANLIB ac_ct_RANLIB CP PERL TOUCH MKDIR SED ECHO OPENSSL TQSLLIB TQSLINC ZLIB EXPAT WXDIR INNODIR wxwin_libs WINTQSLDIR BUILD EGREP LIBOBJS LTLIBOBJS'
+ac_subst_vars='SHELL PATH_SEPARATOR PACKAGE_NAME PACKAGE_TARNAME PACKAGE_VERSION PACKAGE_STRING PACKAGE_BUGREPORT exec_prefix prefix program_transform_name bindir sbindir libexecdir datadir sysconfdir sharedstatedir localstatedir libdir includedir oldincludedir infodir mandir build_alias host_alias target_alias DEFS ECHO_C ECHO_N ECHO_T LIBS build build_cpu build_vendor build_os host host_cpu host_vendor host_os INSTALL_PROGRAM INSTALL_SCRIPT INSTALL_DATA CYGPATH_W PACKAGE VERSION ACLOCAL AUTOCONF AUTOMAKE AUTOHEADER MAKEINFO AMTAR install_sh STRIP ac_ct_STRIP INSTALL_STRIP_PROGRAM AWK SET_MAKE am__leading_dot WINVER platform add_targets WINWD tqslcertresources CC CFLAGS LDFLAGS CPPFLAGS ac_ct_CC EXEEXT OBJEXT DEPDIR am__include am__quote AMDEP_TRUE AMDEP_FALSE AMDEPBACKSLASH CCDEPMODE am__fastdepCC_TRUE am__fastdepCC_FALSE CPP CXX CXXFLAGS ac_ct_CXX CXXDEPMODE am__fastdepCXX_TRUE am__fastdepCXX_FALSE RANLIB ac_ct_RANLIB LN_S CP PERL TOUCH MKDIR SED ECHO OPENSSL TQSLLIB TQSLINC ZLIB EXPAT WXDIR INNODIR wxwin_libs WINTQSLDIR BUILD EGREP LIBOBJS LTLIBOBJS'
 ac_subst_files=''
 
 # Initialize some variables set by options.
@@ -1775,7 +1775,7 @@ case "$build_os" in
 	dyn_lib_suf=".dylib"
     ;;
   mingw32) platform=-DWINDOWS
-	WINWD=`wpwd.bat`
+	WINWD=`cmd /c cd`
 	TQSLLIBFILE="tqsllibd"
 	tqslcertresources="tqslcert-resources.o"
 	;;
@@ -3557,6 +3557,17 @@ else
   RANLIB="$ac_cv_prog_RANLIB"
 fi
 
+echo "$as_me:$LINENO: checking whether ln -s works" >&5
+echo $ECHO_N "checking whether ln -s works... $ECHO_C" >&6
+LN_S=$as_ln_s
+if test "$LN_S" = "ln -s"; then
+  echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6
+else
+  echo "$as_me:$LINENO: result: no, using $LN_S" >&5
+echo "${ECHO_T}no, using $LN_S" >&6
+fi
+
 # Extract the first word of "cp", so it can be a program name with args.
 set dummy cp; ac_word=$2
 echo "$as_me:$LINENO: checking for $ac_word" >&5
@@ -4402,7 +4413,7 @@ fi
 if test "$build_os" = "mingw32"; then
   wd=`pwd`
   cd "$TQSLLIB/.."
-  WINTQSLDIR=`"$wd/wpwd.bat"`
+  WINTQSLDIR=`cmd /c cd`
   cd "$wd"
 fi
 
@@ -4977,7 +4988,7 @@ test -z "$INSTALL_DATA" && INSTALL_DATA='${INSTALL} -m 644'
 
 #AC_PREFIX_DEFAULT(/usr)
 
-                              ac_config_files="$ac_config_files Makefile setup.iss TrustedQSL.spec"
+                                        ac_config_files="$ac_config_files Makefile tqslcert.rc setup.iss TrustedQSL.spec"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -5534,6 +5545,7 @@ do
   case "$ac_config_target" in
   # Handling of arguments.
   "Makefile" ) CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+  "tqslcert.rc" ) CONFIG_FILES="$CONFIG_FILES tqslcert.rc" ;;
   "setup.iss" ) CONFIG_FILES="$CONFIG_FILES setup.iss" ;;
   "TrustedQSL.spec" ) CONFIG_FILES="$CONFIG_FILES TrustedQSL.spec" ;;
   "depfiles" ) CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
@@ -5680,6 +5692,7 @@ s,@am__fastdepCXX_TRUE@,$am__fastdepCXX_TRUE,;t t
 s,@am__fastdepCXX_FALSE@,$am__fastdepCXX_FALSE,;t t
 s,@RANLIB@,$RANLIB,;t t
 s,@ac_ct_RANLIB@,$ac_ct_RANLIB,;t t
+s,@LN_S@,$LN_S,;t t
 s,@CP@,$CP,;t t
 s,@PERL@,$PERL,;t t
 s,@TOUCH@,$TOUCH,;t t

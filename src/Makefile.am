@@ -69,5 +69,5 @@ rsync-exclude:
 	
 install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	test "$(build_os)" != "mingw32" || $(INSTALL_PROGRAM) $(srcdir)/tqsllib2.dll $(DESTDIR)$(bindir)/tqsllib2.dll
+	test "$(build_os)" != "mingw32" || $(INSTALL_PROGRAM) tqsllib2.dll $(DESTDIR)$(bindir)/tqsllib2.dll
 

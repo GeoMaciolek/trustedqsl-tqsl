@@ -21,7 +21,7 @@ case "$build_os" in
 	dyn_lib_suf=".dylib"
     ;;
   mingw32) platform=-DWINDOWS
-	WINWD=`wpwd.bat`
+	WINWD=`cmd /c cd`
 	TQSLLIBFILE="tqsllibd"
 	tqslcertresources="tqslcert-resources.o"
 	;;
@@ -37,6 +37,7 @@ AC_PROG_CC
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_RANLIB
+AC_PROG_LN_S
 AC_PATH_PROG(CP, cp)
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(TOUCH, touch)
@@ -280,7 +281,7 @@ fi
 if test "$build_os" = "mingw32"; then
   wd=`pwd`
   cd "$TQSLLIB/.."
-  WINTQSLDIR=`"$wd/wpwd.bat"`
+  WINTQSLDIR=`cmd /c cd`
   cd "$wd"
 fi
 AC_SUBST(WINTQSLDIR)
@@ -302,4 +303,4 @@ AC_CHECK_FUNCS(mkdir strerror)
 AC_PROG_INSTALL
 #AC_PREFIX_DEFAULT(/usr)
 
-AC_OUTPUT(Makefile setup.iss TrustedQSL.spec)
+AC_OUTPUT(Makefile tqslcert.rc setup.iss TrustedQSL.spec)

@@ -23,6 +23,7 @@ Name: "desktopicon"; Description: "Create a &desktop icon"; GroupDescription: "A
 [InstallDelete]
 Type: files; Name: "{app}\libexpat.dll"
 Type: files; Name: "{app}\tqsllib.dll"
+Type: files; Name: "{app}\licenses\LICENSE"
 
 [Files]
 Source: "@WINWD@\tqsl.exe"; DestDir: "{app}"; Flags: ignoreversion
@@ -32,7 +33,7 @@ Source: "@WINWD@\help\tqslcert\*.*"; DestDir: "{app}\help\tqslcert"; Flags: igno
 Source: "@WINTQSLDIR@\bin\tqsllib2.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "@WINWD@\quick.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "@WINTQSLDIR@\share\tqsl\config.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "@WINWD@\LICENSE"; DestDir: "{app}\licenses"; Flags: ignoreversion
+Source: "@WINWD@\LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
 Source: "@WINWD@\ChangeLog.txt"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 

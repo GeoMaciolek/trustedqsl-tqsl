@@ -1,0 +1,3 @@
+TQSL_CERTICON1	ICON	"@srcdir@/tqsl-key1.ico"
+TQSL_CERTICON2	ICON	"@srcdir@/tqsl.ico"
+#include "wx/msw/wx.rc"

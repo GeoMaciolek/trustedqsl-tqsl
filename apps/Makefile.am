@@ -24,7 +24,7 @@ helpdir = $(datadir)
 AM_CXXFLAGS = -Wall `$(WXCONFIG) --cxxflags` -I$(TQSLINC) -I$(ZLIB)/include -I$(EXPAT)/include
 AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib
 
-BUILT_SOURCES = tqslbuild.h tqslcertbuild.h
+BUILT_SOURCES = tqslbuild.h tqslcertbuild.h helpdir
 
 EXTRA_PROGRAMS = tqsl.app tqslcert.app
 bin_PROGRAMS = tqsl tqslcert @add_targets@
@@ -55,24 +55,24 @@ tqsl_SOURCES = tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp qsoda
 noinst_SCRIPTS =
 
 CLEANFILES = tqslbuild.h tqslcertbuild.h tqsl-@WINVER@.exe ChangeLog.txt \
-	quick.txt setup-is.iss
+	quick.txt setup-is.iss LICENSE.txt
 
 nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
 	licenses/LICENSE LICENSE TrustedQSL.spec.in TrustedQSL.spec \
 	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
-	touchver.pl *.ico setup.iss.in wpwd.bat tqslcert.rc
+	touchver.pl tqsl.ico tqsl-key1.ico setup.iss.in wpwd.bat tqslcert.rc.in
 
 tqslbuild.h: tqslbuild.h.in Makefile
-	$(PERL) touchver.pl tqslbuild.h.in BUILD $(BUILD)
-	$(CP) tqslbuild.h.in tqslbuild.h
-	$(TOUCH) tqslbuild.h.in
+	$(PERL) $(srcdir)/touchver.pl $(srcdir)/tqslbuild.h.in BUILD $(BUILD)
+	$(CP) $(srcdir)/tqslbuild.h.in tqslbuild.h
+	$(TOUCH) $(srcdir)/tqslbuild.h.in
 
 tqslcertbuild.h: tqslcertbuild.h.in Makefile
-	$(PERL) touchver.pl tqslcertbuild.h.in BUILD $(BUILD)
-	$(CP) tqslcertbuild.h.in tqslcertbuild.h
-	$(TOUCH) tqslcertbuild.h.in
+	$(PERL) $(srcdir)/touchver.pl $(srcdir)/tqslcertbuild.h.in BUILD $(BUILD)
+	$(CP) $(srcdir)/tqslcertbuild.h.in tqslcertbuild.h
+	$(TOUCH) $(srcdir)/tqslcertbuild.h.in
 
 tqslcert.app: tqslcert Info.plist.in
 	$(MKDIR) -p tqslcert.app
@@ -81,7 +81,7 @@ tqslcert.app: tqslcert Info.plist.in
 	$(MKDIR) -p tqslcert.app/Contents/Resources
 	$(MKDIR) -p tqslcert.app/Contents/Resources/Help
 	
-	$(CP) help/tqslcert/* tqslcert.app/Contents/Resources/Help
+	$(CP) $(srcdir)/help/tqslcert/* tqslcert.app/Contents/Resources/Help
 	$(CP) $(TQSLLIB)/../share/tqsl/config.xml tqslcert.app/Contents/Resources
 	
 	$(ECHO) -n "APPL????" >tqslcert.app/Contents/PkgInfo
@@ -92,7 +92,7 @@ tqslcert.app: tqslcert Info.plist.in
 	$(SED) -e "s/EXEFILENAME/tqslcert/g" \
 	    -e "s/ICONFILE/wxMac.icns/g"  \
 	    -e "s/VERSION/$(VERSION)/g"   \
-	Info.plist.in > tqslcert.app/Contents/Info.plist
+	$(srcdir)/Info.plist.in > tqslcert.app/Contents/Info.plist
 
 tqsl.app: tqsl Info.plist.in
 	$(MKDIR) -p tqsl.app
@@ -101,7 +101,7 @@ tqsl.app: tqsl Info.plist.in
 	$(MKDIR) -p tqsl.app/Contents/Resources
 	$(MKDIR) -p tqsl.app/Contents/Resources/Help
 	
-	$(CP) help/tqslapp/* tqsl.app/Contents/Resources/Help
+	$(CP) $(srcdir)/help/tqslapp/* tqsl.app/Contents/Resources/Help
 	$(CP) $(TQSLLIB)/../share/tqsl/config.xml tqsl.app/Contents/Resources
 	
 	$(ECHO) -n "APPL????" >tqsl.app/Contents/PkgInfo
@@ -112,24 +112,30 @@ tqsl.app: tqsl Info.plist.in
 	$(SED) -e "s/EXEFILENAME/tqsl/g" \
 	    -e "s/ICONFILE/wxMac.icns/g"  \
 	    -e "s/VERSION/$(VERSION)/g"   \
-	Info.plist.in > tqsl.app/Contents/Info.plist
+	$(srcdir)/Info.plist.in > tqsl.app/Contents/Info.plist
 
 tqslcert-resources.o: tqslcert.rc tqsl.ico tqsl-key1.ico
 	windres --include-dir=@WXDIR@/include -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
 
 quick.txt:
-	unix2dos < quick > quick.txt
+	unix2dos < $(srcdir)/quick > quick.txt
 
 ChangeLog.txt:
-	unix2dos < ChangeLog > ChangeLog.txt
+	unix2dos < $(srcdir)/ChangeLog > ChangeLog.txt
+
+LICENSE.txt:
+	unix2dos < $(srcdir)/LICENSE > LICENSE.txt
 
 setup-is.iss: setup.iss
 	unix2dos < setup.iss > setup-is.iss
 
 installer: all tqsl-@WINVER@.exe
 
-tqsl-@WINVER@.exe: tqsl$(EXEEXT) tqslcert$(EXEEXT) quick.txt ChangeLog.txt setup-is.iss
+tqsl-@WINVER@.exe: tqsl$(EXEEXT) tqslcert$(EXEEXT) quick.txt ChangeLog.txt \
+	setup-is.iss LICENSE.txt
 	strip tqsl$(EXEEXT)
 	strip tqslcert$(EXEEXT)
 	cmd /c '"@INNODIR@/ISCC.exe" setup-is.iss' || exit 1
 	
+helpdir:
+	test -e help || $(LN_S) $(srcdir)/help help
