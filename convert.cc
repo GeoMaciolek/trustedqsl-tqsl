@@ -20,6 +20,8 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "amcert.h"
+#include "sign.h"
 
 static char cvsID[] = "$Id$";
 
@@ -43,7 +45,26 @@ char *bin2hex(const unsigned char *binStr,int len)
     }
   return(tStr);
 }
-  
+void dumpPubKey(PublicKey *pk,FILE *fp)
+{
+  fprintf(fp,"type: %c\n",pk->pkType);
+  fprintf(fp,"call sign: %10.10s\n",pk->callSign);
+  fprintf(fp,"pubkey #: %6.6s\n",pk->pubkeyNum);
+  fprintf(fp,"pubkey: \n%176.176s\n",pk->pkey);
+  return;
+}
+void dumpCert(AmCertExtern *cert,FILE *fp)
+{
+  fprintf(fp,"type: %c\n",cert->data.certType);
+  fprintf(fp,"issue Date: %10.10s\n",cert->data.issueDate);
+  fprintf(fp,"expire Date: %10.10s\n",cert->data.expireDate);
+  fprintf(fp,"CA id: %10.10s\n",cert->data.caID);
+  fprintf(fp,"CA Cert#: %6.6s\n",cert->data.caCertNum);
+  dumpPubKey(&cert->data.publicKey,fp);
+  fprintf(fp,"sig size: %3.3s\n",cert->sigSize);
+  fprintf(fp,"sig: \n%120.120s\n",cert->signature);
+  return;
+}
 void hex2bin(char *hexStr,unsigned char *binStr,int len)
 {
   long	v;

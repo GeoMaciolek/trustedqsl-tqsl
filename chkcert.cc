@@ -33,112 +33,89 @@
 
 // #include <openssl/engine.h>
 extern int errno;
+
+
 static char cvsID[] = "$Id$";
+
+int	debugLevel = 0;
 
 int main(int argc, char *argv[])
 {
+  extern int 	optind;
+  extern char 	*optarg;
 
-  DSA    	*dsa;
-  int   	dsaSize;
-  int    	count;
-  unsigned long h;
-  char		*p,*q;
-  int 		i;
-  char		callsign[200];
-  char  	*pk;
-  char		typ;
-  PublicKey   	*pubkey;
-  AmCertExtern	cert;
-  //  char	     	*fname;
-  char		*CAid;
-  PublicKey	*caPK;
+  AmCertExtern	amCert;
+  AmCertExtern	caCert;
+
   int		rc;
-  FILE		*fp;
-  char		tmpStr[50];
+  char		amCertFile[100];
+  char		caCertFile[100];
+  int 		optCnt=0;
+  int 		c,errFlg;
 
-  char		hamPKf[100];
-  char		certNoStr[10];
-  char		certKeyFn[100];
-static BIO *bio_err = NULL;
-
-bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
-
-  if (argc != 3)
+  while ((c = getopt(argc, argv, "C:a:d:")) != EOF)
+    switch (c) 
+      {
+      case 'a':
+	strcpy(amCertFile,optarg);
+	optCnt++;
+	break;
+      case 'C':
+	strcpy(caCertFile,optarg);
+	optCnt++;
+	break;
+      case 'd':
+	debugLevel = atol(optarg);
+	break;
+      default:
+	errFlg++;
+	break;
+      }
+  if (errFlg || (optCnt != 2))
     {
-      printf("usage: chkcert amCert CA-Cert \n");
+      printf("usage: chkcert -a amCert -C CA-Cert \n");
       return(-1);
     }
-  strncpy(hamPKf,argv[1],99);
-  strncpy(certKeyFn,argv[2],99);
 
-  memset(&cert,' ',sizeof(cert));  
-  rc= readCert(hamPKf,&cert);
+  memset(&caCert,' ',sizeof(AmCertExtern));  
+  rc= readCert(caCertFile,&caCert);
   if (rc > 0)
     {
-      if (cert.data.certType != '1')
+      if (caCert.data.certType != '0')
 	{
-	  fprintf(stderr,"Invalid cert type %c\n",cert.data.certType);
+	  fprintf(stderr,"Invalid cert type %c for \n",caCert.data.certType);
 	  return(1);
 	}
     }
-  
-  dsa = DSA_new();
-  if (dsa == NULL)
+
+  memset(&amCert,' ',sizeof(AmCertExtern));  
+
+  rc= readCert(amCertFile,&amCert);
+  if (rc > 0)
     {
-      return(1);
-    }
-
-  // read common public values
-
-  BN_hex2bn(&dsa->p,pVal);
-  BN_hex2bn(&dsa->g,gVal);
-  BN_hex2bn(&dsa->q,qVal);
-  //DSA_print(bio_err,dsa,0);
-  //char typ;
-  PublicKey *cpk;
-  //printf("cert file %s\n",certKeyFn);
-  cpk = (PublicKey *)readQpub(certKeyFn,&typ);
-	
-
-
-  BN_hex2bn(&dsa->pub_key,(const char *)cpk->pkey);
-
-  //DSA_print(bio_err,dsa,0);
-  unsigned char hash[40];
-  SHA1((unsigned char *)&cert.data,sizeof(cert.data),hash);
-  //printf("hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH));
-  unsigned char sigRet[500];
-  unsigned int sigLen;
-  char	sigsize[5];
-  for(i=0;i<3;i++)
-    {
-      if (cert.sigSize[i] == ' ')
+      if ((amCert.data.certType != '1') && (amCert.data.certType != '0'))
 	{
-	  sigsize[i] = '\0';
-	  break;
+	  fprintf(stderr,"Invalid cert type %c for amaterur\n",
+		  amCert.data.certType);
+	  return(1);
 	}
-      sigsize[i] = cert.sigSize[i];
-    }
+     if (amCert.data.certType == '0')
+       printf("Self signed Cert.\n");
+    } 
 
-  sigLen = atol(sigsize);
-  hex2bin(cert.signature,sigRet,sigLen);
-  
-  sigLen = (sigLen/2);
-  //printf("hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH)); //memory leak
-  //printf("sigret: %d %s\n",sigLen,bin2hex(sigRet,sigLen));
+  rc = validateCert(&caCert, &amCert);
 
-  rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
 
   switch (rc)
     {
     case 1:
-      printf("Good Cert!  verify = %d  signlen %d\n",rc,sigLen);
+      printf("Good Cert!  verify = %d\n",rc);
       break;
     case 0:
-      printf("Bad Cert!  verify = %d  signlen %d\n",rc,sigLen);
+      printf("Bad Cert!  verify = %d\n",rc);
       break;
     default:
-      printf("Error validating!  verify = %d  signlen %d\n",rc,sigLen);
+      printf("Error validating!  verify = %d\n",rc);
     }
 
 

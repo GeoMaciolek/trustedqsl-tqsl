@@ -31,6 +31,7 @@ const char gVal[] = "1A337E37A6C7B32C0DDAE04CF93BADC79BD4D781C39E5E9D141"
 const char qVal[] = "CEAAC08334A9071F79DF95789C938A81BFB7F24D";
 
 const int signSizeMax=120;
+const int pubKeySize=176;
 const int CALL_SIZE=10;
 
 struct PublicKey
@@ -38,7 +39,7 @@ struct PublicKey
   char			pkType;
   char			callSign[12];
   char			pubkeyNum[5];
-  unsigned char		pkey[176];
+  unsigned char		pkey[pubKeySize];
 };
 
 struct AmCertData

@@ -29,15 +29,13 @@
 // #include <openssl/engine.h>
 extern int errno;
 static char cvsID[] = "$Id$";
-
+int debugLevel;
+static BIO *bio_err = NULL;
 int main(int argc, char *argv[])
 {
 
   DSA    *dsa;
-  int    dsaSize;
-  int    count;
-  unsigned long h;
-  char	*p,*q;
+  char	*p;
   int 	i;
   char	callsign[200];
 
@@ -48,9 +46,10 @@ int main(int argc, char *argv[])
       fprintf(stderr,"genkey callsign\n");
       return(2);
     }
-
+  
+  bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
   strcpy(callsign,argv[1]);
-  for(i=0;i<strlen(callsign);i++)
+  for(i=0;i < (int)strlen(callsign);i++)
     callsign[i] = toupper(callsign[i]);
   dsa = DSA_new();
   if (dsa == NULL)
@@ -73,10 +72,25 @@ int main(int argc, char *argv[])
   fp = fopen(fname,"w");
   if (fp)
     {
+      PublicKey pk;
+      initPublicKey(&pk);
       printf("writing public key file %s\n",fname);
-      //BN_print_fp(fp,dsa->p);
+      //      BN_print_fp(fp,dsa->p);
+      DSA_print(bio_err,dsa,0);
       p = BN_bn2hex(dsa->pub_key);
-      fprintf(fp,"1%12.12s%5d%s",callsign,1,p);
+      //      if (debugLevel > 0)
+	printf("strlen of pubkey is %d\n",strlen(p));
+      //      fprintf(fp,"1%12.12s%5d%s",callsign,1,p);
+      pk.pkType = '1';
+      memcpy(&pk.callSign,callsign,strlen(callsign));
+      memcpy(&pk.pkey,p,strlen(p));
+      pk.pubkeyNum[0] = '1';
+
+      // should be move to fileio
+
+      fwrite(&pk,sizeof(pk),1,fp);
+      
+      printf("\n%s\n",p);
 	  
       fclose(fp);
     }

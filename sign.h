@@ -21,6 +21,8 @@
 #define SIGN_H
 
 #include "amcert.h"
+#include <openssl/bn.h>
+
 #define ERROR -1
 int 	sha1File(char *fname,unsigned char *);
 int 	writeSign(char *fname,unsigned char *sig,int len);
@@ -33,5 +35,9 @@ int 	readSignAsc(char *fname,unsigned char *sig,int len);
 void 	*readQpub(char *fname,char *typ);
 int 	readCert(char *fname,AmCertExtern *cert);
 int	lgetopt(int argc, char *argv[], char *opts);
+int 	validateCert(AmCertExtern *caCert, AmCertExtern *amCert);
+void 	initPublicKey(PublicKey *pk);
+void	dumpCert(AmCertExtern *cert,FILE *fp);
+void	dumpPubKey(PublicKey *pk,FILE *fp);
 #endif SIGN_H
 

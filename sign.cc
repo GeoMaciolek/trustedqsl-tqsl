@@ -28,6 +28,7 @@
 
 // #include <openssl/engine.h>
 extern int errno;
+int debugLevel;
 
 static char cvsID[] = "$Id$";
 

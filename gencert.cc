@@ -29,86 +29,82 @@
 
 #include "sign.h"
 #include "amcert.h"
-// #include <openssl/engine.h>
+
 extern int errno;
+int debugLevel = 0;
 static char cvsID[] = "$Id$";
 
 int main(int argc, char *argv[])
 {
 
   DSA    	*dsa;
-  int   	dsaSize;
-  int    	count;
-  unsigned long h;
-  char		*p,*q;
-  int 		i;
-  char		callsign[200];
+
   char  	*pk;
   char		typ;
   PublicKey   	*pubkey;
-  AmCertExtern	cert;
-  //  char	     	*fname;
-  char		*CAid;
-  PublicKey	*caPK;
+  AmCertExtern	amCert;
+
+
   int		rc;
   FILE		*fp;
   char		tmpStr[50];
 
-  char		hamPKf[100];
-  char		certNoStr[10];
-  char		certKeyFn[100];
+  char		amPkFile[100];
+  char		caPrivFile[100];
+  char		amCertFile[100];
+  char		certNum[10];
 
-  if (argc != 4)
+  int 		optCnt=0;
+  int 		c,errFlg;
+  int		selfSign=0;
+
+  while ((c = getopt(argc, argv, "sC:p:a:n:d:")) != EOF)
+    switch (c) 
+      {
+      case 's':
+	selfSign = 1;
+	break;
+      case 'a':
+	strcpy(amCertFile,optarg);
+	optCnt++;
+	break;
+      case 'C':
+	strcpy(caPrivFile,optarg);
+	optCnt++;
+	break;
+      case 'd':
+	debugLevel = atol(optarg);
+	break;
+      case 'p':
+	strcpy(amPkFile,optarg);
+	optCnt++;
+	break;
+      case 'n':
+	strcpy(certNum,optarg);
+	optCnt++;
+	break;
+      default:
+	printf("invalid option %c\n",c);
+	errFlg++;
+	break;
+      }
+
+  if (errFlg || optCnt!= 4)
     {
-      printf("usage: gencert amPK CA-Priv cert-#\n");
+      printf("usage: gencert -a Amateur-cert -p amateur-PK -C "
+	     "CA-priv-key -n cert# \n");
       return(-1);
     }
-  strncpy(hamPKf,argv[1],99);
-  strncpy(certKeyFn,argv[2],99);
-  strncpy(certNoStr,argv[3],9);
 
-  /* #if 0
-     static struct option long_options[] =
-     {
-     { "amateur-public-key", required_argument, NULL, 'p' },
-     { "cert-private-key", required_argument, NULL, 'C' },
-     { "cert-number",required_argument, NULL, 'n' },
-     { 0, 0, 0, 0 }
-     };
-
-     while((c = getopt_long(argc,argv,"p:C:n:")) != EOF)
-     {
-     switch(c)
-     {
-     case 'p':
-     strncpy(hamPKf,optarg,99);
-     break;
-     case 'C':
-     strncpy(certKeyFn,optarg,99);
-     break;
-     case 'n':
-     strncpy(certNoStr,optarg,9);
-     break;
-     case '?':
-     printf ("Try `%s -p amateurs-public-key file "
-     "-C CA Priv Key file -n cert-num\n"), argv[0]);
-     return (0);
-     break;
-     }
-
-     }
-     #endif
-  */  
-
-  pk = (char *)readQpub(hamPKf,&typ);
+  pk = (char *)readQpub(amPkFile,&typ);
   if (pk != NULL)
     {
-      if (typ = '1')
+      if (pk[0] == '1')
 	{
 	  pubkey = (PublicKey *)pk;
 	}
     }
-  
+
   dsa = DSA_new();
   if (dsa == NULL)
     {
@@ -121,52 +117,62 @@ int main(int argc, char *argv[])
   BN_hex2bn(&dsa->g,gVal);
   BN_hex2bn(&dsa->q,qVal);
 
-  readBig(certKeyFn,&dsa->priv_key);
+  readBig(caPrivFile,&dsa->priv_key);
 
-  memset(&cert,' ',sizeof(cert));
+  memset(&amCert,0,sizeof(amCert));
+  memset(&amCert,' ',sizeof(amCert)-1);
+  
+  if (selfSign == 1)
+    amCert.data.certType = '0';
+  else
+    amCert.data.certType = '1';
 
-  cert.data.certType = '1';
-  cert.data.publicKey = *pubkey;
-  memcpy(&cert.data.issueDate,"03/03/2001",10);
-  memcpy(&cert.data.expireDate,"03/03/2011",10);
+  amCert.data.publicKey = *pubkey;
+  memcpy(&amCert.data.issueDate,"03/04/2001",10);
+  memcpy(&amCert.data.expireDate,"03/04/2011",10);
 
   
   sprintf(tmpStr,"%-10.10s       ","TQSL");
-  memcpy(&cert.data.caID,tmpStr,10);
+  memcpy(&amCert.data.caID,tmpStr,10);
 
-  sprintf(tmpStr,"%s      ",certNoStr);
-  memcpy(&cert.data.caCertNum,tmpStr,6);
-
+  sprintf(tmpStr,"%s      ",certNum);
+  memcpy(&amCert.data.caCertNum,tmpStr,6);
 
   unsigned char hash[40];
-  SHA1((unsigned char *)&cert.data,sizeof(cert.data),hash);
+  SHA1((unsigned char *)&amCert.data,sizeof(amCert.data),hash);
 
   unsigned char sigRet[500];
   unsigned int sigLen;
 
-  printf("hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH)); //memory leak
+  if (debugLevel > 0)
+    {
+      char *p;
+      p = bin2hex(hash,SHA_DIGEST_LENGTH);
+      printf("hash: %s\n",p); 
+      printf("amcert: %s\n", (char *)&amCert);
+    }
 
   rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
-  printf("siglen = %d\n",sigLen);
-  printf("sigret: %s\n",bin2hex(sigRet,sigLen));
+
+  if (debugLevel > 3)
+    {
+      char *hv;
+      printf("siglen = %d\n",sigLen);
+      hv = bin2hex(sigRet,sigLen);
+      printf("sigret: %s\n",hv);
+    }
+
   char *sigStr;
   sigStr = bin2hex(sigRet,sigLen);
-  memcpy(&cert.signature,sigStr,sigLen*2);
+  memcpy(&amCert.signature,sigStr,sigLen*2);
   sprintf(tmpStr,"%03d",sigLen*2);
-  memcpy(&cert.sigSize,tmpStr,3);
-  fp = fopen("cert.txt","w");
+  memcpy(&amCert.sigSize,tmpStr,3);
+  fp = fopen(amCertFile,"w");
   if (fp)
     {
-
-
-      // printf("writing public key file %s\n",fname);
-      //BN_print_fp(fp,dsa->p);
-      // p = BN_bn2hex(dsa->pub_key);
-      fwrite(&cert,sizeof(cert),1,fp);
-	  
+      fwrite(&amCert,sizeof(amCert),1,fp);
       fclose(fp);
     }
-    
  
   return(0);
 

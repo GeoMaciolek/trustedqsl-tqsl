@@ -1,15 +1,21 @@
-
+# $Id$
 
 CC = gcc
 CXX = g++
-CXXFLAGS = -g
+CXXFLAGS = -g -Wall
 LIB = -lcrypto
-COMOBJ = fileio.o convert.o tqsllib.o getopt.o
+COMOBJ = fileio.o convert.o tqsllib.o 
 
-all:	sign verify qgenkey gencert chkcert
+all:	sign verify qgenkey gencert chkcert dumpcert dumppk
 
 sign:	sign.o $(COMOBJ)
 	$(CXX) $(CXXFLAGS) -o dsasign sign.o  $(COMOBJ) $(LIB)
+
+dumpcert:	dumpcert.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o dumpcert dumpcert.o  $(COMOBJ) $(LIB)
+
+dumppk:	dumppk.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o dumppk dumppk.o  $(COMOBJ) $(LIB)
 
 qgenkey:	qgenkey.o $(COMOBJ)
 	$(CXX) $(CXXFLAGS) -o qgenkey qgenkey.o  $(COMOBJ) $(LIB)

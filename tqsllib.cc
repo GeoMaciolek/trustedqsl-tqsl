@@ -33,9 +33,11 @@
 
 // #include <openssl/engine.h>
 extern int errno;
+extern int debugLevel;
 static char cvsID[] = "$Id$";
+static BIO *bio_err = NULL;
 
-#if 0
+
 void initPublicKey(PublicKey *pk)
 {
    memset(pk,' ',sizeof(PublicKey));
@@ -44,31 +46,16 @@ void initCert(AmCertExtern *cert)
 {
    memset(cert,' ',sizeof(AmCertExtern));
 }
-#endif
 
-int validiteCert(AmCertExtern *caCert, AmCertExtern *amCert)
+int validateCert(AmCertExtern *caCert, AmCertExtern *amCert)
 {
 
   DSA    	*dsa;
-  //  unsigned long h;
-  // char		*p,*q;
   int 		i;
-  char		callsign[200];
-  char  	*pk;
-  char		typ;
-  PublicKey   	*pubkey;
-  AmCertExtern	cert;
-  //  char	     	*fname;
-  char		*CAid;
-  PublicKey	*caPK;
   int		rc;
-  FILE		*fp;
-  char		tmpStr[50];
 
-  char		hamPKf[100];
-  char		certNoStr[10];
-  char		certKeyFn[100];
-
+  if ((debugLevel > 0))
+    bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
 
   if (amCert->data.certType == '0')  // then selfsigned
     caCert = amCert;
@@ -87,16 +74,27 @@ int validiteCert(AmCertExtern *caCert, AmCertExtern *amCert)
   BN_hex2bn(&dsa->g,gVal);
   BN_hex2bn(&dsa->q,qVal);
 
-  //PublicKey *cpk;
+  char pkhex[200];
+  strncpy(pkhex,(const char *)caCert->data.publicKey.pkey,pubKeySize);
+  pkhex[pubKeySize] = '\0';
 
-  //cpk = (PublicKey *)readQpub(certKeyFn,&typ);
-
-  BN_hex2bn(&dsa->pub_key,(const char *)caCert->data.publicKey.pkey);
+  BN_hex2bn(&dsa->pub_key,pkhex);
+  if (debugLevel > 0)
+    {
+      DSA_print(bio_err,dsa,0);
+    }
 
   unsigned char hash[40];
   unsigned char *amPtr;
   amPtr = (unsigned char *)amCert;
   SHA1(amPtr,sizeof(amCert->data),hash);
+
+  if (debugLevel > 0)
+    {
+      char *p = bin2hex(hash,SHA_DIGEST_LENGTH);
+      fprintf(stderr,"validateCert: hash: %s\n",p);
+      free(p);
+    }
 
   unsigned char sigRet[500];
   unsigned int sigLen;
@@ -115,9 +113,14 @@ int validiteCert(AmCertExtern *caCert, AmCertExtern *amCert)
   hex2bin(amCert->signature,sigRet,sigLen);
   
   sigLen = (sigLen/2);
-  //printf("hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH)); //memory leak
-  //printf("sigret: %d %s\n",sigLen,bin2hex(sigRet,sigLen));
 
+  if (debugLevel > 0)
+    {
+      char *p = bin2hex(sigRet,sigLen);
+      fprintf(stderr,"validateCert: \nsigLen: %d\n",sigLen);
+      fprintf(stderr,"validateCert: \nsigRet: %s\n",p);
+      free(p);
+    }
   rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
   DSA_free(dsa);
   return(rc);
