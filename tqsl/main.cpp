@@ -4,7 +4,10 @@
 
 #include "main.h"
 #include "genkeys.h"
+#include "about.h"
 #include "CaSign.h"
+#include "caValid.h"
+#include "debug.h"
 #include "../tqsl.h"
 //---------------------------------------------------------------------------
 #pragma package(smart_init)
@@ -124,6 +127,24 @@ void __fastcall TtqslFm::ImportCertificate1Click(TObject *Sender)
 void __fastcall TtqslFm::Signacertificate1Click(TObject *Sender)
 {
  genCertFm->Show(); 
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TtqslFm::About1Click(TObject *Sender)
+{
+ aboutFm->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TtqslFm::ValidateCertificates1Click(TObject *Sender)
+{
+ caValidateFm->Show();
+}
+//---------------------------------------------------------------------------
+
+void __fastcall TtqslFm::DebugLevel1Click(TObject *Sender)
+{
+ debugFm->Show();
 }
 //---------------------------------------------------------------------------
 

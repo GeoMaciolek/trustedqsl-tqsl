@@ -35,15 +35,20 @@
 #ifndef BYTE_ORDER
 #define BYTE_ORDER LITTLE_ENDIAN
 #endif
+
+#include <stdio.h>
+
 const int signSizeMax=500;
 const int pubKeySize=200;
-const int CALL_SIZE=10;
-const int MaxCertSize=500; 
+const int tqslCALL_SIZE=13;
+const int MaxCertSize=500;
+
+extern FILE   *dbFile;
 
 struct TqslPublicKey
 {                                        
   char			pkType;          
-  char			callSign[13];    
+  char			callSign[tqslCALL_SIZE];
   char			pubkeyNum[6];    
   unsigned char		pkey[pubKeySize];
 };                                       
@@ -53,10 +58,10 @@ struct TqslCertData
   char			certType;        
   char			issueDate[11];   
   char			expireDate[11];  
-  char			caID[11];        
-  char			caCall1[13];
-  char			caCall2[13];
-  char			caCall3[13];
+  char			caID[tqslCALL_SIZE];
+  char			caCall1[tqslCALL_SIZE];
+  char			caCall2[tqslCALL_SIZE];
+  char			caCall3[tqslCALL_SIZE];
   char			caCertNum[7];    
   TqslPublicKey		publicKey;       
 };                                       
@@ -78,8 +83,8 @@ struct TqslSignature
 struct TqslSignedQSL
 {
   char			qslType;
-  char			yourCall[CALL_SIZE];
-  char			theirCall[CALL_SIZE];
+  char			yourCall[tqslCALL_SIZE];
+  char			theirCall[tqslCALL_SIZE];
   char			qDate[8];
   char			qTime[6];
   char			myRst[3];

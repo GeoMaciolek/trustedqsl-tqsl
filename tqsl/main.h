@@ -55,10 +55,17 @@ __published:	// IDE-managed Components
  TIntegerField *PrivTblKeyNum;
  TStringField *PrivTblKey;
  TStringField *PrivTblChkHash;
+ TMenuItem *ValidateCertificates1;
+ TMenuItem *Help1;
+ TMenuItem *About1;
+ TMenuItem *DebugLevel1;
  void __fastcall CreateNewKeyPair1Click(TObject *Sender);
  void __fastcall ImportCertificate1Click(TObject *Sender);
  
  void __fastcall Signacertificate1Click(TObject *Sender);
+ void __fastcall About1Click(TObject *Sender);
+ void __fastcall ValidateCertificates1Click(TObject *Sender);
+ void __fastcall DebugLevel1Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
  __fastcall TtqslFm(TComponent* Owner);

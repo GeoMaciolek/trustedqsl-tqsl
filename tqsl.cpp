@@ -49,6 +49,7 @@ __declspec(dllimport) DSA * _DSA_new(void);
 int debugLevel=0;
 
 static char cvsID[] = "$Id$";
+FILE   *dbFile = NULL;
 
 char *tqslBin2Hex(const unsigned char *binStr,int len)
 {
@@ -244,8 +245,8 @@ static void packCert(TqslCert *cert,char *certStr)
   strcat(certStr,cert->data.publicKey.callSign);
   strcat(certStr,cert->data.publicKey.pubkeyNum);
 
-  if (debugLevel > 4)
-    fprintf(stderr,"pkey len is %d\n",
+  if (debugLevel > 4 && dbFile != NULL)
+    fprintf(dbFile,"pkey len is %d\n",
 	    strlen((char *)cert->data.publicKey.pkey));
   strcat(certStr,(char *)cert->data.publicKey.pkey);
 }
@@ -566,16 +567,16 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
   DSA    *dsa;
   char	*p;
   int 	i;
-  char	newCall[CALL_SIZE+1];
+  char	newCall[tqslCALL_SIZE+1];
   int 	callLen;
   int   rc;
 
   //
   // make sure call sign isn't too long
   //
-  memset(newCall,0,CALL_SIZE+1);
-  if ((int)strlen(callSign) > CALL_SIZE)
-    callLen =  CALL_SIZE;
+  memset(newCall,0,tqslCALL_SIZE+1);
+  if ((int)strlen(callSign) > tqslCALL_SIZE)
+    callLen =  tqslCALL_SIZE;
   else
     callLen = strlen(callSign);
 
@@ -599,7 +600,7 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
     return(0);
 
   //  initPublicKey(pubKey);
-  
+
   pubKey->pkType = '1';
   p = BN_bn2hex(dsa->pub_key);
 
@@ -622,22 +623,20 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
 
   int		rc;
   char		certStr[700];
+  int    len;
 
 
   if (cert->data.certType == '0' || CACert == NULL)  // then selfsigned
     CACert = cert;
 
-  packCert(cert,certStr);   // pack the cert into standard format
 
-  if (debugLevel > 1)
-    fprintf(stderr,"certStr: %s\n",certStr);
 
   // do we need to check the CA Cert?
   if (chkCA > 0)
     {
       rc = tqslCheckCert(CACert,NULL,0);
       if (rc != 1)  // ca cert not valid
-	return(rc);
+	      return(rc);
     }
   dsa = DSA_new();
   if (dsa == NULL)
@@ -657,13 +656,18 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
 
 
   BN_hex2bn(&dsa->pub_key,pkhex);
+  packCert(cert,certStr);   // pack the cert into standard format
+
+  len = strlen(certStr);
+  if (debugLevel > 1 && dbFile != NULL)
+    fprintf(dbFile,"certStr(%d): %s\n",len,certStr);
 
   unsigned char hash[40];
-  SHA1((const unsigned char *)certStr,strlen(certStr),hash);
+  SHA1((const unsigned char *)certStr,len,hash);
 
 
-  if (debugLevel > 1)
-    fprintf(stderr,"hash: %s\n",tqslBin2Hex(hash,SHA_DIGEST_LENGTH));
+  if (debugLevel > 1 && dbFile != NULL)
+    fprintf(dbFile,"hash: %s\n",tqslBin2Hex(hash,SHA_DIGEST_LENGTH));
 
   unsigned char 	sigRet[500];
   int			sigLen;
@@ -720,9 +724,9 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     cert->data.certType = '1';
 
   cert->data.publicKey = *pubKey;
-  
-  if (debugLevel > 4)
-    fprintf(stderr,"pkey len is %d\n",
+
+  if (debugLevel > 4 && dbFile != NULL)
+    fprintf(dbFile,"pkey len is %d\n",
 	    strlen((char *)cert->data.publicKey.pkey));
 
   strncpy(cert->data.issueDate,issueDate,10);
@@ -739,34 +743,37 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   packCert(cert,certStr);
 
   unsigned char hash[40];
-  if (debugLevel > 1)
-    fprintf(stderr,"certStr: %s\n",certStr);
-  SHA1((unsigned char *)certStr,strlen(certStr),hash);
+  int len;
+  len = strlen(certStr);
+
+  if (debugLevel > 1 && dbFile != NULL)
+    fprintf(dbFile,"certStr(%d): %s\n",len,certStr);
+
+  SHA1((unsigned char *)certStr,len,hash);
 
   unsigned char sigRet[500];
   unsigned int sigLen;
 
-  if (debugLevel > 0)
+  if (debugLevel > 0 && dbFile != NULL)
     {
       char *p;
       p = tqslBin2Hex(hash,SHA_DIGEST_LENGTH);
-      printf("hash: %s\n",p); 
-      printf("amcert: %s\n", (char *)cert);
+      fprintf(dbFile,"hash: %s\n",p);
+      free(p);
     }
 
   rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
-  
-  if (debugLevel > 3)
-    {
-      char *hv;
-      printf("siglen = %d\n",sigLen);
-      hv = tqslBin2Hex(sigRet,sigLen);
-      printf("sigret: %s\n",hv);
-    }
 
   char *sigStr;
   sigStr = tqslBin2Hex(sigRet,sigLen);
   strcpy(cert->signature,sigStr);
+
+  if (debugLevel > 3)
+    {
+      fprintf(dbFile,"siglen = %d\n",sigLen);
+      fprintf(dbFile,"sigret: %s\n",sigStr);
+    }
+  free(sigStr);
   //  sprintf(tmpStr,"%d",sigLen*2);
   //  memcpy(cert->sigSize,tmpStr,3);
   DSA_free(dsa);
