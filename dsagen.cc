@@ -83,7 +83,7 @@ int main()
       if (o)
 	{
 	  fprintf(o,"#ifndef DSA_STATIC_H\n#define DSA_STATIC_H\n\n");
-	  //fprintf(o,copyright);
+	  fprintf(o,copyright);
 	  fprintf(o,"\n\n");
 	  fprintf(o,"\nconst char pVal[] = \"%s\";\n",BN_bn2hex(dsa->p));
 	  fprintf(o,"\nconst char qVal[] = \"%s\";\n",BN_bn2hex(dsa->q));
@@ -118,15 +118,6 @@ int main()
 	  fclose(o);
 
 	}      
-      o = fopen("dsa_private.pem","w");
-      if (o)
-	{
-      int PEM_write_DSAPrivateKey(o, dsa,EVP_des_ede3_cbc ,
-				  NULL, 0,
-                                        pass_cb, "Hello");
-
-
-      //end of test code
       
     }
       
