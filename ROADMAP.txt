@@ -1,0 +1,20 @@
+This file contains the roadmap for the TrustedQSL source directory.
+
+doc - Contains all of the docs files for TrustedQSL except for the
+ones in HTML format.
+
+html - Contains all the HTML files from the web site.
+
+include - Contains the include files required to compile programs to
+link to the TrustedQSL library.
+
+lib - Contains the binaries for the TrustedQSL API
+
+proof_of_concept - This is the old libary which was design as proof
+of concept.
+
+tqsl - This is the stand alone application which will convert ADIF and
+Cabrillo to signed Gabbi format.
+
+Darryl Wagoner WA1GON
+
