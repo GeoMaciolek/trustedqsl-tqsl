@@ -28,7 +28,7 @@
 #define ERROR -1
 int 		sha1File(char *fname,unsigned char *);
 int 		writeSign(char *fname,unsigned char *sig,int len);
-int 		readSign(char *fname,unsigned char *sig,int len);
+qqqint 		readSign(char *fname,unsigned char *sig,int len);
 int		readBig(const char *fname,BIGNUM **bn);
 int 		readSignHex(char *fname,unsigned char *sig,int len);
 TqslPublicKey 	*readPubKey(char *fname,char *typ);
