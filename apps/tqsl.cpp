@@ -46,7 +46,7 @@ using namespace std;
 #include "dxcc.h"
 #include "tqsl_prefs.h"
 
-#define VERSION "1.06"
+#include "version.h"
 
 #undef ALLOW_UNCOMPRESSED
 

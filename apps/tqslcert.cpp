@@ -27,7 +27,7 @@
 
 #include "util.h"
 
-#define VERSION "1.06"
+#include "version.h"
 
 #include "tqslcertbuild.h"
 
