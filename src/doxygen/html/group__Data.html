@@ -8,15 +8,15 @@
 <a class="qindex" href="index.html">Main Page</a> &nbsp; <a class="qindex" href="modules.html">Modules</a> &nbsp; <a class="qindex" href="annotated.html">Compound List</a> &nbsp; <a class="qindex" href="files.html">File List</a> &nbsp; <a class="qindex" href="globals.html">File Members</a> &nbsp; </center>
 <hr><h1>Data API</h1><table border=0 cellpadding=0 cellspacing=0>
 <tr><td colspan=2><br><h2>Defines</h2></td></tr>
-<tr><td nowrap align=right valign=top><a name="a52" doxytag="Data::TQSL_LOCATION_FIELD_TEXT"></a>
+<tr><td nowrap align=right valign=top><a name="a56" doxytag="Data::TQSL_LOCATION_FIELD_TEXT"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_LOCATION_FIELD_TEXT</b>&nbsp;&nbsp;&nbsp;1</td></tr>
-<tr><td nowrap align=right valign=top><a name="a53" doxytag="Data::TQSL_LOCATION_FIELD_DDLIST"></a>
+<tr><td nowrap align=right valign=top><a name="a57" doxytag="Data::TQSL_LOCATION_FIELD_DDLIST"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_LOCATION_FIELD_DDLIST</b>&nbsp;&nbsp;&nbsp;2</td></tr>
-<tr><td nowrap align=right valign=top><a name="a54" doxytag="Data::TQSL_LOCATION_FIELD_LIST"></a>
+<tr><td nowrap align=right valign=top><a name="a58" doxytag="Data::TQSL_LOCATION_FIELD_LIST"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_LOCATION_FIELD_LIST</b>&nbsp;&nbsp;&nbsp;3</td></tr>
-<tr><td nowrap align=right valign=top><a name="a55" doxytag="Data::TQSL_LOCATION_FIELD_CHAR"></a>
+<tr><td nowrap align=right valign=top><a name="a59" doxytag="Data::TQSL_LOCATION_FIELD_CHAR"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_LOCATION_FIELD_CHAR</b>&nbsp;&nbsp;&nbsp;1</td></tr>
-<tr><td nowrap align=right valign=top><a name="a56" doxytag="Data::TQSL_LOCATION_FIELD_INT"></a>
+<tr><td nowrap align=right valign=top><a name="a60" doxytag="Data::TQSL_LOCATION_FIELD_INT"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_LOCATION_FIELD_INT</b>&nbsp;&nbsp;&nbsp;2</td></tr>
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a0">tqsl_initStationLocationCapture</a> (tQSL_Location *locp)</td></tr>
@@ -62,15 +62,19 @@
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a40">tqsl_getBand</a> (int index, const char **name, const char **spectrum, int *low, int *high)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a41">tqsl_getNumMode</a> (int *number)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a42">tqsl_getMode</a> (int index, const char **mode, const char **group)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a43">tqsl_clearCabrilloMap</a> ()</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a44">tqsl_setCabrilloMapEntry</a> (const char *contest, int field, int contest_type)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a45">tqsl_getCabrilloMapEntry</a> (const char *contest, int *fieldnum, int *contest_type)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a46">tqsl_clearADIFModes</a> ()</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a47">tqsl_setADIFMode</a> (const char *adif_item, const char *mode)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a48">tqsl_getADIFMode</a> (const char *adif_item, char *mode, int nmode)</td></tr>
-<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a49">tqsl_getGABBItCERT</a> (tQSL_Cert cert, int uid)</td></tr>
-<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a50">tqsl_getGABBItSTATION</a> (tQSL_Location loc, int uid, int certuid)</td></tr>
-<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a51">tqsl_getGABBItCONTACT</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso, int stationuid)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a43">tqsl_getNumPropagationMode</a> (int *number)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a44">tqsl_getPropagationMode</a> (int index, const char **name, const char **descrip)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a45">tqsl_getNumSatellite</a> (int *number)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a46">tqsl_getSatellite</a> (int index, const char **name, const char **descrip, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *end)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a47">tqsl_clearCabrilloMap</a> ()</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a48">tqsl_setCabrilloMapEntry</a> (const char *contest, int field, int contest_type)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a49">tqsl_getCabrilloMapEntry</a> (const char *contest, int *fieldnum, int *contest_type)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a50">tqsl_clearADIFModes</a> ()</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a51">tqsl_setADIFMode</a> (const char *adif_item, const char *mode)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a52">tqsl_getADIFMode</a> (const char *adif_item, char *mode, int nmode)</td></tr>
+<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a53">tqsl_getGABBItCERT</a> (tQSL_Cert cert, int uid)</td></tr>
+<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a54">tqsl_getGABBItSTATION</a> (tQSL_Location loc, int uid, int certuid)</td></tr>
+<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a55">tqsl_getGABBItCONTACT</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso, int stationuid)</td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The Data API is used to form data into TrustedQSL records. A TrustedQSL record consists of a station record and a QSO record. Together, the two records fully describe one station's end of the QSO -- just as a paper QSL card does.
@@ -82,7 +86,7 @@ The <a class="el" href="group__Data.html#a15">tqsl_getStationLocation</a>() func
 With the necessary station location available, a signed GABBI output file can be generated using the tqsl_getGABBIxxxxx functions:
 <p>
 <ul>
-<li> <a class="el" href="group__Data.html#a49">tqsl_getGABBItCERT</a>() - Returns a GABBI tCERT record for the given tQSL_Cert <li> <a class="el" href="group__Data.html#a50">tqsl_getGABBItSTATION</a>() - Returns a GABBI tSTATION record for the given tQSL_Location <li> <a class="el" href="group__Data.html#a51">tqsl_getGABBItCONTACT</a>() - Returns a GABBI tCONTACT record for the given <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>, using the given tQSL_Cert and tQSL_Location.</ul>
+<li> <a class="el" href="group__Data.html#a53">tqsl_getGABBItCERT</a>() - Returns a GABBI tCERT record for the given tQSL_Cert <li> <a class="el" href="group__Data.html#a54">tqsl_getGABBItSTATION</a>() - Returns a GABBI tSTATION record for the given tQSL_Location <li> <a class="el" href="group__Data.html#a55">tqsl_getGABBItCONTACT</a>() - Returns a GABBI tCONTACT record for the given <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>, using the given tQSL_Cert and tQSL_Location.</ul>
 The GABBI format requires that the tCERT record contain an integer identifier that is unique within the GABBI file. Similarly, each tSTATION record must contain a unique identifier. Aditionally, the tSTATION record must reference the identifier of a preceding tCERT record. Finally, each tCONTACT record must reference a preceding tSTATION record. (A GABBI processor uses these identifiers and references to tie the station and contact records together and to verify their signature via the certificate.) It is the responsibility of the caller to supply these identifiers and to ensure that the supplied references match the tQSL_Cert and tQSL_Location used to create the referenced GABBI records.
 <p>
 Station Location Generation
@@ -110,7 +114,7 @@ In the case of a GUI system, you'll probably want to display the fields in pages
 4) Once the user has completed entries for the page, if <a class="el" href="group__Data.html#a7">tqsl_hasNextStationLocationCapture</a>() returns 1, call <a class="el" href="group__Data.html#a5">tqsl_nextStationLocationCapture</a>() and go back to step 2.
 <p>
 N.B. The first two fields in the station-location capture process are always call sign and DXCC entity, in that order. As a practical matter, these two fields must match the corresponding fields in the available certificates. The library will therefore constrain the values of these fields to match what's available in the certificate store. See <a href="group__CertStuff.html">Certificate Handling API</a>. <hr><h2>Function Documentation</h2>
-<a name="a46" doxytag="tqsllib.h::tqsl_clearADIFModes"></a><p>
+<a name="a50" doxytag="tqsllib.h::tqsl_clearADIFModes"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -139,7 +143,7 @@ int tqsl_clearADIFModes (
 Clear the map of ADIF modes     </td>
   </tr>
 </table>
-<a name="a43" doxytag="tqsllib.h::tqsl_clearCabrilloMap"></a><p>
+<a name="a47" doxytag="tqsllib.h::tqsl_clearCabrilloMap"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -226,7 +230,7 @@ tQSL_Location * <em>locp</em>&nbsp;)
 Release the station-location resources. This should be called for any tQSL_Location that was initialized via <a class="el" href="group__Data.html#a0">tqsl_initStationLocationCapture</a>() or <a class="el" href="group__Data.html#a15">tqsl_getStationLocation</a>()     </td>
   </tr>
 </table>
-<a name="a48" doxytag="tqsllib.h::tqsl_getADIFMode"></a><p>
+<a name="a52" doxytag="tqsllib.h::tqsl_getADIFMode"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -324,7 +328,7 @@ Get a band by its index.
 Note: <code>spectrum</code>, <code>low</code> and/or <code>high</code> may be NULL.     </td>
   </tr>
 </table>
-<a name="a45" doxytag="tqsllib.h::tqsl_getCabrilloMapEntry"></a><p>
+<a name="a49" doxytag="tqsllib.h::tqsl_getCabrilloMapEntry"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -445,7 +449,7 @@ const char ** <em>name</em>&nbsp;)
 Get the name of a DXCC Entity by its DXCC number.     </td>
   </tr>
 </table>
-<a name="a49" doxytag="tqsllib.h::tqsl_getGABBItCERT"></a><p>
+<a name="a53" doxytag="tqsllib.h::tqsl_getGABBItCERT"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -486,7 +490,7 @@ Returns the NULL pointer on error.
 N.B. On systems that distinguish text-mode files from binary-mode files, notably Windows, the GABBI records should be written in binary mode.     </td>
   </tr>
 </table>
-<a name="a51" doxytag="tqsllib.h::tqsl_getGABBItCONTACT"></a><p>
+<a name="a55" doxytag="tqsllib.h::tqsl_getGABBItCONTACT"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -541,7 +545,7 @@ Returns the NULL pointer on error.
 N.B. On systems that distinguish text-mode files from binary-mode files, notably Windows, the GABBI records should be written in binary mode.     </td>
   </tr>
 </table>
-<a name="a50" doxytag="tqsllib.h::tqsl_getGABBItSTATION"></a><p>
+<a name="a54" doxytag="tqsllib.h::tqsl_getGABBItSTATION"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -1402,6 +1406,64 @@ int * <em>number</em>&nbsp;)
 Get the number of Mode entries in the Mode list     </td>
   </tr>
 </table>
+<a name="a43" doxytag="tqsllib.h::tqsl_getNumPropagationMode"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getNumPropagationMode (
+          </b></td>
+          <td valign="bottom"><b>
+int * <em>number</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Get the number of Propagation Mode entries in the Propagation Mode list     </td>
+  </tr>
+</table>
+<a name="a45" doxytag="tqsllib.h::tqsl_getNumSatellite"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getNumSatellite (
+          </b></td>
+          <td valign="bottom"><b>
+int * <em>number</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Get the number of Satellite entries in the Satellite list     </td>
+  </tr>
+</table>
 <a name="a12" doxytag="tqsllib.h::tqsl_getNumStationLocations"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
@@ -1435,6 +1497,108 @@ int * <em>nloc</em>&nbsp;)
 
 <p>
 Get the number of saved station locations     </td>
+  </tr>
+</table>
+<a name="a44" doxytag="tqsllib.h::tqsl_getPropagationMode"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getPropagationMode (
+          </b></td>
+          <td valign="bottom"><b>
+int <em>index</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char ** <em>name</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char ** <em>descrip</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Get a propagation mode by its index.
+<p>
+<code>name</code> - The GAABI propagation mode name <code>descrip</code> - Text description of the propagation mode
+<p>
+Note: <code>descrip</code> may be NULL.     </td>
+  </tr>
+</table>
+<a name="a46" doxytag="tqsllib.h::tqsl_getSatellite"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_getSatellite (
+          </b></td>
+          <td valign="bottom"><b>
+int <em>index</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char ** <em>name</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const char ** <em>descrip</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+<a class="el" href="structtQSL__Date.html">tQSL_Date</a> * <em>start</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+<a class="el" href="structtQSL__Date.html">tQSL_Date</a> * <em>end</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Get a satellite by its index.
+<p>
+<code>name</code> - The GAABI satellite name <code>descrip</code> - Text description of the satellite <code>start</code> - The date the satellite entered service <code>end</code> - The last date the satellite was in service
+<p>
+Note: <code>descrip</code>, start and/or end may be NULL.     </td>
   </tr>
 </table>
 <a name="a15" doxytag="tqsllib.h::tqsl_getStationLocation"></a><p>
@@ -1834,7 +1998,7 @@ int <em>overwrite</em>&nbsp;)
 Save the station location data. Note that the name must have been set via tqsl_setStationLocationCaptureName if this is a new station location. If the <code>overwrite</code> parameter is zero and a station location of that name is already in existance, an error occurs with tQSL_Error set to TQSL_NAME_EXISTS.     </td>
   </tr>
 </table>
-<a name="a47" doxytag="tqsllib.h::tqsl_setADIFMode"></a><p>
+<a name="a51" doxytag="tqsllib.h::tqsl_setADIFMode"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -1869,7 +2033,7 @@ const char * <em>mode</em>&nbsp;)
 Set the mapping of an ADIF mode to a TQSL mode.     </td>
   </tr>
 </table>
-<a name="a44" doxytag="tqsllib.h::tqsl_setCabrilloMapEntry"></a><p>
+<a name="a48" doxytag="tqsllib.h::tqsl_setCabrilloMapEntry"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -2136,7 +2300,7 @@ tQSL_Location <em>loc</em>&nbsp;)
 Update the pages based on the currently selected settings.     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

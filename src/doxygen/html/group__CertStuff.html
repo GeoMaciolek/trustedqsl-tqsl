@@ -23,7 +23,7 @@
 <tr><td nowrap align=right valign=top><a name="a36" doxytag="CertStuff::TQSL_PK_TYPE_ENC"></a>
 #define&nbsp;</td><td valign=bottom><b>TQSL_PK_TYPE_ENC</b>&nbsp;&nbsp;&nbsp;3</td></tr>
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *callsign, int dxcc, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *callsign, int dxcc, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const <a class="el" href="tqsllib_8h.html#a46">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a> (tQSL_Cert cert, int *keyonly)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a> (tQSL_Cert cert, long *serial)</td></tr>
@@ -48,8 +48,8 @@
 <tr><td nowrap align=right valign=top>void&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a> (const char *file, int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a24">tqsl_getNumProviders</a> (int *n)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a25">tqsl_getProvider</a> (int idx, <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> *provider)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a> (const char *filename, <a class="el" href="tqsllib_8h.html#a45">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a25">tqsl_getProvider</a> (int idx, <a class="el" href="tqsllib_8h.html#a46">TQSL_PROVIDER</a> *provider)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a> (const char *filename, <a class="el" href="tqsllib_8h.html#a47">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a> (tQSL_Cert cert, const char *filename, const char *p12password)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a> (const char *filename, const char *p12password, const char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a> (tQSL_Cert cert)</td></tr>
@@ -80,7 +80,7 @@ const char * <em>filename</em>,
         <tr>
           <td></td>
           <td><b>
-<a class="el" href="tqsllib_8h.html#a45">TQSL_CERT_REQ</a> * <em>req</em>, 
+<a class="el" href="tqsllib_8h.html#a47">TQSL_CERT_REQ</a> * <em>req</em>, 
           </b></td>
         </tr>
         <tr>
@@ -1148,7 +1148,7 @@ int <em>idx</em>,
         <tr>
           <td></td>
           <td><b>
-<a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> * <em>provider</em>&nbsp;)
+<a class="el" href="tqsllib_8h.html#a46">TQSL_PROVIDER</a> * <em>provider</em>&nbsp;)
           </b></td>
         </tr>
 
@@ -1325,7 +1325,7 @@ const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> * <em>date</em>,
         <tr>
           <td></td>
           <td><b>
-const <a class="el" href="tqsllib_8h.html#a44">TQSL_PROVIDER</a> * <em>issuer</em>, 
+const <a class="el" href="tqsllib_8h.html#a46">TQSL_PROVIDER</a> * <em>issuer</em>, 
           </b></td>
         </tr>
         <tr>
@@ -1358,7 +1358,7 @@ Returns 0 on success, nonzero on failure.
 Each of the tQSL_Cert objects in the list should be freed by calling <a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate</a>().     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

@@ -31,25 +31,33 @@
 00034 <font class="preprocessor"></font><font class="keyword">extern</font> <font class="stringliteral">"C"</font> {
 00035 <font class="preprocessor">#endif</font>
 00036 <font class="preprocessor"></font>
-00046 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a1">tqsl_beginADIFConverter</a>(tQSL_Converter *conv, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, tQSL_Cert *certs, <font class="keywordtype">int</font> ncerts, tQSL_Location loc);
-00047 
-00057 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a2">tqsl_beginCabrilloConverter</a>(tQSL_Converter *conv, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, tQSL_Cert *certs, <font class="keywordtype">int</font> ncerts, tQSL_Location loc);
-00058 
-00060 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a3">tqsl_endConverter</a>(tQSL_Converter *conv);
-00061 
-00076 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Convert.html#a4">tqsl_getConverterGABBI</a>(tQSL_Converter conv);
-00077 
-00079 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a5">tqsl_getConverterCert</a>(tQSL_Converter conv, tQSL_Cert *certp);
-00080 
-00083 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a6">tqsl_getConverterLine</a>(tQSL_Converter conv, <font class="keywordtype">int</font> *lineno);
-00084 
-00087 <font class="preprocessor">#ifdef __cplusplus</font>
-00088 <font class="preprocessor"></font>}
-00089 <font class="preprocessor">#endif</font>
-00090 <font class="preprocessor"></font>
-00091 <font class="preprocessor">#endif  </font><font class="comment">/* __tqslconvert_h */</font>
-00092 
-</pre></div><hr><address><small>Generated at Mon Aug 18 13:44:09 2003 for TrustedQSL Library API by
+00046 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a1">tqsl_beginADIFConverter</a>(tQSL_Converter *conv, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, tQSL_Cert *certs,
+00047         <font class="keywordtype">int</font> ncerts, tQSL_Location loc);
+00048 
+00058 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a2">tqsl_beginCabrilloConverter</a>(tQSL_Converter *conv, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, tQSL_Cert *certs,
+00059         <font class="keywordtype">int</font> ncerts, tQSL_Location loc);
+00060 
+00062 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a3">tqsl_endConverter</a>(tQSL_Converter *conv);
+00063 
+00072 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a4">tqsl_setConverterAllowBadCall</a>(tQSL_Converter conv, <font class="keywordtype">int</font> allow);
+00073 
+00081 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a5">tqsl_setADIFConverterDateFilter</a>(tQSL_Converter conv, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);
+00082 
+00101 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Convert.html#a6">tqsl_getConverterGABBI</a>(tQSL_Converter conv);
+00102 
+00104 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a7">tqsl_getConverterCert</a>(tQSL_Converter conv, tQSL_Cert *certp);
+00105 
+00108 <font class="keywordtype">int</font> <a class="code" href="group__Convert.html#a8">tqsl_getConverterLine</a>(tQSL_Converter conv, <font class="keywordtype">int</font> *lineno);
+00109 
+00114 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Convert.html#a9">tqsl_getConverterRecordText</a>(tQSL_Converter conv);
+00115 
+00118 <font class="preprocessor">#ifdef __cplusplus</font>
+00119 <font class="preprocessor"></font>}
+00120 <font class="preprocessor">#endif</font>
+00121 <font class="preprocessor"></font>
+00122 <font class="preprocessor">#endif  </font><font class="comment">/* __tqslconvert_h */</font>
+00123 
+</pre></div><hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

@@ -48,333 +48,347 @@
 00044 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CRQ_POSTAL_MAX          20</font>
 00045 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CRQ_COUNTRY_MAX         80</font>
 00046 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CRQ_EMAIL_MAX           180</font>
-00047 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_BAND_MAX                10</font>
+00047 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_BAND_MAX                6</font>
 00048 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_MODE_MAX                16</font>
 00049 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_FREQ_MAX                20</font>
-00050 <font class="preprocessor"></font>
-00051 
-00052 <font class="preprocessor">#define TQSL_CERT_CB_USER            0</font>
-00053 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CA              1</font>
-00054 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_ROOT            2</font>
-00055 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_PKEY            3</font>
-00056 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CONFIG          4</font>
-00057 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CERT_TYPE(x)    ((x) &amp; 0xf)</font>
-00058 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_MILESTONE       0</font>
-00059 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_RESULT          0x10</font>
-00060 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CALL_TYPE(x)    ((x) &amp; TQSL_CERT_CB_RESULT)</font>
-00061 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_PROMPT          0</font>
-00062 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_DUPLICATE       0x100</font>
-00063 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_ERROR           0x200</font>
-00064 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_LOADED          0x300</font>
-00065 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) &amp; 0x0f00)</font>
-00066 <font class="preprocessor"></font>
-00067 <font class="keyword">typedef</font> <font class="keywordtype">void</font> * tQSL_Cert;
-00068 <font class="keyword">typedef</font> <font class="keywordtype">void</font> * tQSL_Location;
-00069 
-<a name="l00071"></a><a class="code" href="structtQSL__Date.html">00071</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
-00072         <font class="keywordtype">int</font> year;
-00073         <font class="keywordtype">int</font> month;
-00074         <font class="keywordtype">int</font> day;
-00075 } <a class="code" href="structtQSL__Date.html">tQSL_Date</a>;
-00076 
-<a name="l00078"></a><a class="code" href="structtQSL__Time.html">00078</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
-00079         <font class="keywordtype">int</font> hour;
-00080         <font class="keywordtype">int</font> minute;
-00081         <font class="keywordtype">int</font> second;
-00082 } <a class="code" href="structtQSL__Time.html">tQSL_Time</a>;
-00083 
-<a name="l00085"></a><a class="code" href="structtqsl__provider__st.html">00085</a> <font class="keyword">typedef</font> <font class="keyword">struct </font><a class="code" href="structtqsl__provider__st.html">tqsl_provider_st</a> {
-00086         <font class="keywordtype">char</font> organizationName[TQSL_NAME_ELEMENT_MAX+1];
-00087         <font class="keywordtype">char</font> organizationalUnitName[TQSL_NAME_ELEMENT_MAX+1];
-00088         <font class="keywordtype">char</font> emailAddress[TQSL_NAME_ELEMENT_MAX+1];
-00089         <font class="keywordtype">char</font> url[TQSL_NAME_ELEMENT_MAX+1];
-00090 } <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a>;
-00091 
-<a name="l00093"></a><a class="code" href="structtqsl__cert__req__st.html">00093</a> <font class="keyword">typedef</font> <font class="keyword">struct </font><a class="code" href="structtqsl__cert__req__st.html">tqsl_cert_req_st</a> {
-00094         <font class="keywordtype">char</font> providerName[TQSL_NAME_ELEMENT_MAX+1];
-00095         <font class="keywordtype">char</font> providerUnit[TQSL_NAME_ELEMENT_MAX+1];
-00096         <font class="keywordtype">char</font> callSign[TQSL_CALLSIGN_MAX+1];
-00097         <font class="keywordtype">char</font> name[TQSL_CRQ_NAME_MAX+1];
-00098         <font class="keywordtype">char</font> address1[TQSL_CRQ_ADDR_MAX+1];
-00099         <font class="keywordtype">char</font> address2[TQSL_CRQ_ADDR_MAX+1];
-00100         <font class="keywordtype">char</font> city[TQSL_CRQ_CITY_MAX+1];
-00101         <font class="keywordtype">char</font> state[TQSL_CRQ_STATE_MAX+1];
-00102         <font class="keywordtype">char</font> postalCode[TQSL_CRQ_POSTAL_MAX+1];
-00103         <font class="keywordtype">char</font> country[TQSL_CRQ_COUNTRY_MAX+1];
-00104         <font class="keywordtype">char</font> emailAddress[TQSL_CRQ_EMAIL_MAX+1];
-00105         <font class="keywordtype">int</font> dxccEntity;
-00106         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotBefore;
-00107         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotAfter;
-00108         <font class="keywordtype">char</font> password[TQSL_PASSWORD_MAX+1];
-00109         tQSL_Cert signer;
-00110         <font class="keywordtype">char</font> renew;
-00111 } <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a>;
-00112 
-<a name="l00114"></a><a class="code" href="structTQSL__QSO__RECORD.html">00114</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
-00115         <font class="keywordtype">char</font> callsign[TQSL_CALLSIGN_MAX];
-00116         <font class="keywordtype">char</font> band[TQSL_BAND_MAX];
-00117         <font class="keywordtype">char</font> mode[TQSL_MODE_MAX];
-00118         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> date;
-00119         <a class="code" href="structtQSL__Time.html">tQSL_Time</a> time;
-00120         <font class="keywordtype">char</font> freq[TQSL_FREQ_MAX];
-00121 } <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>;
-00122 
-<a name="l00124"></a><a class="code" href="tqsllib_8h.html#a46">00124</a> <font class="keyword">extern</font> <font class="keyword">const</font> <font class="keywordtype">char</font> *tQSL_BaseDir;
-00125 
-00126 <font class="preprocessor">#ifdef __cplusplus</font>
-00127 <font class="preprocessor"></font><font class="keyword">extern</font> <font class="stringliteral">"C"</font> {
-00128 <font class="preprocessor">#endif</font>
-00129 <font class="preprocessor"></font>
-00134 
-00135 
-00137 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">int</font> tQSL_Error;
-00139 DLLEXPORT <font class="keyword">extern</font> TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
-00141 DLLEXPORT <font class="keyword">extern</font> TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
-00143 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">char</font> tQSL_ErrorFile[256];
-00145 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">char</font> tQSL_CustomError[256];
-00146 
-00151 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a5">tqsl_init</a>();
-00152 
-00162 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a6">tqsl_setDirectory</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *dir);
-00163 
-00167 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a7">tqsl_getErrorString</a>();
+00050 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_SATNAME_MAX             6</font>
+00051 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PROPMODE_MAX            6</font>
+00052 <font class="preprocessor"></font>
+00053 <font class="preprocessor">#define TQSL_CERT_CB_USER            0</font>
+00054 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CA              1</font>
+00055 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_ROOT            2</font>
+00056 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_PKEY            3</font>
+00057 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CONFIG          4</font>
+00058 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CERT_TYPE(x)    ((x) &amp; 0xf)</font>
+00059 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_MILESTONE       0</font>
+00060 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_RESULT          0x10</font>
+00061 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_CALL_TYPE(x)    ((x) &amp; TQSL_CERT_CB_RESULT)</font>
+00062 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_PROMPT          0</font>
+00063 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_DUPLICATE       0x100</font>
+00064 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_ERROR           0x200</font>
+00065 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_LOADED          0x300</font>
+00066 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) &amp; 0x0f00)</font>
+00067 <font class="preprocessor"></font>
+00068 <font class="keyword">typedef</font> <font class="keywordtype">void</font> * tQSL_Cert;
+00069 <font class="keyword">typedef</font> <font class="keywordtype">void</font> * tQSL_Location;
+00070 
+<a name="l00072"></a><a class="code" href="structtQSL__Date.html">00072</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
+00073         <font class="keywordtype">int</font> year;
+00074         <font class="keywordtype">int</font> month;
+00075         <font class="keywordtype">int</font> day;
+00076 } <a class="code" href="structtQSL__Date.html">tQSL_Date</a>;
+00077 
+<a name="l00079"></a><a class="code" href="structtQSL__Time.html">00079</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
+00080         <font class="keywordtype">int</font> hour;
+00081         <font class="keywordtype">int</font> minute;
+00082         <font class="keywordtype">int</font> second;
+00083 } <a class="code" href="structtQSL__Time.html">tQSL_Time</a>;
+00084 
+<a name="l00086"></a><a class="code" href="structtqsl__provider__st.html">00086</a> <font class="keyword">typedef</font> <font class="keyword">struct </font><a class="code" href="structtqsl__provider__st.html">tqsl_provider_st</a> {
+00087         <font class="keywordtype">char</font> organizationName[TQSL_NAME_ELEMENT_MAX+1];
+00088         <font class="keywordtype">char</font> organizationalUnitName[TQSL_NAME_ELEMENT_MAX+1];
+00089         <font class="keywordtype">char</font> emailAddress[TQSL_NAME_ELEMENT_MAX+1];
+00090         <font class="keywordtype">char</font> url[TQSL_NAME_ELEMENT_MAX+1];
+00091 } <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a>;
+00092 
+<a name="l00094"></a><a class="code" href="structtqsl__cert__req__st.html">00094</a> <font class="keyword">typedef</font> <font class="keyword">struct </font><a class="code" href="structtqsl__cert__req__st.html">tqsl_cert_req_st</a> {
+00095         <font class="keywordtype">char</font> providerName[TQSL_NAME_ELEMENT_MAX+1];
+00096         <font class="keywordtype">char</font> providerUnit[TQSL_NAME_ELEMENT_MAX+1];
+00097         <font class="keywordtype">char</font> callSign[TQSL_CALLSIGN_MAX+1];
+00098         <font class="keywordtype">char</font> name[TQSL_CRQ_NAME_MAX+1];
+00099         <font class="keywordtype">char</font> address1[TQSL_CRQ_ADDR_MAX+1];
+00100         <font class="keywordtype">char</font> address2[TQSL_CRQ_ADDR_MAX+1];
+00101         <font class="keywordtype">char</font> city[TQSL_CRQ_CITY_MAX+1];
+00102         <font class="keywordtype">char</font> state[TQSL_CRQ_STATE_MAX+1];
+00103         <font class="keywordtype">char</font> postalCode[TQSL_CRQ_POSTAL_MAX+1];
+00104         <font class="keywordtype">char</font> country[TQSL_CRQ_COUNTRY_MAX+1];
+00105         <font class="keywordtype">char</font> emailAddress[TQSL_CRQ_EMAIL_MAX+1];
+00106         <font class="keywordtype">int</font> dxccEntity;
+00107         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotBefore;
+00108         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotAfter;
+00109         <font class="keywordtype">char</font> password[TQSL_PASSWORD_MAX+1];
+00110         tQSL_Cert signer;
+00111         <font class="keywordtype">char</font> renew;
+00112 } <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a>;
+00113 
+<a name="l00115"></a><a class="code" href="structTQSL__QSO__RECORD.html">00115</a> <font class="keyword">typedef</font> <font class="keyword">struct </font>{
+00116         <font class="keywordtype">char</font> callsign[TQSL_CALLSIGN_MAX+1];
+00117         <font class="keywordtype">char</font> band[TQSL_BAND_MAX+1];
+00118         <font class="keywordtype">char</font> mode[TQSL_MODE_MAX+1];
+00119         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> date;
+00120         <a class="code" href="structtQSL__Time.html">tQSL_Time</a> time;
+00121         <font class="keywordtype">char</font> freq[TQSL_FREQ_MAX+1];
+00122         <font class="keywordtype">char</font> rxfreq[TQSL_FREQ_MAX+1];
+00123         <font class="keywordtype">char</font> rxband[TQSL_BAND_MAX+1];
+00124         <font class="keywordtype">char</font> propmode[TQSL_PROPMODE_MAX+1];
+00125         <font class="keywordtype">char</font> satname[TQSL_SATNAME_MAX+1];
+00126 } <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>;
+00127 
+<a name="l00129"></a><a class="code" href="tqsllib_8h.html#a48">00129</a> <font class="keyword">extern</font> <font class="keyword">const</font> <font class="keywordtype">char</font> *tQSL_BaseDir;
+00130 
+00131 <font class="preprocessor">#ifdef __cplusplus</font>
+00132 <font class="preprocessor"></font><font class="keyword">extern</font> <font class="stringliteral">"C"</font> {
+00133 <font class="preprocessor">#endif</font>
+00134 <font class="preprocessor"></font>
+00139 
+00140 
+00142 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">int</font> tQSL_Error;
+00144 DLLEXPORT <font class="keyword">extern</font> TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
+00146 DLLEXPORT <font class="keyword">extern</font> TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
+00148 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">char</font> tQSL_ErrorFile[256];
+00150 DLLEXPORT <font class="keyword">extern</font> <font class="keywordtype">char</font> tQSL_CustomError[256];
+00151 
+00156 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a5">tqsl_init</a>();
+00157 
+00167 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a6">tqsl_setDirectory</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *dir);
 00168 
-00173 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a8">tqsl_getErrorString_v</a>(<font class="keywordtype">int</font> err);
-00174 
-00182 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a9">tqsl_encodeBase64</a>(<font class="keyword">const</font> <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> datalen, <font class="keywordtype">char</font> *output, <font class="keywordtype">int</font> outputlen);
-00183 
-00192 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a10">tqsl_decodeBase64</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *input, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> *datalen);
-00193 
-00200 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a11">tqsl_initDate</a>(<a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keyword">const</font> <font class="keywordtype">char</font> *str);
-00201 
-00208 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a12">tqsl_initTime</a>(<a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <font class="keyword">const</font> <font class="keywordtype">char</font> *str);
-00209 
-00219 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a13">tqsl_compareDates</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *a, <font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *b);
-00220 
-00225 <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a14">tqsl_convertDateToText</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00226 
-00231 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a15">tqsl_isDateValid</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
-00232 
-00237 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a16">tqsl_isDateNull</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
-00238 
-00243 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a17">tqsl_isTimeValid</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *t);
-00244 
-00249 <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a18">tqsl_convertTimeToText</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00250 
-00253 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a19">tqsl_getVersion</a>(<font class="keywordtype">int</font> *major, <font class="keywordtype">int</font> *minor);
-00254 
-00257 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a20">tqsl_getConfigVersion</a>(<font class="keywordtype">int</font> *major, <font class="keywordtype">int</font> *minor);
-00258 
-00287 <font class="preprocessor">#define TQSL_SELECT_CERT_WITHKEYS 1</font>
-00288 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_SELECT_CERT_EXPIRED 2</font>
-00289 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_SELECT_CERT_SUPERCEDED 4</font>
-00290 <font class="preprocessor"></font>
-00316 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(tQSL_Cert **certlist, <font class="keywordtype">int</font> *ncerts,
-00317         <font class="keyword">const</font> <font class="keywordtype">char</font> *callsign, <font class="keywordtype">int</font> dxcc, <font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keyword">const</font> <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, <font class="keywordtype">int</font> flag);
-00318 
-00321 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *keyonly);
-00322 
-00325 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00326 
-00329 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a>(tQSL_Cert cert, <font class="keywordtype">long</font> *serial);
-00330 
-00340 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a4">tqsl_getCertificateIssuer</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00341 
-00351 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a5">tqsl_getCertificateIssuerOrganization</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00361 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganizationalUnit</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00371 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a7">tqsl_getCertificateCallSign</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00381 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a8">tqsl_getCertificateAROName</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00382 
-00392 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a9">tqsl_getCertificateEmailAddress</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00393 
-00402 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a10">tqsl_getCertificateQSONotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00403 
-00412 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00413 
-00422 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a12">tqsl_getCertificateNotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00423 
-00432 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a13">tqsl_getCertificateNotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00433 
-00442 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a14">tqsl_getCertificateDXCCEntity</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *dxcc);
-00443 
-00454 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a15">tqsl_getCertificateRequestAddress1</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00455 
-00466 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress2</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00467 
-00478 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a17">tqsl_getCertificateRequestCity</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00479 
-00490 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a18">tqsl_getCertificateRequestState</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00491 
-00502 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a19">tqsl_getCertificateRequestPostalCode</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00503 
-00514 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a20">tqsl_getCertificateRequestCountry</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
-00515 
-00516 <font class="preprocessor">#define TQSL_PK_TYPE_ERR        0</font>
-00517 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_NONE       1</font>
-00518 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_UNENC      2</font>
-00519 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_ENC        3</font>
-00520 <font class="preprocessor"></font>
-00535 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a21">tqsl_getCertificatePrivateKeyType</a>(tQSL_Cert cert);
-00536 
-00537 
-00541 <font class="keywordtype">void</font> <a class="code" href="group__CertStuff.html#a22">tqsl_freeCertificate</a>(tQSL_Cert cert);
+00172 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a7">tqsl_getErrorString</a>();
+00173 
+00178 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a8">tqsl_getErrorString_v</a>(<font class="keywordtype">int</font> err);
+00179 
+00187 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a9">tqsl_encodeBase64</a>(<font class="keyword">const</font> <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> datalen, <font class="keywordtype">char</font> *output, <font class="keywordtype">int</font> outputlen);
+00188 
+00197 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a10">tqsl_decodeBase64</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *input, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> *datalen);
+00198 
+00205 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a11">tqsl_initDate</a>(<a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keyword">const</font> <font class="keywordtype">char</font> *str);
+00206 
+00213 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a12">tqsl_initTime</a>(<a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <font class="keyword">const</font> <font class="keywordtype">char</font> *str);
+00214 
+00224 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a13">tqsl_compareDates</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *a, <font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *b);
+00225 
+00230 <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a14">tqsl_convertDateToText</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00231 
+00236 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a15">tqsl_isDateValid</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
+00237 
+00242 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a16">tqsl_isDateNull</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
+00243 
+00248 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a17">tqsl_isTimeValid</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *t);
+00249 
+00254 <font class="keywordtype">char</font> *<a class="code" href="tqsllib_8h.html#a18">tqsl_convertTimeToText</a>(<font class="keyword">const</font> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00255 
+00258 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a19">tqsl_getVersion</a>(<font class="keywordtype">int</font> *major, <font class="keywordtype">int</font> *minor);
+00259 
+00262 <font class="keywordtype">int</font> <a class="code" href="tqsllib_8h.html#a20">tqsl_getConfigVersion</a>(<font class="keywordtype">int</font> *major, <font class="keywordtype">int</font> *minor);
+00263 
+00292 <font class="preprocessor">#define TQSL_SELECT_CERT_WITHKEYS 1</font>
+00293 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_SELECT_CERT_EXPIRED 2</font>
+00294 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_SELECT_CERT_SUPERCEDED 4</font>
+00295 <font class="preprocessor"></font>
+00321 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(tQSL_Cert **certlist, <font class="keywordtype">int</font> *ncerts,
+00322         <font class="keyword">const</font> <font class="keywordtype">char</font> *callsign, <font class="keywordtype">int</font> dxcc, <font class="keyword">const</font> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <font class="keyword">const</font> <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, <font class="keywordtype">int</font> flag);
+00323 
+00326 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *keyonly);
+00327 
+00330 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00331 
+00334 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a>(tQSL_Cert cert, <font class="keywordtype">long</font> *serial);
+00335 
+00345 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a4">tqsl_getCertificateIssuer</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00346 
+00356 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a5">tqsl_getCertificateIssuerOrganization</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00366 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganizationalUnit</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00376 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a7">tqsl_getCertificateCallSign</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00386 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a8">tqsl_getCertificateAROName</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00387 
+00397 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a9">tqsl_getCertificateEmailAddress</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00398 
+00407 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a10">tqsl_getCertificateQSONotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00408 
+00417 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00418 
+00427 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a12">tqsl_getCertificateNotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00428 
+00437 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a13">tqsl_getCertificateNotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00438 
+00447 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a14">tqsl_getCertificateDXCCEntity</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *dxcc);
+00448 
+00459 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a15">tqsl_getCertificateRequestAddress1</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00460 
+00471 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress2</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00472 
+00483 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a17">tqsl_getCertificateRequestCity</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00484 
+00495 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a18">tqsl_getCertificateRequestState</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00496 
+00507 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a19">tqsl_getCertificateRequestPostalCode</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00508 
+00519 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a20">tqsl_getCertificateRequestCountry</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *str, <font class="keywordtype">int</font> bufsiz);
+00520 
+00521 <font class="preprocessor">#define TQSL_PK_TYPE_ERR        0</font>
+00522 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_NONE       1</font>
+00523 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_UNENC      2</font>
+00524 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_PK_TYPE_ENC        3</font>
+00525 <font class="preprocessor"></font>
+00540 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a21">tqsl_getCertificatePrivateKeyType</a>(tQSL_Cert cert);
+00541 
 00542 
-00543 <font class="comment">/* int tqsl_checkCertificate(tQSL_Cert); */</font>
-00544 
-00562 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *file, <font class="keywordtype">int</font>(*cb)(<font class="keywordtype">int</font> type, <font class="keyword">const</font> <font class="keywordtype">char</font> *message, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
-00563 
-00566 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a24">tqsl_getNumProviders</a>(<font class="keywordtype">int</font> *n);
-00567 
-00572 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a25">tqsl_getProvider</a>(<font class="keywordtype">int</font> idx, <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider);
-00573 
-00586 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a26">tqsl_createCertRequest</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req,
-00587         <font class="keywordtype">int</font>(*pwcb)(<font class="keywordtype">char</font> *pwbuf, <font class="keywordtype">int</font> pwsize, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
-00588 
-00596 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a>(tQSL_Cert cert, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <font class="keyword">const</font> <font class="keywordtype">char</font> *p12password);
-00597 
-00600 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <font class="keyword">const</font> <font class="keywordtype">char</font> *p12password, <font class="keyword">const</font> <font class="keywordtype">char</font> *password,
-00601         <font class="keywordtype">int</font> (*pwcb)(<font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz, <font class="keywordtype">void</font> *userdata), int(*cb)(<font class="keywordtype">int</font> type , <font class="keyword">const</font> <font class="keywordtype">char</font> *message, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
+00546 <font class="keywordtype">void</font> <a class="code" href="group__CertStuff.html#a22">tqsl_freeCertificate</a>(tQSL_Cert cert);
+00547 
+00548 <font class="comment">/* int tqsl_checkCertificate(tQSL_Cert); */</font>
+00549 
+00567 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *file, <font class="keywordtype">int</font>(*cb)(<font class="keywordtype">int</font> type, <font class="keyword">const</font> <font class="keywordtype">char</font> *message, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
+00568 
+00571 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a24">tqsl_getNumProviders</a>(<font class="keywordtype">int</font> *n);
+00572 
+00577 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a25">tqsl_getProvider</a>(<font class="keywordtype">int</font> idx, <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider);
+00578 
+00591 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a26">tqsl_createCertRequest</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req,
+00592         <font class="keywordtype">int</font>(*pwcb)(<font class="keywordtype">char</font> *pwbuf, <font class="keywordtype">int</font> pwsize, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
+00593 
+00601 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a>(tQSL_Cert cert, <font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <font class="keyword">const</font> <font class="keywordtype">char</font> *p12password);
 00602 
-00605 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a>(tQSL_Cert cert);
-00606 
-00629 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a0">tqsl_beginSigning</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *password,  <font class="keywordtype">int</font>(*pwcb)(<font class="keywordtype">char</font> *pwbuf, <font class="keywordtype">int</font> pwsize, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
-00630 
-00635 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a1">tqsl_checkSigningStatus</a>(tQSL_Cert cert);
-00636 
-00641 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *sigsize);
-00642 
-00648 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a3">tqsl_signDataBlock</a>(tQSL_Cert cert, <font class="keyword">const</font> <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> datalen, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *sig, <font class="keywordtype">int</font> *siglen);
-00649 
-00657 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a4">tqsl_signQSORecord</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *sig, <font class="keywordtype">int</font> *siglen);
-00658 
-00663 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a5">tqsl_endSigning</a>(tQSL_Cert cert);
-00664 
-00766 <font class="comment">/* Location field input types */</font>
-00767 
-00768 <font class="preprocessor">#define TQSL_LOCATION_FIELD_TEXT        1</font>
-00769 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_DDLIST      2</font>
-00770 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_LIST        3</font>
-00771 <font class="preprocessor"></font>
-00772 <font class="comment">/* Location field data types */</font>
-00773 <font class="preprocessor">#define TQSL_LOCATION_FIELD_CHAR 1</font>
-00774 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_INT 2</font>
-00775 <font class="preprocessor"></font>
-00777 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a0">tqsl_initStationLocationCapture</a>(tQSL_Location *locp);
-00778 
-00783 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a1">tqsl_endStationLocationCapture</a>(tQSL_Location *locp);
-00784 
-00786 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a2">tqsl_updateStationLocationCapture</a>(tQSL_Location loc);
-00787 
-00788 <font class="comment">//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);</font>
+00605 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *filename, <font class="keyword">const</font> <font class="keywordtype">char</font> *p12password, <font class="keyword">const</font> <font class="keywordtype">char</font> *password,
+00606         <font class="keywordtype">int</font> (*pwcb)(<font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz, <font class="keywordtype">void</font> *userdata), int(*cb)(<font class="keywordtype">int</font> type , <font class="keyword">const</font> <font class="keywordtype">char</font> *message, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
+00607 
+00610 <font class="keywordtype">int</font> <a class="code" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a>(tQSL_Cert cert);
+00611 
+00634 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a0">tqsl_beginSigning</a>(tQSL_Cert cert, <font class="keywordtype">char</font> *password,  <font class="keywordtype">int</font>(*pwcb)(<font class="keywordtype">char</font> *pwbuf, <font class="keywordtype">int</font> pwsize, <font class="keywordtype">void</font> *userdata), <font class="keywordtype">void</font> *user);
+00635 
+00640 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a1">tqsl_checkSigningStatus</a>(tQSL_Cert cert);
+00641 
+00646 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a>(tQSL_Cert cert, <font class="keywordtype">int</font> *sigsize);
+00647 
+00653 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a3">tqsl_signDataBlock</a>(tQSL_Cert cert, <font class="keyword">const</font> <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *data, <font class="keywordtype">int</font> datalen, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *sig, <font class="keywordtype">int</font> *siglen);
+00654 
+00662 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a4">tqsl_signQSORecord</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, <font class="keywordtype">unsigned</font> <font class="keywordtype">char</font> *sig, <font class="keywordtype">int</font> *siglen);
+00663 
+00668 <font class="keywordtype">int</font> <a class="code" href="group__Sign.html#a5">tqsl_endSigning</a>(tQSL_Cert cert);
+00669 
+00771 <font class="comment">/* Location field input types */</font>
+00772 
+00773 <font class="preprocessor">#define TQSL_LOCATION_FIELD_TEXT        1</font>
+00774 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_DDLIST      2</font>
+00775 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_LIST        3</font>
+00776 <font class="preprocessor"></font>
+00777 <font class="comment">/* Location field data types */</font>
+00778 <font class="preprocessor">#define TQSL_LOCATION_FIELD_CHAR 1</font>
+00779 <font class="preprocessor"></font><font class="preprocessor">#define TQSL_LOCATION_FIELD_INT 2</font>
+00780 <font class="preprocessor"></font>
+00782 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a0">tqsl_initStationLocationCapture</a>(tQSL_Location *locp);
+00783 
+00788 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a1">tqsl_endStationLocationCapture</a>(tQSL_Location *locp);
 00789 
-00791 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a3">tqsl_getStationLocationCapturePage</a>(tQSL_Location loc, <font class="keywordtype">int</font> *page);
+00791 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a2">tqsl_updateStationLocationCapture</a>(tQSL_Location loc);
 00792 
-00797 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a4">tqsl_setStationLocationCapturePage</a>(tQSL_Location loc, <font class="keywordtype">int</font> page);
-00798 
-00800 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a5">tqsl_nextStationLocationCapture</a>(tQSL_Location loc);
-00801 
-00803 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a6">tqsl_prevStationLocationCapture</a>(tQSL_Location loc);
-00804 
-00806 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a7">tqsl_hasNextStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> *rval);
-00807 
-00809 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a8">tqsl_hasPrevStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> *rval);
-00810 
-00817 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a9">tqsl_saveStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> overwrite);
-00818 
-00820 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a10">tqsl_getStationLocationCaptureName</a>(tQSL_Location loc, <font class="keywordtype">char</font> *namebuf, <font class="keywordtype">int</font> bufsiz);
-00821 
-00823 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a11">tqsl_setStationLocationCaptureName</a>(tQSL_Location loc, <font class="keyword">const</font> <font class="keywordtype">char</font> *name);
-00824 
-00826 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a12">tqsl_getNumStationLocations</a>(tQSL_Location loc, <font class="keywordtype">int</font> *nloc);
-00827 
-00829 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a13">tqsl_getStationLocationName</a>(tQSL_Location loc, <font class="keywordtype">int</font> idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00830 
-00832 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a14">tqsl_getStationLocationCallSign</a>(tQSL_Location loc, <font class="keywordtype">int</font> idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00833 
-00838 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a15">tqsl_getStationLocation</a>(tQSL_Location *loc, <font class="keyword">const</font> <font class="keywordtype">char</font> *name);
-00839 
-00841 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a16">tqsl_deleteStationLocation</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *name);
-00842 
-00844 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a17">tqsl_getNumLocationField</a>(tQSL_Location loc, <font class="keywordtype">int</font> *numf);
-00845 
-00847 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a18">tqsl_getLocationFieldDataLabelSize</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
-00848 
-00850 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a19">tqsl_getLocationFieldDataLabel</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00851 
-00853 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a20">tqsl_getLocationFieldDataGABBISize</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
-00854 
-00856 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a21">tqsl_getLocationFieldDataGABBI</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00857 
-00863 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a22">tqsl_getLocationFieldInputType</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *type);
-00864 
-00869 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a23">tqsl_getLocationFieldDataType</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *type);
-00870 
-00872 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a24">tqsl_getLocationFieldDataLength</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
-00873 
-00880 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a25">tqsl_getLocationFieldCharData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00881 
-00887 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a26">tqsl_getLocationFieldIntData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *dat);
-00888 
-00893 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a27">tqsl_getLocationFieldIndex</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *dat);
-00894 
-00896 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a28">tqsl_getNumLocationFieldListItems</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
-00897 
-00899 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a29">tqsl_getLocationFieldListItem</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> item_idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00900 
-00902 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a30">tqsl_setLocationFieldCharData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keyword">const</font> <font class="keywordtype">char</font> *buf);
-00903 
-00906 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a31">tqsl_setLocationFieldIntData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> dat);
-00907 
-00912 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a32">tqsl_setLocationFieldIndex</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> dat);
-00913 
-00918 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a33">tqsl_getLocationFieldChanged</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *changed);
-00919 
-00921 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a34">tqsl_getLocationCallSign</a>(tQSL_Location loc, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
-00922 
-00924 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a35">tqsl_getLocationDXCCEntity</a>(tQSL_Location loc, <font class="keywordtype">int</font> *dxcc);
-00925 
-00928 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a36">tqsl_getNumDXCCEntity</a>(<font class="keywordtype">int</font> *number);
-00929 
-00932 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a37">tqsl_getDXCCEntity</a>(<font class="keywordtype">int</font> index, <font class="keywordtype">int</font> *number, <font class="keyword">const</font> <font class="keywordtype">char</font> **name);
-00933 
-00936 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a38">tqsl_getDXCCEntityName</a>(<font class="keywordtype">int</font> number, <font class="keyword">const</font> <font class="keywordtype">char</font> **name);
-00937 
-00939 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a39">tqsl_getNumBand</a>(<font class="keywordtype">int</font> *number);
-00940 
-00950 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a40">tqsl_getBand</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **name, <font class="keyword">const</font> <font class="keywordtype">char</font> **spectrum, <font class="keywordtype">int</font> *low, <font class="keywordtype">int</font> *high);
-00951 
-00953 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a41">tqsl_getNumMode</a>(<font class="keywordtype">int</font> *number);
-00954 
-00962 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a42">tqsl_getMode</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **mode, <font class="keyword">const</font> <font class="keywordtype">char</font> **group);
-00963 
-00966 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a43">tqsl_clearCabrilloMap</a>();
-00967 
-00978 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a44">tqsl_setCabrilloMapEntry</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *contest, <font class="keywordtype">int</font> field, <font class="keywordtype">int</font> contest_type);
-00979 
-00991 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a45">tqsl_getCabrilloMapEntry</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *contest, <font class="keywordtype">int</font> *fieldnum, <font class="keywordtype">int</font> *contest_type);
-00992 
-00995 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a46">tqsl_clearADIFModes</a>();
-00996 
-00999 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a47">tqsl_setADIFMode</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *adif_item, <font class="keyword">const</font> <font class="keywordtype">char</font> *mode);
-01000 
-01003 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a48">tqsl_getADIFMode</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *adif_item, <font class="keywordtype">char</font> *mode, <font class="keywordtype">int</font> nmode);
-01004 
-01014 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a49">tqsl_getGABBItCERT</a>(tQSL_Cert cert, <font class="keywordtype">int</font> uid);
-01015 
-01026 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a50">tqsl_getGABBItSTATION</a>(tQSL_Location loc, <font class="keywordtype">int</font> uid, <font class="keywordtype">int</font> certuid);
-01027 
-01040 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a51">tqsl_getGABBItCONTACT</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso,
-01041         <font class="keywordtype">int</font> stationuid);
-01042 
-01045 <font class="preprocessor">#ifdef __cplusplus</font>
-01046 <font class="preprocessor"></font>}
-01047 <font class="preprocessor">#endif</font>
-01048 <font class="preprocessor"></font>
-01049 <font class="comment">/* Useful defines */</font>
-01050 <font class="preprocessor">#define TQSL_MAX_PW_LENGTH         32     </font><font class="comment">/* Password buffer length */</font>
-01051 
-01052 <font class="preprocessor">#endif </font><font class="comment">/* TQSLLIB_H */</font>
-</pre></div><hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
+00793 <font class="comment">//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);</font>
+00794 
+00796 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a3">tqsl_getStationLocationCapturePage</a>(tQSL_Location loc, <font class="keywordtype">int</font> *page);
+00797 
+00802 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a4">tqsl_setStationLocationCapturePage</a>(tQSL_Location loc, <font class="keywordtype">int</font> page);
+00803 
+00805 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a5">tqsl_nextStationLocationCapture</a>(tQSL_Location loc);
+00806 
+00808 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a6">tqsl_prevStationLocationCapture</a>(tQSL_Location loc);
+00809 
+00811 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a7">tqsl_hasNextStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> *rval);
+00812 
+00814 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a8">tqsl_hasPrevStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> *rval);
+00815 
+00822 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a9">tqsl_saveStationLocationCapture</a>(tQSL_Location loc, <font class="keywordtype">int</font> overwrite);
+00823 
+00825 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a10">tqsl_getStationLocationCaptureName</a>(tQSL_Location loc, <font class="keywordtype">char</font> *namebuf, <font class="keywordtype">int</font> bufsiz);
+00826 
+00828 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a11">tqsl_setStationLocationCaptureName</a>(tQSL_Location loc, <font class="keyword">const</font> <font class="keywordtype">char</font> *name);
+00829 
+00831 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a12">tqsl_getNumStationLocations</a>(tQSL_Location loc, <font class="keywordtype">int</font> *nloc);
+00832 
+00834 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a13">tqsl_getStationLocationName</a>(tQSL_Location loc, <font class="keywordtype">int</font> idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00835 
+00837 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a14">tqsl_getStationLocationCallSign</a>(tQSL_Location loc, <font class="keywordtype">int</font> idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00838 
+00843 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a15">tqsl_getStationLocation</a>(tQSL_Location *loc, <font class="keyword">const</font> <font class="keywordtype">char</font> *name);
+00844 
+00846 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a16">tqsl_deleteStationLocation</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *name);
+00847 
+00849 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a17">tqsl_getNumLocationField</a>(tQSL_Location loc, <font class="keywordtype">int</font> *numf);
+00850 
+00852 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a18">tqsl_getLocationFieldDataLabelSize</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
+00853 
+00855 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a19">tqsl_getLocationFieldDataLabel</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00856 
+00858 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a20">tqsl_getLocationFieldDataGABBISize</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
+00859 
+00861 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a21">tqsl_getLocationFieldDataGABBI</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00862 
+00868 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a22">tqsl_getLocationFieldInputType</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *type);
+00869 
+00874 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a23">tqsl_getLocationFieldDataType</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *type);
+00875 
+00877 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a24">tqsl_getLocationFieldDataLength</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
+00878 
+00885 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a25">tqsl_getLocationFieldCharData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00886 
+00892 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a26">tqsl_getLocationFieldIntData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *dat);
+00893 
+00898 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a27">tqsl_getLocationFieldIndex</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *dat);
+00899 
+00901 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a28">tqsl_getNumLocationFieldListItems</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *rval);
+00902 
+00904 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a29">tqsl_getLocationFieldListItem</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> item_idx, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00905 
+00907 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a30">tqsl_setLocationFieldCharData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keyword">const</font> <font class="keywordtype">char</font> *buf);
+00908 
+00911 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a31">tqsl_setLocationFieldIntData</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> dat);
+00912 
+00917 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a32">tqsl_setLocationFieldIndex</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> dat);
+00918 
+00923 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a33">tqsl_getLocationFieldChanged</a>(tQSL_Location loc, <font class="keywordtype">int</font> field_num, <font class="keywordtype">int</font> *changed);
+00924 
+00926 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a34">tqsl_getLocationCallSign</a>(tQSL_Location loc, <font class="keywordtype">char</font> *buf, <font class="keywordtype">int</font> bufsiz);
+00927 
+00929 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a35">tqsl_getLocationDXCCEntity</a>(tQSL_Location loc, <font class="keywordtype">int</font> *dxcc);
+00930 
+00933 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a36">tqsl_getNumDXCCEntity</a>(<font class="keywordtype">int</font> *number);
+00934 
+00937 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a37">tqsl_getDXCCEntity</a>(<font class="keywordtype">int</font> index, <font class="keywordtype">int</font> *number, <font class="keyword">const</font> <font class="keywordtype">char</font> **name);
+00938 
+00941 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a38">tqsl_getDXCCEntityName</a>(<font class="keywordtype">int</font> number, <font class="keyword">const</font> <font class="keywordtype">char</font> **name);
+00942 
+00944 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a39">tqsl_getNumBand</a>(<font class="keywordtype">int</font> *number);
+00945 
+00955 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a40">tqsl_getBand</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **name, <font class="keyword">const</font> <font class="keywordtype">char</font> **spectrum, <font class="keywordtype">int</font> *low, <font class="keywordtype">int</font> *high);
+00956 
+00958 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a41">tqsl_getNumMode</a>(<font class="keywordtype">int</font> *number);
+00959 
+00967 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a42">tqsl_getMode</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **mode, <font class="keyword">const</font> <font class="keywordtype">char</font> **group);
+00968 
+00970 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a43">tqsl_getNumPropagationMode</a>(<font class="keywordtype">int</font> *number);
+00971 
+00979 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a44">tqsl_getPropagationMode</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **name, <font class="keyword">const</font> <font class="keywordtype">char</font> **descrip);
+00980 
+00982 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a45">tqsl_getNumSatellite</a>(<font class="keywordtype">int</font> *number);
+00983 
+00993 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a46">tqsl_getSatellite</a>(<font class="keywordtype">int</font> index, <font class="keyword">const</font> <font class="keywordtype">char</font> **name, <font class="keyword">const</font> <font class="keywordtype">char</font> **descrip,
+00994         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);
+00995 
+00998 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a47">tqsl_clearCabrilloMap</a>();
+00999 
+01010 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a48">tqsl_setCabrilloMapEntry</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *contest, <font class="keywordtype">int</font> field, <font class="keywordtype">int</font> contest_type);
+01011 
+01023 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a49">tqsl_getCabrilloMapEntry</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *contest, <font class="keywordtype">int</font> *fieldnum, <font class="keywordtype">int</font> *contest_type);
+01024 
+01027 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a50">tqsl_clearADIFModes</a>();
+01028 
+01031 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a51">tqsl_setADIFMode</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *adif_item, <font class="keyword">const</font> <font class="keywordtype">char</font> *mode);
+01032 
+01035 <font class="keywordtype">int</font> <a class="code" href="group__Data.html#a52">tqsl_getADIFMode</a>(<font class="keyword">const</font> <font class="keywordtype">char</font> *adif_item, <font class="keywordtype">char</font> *mode, <font class="keywordtype">int</font> nmode);
+01036 
+01046 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a53">tqsl_getGABBItCERT</a>(tQSL_Cert cert, <font class="keywordtype">int</font> uid);
+01047 
+01058 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a54">tqsl_getGABBItSTATION</a>(tQSL_Location loc, <font class="keywordtype">int</font> uid, <font class="keywordtype">int</font> certuid);
+01059 
+01072 <font class="keyword">const</font> <font class="keywordtype">char</font> *<a class="code" href="group__Data.html#a55">tqsl_getGABBItCONTACT</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso,
+01073         <font class="keywordtype">int</font> stationuid);
+01074 
+01077 <font class="preprocessor">#ifdef __cplusplus</font>
+01078 <font class="preprocessor"></font>}
+01079 <font class="preprocessor">#endif</font>
+01080 <font class="preprocessor"></font>
+01081 <font class="comment">/* Useful defines */</font>
+01082 <font class="preprocessor">#define TQSL_MAX_PW_LENGTH         32     </font><font class="comment">/* Password buffer length */</font>
+01083 
+01084 <font class="preprocessor">#endif </font><font class="comment">/* TQSLLIB_H */</font>
+</pre></div><hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

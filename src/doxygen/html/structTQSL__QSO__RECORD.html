@@ -11,24 +11,32 @@
 <a href="structTQSL__QSO__RECORD-members.html">List of all members.</a><table border=0 cellpadding=0 cellspacing=0>
 <tr><td colspan=2><br><h2>Public Attributes</h2></td></tr>
 <tr><td nowrap align=right valign=top><a name="m0" doxytag="TQSL_QSO_RECORD::callsign"></a>
-char&nbsp;</td><td valign=bottom><b>callsign</b> [TQSL_CALLSIGN_MAX]</td></tr>
+char&nbsp;</td><td valign=bottom><b>callsign</b> [TQSL_CALLSIGN_MAX+1]</td></tr>
 <tr><td nowrap align=right valign=top><a name="m1" doxytag="TQSL_QSO_RECORD::band"></a>
-char&nbsp;</td><td valign=bottom><b>band</b> [TQSL_BAND_MAX]</td></tr>
+char&nbsp;</td><td valign=bottom><b>band</b> [TQSL_BAND_MAX+1]</td></tr>
 <tr><td nowrap align=right valign=top><a name="m2" doxytag="TQSL_QSO_RECORD::mode"></a>
-char&nbsp;</td><td valign=bottom><b>mode</b> [TQSL_MODE_MAX]</td></tr>
+char&nbsp;</td><td valign=bottom><b>mode</b> [TQSL_MODE_MAX+1]</td></tr>
 <tr><td nowrap align=right valign=top><a name="m3" doxytag="TQSL_QSO_RECORD::date"></a>
 <a class="el" href="structtQSL__Date.html">tQSL_Date</a>&nbsp;</td><td valign=bottom><b>date</b></td></tr>
 <tr><td nowrap align=right valign=top><a name="m4" doxytag="TQSL_QSO_RECORD::time"></a>
 <a class="el" href="structtQSL__Time.html">tQSL_Time</a>&nbsp;</td><td valign=bottom><b>time</b></td></tr>
 <tr><td nowrap align=right valign=top><a name="m5" doxytag="TQSL_QSO_RECORD::freq"></a>
-char&nbsp;</td><td valign=bottom><b>freq</b> [TQSL_FREQ_MAX]</td></tr>
+char&nbsp;</td><td valign=bottom><b>freq</b> [TQSL_FREQ_MAX+1]</td></tr>
+<tr><td nowrap align=right valign=top><a name="m6" doxytag="TQSL_QSO_RECORD::rxfreq"></a>
+char&nbsp;</td><td valign=bottom><b>rxfreq</b> [TQSL_FREQ_MAX+1]</td></tr>
+<tr><td nowrap align=right valign=top><a name="m7" doxytag="TQSL_QSO_RECORD::rxband"></a>
+char&nbsp;</td><td valign=bottom><b>rxband</b> [TQSL_BAND_MAX+1]</td></tr>
+<tr><td nowrap align=right valign=top><a name="m8" doxytag="TQSL_QSO_RECORD::propmode"></a>
+char&nbsp;</td><td valign=bottom><b>propmode</b> [TQSL_PROPMODE_MAX+1]</td></tr>
+<tr><td nowrap align=right valign=top><a name="m9" doxytag="TQSL_QSO_RECORD::satname"></a>
+char&nbsp;</td><td valign=bottom><b>satname</b> [TQSL_SATNAME_MAX+1]</td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 QSO data 
 <p>
 <hr>The documentation for this struct was generated from the following file:<ul>
 <li><a class="el" href="tqsllib_8h-source.html">tqsllib.h</a></ul>
-<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

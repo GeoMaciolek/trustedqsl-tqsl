@@ -17,14 +17,17 @@ typedef void*&nbsp;</td><td valign=bottom><b>tQSL_Converter</b></td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a1">tqsl_beginADIFConverter</a> (tQSL_Converter *conv, const char *filename, tQSL_Cert *certs, int ncerts, tQSL_Location loc)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a2">tqsl_beginCabrilloConverter</a> (tQSL_Converter *conv, const char *filename, tQSL_Cert *certs, int ncerts, tQSL_Location loc)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a3">tqsl_endConverter</a> (tQSL_Converter *conv)</td></tr>
-<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a4">tqsl_getConverterGABBI</a> (tQSL_Converter conv)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a5">tqsl_getConverterCert</a> (tQSL_Converter conv, tQSL_Cert *certp)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a6">tqsl_getConverterLine</a> (tQSL_Converter conv, int *lineno)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a4">tqsl_setConverterAllowBadCall</a> (tQSL_Converter conv, int allow)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a5">tqsl_setADIFConverterDateFilter</a> (tQSL_Converter conv, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *end)</td></tr>
+<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a6">tqsl_getConverterGABBI</a> (tQSL_Converter conv)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a7">tqsl_getConverterCert</a> (tQSL_Converter conv, tQSL_Cert *certp)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a8">tqsl_getConverterLine</a> (tQSL_Converter conv, int *lineno)</td></tr>
+<tr><td nowrap align=right valign=top>const char*&nbsp;</td><td valign=bottom><a class="el" href="group__Convert.html#a9">tqsl_getConverterRecordText</a> (tQSL_Converter conv)</td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
  tQSL library converter functions.
 <p>
-<hr><address><small>Generated at Mon Aug 18 13:44:10 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,
