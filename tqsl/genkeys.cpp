@@ -1,6 +1,7 @@
 //---------------------------------------------------------------------------
 #include <vcl.h>
 #include <fcntl.h>
+#include <stdio.h>
 #include<io.h>
 
 #pragma hdrstop
@@ -32,38 +33,33 @@ void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
   if (callSignEd->Text.Length() < 3)
    return;
   rc = tqslGenNewKeys(callSignEd->Text.c_str(),&secretKey,&pubKey);
-  if (rc > 0)
-    {
-     Label2->Caption = rc;
-     int fd;
+  if (rc < 1)
+   return;
 
-     fd = open(pubFile,O_WRONLY|O_CREAT|O_TRUNC,0644);
-     if (fd >= 0)
+  Label2->Caption = rc;
+  FILE *fd;
+
+  fd = fopen(pubFile,"w");
+  if (fd != NULL)
+   {
+     char *pkStr;
+     pkStr = tqslPubKeyToStr(&pubKey);
+     if (pkStr != NULL)
        {
-         rc = write(fd,&pubKey,sizeof(pubKey));
-         close(fd);
-         if (rc != sizeof(pubKey))
-	          {
-	            //fprintf(stderr,"writing public file failed\n");
-	            return;
-	          }
+         rc = fprintf(fd,"%s\n",pkStr);
+         fclose(fd);
        }
      else
        {
          //fprintf(stderr,"creating public file failed\n");
          return;
        }
-
-  fd = open(secretFile,O_WRONLY|O_CREAT|O_TRUNC,0600);
+   }
+  fd = fopen(secretFile,"w");
   if (fd >= 0)
     {
-      rc = write(fd,secretKey,strlen(secretKey));
-      close(fd);
-      if (rc != (int)strlen(secretKey))
-	      {
-	      //fprintf(stderr,"writing private file failed\n");
-	      return;
-	      }
+      fprintf(fd,"%s\n",secretKey);
+      fclose(fd);
     }
   else
     {
@@ -71,6 +67,5 @@ void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
       return;
     }	 
 
-  } 
 }
 //---------------------------------------------------------------------------

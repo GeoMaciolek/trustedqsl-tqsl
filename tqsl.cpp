@@ -99,8 +99,9 @@ static int getFileSize(const char *fname)
 {
   struct stat sbuf;
   int rc;
-
+#ifndef __BORLANDC__
   cvsID = cvsID;
+#endif
   rc = stat(fname,&sbuf);
   if (rc < 0) 
     return(-1);

@@ -131,3 +131,4 @@ void hex2bin(char *hexStr,unsigned char *binStr,int len)
     }
 }
 
+

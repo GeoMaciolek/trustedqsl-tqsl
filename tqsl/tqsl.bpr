@@ -37,8 +37,8 @@ CFLAG2 = -D_RTLDLL;USEPACKAGES \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -H=$(BCB)\lib\vcl35.csm
 CFLAG3 = -Tkh30000
-PFLAGS = -U..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
-  -D_RTLDLL;USEPACKAGES \
+PFLAGS = -D_RTLDLL;USEPACKAGES \
+  -U..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -$Y -$W -$O- -v -JPHN -M
 RFLAGS = -D_RTLDLL;USEPACKAGES \
@@ -87,19 +87,21 @@ Count=1
 Item0=d:\program files\borland\cbuilder3\projects;$(BCB)\include;$(BCB)\include\vcl;c:\include
 
 [HistoryLists\hlLibraryPath]
-Count=1
-Item0=d:\program files\borland\cbuilder3\projects;..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib
+Count=2
+Item0=..\..\..\..\delphi\prolib\source;d:\program files\borland\cbuilder3\projects;..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib
+Item1=d:\program files\borland\cbuilder3\projects;..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib
 
 [HistoryLists\hlDebugSourcePath]
-Count=1
-Item0=$(BCB)\source\vcl
+Count=2
+Item0=$(BCB)\source\vcl;..
+Item1=$(BCB)\source\vcl
 
 [HistoryLists\hlConditionals]
 Count=1
 Item0=_RTLDLL;USEPACKAGES
 
 [Debugging]
-DebugSourceDirs=$(BCB)\source\vcl
+DebugSourceDirs=$(BCB)\source\vcl;..
 
 [Parameters]
 RunParams=
