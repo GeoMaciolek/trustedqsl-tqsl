@@ -57,17 +57,17 @@ typedef void *&nbsp;</td><td class="memItemRight" valign=bottom><b>tQSL_ADIF</b>
 
 <tr><td class="mdescLeft">&nbsp;</td><td class="mdescRight">Response values returned from <a class="el" href="group__ADIF.html#a3">tqsl_getADIFField()</a>. <br><br></td></tr>
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a1">tqsl_adifGetError</a> (<a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> status)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a1">tqsl_adifGetError</a> (<a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> status)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a2">tqsl_beginADIF</a> (tQSL_ADIF *adifp, const  char *filename)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a2">tqsl_beginADIF</a> (tQSL_ADIF *adifp, const  char *filename)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a3">tqsl_getADIFField</a> (tQSL_ADIF adif, <a class="el" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, <a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> *status, const  <a class="el" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a> *adifFields, const  char *const *typesDefined, unsigned char *(*allocator)(size_t))</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a3">tqsl_getADIFField</a> (tQSL_ADIF adif, <a class="el" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, <a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> *status, const  <a class="el" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a> *adifFields, const  char *const *typesDefined, unsigned char *(*allocator)(size_t))</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a4">tqsl_getADIFLine</a> (tQSL_ADIF adif, int *lineno)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a4">tqsl_getADIFLine</a> (tQSL_ADIF adif, int *lineno)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a5">tqsl_endADIF</a> (tQSL_ADIF *adifp)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a5">tqsl_endADIF</a> (tQSL_ADIF *adifp)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a6">tqsl_adifMakeField</a> (const  char *fieldname, char type, const  unsigned char *value, int len, unsigned char *buf, int buflen)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__ADIF.html#a6">tqsl_adifMakeField</a> (const  char *fieldname, char type, const  unsigned char *value, int len, unsigned char *buf, int buflen)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -78,7 +78,7 @@ These functions and data structures provide a means of parsing an ADIF file into
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> char* tqsl_adifGetError </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT char* tqsl_adifGetError </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top"><a class="el" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a>&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>status</em>          </td>
@@ -107,7 +107,7 @@ Get the ADIF error message that corresponds to a particular error value     </td
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_adifMakeField </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_adifMakeField </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">const char *&nbsp;</td>
           <td class="mdname" nowrap> <em>fieldname</em>, </td>
@@ -170,7 +170,7 @@ N.B. On systems that distinguish text-mode files from binary-mode files, notably
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_beginADIF </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_beginADIF </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_ADIF *&nbsp;</td>
           <td class="mdname" nowrap> <em>adifp</em>, </td>
@@ -208,7 +208,7 @@ Initialize an ADIF file for reading     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_endADIF </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_endADIF </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_ADIF *&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>adifp</em>          </td>
@@ -237,7 +237,7 @@ End and release an ADIF file     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getADIFField </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getADIFField </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_ADIF&nbsp;</td>
           <td class="mdname" nowrap> <em>adif</em>, </td>
@@ -308,7 +308,7 @@ Get the next field from an ADIF file<p>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getADIFLine </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getADIFLine </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_ADIF&nbsp;</td>
           <td class="mdname" nowrap> <em>adif</em>, </td>
@@ -340,7 +340,7 @@ Get the next field from an ADIF file<p>
 Get the current line number (starting from 1) of the input file     </td>
   </tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Feb 7 12:54:08 2005 for TrustedQSL Library API by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Feb 18 13:47:15 2005 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 > 
 </a>1.3.4 </small></address>

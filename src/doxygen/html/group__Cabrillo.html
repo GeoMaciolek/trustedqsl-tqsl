@@ -43,21 +43,21 @@ typedef void *&nbsp;</td><td class="memItemRight" valign=bottom><b>tQSL_Cabrillo
  }</td></tr>
 
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>const  char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a1">tqsl_cabrilloGetError</a> (<a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> err)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT const  char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a1">tqsl_cabrilloGetError</a> (<a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> err)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a2">tqsl_beginCabrillo</a> (tQSL_Cabrillo *cabp, const  char *filename)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a2">tqsl_beginCabrillo</a> (tQSL_Cabrillo *cabp, const  char *filename)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a3">tqsl_getCabrilloContest</a> (tQSL_Cabrillo cab, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a3">tqsl_getCabrilloContest</a> (tQSL_Cabrillo cab, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a4">tqsl_getCabrilloFreqType</a> (tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a4">tqsl_getCabrilloFreqType</a> (tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a5">tqsl_getCabrilloLine</a> (tQSL_Cabrillo cab, int *lineno)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a5">tqsl_getCabrilloLine</a> (tQSL_Cabrillo cab, int *lineno)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>const  char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a6">tqsl_getCabrilloRecordText</a> (tQSL_Cabrillo cab)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT const  char *&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a6">tqsl_getCabrilloRecordText</a> (tQSL_Cabrillo cab)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a7">tqsl_getCabrilloField</a> (tQSL_Cabrillo cab, <a class="el" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a> *field, <a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> *err)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a7">tqsl_getCabrilloField</a> (tQSL_Cabrillo cab, <a class="el" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a> *field, <a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> *err)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a8">tqsl_endCabrillo</a> (tQSL_Cabrillo *cabp)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__Cabrillo.html#a8">tqsl_endCabrillo</a> (tQSL_Cabrillo *cabp)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -69,7 +69,7 @@ For convenience, the returned fields are identified using field names from the <
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_beginCabrillo </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_beginCabrillo </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo *&nbsp;</td>
           <td class="mdname" nowrap> <em>cabp</em>, </td>
@@ -107,7 +107,7 @@ Initialize a Cabrillo file for reading     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const char* tqsl_cabrilloGetError </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT const char* tqsl_cabrilloGetError </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top"><a class="el" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a>&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>err</em>          </td>
@@ -136,7 +136,7 @@ Get the Cabrillo error message that corresponds to a particular error value     
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_endCabrillo </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_endCabrillo </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo *&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>cabp</em>          </td>
@@ -165,7 +165,7 @@ Finish reading a Cabrillo file and release its resources     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCabrilloContest </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCabrilloContest </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo&nbsp;</td>
           <td class="mdname" nowrap> <em>cab</em>, </td>
@@ -209,7 +209,7 @@ Get the Contest name as specified in the Cabrillo CONTEST line     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCabrilloField </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCabrilloField </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo&nbsp;</td>
           <td class="mdname" nowrap> <em>cab</em>, </td>
@@ -255,7 +255,7 @@ Get the next field of the Cabrillo record<p>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCabrilloFreqType </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCabrilloFreqType </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo&nbsp;</td>
           <td class="mdname" nowrap> <em>cab</em>, </td>
@@ -293,7 +293,7 @@ Get the Frequency type (HF or VHF) as determined by the contest     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCabrilloLine </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCabrilloLine </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo&nbsp;</td>
           <td class="mdname" nowrap> <em>cab</em>, </td>
@@ -331,7 +331,7 @@ Get the current line number (starting from 1) of the input file     </td>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> const char* tqsl_getCabrilloRecordText </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT const char* tqsl_getCabrilloRecordText </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cabrillo&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>cab</em>          </td>
@@ -354,7 +354,7 @@ Get the current line number (starting from 1) of the input file     </td>
 Get the text of the current Cabrillo record     </td>
   </tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Feb 7 12:54:08 2005 for TrustedQSL Library API by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Feb 18 13:47:15 2005 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 > 
 </a>1.3.4 </small></address>

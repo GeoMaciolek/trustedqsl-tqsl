@@ -8,87 +8,89 @@
 <h1>Certificate Handling API</h1><table border=0 cellpadding=0 cellspacing=0>
 <tr><td></td></tr>
 <tr><td colspan=2><br><h2>Defines</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a30" doxytag="CertStuff::TQSL_SELECT_CERT_WITHKEYS" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a31" doxytag="CertStuff::TQSL_SELECT_CERT_WITHKEYS" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_SELECT_CERT_WITHKEYS</b>&nbsp;&nbsp;&nbsp;1</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a31" doxytag="CertStuff::TQSL_SELECT_CERT_EXPIRED" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a32" doxytag="CertStuff::TQSL_SELECT_CERT_EXPIRED" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_SELECT_CERT_EXPIRED</b>&nbsp;&nbsp;&nbsp;2</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a32" doxytag="CertStuff::TQSL_SELECT_CERT_SUPERCEDED" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a33" doxytag="CertStuff::TQSL_SELECT_CERT_SUPERCEDED" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_SELECT_CERT_SUPERCEDED</b>&nbsp;&nbsp;&nbsp;4</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a33" doxytag="CertStuff::TQSL_PK_TYPE_ERR" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a34" doxytag="CertStuff::TQSL_PK_TYPE_ERR" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_PK_TYPE_ERR</b>&nbsp;&nbsp;&nbsp;0</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a34" doxytag="CertStuff::TQSL_PK_TYPE_NONE" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a35" doxytag="CertStuff::TQSL_PK_TYPE_NONE" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_PK_TYPE_NONE</b>&nbsp;&nbsp;&nbsp;1</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a35" doxytag="CertStuff::TQSL_PK_TYPE_UNENC" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a36" doxytag="CertStuff::TQSL_PK_TYPE_UNENC" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_PK_TYPE_UNENC</b>&nbsp;&nbsp;&nbsp;2</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a36" doxytag="CertStuff::TQSL_PK_TYPE_ENC" ></a>
+<tr><td class="memItemLeft" nowrap align=right valign=top><a class="anchor" name="a37" doxytag="CertStuff::TQSL_PK_TYPE_ENC" ></a>
 #define&nbsp;</td><td class="memItemRight" valign=bottom><b>TQSL_PK_TYPE_ENC</b>&nbsp;&nbsp;&nbsp;3</td></tr>
 
 <tr><td colspan=2><br><h2>Functions</h2></td></tr>
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const  char *callsign, int dxcc, const  <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const  <a class="el" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const  char *callsign, int dxcc, const  <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const  <a class="el" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a> (tQSL_Cert cert, int *keyonly)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a1">tqsl_getSelectedCertificate</a> (tQSL_Cert *cert, const  tQSL_Cert **certlist, int idx)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a2">tqsl_getCertificateKeyOnly</a> (tQSL_Cert cert, int *keyonly)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a> (tQSL_Cert cert, long *serial)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a3">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a4">tqsl_getCertificateIssuer</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a4">tqsl_getCertificateSerial</a> (tQSL_Cert cert, long *serial)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a5">tqsl_getCertificateIssuerOrganization</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a5">tqsl_getCertificateIssuer</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganizationalUnit</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganization</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a7">tqsl_getCertificateCallSign</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a7">tqsl_getCertificateIssuerOrganizationalUnit</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a8">tqsl_getCertificateAROName</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a8">tqsl_getCertificateCallSign</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a9">tqsl_getCertificateEmailAddress</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a9">tqsl_getCertificateAROName</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a10">tqsl_getCertificateQSONotBeforeDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a10">tqsl_getCertificateEmailAddress</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotAfterDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotBeforeDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a12">tqsl_getCertificateNotBeforeDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a12">tqsl_getCertificateQSONotAfterDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a13">tqsl_getCertificateNotAfterDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a13">tqsl_getCertificateNotBeforeDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a14">tqsl_getCertificateDXCCEntity</a> (tQSL_Cert cert, int *dxcc)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a14">tqsl_getCertificateNotAfterDate</a> (tQSL_Cert cert, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a15">tqsl_getCertificateRequestAddress1</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a15">tqsl_getCertificateDXCCEntity</a> (tQSL_Cert cert, int *dxcc)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress2</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress1</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a17">tqsl_getCertificateRequestCity</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a17">tqsl_getCertificateRequestAddress2</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a18">tqsl_getCertificateRequestState</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a18">tqsl_getCertificateRequestCity</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a19">tqsl_getCertificateRequestPostalCode</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a19">tqsl_getCertificateRequestState</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a20">tqsl_getCertificateRequestCountry</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a20">tqsl_getCertificateRequestPostalCode</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a21">tqsl_getCertificatePrivateKeyType</a> (tQSL_Cert cert)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a21">tqsl_getCertificateRequestCountry</a> (tQSL_Cert cert, char *str, int bufsiz)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>void&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate</a> (tQSL_Cert cert)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a22">tqsl_getCertificatePrivateKeyType</a> (tQSL_Cert cert)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a> (const  char *file, int(*cb)(int type, const  char *message, void *userdata), void *user)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT void&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a23">tqsl_freeCertificate</a> (tQSL_Cert cert)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a24">tqsl_getNumProviders</a> (int *n)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a24">tqsl_importTQSLFile</a> (const  char *file, int(*cb)(int type, const  char *message, void *userdata), void *user)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a25">tqsl_getProvider</a> (int idx, <a class="el" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a25">tqsl_getNumProviders</a> (int *n)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest</a> (const  char *filename, <a class="el" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a26">tqsl_getProvider</a> (int idx, <a class="el" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a> (tQSL_Cert cert, const  char *filename, const  char *p12password)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a27">tqsl_createCertRequest</a> (const  char *filename, <a class="el" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req, int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a> (const  char *filename, const  char *p12password, const  char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const  char *message, void *userdata), void *user)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a28">tqsl_exportPKCS12File</a> (tQSL_Cert cert, const  char *filename, const  char *p12password)</td></tr>
 
-<tr><td class="memItemLeft" nowrap align=right valign=top>int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a> (tQSL_Cert cert)</td></tr>
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a29">tqsl_importPKCS12File</a> (const  char *filename, const  char *p12password, const  char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const  char *message, void *userdata), void *user)</td></tr>
+
+<tr><td class="memItemLeft" nowrap align=right valign=top>DLLEXPORT int&nbsp;</td><td class="memItemRight" valign=bottom><a class="el" href="group__CertStuff.html#a30">tqsl_deleteCertificate</a> (tQSL_Cert cert)</td></tr>
 
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
@@ -102,18 +104,18 @@ Certificates are managed by manipulating <code>tQSL_Cert</code> objects. A <code
 </ul>
 The certificate management process consists of:<p>
 <ul>
-<li><b>Applying for a certificate.</b> Certificate requests are produced via the <a class="el" href="group__CertStuff.html#a26">tqsl_createCertRequest()</a> function, which produces a certificate-request file to send to the issuer. </li>
-<li><b>Importing the certificate</b> file received from the issuer into the local "certificate store," a directory managed by the tQSL library, via <a class="el" href="group__CertStuff.html#a23">tqsl_importTQSLFile()</a>. </li>
+<li><b>Applying for a certificate.</b> Certificate requests are produced via the <a class="el" href="group__CertStuff.html#a27">tqsl_createCertRequest()</a> function, which produces a certificate-request file to send to the issuer. </li>
+<li><b>Importing the certificate</b> file received from the issuer into the local "certificate store," a directory managed by the tQSL library, via <a class="el" href="group__CertStuff.html#a24">tqsl_importTQSLFile()</a>. </li>
 <li><b>Selecting an appropriate certificate</b> to use to sign a QSO record via <a class="el" href="group__CertStuff.html#a0">tqsl_selectCertificates()</a>. </li>
 </ul>
 <hr><h2>Function Documentation</h2>
-<a class="anchor" name="a26" doxytag="tqsllib.h::tqsl_createCertRequest" ></a><p>
+<a class="anchor" name="a27" doxytag="tqsllib.h::tqsl_createCertRequest" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_createCertRequest </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_createCertRequest </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">const char *&nbsp;</td>
           <td class="mdname" nowrap> <em>filename</em>, </td>
@@ -160,13 +162,13 @@ If <code>req-&gt;password</code> is NULL and <code>cb</code> is not NULL, the ca
 If req-&gt;signer is not zero and the signing certificate requires a password, the password may be in req-&gt;signer_password, else signer_pwcb is called.     </td>
   </tr>
 </table>
-<a class="anchor" name="a29" doxytag="tqsllib.h::tqsl_deleteCertificate" ></a><p>
+<a class="anchor" name="a30" doxytag="tqsllib.h::tqsl_deleteCertificate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_deleteCertificate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_deleteCertificate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>cert</em>          </td>
@@ -189,13 +191,13 @@ If req-&gt;signer is not zero and the signing certificate requires a password, t
 Delete a certificate and private key     </td>
   </tr>
 </table>
-<a class="anchor" name="a27" doxytag="tqsllib.h::tqsl_exportPKCS12File" ></a><p>
+<a class="anchor" name="a28" doxytag="tqsllib.h::tqsl_exportPKCS12File" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_exportPKCS12File </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_exportPKCS12File </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -235,13 +237,13 @@ The tQSL_Cert must be initialized for signing (see <a class="el" href="group__Si
 The supplied <code>p12password</code> is used to encrypt the PKCS12 data.     </td>
   </tr>
 </table>
-<a class="anchor" name="a22" doxytag="tqsllib.h::tqsl_freeCertificate" ></a><p>
+<a class="anchor" name="a23" doxytag="tqsllib.h::tqsl_freeCertificate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> void tqsl_freeCertificate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT void tqsl_freeCertificate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>cert</em>          </td>
@@ -264,13 +266,13 @@ The supplied <code>p12password</code> is used to encrypt the PKCS12 data.     </
 Free the memory used by the tQSL_Cert. Once this function is called, <code>cert</code> should not be used again in any way.     </td>
   </tr>
 </table>
-<a class="anchor" name="a8" doxytag="tqsllib.h::tqsl_getCertificateAROName" ></a><p>
+<a class="anchor" name="a9" doxytag="tqsllib.h::tqsl_getCertificateAROName" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateAROName </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateAROName </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -314,13 +316,13 @@ Get the ARO name string from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a7" doxytag="tqsllib.h::tqsl_getCertificateCallSign" ></a><p>
+<a class="anchor" name="a8" doxytag="tqsllib.h::tqsl_getCertificateCallSign" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateCallSign </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateCallSign </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -364,13 +366,13 @@ Get the ARO call sign string from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a14" doxytag="tqsllib.h::tqsl_getCertificateDXCCEntity" ></a><p>
+<a class="anchor" name="a15" doxytag="tqsllib.h::tqsl_getCertificateDXCCEntity" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateDXCCEntity </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateDXCCEntity </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -407,13 +409,13 @@ Get the DXCC entity number from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a9" doxytag="tqsllib.h::tqsl_getCertificateEmailAddress" ></a><p>
+<a class="anchor" name="a10" doxytag="tqsllib.h::tqsl_getCertificateEmailAddress" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateEmailAddress </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateEmailAddress </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -457,13 +459,13 @@ Get the email address from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a2" doxytag="tqsllib.h::tqsl_getCertificateEncoded" ></a><p>
+<a class="anchor" name="a3" doxytag="tqsllib.h::tqsl_getCertificateEncoded" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateEncoded </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateEncoded </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -501,13 +503,13 @@ Returns 0 on success, nonzero on failure.     </td>
 Get the encoded certificate for inclusion in a GABBI file.     </td>
   </tr>
 </table>
-<a class="anchor" name="a4" doxytag="tqsllib.h::tqsl_getCertificateIssuer" ></a><p>
+<a class="anchor" name="a5" doxytag="tqsllib.h::tqsl_getCertificateIssuer" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateIssuer </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateIssuer </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -551,13 +553,13 @@ Get the issuer (DN) string from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a5" doxytag="tqsllib.h::tqsl_getCertificateIssuerOrganization" ></a><p>
+<a class="anchor" name="a6" doxytag="tqsllib.h::tqsl_getCertificateIssuerOrganization" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateIssuerOrganization </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateIssuerOrganization </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -601,13 +603,13 @@ Get the issuer's organization name from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a6" doxytag="tqsllib.h::tqsl_getCertificateIssuerOrganizationalUnit" ></a><p>
+<a class="anchor" name="a7" doxytag="tqsllib.h::tqsl_getCertificateIssuerOrganizationalUnit" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateIssuerOrganizationalUnit </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateIssuerOrganizationalUnit </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -651,13 +653,13 @@ Get the issuer's organizational unit name from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a1" doxytag="tqsllib.h::tqsl_getCertificateKeyOnly" ></a><p>
+<a class="anchor" name="a2" doxytag="tqsllib.h::tqsl_getCertificateKeyOnly" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateKeyOnly </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateKeyOnly </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -689,13 +691,13 @@ Returns 0 on success, nonzero on failure.     </td>
 Find out if the "certificate" is just a key pair.     </td>
   </tr>
 </table>
-<a class="anchor" name="a13" doxytag="tqsllib.h::tqsl_getCertificateNotAfterDate" ></a><p>
+<a class="anchor" name="a14" doxytag="tqsllib.h::tqsl_getCertificateNotAfterDate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateNotAfterDate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateNotAfterDate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -732,13 +734,13 @@ Get the certificate's not-after date from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a12" doxytag="tqsllib.h::tqsl_getCertificateNotBeforeDate" ></a><p>
+<a class="anchor" name="a13" doxytag="tqsllib.h::tqsl_getCertificateNotBeforeDate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateNotBeforeDate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateNotBeforeDate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -775,13 +777,13 @@ Get the certificate's not-before date from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a21" doxytag="tqsllib.h::tqsl_getCertificatePrivateKeyType" ></a><p>
+<a class="anchor" name="a22" doxytag="tqsllib.h::tqsl_getCertificatePrivateKeyType" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificatePrivateKeyType </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificatePrivateKeyType </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>cert</em>          </td>
@@ -815,13 +817,13 @@ Returns one of the following values:<p>
     </td>
   </tr>
 </table>
-<a class="anchor" name="a11" doxytag="tqsllib.h::tqsl_getCertificateQSONotAfterDate" ></a><p>
+<a class="anchor" name="a12" doxytag="tqsllib.h::tqsl_getCertificateQSONotAfterDate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateQSONotAfterDate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateQSONotAfterDate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -858,13 +860,13 @@ Get the QSO not-after date from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a10" doxytag="tqsllib.h::tqsl_getCertificateQSONotBeforeDate" ></a><p>
+<a class="anchor" name="a11" doxytag="tqsllib.h::tqsl_getCertificateQSONotBeforeDate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateQSONotBeforeDate </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateQSONotBeforeDate </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -901,13 +903,13 @@ Get the QSO not-before date from a tQSL_Cert.<p>
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a15" doxytag="tqsllib.h::tqsl_getCertificateRequestAddress1" ></a><p>
+<a class="anchor" name="a16" doxytag="tqsllib.h::tqsl_getCertificateRequestAddress1" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestAddress1 </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestAddress1 </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -951,13 +953,13 @@ Get the first address line from the certificate request used in applying for a t
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a16" doxytag="tqsllib.h::tqsl_getCertificateRequestAddress2" ></a><p>
+<a class="anchor" name="a17" doxytag="tqsllib.h::tqsl_getCertificateRequestAddress2" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestAddress2 </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestAddress2 </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1001,13 +1003,13 @@ Get the second address line from the certificate request used in applying for a 
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a17" doxytag="tqsllib.h::tqsl_getCertificateRequestCity" ></a><p>
+<a class="anchor" name="a18" doxytag="tqsllib.h::tqsl_getCertificateRequestCity" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestCity </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestCity </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1051,13 +1053,13 @@ Get the city from the certificate request used in applying for a tQSL_Cert certi
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a20" doxytag="tqsllib.h::tqsl_getCertificateRequestCountry" ></a><p>
+<a class="anchor" name="a21" doxytag="tqsllib.h::tqsl_getCertificateRequestCountry" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestCountry </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestCountry </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1101,13 +1103,13 @@ Get the country from the certificate request used in applying for a tQSL_Cert ce
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a19" doxytag="tqsllib.h::tqsl_getCertificateRequestPostalCode" ></a><p>
+<a class="anchor" name="a20" doxytag="tqsllib.h::tqsl_getCertificateRequestPostalCode" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestPostalCode </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestPostalCode </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1151,13 +1153,13 @@ Get the postal (ZIP) code from the certificate request used in applying for a tQ
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a18" doxytag="tqsllib.h::tqsl_getCertificateRequestState" ></a><p>
+<a class="anchor" name="a19" doxytag="tqsllib.h::tqsl_getCertificateRequestState" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateRequestState </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateRequestState </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1201,13 +1203,13 @@ Get the state from the certificate request used in applying for a tQSL_Cert cert
 Returns 0 on success, nonzero on failure.     </td>
   </tr>
 </table>
-<a class="anchor" name="a3" doxytag="tqsllib.h::tqsl_getCertificateSerial" ></a><p>
+<a class="anchor" name="a4" doxytag="tqsllib.h::tqsl_getCertificateSerial" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getCertificateSerial </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getCertificateSerial </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert&nbsp;</td>
           <td class="mdname" nowrap> <em>cert</em>, </td>
@@ -1239,13 +1241,13 @@ Returns 0 on success, nonzero on failure.     </td>
 Get the issuer's serial number of the certificate.     </td>
   </tr>
 </table>
-<a class="anchor" name="a24" doxytag="tqsllib.h::tqsl_getNumProviders" ></a><p>
+<a class="anchor" name="a25" doxytag="tqsllib.h::tqsl_getNumProviders" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getNumProviders </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getNumProviders </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">int *&nbsp;</td>
           <td class="mdname1" valign="top" nowrap> <em>n</em>          </td>
@@ -1268,13 +1270,13 @@ Get the issuer's serial number of the certificate.     </td>
 Get the number of certificate providers known to tqsllib.     </td>
   </tr>
 </table>
-<a class="anchor" name="a25" doxytag="tqsllib.h::tqsl_getProvider" ></a><p>
+<a class="anchor" name="a26" doxytag="tqsllib.h::tqsl_getProvider" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_getProvider </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getProvider </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">int&nbsp;</td>
           <td class="mdname" nowrap> <em>idx</em>, </td>
@@ -1305,18 +1307,63 @@ Get the number of certificate providers known to tqsllib.     </td>
 <p>
 Get the information for a certificate provider.<p>
 <ul>
-<li><code>idx</code> is the index, 0 &lt;= idx &lt; <a class="el" href="group__CertStuff.html#a24">tqsl_getNumProviders()</a> </li>
+<li><code>idx</code> is the index, 0 &lt;= idx &lt; <a class="el" href="group__CertStuff.html#a25">tqsl_getNumProviders()</a> </li>
 </ul>
     </td>
   </tr>
 </table>
-<a class="anchor" name="a28" doxytag="tqsllib.h::tqsl_importPKCS12File" ></a><p>
+<a class="anchor" name="a1" doxytag="tqsllib.h::tqsl_getSelectedCertificate" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_importPKCS12File </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_getSelectedCertificate </td>
+          <td class="md" valign="top">(&nbsp;</td>
+          <td class="md" nowrap valign="top">tQSL_Cert *&nbsp;</td>
+          <td class="mdname" nowrap> <em>cert</em>, </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td class="md" nowrap>const tQSL_Cert **&nbsp;</td>
+          <td class="mdname" nowrap> <em>certlist</em>, </td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td class="md" nowrap>int&nbsp;</td>
+          <td class="mdname" nowrap> <em>idx</em></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td class="md">)&nbsp;</td>
+          <td class="md" colspan="2"></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Get a particulat certificate from the list returnded by tqsl_selectCertificates. This function exists principally to make it easier for VB programs to access the list of certificates.<p>
+It is the caller's responsibility to ensure that 0 &lt;= idx &lt; ncerts (where ncerts is the value returned by tqsl_selectCertificates)     </td>
+  </tr>
+</table>
+<a class="anchor" name="a29" doxytag="tqsllib.h::tqsl_importPKCS12File" ></a><p>
+<table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
+  <tr>
+    <td class="mdRow">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_importPKCS12File </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">const char *&nbsp;</td>
           <td class="mdname" nowrap> <em>filename</em>, </td>
@@ -1372,13 +1419,13 @@ Get the information for a certificate provider.<p>
 Load certificates and a private key from a PKCS12 file.     </td>
   </tr>
 </table>
-<a class="anchor" name="a23" doxytag="tqsllib.h::tqsl_importTQSLFile" ></a><p>
+<a class="anchor" name="a24" doxytag="tqsllib.h::tqsl_importTQSLFile" ></a><p>
 <table class="mdTable" width="100%" cellpadding="2" cellspacing="0">
   <tr>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_importTQSLFile </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_importTQSLFile </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">const char *&nbsp;</td>
           <td class="mdname" nowrap> <em>file</em>, </td>
@@ -1420,7 +1467,7 @@ cb(type, message);<p>
 <code>TQSL_CERT_CB_CALL_TYPE(type)</code> := <code>TQSL_CERT_CB_MILESTONE</code> | <code>TQSL_CERT_CB_RESULT</code> <p>
 <code>TQSL_CERT_CB_CERT_TYPE(type)</code> := <code>TQSL_CERT_CB_ROOT</code> | <code>TQSL_CERT_CB_CA</code> | <code>TQSL_CERT_CB_USER</code> <p>
 <code>TQSL_CERT_CB_RESULT_TYPE(type)</code> := <code>TQSL_CERT_CB_PROMPT</code> | <code>TQSL_CERT_CB_WARNING</code> | <code>TQSL_CERT_CB_ERROR</code> <p>
-<code><a class="el" href="tqsllib_8h.html#a30">TQSL_CERT_CB_RESULT_TYPE()</a></code> is meaningful only if <code><a class="el" href="tqsllib_8h.html#a25">TQSL_CERT_CB_CALL_TYPE()</a></code> == <code>TQSL_CERT_CB_RESULT</code>     </td>
+<code><a class="el" href="tqsllib_8h.html#a31">TQSL_CERT_CB_RESULT_TYPE()</a></code> is meaningful only if <code><a class="el" href="tqsllib_8h.html#a26">TQSL_CERT_CB_CALL_TYPE()</a></code> == <code>TQSL_CERT_CB_RESULT</code>     </td>
   </tr>
 </table>
 <a class="anchor" name="a0" doxytag="tqsllib.h::tqsl_selectCertificates" ></a><p>
@@ -1429,7 +1476,7 @@ cb(type, message);<p>
     <td class="mdRow">
       <table cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td class="md" nowrap valign="top"> int tqsl_selectCertificates </td>
+          <td class="md" nowrap valign="top"> DLLEXPORT int tqsl_selectCertificates </td>
           <td class="md" valign="top">(&nbsp;</td>
           <td class="md" nowrap valign="top">tQSL_Cert **&nbsp;</td>
           <td class="mdname" nowrap> <em>certlist</em>, </td>
@@ -1499,10 +1546,10 @@ Selects a set of certificates from the user's certificate store based on optiona
 <li><code>flag</code> - OR of <code>TQSL_SELECT_CERT_EXPIRED</code> (include expired certs), <code>TQSL_SELECT_CERT_SUPERCEDED</code> and <code>TQSL_SELECT_CERT_WITHKEYS</code> (keys that don't have associated certs will be returned).</li>
 </ul>
 Returns 0 on success, nonzero on failure.<p>
-Each of the tQSL_Cert objects in the list should be freed by calling <a class="el" href="group__CertStuff.html#a22">tqsl_freeCertificate()</a>.     </td>
+Each of the tQSL_Cert objects in the list should be freed by calling <a class="el" href="group__CertStuff.html#a23">tqsl_freeCertificate()</a>.     </td>
   </tr>
 </table>
-<hr size="1"><address style="align: right;"><small>Generated on Mon Feb 7 12:54:08 2005 for TrustedQSL Library API by
+<hr size="1"><address style="align: right;"><small>Generated on Fri Feb 18 13:47:15 2005 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 > 
 </a>1.3.4 </small></address>
