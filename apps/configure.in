@@ -17,7 +17,7 @@ dyn_lib_suf=".so"
 
 case "$build_os" in
   darwin*) platform="-DMAC"
-	add_targets='tqsl.app tqslcert.app'
+	add_targets='dist/TrustedQSL/tqsl.app dist/TrustedQSL/tqslcert.app'
 	dyn_lib_suf=".dylib"
     ;;
   mingw32) platform=-DWINDOWS

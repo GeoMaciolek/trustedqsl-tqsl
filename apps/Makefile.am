@@ -27,14 +27,11 @@ helpdir = $(datadir)
 AM_CXXFLAGS = -Wall `$(WXCONFIG) --cxxflags` -I$(TQSLINC) -I$(ZLIB)/include -I$(EXPAT)/include
 AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib -L$(OPENSSL)/lib
 
-BUILT_SOURCES = tqslbuild.h tqslcertbuild.h helpdir
+BUILT_SOURCES = tqslbuild.h tqslcertbuild.h helpdir icondir
 
-EXTRA_PROGRAMS = tqsl.app tqslcert.app
+EXTRA_PROGRAMS = 
+
 bin_PROGRAMS = tqsl tqslcert @add_targets@
-
-tqsl_app_SOURCES =
-
-tqslcert_app_SOURCES =
 
 tqsl_LDADD = @tqslcertresources@ @wxwin_libs@
 tqsl_DEPENDENCIES = @tqslcertresources@
@@ -65,7 +62,8 @@ nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
 	LICENSE TrustedQSL.spec.in TrustedQSL.spec \
 	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
-	touchver.pl tqsl.ico tqsl-key1.ico setup.iss.in wpwd.bat tqslcert.rc.in
+	touchver.pl key.ico tqsl.ico tqsl-key1.ico setup.iss.in tqslcert.rc.in \
+	icons/*.* tqslicons.icns
 
 tqslbuild.h: tqslbuild.h.in Makefile
 	$(PERL) $(srcdir)/touchver.pl $(srcdir)/tqslbuild.h.in BUILD $(BUILD)
@@ -77,47 +75,58 @@ tqslcertbuild.h: tqslcertbuild.h.in Makefile
 	$(CP) $(srcdir)/tqslcertbuild.h.in tqslcertbuild.h
 	$(TOUCH) $(srcdir)/tqslcertbuild.h.in
 
-tqslcert.app: tqslcert Info.plist.in
-	$(MKDIR) -p tqslcert.app
-	$(MKDIR) -p tqslcert.app/Contents
-	$(MKDIR) -p tqslcert.app/Contents/MacOS
-	$(MKDIR) -p tqslcert.app/Contents/Resources
-	$(MKDIR) -p tqslcert.app/Contents/Resources/Help
-	
-	$(CP) $(srcdir)/help/tqslcert/* tqslcert.app/Contents/Resources/Help
-	$(CP) $(TQSLLIB)/../share/tqsl/config.xml tqslcert.app/Contents/Resources
-	
-	$(ECHO) -n "APPL????" >tqslcert.app/Contents/PkgInfo
+dmg: TrustedQSL.dmg
+
+TrustedQSL.dmg: dist/TrustedQSL/tqslcert.app dist/TrustedQSL/tqsl.app
+	hdiutil create -srcfolder ./dist -volname TrustedQSL -nouuid -noanyowners TrustedQSL.dmg
+
+dist/TrustedQSL/tqslcert.app: tqslcert $(srcdir)/tqslicons.icns $(srcdir)/Info.plist.in
+	$(MKDIR) -p dist
+	$(MKDIR) -p dist/TrustedQSL
+	$(MKDIR) -p dist/TrustedQSL/tqslcert.app
+	$(MKDIR) -p dist/TrustedQSL/tqslcert.app/Contents
+	$(MKDIR) -p dist/TrustedQSL/tqslcert.app/Contents/MacOS
+	$(MKDIR) -p dist/TrustedQSL/tqslcert.app/Contents/Resources
+	$(MKDIR) -p dist/TrustedQSL/tqslcert.app/Contents/Resources/Help
+
+	$(CP) $(srcdir)/help/tqslcert/* dist/TrustedQSL/tqslcert.app/Contents/Resources/Help
+	$(CP) $(TQSLLIB)/../share/tqsl/config.xml dist/TrustedQSL/tqslcert.app/Contents/Resources
+	$(CP) $(srcdir)/tqslicons.icns dist/TrustedQSL/tqslcert.app/Contents/Resources
+
+	$(ECHO) -n "APPL????" >dist/TrustedQSL/tqslcert.app/Contents/PkgInfo
 	$(STRIP) tqslcert
-	$(CP) tqslcert tqslcert.app/Contents/MacOS/tqslcert
-	$(CP) $(WXRSRC) tqslcert.app/Contents/Resources/tqslcert.rsrc
+	$(CP) tqslcert dist/TrustedQSL/tqslcert.app/Contents/MacOS/tqslcert
+	$(CP) $(WXRSRC) dist/TrustedQSL/tqslcert.app/Contents/Resources/tqslcert.rsrc
 
 	$(SED) -e "s/EXEFILENAME/tqslcert/g" \
-	    -e "s/ICONFILE/wxMac.icns/g"  \
+	    -e "s/ICONFILE/tqslicons.icns/g"  \
 	    -e "s/VERSION/$(VERSION)/g"   \
-	$(srcdir)/Info.plist.in > tqslcert.app/Contents/Info.plist
+	$(srcdir)/Info.plist.in > dist/TrustedQSL/tqslcert.app/Contents/Info.plist
 
-tqsl.app: tqsl Info.plist.in
-	$(MKDIR) -p tqsl.app
-	$(MKDIR) -p tqsl.app/Contents
-	$(MKDIR) -p tqsl.app/Contents/MacOS
-	$(MKDIR) -p tqsl.app/Contents/Resources
-	$(MKDIR) -p tqsl.app/Contents/Resources/Help
-	
-	$(CP) $(srcdir)/help/tqslapp/* tqsl.app/Contents/Resources/Help
-	$(CP) $(TQSLLIB)/../share/tqsl/config.xml tqsl.app/Contents/Resources
-	
-	$(ECHO) -n "APPL????" >tqsl.app/Contents/PkgInfo
+dist/TrustedQSL/tqsl.app: tqsl $(srcdir)/tqslicons.icns $(srcdir)/Info.plist.in
+	$(MKDIR) -p dist
+	$(MKDIR) -p dist/TrustedQSL
+	$(MKDIR) -p dist/TrustedQSL/tqsl.app
+	$(MKDIR) -p dist/TrustedQSL/tqsl.app/Contents
+	$(MKDIR) -p dist/TrustedQSL/tqsl.app/Contents/MacOS
+	$(MKDIR) -p dist/TrustedQSL/tqsl.app/Contents/Resources
+	$(MKDIR) -p dist/TrustedQSL/tqsl.app/Contents/Resources/Help
+
+	$(CP) $(srcdir)/help/tqslapp/* dist/TrustedQSL/tqsl.app/Contents/Resources/Help
+	$(CP) $(TQSLLIB)/../share/tqsl/config.xml dist/TrustedQSL/tqsl.app/Contents/Resources
+	$(CP) $(srcdir)/tqslicons.icns dist/TrustedQSL/tqsl.app/Contents/Resources
+
+	$(ECHO) -n "APPL????" >dist/TrustedQSL/tqsl.app/Contents/PkgInfo
 	$(STRIP) tqsl
-	$(CP) tqsl tqsl.app/Contents/MacOS/tqsl
-	$(CP) $(WXRSRC) tqsl.app/Contents/Resources/tqsl.rsrc
-	
-	$(SED) -e "s/EXEFILENAME/tqsl/g" \
-	    -e "s/ICONFILE/wxMac.icns/g"  \
-	    -e "s/VERSION/$(VERSION)/g"   \
-	$(srcdir)/Info.plist.in > tqsl.app/Contents/Info.plist
+	$(CP) tqsl dist/TrustedQSL/tqsl.app/Contents/MacOS/tqsl
+	$(CP) $(WXRSRC) dist/TrustedQSL/tqsl.app/Contents/Resources/tqsl.rsrc
 
-tqslcert-resources.o: tqslcert.rc tqsl.ico tqsl-key1.ico
+	$(SED) -e "s/EXEFILENAME/tqsl/g" \
+	    -e "s/ICONFILE/tqslicons.icns/g"  \
+	    -e "s/VERSION/$(VERSION)/g"   \
+	$(srcdir)/Info.plist.in > dist/TrustedQSL/tqsl.app/Contents/Info.plist
+
+tqslcert-resources.o: tqslcert.rc key.ico tqsl.ico tqsl-key1.ico
 	windres --include-dir=@WXDIR@/include -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
 
 quick.txt:
@@ -139,6 +148,9 @@ tqsl-@WINVER@.exe: tqsl$(EXEEXT) tqslcert$(EXEEXT) quick.txt ChangeLog.txt \
 	strip tqsl$(EXEEXT)
 	strip tqslcert$(EXEEXT)
 	cmd /c '"@INNODIR@/ISCC.exe" setup-is.iss' || exit 1
-	
+
 helpdir:
 	test -e help || $(LN_S) $(srcdir)/help help
+
+icondir:
+	test -e icons || $(LN_S) $(srcdir)/icons icons
