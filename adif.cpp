@@ -42,6 +42,7 @@ void AdifBase::init()
   satMode=NULL;
   satName=NULL;
   srx=NULL;
+  state=NULL;
   stx=NULL;
   tenTen=NULL;
   timeOff=NULL;
@@ -94,6 +95,7 @@ void AdifBase::clearQSO()
   delete satMode;
   delete satName;
   delete srx;
+  delete state;
   delete stx;
   delete tenTen;
   delete timeOff;
@@ -114,7 +116,136 @@ AdifBase::AdifBase()
 {
   cvsID = cvsID;
 
-  clearQSO();
+  init();
+
+}
+
+void AdifBase::dump()
+{
+  if (address)
+    printf("<ADDRESS:%d>%s\n",strlen(address),address);
+
+
+  if (age)
+    printf("<AGE:%d>%s\n",strlen(age),age);
+
+  if (arrlSect)
+    printf("<ARRL_SECT:%d>%s\n",strlen(arrlSect),arrlSect);
+
+  if (band)
+    printf("<BAND:%d>%s\n",strlen(band),band);
+
+  if (call)
+    printf("<CALL:%d>%s\n",strlen(call),call);
+
+  if (cnty)
+    printf("<CNTY:%d>%s\n",strlen(cnty),cnty);
+
+  if (comment)
+    printf("<COMMENT:%d>%s\n",strlen(comment),comment);
+
+  if (cont)
+    printf("<CONT:%d>%s\n",strlen(cont),cont);
+
+  if (contestId)
+    printf("<CONTEST_ID:%d>%s\n",strlen(contestId),contestId);
+
+  if (cqz)
+    printf("<CQZ:%d>%s\n",strlen(cqz),cqz);
+
+  if (dxcc)
+    printf("<DXCC:%d>%s\n",strlen(dxcc),dxcc);
+
+  if (freq)
+    printf("<FREQ:%d>%s\n",strlen(freq),freq);
+
+  if (gridSquare)
+    printf("<GRIDSQUARE:%d>%s\n",strlen(gridSquare),gridSquare);
+
+  if (iota)
+    printf("<IOTA:%d>%s\n",strlen(iota),iota);
+
+  if (ituz)
+    printf("<ITUZ:%d>%s\n",strlen(ituz),ituz);
+
+  if (mode)
+    printf("<MODE:%d>%s\n",strlen(mode),mode);
+
+  if (name)
+    printf("<NAME:%d>%s\n",strlen(name),name);
+
+  if (notes)
+    printf("<NOTES:%d>%s\n",strlen(notes),notes);
+
+  if (oper)
+    printf("<OPERATOR:%d>%s\n",strlen(oper),oper);
+
+  if (pfx)
+    printf("<PFX:%d>%s\n",strlen(pfx),pfx);
+
+  if (propMode)
+    printf("<PROP_MODE:%d>%s\n",strlen(propMode),propMode);
+
+  if (qslMsg)
+    printf("<QSLMSG:%d>%s\n",strlen(qslMsg),qslMsg);
+
+
+  if (qslRDate)
+    printf("<QSLRDATE:%d>%s\n",strlen(qslRDate),qslRDate);
+
+  if (qslSDate)
+    printf("<QSLSDATE:%d>%s\n",strlen(qslSDate),qslSDate);
+
+  if (qslRcvd)
+    printf("<QSL_RCVD:%d>%s\n",strlen(qslRcvd),qslRcvd); 
+
+  if (qslSent)
+    printf("<QSL_SENT:%d>%s\n",strlen(qslSent),qslSent);  
+
+  if (qslVia)
+    printf("<QSL_VIA:%d>%s\n",strlen(qslVia),qslVia);  
+
+  if (qsoDate)
+    printf("<QSO_DATE:%d>%s\n",strlen(qsoDate),qsoDate);  
+
+  if (qth)
+    printf("<QTH:%d>%s\n",strlen(qth),qth);  
+
+  if (rstRcvd)
+    printf("<RST_RCVD:%d>%s\n",strlen(rstRcvd),rstRcvd); 
+
+  if (rstSent)
+    printf("<RST_SENT:%d>%s\n",strlen(rstSent),rstSent); 
+
+  if (rxPwr)
+    printf("<RX_PWR:%d>%s\n",strlen(rxPwr),rxPwr); 
+
+  if (satMode)
+    printf("<SAT_MODE:%d>%s\n",strlen(satMode),satMode);     
+
+  if (satName)
+    printf("<SAT_NAME:%d>%s\n",strlen(satName),satName); 
+
+  if (srx)
+    printf("<SRX:%d>%s\n",strlen(srx),srx); 
+
+  if (state)
+    printf("<STATE:%d>%s\n",strlen(state),state); 
+
+  if (stx)
+    printf("<STX:%d>%s\n",strlen(stx),stx); 
+
+  if (tenTen)
+    printf("<TEN_TEN:%d>%s\n",strlen(tenTen),tenTen);
+
+  if (timeOff)
+    printf("<TIME_OFF:%d>%s\n",strlen(timeOff),timeOff);
+
+  if (txPwr)
+    printf("<TX_PWR:%d>%s\n",strlen(txPwr),txPwr);
+
+  if (veProv)
+    printf("<VE_PROV:%d>%s\n",strlen(veProv),veProv);
 
 }
 
@@ -209,263 +340,269 @@ char *AdifBase::AdifParseNext(char *str)
 
       // pick out the fields
 
-      if (strcastcmp("CALL",vName) == 0)
+      if (strcasecmp("CALL",vName) == 0)
 	{
-	  call = strdup(vName);
+	  call = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("AGE",vName) == 0)
+      if (strcasecmp("AGE",vName) == 0)
 	{
-	  age = strdup(vName);
+	  age = strdup(valueStr);
 	  continue;
 	}
 	
-      if (strcastcmp("ADDRESS",vName) == 0)
+      if (strcasecmp("ADDRESS",vName) == 0)
 	{
-	  address = strdup(vName);
+	  address = strdup(valueStr);
 	  continue;
 	}  
 
-      if (strcastcmp("ARRLSECT",vName) == 0)
+      if (strcasecmp("ARRLSECT",vName) == 0)
 	{
-	  arrlSect = strdup(vName);
+	  arrlSect = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("BAND",vName) == 0)
+      if (strcasecmp("BAND",vName) == 0)
 	{
-	  band = strdup(vName);
+	  band = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("CNTY",vName) == 0)
+      if (strcasecmp("CNTY",vName) == 0)
 	{
-	  cnty = strdup(vName);
-	  continue;
-	}
-
-
-      if (strcastcmp("COMMENT",vName) == 0)
-	{
-	  comment = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("CONT",vName) == 0)
-	{
-	  cont = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("CONTEST_ID",vName) == 0)
-	{
-	  contestId = strdup(vName);
+	  cnty = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("CQZ",vName) == 0)
+      if (strcasecmp("COMMENT",vName) == 0)
 	{
-	  cqz = strdup(vName);
+	  comment = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("DXCC",vName) == 0)
+      if (strcasecmp("CONT",vName) == 0)
 	{
-	  dxcc = strdup(vName);
+	  cont = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("FREQ",vName) == 0)
+      if (strcasecmp("CONTEST_ID",vName) == 0)
 	{
-	  freq = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("GRID_SQUARE",vName) == 0)
-	{
-	  gridSquare = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("IOTA",vName) == 0)
-	{
-	  iota = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("ITUZ",vName) == 0)
-	{
-	  ituz = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("MODE",vName) == 0)
-	{
-	  mode = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("NAME",vName) == 0)
-	{
-	  name = strdup(vName);
+	  contestId = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("NOTES",vName) == 0)
+      if (strcasecmp("CQZ",vName) == 0)
 	{
-	  notes = strdup(vName);
+	  cqz = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("OPERATOR",vName) == 0)
+      if (strcasecmp("DXCC",vName) == 0)
 	{
-	  oper = strdup(vName);
+	  dxcc = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("PFX",vName) == 0)
+      if (strcasecmp("FREQ",vName) == 0)
 	{
-	  pfx = strdup(vName);
+	  freq = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("PROP_MODE",vName) == 0)
+      if (strcasecmp("GRID_SQUARE",vName) == 0)
 	{
-	  propMode = strdup(vName);
+	  gridSquare = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("qslMsg",vName) == 0)
+      if (strcasecmp("IOTA",vName) == 0)
 	{
-	  qslMsg = strdup(vName);
+	  iota = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("QSL_R_DATE",vName) == 0)
+      if (strcasecmp("ITUZ",vName) == 0)
 	{
-	  qslRDate = strdup(vName);
+	  ituz = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("QSL_S_DATE",vName) == 0)
+      if (strcasecmp("MODE",vName) == 0)
 	{
-	  qslSDate = strdup(vName);
+	  mode = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("QSL_RCVD",vName) == 0)
+      if (strcasecmp("NAME",vName) == 0)
 	{
-	  qslRcvd = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("QSL_SENT",vName) == 0)
-	{
-	  qslSent = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("QSL_VIA",vName) == 0)
-	{
-	  qslVia = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("QSO_DATE",vName) == 0)
-	{
-	  qslDate = strdup(vName);
+	  name = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("QTH",vName) == 0)
+      if (strcasecmp("NOTES",vName) == 0)
 	{
-	  qtz = strdup(vName);
+	  notes = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("OPERATOR",vName) == 0)
+	{
+	  oper = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("PFX",vName) == 0)
+	{
+	  pfx = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("PROP_MODE",vName) == 0)
+	{
+	  propMode = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("qslMsg",vName) == 0)
+	{
+	  qslMsg = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSL_R_DATE",vName) == 0)
+	{
+	  qslRDate = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSL_S_DATE",vName) == 0)
+	{
+	  qslSDate = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSL_RCVD",vName) == 0)
+	{
+	  qslRcvd = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSL_SENT",vName) == 0)
+	{
+	  qslSent = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSL_VIA",vName) == 0)
+	{
+	  qslVia = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("QSO_DATE",vName) == 0)
+	{
+	  qsoDate = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("RST_RCVD",vName) == 0)
+      if (strcasecmp("QTH",vName) == 0)
 	{
-	  rstRcvd = strdup(vName);
+	  qth = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("RST_SENT",vName) == 0)
+      if (strcasecmp("RST_RCVD",vName) == 0)
 	{
-	  rstSent = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("RX_PWR",vName) == 0)
-	{
-	  rxPwr = strdup(vName);
+	  rstRcvd = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("SAT_MODE",vName) == 0)
+      if (strcasecmp("RST_SENT",vName) == 0)
 	{
-	  satMode = strdup(vName);
+	  rstSent = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("RX_PWR",vName) == 0)
+	{
+	  rxPwr = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("SAT_NAME",vName) == 0)
+      if (strcasecmp("SAT_MODE",vName) == 0)
 	{
-	  satName = strdup(vName);
+	  satMode = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("SRX",vName) == 0)
+      if (strcasecmp("SAT_NAME",vName) == 0)
 	{
-	  srx = strdup(vName);
-	  continue;
-	}
-
-      if (strcastcmp("STX",vName) == 0)
-	{
-	  stx = strdup(vName);
+	  satName = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("TENTEN",vName) == 0)
+      if (strcasecmp("SRX",vName) == 0)
 	{
-	  tenTen = strdup(vName);
+	  srx = strdup(valueStr);
 	  continue;
 	}
 
-      if (strcastcmp("TIME_OFF",vName) == 0)
+      if (strcasecmp("STATE",vName) == 0)
 	{
-	  timeOff = strdup(vName);
+	  state = strdup(valueStr);
 	  continue;
 	}
 
-
-      if (strcastcmp("TIME_ON",vName) == 0)
+      if (strcasecmp("STX",vName) == 0)
 	{
-	  timeOn = strdup(vName);
-	  continue;
-	}
-
-
-      if (strcastcmp("TX_PWR",vName) == 0)
-	{
-	  txPwr = strdup(vName);
+	  stx = strdup(valueStr);
 	  continue;
 	}
 
 
-      if (strcastcmp("VE_PROV",vName) == 0)
+      if (strcasecmp("TENTEN",vName) == 0)
 	{
-	  veProv = strdup(vName);
+	  tenTen = strdup(valueStr);
+	  continue;
+	}
+
+      if (strcasecmp("TIME_OFF",vName) == 0)
+	{
+	  timeOff = strdup(valueStr);
+	  continue;
+	}
+
+
+      if (strcasecmp("TIME_ON",vName) == 0)
+	{
+	  timeOn = strdup(valueStr);
+	  continue;
+	}
+
+
+      if (strcasecmp("TX_PWR",vName) == 0)
+	{
+	  txPwr = strdup(valueStr);
+	  continue;
+	}
+
+
+      if (strcasecmp("VE_PROV",vName) == 0)
+	{
+	  veProv = strdup(valueStr);
 	  continue;
 	}
     }

@@ -75,7 +75,9 @@ int main(int argc,char *argv[])
 
   while((rcStr = adif.AdifParseNext(adifStr)) != NULL)
     {
-
+      adif.dump();
+      printf("====\n");
+      adif.clearQSO();
       adifStr = rcStr;
     }
 

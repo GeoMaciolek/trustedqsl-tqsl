@@ -38,6 +38,7 @@ class AdifBase
   char		*satMode;
   char		*satName;
   char		*srx;
+  char		*state;
   char		*stx;
   char		*tenTen;
   char		*timeOff;
@@ -57,6 +58,7 @@ class AdifBase
   void		init();
   void		clearQSO();
   char		*readNext();
+  void		dump();
   char 		*AdifParseNext(char *);
 
 };
