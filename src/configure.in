@@ -1,10 +1,5 @@
 dnl Process this file with autoconf to produce a configure script.
 
-dnl Get the version from the source
-majver=`grep "#define TQSLLIB_VERSION_MAJOR" tqsllib.cpp | cut -d ' ' -f 3`
-minver=`grep "#define TQSLLIB_VERSION_MINOR" tqsllib.cpp | cut -d ' ' -f 3`
-version="$majver.$minver"
-
 AC_INIT(tqsllib, 2.0, lotw-help@arrl.org)
 AC_CONFIG_HEADERS(sysconfig.h)
 AC_CANONICAL_HOST
@@ -16,6 +11,11 @@ TQSLLIB_VERSION_MAJOR=`echo $VERSION | sed -e 's/\..*//'`
 TQSLLIB_VERSION_MINOR=`echo $VERSION | sed -e 's/.*\.//'`
 AC_DEFINE_UNQUOTED(TQSLLIB_VERSION_MAJOR, $TQSLLIB_VERSION_MAJOR, [Major version number])
 AC_DEFINE_UNQUOTED(TQSLLIB_VERSION_MINOR, $TQSLLIB_VERSION_MINOR, [Minor version number])
+AC_SUBST(TQSLLIB_VERSION_MAJOR)
+AC_SUBST(TQSLLIB_VERSION_MINOR)
+
+SHLIBVER=$(($TQSLLIB_VERSION_MAJOR -1))
+AC_SUBST(SHLIBVER)
 
 dnl Set defines for platforms
 
@@ -189,5 +189,12 @@ AC_ARG_ENABLE(extra,
   ]
 )
 AC_SUBST(make_extra)
+
+if test $TQSLLIB_VERSION_MAJOR -gt 1; then
+  DLLVER=$TQSLLIB_VERSION_MAJOR
+else
+  DLLVER=
+fi
+AC_SUBST(DLLVER)
 
 AC_OUTPUT(Makefile tqsllib.spec)

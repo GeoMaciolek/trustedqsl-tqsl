@@ -7,6 +7,7 @@ PLATFORM = @platform@
 datadir = @datadir@/tqsl
 docdir = @datadir@/doc
 
+DLLVER=@DLLVER@
 INCLUDES = -I$(OPENSSL)/include -I$(EXPAT)/include -I$(ZLIB)/include
 
 AM_CXXFLAGS = -g3 -O -Wall $(LOTW_SERVER) $(PLATFORM) -DCONFDIR=\"$(datadir)\"
@@ -19,6 +20,7 @@ libtqsllib_la_SOURCES = tqsllib.cpp openssl_cert.cpp adif.cpp xml.cpp location.c
 	tqslconvert.cpp cabrillo.cpp location.h tqsllib-doc.h xml.h \
 	openssl_cert.h tqslexc.h
 include_HEADERS = tqsllib.h tqslerrno.h cabrillo.h adif.h tqslconvert.h
+libtqsllib_la_LDFLAGS = -version-info @SHLIBVER@:@TQSLLIB_VERSION_MINOR@:0
 
 EXTRA_PROGRAMS = gen_crq load_cert station_loc converter
 noinst_PROGRAMS = $(make_extra)
@@ -53,21 +55,21 @@ doc_DATA = $(docfiles)
 EXTRA_DIST = configdir/config.xml config.xml licenses/LICENSE LICENSE tqsllib.spec.in tqsllib.spec \
 	tqsllib.depends doxygen Doxyfile tqsllib.css
 
-MOSTLYCLEANFILES = tqsllib2.dll tqsllib.def tqsllib.exports
+MOSTLYCLEANFILES = tqsllib$(DLLVER).dll tqsllib.def tqsllib.exports
 
 libtqsllibd.a: libtqsllib.la
-	dllwrap.exe --add-stdcall-alias --output-def tqsllib2.def \
-	    --output-exp tqsllib2.exports \
-		--dllname tqsllib2.dll \
+	dllwrap.exe --add-stdcall-alias --output-def tqsllib.def \
+	    --output-exp tqsllib.exports \
+		--dllname tqsllib$(DLLVER).dll \
 		--output-lib libtqsllibd.a .libs/libtqsllib.a -L$(OPENSSL)/lib \
 		-L$(EXPAT)/lib -lexpat -L$(ZLIB)/lib \
 		-lz -lcrypto -lgdi32 -lstdc++
-	strip tqsllib2.dll
+	strip tqsllib$(DLLVER).dll
 
 rsync-exclude:
 	echo "$(PROGRAMS)" | perl -p -e 's/ /\n/g' > rsync-exclude
 	
 install-exec-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	test "$(build_os)" != "mingw32" || $(INSTALL_PROGRAM) tqsllib2.dll $(DESTDIR)$(bindir)/tqsllib2.dll
+	test "$(build_os)" != "mingw32" || $(INSTALL_PROGRAM) tqsllib$(DLLVER).dll $(DESTDIR)$(bindir)/tqsllib$(DLLVER).dll
 

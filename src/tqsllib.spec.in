@@ -44,8 +44,8 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE ChangeLog
 
 /usr/lib/libtqsllib.so
-/usr/lib/libtqsllib.so.0
-/usr/lib/libtqsllib.so.0.0.0
+/usr/lib/libtqsllib.so.1
+/usr/lib/libtqsllib.so.1.0.0
 /usr/share/tqsl/config.xml
 /usr/bin/dumptqsldata
 
