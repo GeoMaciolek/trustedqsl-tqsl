@@ -98,7 +98,7 @@ getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	wxString message = wxString::Format(wxT("Enter the password to unlock the private key for\n"
 		"%s -- %s\n(This is the password you made up when you\nrequested the certificate.)"),
 		wxString(call, wxConvLocal).c_str(), wxString(dxccname, wxConvLocal).c_str());
-	
+
 	wxString pw = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""),
 		wxGetApp().GetTopWindow());
 	if (pw == wxT(""))
@@ -385,14 +385,18 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_new, wxT("Create &New ADIF file..."));
 	file_menu->Append(tm_f_edit, wxT("&Edit existing ADIF file..."));
-	file_menu->AppendSeparator();
 #ifdef ALLOW_UNCOMPRESSED
+	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_compress, wxT("Co&mpress..."));
 	file_menu->Append(tm_f_uncompress, wxT("&Uncompress..."));
+#endif
+#ifndef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->AppendSeparator();
 #endif
 	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
+#ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
+#endif
 	file_menu->Append(tm_f_exit, wxT("E&xit"));
 
 	// Station menu
@@ -407,7 +411,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 	if (wxFileNameFromPath(hhp) != wxT("")) {
 		if (help.AddBook(hhp))
 		help_menu->Append(tm_h_contents, wxT("&Contents"));
+#ifndef __WXMAC__	// On Mac, About not on Help menu
 		help_menu->AppendSeparator();
+#endif
 	}
 	help_menu->Append(tm_h_about, wxT("&About"));
 
@@ -1062,6 +1068,12 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 }
 
 QSLApp::QSLApp() : wxApp() {
+#ifdef __WXMAC__	// Tell wx to put these items on the proper menu
+	wxApp::s_macAboutMenuItemId = long(tm_h_about);
+	wxApp::s_macPreferencesMenuItemId = long(tm_f_preferences);
+	wxApp::s_macExitMenuItemId = long(tm_f_exit);
+#endif
+
 	wxConfigBase::Set(new wxConfig(wxT("tqslapp")));
 }
 
