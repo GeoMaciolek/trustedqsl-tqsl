@@ -1,229 +1,164 @@
-Copyright (C) 1994, 1995, 1996, 1999, 2000, 2001, 2002 Free Software
-Foundation, Inc.
+tqsllib
+=======
 
-   This file is free documentation; the Free Software Foundation gives
-unlimited permission to copy, distribute and modify it.
+This is the TrustedQSL library, part of the TrustedQSL project:
 
-Basic Installation
-==================
+http://sourceforge.net/projects/trustedqsl/
 
-   These are generic installation instructions.
+===================================================================
+Contents
 
-   The `configure' shell script attempts to guess correct values for
-various system-dependent variables used during compilation.  It uses
-those values to create a `Makefile' in each directory of the package.
-It may also create one or more `.h' files containing system-dependent
-definitions.  Finally, it creates a shell script `config.status' that
-you can run in the future to recreate the current configuration, and a
-file `config.log' containing compiler output (useful mainly for
-debugging `configure').
+1) Prerequisites
 
-   It can also use an optional file (typically called `config.cache'
-and enabled with `--cache-file=config.cache' or simply `-C') that saves
-the results of its tests to speed up reconfiguring.  (Caching is
-disabled by default to prevent problems with accidental use of stale
-cache files.)
+2) Building the Library under Linux/Unix
 
-   If you need to do unusual things to compile the package, please try
-to figure out how `configure' could check whether to do them, and mail
-diffs or instructions to the address given in the `README' so they can
-be considered for the next release.  If you are using the cache, and at
-some point `config.cache' contains results you don't want to keep, you
-may remove or edit it.
+3) Building the Library under Mac OS X
 
-   The file `configure.ac' (or `configure.in') is used to create
-`configure' by a program called `autoconf'.  You only need
-`configure.ac' if you want to change it or regenerate `configure' using
-a newer version of `autoconf'.
+4) Building the Library under Windows.
 
-The simplest way to compile this package is:
+===================================================================
 
-  1. `cd' to the directory containing the package's source code and type
-     `./configure' to configure the package for your system.  If you're
-     using `csh' on an old version of System V, you might need to type
-     `sh ./configure' instead to prevent `csh' from trying to execute
-     `configure' itself.
+1) Prerequisites
 
-     Running `configure' takes awhile.  While running, it prints some
-     messages telling which features it is checking for.
+The TrustedQSL library depends on several other libraries:
 
-  2. Type `make' to compile the package.
+OpenSSL (http://www.openssl.org/)
+expat 1.x XML parser library (http://expat.sourceforge.net/)
+zlib (http://www.gzip.org/zlib/)
 
-  3. Optionally, type `make check' to run any self-tests that come with
-     the package.
+Most Unix and unix-like workstations will have these available. For
+those systems that do not, the packages are easily built. Instructions
+for building under the Windows environment are given below under
+"Building the "Library under Windows."
 
-  4. Type `make install' to install the programs and any data files and
-     documentation.
+In the instructions that follow, the versions of other packages
+that were used to build the tqsllib package as of the date this
+document was last updated are given in parentheses.
 
-  5. You can remove the program binaries and object files from the
-     source code directory by typing `make clean'.  To also remove the
-     files that `configure' created (so you can compile the package for
-     a different kind of computer), type `make distclean'.  There is
-     also a `make maintainer-clean' target, but that is intended mainly
-     for the package's developers.  If you use it, you may have to get
-     all sorts of other programs in order to regenerate files that came
-     with the distribution.
+===================================================================
 
-Compilers and Options
-=====================
+2) Building the Library under Linux/Unix
 
-   Some systems require unusual options for compilation or linking that
-the `configure' script does not know about.  Run `./configure --help'
-for details on some of the pertinent environment variables.
+The quick answer:
 
-   You can give `configure' initial values for configuration parameters
-by setting variables in the command line or in the environment.  Here
-is an example:
+./configure
+make
+make install
 
-     ./configure CC=c89 CFLAGS=-O2 LIBS=-lposix
+That will install the library under /usr/local. It also will install
+the needed header files under /usr/local/include and a sample program
+that dumps the configuration file, dumptqsldata, under /usr/local/bin.
 
-   *Note Defining Variables::, for more details.
+You can change the install location via:
+./configure --prefix=/foo/bar
 
-Compiling For Multiple Architectures
-====================================
+By default, both shared and static versions of the library are built.
+You can change that using the standard libtool options, and you can also
+specify the location of needed libraries. For details, see:
 
-   You can compile the package for more than one kind of computer at the
-same time, by placing the object files for each architecture in their
-own directory.  To do this, you must use a version of `make' that
-supports the `VPATH' variable, such as GNU `make'.  `cd' to the
-directory where you want the object files and executables to go and run
-the `configure' script.  `configure' automatically checks for the
-source code in the directory that `configure' is in and in `..'.
+./configure --help
 
-   If you have to use a `make' that does not support the `VPATH'
-variable, you have to compile the package for one architecture at a
-time in the source code directory.  After you have installed the
-package for one architecture, use `make distclean' before reconfiguring
-for another architecture.
+===================================================================
 
-Installation Names
-==================
+3) Building the Library under Mac OS X
 
-   By default, `make install' will install the package's files in
-`/usr/local/bin', `/usr/local/man', etc.  You can specify an
-installation prefix other than `/usr/local' by giving `configure' the
-option `--prefix=PATH'.
+This is done in much the same manner as building under Linux/Unix, above.
+However, it is desirable to *not* build a dylib (shared library). Rather,
+use a static library so that applications will not have to distribute and
+manage the dylib as a system file.
 
-   You can specify separate installation prefixes for
-architecture-specific files and architecture-independent files.  If you
-give `configure' the option `--exec-prefix=PATH', the package will use
-PATH as the prefix for installing programs and libraries.
-Documentation and other data files will still use the regular prefix.
+You also may not want to install the library into system directories:
 
-   In addition, if you use an unusual directory layout you can give
-options like `--bindir=PATH' to specify different values for particular
-kinds of files.  Run `configure --help' for a list of the directories
-you can set and what kinds of files go in them.
+./configure --disable-shared --prefix=$HOME/tqsllib
+make
+make install
 
-   If the package supports it, you can cause programs to be installed
-with an extra prefix or suffix on their names by giving `configure' the
-option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
+===================================================================
 
-Optional Features
-=================
+4) Building the Library under Windows
 
-   Some packages pay attention to `--enable-FEATURE' options to
-`configure', where FEATURE indicates an optional part of the package.
-They may also pay attention to `--with-PACKAGE' options, where PACKAGE
-is something like `gnu-as' or `x' (for the X Window System).  The
-`README' should mention any `--enable-' and `--with-' options that the
-package recognizes.
+The end result of building under Windows will be a single DLL,
+TQSLLIB2.DLL.
 
-   For packages that use the X Window System, `configure' can usually
-find the X include and library files automatically, but if it doesn't,
-you can use the `configure' options `--x-includes=DIR' and
-`--x-libraries=DIR' to specify their locations.
+Building under Windows is a bit more complicated to set
+up since the build environment has to mimic the unix environment
+that is native to the other platforms. For this purpose, we used
+the MSYS/MinGW environment. You also will certainly need to obtain
+and build the prerequisite software. What follows is a complete
+guide to installing and building everything:
 
-Specifying the System Type
-==========================
+Along with the software packages listed under Prerequisites, above,
+the development enviromnent is set up my obtaining and installing the
+following:
 
-   There may be some features `configure' cannot figure out
-automatically, but needs to determine by the type of machine the package
-will run on.  Usually, assuming the package is built to be run on the
-_same_ architectures, `configure' can figure that out, but if it prints
-a message saying it cannot guess the machine type, give it the
-`--build=TYPE' option.  TYPE can either be a short name for the system
-type, such as `sun4', or a canonical name which has the form:
+MinGW, MSYS and the MSYS Developer's Toolkit (DTK) (http://www.mingw.org/)
 
-     CPU-COMPANY-SYSTEM
+STEP 1) Set up the build environment
 
-where SYSTEM can have one of these forms:
+Install MinGW (3.1.0-1)
+Install MSYS (1.0.10)
 
-     OS KERNEL-OS
+Note: MSYS should be installed to a directory path that does not
+contain any spaces!
 
-   See the file `config.sub' for the possible values of each field.  If
-`config.sub' isn't included in this package, then this package doesn't
-need to know the machine type.
+Install MSYS DTK (1.0.1)
 
-   If you are _building_ compiler tools for cross-compiling, you should
-use the `--target=TYPE' option to select the type of system they will
-produce code for.
+The rest of the procedure is performed from within an MSYS shell.
+Launch MSYS via the Windows Start menu. (It will be in the MinGW
+program group unless you explicitly installed it elsewhere.)
 
-   If you want to _use_ a cross compiler, that generates code for a
-platform different from the build platform, you should specify the
-"host" platform (i.e., that on which the generated programs will
-eventually be run) with `--host=TYPE'.
+**NOTE**
+Since MSYS simulates a Unix-type environment, you should take note
+of the following:
 
-Sharing Defaults
-================
+  A) In paths, directories are separated by a forward slash (/) not
+  a backslash (\).
 
-   If you want to set default values for `configure' scripts to share,
-you can create a site shell script called `config.site' that gives
-default values for variables like `CC', `cache_file', and `prefix'.
-`configure' looks for `PREFIX/share/config.site' if it exists, then
-`PREFIX/etc/config.site' if it exists.  Or, you can set the
-`CONFIG_SITE' environment variable to the location of the site script.
-A warning: not all `configure' scripts look for a site script.
+  B) Unix commands are case-sensitive.
 
-Defining Variables
-==================
+  C) The 'cd' command changes the current directory. If given with
+  no arguments, it changes to the "home" directory. Each of the
+  following steps is begun from the home directory.
 
-   Variables not defined in a site shell script can be set in the
-environment passed to `configure'.  However, some packages may run
-configure again during the build, and the customized values of these
-variables may be lost.  In order to avoid this problem, you should set
-them in the `configure' command line, using `VAR=value'.  For example:
+STEP 2) Compile OpenSSL (0.9.7e)
 
-     ./configure CC=/usr/local2/bin/gcc
+Install the openssl source.
 
-will cause the specified gcc to be used as the C compiler (unless it is
-overridden in the site shell script).
+cd
+tar -xzf openssl-0.9.7e.tar.gz
+cd openssl-0.9.7e
+./config no-shared --prefix=$HOME/openssl mingw
+make install_sw
 
-`configure' Invocation
-======================
+STEP 3) Compile the expat library (1.95.8)
 
-   `configure' recognizes the following options to control how it
-operates.
+Install the expat source
 
-`--help'
-`-h'
-     Print a summary of the options to `configure', and exit.
+cd
+tar -xzf expat-1.95.8.tar.gz
+cd expat-1.95.8
+./configure --disable-shared --prefix=$HOME/expat
+make installlib
 
-`--version'
-`-V'
-     Print the version of Autoconf used to generate the `configure'
-     script, and exit.
+STEP 4) Compile the zlib library (1.2.1)
 
-`--cache-file=FILE'
-     Enable the cache: use and save the results of the tests in FILE,
-     traditionally `config.cache'.  FILE defaults to `/dev/null' to
-     disable caching.
+Install the zlib source
 
-`--config-cache'
-`-C'
-     Alias for `--cache-file=config.cache'.
+cd
+tar -xzf zlib-1.2.1.tar.gz
+cd zlib-1.2.1
+./configure --prefix=$HOME/zlib
+make install
 
-`--quiet'
-`--silent'
-`-q'
-     Do not print messages saying which checks are being made.  To
-     suppress all normal output, redirect it to `/dev/null' (any error
-     messages will still be shown).
+STEP 5) Compile the tqsllib library (1.6)
 
-`--srcdir=DIR'
-     Look for the package's source code in directory DIR.  Usually
-     `configure' can determine that directory automatically.
+Install the tsqllib source
 
-`configure' also accepts some other, not widely useful, options.  Run
-`configure --help' for more details.
+cd
+tar -xzf tqsllib-1.6.tar.gz
+cd tqsllib-1.6
+./configure --disable-shared --prefix=$HOME/tqsllib
+make install
 
+This should result in the creation of the tqsllib2.dll
+file and the dumptqsldata.exe file, both in $HOME/tqsllib/bin.
