@@ -54,10 +54,36 @@ int main(int argc, char *argv[])
   int 		optCnt=0;
   int 		c,errFlg=0;
   int		selfSign=0;
+  char		expStr[20];
+  char		issueStr[20];
+  char		caId[20];
 
-  while ((c = getopt(argc, argv, "sC:p:a:n:d:")) != EOF)
+  cvsID = cvsID; // prevent warnings
+
+  while ((c = getopt(argc, argv, "sC:p:a:n:d:e:i:I:")) != EOF)
     switch (c) 
       {
+      case 'i':
+	strcpy(issueStr,optarg);
+	if (!chkDate(issueStr))
+	  {
+	    fprintf(stderr,"invalid issued date %s\n",issueStr);
+	    errFlg++;  
+	  }
+	else
+	  optCnt++;
+
+	break;
+      case 'e':
+	strcpy(expStr,optarg);
+	if (!chkDate(expStr))
+	  {
+	    fprintf(stderr,"invalid expire date %s\n",expStr);
+	    errFlg++;  
+	  }
+	else
+	  optCnt++;
+	break;
       case 's':
 	selfSign = 1;
 	break;
@@ -67,6 +93,11 @@ int main(int argc, char *argv[])
 	break;
       case 'C':
 	strcpy(caPrivFile,optarg);
+	optCnt++;
+	break;
+      case 'I':
+	strncpy(caId,optarg,10);
+	caId[10]='\0';
 	optCnt++;
 	break;
       case 'd':
@@ -86,20 +117,19 @@ int main(int argc, char *argv[])
 	break;
       }
 
-  if (errFlg || optCnt!= 4)
+  if (errFlg || optCnt != 7)
     {
       printf("usage: gencert -a Amateur-cert -p amateur-PK -C "
-	     "CA-priv-key -n cert# \n");
+	     "CA-priv-key -n cert# -i issue-date (mm/dd/yyyy) "
+	     "-e expire-date (mm/dd/yyyy) -I CA ID (10 max)\n");
       return(-1);
     }
 
-  pk = (char *)readQpub(amPkFile,&typ);
-  if (pk != NULL)
+  pubkey = readPubKey(amPkFile,&typ);
+  if (pk == NULL)
     {
-      if (pk[0] == '1')
-	{
-	  pubkey = (PublicKey *)pk;
-	}
+      fprintf(stderr,"Unable to read public key file %s\n",amPkFile);
+      return(2);
     }
 
   dsa = DSA_new();
@@ -125,11 +155,14 @@ int main(int argc, char *argv[])
     amCert.data.certType = '1';
 
   amCert.data.publicKey = *pubkey;
-  memcpy(&amCert.data.issueDate,"03/04/2001",10);
-  memcpy(&amCert.data.expireDate,"03/04/2011",10);
+  sprintf(tmpStr,"%-10.10s       ",issueStr);
+  memcpy(&amCert.data.issueDate,tmpStr,10);
+
+  sprintf(tmpStr,"%-10.10s       ",expStr	);
+  memcpy(&amCert.data.expireDate,tmpStr,10);
 
   
-  sprintf(tmpStr,"%-10.10s       ","TQSL");
+  sprintf(tmpStr,"%-10.10s       ",caId);
   memcpy(&amCert.data.caID,tmpStr,10);
 
   sprintf(tmpStr,"%s      ",certNum);

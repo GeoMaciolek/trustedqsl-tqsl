@@ -25,6 +25,58 @@
 
 static char cvsID[] = "$Id$";
 
+// a very simple date checking routine.  
+// returns 1 if date is ok or 0 if date is bad.
+//
+int chkDate(const char *sdate)
+{
+  char dateA[3][10];
+
+  int i;
+  int j,k;
+  i = 0;
+  j = 0;
+  k = 0;
+  long d,y,m;
+
+  for (i=0;i<strlen(sdate);i++)
+    {
+      if (sdate[i] == '\0')
+	{
+	dateA[j][k] = '\0';
+	break;
+	}
+      if (sdate[i] == '/')
+	{
+	  dateA[j][k] = '\0';
+	  k=0;
+	  j++;
+	  continue;
+	}
+      dateA[j][k] = sdate[i];
+      k++;
+      dateA[j][k] = '\0';
+    }
+  
+  if (j != 2)
+    return(0);
+
+  m = atol(dateA[0]);
+  d = atol(dateA[1]);
+  y = atol(dateA[2]);
+
+  if (d < 1 || d > 31)
+    return(0);
+
+  if (m < 1 || m > 12)
+    return(0);
+
+  if (y < 2001 || y > 2200)
+    return(0);
+
+  return(1);
+  
+}
 char *bin2hex(const unsigned char *binStr,int len)
 {
   char *tStr;

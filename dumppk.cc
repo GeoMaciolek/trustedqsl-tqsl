@@ -10,7 +10,7 @@ int main(int argc,char *argv[])
 
   PublicKey  *pk;
   char  typ;
-  pk = (PublicKey *)readQpub(argv[1],&typ);
+  pk = (PublicKey *)readPubKey(argv[1],&typ);
   dumpPubKey(pk,stdout);
   return(0);
 

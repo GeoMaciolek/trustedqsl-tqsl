@@ -115,9 +115,13 @@ int main(int argc, char *argv[])
       for(int i=0;i<(int)sigLen;i++)
 	printf("%02x",sigRet[i]);
       printf("\n");
-      writeSign(argv[1],sigRet,sigLen);
-      if (writeSignAsc(argv[1],sigRet,sigLen) < 0)
-	perror("writeSignAsc");
+      char sigFile[100];
+      sprintf(sigFile,"%s.sig",argv[1]);
+      writeSign(sigFile,sigRet,sigLen);
+
+      sprintf(sigFile,"%s.asig",argv[1]); 
+      if (writeSignHex(sigFile,sigRet,sigLen) < 0)
+	perror("writeSignHex");
       rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
       printf("verify returned %d\n",rc);
     }

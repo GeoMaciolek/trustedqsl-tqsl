@@ -6,7 +6,11 @@ CXXFLAGS = -g -Wall
 LIB = -lcrypto
 COMOBJ = fileio.o convert.o tqsllib.o 
 
-all:	sign verify qgenkey gencert chkcert dumpcert dumppk
+all:	sign verify qgenkey gencert chkcert dumpcert dumppk chkdate
+
+
+chkdate: chkdate.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o chkdate chkdate.o  $(COMOBJ) $(LIB)
 
 sign:	sign.o $(COMOBJ)
 	$(CXX) $(CXXFLAGS) -o dsasign sign.o  $(COMOBJ) $(LIB)

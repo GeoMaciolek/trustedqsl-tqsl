@@ -38,13 +38,18 @@ static char cvsID[] = "$Id$";
 extern int errno;
 #endif
 
-void *readQpub(char *fname,char *typ)
+// read public key file which has a type 1 format
+// return NULL on error
+//
+PublicKey *readPubKey(char *fname,char *typ)
 {
 
-  char	buf[500];
-  char	*retbuf;
-  int	rc;
-  int	fd;
+  char		buf[500];
+  PublicKey	*retbuf;
+  int		rc;
+  int		fd;
+
+  cvsID = cvsID;  // avoid warnigns
 
   fd = open(fname,O_RDONLY);
   if (fd < 0)
@@ -60,21 +65,23 @@ void *readQpub(char *fname,char *typ)
   switch (buf[0])
     {
     case '1':
-      retbuf = (char *)malloc(sizeof(PublicKey));
+      retbuf = new PublicKey;
       memcpy(retbuf,buf,sizeof(PublicKey));
 
-      return((void*) retbuf);
+      return(retbuf);
     }
   return(NULL);
 }
   
+// write a binary signature file.  Maybe not be used any
+// more.  returns negitive number on error or number of
+// bytes written
+
 int writeSign(char *fname,unsigned char *sig,int len)
 {
-  char	newName[500];
-  int	fd;
 
-  sprintf(newName,"%s.sig",fname);
-  fd = open(newName,O_WRONLY|O_CREAT|O_TRUNC,0644);
+  int	fd;
+  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
   if (fd < 0)
     return(-1);
 
@@ -86,17 +93,18 @@ int writeSign(char *fname,unsigned char *sig,int len)
     return(-2);
   return(rc);
 }
-int writeSignAsc(char *fname, unsigned char *sig,int len)
+
+// writes an hex encode ascii signature file.
+// return number of bytes writing or negitive on error
+//
+int writeSignHex(char *fname, unsigned char *sig,int len)
 {
-  char	newName[500];
   
   int	fd;
 
-  sprintf(newName,"%s.asig",fname);
-  fd = open(newName,O_WRONLY|O_CREAT|O_TRUNC,0644);
+  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
   if (fd < 0)
     return(-1);
-
 
   char *t;
   t = bin2hex(sig,len);
@@ -105,7 +113,13 @@ int writeSignAsc(char *fname, unsigned char *sig,int len)
   free(t);
   return(len*2);
 }
-int readSignAsc(char *fname,unsigned char *sig,int len)
+
+// reads an hex encode ascii file stores results in sig.
+// sig must be large enough to contain the the binary
+// signature.  It should be around 42 bytes.
+// Returns the number of bytes in sig or -1 for error.
+
+int readSignHex(char *fname,unsigned char *sig,int len)
 {
   char	newName[200];
   char  txtSign[200];
@@ -122,6 +136,9 @@ int readSignAsc(char *fname,unsigned char *sig,int len)
   hex2bin(txtSign,sig,rc);
   return(rc/2);
 }
+//
+// read binary signature.  returns -1 or error.
+//
 int readSign(char *fname,unsigned char *sig,int len)
 {
   char	newName[500];
@@ -138,6 +155,8 @@ int readSign(char *fname,unsigned char *sig,int len)
   return(rc);
 }
 
+// return the number of bytes in a file.
+
 int getFileSize(char *fname)
 {
   struct stat sbuf;
@@ -145,10 +164,11 @@ int getFileSize(char *fname)
 
   rc = stat(fname,&sbuf);
   if (rc < 0) 
-    return(0);
+    return(-1);
   return(sbuf.st_size);
 }
 
+// read a cert from a file.
 int readCert(char *fname,AmCertExtern *cert)
 {
   int fileSize;
@@ -167,6 +187,10 @@ int readCert(char *fname,AmCertExtern *cert)
   return(rc);
 
 }
+
+//
+// sha1 hash a file
+//
 int sha1File(char *fname,unsigned char *hash)
 {
 
@@ -199,64 +223,73 @@ int sha1File(char *fname,unsigned char *hash)
   
   return(1);
 }
+
+// store and read DSA info.  not currently used.
+// from one of the kind folk on the openssl mailing list.
+//
 int storeDSA(DSA *dsa)
 {
 
-	unsigned char		buf[1024];
-	unsigned char		*ptr;
-	unsigned int		DER_size;
-	unsigned int		DER_to_file;
-	FILE			*f;
-	int			CounterRet;
-	unsigned long		h_ret;
+  unsigned char		buf[1024];
+  unsigned char		*ptr;
+  unsigned int		DER_size;
+  unsigned int		DER_to_file;
+  FILE			*f;
+  int			CounterRet;
+  unsigned long		h_ret;
 
-	dsa = DSA_generate_parameters(1024, NULL, 0, &CounterRet, &h_ret,
-				      NULL, NULL);
-	if (dsa == NULL)
-		return ERROR;
+  dsa = DSA_generate_parameters(1024, NULL, 0, &CounterRet, &h_ret,
+				NULL, NULL);
+  if (dsa == NULL)
+    return ERROR;
 
-	if (DSA_generate_key(dsa) != 1)
-		return ERROR;
+  if (DSA_generate_key(dsa) != 1)
+    return ERROR;
 
-	// Store the private key (in DER encoding binary) in the specified file.
-	ptr = buf;
-	DER_size = i2d_DSAPrivateKey(dsa, &ptr);
-	if (DER_size == 0)
-	{
-		DSA_free(dsa);
-		return ERROR;
-	}
-	f = fopen("privatekey","wb");
-	if (f == NULL)
-	{
-		return ERROR;
-	}
-	DER_to_file = htonl(DER_size);
-	fwrite(&DER_to_file,sizeof(int),1,f);
-	fwrite(buf,sizeof(char),DER_size,f);
-	fclose(f);
-	return(0);
+  // Store the private key (in DER encoding binary) in the specified file.
+  ptr = buf;
+  DER_size = i2d_DSAPrivateKey(dsa, &ptr);
+  if (DER_size == 0)
+    {
+      DSA_free(dsa);
+      return ERROR;
+    }
+  f = fopen("privatekey","wb");
+  if (f == NULL)
+    {
+      return ERROR;
+    }
+  DER_to_file = htonl(DER_size);
+  fwrite(&DER_to_file,sizeof(int),1,f);
+  fwrite(buf,sizeof(char),DER_size,f);
+  fclose(f);
+  return(0);
 }
 //******************* LOAD **********************
 int loadDSA(DSA *dsa)
 {
-	unsigned char		buf[1024];
-	unsigned char		*ptr;
-	unsigned int		DER_size;
-	FILE			*f;
+  unsigned char		buf[1024];
+  unsigned char		*ptr;
+  unsigned int		DER_size;
+  FILE			*f;
 
-	ptr = buf;
-	f = fopen("privatekey","rb");
-	if (f == NULL)
-		return ERROR;
-	fread(&DER_size,sizeof(int),1,f);
-	DER_size = ntohl(DER_size);
-	fread(buf,sizeof(char),DER_size,f);
-	fclose(f);
-	if (d2i_DSAPrivateKey(&dsa, &ptr, DER_size) == NULL)
-		return ERROR;
-	return(0);
+  ptr = buf;
+  f = fopen("privatekey","rb");
+  if (f == NULL)
+    return ERROR;
+  fread(&DER_size,sizeof(int),1,f);
+  DER_size = ntohl(DER_size);
+  fread(buf,sizeof(char),DER_size,f);
+  fclose(f);
+  if (d2i_DSAPrivateKey(&dsa, &ptr, DER_size) == NULL)
+    return ERROR;
+  return(0);
 }
+
+// Read a big number from a hex encoded file and store it in
+// bn
+// returns -1 on error.
+
 int readBig(const char *fname,BIGNUM **bn)
 {
   FILE *fkey;

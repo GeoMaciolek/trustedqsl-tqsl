@@ -24,20 +24,21 @@
 #include <openssl/bn.h>
 
 #define ERROR -1
-int 	sha1File(char *fname,unsigned char *);
-int 	writeSign(char *fname,unsigned char *sig,int len);
-int 	readSign(char *fname,unsigned char *sig,int len);
-int	readBig(const char *fname,BIGNUM **bn);
-char 	*bin2hex(const unsigned char *binStr,int len);
-int 	writeSignAsc(char *fname, unsigned char *sig,int len);
-void 	hex2bin(char *hexStr,unsigned char *binStr,int len);
-int 	readSignAsc(char *fname,unsigned char *sig,int len);
-void 	*readQpub(char *fname,char *typ);
-int 	readCert(char *fname,AmCertExtern *cert);
-int	lgetopt(int argc, char *argv[], char *opts);
-int 	validateCert(AmCertExtern *caCert, AmCertExtern *amCert);
-void 	initPublicKey(PublicKey *pk);
-void	dumpCert(AmCertExtern *cert,FILE *fp);
-void	dumpPubKey(PublicKey *pk,FILE *fp);
+int 		sha1File(char *fname,unsigned char *);
+int 		writeSign(char *fname,unsigned char *sig,int len);
+int 		readSign(char *fname,unsigned char *sig,int len);
+int		readBig(const char *fname,BIGNUM **bn);
+char 		*bin2hex(const unsigned char *binStr,int len);
+int 		writeSignHex(char *fname, unsigned char *sig,int len);
+void 		hex2bin(char *hexStr,unsigned char *binStr,int len);
+int 		readSignHex(char *fname,unsigned char *sig,int len);
+PublicKey 	*readPubKey(char *fname,char *typ);
+int 		readCert(char *fname,AmCertExtern *cert);
+int		lgetopt(int argc, char *argv[], char *opts);
+int 		validateCert(AmCertExtern *caCert, AmCertExtern *amCert);
+void 		initPublicKey(PublicKey *pk);
+void		dumpCert(AmCertExtern *cert,FILE *fp);
+void		dumpPubKey(PublicKey *pk,FILE *fp);
+int		chkDate(const char *);
 #endif SIGN_H
 

@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
       readBig("pubkey.txt",&dsa->pub_key);
       DSA_print(bio_err,dsa,0);
       //      sigLen = readSign(argv[1],sigRet,99);
-      sigLen = readSignAsc(argv[1],sigRet,99);
+      sigLen = readSignHex(argv[1],sigRet,99);
 	
       if (sigLen > 0)
 	{
@@ -116,7 +116,7 @@ int main(int argc, char *argv[])
 	}
       else
 	{
-	  perror("readSignAsc");
+	  perror("readSignHex");
 	  printf("bad read of sig file\n");
 	}
     }
