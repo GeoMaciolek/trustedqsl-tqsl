@@ -125,14 +125,6 @@ int main(int argc, char *argv[])
 
   memset(&cert,' ',sizeof(cert));
 
-  cert.data.mark1=',';
-  cert.data.mark2=',';
-  cert.data.mark3=',';
-  cert.data.mark4=',';
-  cert.data.mark5=',';
-  cert.mark6=',';
-  cert.mark7=',';
-
   cert.data.certType = '1';
   cert.data.publicKey = *pubkey;
   memcpy(&cert.data.issueDate,"03/03/2001",10);

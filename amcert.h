@@ -45,23 +45,16 @@ struct AmCertData
 {
   char			certType;
   char			issueDate[10];
-  char			mark1;
   char			expireDate[10];
-  char			mark2;
   char			caID[10];
-  char			mark3;
   char			caPK[4];
-  char			mark4;
   char			caCertNum[6];
-  char			mark5;
   PublicKey		publicKey;
 };
 struct AmCertExtern
 {
   AmCertData		data;
-  char			mark6;
   char		        sigSize[3];
-  char			mark7;
   char			signature[signSizeMax];
 };
 
