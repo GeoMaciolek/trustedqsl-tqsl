@@ -29,7 +29,7 @@
 #include <openssl/bn.h>
 #include <string.h>
 
-#include "amcert.h"
+#include "tqsl.h"
 #include "sign.h"
 
 static char cvsID[] = "$Id$";

@@ -26,7 +26,7 @@
 #include <ctype.h>
 
 #include "sign.h"
-#include "amcert.h"
+#include "tqsl.h"
 // #include <openssl/engine.h>
 extern int errno;
 static char cvsID[] = "$Id$";
@@ -40,8 +40,7 @@ int main(int argc, char *argv[])
   int 	i;
   char	callsign[200];
 
-  printf("sizeof Amcert: %d\n",sizeof(TqslCert));
-
+  cvsID = cvsID;
   if (argc != 2)
     {
       fprintf(stderr,"genkey callsign\n");

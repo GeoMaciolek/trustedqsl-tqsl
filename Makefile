@@ -29,7 +29,7 @@ tqgencert:	gencert.o $(COMOBJ)
 
 
 clean:
-	rm -f sign verify qgenkey gencert chkcert dumpcert dumppk *.o *~ core *.exe
+	rm -f sign verify tqgenkey tqgencert tqchkcert tqdumpcert tqdumppk *.o *~ core *.exe
 
 # DO NOT DELETE
 

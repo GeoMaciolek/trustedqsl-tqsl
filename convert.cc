@@ -20,7 +20,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "amcert.h"
+#include "tqsl.h"
 #include "sign.h"
 
 static char cvsID[] = "$Id$";
@@ -32,13 +32,14 @@ int chkDate(const char *sdate)
 {
   char dateA[3][10];
 
-  int i;
+  size_t i;
   int j,k;
   i = 0;
   j = 0;
   k = 0;
   long d,y,m;
 
+  cvsID = cvsID;
   for (i=0;i<strlen(sdate);i++)
     {
       if (sdate[i] == '\0')

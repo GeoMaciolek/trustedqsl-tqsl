@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "amcert.h"
+#include "tqsl.h"
 #include "sign.h"
 int debugLevel = 0;
 int main(int argc,char *argv[])

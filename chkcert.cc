@@ -28,7 +28,7 @@
 #include <openssl/sha.h>
 #include <openssl/err.h>
 
-#include "amcert.h"
+#include "tqsl.h"
 #include "sign.h"
 
 // #include <openssl/engine.h>
@@ -52,6 +52,8 @@ int main(int argc, char *argv[])
   char		caCertFile[100];
   int 		optCnt=0;
   int 		c,errFlg=0;
+
+  cvsID = cvsID;
 
   while ((c = getopt(argc, argv, "C:a:d:s")) != EOF)
     switch (c) 

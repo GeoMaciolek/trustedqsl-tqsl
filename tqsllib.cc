@@ -28,7 +28,7 @@
 #include <openssl/sha.h>
 #include <openssl/err.h>
 #include <openssl/dsa.h>
-#include "amcert.h"
+#include "tqsl.h"
 #include "sign.h"
 
 // #include <openssl/engine.h>

@@ -28,7 +28,7 @@
 #include <openssl/sha.h>
 
 #include "sign.h"
-#include "amcert.h"
+#include "tqsl.h"
 
 extern int errno;
 int debugLevel = 0;
