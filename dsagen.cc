@@ -8,18 +8,37 @@
 #include <stdio.h>
 #include <string.h>
 #include <openssl/dsa.h>
+#include <openssl/pem.h>
 
 void cb(int p, int n, void *v)
-	{
-	char c='*';
+{
+  char c='*';
 
-	if (p == 0) c='.';
-	if (p == 1) c='+';
-	if (p == 2) c='*';
-	if (p == 3) c='\n';
-	printf("%c",c);
-	fflush(stdout);
-	}
+  if (p == 0) c='.';
+  if (p == 1) c='+';
+  if (p == 2) c='*';
+  if (p == 3) c='\n';
+  printf("%c",c);
+  fflush(stdout);
+}
+
+int pass_cb(char *buf, int size, int rwflag, void *u)
+{
+  int len;
+  char *tmp;
+        
+  printf("Enter pass phrase for \"%s\"\n", (char *)u);
+
+  tmp = "hello";
+  len = strlen(tmp);
+
+  if (len <= 0) return 0;
+        
+  if (len > size) len = size;
+  memcpy(buf, tmp, len);
+  return len;
+}
+
 
 int main()
 {
@@ -77,6 +96,38 @@ int main()
 	  fprintf(o,"\n\n#endif\n\n");
 	  fclose(o);
 	}
+      o = fopen("dsa_static.pem","a+");
+      if (o)
+	{
+	  
+	  PEM_write_DSAparams(o, dsa);
+	  fclose(o);
+
+	}
+
+      // test code
+      int rc;
+      rc = DSA_generate_key(dsa);
+      if (rc == 0)
+	return(0);
+
+      o = fopen("dsa_public.pem","w");
+      if (o)
+	{
+	  PEM_write_DSA_PUBKEY(o, dsa);
+	  fclose(o);
+
+	}      
+      o = fopen("dsa_private.pem","w");
+      if (o)
+	{
+      int PEM_write_DSAPrivateKey(o, dsa,EVP_des_ede3_cbc ,
+				  NULL, 0,
+                                        pass_cb, "Hello");
+
+
+      //end of test code
+      
     }
       
 }
