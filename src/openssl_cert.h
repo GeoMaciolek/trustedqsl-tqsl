@@ -15,9 +15,7 @@
   * OpenSSL X509 certificate interface functions.
   */
 
-#define PERL5	// Hack for older openssl c++ conflict
-#include <openssl/x509.h>
-#undef PERL5
+#include "openssl/x509.h"
 
 #undef CLIENT_STATIC
 #ifndef LOTW_SERVER
