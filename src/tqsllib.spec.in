@@ -51,7 +51,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-,root,root)
-%doc README LICENSE ChangeLog doxygen/html
+%doc LICENSE ChangeLog doxygen/html
 
 /usr/lib/libtqsllib.a
 /usr/lib/libtqsllib.la
