@@ -173,7 +173,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		tc_dxcc->Append(dx.name(), (void *)dx.number());
 		ok = dx.getNext();
 	}
-	const char *ent = "UNITED STATES";
+	const char *ent = "-NONE-";
 	if (crq) {
 		if (dx.getByEntity(crq->dxccEntity)) {
 			ent = dx.name();
@@ -508,7 +508,7 @@ CRQ_IntroPage::validate() {
 		ok = (ok && havealpha && havenumeric);
 	}
 	Parent()->dxcc = (int)(tc_dxcc->GetClientData(tc_dxcc->GetSelection()));
-	if (Parent()->dxcc < 1) {
+	if (Parent()->dxcc < 0) {
 		errmsg = "You must select a DXCC entity.";
 		ok = false;
 	}
@@ -563,6 +563,18 @@ bool
 CRQ_IntroPage::TransferDataFromWindow() {
 	if (validate())		// Should only happen when going Back
 		return true;
+	if (Parent()->dxcc == 0)
+		wxMessageBox(
+			"You have selected DXCC Entity -NONE-\n\n"
+			"QSO records signed using the certificate will not\n"
+			"be valid for DXCC award credit (but will be valid \n"
+			"for other applicable awards). If the certificate is\n"
+			"to be used for signing QSOs from maritime/marine\n"
+			"mobile, shipboard, or air mobile operations, that is\n"
+			"the correct selection. Otherwise, you probably\n"
+			"should use the \"Back\" button to return to the DXCC\n"
+			"page after clicking \"OK\"",
+			"TQSLCert Warning");
 	Parent()->callsign = tc_call->GetValue();
 	Parent()->callsign.MakeUpper();
 	tc_call->SetValue(Parent()->callsign);
@@ -688,7 +700,8 @@ CRQ_SignPage::validate() {
 		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
 		if (!data)
 			errmsg = "You must select a signing certificate from the list";
-	}
+	} else if (Parent()->dxcc == 0)
+		errmsg = "Request must be signed (DXCC Entity == -NONE-)";
 	tc_status->SetLabel(errmsg ? errmsg : "");
 	return errmsg;
 }

@@ -262,6 +262,11 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, "pref-opt.htm") {
 	config->Read("BadCalls", &allow);
 	badcalls->SetValue(allow);
 	sizer->Add(badcalls, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	daterange = new wxCheckBox(this, ID_PREF_FILE_BADCALLS, "Prompt for QSO Date range when signing");
+	allow = true;
+	config->Read("DateRange", &allow);
+	daterange->SetValue(allow);
+	sizer->Add(daterange, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	SetSizer(sizer);
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
@@ -290,6 +295,7 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write("CabrilloFiles", fix_ext_str(cabrillo->GetValue()));
 	config->Write("ADIFFiles", fix_ext_str(adif->GetValue()));
 	config->Write("BadCalls", badcalls->GetValue());
+	config->Write("DateRange", daterange->GetValue());
 	return true;
 }
 

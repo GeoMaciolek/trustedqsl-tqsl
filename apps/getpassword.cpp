@@ -63,7 +63,8 @@ GetPasswordDialog::TransferDataFromWindow() {
 
 void
 GetPasswordDialog::OnOk(wxCommandEvent&) {
-	EndModal(wxID_OK);
+	if (TransferDataFromWindow())
+		EndModal(wxID_OK);
 }
 
 void

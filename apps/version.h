@@ -15,6 +15,6 @@
 #ifndef __version_h
 #define __version_h
 
-#define VERSION "1.07"
+#define VERSION "1.09pre"
 
 #endif	// __version_h

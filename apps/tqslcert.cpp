@@ -92,10 +92,24 @@ CertApp::OnInit() {
 			"Notice", wxOK, frame);
 	}
 	int ncerts = frame->cert_tree->Build(CERTLIST_FLAGS);
-	if (ncerts == 0 && wxMessageBox("You have no certificate with which to sign log submissions. "
+	if (ncerts == 0 && wxMessageBox("You have no certificate with which to sign log submissions.\n"
 		"Would you like to request a certificate now?", "Alert", wxYES_NO, frame) == wxYES) {
 		wxCommandEvent e;
 		frame->CRQWizard(e);
+	}
+	if (ncerts > 0) {
+		long cookie = 1423;
+		wxTreeItemId it = frame->cert_tree->GetFirstChild(frame->cert_tree->GetRootItem(), cookie);
+		while (it) {
+			if (frame->cert_tree->GetItemText(it) == "Test Certificate Authority") {
+				wxMessageBox("You must delete your beta-test certificates (the ones\n"
+					"listed under \"Test Certificate Authority\") to ensure proprer\n"
+					"operation of the TrustedQSL software.", "Warning", wxOK, frame);
+				break;
+			}
+			it = frame->cert_tree->GetNextChild(frame->cert_tree->GetRootItem(), cookie);
+		}
+		
 	}
 	return TRUE;
 }
@@ -424,8 +438,12 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 		return;
 
 	if (wxMessageBox(
-"This will permanently remove the certificate from your system.\n\n"
-"Are you sure this is what you want to do?", "Warning", wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+"WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n"
+"This will permanently remove the certificate from your system.\n"
+"You will NOT be able to recover it by loading a .TQ6 file.\n"
+"You WILL be able to recover it from a .P12 file only if you\n"
+"have created one via the Certificate menu's Save command.\n\n"
+"ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?", "Warning", wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxMessageBox(tqsl_getErrorString(), "Error");
 		cert_tree->Build(CERTLIST_FLAGS);

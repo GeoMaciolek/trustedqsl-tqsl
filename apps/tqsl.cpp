@@ -74,9 +74,34 @@ enum {
 
 static char *ErrorTitle = "TQSL Error";
 
+/////////// Application //////////////
+
+class QSLApp : public wxApp {
+public:
+	QSLApp();
+	virtual ~QSLApp();
+	bool OnInit();
+	virtual wxLog *CreateLogTarget();
+};
+
+IMPLEMENT_APP(QSLApp)
+
+
 static int
-getPassword(char *buf, int bufsiz, void *) {
-	wxString pw = wxGetPasswordFromUser("Enter the password to unlock the private key", "Enter password");
+getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
+	char call[TQSL_CALLSIGN_MAX+1] = "";
+	int dxcc = 0;
+	const char *dxccname = "Unknown";
+	tqsl_getCertificateCallSign(cert, call, sizeof call);
+	tqsl_getCertificateDXCCEntity(cert, &dxcc);
+	tqsl_getDXCCEntityName(dxcc, &dxccname);
+	
+	wxString message = wxString::Format("Enter the password to unlock the private key for\n"
+		"%s -- %s\n(This is the password you made up when you\nrequested the certificate.)",
+		call, dxccname);
+	
+	wxString pw = wxGetPasswordFromUser(message, "Enter password", "",
+		wxGetApp().GetTopWindow());
 	if (pw == "")
 		return 1;
 	strncpy(buf, pw.c_str(), bufsiz);
@@ -149,17 +174,20 @@ END_EVENT_TABLE()
 DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxString("QSO Date Range")) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1,
-		"You may set the starting and/or ending QSO dates.\n\n"
+		"You may set the starting and/or ending QSO dates\n"
+		"in order to select QSOs from the input file.\n\n"
 		"QSOs prior to the starting date or after the ending\n"
-		"date will not be signed or included in the output file."), 0, wxALL|wxALIGN_CENTER, 10);
+		"date will not be signed or included in the output file.\n\n"
+		"You may leave either date (or both dates) blank."
+	), 0, wxALL|wxALIGN_CENTER, 10);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, "Start Date:"), 0, wxRIGHT, 5);
+	hsizer->Add(new wxStaticText(this, -1, "Start Date (YYYY-MM-DD)"), 0, wxRIGHT, 5);
 	start_tc = new wxTextCtrl(this, TQSL_DR_START);
 	hsizer->Add(start_tc, 0, 0, 0);
 	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, "End Date:"), 0, wxRIGHT, 5);
+	hsizer->Add(new wxStaticText(this, -1, "End Date (YYYY-MM-DD)"), 0, wxRIGHT, 5);
 	end_tc = new wxTextCtrl(this, TQSL_DR_END);
 	hsizer->Add(end_tc, 0, 0, 0);
 	sizer->Add(hsizer, 0, wxALL|wxALIGN_CENTER, 10);
@@ -632,6 +660,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 
 bool
 MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compressed) {
+    static char *iam = "TQSL V" VERSION;
    	const char *cp;
 	tQSL_Converter conv = 0;
 	char callsign[40];
@@ -696,6 +725,17 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 		conv_dial->Show(TRUE);
 		this->Enable(FALSE);
 		bool ignore_err = false;
+		int major = 0, minor = 0, config_major = 0, config_minor = 0;
+		tqsl_getVersion(&major, &minor);
+		tqsl_getConfigVersion(&config_major, &config_minor);
+		wxString ident = wxString::Format("%s Lib: V%d.%d Config: V%d.%d", iam,
+			major, minor, config_major, config_minor);
+		wxString gabbi_ident = wxString::Format("<TQSL_IDENT:%d>%s", ident.length(), ident.c_str());
+		gabbi_ident += "\n";
+		if (compressed)
+			gzwrite(gout, const_cast<char *>(gabbi_ident.c_str()), gabbi_ident.length());
+		else
+			out << gabbi_ident << endl;
    		do {
    	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {
   					wxSafeYield(conv_dial);
@@ -718,8 +758,15 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 			}
    			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
    				tQSL_Cert cert;
+				int rval;
    				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
-   				check_tqsl_error(tqsl_beginSigning(cert, 0, getPassword, 0));
+				do {
+	   				if ((rval = tqsl_beginSigning(cert, 0, getPassword, cert)) == 0)
+						break;
+					if (tQSL_Error == TQSL_PASSWORD_ERROR)
+						wxLogMessage("Password error");
+				} while (tQSL_Error == TQSL_PASSWORD_ERROR);
+   				check_tqsl_error(rval);
    				continue;
    			}
 			if (tQSL_Error == TQSL_DATE_OUT_OF_RANGE) {
@@ -995,18 +1042,6 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	Preferences dial(this, &help);
 	dial.ShowModal();
 }
-
-/////////// Application //////////////
-
-class QSLApp : public wxApp {
-public:
-	QSLApp();
-	virtual ~QSLApp();
-	bool OnInit();
-	virtual wxLog *CreateLogTarget();
-};
-
-IMPLEMENT_APP(QSLApp)
 
 QSLApp::QSLApp() : wxApp() {
 	wxConfigBase::Set(new wxConfig("tqslapp"));
