@@ -12,8 +12,9 @@
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a1">tqsl_checkSigningStatus</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a> (tQSL_Cert cert, int *sigsize)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a3">tqsl_signDataBlock</a> (tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a4">tqsl_signQSORecord</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, unsigned char *sig, int *siglen)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a5">tqsl_endSigning</a> (tQSL_Cert cert)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a4">tqsl_verifyDataBlock</a> (tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a5">tqsl_signQSORecord</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, unsigned char *sig, int *siglen)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a6">tqsl_endSigning</a> (tQSL_Cert cert)</td></tr>
 </table>
 <hr><a name="_details"></a><h2>Detailed Description</h2>
 The Signing API uses a tQSL_Cert (see <a href="group__CertStuff.html">Certificate Handling API</a>) to digitally sign a block of data. <hr><h2>Function Documentation</h2>
@@ -101,7 +102,7 @@ Test whether the tQSL_Cert object is initialized for signing.
 Returns 0 if initialized. Sets tQSL_Error to TQSL_SIGNINIT_ERROR if not.     </td>
   </tr>
 </table>
-<a name="a5" doxytag="tqsllib.h::tqsl_endSigning"></a><p>
+<a name="a6" doxytag="tqsllib.h::tqsl_endSigning"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -222,7 +223,7 @@ Sign a data block.
 <a class="el" href="group__Sign.html#a0">tqsl_beginSigning</a>() must have been called for the tQSL_Cert object before calling this function.     </td>
   </tr>
 </table>
-<a name="a4" doxytag="tqsllib.h::tqsl_signQSORecord"></a><p>
+<a name="a5" doxytag="tqsllib.h::tqsl_signQSORecord"></a><p>
 <table width="100%" cellpadding="2" cellspacing="0" border="0">
   <tr>
     <td class="md">
@@ -279,7 +280,62 @@ Sign a single QSO record
 <code>loc</code> must be a valid tQSL_Location object. See <a href="group__Data.html">Data API</a>.     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
+<a name="a4" doxytag="tqsllib.h::tqsl_verifyDataBlock"></a><p>
+<table width="100%" cellpadding="2" cellspacing="0" border="0">
+  <tr>
+    <td class="md">
+      <table cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td nowrap valign="top"><b> 
+int tqsl_verifyDataBlock (
+          </b></td>
+          <td valign="bottom"><b>
+tQSL_Cert <em>cert</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+const unsigned char * <em>data</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int <em>datalen</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+unsigned char * <em>sig</em>, 
+          </b></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td><b>
+int <em>siglen</em>&nbsp;)
+          </b></td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
+<table cellspacing=5 cellpadding=0 border=0>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+    <td>
+
+<p>
+Verify a signed data block.
+<p>
+<a class="el" href="group__Sign.html#a0">tqsl_beginSigning</a>() need <em>not</em> have been called.     </td>
+  </tr>
+</table>
+<hr><address><small>Generated at Tue Oct 21 05:31:16 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,

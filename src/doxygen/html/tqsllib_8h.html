@@ -163,8 +163,9 @@ typedef void*&nbsp;</td><td valign=bottom><b>tQSL_Location</b></td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a1">tqsl_checkSigningStatus</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a> (tQSL_Cert cert, int *sigsize)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a3">tqsl_signDataBlock</a> (tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a4">tqsl_signQSORecord</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, unsigned char *sig, int *siglen)</td></tr>
-<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a5">tqsl_endSigning</a> (tQSL_Cert cert)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a4">tqsl_verifyDataBlock</a> (tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a5">tqsl_signQSORecord</a> (tQSL_Cert cert, tQSL_Location loc, <a class="el" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, unsigned char *sig, int *siglen)</td></tr>
+<tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Sign.html#a6">tqsl_endSigning</a> (tQSL_Cert cert)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a0">tqsl_initStationLocationCapture</a> (tQSL_Location *locp)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a1">tqsl_endStationLocationCapture</a> (tQSL_Location *locp)</td></tr>
 <tr><td nowrap align=right valign=top>int&nbsp;</td><td valign=bottom><a class="el" href="group__Data.html#a2">tqsl_updateStationLocationCapture</a> (tQSL_Location loc)</td></tr>
@@ -321,7 +322,7 @@ typedef struct <a class="el" href="structtqsl__provider__st.html">tqsl_provider_
 Certificate provider data     </td>
   </tr>
 </table>
-<hr><address><small>Generated at Thu Oct 2 20:23:17 2003 for TrustedQSL Library API by
+<hr><address><small>Generated at Tue Oct 21 05:31:16 2003 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.gif" alt="doxygen" align="middle" border=0 
 width=110 height=53></a>1.2.8.1 written by <a href="mailto:dimitri@stack.nl">Dimitri van Heesch</a>,
