@@ -75,7 +75,7 @@ TODO list (not in order):
 8. Needs award sponsors and software developers participation
 in setting standard formats.
 
-9. Need (CRL) Cert Revoke list support.  I don't expect this to
+9. Need (CRL) Cert Revocation List support.  I don't expect this to
 be used often because the only reason to revoke a cert is if
 the private key has been compromised.  Award sponsors may keep
 a list of amateurs that are not trusted, but that is different
