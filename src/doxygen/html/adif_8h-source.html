@@ -82,19 +82,19 @@
 00087 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
 00088 <span class="preprocessor">#endif</span>
 00089 <span class="preprocessor"></span>
-00091 <span class="keywordtype">char</span> *<a class="code" href="group__ADIF.html#a1">tqsl_adifGetError</a>( TQSL_ADIF_GET_FIELD_ERROR status );
+00091 DLLEXPORT <span class="keywordtype">char</span> *<a class="code" href="group__ADIF.html#a1">tqsl_adifGetError</a>( TQSL_ADIF_GET_FIELD_ERROR status );
 00092 
-00094 <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a2">tqsl_beginADIF</a>(tQSL_ADIF *adifp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);
+00094 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a2">tqsl_beginADIF</a>(tQSL_ADIF *adifp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);
 00095 
-00112 <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a3">tqsl_getADIFField</a>(tQSL_ADIF adif, <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, TQSL_ADIF_GET_FIELD_ERROR *status,
+00112 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a3">tqsl_getADIFField</a>(tQSL_ADIF adif, <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, TQSL_ADIF_GET_FIELD_ERROR *status,
 00113         <span class="keyword">const</span> <a class="code" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a> *adifFields, <span class="keyword">const</span> <span class="keywordtype">char</span> * <span class="keyword">const</span> *typesDefined,
 00114         <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *(*allocator)(size_t) );
 00115 
-00117 <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a4">tqsl_getADIFLine</a>(tQSL_ADIF adif, <span class="keywordtype">int</span> *lineno);
+00117 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a4">tqsl_getADIFLine</a>(tQSL_ADIF adif, <span class="keywordtype">int</span> *lineno);
 00118 
-00120 <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a5">tqsl_endADIF</a>(tQSL_ADIF *adifp);
+00120 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a5">tqsl_endADIF</a>(tQSL_ADIF *adifp);
 00121 
-00127 <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a6">tqsl_adifMakeField</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *fieldname, <span class="keywordtype">char</span> type, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *value, <span class="keywordtype">int</span> len,
+00127 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__ADIF.html#a6">tqsl_adifMakeField</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *fieldname, <span class="keywordtype">char</span> type, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *value, <span class="keywordtype">int</span> len,
 00128         <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> buflen);
 00129 
 00130 <span class="preprocessor">#ifdef __cplusplus</span>
@@ -102,7 +102,7 @@
 00132 <span class="preprocessor">#endif</span>
 00133 <span class="preprocessor"></span>
 00136 <span class="preprocessor">#endif </span><span class="comment">/* __ADIF_H */</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Feb 7 12:54:07 2005 for TrustedQSL Library API by
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Feb 22 08:15:36 2005 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 > 
 </a>1.3.4 </small></address>

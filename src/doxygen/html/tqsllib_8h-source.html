@@ -20,372 +20,378 @@
 00013 <span class="preprocessor"></span>
 00014 <span class="preprocessor">#ifdef __WIN32__</span>
 00015 <span class="preprocessor"></span><span class="preprocessor">        #ifdef TQSLLIB_DEF</span>
-00016 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORT __declspec(dllexport)</span>
-00017 <span class="preprocessor"></span><span class="preprocessor">        #else</span>
-00018 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORT __declspec(dllimport)</span>
-00019 <span class="preprocessor"></span><span class="preprocessor">        #endif</span>
-00020 <span class="preprocessor"></span><span class="preprocessor">#else</span>
-00021 <span class="preprocessor"></span><span class="preprocessor">        #define DLLEXPORT</span>
-00022 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
-00023 <span class="preprocessor"></span>
-00024 <span class="preprocessor">#include "adif.h"</span>
-00025 <span class="preprocessor">#include "cabrillo.h"</span>
-00026 
-00031 <span class="comment">/* Sizes */</span>
-00032 <span class="preprocessor">#define TQSL_MAX_PATH_LEN            256</span>
-00033 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PASSWORD_MAX            80</span>
-00034 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_NAME_ELEMENT_MAX        256</span>
-00035 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CALLSIGN_MAX            13</span>
-00036 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_NAME_MAX            60</span>
-00037 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_ADDR_MAX            80</span>
-00038 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_CITY_MAX            80</span>
-00039 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_STATE_MAX           80</span>
-00040 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_POSTAL_MAX          20</span>
-00041 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_COUNTRY_MAX         80</span>
-00042 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_EMAIL_MAX           180</span>
-00043 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_BAND_MAX                6</span>
-00044 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_MODE_MAX                16</span>
-00045 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_FREQ_MAX                20</span>
-00046 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SATNAME_MAX             6</span>
-00047 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PROPMODE_MAX            6</span>
-00048 <span class="preprocessor"></span>
-00049 <span class="preprocessor">#define TQSL_CERT_CB_USER            0</span>
-00050 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CA              1</span>
-00051 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_ROOT            2</span>
-00052 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_PKEY            3</span>
-00053 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CONFIG          4</span>
-00054 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CERT_TYPE(x)    ((x) &amp; 0xf)</span>
-00055 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_MILESTONE       0</span>
-00056 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_RESULT          0x10</span>
-00057 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CALL_TYPE(x)    ((x) &amp; TQSL_CERT_CB_RESULT)</span>
-00058 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_PROMPT          0</span>
-00059 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_DUPLICATE       0x100</span>
-00060 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_ERROR           0x200</span>
-00061 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_LOADED          0x300</span>
-00062 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) &amp; 0x0f00)</span>
-00063 <span class="preprocessor"></span>
-00064 <span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Cert;
-00065 <span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Location;
-00066 
-<a name="l00068"></a><a class="code" href="structtQSL__Date.html">00068</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
-00069         <span class="keywordtype">int</span> year;
-00070         <span class="keywordtype">int</span> month;
-00071         <span class="keywordtype">int</span> day;
-00072 } <a class="code" href="structtQSL__Date.html">tQSL_Date</a>;
-00073 
-<a name="l00075"></a><a class="code" href="structtQSL__Time.html">00075</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
-00076         <span class="keywordtype">int</span> hour;
-00077         <span class="keywordtype">int</span> minute;
-00078         <span class="keywordtype">int</span> second;
-00079 } <a class="code" href="structtQSL__Time.html">tQSL_Time</a>;
-00080 
-<a name="l00082"></a><a class="code" href="structtqsl__provider__st.html">00082</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structtqsl__provider__st.html">tqsl_provider_st</a> {
-00083         <span class="keywordtype">char</span> organizationName[TQSL_NAME_ELEMENT_MAX+1];
-00084         <span class="keywordtype">char</span> organizationalUnitName[TQSL_NAME_ELEMENT_MAX+1];
-00085         <span class="keywordtype">char</span> emailAddress[TQSL_NAME_ELEMENT_MAX+1];
-00086         <span class="keywordtype">char</span> url[TQSL_NAME_ELEMENT_MAX+1];
-00087 } <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a>;
-00088 
-<a name="l00090"></a><a class="code" href="structtqsl__cert__req__st.html">00090</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structtqsl__cert__req__st.html">tqsl_cert_req_st</a> {
-00091         <span class="keywordtype">char</span> providerName[TQSL_NAME_ELEMENT_MAX+1];
-00092         <span class="keywordtype">char</span> providerUnit[TQSL_NAME_ELEMENT_MAX+1];
-00093         <span class="keywordtype">char</span> callSign[TQSL_CALLSIGN_MAX+1];
-00094         <span class="keywordtype">char</span> name[TQSL_CRQ_NAME_MAX+1];
-00095         <span class="keywordtype">char</span> address1[TQSL_CRQ_ADDR_MAX+1];
-00096         <span class="keywordtype">char</span> address2[TQSL_CRQ_ADDR_MAX+1];
-00097         <span class="keywordtype">char</span> city[TQSL_CRQ_CITY_MAX+1];
-00098         <span class="keywordtype">char</span> state[TQSL_CRQ_STATE_MAX+1];
-00099         <span class="keywordtype">char</span> postalCode[TQSL_CRQ_POSTAL_MAX+1];
-00100         <span class="keywordtype">char</span> country[TQSL_CRQ_COUNTRY_MAX+1];
-00101         <span class="keywordtype">char</span> emailAddress[TQSL_CRQ_EMAIL_MAX+1];
-00102         <span class="keywordtype">int</span> dxccEntity;
-00103         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotBefore;
-00104         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotAfter;
-00105         <span class="keywordtype">char</span> password[TQSL_PASSWORD_MAX+1];
-00106         tQSL_Cert signer;
-00107         <span class="keywordtype">char</span> renew;
-00108 } <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a>;
-00109 
-<a name="l00111"></a><a class="code" href="structTQSL__QSO__RECORD.html">00111</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
-00112         <span class="keywordtype">char</span> callsign[TQSL_CALLSIGN_MAX+1];
-00113         <span class="keywordtype">char</span> band[TQSL_BAND_MAX+1];
-00114         <span class="keywordtype">char</span> mode[TQSL_MODE_MAX+1];
-00115         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> date;
-00116         <a class="code" href="structtQSL__Time.html">tQSL_Time</a> time;
-00117         <span class="keywordtype">char</span> freq[TQSL_FREQ_MAX+1];
-00118         <span class="keywordtype">char</span> rxfreq[TQSL_FREQ_MAX+1];
-00119         <span class="keywordtype">char</span> rxband[TQSL_BAND_MAX+1];
-00120         <span class="keywordtype">char</span> propmode[TQSL_PROPMODE_MAX+1];
-00121         <span class="keywordtype">char</span> satname[TQSL_SATNAME_MAX+1];
-00122 } <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>;
-00123 
-<a name="l00125"></a><a class="code" href="tqsllib_8h.html#a48">00125</a> <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="tqsllib_8h.html#a48">tQSL_BaseDir</a>;
+00016 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORT __stdcall __declspec(dllexport)</span>
+00017 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORTDATA __declspec(dllexport)</span>
+00018 <span class="preprocessor"></span><span class="preprocessor">        #else</span>
+00019 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORT __stdcall __declspec(dllimport)</span>
+00020 <span class="preprocessor"></span><span class="preprocessor">                #define DLLEXPORTDATA __declspec(dllimport)</span>
+00021 <span class="preprocessor"></span><span class="preprocessor">        #endif</span>
+00022 <span class="preprocessor"></span><span class="preprocessor">#else</span>
+00023 <span class="preprocessor"></span><span class="preprocessor">        #define DLLEXPORT</span>
+00024 <span class="preprocessor"></span><span class="preprocessor">        #define DLLEXPORTDATA</span>
+00025 <span class="preprocessor"></span><span class="preprocessor">#endif</span>
+00026 <span class="preprocessor"></span>
+00027 <span class="preprocessor">#include "adif.h"</span>
+00028 <span class="preprocessor">#include "cabrillo.h"</span>
+00029 
+00034 <span class="comment">/* Sizes */</span>
+00035 <span class="preprocessor">#define TQSL_MAX_PATH_LEN            256</span>
+00036 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PASSWORD_MAX            80</span>
+00037 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_NAME_ELEMENT_MAX        256</span>
+00038 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CALLSIGN_MAX            13</span>
+00039 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_NAME_MAX            60</span>
+00040 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_ADDR_MAX            80</span>
+00041 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_CITY_MAX            80</span>
+00042 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_STATE_MAX           80</span>
+00043 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_POSTAL_MAX          20</span>
+00044 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_COUNTRY_MAX         80</span>
+00045 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CRQ_EMAIL_MAX           180</span>
+00046 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_BAND_MAX                6</span>
+00047 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_MODE_MAX                16</span>
+00048 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_FREQ_MAX                20</span>
+00049 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SATNAME_MAX             6</span>
+00050 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PROPMODE_MAX            6</span>
+00051 <span class="preprocessor"></span>
+00052 <span class="preprocessor">#define TQSL_CERT_CB_USER            0</span>
+00053 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CA              1</span>
+00054 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_ROOT            2</span>
+00055 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_PKEY            3</span>
+00056 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CONFIG          4</span>
+00057 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CERT_TYPE(x)    ((x) &amp; 0xf)</span>
+00058 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_MILESTONE       0</span>
+00059 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_RESULT          0x10</span>
+00060 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_CALL_TYPE(x)    ((x) &amp; TQSL_CERT_CB_RESULT)</span>
+00061 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_PROMPT          0</span>
+00062 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_DUPLICATE       0x100</span>
+00063 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_ERROR           0x200</span>
+00064 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_LOADED          0x300</span>
+00065 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) &amp; 0x0f00)</span>
+00066 <span class="preprocessor"></span>
+00067 <span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Cert;
+00068 <span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Location;
+00069 
+<a name="l00071"></a><a class="code" href="structtQSL__Date.html">00071</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
+00072         <span class="keywordtype">int</span> year;
+00073         <span class="keywordtype">int</span> month;
+00074         <span class="keywordtype">int</span> day;
+00075 } <a class="code" href="structtQSL__Date.html">tQSL_Date</a>;
+00076 
+<a name="l00078"></a><a class="code" href="structtQSL__Time.html">00078</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
+00079         <span class="keywordtype">int</span> hour;
+00080         <span class="keywordtype">int</span> minute;
+00081         <span class="keywordtype">int</span> second;
+00082 } <a class="code" href="structtQSL__Time.html">tQSL_Time</a>;
+00083 
+<a name="l00085"></a><a class="code" href="structtqsl__provider__st.html">00085</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structtqsl__provider__st.html">tqsl_provider_st</a> {
+00086         <span class="keywordtype">char</span> organizationName[TQSL_NAME_ELEMENT_MAX+1];
+00087         <span class="keywordtype">char</span> organizationalUnitName[TQSL_NAME_ELEMENT_MAX+1];
+00088         <span class="keywordtype">char</span> emailAddress[TQSL_NAME_ELEMENT_MAX+1];
+00089         <span class="keywordtype">char</span> url[TQSL_NAME_ELEMENT_MAX+1];
+00090 } <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a>;
+00091 
+<a name="l00093"></a><a class="code" href="structtqsl__cert__req__st.html">00093</a> <span class="keyword">typedef</span> <span class="keyword">struct </span><a class="code" href="structtqsl__cert__req__st.html">tqsl_cert_req_st</a> {
+00094         <span class="keywordtype">char</span> providerName[TQSL_NAME_ELEMENT_MAX+1];
+00095         <span class="keywordtype">char</span> providerUnit[TQSL_NAME_ELEMENT_MAX+1];
+00096         <span class="keywordtype">char</span> callSign[TQSL_CALLSIGN_MAX+1];
+00097         <span class="keywordtype">char</span> name[TQSL_CRQ_NAME_MAX+1];
+00098         <span class="keywordtype">char</span> address1[TQSL_CRQ_ADDR_MAX+1];
+00099         <span class="keywordtype">char</span> address2[TQSL_CRQ_ADDR_MAX+1];
+00100         <span class="keywordtype">char</span> city[TQSL_CRQ_CITY_MAX+1];
+00101         <span class="keywordtype">char</span> state[TQSL_CRQ_STATE_MAX+1];
+00102         <span class="keywordtype">char</span> postalCode[TQSL_CRQ_POSTAL_MAX+1];
+00103         <span class="keywordtype">char</span> country[TQSL_CRQ_COUNTRY_MAX+1];
+00104         <span class="keywordtype">char</span> emailAddress[TQSL_CRQ_EMAIL_MAX+1];
+00105         <span class="keywordtype">int</span> dxccEntity;
+00106         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotBefore;
+00107         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> qsoNotAfter;
+00108         <span class="keywordtype">char</span> password[TQSL_PASSWORD_MAX+1];
+00109         tQSL_Cert signer;
+00110         <span class="keywordtype">char</span> renew;
+00111 } <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a>;
+00112 
+<a name="l00114"></a><a class="code" href="structTQSL__QSO__RECORD.html">00114</a> <span class="keyword">typedef</span> <span class="keyword">struct </span>{
+00115         <span class="keywordtype">char</span> callsign[TQSL_CALLSIGN_MAX+1];
+00116         <span class="keywordtype">char</span> band[TQSL_BAND_MAX+1];
+00117         <span class="keywordtype">char</span> mode[TQSL_MODE_MAX+1];
+00118         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> date;
+00119         <a class="code" href="structtQSL__Time.html">tQSL_Time</a> time;
+00120         <span class="keywordtype">char</span> freq[TQSL_FREQ_MAX+1];
+00121         <span class="keywordtype">char</span> rxfreq[TQSL_FREQ_MAX+1];
+00122         <span class="keywordtype">char</span> rxband[TQSL_BAND_MAX+1];
+00123         <span class="keywordtype">char</span> propmode[TQSL_PROPMODE_MAX+1];
+00124         <span class="keywordtype">char</span> satname[TQSL_SATNAME_MAX+1];
+00125 } <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a>;
 00126 
-00127 <span class="preprocessor">#ifdef __cplusplus</span>
-00128 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
-00129 <span class="preprocessor">#endif</span>
-00130 <span class="preprocessor"></span>
-00135 
-00136 
-<a name="l00138"></a><a class="code" href="group__Util.html#a0">00138</a> DLLEXPORT <span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a0">tQSL_Error</a>;
-<a name="l00140"></a><a class="code" href="group__Util.html#a1">00140</a> DLLEXPORT <span class="keyword">extern</span> <a class="code" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> <a class="code" href="group__Util.html#a1">tQSL_ADIF_Error</a>;
-<a name="l00142"></a><a class="code" href="group__Util.html#a2">00142</a> DLLEXPORT <span class="keyword">extern</span> <a class="code" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> <a class="code" href="group__Util.html#a2">tQSL_Cabrillo_Error</a>;
-<a name="l00144"></a><a class="code" href="group__Util.html#a3">00144</a> DLLEXPORT <span class="keyword">extern</span> <span class="keywordtype">char</span> <a class="code" href="group__Util.html#a3">tQSL_ErrorFile</a>[256];
-<a name="l00146"></a><a class="code" href="group__Util.html#a4">00146</a> DLLEXPORT <span class="keyword">extern</span> <span class="keywordtype">char</span> <a class="code" href="group__Util.html#a4">tQSL_CustomError</a>[256];
-00147 
-00152 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a5">tqsl_init</a>();
-00153 
-00163 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a6">tqsl_setDirectory</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *dir);
-00164 
-00168 <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a7">tqsl_getErrorString</a>();
-00169 
-00174 <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a8">tqsl_getErrorString_v</a>(<span class="keywordtype">int</span> err);
-00175 
-00183 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a9">tqsl_encodeBase64</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">char</span> *output, <span class="keywordtype">int</span> outputlen);
-00184 
-00193 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a10">tqsl_decodeBase64</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *input, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> *datalen);
-00194 
-00201 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a11">tqsl_initDate</a>(<a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keyword">const</span> <span class="keywordtype">char</span> *str);
-00202 
-00209 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a12">tqsl_initTime</a>(<a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <span class="keyword">const</span> <span class="keywordtype">char</span> *str);
-00210 
-00220 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a13">tqsl_compareDates</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *a, <span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *b);
-00221 
-00226 <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a14">tqsl_convertDateToText</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00227 
-00232 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a15">tqsl_isDateValid</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
-00233 
-00238 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a16">tqsl_isDateNull</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
-00239 
-00244 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a17">tqsl_isTimeValid</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *t);
-00245 
-00250 <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a18">tqsl_convertTimeToText</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00251 
-00254 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a19">tqsl_getVersion</a>(<span class="keywordtype">int</span> *major, <span class="keywordtype">int</span> *minor);
-00255 
-00258 <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a20">tqsl_getConfigVersion</a>(<span class="keywordtype">int</span> *major, <span class="keywordtype">int</span> *minor);
-00259 
-00288 <span class="preprocessor">#define TQSL_SELECT_CERT_WITHKEYS 1</span>
-00289 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SELECT_CERT_EXPIRED 2</span>
-00290 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SELECT_CERT_SUPERCEDED 4</span>
-00291 <span class="preprocessor"></span>
-00317 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(tQSL_Cert **certlist, <span class="keywordtype">int</span> *ncerts,
-00318         <span class="keyword">const</span> <span class="keywordtype">char</span> *callsign, <span class="keywordtype">int</span> dxcc, <span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keyword">const</span> <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, <span class="keywordtype">int</span> flag);
-00319 
-00322 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a1">tqsl_getCertificateKeyOnly</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *keyonly);
-00323 
-00326 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a2">tqsl_getCertificateEncoded</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00327 
-00330 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a3">tqsl_getCertificateSerial</a>(tQSL_Cert cert, <span class="keywordtype">long</span> *serial);
-00331 
-00341 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a4">tqsl_getCertificateIssuer</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00342 
-00352 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a5">tqsl_getCertificateIssuerOrganization</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00362 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganizationalUnit</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00372 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a7">tqsl_getCertificateCallSign</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00382 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a8">tqsl_getCertificateAROName</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00383 
-00393 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a9">tqsl_getCertificateEmailAddress</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00394 
-00403 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a10">tqsl_getCertificateQSONotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00404 
-00413 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00414 
-00423 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a12">tqsl_getCertificateNotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00424 
-00433 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a13">tqsl_getCertificateNotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
-00434 
-00443 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a14">tqsl_getCertificateDXCCEntity</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *dxcc);
-00444 
-00455 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a15">tqsl_getCertificateRequestAddress1</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00456 
-00467 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress2</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00468 
-00479 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a17">tqsl_getCertificateRequestCity</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00480 
-00491 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a18">tqsl_getCertificateRequestState</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00492 
-00503 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a19">tqsl_getCertificateRequestPostalCode</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00504 
-00515 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a20">tqsl_getCertificateRequestCountry</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
-00516 
-00517 <span class="preprocessor">#define TQSL_PK_TYPE_ERR        0</span>
-00518 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_NONE       1</span>
-00519 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_UNENC      2</span>
-00520 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_ENC        3</span>
-00521 <span class="preprocessor"></span>
-00536 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a21">tqsl_getCertificatePrivateKeyType</a>(tQSL_Cert cert);
-00537 
-00538 
-00542 <span class="keywordtype">void</span> <a class="code" href="group__CertStuff.html#a22">tqsl_freeCertificate</a>(tQSL_Cert cert);
-00543 
-00544 <span class="comment">/* int tqsl_checkCertificate(tQSL_Cert); */</span>
-00545 
-00563 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a23">tqsl_importTQSLFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span>(*cb)(<span class="keywordtype">int</span> type, <span class="keyword">const</span> <span class="keywordtype">char</span> *message, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
-00564 
-00567 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a24">tqsl_getNumProviders</a>(<span class="keywordtype">int</span> *n);
-00568 
-00573 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a25">tqsl_getProvider</a>(<span class="keywordtype">int</span> idx, <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider);
-00574 
-00587 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a26">tqsl_createCertRequest</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req,
-00588         <span class="keywordtype">int</span>(*pwcb)(<span class="keywordtype">char</span> *pwbuf, <span class="keywordtype">int</span> pwsize, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
-00589 
-00597 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a27">tqsl_exportPKCS12File</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keyword">const</span> <span class="keywordtype">char</span> *p12password);
-00598 
-00601 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a28">tqsl_importPKCS12File</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keyword">const</span> <span class="keywordtype">char</span> *p12password, <span class="keyword">const</span> <span class="keywordtype">char</span> *password,
-00602         <span class="keywordtype">int</span> (*pwcb)(<span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">int</span>(*cb)(<span class="keywordtype">int</span> type , <span class="keyword">const</span> <span class="keywordtype">char</span> *message, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
+<a name="l00128"></a><a class="code" href="tqsllib_8h.html#a49">00128</a> <span class="keyword">extern</span> <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="tqsllib_8h.html#a49">tQSL_BaseDir</a>;
+00129 
+00130 <span class="preprocessor">#ifdef __cplusplus</span>
+00131 <span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">"C"</span> {
+00132 <span class="preprocessor">#endif</span>
+00133 <span class="preprocessor"></span>
+00138 
+00139 
+<a name="l00141"></a><a class="code" href="group__Util.html#a0">00141</a> DLLEXPORTDATA <span class="keyword">extern</span> <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a0">tQSL_Error</a>;
+<a name="l00143"></a><a class="code" href="group__Util.html#a1">00143</a> DLLEXPORTDATA <span class="keyword">extern</span> <a class="code" href="group__ADIF.html#a12">TQSL_ADIF_GET_FIELD_ERROR</a> <a class="code" href="group__Util.html#a1">tQSL_ADIF_Error</a>;
+<a name="l00145"></a><a class="code" href="group__Util.html#a2">00145</a> DLLEXPORTDATA <span class="keyword">extern</span> <a class="code" href="group__Cabrillo.html#a12">TQSL_CABRILLO_ERROR_TYPE</a> <a class="code" href="group__Util.html#a2">tQSL_Cabrillo_Error</a>;
+<a name="l00147"></a><a class="code" href="group__Util.html#a3">00147</a> DLLEXPORTDATA <span class="keyword">extern</span> <span class="keywordtype">char</span> <a class="code" href="group__Util.html#a3">tQSL_ErrorFile</a>[256];
+<a name="l00149"></a><a class="code" href="group__Util.html#a4">00149</a> DLLEXPORTDATA <span class="keyword">extern</span> <span class="keywordtype">char</span> <a class="code" href="group__Util.html#a4">tQSL_CustomError</a>[256];
+00150 
+00155 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a5">tqsl_init</a>();
+00156 
+00166 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a6">tqsl_setDirectory</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *dir);
+00167 
+00171 DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a7">tqsl_getErrorString</a>();
+00172 
+00177 DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a8">tqsl_getErrorString_v</a>(<span class="keywordtype">int</span> err);
+00178 
+00186 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a9">tqsl_encodeBase64</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">char</span> *output, <span class="keywordtype">int</span> outputlen);
+00187 
+00196 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a10">tqsl_decodeBase64</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *input, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> *datalen);
+00197 
+00204 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a11">tqsl_initDate</a>(<a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keyword">const</span> <span class="keywordtype">char</span> *str);
+00205 
+00212 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a12">tqsl_initTime</a>(<a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <span class="keyword">const</span> <span class="keywordtype">char</span> *str);
+00213 
+00223 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a13">tqsl_compareDates</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *a, <span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *b);
+00224 
+00229 DLLEXPORT <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a14">tqsl_convertDateToText</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00230 
+00235 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a15">tqsl_isDateValid</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
+00236 
+00241 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a16">tqsl_isDateNull</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *d);
+00242 
+00247 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a17">tqsl_isTimeValid</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *t);
+00248 
+00253 DLLEXPORT <span class="keywordtype">char</span> *<a class="code" href="group__Util.html#a18">tqsl_convertTimeToText</a>(<span class="keyword">const</span> <a class="code" href="structtQSL__Time.html">tQSL_Time</a> *time, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00254 
+00257 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a19">tqsl_getVersion</a>(<span class="keywordtype">int</span> *major, <span class="keywordtype">int</span> *minor);
+00258 
+00261 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Util.html#a20">tqsl_getConfigVersion</a>(<span class="keywordtype">int</span> *major, <span class="keywordtype">int</span> *minor);
+00262 
+00291 <span class="preprocessor">#define TQSL_SELECT_CERT_WITHKEYS 1</span>
+00292 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SELECT_CERT_EXPIRED 2</span>
+00293 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_SELECT_CERT_SUPERCEDED 4</span>
+00294 <span class="preprocessor"></span>
+00320 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a0">tqsl_selectCertificates</a>(tQSL_Cert **certlist, <span class="keywordtype">int</span> *ncerts,
+00321         <span class="keyword">const</span> <span class="keywordtype">char</span> *callsign, <span class="keywordtype">int</span> dxcc, <span class="keyword">const</span> <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date, <span class="keyword">const</span> <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *issuer, <span class="keywordtype">int</span> flag);
+00322 
+00331 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a1">tqsl_getSelectedCertificate</a>(tQSL_Cert *cert, <span class="keyword">const</span> tQSL_Cert **certlist,
+00332         <span class="keywordtype">int</span> idx);
+00333 
+00336 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a2">tqsl_getCertificateKeyOnly</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *keyonly);
+00337 
+00340 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a3">tqsl_getCertificateEncoded</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00341 
+00344 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a4">tqsl_getCertificateSerial</a>(tQSL_Cert cert, <span class="keywordtype">long</span> *serial);
+00345 
+00355 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a5">tqsl_getCertificateIssuer</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00356 
+00366 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a6">tqsl_getCertificateIssuerOrganization</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00376 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a7">tqsl_getCertificateIssuerOrganizationalUnit</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00386 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a8">tqsl_getCertificateCallSign</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00396 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a9">tqsl_getCertificateAROName</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00397 
+00407 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a10">tqsl_getCertificateEmailAddress</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00408 
+00417 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a11">tqsl_getCertificateQSONotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00418 
+00427 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a12">tqsl_getCertificateQSONotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00428 
+00437 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a13">tqsl_getCertificateNotBeforeDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00438 
+00447 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a14">tqsl_getCertificateNotAfterDate</a>(tQSL_Cert cert, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *date);
+00448 
+00457 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a15">tqsl_getCertificateDXCCEntity</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *dxcc);
+00458 
+00469 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a16">tqsl_getCertificateRequestAddress1</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00470 
+00481 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a17">tqsl_getCertificateRequestAddress2</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00482 
+00493 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a18">tqsl_getCertificateRequestCity</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00494 
+00505 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a19">tqsl_getCertificateRequestState</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00506 
+00517 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a20">tqsl_getCertificateRequestPostalCode</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00518 
+00529 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a21">tqsl_getCertificateRequestCountry</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *str, <span class="keywordtype">int</span> bufsiz);
+00530 
+00531 <span class="preprocessor">#define TQSL_PK_TYPE_ERR        0</span>
+00532 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_NONE       1</span>
+00533 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_UNENC      2</span>
+00534 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_PK_TYPE_ENC        3</span>
+00535 <span class="preprocessor"></span>
+00550 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a22">tqsl_getCertificatePrivateKeyType</a>(tQSL_Cert cert);
+00551 
+00552 
+00556 DLLEXPORT <span class="keywordtype">void</span> <a class="code" href="group__CertStuff.html#a23">tqsl_freeCertificate</a>(tQSL_Cert cert);
+00557 
+00558 <span class="comment">/* int tqsl_checkCertificate(tQSL_Cert); */</span>
+00559 
+00577 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a24">tqsl_importTQSLFile</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *file, <span class="keywordtype">int</span>(*cb)(<span class="keywordtype">int</span> type, <span class="keyword">const</span> <span class="keywordtype">char</span> *message, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
+00578 
+00581 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a25">tqsl_getNumProviders</a>(<span class="keywordtype">int</span> *n);
+00582 
+00587 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a26">tqsl_getProvider</a>(<span class="keywordtype">int</span> idx, <a class="code" href="structtqsl__provider__st.html">TQSL_PROVIDER</a> *provider);
+00588 
+00601 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a27">tqsl_createCertRequest</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <a class="code" href="structtqsl__cert__req__st.html">TQSL_CERT_REQ</a> *req,
+00602         <span class="keywordtype">int</span>(*pwcb)(<span class="keywordtype">char</span> *pwbuf, <span class="keywordtype">int</span> pwsize, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
 00603 
-00606 <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a29">tqsl_deleteCertificate</a>(tQSL_Cert cert);
-00607 
-00630 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a0">tqsl_beginSigning</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *password,  <span class="keywordtype">int</span>(*pwcb)(<span class="keywordtype">char</span> *pwbuf, <span class="keywordtype">int</span> pwsize, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
-00631 
-00636 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a1">tqsl_checkSigningStatus</a>(tQSL_Cert cert);
-00637 
-00642 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *sigsize);
-00643 
-00649 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a3">tqsl_signDataBlock</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> *siglen);
-00650 
-00655 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a4">tqsl_verifyDataBlock</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> siglen);
-00656 
-00664 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a5">tqsl_signQSORecord</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> *siglen);
-00665 
-00670 <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a6">tqsl_endSigning</a>(tQSL_Cert cert);
-00671 
-00773 <span class="comment">/* Location field input types */</span>
-00774 
-00775 <span class="preprocessor">#define TQSL_LOCATION_FIELD_TEXT        1</span>
-00776 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_DDLIST      2</span>
-00777 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_LIST        3</span>
-00778 <span class="preprocessor"></span>
-00779 <span class="comment">/* Location field data types */</span>
-00780 <span class="preprocessor">#define TQSL_LOCATION_FIELD_CHAR 1</span>
-00781 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_INT 2</span>
-00782 <span class="preprocessor"></span>
-00784 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a0">tqsl_initStationLocationCapture</a>(tQSL_Location *locp);
-00785 
-00790 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a1">tqsl_endStationLocationCapture</a>(tQSL_Location *locp);
-00791 
-00793 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a2">tqsl_updateStationLocationCapture</a>(tQSL_Location loc);
-00794 
-00795 <span class="comment">//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);</span>
-00796 
-00798 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a3">tqsl_getStationLocationCapturePage</a>(tQSL_Location loc, <span class="keywordtype">int</span> *page);
+00611 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a28">tqsl_exportPKCS12File</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keyword">const</span> <span class="keywordtype">char</span> *p12password);
+00612 
+00615 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a29">tqsl_importPKCS12File</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *filename, <span class="keyword">const</span> <span class="keywordtype">char</span> *p12password, <span class="keyword">const</span> <span class="keywordtype">char</span> *password,
+00616         <span class="keywordtype">int</span> (*pwcb)(<span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">int</span>(*cb)(<span class="keywordtype">int</span> type , <span class="keyword">const</span> <span class="keywordtype">char</span> *message, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
+00617 
+00620 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__CertStuff.html#a30">tqsl_deleteCertificate</a>(tQSL_Cert cert);
+00621 
+00644 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a0">tqsl_beginSigning</a>(tQSL_Cert cert, <span class="keywordtype">char</span> *password,  <span class="keywordtype">int</span>(*pwcb)(<span class="keywordtype">char</span> *pwbuf, <span class="keywordtype">int</span> pwsize, <span class="keywordtype">void</span> *userdata), <span class="keywordtype">void</span> *user);
+00645 
+00650 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a1">tqsl_checkSigningStatus</a>(tQSL_Cert cert);
+00651 
+00656 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a2">tqsl_getMaxSignatureSize</a>(tQSL_Cert cert, <span class="keywordtype">int</span> *sigsize);
+00657 
+00663 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a3">tqsl_signDataBlock</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> *siglen);
+00664 
+00669 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a4">tqsl_verifyDataBlock</a>(tQSL_Cert cert, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> datalen, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> siglen);
+00670 
+00678 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a5">tqsl_signQSORecord</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *rec, <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *sig, <span class="keywordtype">int</span> *siglen);
+00679 
+00684 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Sign.html#a6">tqsl_endSigning</a>(tQSL_Cert cert);
+00685 
+00787 <span class="comment">/* Location field input types */</span>
+00788 
+00789 <span class="preprocessor">#define TQSL_LOCATION_FIELD_TEXT        1</span>
+00790 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_DDLIST      2</span>
+00791 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_LIST        3</span>
+00792 <span class="preprocessor"></span>
+00793 <span class="comment">/* Location field data types */</span>
+00794 <span class="preprocessor">#define TQSL_LOCATION_FIELD_CHAR 1</span>
+00795 <span class="preprocessor"></span><span class="preprocessor">#define TQSL_LOCATION_FIELD_INT 2</span>
+00796 <span class="preprocessor"></span>
+00798 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a0">tqsl_initStationLocationCapture</a>(tQSL_Location *locp);
 00799 
-00804 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a4">tqsl_setStationLocationCapturePage</a>(tQSL_Location loc, <span class="keywordtype">int</span> page);
+00804 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a1">tqsl_endStationLocationCapture</a>(tQSL_Location *locp);
 00805 
-00807 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a5">tqsl_nextStationLocationCapture</a>(tQSL_Location loc);
+00807 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a2">tqsl_updateStationLocationCapture</a>(tQSL_Location loc);
 00808 
-00810 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a6">tqsl_prevStationLocationCapture</a>(tQSL_Location loc);
-00811 
-00813 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a7">tqsl_hasNextStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> *rval);
-00814 
-00816 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a8">tqsl_hasPrevStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> *rval);
-00817 
-00824 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a9">tqsl_saveStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> overwrite);
+00809 <span class="comment">//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);</span>
+00810 
+00812 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a3">tqsl_getStationLocationCapturePage</a>(tQSL_Location loc, <span class="keywordtype">int</span> *page);
+00813 
+00818 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a4">tqsl_setStationLocationCapturePage</a>(tQSL_Location loc, <span class="keywordtype">int</span> page);
+00819 
+00821 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a5">tqsl_nextStationLocationCapture</a>(tQSL_Location loc);
+00822 
+00824 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a6">tqsl_prevStationLocationCapture</a>(tQSL_Location loc);
 00825 
-00827 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a10">tqsl_getStationLocationCaptureName</a>(tQSL_Location loc, <span class="keywordtype">char</span> *namebuf, <span class="keywordtype">int</span> bufsiz);
+00827 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a7">tqsl_hasNextStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> *rval);
 00828 
-00830 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a11">tqsl_setStationLocationCaptureName</a>(tQSL_Location loc, <span class="keyword">const</span> <span class="keywordtype">char</span> *name);
+00830 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a8">tqsl_hasPrevStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> *rval);
 00831 
-00833 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a12">tqsl_getNumStationLocations</a>(tQSL_Location loc, <span class="keywordtype">int</span> *nloc);
-00834 
-00836 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a13">tqsl_getStationLocationName</a>(tQSL_Location loc, <span class="keywordtype">int</span> idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00837 
-00839 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a14">tqsl_getStationLocationCallSign</a>(tQSL_Location loc, <span class="keywordtype">int</span> idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00840 
-00845 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a15">tqsl_getStationLocation</a>(tQSL_Location *loc, <span class="keyword">const</span> <span class="keywordtype">char</span> *name);
-00846 
-00848 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a16">tqsl_deleteStationLocation</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
-00849 
-00851 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a17">tqsl_getNumLocationField</a>(tQSL_Location loc, <span class="keywordtype">int</span> *numf);
-00852 
-00854 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a18">tqsl_getLocationFieldDataLabelSize</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
-00855 
-00857 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a19">tqsl_getLocationFieldDataLabel</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00858 
-00860 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a20">tqsl_getLocationFieldDataGABBISize</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
-00861 
-00863 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a21">tqsl_getLocationFieldDataGABBI</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00864 
-00870 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a22">tqsl_getLocationFieldInputType</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *type);
-00871 
-00876 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a23">tqsl_getLocationFieldDataType</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *type);
-00877 
-00879 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a24">tqsl_getLocationFieldDataLength</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
-00880 
-00887 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a25">tqsl_getLocationFieldCharData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00888 
-00894 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a26">tqsl_getLocationFieldIntData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *dat);
-00895 
-00900 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a27">tqsl_getLocationFieldIndex</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *dat);
-00901 
-00903 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a28">tqsl_getNumLocationFieldListItems</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
-00904 
-00906 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a29">tqsl_getLocationFieldListItem</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> item_idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00907 
-00909 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a30">tqsl_setLocationFieldCharData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keyword">const</span> <span class="keywordtype">char</span> *buf);
-00910 
-00913 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a31">tqsl_setLocationFieldIntData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> dat);
-00914 
-00919 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a32">tqsl_setLocationFieldIndex</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> dat);
-00920 
-00925 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a33">tqsl_getLocationFieldChanged</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *changed);
-00926 
-00928 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a34">tqsl_getLocationCallSign</a>(tQSL_Location loc, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
-00929 
-00931 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a35">tqsl_getLocationDXCCEntity</a>(tQSL_Location loc, <span class="keywordtype">int</span> *dxcc);
-00932 
-00935 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a36">tqsl_getNumDXCCEntity</a>(<span class="keywordtype">int</span> *number);
-00936 
-00939 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a37">tqsl_getDXCCEntity</a>(<span class="keywordtype">int</span> index, <span class="keywordtype">int</span> *number, <span class="keyword">const</span> <span class="keywordtype">char</span> **name);
+00838 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a9">tqsl_saveStationLocationCapture</a>(tQSL_Location loc, <span class="keywordtype">int</span> overwrite);
+00839 
+00841 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a10">tqsl_getStationLocationCaptureName</a>(tQSL_Location loc, <span class="keywordtype">char</span> *namebuf, <span class="keywordtype">int</span> bufsiz);
+00842 
+00844 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a11">tqsl_setStationLocationCaptureName</a>(tQSL_Location loc, <span class="keyword">const</span> <span class="keywordtype">char</span> *name);
+00845 
+00847 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a12">tqsl_getNumStationLocations</a>(tQSL_Location loc, <span class="keywordtype">int</span> *nloc);
+00848 
+00850 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a13">tqsl_getStationLocationName</a>(tQSL_Location loc, <span class="keywordtype">int</span> idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00851 
+00853 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a14">tqsl_getStationLocationCallSign</a>(tQSL_Location loc, <span class="keywordtype">int</span> idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00854 
+00859 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a15">tqsl_getStationLocation</a>(tQSL_Location *loc, <span class="keyword">const</span> <span class="keywordtype">char</span> *name);
+00860 
+00862 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a16">tqsl_deleteStationLocation</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *name);
+00863 
+00865 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a17">tqsl_getNumLocationField</a>(tQSL_Location loc, <span class="keywordtype">int</span> *numf);
+00866 
+00868 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a18">tqsl_getLocationFieldDataLabelSize</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
+00869 
+00871 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a19">tqsl_getLocationFieldDataLabel</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00872 
+00874 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a20">tqsl_getLocationFieldDataGABBISize</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
+00875 
+00877 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a21">tqsl_getLocationFieldDataGABBI</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00878 
+00884 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a22">tqsl_getLocationFieldInputType</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *type);
+00885 
+00890 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a23">tqsl_getLocationFieldDataType</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *type);
+00891 
+00893 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a24">tqsl_getLocationFieldDataLength</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
+00894 
+00901 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a25">tqsl_getLocationFieldCharData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00902 
+00908 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a26">tqsl_getLocationFieldIntData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *dat);
+00909 
+00914 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a27">tqsl_getLocationFieldIndex</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *dat);
+00915 
+00917 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a28">tqsl_getNumLocationFieldListItems</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *rval);
+00918 
+00920 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a29">tqsl_getLocationFieldListItem</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> item_idx, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00921 
+00923 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a30">tqsl_setLocationFieldCharData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keyword">const</span> <span class="keywordtype">char</span> *buf);
+00924 
+00927 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a31">tqsl_setLocationFieldIntData</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> dat);
+00928 
+00933 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a32">tqsl_setLocationFieldIndex</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> dat);
+00934 
+00939 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a33">tqsl_getLocationFieldChanged</a>(tQSL_Location loc, <span class="keywordtype">int</span> field_num, <span class="keywordtype">int</span> *changed);
 00940 
-00943 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a38">tqsl_getDXCCEntityName</a>(<span class="keywordtype">int</span> number, <span class="keyword">const</span> <span class="keywordtype">char</span> **name);
-00944 
-00946 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a39">tqsl_getNumBand</a>(<span class="keywordtype">int</span> *number);
-00947 
-00957 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a40">tqsl_getBand</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **spectrum, <span class="keywordtype">int</span> *low, <span class="keywordtype">int</span> *high);
+00942 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a34">tqsl_getLocationCallSign</a>(tQSL_Location loc, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);
+00943 
+00945 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a35">tqsl_getLocationDXCCEntity</a>(tQSL_Location loc, <span class="keywordtype">int</span> *dxcc);
+00946 
+00949 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a36">tqsl_getNumDXCCEntity</a>(<span class="keywordtype">int</span> *number);
+00950 
+00953 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a37">tqsl_getDXCCEntity</a>(<span class="keywordtype">int</span> index, <span class="keywordtype">int</span> *number, <span class="keyword">const</span> <span class="keywordtype">char</span> **name);
+00954 
+00957 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a38">tqsl_getDXCCEntityName</a>(<span class="keywordtype">int</span> number, <span class="keyword">const</span> <span class="keywordtype">char</span> **name);
 00958 
-00960 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a41">tqsl_getNumMode</a>(<span class="keywordtype">int</span> *number);
+00960 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a39">tqsl_getNumBand</a>(<span class="keywordtype">int</span> *number);
 00961 
-00969 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a42">tqsl_getMode</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **mode, <span class="keyword">const</span> <span class="keywordtype">char</span> **group);
-00970 
-00972 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a43">tqsl_getNumPropagationMode</a>(<span class="keywordtype">int</span> *number);
-00973 
-00981 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a44">tqsl_getPropagationMode</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **descrip);
-00982 
-00984 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a45">tqsl_getNumSatellite</a>(<span class="keywordtype">int</span> *number);
-00985 
-00995 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a46">tqsl_getSatellite</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **descrip,
-00996         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);
-00997 
-01000 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a47">tqsl_clearCabrilloMap</a>();
-01001 
-01012 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a48">tqsl_setCabrilloMapEntry</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *contest, <span class="keywordtype">int</span> field, <span class="keywordtype">int</span> contest_type);
-01013 
-01025 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a49">tqsl_getCabrilloMapEntry</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *contest, <span class="keywordtype">int</span> *fieldnum, <span class="keywordtype">int</span> *contest_type);
-01026 
-01029 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a50">tqsl_clearADIFModes</a>();
-01030 
-01033 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a51">tqsl_setADIFMode</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *adif_item, <span class="keyword">const</span> <span class="keywordtype">char</span> *mode);
-01034 
-01037 <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a52">tqsl_getADIFMode</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *adif_item, <span class="keywordtype">char</span> *mode, <span class="keywordtype">int</span> nmode);
-01038 
-01048 <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a53">tqsl_getGABBItCERT</a>(tQSL_Cert cert, <span class="keywordtype">int</span> uid);
-01049 
-01060 <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a54">tqsl_getGABBItSTATION</a>(tQSL_Location loc, <span class="keywordtype">int</span> uid, <span class="keywordtype">int</span> certuid);
-01061 
-01074 <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a55">tqsl_getGABBItCONTACT</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso,
-01075         <span class="keywordtype">int</span> stationuid);
-01076 
-01079 <span class="preprocessor">#ifdef __cplusplus</span>
-01080 <span class="preprocessor"></span>}
-01081 <span class="preprocessor">#endif</span>
-01082 <span class="preprocessor"></span>
-01083 <span class="comment">/* Useful defines */</span>
-01084 <span class="preprocessor">#define TQSL_MAX_PW_LENGTH         32     </span><span class="comment">/* Password buffer length */</span>
-01085 
-01086 <span class="preprocessor">#endif </span><span class="comment">/* TQSLLIB_H */</span>
-</pre></div><hr size="1"><address style="align: right;"><small>Generated on Mon Feb 7 12:54:08 2005 for TrustedQSL Library API by
+00971 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a40">tqsl_getBand</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **spectrum, <span class="keywordtype">int</span> *low, <span class="keywordtype">int</span> *high);
+00972 
+00974 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a41">tqsl_getNumMode</a>(<span class="keywordtype">int</span> *number);
+00975 
+00983 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a42">tqsl_getMode</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **mode, <span class="keyword">const</span> <span class="keywordtype">char</span> **group);
+00984 
+00986 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a43">tqsl_getNumPropagationMode</a>(<span class="keywordtype">int</span> *number);
+00987 
+00995 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a44">tqsl_getPropagationMode</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **descrip);
+00996 
+00998 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a45">tqsl_getNumSatellite</a>(<span class="keywordtype">int</span> *number);
+00999 
+01009 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a46">tqsl_getSatellite</a>(<span class="keywordtype">int</span> index, <span class="keyword">const</span> <span class="keywordtype">char</span> **name, <span class="keyword">const</span> <span class="keywordtype">char</span> **descrip,
+01010         <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);
+01011 
+01014 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a47">tqsl_clearCabrilloMap</a>();
+01015 
+01026 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a48">tqsl_setCabrilloMapEntry</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *contest, <span class="keywordtype">int</span> field, <span class="keywordtype">int</span> contest_type);
+01027 
+01039 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a49">tqsl_getCabrilloMapEntry</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *contest, <span class="keywordtype">int</span> *fieldnum, <span class="keywordtype">int</span> *contest_type);
+01040 
+01043 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a50">tqsl_clearADIFModes</a>();
+01044 
+01047 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a51">tqsl_setADIFMode</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *adif_item, <span class="keyword">const</span> <span class="keywordtype">char</span> *mode);
+01048 
+01051 DLLEXPORT <span class="keywordtype">int</span> <a class="code" href="group__Data.html#a52">tqsl_getADIFMode</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *adif_item, <span class="keywordtype">char</span> *mode, <span class="keywordtype">int</span> nmode);
+01052 
+01062 DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a53">tqsl_getGABBItCERT</a>(tQSL_Cert cert, <span class="keywordtype">int</span> uid);
+01063 
+01074 DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a54">tqsl_getGABBItSTATION</a>(tQSL_Location loc, <span class="keywordtype">int</span> uid, <span class="keywordtype">int</span> certuid);
+01075 
+01088 DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span> *<a class="code" href="group__Data.html#a55">tqsl_getGABBItCONTACT</a>(tQSL_Cert cert, tQSL_Location loc, <a class="code" href="structTQSL__QSO__RECORD.html">TQSL_QSO_RECORD</a> *qso,
+01089         <span class="keywordtype">int</span> stationuid);
+01090 
+01093 <span class="preprocessor">#ifdef __cplusplus</span>
+01094 <span class="preprocessor"></span>}
+01095 <span class="preprocessor">#endif</span>
+01096 <span class="preprocessor"></span>
+01097 <span class="comment">/* Useful defines */</span>
+01098 <span class="preprocessor">#define TQSL_MAX_PW_LENGTH         32     </span><span class="comment">/* Password buffer length */</span>
+01099 
+01100 <span class="preprocessor">#endif </span><span class="comment">/* TQSLLIB_H */</span>
+</pre></div><hr size="1"><address style="align: right;"><small>Generated on Tue Feb 22 08:15:36 2005 for TrustedQSL Library API by
 <a href="http://www.doxygen.org/index.html">
 <img src="doxygen.png" alt="doxygen" align="middle" border=0 > 
 </a>1.3.4 </small></address>
