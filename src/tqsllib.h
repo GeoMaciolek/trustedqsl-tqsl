@@ -32,7 +32,8 @@
   * tQSL library functions.
   */
 
-/** Sizes */
+/* Sizes */
+#define TQSL_MAX_PATH_LEN            256
 #define TQSL_PASSWORD_MAX            80
 #define TQSL_NAME_ELEMENT_MAX        256
 #define TQSL_CALLSIGN_MAX            13
@@ -51,13 +52,16 @@
 #define TQSL_CERT_CB_USER            0
 #define TQSL_CERT_CB_CA              1
 #define TQSL_CERT_CB_ROOT            2
+#define TQSL_CERT_CB_PKEY            3
+#define TQSL_CERT_CB_CONFIG          4
 #define TQSL_CERT_CB_CERT_TYPE(x)    ((x) & 0xf)
 #define TQSL_CERT_CB_MILESTONE       0
 #define TQSL_CERT_CB_RESULT          0x10
 #define TQSL_CERT_CB_CALL_TYPE(x)    ((x) & TQSL_CERT_CB_RESULT)
 #define TQSL_CERT_CB_PROMPT          0
-#define TQSL_CERT_CB_WARNING         0x100
+#define TQSL_CERT_CB_DUPLICATE       0x100
 #define TQSL_CERT_CB_ERROR           0x200
+#define TQSL_CERT_CB_LOADED          0x300
 #define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) & 0x0f00)
 
 typedef void * tQSL_Cert;
@@ -140,12 +144,20 @@ DLLEXPORT extern char tQSL_ErrorFile[256];
 /// Custom error message string
 DLLEXPORT extern char tQSL_CustomError[256];
 
-/** Initialize the tQSL library */
+/** Initialize the tQSL library
+  *
+  * This function should be called prior to calling any other library functions.
+  */
 int tqsl_init();
 
 /** Set the directory where the TQSL files are kept.
   * May be called either before of after tqsl_init(), but should be called
   * before calling any other functions in the library.
+  *
+  * Note that this is purely optional. The library will figure out an
+  * approriate directory if tqsl_setDirectory isn't called. Unless there is
+  * some particular need to set the directory explicitly, programs should
+  * refrain from doing so.
   */
 int tqsl_setDirectory(const char *dir);
 
@@ -153,6 +165,7 @@ int tqsl_setDirectory(const char *dir);
   * See tqsl_getErrorString_v().
   */
 const char *tqsl_getErrorString();
+
 /** Gets the error string corresponding to the given error number.
   * The error string is available only until the next call to
   * tqsl_getErrorString_v or tqsl_getErrorString.
@@ -165,8 +178,6 @@ const char *tqsl_getErrorString_v(int err);
   * \li \c datalen = length of \c data in bytes
   * \li \c output = pointer to output buffer
   * \li \c outputlen = size of output buffer in bytes
-  *
-  * Returns 0 if successful.
   */
 int tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outputlen);
 
@@ -176,8 +187,7 @@ int tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int 
   * \li \c data = pointer to output buffer
   * \li \c datalen = pointer to int containing the size of the output buffer in bytes
   *
-  * Returns 0 if successful and places the number of resulting data bytes
-  * into \c *datalen.
+  * Places the number of resulting data bytes into \c *datalen.
   */
 int tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen);
 
@@ -238,29 +248,37 @@ int tqsl_isTimeValid(const tQSL_Time *t);
   */
 char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
 
+/** Returns the library version. \c major and/or \c minor may be NULL.
+  */
+int tqsl_getVersion(int *major, int *minor);
+
+/** Returns the configuration-file version. \c major and/or \c minor may be NULL.
+  */
+int tqsl_getConfigVersion(int *major, int *minor);
 
 /** @} */
 
 
 /** \defgroup CertStuff Certificate Handling API
   *
-  * Certificates are managed by manipulating tQSL_Cert objects. A tQSL_Cert
+  * Certificates are managed by manipulating \c tQSL_Cert objects. A \c tQSL_Cert
   * contains:
   *
   * \li The identity of the organization that issued the certificate (the "issuer").
   * \li The name and call sign of the amateur radio operator (ARO).
+  * \li The DXCC entity number for which this certificate is valid.
   * \li The range of QSO dates for which this certificate can be used.
   * \li The resources needed to digitally sign and verify QSO records.
   *
   * The certificate management process consists of:
   *
-  * \li Applying for a certificate. Certificate requests are produced via the
+  * \li <B>Applying for a certificate.</b> Certificate requests are produced via the
   *  tqsl_createCertRequest() function, which produces a certificate-request
   * file to send to the issuer.
-  * \li Importing the certificate file received from the issuer into the local
+  * \li <B>Importing the certificate</B> file received from the issuer into the local
   * "certificate store," a directory managed by the tQSL library, via
-  * tqsl_importCertFile().
-  * \li Selecting an appropriate certificate to use to sign a QSO record via
+  * tqsl_importTQSLFile().
+  * \li <B>Selecting an appropriate certificate</B> to use to sign a QSO record via
   * tqsl_selectCertificates().
   */
 
@@ -285,8 +303,8 @@ char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
   * that have a QSO date range that encompasses this date will be
   * returned.
   * \li \c issuer - Optional issuer (DN) string to match.
-  * \li \c flag - OR of TQSL_SELECT_CERT_EXPIRED (include expired
-  * certs), TQSL_SELECT_CERT_SUPERCEDED and TQSL_SELECT_CERT_WITHKEYS
+  * \li \c flag - OR of \c TQSL_SELECT_CERT_EXPIRED (include expired
+  * certs), \c TQSL_SELECT_CERT_SUPERCEDED and \c TQSL_SELECT_CERT_WITHKEYS
   * (keys that don't have associated certs will be returned).
   *
   * Returns 0 on success, nonzero on failure.
@@ -296,7 +314,7 @@ char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
   *
   */
 int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
-	const char *callsign, int dxcc, const tQSL_Date *date, const char *issuer, int flag);
+	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flag);
 
 /** Find out if the "certificate" is just a key pair.
   */
@@ -508,10 +526,10 @@ int tqsl_getCertificateRequestCountry(tQSL_Cert cert, char *str, int bufsiz);
   *
   * Returns one of the following values:
   *
-  * \li TQSL_PK_TYPE_ERR - An error occurred. Use tqsl_getErrorString() to examine.
-  * \li TQSL_PK_TYPE_NONE - No matching private key was found.
-  * \li TQSL_PK_TYPE_UNENC - The matching private key is unencrypted.
-  * \li TQSL_PK_TYPE_ENC - The matching private key is encrypted
+  * \li \c TQSL_PK_TYPE_ERR - An error occurred. Use tqsl_getErrorString() to examine.
+  * \li \c TQSL_PK_TYPE_NONE - No matching private key was found.
+  * \li \c TQSL_PK_TYPE_UNENC - The matching private key is unencrypted.
+  * \li \c TQSL_PK_TYPE_ENC - The matching private key is encrypted
   * (password protected).
   */
 int tqsl_getCertificatePrivateKeyType(tQSL_Cert cert);
@@ -533,18 +551,15 @@ void tqsl_freeCertificate(tQSL_Cert cert);
   *
   * \c type has several fields that can be accessed via macros:
   *
-  *  TQSL_CERT_CB_CALL_TYPE(type) := TQSL_CERT_CB_MILESTONE | TQSL_CERT_CB_RESULT
+  *  \c TQSL_CERT_CB_CALL_TYPE(type) := \c TQSL_CERT_CB_MILESTONE | \c TQSL_CERT_CB_RESULT
   *
-  *  TQSL_CERT_CB_CERT_TYPE(type) := TQSL_CERT_CB_ROOT | TQSL_CERT_CB_CA | TQSL_CERT_CB_USER
+  *  \c TQSL_CERT_CB_CERT_TYPE(type) := \c TQSL_CERT_CB_ROOT | \c TQSL_CERT_CB_CA | \c TQSL_CERT_CB_USER
   *
-  *  TQSL_CERT_CB_RESULT_TYPE(type) := TQSL_CERT_CB_PROMPT | TQSL_CERT_CB_WARNING | TQSL_CERT_CB_ERROR
+  *  \c TQSL_CERT_CB_RESULT_TYPE(type) := \c TQSL_CERT_CB_PROMPT | \c TQSL_CERT_CB_WARNING | \c TQSL_CERT_CB_ERROR
   *
-  *  TQSL_CERT_CB_CERT_TYPE() is meaningful only if TQSL_CERT_CB_CALL_TYPE()==TQSL_CERT_CB_MILESTONE
-  *
-  *  TQSL_CERT_CB_RESULT_TYPE() is meaningful only if TQSL_CERT_CB_CALL_TYPE()==TQSL_CERT_CB_RESULT
+  *  \c TQSL_CERT_CB_RESULT_TYPE() is meaningful only if \c TQSL_CERT_CB_CALL_TYPE() == \c TQSL_CERT_CB_RESULT
   */
-//int tqsl_importCertFile(const char *file, int(*cb)(int type, const char *));
-int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *));
+int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *message, void *userdata), void *user);
 
 /** Get the number of certificate providers known to tqsllib.
   */
@@ -562,39 +577,32 @@ int tqsl_getProvider(int idx, TQSL_PROVIDER *provider);
   *
   * If \c req->password is NULL and \c cb is not NULL, the callback will be
   * called to acquire the password. Otherwise \c req->password will be used as
-  * the password.   * If the password is NULL or an empty string the generated
+  * the password.  If the password is NULL or an empty string the generated
   * private key will be stored unencrypted.
   *
   * If req->signer is not zero and the signing certificate requires a password,
   * the password may be in req->signer_password, else signer_pwcb is called.
   */
 int tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *req,
-	int(*pwcb)(char *pwbuf, int pwsize));
+	int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user);
 
-/** Export User certificate (see tqsl_exportKeys() \c certs_flag parameter) */
-#define TQSL_EXPORT_USER	1
-/** Export CA certificate (see tqsl_exportKeys() \c certs_flag parameter) */
-#define TQSL_EXPORT_CA		2
-/** Export Root certificate (see tqsl_exportKeys() \c certs_flag parameter) */
-#define TQSL_EXPORT_ROOT	4
-/** Export User's private key (see tqsl_exportKeys() \c certs_flag parameter) */
-#define TQSL_EXPORT_PRIVATE	8
-
-/** Save a key pair  and/or certificates to a file in PKCS12 format.
-  *
-  * [This function is not yet implemented.]
+/** Save a key pair and certificates to a file in PKCS12 format.
   *
   * The tQSL_Cert must be initialized for signing (see tqsl_beginSigning())
   * if the user certificate is being exported.
   *
-  * \c certs_flag determines which certificates will be included in the
-  * file. It is the logical 'or' of TQSL_EXPORT_USER TQSL_EXPORT_CA
-  *
-  * The supplied \c password is used to encrypt the private key, if the private
-  * key is included in the export.
+  * The supplied \c p12password is used to encrypt the PKCS12 data.
   */
-int tqsl_exportKeys(tQSL_Cert cert, const char *filename, int certs_flag,
-	const char *password);
+int tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password);
+
+/** Load certificates and a private key from a PKCS12 file.
+  */
+int tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
+	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
+
+/** Delete a certificate and private key
+  */
+int tqsl_deleteCertificate(tQSL_Cert cert);
 
 /** @} */
 
@@ -618,7 +626,7 @@ int tqsl_exportKeys(tQSL_Cert cert, const char *filename, int certs_flag,
   * \c pwcb parameters: \c pwbuf is a pointer to a buffer of \c pwsize chars.
   * The buffer should be NUL-terminated.
   */
-int tqsl_beginSigning(tQSL_Cert cert, char *password,  int(*pwcb)(char *pwbuf, int pwsize));
+int tqsl_beginSigning(tQSL_Cert cert, char *password,  int(*pwcb)(char *pwbuf, int pwsize, void *userdata), void *user);
 
 /** Test whether the tQSL_Cert object is initialized for signing.
   *
@@ -953,6 +961,37 @@ int tqsl_getNumMode(int *number);
   */
 int tqsl_getMode(int index, const char **mode, const char **group);
 
+/** Clear the map of Cabrillo contests.
+  */
+int tqsl_clearCabrilloMap();
+
+/** Set the mapping of a Cabrillo contest name (as found in the
+  * CONTEST line of a Cabrillo file) to the QSO line call-worked field number
+  * and the contest type.
+  *
+  * \c field can have a value of TQSL_MIN_CABRILLO_MAP_FIELD (cabrillo.h)
+  * or greater. Field number starts at 1.
+  *
+  * \c contest_type must be TQSL_CABRILLO_HF or TQSL_CABRILLO_VHF,
+  * defined in cabrillo.h
+  */
+int tqsl_setCabrilloMapEntry(const char *contest, int field, int contest_type);
+
+/** Get the mapping of a Cabrillo contest name (as found in the
+  * CONTEST line of a Cabrillo file) to a call-worked field number
+  * and the contest type.
+  *
+  * \c fieldnum will be set to 0 if the contest name isn't in the Cabrillo
+  * map. Otherwise it is set to the QSO line field number of the call-worked
+  * field, with field counting starting at 1.
+  *
+  * \c contest_type may be NULL. If not, it is set to the Cabrillo contest
+  * type (TQSL_CABRILLO_HF or TQSL_CABRILLO_VHF), defined in cabrillo.h.
+  */
+int tqsl_getCabrilloMapEntry(const char *contest, int *fieldnum, int *contest_type);
+
+/** Clear the map of ADIF modes
+  */
 int tqsl_clearADIFModes();
 
 /** Set the mapping of an ADIF mode to a TQSL mode.

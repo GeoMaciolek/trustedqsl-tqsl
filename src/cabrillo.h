@@ -51,6 +51,8 @@ typedef enum {
 	TQSL_CABRILLO_VHF,
 } TQSL_CABRILLO_FREQ_TYPE;
 
+#define TQSL_MIN_CABRILLO_MAP_FIELD 5
+
 /** Cabrillo field data:
   *
   * \li \c name - ADIF field name
@@ -81,6 +83,9 @@ int tqsl_getCabrilloFreqType(tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type);
 
 /** Get the current line number (starting from 1) of the input file */
 int tqsl_getCabrilloLine(tQSL_Cabrillo cab, int *lineno);
+
+/** Get the text of the current Cabrillo record */
+const char * tqsl_getCabrilloRecordText(tQSL_Cabrillo cab);
 
 /** Get the next field of the Cabrillo record
   *

@@ -48,6 +48,18 @@ struct cabrillo_field_def {
 	int (*process)(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp);
 };
 
+static cabrillo_field_def cabrillo_dummy[] = {
+	{ "CALL", 6, 0 },
+	{ "BAND", 0, freq_to_band },
+	{ "MODE", 1, mode_xlat },
+	{ "QSO_DATE", 2, 0 },
+	{ "TIME_ON", 3, time_fixer },
+	{ "FREQ", 0, 0 },
+	{ "MYCALL", 4, 0 },
+};
+
+/*
+
 // Cabrillo QSO template specs
 
 // Call in field 6
@@ -94,13 +106,16 @@ static cabrillo_field_def cabrillo_c9[] = {
 	{ "MYCALL", 4, 0 },
 };
 
+*/
+
 struct cabrillo_contest {
-	const char *contest_name;
+	char *contest_name;
 	TQSL_CABRILLO_FREQ_TYPE type;
-	cabrillo_field_def* fields;
+	cabrillo_field_def *fields;
 	int nfields;
 };
 
+/*
 static cabrillo_contest cabrillo_contests[] = {
 	// ARRL SS
 	{ "ARRL-SS-CW", TQSL_CABRILLO_HF, cabrillo_c9, sizeof cabrillo_c9 / sizeof cabrillo_c9[0] },
@@ -125,12 +140,12 @@ static cabrillo_contest cabrillo_contests[] = {
 	{ "DARC-WAEDC-CW", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
 	{ "DARC-WAEDC-RTTY", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
 	{ "DARC-WAEDC-SSB", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
-	// NA
-	{ "NAQP-CW", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
-	{ "NAQP-RTTY", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
-	{ "NAQP-SSB", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
-	{ "NAQP-SPRINT-CW", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
-	{ "NAQP-SPRINT-SSB", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
+	// NA/NAQP
+	{ "NAQP-CW", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
+	{ "NAQP-RTTY", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
+	{ "NAQP-SSB", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
+	{ "NA-SPRINT-CW", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
+	{ "NA-SPRINT-SSB", TQSL_CABRILLO_HF, cabrillo_c8, sizeof cabrillo_c8 / sizeof cabrillo_c8[0] },
 	// Other HF
 	{ "STEW-PERRY", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
 	{ "OCEANIA-DX-CW", TQSL_CABRILLO_HF, cabrillo_c7, sizeof cabrillo_c7 / sizeof cabrillo_c7[0] },
@@ -150,6 +165,7 @@ static cabrillo_contest cabrillo_contests[] = {
 	{ "ARRL-VHF-SEP", TQSL_CABRILLO_VHF, cabrillo_c6, sizeof cabrillo_c6 / sizeof cabrillo_c6[0] },
 	{ "CQ-VHF", TQSL_CABRILLO_VHF, cabrillo_c6, sizeof cabrillo_c6 / sizeof cabrillo_c6[0] },
 };
+*/
 
 struct TQSL_CABRILLO {
 	int sentinel;
@@ -316,6 +332,50 @@ time_fixer(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	return 0;
 }
 
+static void
+tqsl_free_cabrillo_contest(struct cabrillo_contest *c) {
+		if (c->contest_name)
+			free(c->contest_name);
+		if (c->fields)
+			free(c->fields);
+		free(c);
+}
+
+static struct cabrillo_contest *
+tqsl_new_cabrillo_contest(const char *contest_name, int call_field, int contest_type) {
+	cabrillo_contest *c = (cabrillo_contest *)calloc(1, sizeof (struct cabrillo_contest));
+	if (c == NULL)
+		return NULL;
+	if ((c->contest_name = (char *)malloc(strlen(contest_name)+1)) == NULL) {
+		tqsl_free_cabrillo_contest(c);
+		return NULL;
+	}
+	strcpy(c->contest_name, contest_name);
+	c->type = (TQSL_CABRILLO_FREQ_TYPE)contest_type;
+	if ((c->fields = (struct cabrillo_field_def *)calloc(1, sizeof cabrillo_dummy)) == NULL) {
+		tqsl_free_cabrillo_contest(c);
+		return NULL;
+	}
+	memcpy(c->fields, cabrillo_dummy, sizeof cabrillo_dummy);
+	c->fields[0].loc = call_field-1;
+	c->nfields = sizeof cabrillo_dummy / sizeof cabrillo_dummy[0];
+	return c;
+}
+
+static void
+tqsl_free_cab(struct TQSL_CABRILLO *cab) {
+	if (cab->sentinel != 0x2449)
+		return;
+	cab->sentinel = 0;
+	if (cab->filename)
+		free(cab->filename);
+	if (cab->fp)
+		fclose(cab->fp);
+	if (cab->contest)
+		tqsl_free_cabrillo_contest(cab->contest);
+	free(cab);
+}
+
 DLLEXPORT int
 tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	TQSL_CABRILLO_ERROR_TYPE terrno;
@@ -325,12 +385,12 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	}
 	struct TQSL_CABRILLO *cab;
 	cab = (struct TQSL_CABRILLO *)calloc(1, sizeof (struct TQSL_CABRILLO));
-	cab->sentinel = 0x2449;
-	cab->field_idx = -1;
 	if (cab == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;
 		goto err;
 	}
+	cab->sentinel = 0x2449;
+	cab->field_idx = -1;
 	if ((cab->fp = fopen(filename, "r")) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		goto err;
@@ -352,12 +412,20 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 				&& !strcmp(cab->rec, "CONTEST")
 				&& strtok(vp, " \t\r\n") != 0) {
 				terrno = TQSL_CABRILLO_UNKNOWN_CONTEST;
-				for (int i = 0; i < int(sizeof cabrillo_contests / sizeof cabrillo_contests[0]); i++) {
+				int callfield, contest_type;
+				if (tqsl_getCabrilloMapEntry(vp, &callfield, &contest_type)) {
+					tqsl_free_cab(cab);
+					return 1;
+				}
+				if (callfield != 0)
+					cab->contest = tqsl_new_cabrillo_contest(vp, callfield, contest_type);
+/*				for (int i = 0; i < int(sizeof cabrillo_contests / sizeof cabrillo_contests[0]); i++) {
 					if (!strcasecmp(vp, cabrillo_contests[i].contest_name)) {
 						cab->contest = cabrillo_contests + i;
 						break;
 					}
 				}
+*/
 				if (cab->contest == 0) {
 					strncpy(errmsgdata, vp, sizeof errmsgdata);
 					cp = 0;
@@ -385,9 +453,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 err:
 	strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 	tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
-	if (cab->fp)
-		fclose(cab->fp);
-	free(cab);
+	tqsl_free_cab(cab);
 	return 1;
 
 }
@@ -398,13 +464,9 @@ tqsl_endCabrillo(tQSL_Cabrillo *cabp) {
 	if (cabp == 0)
 		return 0;
 	cab = CAST_TQSL_CABRILLO(*cabp);
-	if (!cab || cab->sentinel != 0x3345)
+	if (!cab || cab->sentinel != 0x2449)
 		return 0;
-	if (cab->filename)
-		free(cab->filename);
-	if (cab->fp)
-		fclose(cab->fp);
-	free(cab);
+	tqsl_free_cab(cab);
 	*cabp = 0;
 	return 0;
 }
@@ -582,4 +644,12 @@ tqsl_getCabrilloLine(tQSL_Cabrillo cabp, int *lineno) {
 	}
 	*lineno = cab->line_no;
 	return 0;
+}
+
+DLLEXPORT const char *
+tqsl_getCabrilloRecordText(tQSL_Cabrillo cabp) {
+	TQSL_CABRILLO *cab;
+	if ((cab = check_cabrillo(cabp)) == 0)
+		return 0;
+	return cab->rec;
 }

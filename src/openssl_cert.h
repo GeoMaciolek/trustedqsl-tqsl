@@ -19,8 +19,10 @@
 #include "sysconfig.h"
 #endif
 
+#define PERL5	// Hack for older openssl c++ conflict
 #include <openssl/x509.h>
 #include <openssl/e_os.h>
+#undef PERL5
 
 #undef CLIENT_STATIC
 #ifndef LOTW_SERVER
@@ -42,7 +44,7 @@ namespace tqsllib {
 
 typedef enum { ROOTCERT = 0, CACERT, USERCERT } certtype;
 
-int tqsl_import_cert(const char *cert, certtype type, int(*cb)(int, const char *));
+int tqsl_import_cert(const char *cert, certtype type, int(*cb)(int, const char *, void *), void *);
 
 } // namespace
 
@@ -75,7 +77,7 @@ CLIENT_STATIC TQSL_X509_STACK *tqsl_ssl_load_certs_from_file(const char *filenam
   * Returns NULL if the test certificate is valid, othewise returns an error message.
   */
 CLIENT_STATIC const char *tqsl_ssl_verify_cert(X509 *cert, TQSL_X509_STACK *cacerts, TQSL_X509_STACK *rootcerts, int purpose,
-	int (*cb)(int ok, X509_STORE_CTX *ctx));
+	int (*cb)(int ok, X509_STORE_CTX *ctx), TQSL_X509_STACK **chain = 0);
 
 /// Get the number of name entries in an X509 name object
 CLIENT_STATIC int tqsl_get_name_count(X509_NAME *name);
@@ -109,12 +111,12 @@ CLIENT_STATIC int tqsl_get_asn1_date(ASN1_TIME *tm, tQSL_Date *date);
   * stack is not altered.
   */
 CLIENT_STATIC TQSL_X509_STACK *tqsl_filter_cert_list(TQSL_X509_STACK *sk, const char *callsign,
-	int dxcc, const tQSL_Date *date, const char *issuer, int isvalid);
+	int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int isvalid);
 
 CLIENT_STATIC EVP_PKEY *tqsl_new_rsa_key(int nbits);
 
 CLIENT_STATIC int tqsl_store_cert(const char *pem, X509 *cert, const char *certfile,
-	int type, int (*cb)(int, const char *));
+	int type, int (*cb)(int, const char *, void *), void *);
 
 CLIENT_STATIC int tqsl_write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned char *value, int len);
 

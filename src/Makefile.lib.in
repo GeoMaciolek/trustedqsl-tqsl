@@ -1,10 +1,8 @@
 LIBS=-lexpat -lcrypto -liberty @LIBS@
 OPENSSL=@OPENSSL@
 EXPAT=@EXPAT@
-CXXFLAGS = -O0 -g3 -Wall -I. -I../include -I$(WXWIN)/src/zlib -I$(OPENSSL)/include -I$(EXPAT)/include $(INCDIR) @DEFS@
+CXXFLAGS = -O0 -g3 -Wall -I. -I$(WXWIN)/src/zlib -I$(OPENSSL)/include -I$(EXPAT)/include $(INCDIR) @DEFS@
 LDFLAGS = -L. -L$(OPENSSL)/lib -L$(EXPAT)/lib -L$(WXWIN)/lib $(LIBS) -lstdc++
-
-OBJS = tqsllib.o openssl_cert.o adif.o  xml.o location.o tqslconvert.o cabrillo.o
 
 PTARGETS = gen_crq load_cert station_loc dumptqsldata converter
 
@@ -14,37 +12,50 @@ ifeq ($(MINGW32),yes)
   TARGETS=$(PTARGETS) tqsllib.dll
   ZLIB=zlib
   MYLIB=tqsllibd
+  OSUF=o
 else
   TARGETS=$(PTARGETS)
   ZLIB=z
   MYLIB = tqsllib
+  OSUF=lo
+  LIBTOOL = libtool
+  LIBTOOL_PATH = -rpath /usr/lib
 endif
 
-SUPPORT_LIB = lotwsup
+OBJS = tqsllib.$(OSUF) openssl_cert.$(OSUF) adif.$(OSUF)  xml.$(OSUF) \
+	location.$(OSUF) tqslconvert.$(OSUF) cabrillo.$(OSUF)
 
 all: $(TARGETS)
 
 gen_crq$(OBJSUF): gen_crq.o lib$(MYLIB).a
-	gcc -o gen_crq$(OBJSUF) gen_crq.o -l$(MYLIB) $(LDFLAGS) $(WINLDFLAGS) -l$(ZLIB)
-	
+	$(LIBTOOL) gcc -o gen_crq gen_crq.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+
 load_cert$(OBJSUF): load_cert.o lib$(MYLIB).a
-	gcc -o load_cert$(OBJSUF) load_cert.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	$(LIBTOOL) gcc -o load_cert load_cert.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
 	
 converter$(OBJSUF): converter.o lib$(MYLIB).a
-	gcc -o converter$(OBJSUF) converter.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	$(LIBTOOL) gcc -o converter converter.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
 	
 station_loc$(OBJSUF): station_loc.o lib$(MYLIB).a
-	gcc -o station_loc$(OBJSUF) station_loc.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	$(LIBTOOL) gcc -o station_loc station_loc.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
 	
 dumptqsldata$(OBJSUF): dumptqsldata.o lib$(MYLIB).a
-	gcc -o dumptqsldata$(OBJSUF) dumptqsldata.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	$(LIBTOOL) gcc -o dumptqsldata dumptqsldata.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
 	
 include tqsllib.depends
 
+ifeq ($(MINGW32),yes)
+
 libtqsllib.a: $(OBJS)
-	rm -f libtqsllib.a
-	ar q libtqsllib.a $(OBJS)
-	ranlib libtqsllib.a
+	  ar q libtqsllib.a $(OBJS)
+	  ranlib libtqsllib.a
+
+else
+
+libtqsllib.a: $(OBJS)
+	$(LIBTOOL) gcc $(LIBTOOL_PATH) -g -O -o libtqsllib.la $(OBJS)
+
+endif
 
 libtqsllibd.a: tqsllib.dll
 
@@ -56,10 +67,11 @@ tqsllib.dll: libtqsllib.a
 	strip tqsllib.dll
 
 clean:
-	rm -f *.exe *.dll *.o *.a *~ xxx.*
+	rm -f *.exe *.dll *.o *.lo *.a *.la *~ xxx.*
+	rm -rf .libs
 
 %.o: %.cpp
-	g++ $(CXXFLAGS) -c -o $@ $*.cpp
+	$(LIBTOOL) g++ $(CXXFLAGS) -c -o $@ $*.cpp
 
-%.o: %.c
-	g++ $(CXXFLAGS) -c -o $@ $*.c
+%.lo: %.cpp
+	$(LIBTOOL) g++ $(CXXFLAGS) -c -o $@ $*.cpp

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="0" minorversion="9">
+<tqslconfig majorversion="0" minorversion="10">
   <providers>
     <provider organizationName="Test Certificate Authority">
       <organizationalUnitName>TrustedQSL Test</organizationalUnitName>
@@ -28,7 +28,7 @@
       </tCONTACT>
     </sigspec>
   </sigspecs>
-  <dxcc date="2003-06-10">
+  <dxcc date="2003-08-14">
     <entity arrlId="1">CANADA</entity>
     <entity arrlId="3">AFGHANISTAN</entity>
     <entity arrlId="4">AGALEGA &amp; ST BRANDON</entity>
@@ -417,8 +417,6 @@
     <mode group="DATA">MT63</mode>
     <mode group="DATA">PACKET</mode>
     <mode group="DATA">PACTOR</mode>
-    <mode group="DATA">PACTOR2</mode>
-    <mode group="CW">PCW</mode>
     <mode group="PHONE">PHONE</mode>
     <mode group="DATA">PSK125</mode>
     <mode group="DATA">PSK31</mode>
@@ -435,12 +433,54 @@
     <adifmode mode="SSB">LSB</adifmode>
     <adifmode mode="MINIRTTY">MTTY</adifmode>
     <adifmode mode="PACTOR">PAC</adifmode>
-    <adifmode mode="PACTOR2">PAC2</adifmode>
+    <adifmode mode="PACTOR">PAC2</adifmode>
+    <adifmode mode="CW">PCW</adifmode>
     <adifmode mode="PACKET">PKT</adifmode>
     <adifmode mode="THROB">THRB</adifmode>
     <adifmode mode="AMTOR">TOR</adifmode>
     <adifmode mode="SSB">USB</adifmode>
   </adifmap>
+  <cabrillomap>
+    <cabrillocontest field="8" type="HF">AP-SPRINT</cabrillocontest>
+    <cabrillocontest field="8" type="HF">ARRL-10</cabrillocontest>
+    <cabrillocontest field="8" type="HF">ARRL-160</cabrillocontest>
+    <cabrillocontest field="8" type="HF">ARRL-DX-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">ARRL-DX-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">ARRL-RTTY</cabrillocontest>
+    <cabrillocontest field="10" type="HF">ARRL-SS-CW</cabrillocontest>
+    <cabrillocontest field="10" type="HF">ARRL-SS-SSB</cabrillocontest>
+    <cabrillocontest field="7" type="VHF">ARRL-UHF-AUG</cabrillocontest>
+    <cabrillocontest field="7" type="VHF">ARRL-VHF-JAN</cabrillocontest>
+    <cabrillocontest field="7" type="VHF">ARRL-VHF-JUN</cabrillocontest>
+    <cabrillocontest field="7" type="VHF">ARRL-VHF-SEP</cabrillocontest>
+    <cabrillocontest field="9" type="HF">BARTG-RTTY</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-160-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-160-SSB</cabrillocontest>
+    <cabrillocontest field="7" type="VHF">CQ-VHF</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-WPX-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-WPX-RTTY</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-WPX-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-WW-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">CQ-WW-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">DARC-WAEDC-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">DARC-WAEDC-RTTY</cabrillocontest>
+    <cabrillocontest field="8" type="HF">DARC-WAEDC-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">IARU-HF</cabrillocontest>
+    <cabrillocontest field="9" type="HF">NA-SPRINT-CW</cabrillocontest>
+    <cabrillocontest field="9" type="HF">NA-SPRINT-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">NAQP-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">NAQP-RTTY</cabrillocontest>
+    <cabrillocontest field="8" type="HF">NAQP-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">NEQP</cabrillocontest>
+    <cabrillocontest field="8" type="HF">OCEANIA-DX-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">OCEANIA-DX-SSB</cabrillocontest>
+    <cabrillocontest field="9" type="HF">RSGB-IOTA</cabrillocontest>
+    <cabrillocontest field="8" type="HF">SAC-CW</cabrillocontest>
+    <cabrillocontest field="8" type="HF">SAC-SSB</cabrillocontest>
+    <cabrillocontest field="8" type="HF">STEW-PERRY</cabrillocontest>
+    <cabrillocontest field="9" type="HF">TARA-RTTY</cabrillocontest>
+    <cabrillocontest field="8" type="HF">WAEDC</cabrillocontest>
+  </cabrillomap>
   <locpages>
     <page Id="1" follows="0">
       <pageField>CALL</pageField>

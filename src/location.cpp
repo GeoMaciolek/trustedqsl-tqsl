@@ -28,6 +28,8 @@
 
 #include <vector>
 
+using namespace std;
+
 namespace tqsllib {
 
 class TQSL_LOCATION_ITEM {
@@ -116,27 +118,7 @@ public:
 	string mode, group;
 };
 
-}	// namespace
-
-#define CAST_TQSL_LOCATION(x) ((tqsllib::TQSL_LOCATION *)(x))
-
-using namespace std;
-using namespace tqsllib;
-
-typedef map<int, string> IntMap;
-
-// config data
-
-static XMLElement tqsl_xml_config;
-static IntMap DXCCMap;
-static vector< pair<int,string> > DXCCList;
-static vector<Band> BandList;
-static vector<Mode> ModeList;
-static map<int, XMLElement> tqsl_page_map;
-static map<string, XMLElement> tqsl_field_map;
-static map<string, string> tqsl_adif_map;
-
-static bool
+bool
 operator< (const Band& o1, const Band& o2) {
 	static char *suffixes[] = { "M", "CM", "MM"};
 	static char *prefix_chars = "0123456789.";
@@ -158,7 +140,7 @@ operator< (const Band& o1, const Band& o2) {
 	return atof(o1.name.c_str()) > atof(o2.name.c_str());
 }
 
-static bool
+bool
 operator< (const Mode& o1, const Mode& o2) {
 	static char *groups[] = { "CW", "PHONE", "IMAGE", "DATA" };
 	// m1 < m2 if m1 is a modegroup and m2 is not
@@ -181,10 +163,38 @@ operator< (const Mode& o1, const Mode& o2) {
 	return m1_g < m2_g;
 }
 
+}	// namespace
+
+using namespace tqsllib;
+
+#define CAST_TQSL_LOCATION(x) ((tqsllib::TQSL_LOCATION *)(x))
+
+typedef map<int, string> IntMap;
+
+// config data
+
+static XMLElement tqsl_xml_config;
+static int tqsl_xml_config_major = -1;
+static int tqsl_xml_config_minor = 0;
+static IntMap DXCCMap;
+static vector< pair<int,string> > DXCCList;
+static vector<Band> BandList;
+static vector<Mode> ModeList;
+static map<int, XMLElement> tqsl_page_map;
+static map<string, XMLElement> tqsl_field_map;
+static map<string, string> tqsl_adif_map;
+static map<string, pair<int, int> > tqsl_cabrillo_map;
+static map<string, pair<int, int> > tqsl_cabrillo_user_map;
+
+static char
+char_toupper(char c) {
+	return toupper(c);
+}
+
 static string
 string_toupper(const string& in) {
 	string out = in;
-	transform(out.begin(), out.end(), out.begin(), toupper);
+	transform(out.begin(), out.end(), out.begin(), char_toupper);
 	return out;
 }
 
@@ -205,18 +215,61 @@ static int
 tqsl_load_xml_config() {
 	if (tqsl_xml_config.getElementList().size() > 0)	// Already init'd
 		return 0;
-	string path = string(tQSL_BaseDir) + "/config.xml";
-	if (!tqsl_xml_config.parseFile(path.c_str())) {
-#ifndef __WIN32__
-		tqsl_xml_config.parseFile("/etc/tqsl/config.xml");
-#endif
+	XMLElement default_config;
+	XMLElement user_config;
+	string default_path;
+
+#ifdef __WIN32__
+	HKEY hkey;
+	DWORD dtype;
+	char wpath[TQSL_MAX_PATH_LEN];
+	DWORD bsize = sizeof wpath;
+	int wval;
+	if ((wval = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
+		"Software\\TrustedQSL\\TQSLCert", 0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
+		wval = RegQueryValueEx(hkey, "InstallPath", 0, &dtype, (LPBYTE)wpath, &bsize);
+		RegCloseKey(hkey);
+		if (wval == ERROR_SUCCESS)
+			default_path = string(wpath) + "/config.xml";
 	}
+#else
+	default_path = "/etc/tqsl/config.xml";
+#endif
+
+	string user_path = string(tQSL_BaseDir) + "/config.xml";
+
+	default_config.parseFile(default_path.c_str());
+	user_config.parseFile(user_path.c_str());
+
+	int default_major = -1;
+	int default_minor = 0;
+	int user_major = -1;
+	int user_minor = 0;
+
 	XMLElement top;
-	if (!tqsl_xml_config.getFirstElement("tqslconfig", top)) {
-		tqsl_xml_config.clear();
+	if (default_config.getFirstElement("tqslconfig", top)) {
+		default_major = atoi(top.getAttribute("majorversion").first.c_str());
+		default_minor = atoi(top.getAttribute("minorversion").first.c_str());
+	}
+	if (user_config.getFirstElement("tqslconfig", top)) {
+		user_major = atoi(top.getAttribute("majorversion").first.c_str());
+		user_minor = atoi(top.getAttribute("minorversion").first.c_str());
+	}
+
+	if (default_major > user_major
+		|| (default_major == user_major && default_minor > user_minor)) {
+			tqsl_xml_config = default_config;
+			tqsl_xml_config_major = default_major;
+			tqsl_xml_config_minor = default_minor;
+			return 0;
+	}
+	if (user_major < 0) {
 		tQSL_Error = TQSL_CONFIG_ERROR;
 		return 1;
 	}
+	tqsl_xml_config	= user_config;
+	tqsl_xml_config_major = user_major;
+	tqsl_xml_config_minor = user_minor;
 	return 0;
 }
 
@@ -419,6 +472,19 @@ init_band() {
 	sort(BandList.begin(), BandList.end());
 	return 0;
 }
+
+DLLEXPORT int
+tqsl_getConfigVersion(int *major, int *minor) {
+	if (tqsl_init())
+		return 1;
+	if (tqsl_load_xml_config())
+		return 1;
+	if (major)
+		*major = tqsl_xml_config_major;
+	if (minor)
+		*minor = tqsl_xml_config_minor;
+	return 0;
+}
 	
 DLLEXPORT int
 tqsl_getNumBand(int *number) {
@@ -551,6 +617,63 @@ tqsl_getDXCCEntityName(int number, const char **name) {
 		return 1;
 	}
 	*name = it->second.c_str();
+	return 0;
+}
+
+static int
+init_cabrillo_map() {
+	if (tqsl_cabrillo_map.size() > 0)
+		return 0;
+	XMLElement cabrillo_map;
+	if (tqsl_get_xml_config_section("cabrillomap", cabrillo_map))
+		return 1;
+	XMLElement cabrillo_item;
+	bool ok = cabrillo_map.getFirstElement("cabrillocontest", cabrillo_item);
+	while (ok) {
+		if (cabrillo_item.getText() != "" && atoi(cabrillo_item.getAttribute("field").first.c_str()) > TQSL_MIN_CABRILLO_MAP_FIELD)
+			tqsl_cabrillo_map[cabrillo_item.getText()] =
+				make_pair(atoi(cabrillo_item.getAttribute("field").first.c_str())-1,
+					(cabrillo_item.getAttribute("type").first == "VHF") ? TQSL_CABRILLO_VHF : TQSL_CABRILLO_HF);
+		ok = cabrillo_map.getNextElement(cabrillo_item);
+	}
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_clearCabrilloMap() {
+	tqsl_cabrillo_user_map.clear();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_setCabrilloMapEntry(const char *contest, int field, int contest_type) {
+	if (contest == 0 || field <= TQSL_MIN_CABRILLO_MAP_FIELD ||
+		(contest_type != TQSL_CABRILLO_HF && contest_type != TQSL_CABRILLO_VHF)) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	tqsl_cabrillo_user_map[string_toupper(contest)] = make_pair(field-1, contest_type);
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getCabrilloMapEntry(const char *contest, int *fieldnum, int *contest_type) {
+	if (contest == 0 || fieldnum == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_cabrillo_map())
+		return 1;
+	map<string, pair<int,int> >::iterator it;
+	if ((it = tqsl_cabrillo_user_map.find(string_toupper(contest))) == tqsl_cabrillo_user_map.end()) {
+		if ((it = tqsl_cabrillo_map.find(string_toupper(contest))) == tqsl_cabrillo_map.end()) {
+			*fieldnum = 0;
+			return 0;
+		}
+	}
+	*fieldnum = it->second.first + 1;
+	if (contest_type)
+		*contest_type = it->second.second;
 	return 0;
 }
 
@@ -1981,7 +2104,7 @@ tqsl_getProvider(int idx, TQSL_PROVIDER *provider) {
 }
 
 DLLEXPORT int
-tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *)) {
+tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), void *userdata) {
 	XMLElement topel;
 	if (!topel.parseFile(file)) {
 		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
@@ -1999,22 +2122,43 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *)) {
 		XMLElement cert;
 		bool cstat = section.getFirstElement("rootcert", cert);
 		while (cstat) {
-			tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb);
+			tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata);
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("cacert", cert);
 		while (cstat) {
-			tqsl_import_cert(cert.getText().c_str(), CACERT, cb);
+			tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata);
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("usercert", cert);
 		while (cstat) {
-			tqsl_import_cert(cert.getText().c_str(), USERCERT, cb);
+			tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata);
 			cstat = section.getNextElement(cert);
 		}
 	}
 	stat = tqsldata.getFirstElement("tqslconfig", section);
 	if (stat) {
+		// Check to make sure we aren't overwriting newer version
+		int major = atoi(section.getAttribute("majorversion").first.c_str());
+		int minor = atoi(section.getAttribute("minorversion").first.c_str());
+		int curmajor, curminor;
+		if (tqsl_getConfigVersion(&major, &minor))
+			return 1;
+		const char *msg =  "Newer config already present";
+		if (major == curmajor) {
+			if (minor == curminor)
+				msg = "Same config version already present";
+			else if (minor > curminor)
+				msg = 0;
+		} else if (major > curmajor)
+			msg = 0;
+		if (msg) {
+			if (cb)
+				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_DUPLICATE | TQSL_CERT_CB_CONFIG,
+					msg, userdata);
+			return 0;
+		}
+
 		// Save the configuration file
 		string fn = string(tQSL_BaseDir) + "/config.xml";
 		ofstream out;
@@ -2027,6 +2171,9 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *)) {
 		catch (exception& x) {
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
+			if (cb)
+				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR | TQSL_CERT_CB_CONFIG,
+					fn.c_str(), userdata);
 			return 1;
 		}
 		// Clear stored config data to force re-reading new config
@@ -2038,6 +2185,12 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *)) {
 		tqsl_page_map.clear();
 		tqsl_field_map.clear();
 		tqsl_adif_map.clear();
+		tqsl_cabrillo_map.clear();
+		string version = "Configuration V" + section.getAttribute("majorversion").first + "."
+			+ section.getAttribute("minorversion").first + "\n" + fn;
+		if (cb)
+			return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_LOADED | TQSL_CERT_CB_CONFIG,
+				version.c_str(), userdata);
 	}
 	return 0;
 }

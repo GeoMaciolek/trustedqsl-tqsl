@@ -51,6 +51,18 @@ check_adif(tQSL_ADIF adif) {
 	return CAST_TQSL_ADIF(adif);
 }
 
+static void
+free_adif(TQSL_ADIF *adif) {
+	if (adif && adif->sentinel == 0x3345) {
+		adif->sentinel = 0;
+		if (adif->filename)
+			free(adif->filename);
+		if (adif->fp)
+			fclose(adif->fp);
+		free(adif);
+	}
+}
+	
 DLLEXPORT int
 tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	if (filename == NULL) {
@@ -59,11 +71,11 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	}
 	struct TQSL_ADIF *adif;
 	adif = (struct TQSL_ADIF *)calloc(1, sizeof (struct TQSL_ADIF));
-	adif->sentinel = 0x3345;
 	if (adif == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;
 		goto err;
 	}
+	adif->sentinel = 0x3345;
 	if ((adif->fp = fopen(filename, "r")) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
@@ -78,9 +90,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	*((struct TQSL_ADIF **)adifp) = adif;
 	return 0;
 err:
-	if (adif->fp)
-		fclose(adif->fp);
-	free(adif);
+	free_adif(adif);
 	return 1;
 
 }
@@ -91,13 +101,7 @@ tqsl_endADIF(tQSL_ADIF *adifp) {
 	if (adifp == 0)
 		return 0;
 	adif = CAST_TQSL_ADIF(*adifp);
-	if (!adif || adif->sentinel != 0x3345)
-		return 0;
-	if (adif->filename)
-		free(adif->filename);
-	if (adif->fp)
-		fclose(adif->fp);
-	free(adif);
+	free_adif(adif);
 	*adifp = 0;
 	return 0;
 }

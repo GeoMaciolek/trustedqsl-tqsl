@@ -21,11 +21,14 @@
 #include "tqslerrno.h"
 #include <cstring>
 #include <string>
+#include <ctype.h>
 #include <set>
 
 //#include <iostream>
 
 using namespace std;
+
+static bool checkCallSign(const string& call);
 
 namespace tqsllib {
 
@@ -47,8 +50,10 @@ public:
 	int base_idx;
 	bool need_station_rec;
 	bool *certs_used;
+	bool allow_bad_calls;
 	set <string> modes;
 	set <string> bands;
+	string rec_text;
 };
 
 inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
@@ -60,6 +65,7 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	certs_used = 0;
 	need_station_rec = false;
 	rec_done = true;
+	allow_bad_calls = false;
 	memset(&rec, 0, sizeof rec);
 	// Init the band data
 	const char *val;
@@ -94,6 +100,7 @@ inline TQSL_CONVERTER::~TQSL_CONVERTER() {
 
 inline void TQSL_CONVERTER::clearRec() {
 	memset(&rec, 0, sizeof rec);
+	rec_text = "";
 }
 
 #define CAST_TQSL_CONVERTER(x) ((tqsllib::TQSL_CONVERTER *)(x))
@@ -275,8 +282,14 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				} else if (!strcasecmp(result.name, "TIME_ON") && result.data) {
 					cstat = tqsl_initTime(&(conv->rec.time), (const char *)result.data);
 				}
+				if (stat == TQSL_ADIF_GET_FIELD_SUCCESS) {
+					conv->rec_text += string((char *)result.name) + ": ";
+					if (result.data)
+						conv->rec_text += string((char *)result.data);
+					conv->rec_text += "\n";
+				}
 				if (result.data)
-					delete[] result.data;
+						delete[] result.data;
 			} while (cstat == 0);
 			if (cstat)
 				return 0;
@@ -334,6 +347,9 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					} else if (!strcasecmp(field.name, "TIME_ON")) {
 						cstat = tqsl_initTime(&(conv->rec.time), field.value);
 					}
+					if (conv->rec_text != "")
+						conv->rec_text += "\n";
+					conv->rec_text += string(field.name) + ": " + field.value;
 				}
 			} while (stat == TQSL_CABRILLO_NO_ERROR && cstat == 0);
 			if (cstat || stat != TQSL_CABRILLO_EOR)
@@ -346,6 +362,14 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	}
 	// Do field value mapping
 	tqsl_strtoupper(conv->rec.callsign);
+	if (!conv->allow_bad_calls) {
+		if (!checkCallSign(conv->rec.callsign)) {
+			conv->rec_done = true;
+			snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid amateur CALL (%s)", conv->rec.callsign);
+			tQSL_Error = TQSL_CUSTOM_ERROR;
+			return 0;
+		}
+	}
 	tqsl_strtoupper(conv->rec.band);
 	tqsl_strtoupper(conv->rec.mode);
 	char val[256] = "";
@@ -422,4 +446,57 @@ tqsl_getConverterLine(tQSL_Converter convp, int *lineno) {
 		return tqsl_getADIFLine(conv->adif, lineno);
 	*lineno = 0;
 	return 0;
+}
+
+DLLEXPORT const char *
+tqsl_getConverterRecordText(tQSL_Converter convp) {
+	TQSL_CONVERTER *conv;
+	if (!(conv = check_conv(convp)))
+		return 0;
+	return conv->rec_text.c_str();
+}
+
+DLLEXPORT int
+tqsl_setConverterAllowBadCall(tQSL_Converter convp, int allow) {
+	TQSL_CONVERTER *conv;
+	if (!(conv = check_conv(convp)))
+		return 1;
+	conv->allow_bad_calls = (allow != 0);
+	return 0;
+}
+
+static bool
+hasValidCallSignChars(const string& call) {
+	// Check for invalid characters
+	if (call.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/") != string::npos)
+		return false;
+	// Need at least one letter
+	if (call.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos)
+		return false;
+	// Need at least one number
+	if (call.find_first_of("0123456789") == string::npos)
+		return false;
+	return true;
+}
+
+static bool
+checkCallSign(const string& call) {
+	if (!hasValidCallSignChars(call))
+		return false;
+	if (call.length() < 3)
+		return false;
+	string::size_type idx, newidx;
+	for (idx = 0; idx != string::npos; idx = newidx+1) {
+		string s;
+		newidx = call.find('/', idx);
+		if (newidx == string::npos)
+			s = call.substr(idx);
+		else
+			s = call.substr(idx, newidx - idx);
+		if (s.length() == 0)
+			return false;	// Leading or trailing '/' is bad, bad!
+		if (newidx == string::npos)
+			break;
+	}
+	return true;
 }

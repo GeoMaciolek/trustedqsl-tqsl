@@ -10,6 +10,9 @@
 
 #define TQSLLIB_DEF
 
+#define TQSLLIB_VERSION_MAJOR 1
+#define TQSLLIB_VERSION_MINOR 0
+
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "adif.h"
@@ -24,8 +27,6 @@
 #include <openssl/err.h>
 #include <openssl/objects.h>
 #include <openssl/evp.h>
-
-#define TQSL_MAX_PATH_LEN 256
 
 #ifdef __WIN32__
 #define MKDIR(x,y) mkdir(x)
@@ -45,13 +46,17 @@ DLLEXPORT char tQSL_CustomError[256];
 #define TQSL_OID_QSO_NOT_AFTER TQSL_OID_BASE "3"
 #define TQSL_OID_DXCC_ENTITY TQSL_OID_BASE "4"
 #define TQSL_OID_SUPERCEDED_CERT TQSL_OID_BASE "5"
+#define TQSL_OID_CRQ_ISSUER_ORGANIZATION TQSL_OID_BASE "6"
+#define TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT TQSL_OID_BASE "7"
 
 static char *custom_objects[][3] = {
 	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
 	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
 	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
 	{ TQSL_OID_DXCC_ENTITY, "dxccEntity", NULL },
-	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL }
+	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL },
+	{ TQSL_OID_CRQ_ISSUER_ORGANIZATION, "tqslCRQIssuerOrganization", NULL },
+	{ TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT, "tqslCRQIssuerOrganizationalUnit", NULL },
 };
 
 static char *error_strings[] = {
@@ -72,7 +77,9 @@ static char *error_strings[] = {
 	"Certificate provider not found",					/* TQSL_PROVIDER_NOT_FOUND */
 	"No certificate for key",							/* TQSL_CERT_KEY_ONLY */
 	"Configuration file error",							/* TQSL_CONFIG_ERROR */
-	"No matching certificate found",					/* TQSL_CERT_NOT_FOUND */
+	"Certificate or private key not found",				/* TQSL_CERT_NOT_FOUND */
+	"PKCS#12 file not TQSL compatible",					/* TQSL_PKCS12_ERROR */
+	"Certificate not TQSL compatible",					/* TQSL_CERT_TYPE_ERROR */
 };
 
 static int pmkdir(const char *path, int perm) {
@@ -512,7 +519,7 @@ tqsl_initTime(tQSL_Time *time, const char *str) {
 	int parts[3];
 	int i;
 
-	if (time == NULL) {
+	if (time == NULL || str == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
@@ -552,4 +559,13 @@ tqsl_initTime(tQSL_Time *time, const char *str) {
 err:
 	tQSL_Error = TQSL_INVALID_TIME;
 		return 1;
+}
+
+DLLEXPORT int
+tqsl_getVersion(int *major, int *minor) {
+	if (major)
+		*major = TQSLLIB_VERSION_MAJOR;
+	if (minor)
+		*minor = TQSLLIB_VERSION_MINOR;
+	return 0;
 }

@@ -97,7 +97,7 @@ main(int argc, char *argv[]) {
 			cout << "Signing certificate issuer: " << buf << endl;
 			cout << "Signing certificate serial: " << serial << endl;
 			cout << "  Signing certificate DXCC: " << cdxcc << endl;
-			if (tqsl_beginSigning(sign_cert, "", 0))
+			if (tqsl_beginSigning(sign_cert, "", 0, 0))
 				throw tqslexc();
 		}
 		TQSL_CERT_REQ crq;
@@ -120,7 +120,7 @@ main(int argc, char *argv[]) {
 			}
 			string filename = string(argv[optind]) + ".tq5";
 			cout << "Creating CRQ for " << crq.callSign << " DXCC=" << crq.dxccEntity << endl;
-			if (tqsl_createCertRequest(filename.c_str(), &crq, 0))
+			if (tqsl_createCertRequest(filename.c_str(), &crq, 0, 0))
 				throw tqslexc();
 		}
 		return EXIT_SUCCESS;

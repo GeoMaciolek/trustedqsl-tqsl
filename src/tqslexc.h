@@ -23,8 +23,8 @@ class myexc : public std::exception {
 public:
 	myexc(const std::string& err) : std::exception() { _err = err; }
 	myexc(const myexc& x) { _err = x._err; }
-	virtual const char *what() const { return _err.c_str(); }
-	virtual ~myexc() {}
+	virtual const char *what() const throw () { return _err.c_str(); }
+	virtual ~myexc() throw () {}
 private:
 	std::string _err;
 };

@@ -12,6 +12,7 @@
 #include "sysconfig.h"
 #endif
 
+#include <iostream>
 #include <fstream>
 #include <cstdlib>
 #include <unistd.h>
@@ -71,7 +72,7 @@ main(int argc, char *argv[]) {
 			throw tqslexc();
 		if (ncerts < 1)
 			throw myexc(string("No certificates available for ") + call);
-		int stat = 0;
+		int stat = 1;
 		if (type == UNKNOWN || type == CABRILLO) {
 			if ((stat = tqsl_beginCabrilloConverter(&conv, argv[optind], certs, ncerts, loc)) != 0
 				&& type == CABRILLO)
@@ -99,7 +100,7 @@ main(int argc, char *argv[]) {
    				tQSL_Cert cert;
    				if (tqsl_getConverterCert(conv, &cert))
 					throw tqslexc();
-   				if (tqsl_beginSigning(cert, 0, 0))
+   				if (tqsl_beginSigning(cert, 0, 0, 0))
 					throw tqslexc();
    				continue;
    			}
