@@ -4,7 +4,8 @@ CC = gcc
 CXX = g++
 CXXFLAGS = -g -Wall
 LIB = -lcrypto
-COMOBJ = fileio.o convert.o tqsllib.o tqsl.o readpriv.o
+COMOBJ = fileio.o convert.o tqsl.o readpriv.o
+#COMOBJ = fileio.o convert.o tqsllib.o tqsl.o readpriv.o
 
 all:	tqgenkey tqgencert tqchkcert tqdumpcert tqdumppk chkdate tqsignfile \
 	tqverify adifsign

@@ -41,6 +41,15 @@
 static char cvsID[] = "$Id$";
 int debugLevel=0;
 
+void initPublicKey(TqslPublicKey *pk)
+{
+  cvsID = cvsID;
+  memset(pk,' ',sizeof(TqslPublicKey));
+}
+void initCert(TqslCert *cert)
+{
+   memset(cert,' ',sizeof(TqslCert));
+}
 int tqslReadCert(const char *fname,TqslCert *cert)
 {
 
