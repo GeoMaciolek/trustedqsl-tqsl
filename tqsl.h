@@ -83,8 +83,13 @@ struct TqslSignedQSL
   TqslCert		cert;
 };
 
-int tqslReadCert(char *fname,TqslCert *);
-int tqslWriteCert(char *fname,TqslCert *);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+
+int tqslReadCert(const char *fname,TqslCert *);
+int tqslWriteCert(const char *fname,TqslCert *);
 int tqslCheckCert(TqslCert *cert,TqslCert *CACert);
 int tqslSignCert(TqslCert *cert,const char *caPrivFName,
 		 const char *caId,const char *pubKeyFName,
@@ -93,5 +98,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivFName,
 int tqslSignData(const char *privKeyFname,const unsigned char *data,
 		 TqslCert *cert,TqslSignature *signature);
   
-
+#ifdef __cplusplus
+}
+#endif
 #endif
