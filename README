@@ -13,17 +13,48 @@ The size of a cert which includes the public key is 358 bytes.
 The size of a signedQSL is around 1k.  This means that more than
 a 1000 signed trusted QSL could be stored on a single floppy.
 
+Since the last release names have been changed.  In fact now
+they are as much for example as part of the kit.
 
 Currently working:
 
-qgenkey - This will create a public/private key pair.
+tqgenkey - This will create a public/private key pair.
 
-gencert - This will create a cert for the public key.  To be used
+tqgencert - This will create a cert for the public key.  To be used
 only by CA's.  Still needs issue/expiration date functions.
 
-chkcert - This validate a cert.  Can be used by anyone to validate
+tqchkcert - This validate a cert.  Can be used by anyone to validate
 a public cert.
 
+The external API is starting to take form:
+
+tqslReadCert - Read a cert from a file
+
+tqslWriteCert - write a cert to a file
+
+tqslReadPub - read a public key from a file
+
+tqslWritePub - write a public key to a file
+
+tqslGenNewKeys - create a randon match pair of keys
+
+tqslSignCert - Sign a cert.  This is used by CA to create a cert.
+
+tqslCheckCert - This function validate that a cert is validate
+and has not been tampered with.
+
+*** Not done yet! ***
+
+tqslSignData - Sign a message with a private key
+
+tqslVerifyData - validates who the message is from and that it hasn't
+been tampered with.
+
+tqslSignQSL - Sign a QSL record. 
+
+tqslVerifyQSL - verify a QSL record.
+
+ 
 TODO list (not in order):
 
 1. Make sure that Microsoft C++ will compile and like.
@@ -43,6 +74,20 @@ TODO list (not in order):
 
 8. Needs award sponsors and software developers participation
 in setting standard formats.
+
+9. Need (CRL) Cert Revoke list support.  I don't expect this to
+be used often because the only reason to revoke a cert is if
+the private key has been compromised.  Award sponsors may keep
+a list of amateurs that are not trusted, but that is different
+than a cert being invalidated.  If a private key is lost then
+a new cert is issued, but the old one is still valid, because
+it can only be used to validate signature on the old key.  The
+only reason to revoke a cert is if the private key is compromised.
+Not really sure what form this should take.  The only
+data that would be require is Cert Id, CA Id, CA signature.
+My guess is we won't have more than a dozen or so a year.
+
+
 
 
 
