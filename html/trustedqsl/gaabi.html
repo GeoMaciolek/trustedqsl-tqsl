@@ -6,13 +6,13 @@
       </title>
    </head>
    <body>
-      <h2>
+      <h2 align=center>
          Trusted Gabbi (Global Amateur Interchange)&nbsp; Formats
       </h2>
       <h3>
          Discussion:
       </h3>
-      <p>
+<P>
          <br>
          There are currently many different interchange formats that are being
          used by amateur radio today. By far the most popular is<a href= 
@@ -20,18 +20,30 @@
          Format)</a>&nbsp;for good 
 reason. It is a very elegant, robust, and easy to read as raw data. It has many 
 of the features found in XML without the need for special libraries and their 
-associated learning curve. Having said that <STRONG>ADIF</STRONG> does have a 
-short coming. It doesn't have any concept of record type. Discussions with the 
-ADIF development&nbsp;reflector hasn't been fruitful. Therefore to meet the 
-requires of this TrustedQSL/LoTW projects the standard must be forked. The new 
-standard will be called <STRONG>Gabbi</STRONG> (Global Amateur Interchange) . It is hoped 
-that the two standards will be merged at some point in the future. Therefore a 
-design goal is for Gabbi format to be backward compatible with ADIF. This turns 
-out to be fairly easy to do by declaring the QSO/Logbook record as the default 
-record type.&nbsp; The QSO record type will use the standard already defined by 
-ADIF. Also see <a href="format_design.html">high level design notes</a> from Michael Keane K1MK.
-      </p>
-<P><FONT size=3></FONT></FONT>&nbsp;</P>
+associated learning curve. Having said that <STRONG>ADIF</STRONG> does have a short coming. It doesn't 
+have any concept of record type. Discussions on the ADIF 
+development reflector  hasn't been fruitful. Therefore to meet the requires 
+of this <STRONG>TrustedQSL/LoTW</STRONG>    
+             
+         
+    projects the standard must be forked. The new 
+standard will be called <STRONG>Gabbi</STRONG> 
+(Global Amateur Interchange) . It is hoped that the two standards will be merged 
+at some point in the future. Therefore a design goal is for Gabbi format to be 
+backward compatible with ADIF. This turns out to be fairly easy to do by 
+declaring the QSO/Logbook record as the default record type.&nbsp; The QSO 
+record type will use the standard already defined by ADIF. </P>
+<P>        
+               
+              
+               
+             
+ Also see <A href="format_design.html">TrustedQSL High 
+Level Virtual Record Design Notes</A>&nbsp;by Michael Keane K1MK.&nbsp;&nbsp; This is 
+a very good conceptual of 
+digital signing canonical form 
+of TrustedQSLs. </P>
+<P><FONT size=3></FONT></FONT></P>
       <h3>
          Requirements:
       </h3>
@@ -66,7 +78,7 @@ ADIF. Also see <a href="format_design.html">high level design notes</a> from Mic
 <P><STRONG>tCONTACT</STRONG> - Trusted Contact Record.&nbsp; This record 
 contains on the information about the contact and a pointer to the tSTATION 
 record. </P>
-<P><STRONG>tQSL</STRONG> - A Trusted QSL is a match set of&nbsp;a tSTATION 
+<P><STRONG>tQSL</STRONG> - A Trusted QSL is a match set of a  tSTATION 
 record and a tCONTACT record.&nbsp; Many tCONTACT records can reference a single 
 tSTATION record.&nbsp; </P>
 <P><STRONG>tSTATION</STRONG> - Trusted Station Record.&nbsp; This record 
@@ -94,7 +106,7 @@ contains information about the station used to make contacts.</P>
             </td>
             <td>
                This is also the standard logbook format.&nbsp; To maintain backward
-               compatablity with ADIF this is the default record type.&nbsp; For
+               compatibility with ADIF this is the default record type.&nbsp; For
                details of this QSO Record type see<a href= 
                "http:://www.hosenose.com/adif">http:://www.hosenose.com/adif</a> for details
             </td>
@@ -170,7 +182,7 @@ contains information about the station used to make contacts.</P>
 			<td>20</td>			
             <td>Global Unique IDentifier.&nbsp; Exact description is TBD, but should
                be something like callsign and date/time group.&nbsp; This maybe a
-               viritual field.</td>
+               virtual field.</td>
          </tr>
       </table>
       <h3>
@@ -300,7 +312,7 @@ contains information about the station used to make contacts.</P>
       </table>
 	  
       <h3>
-         tSTATION&nbsp;(Trusted Station) Record:
+         tSTATION (Trusted Station) Record:
       </h3>
       <p>The tSTATION record contains information that is common to a set of tCONTACTs.
       </p>
@@ -443,7 +455,7 @@ contains information about the station used to make contacts.</P>
 			<td>Y</td>
 			<td>20</td>
             <td>Second subdivision of government such as US 
-      County, province, JA district, etc in which the station was located at the time oftheQSL</td>
+      County, province, JA district, etc in which the station was located at the time of the QSL</td>
          </tr>
          <tr>
             <td>SUB_GOV3</td>
