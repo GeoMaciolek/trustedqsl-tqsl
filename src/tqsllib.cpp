@@ -11,7 +11,7 @@
 #define TQSLLIB_DEF
 
 #define TQSLLIB_VERSION_MAJOR 1
-#define TQSLLIB_VERSION_MINOR 2
+#define TQSLLIB_VERSION_MINOR 3
 
 #include "tqsllib.h"
 #include "tqslerrno.h"
