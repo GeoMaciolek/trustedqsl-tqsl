@@ -17,21 +17,15 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <openssl/dsa.h>
-#include <openssl/bio.h>
-#include <openssl/bn.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <openssl/sha.h>
-#include <openssl/err.h>
+#include <stdlib.h>
 
 #include "tqsl.h"
-#include "sign.h"
 
-// #include <openssl/engine.h>
 extern int errno;
 
 static char cvsID[] = "$Id$";

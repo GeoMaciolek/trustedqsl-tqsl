@@ -17,18 +17,17 @@
     License along with this library; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
-#include <openssl/dsa.h>
-#include <openssl/bio.h>
-#include <openssl/bn.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <unistd.h>
 #include <getopt.h>
-#include <openssl/sha.h>
+#include <stdlib.h>
 
-#include "sign.h"
 #include "tqsl.h"
+
+char *readPrivKey(const char *fname);
+int chkDate(const char *sdate);
 
 extern int errno;
 extern int debugLevel;
@@ -37,39 +36,6 @@ static char cvsID[] = "$Id$";
 // private key should be stored encrypted.  But for this example it
 // is stored as an hex encoded string.
 
-char *readPrivKey(const char *fname)
-{
-  FILE *fkey;
-  char p[500];
-  char *retStr;
-  int rc;
-
-  fkey = fopen(fname,"r");
-  rc = -1;
-  if (fkey)
-    {
-      retStr = fgets(p,499,fkey);
-      if (retStr != NULL)
-        {
-          //strip out eol
-          retStr = strchr(p,'\n');
-          if (retStr != NULL)
-            *retStr = '\0';
-          retStr = strchr(p,'\r');
-          if (retStr != NULL)
-            *retStr = '\0';  
-
-	  retStr = strdup(p);
-	  return(retStr);
-        }
-
-      fclose(fkey);
-      return(NULL);
-    }
-
-  return(NULL);
-
-}
 
 int main(int argc, char *argv[])
 {

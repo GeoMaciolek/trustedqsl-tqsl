@@ -18,21 +18,16 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <openssl/bio.h>
-#include <openssl/bn.h>
-#include <openssl/dsa.h>
-
-
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
 #include <getopt.h>
 
-#include "sign.h"
 #include "tqsl.h"
-// #include <openssl/engine.h>
+
 extern int errno;
+
 static char cvsID[] = "$Id$";
 extern int debugLevel;
 
