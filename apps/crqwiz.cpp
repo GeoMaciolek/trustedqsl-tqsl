@@ -555,7 +555,7 @@ CRQ_IntroPage::validate() {
 		int ncert = 0;
 		tqsl_selectCertificates(&certlist, &ncert, val.mb_str(), Parent()->dxcc, 0,
 			&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
-cerr << "ncert: " << ncert << endl;
+//cerr << "ncert: " << ncert << endl;
 		if (ncert > 0) {
 			char cert_before_buf[40], cert_after_buf[40];
 			for (int i = 0; i < ncert; i++) {
@@ -565,7 +565,7 @@ cerr << "ncert: " << ncert << endl;
 				tqsl_getCertificateQSONotBeforeDate(certlist[i], &cert_not_before);
 				tqsl_getCertificateQSONotAfterDate(certlist[i], &cert_not_after);
 				tqsl_getCertificateDXCCEntity(certlist[i], &cert_dxcc);
-cerr << "dxcc: " << cert_dxcc << endl;
+//cerr << "dxcc: " << cert_dxcc << endl;
 				if (cert_dxcc == Parent()->dxcc
 					&& ((tqsl_isDateValid(&Parent()->qsonotafter)
 						&& !(tqsl_compareDates(&Parent()->qsonotbefore, &cert_not_after) == 1
