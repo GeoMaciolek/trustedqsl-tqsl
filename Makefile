@@ -7,7 +7,10 @@ LIB = -lcrypto
 COMOBJ = fileio.o convert.o tqsllib.o tqsl.o readpriv.o
 
 all:	tqgenkey tqgencert tqchkcert tqdumpcert tqdumppk chkdate tqsignfile \
-	tqverify
+	tqverify adifsign
+
+adifsign: adifsign.o adif.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o adifsign adifsign.o  adif.o $(COMOBJ) $(LIB)
 
 tqsignfile: tqsignfile.o $(COMOBJ)
 	$(CXX) $(CXXFLAGS) -o tqsignfile tqsignfile.o  $(COMOBJ) $(LIB)

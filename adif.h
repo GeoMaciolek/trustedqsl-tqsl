@@ -3,58 +3,61 @@
 
 class AdifBase
 {
-  char		*address=NULL;
-  char		*age=NULL;
-  char		*arrlSect=NULL;
-  char		*band=NULL;
-  char		*call=NULL;
-  char		*cnty=NULL;
-  char		*comment=NULL;
-  char		*cont=NULL;
-  char		*contestId=NULL;
-  char		*cqz=NULL;
-  char		*dxcc=NULL;
-  char		*freq=NULL;
-  char		*gridSquare=NULL;
-  char		*iota=NULL;
-  char		*ituz=NULL;
-  char		*mode=NULL;
-  char		*name=NULL;
-  char		*notes=NULL;
-  char		*operator=NULL;
-  char		*pfx=NULL;
-  char		*propMode=NULL;
-  char		*qslMsg=NULL;
-  char		*qslRDate=NULL;
-  char		*qslSDate=NULL;
-  char		*qslRcvd=NULL;
-  char		*qslSent=NULL;
-  char		*qslVia=NULL;
-  char		*qsoDate=NULL;
-  char		*qth=NULL;
-  char		*rstRcvd=NULL;
-  char		*rstSent=NULL;
-  char		*rxPwr=NULL;
-  char		*satMode=NULL;
-  char		*satName=NULL;
-  char		*srx=NULL;
-  char		*stx=NULL;
-  char		*tenTen=NULL;
-  char		*timeOff=NULL;
-  char		*timeOn=NULL;
-  char		*txPwr=NULL;
-  char		*veProv=NULL;
+  char		*address;
+  char		*age;
+  char		*arrlSect;
+  char		*band;
+  char		*call;
+  char		*cnty;
+  char		*comment;
+  char		*cont;
+  char		*contestId;
+  char		*cqz;
+  char		*dxcc;
+  char		*freq;
+  char		*gridSquare;
+  char		*iota;
+  char		*ituz;
+  char		*mode;
+  char		*name;
+  char		*notes;
+  char		*oper;
+  char		*pfx;
+  char		*propMode;
+  char		*qslMsg;
+  char		*qslRDate;
+  char		*qslSDate;
+  char		*qslRcvd;
+  char		*qslSent;
+  char		*qslVia;
+  char		*qsoDate;
+  char		*qth;
+  char		*rstRcvd;
+  char		*rstSent;
+  char		*rxPwr;
+  char		*satMode;
+  char		*satName;
+  char		*srx;
+  char		*stx;
+  char		*tenTen;
+  char		*timeOff;
+  char		*timeOn;
+  char		*txPwr;
+  char		*veProv;
 
-  char		*privKey=NULL;
-  char		*myCert=NULL;
-  char		*signature=NULL;
-  
+  char		*privKey;
+  char		*myCert;
+  char		*signature;
+
+  // private functions
+  char		*nextLine(char *);
+
  public:
   AdifBase();	
   void		init();
   void		clearQSO();
   char		*readNext();
-  
+  char 		*AdifParseNext(char *);
 
 };
 
