@@ -47,6 +47,10 @@
 			 	</OBJECT>
 		 </UL>
 	<LI> <OBJECT>
+		<param name="Name" value="TQSL Command Line">
+		<param name="Local" value="cmdline.htm">
+	     </OBJECT>
+	<LI> <OBJECT>
 		<param name="Name" value="About TrustedQSL">
 		<param name="Local" value="tqsl.htm">
 	     </OBJECT>

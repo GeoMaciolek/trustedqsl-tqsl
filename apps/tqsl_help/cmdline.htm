@@ -1,0 +1,71 @@
+<HTML><HEAD><TITLE>Signing</TITLE></HEAD>
+<BODY>
+<H3>TQSL Command Line</H3>
+<P>
+When starting TQSL you may provide command-line options that affect how TQSL runs. Some of the
+options require an argument, separated from the option letter by one or more spaces. (Arguments that
+contain spaces or other shell-special characters should be quoted in a manner suitable for the
+operating system and shell that's being used.) If more than
+one option is specified, each option must be separated from the preceding one by one or more
+spaces.
+<P>
+Each option represents an action for TQSL to take. The options are executed in the order they
+appear on the command line - left to right. After processing the options (except for option
+<b>-x</b>) TQSL enters its normal menu-driven mode of operation.
+<P>
+<TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0>
+<TR><TD COLSPAN=2 align="center"><B>TQSL Options</B></TD></TR>
+<TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
+
+<TR><TD><b>-l</b> location_name</TD>
+<TD>Selects an existing station location. This location will be used for the commands that follow.
+If the station location doesn't exist, TQSL will just exit.</TD></TR>
+
+<TR><TD><b>-s</b></TD>
+<TD>Add or edit station location. If there is a preceding <b>-l</b> option the specified
+location will be edited. If there is no preceding <b>-l</b> option, a new station
+location is being added.</TD></TR>
+
+<TR><TD><b>-x</b></TD>
+<TD>Exit TQSL. If this argument is used it should be the last one on the command line.
+If this argument is not present, TQSL will begin normal operation after successfully
+processing all command-line arguments.</TD></TR>
+
+<TR><TD>filename</TD>
+<TD>Any command-line parameter that is not an option or an option's argument will be
+treated as the name of a log file (ADIF or Cabrillo) to be signed. The resulting signed
+file (.tq8) will be placed in the same directory as the log file, overwriting any
+existing .tq8 file of the same name. (Note: If this option is not preceded by a <b>-l</b>
+option that selects the station location to be used for signing, the <b>Select Station
+Location for Signing</b> dialog will be presented.)
+File names that contain spaces or other shell-special characters should be quoted in a manner
+suitable for the operating system and shell that's being used.<P>
+N.B.: If the private key needed to sign a log is protected by a password, the user will
+be prompted to supply that password for each file being signed.
+</TD></TR>
+
+</TABLE>
+<P>
+<B>Examples:</B>
+<P>
+Edit the &quot;Home&quot; station location:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -l Home -s
+</CODE>
+<P>
+Add a station location, then exit:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -s -x
+</CODE>
+<P>
+Sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; station location, then exit:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -l "CQWW Portable" "cqww log.adi" -x
+</CODE>
+<P>
+Sign a set of log files using the &quot;Home&quot; station location, then exit:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -l Home Jan.adi Feb.adi Mar.adi Jun.adi Jul.adi -x
+</CODE>
+<P>
+</BODY></HTML>

@@ -465,18 +465,23 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxMessageBox(msg, "About", wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
-void
-MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
-	tQSL_Location loc;
+static void
+AddEditStationLocation(tQSL_Location loc, const char *title = "Add Station Location") {
 	try {
-		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-		run_station_wizard(this, loc, &help);
-		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
+		run_station_wizard(frame, loc, &(frame->help), title);
 	}
 	catch (TQSLException& x) {
 		wxLogError(x.what());
-//		wxMessageBox(x.what(), error_title);
 	}
+}
+
+void
+MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
+	tQSL_Location loc;
+	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+	AddEditStationLocation(loc);
+	check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 }
 
 void
@@ -1075,22 +1080,33 @@ QSLApp::OnInit() {
 				tqsl_endStationLocationCapture(&loc);
 			if (tqsl_getStationLocation(&loc, argv[i])) {
 				wxMessageBox(tqsl_getErrorString(), ErrorTitle, wxOK|wxCENTRE, frame);
-				return FALSE;
+				return false;
 			}
 			locsw = false;
 		} else if (!strcasecmp(argv[i], "-l")) {
 			locsw = true;
-		} else if (loc == 0) {
-			wxMessageBox("-l option must precede filename", ErrorTitle, wxOK|wxCENTRE, frame);
-			return FALSE;
+		} else if (!strcasecmp(argv[i], "-s")) {
+			// Add/Edit station location
+			if (loc == 0) {
+				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+				AddEditStationLocation(loc);
+			} else
+				AddEditStationLocation(loc, "Edit Station Location");
+		} else if (!strcasecmp(argv[i], "-x")) {
+			return false;
 		} else {
+			if (loc == 0)
+				loc = frame->SelectStationLocation("Select Station Location for Signing");
+			if (loc == 0)
+				return false;
 			wxString path, name, ext;
 			wxSplitPath(argv[i], &path, &name, &ext);
-			path += "/";
-			path += name + ".tq7";
+			if (path != "")
+				path += "/";
+			path += name + ".tq8";
 			wxString infile(argv[i]);
 			try {
-				if (frame->ConvertLogFile(loc, infile, path))
+				if (frame->ConvertLogFile(loc, infile, path, true))
 					break;
 			} catch (TQSLException& x) {
 				wxString s;
