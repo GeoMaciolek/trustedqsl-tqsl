@@ -54,6 +54,9 @@ struct TqslCertData
   char			issueDate[11];   
   char			expireDate[11];  
   char			caID[11];        
+  char			caCall1[13];
+  char			caCall2[13];
+  char			caCall3[13];
   char			caCertNum[7];    
   TqslPublicKey		publicKey;       
 };                                       
@@ -65,22 +68,9 @@ struct TqslCert
   char			signature[signSizeMax]; //76        120
 };                                              // total size 196
 
-// hex string encoded cert postions
-const int CertTypePos = 0;
-const int CertIssuePos = 1;
-const int CertExpirePos = 11;
-const int CertCaIDPos = 21;
-const int CertCaPkPos = 31;
-const int CertNoPos = 35;
-const int CertCallPos = 42;
-const int CertPkNumPos = 54;
-const int CertPkPos = 59;
-
-
 struct TqslSignature
 {
   char			sigType;
-  char			sigSize[3];
   char			signature[signSizeMax];
   TqslCert		cert;
 };
@@ -113,20 +103,31 @@ extern "C"
 {
 #endif
 
-  int tqslReadCert(const char *fname,TqslCert *);
-  int tqslWriteCert(const char *fname,TqslCert *);
-  int tqslReadPub(const char *fname,TqslPublicKey *);
-  int tqslWritePub(const char *fname,TqslPublicKey *);
-  int tqslGenNewKeys(const char *callSign,char **,
+  char * 	tqslSigToStr(TqslSignature *);
+  int 		tqslStrToSig(TqslSignature *,const char *);
+
+  char * 	tqslPubKeyToStr(TqslPublicKey *);
+  int 		tqslStrToPubKey(TqslPublicKey *,const char *);
+
+  char * 	tqslCertToStr(TqslCert *);
+  int 		tqslStrToCert(TqslCert *,const char *);
+
+  int 		tqslReadCert(const char *fname,TqslCert *);
+  int 		tqslWriteCert(const char *fname,TqslCert *);
+  int 		tqslReadPub(const char *fname,TqslPublicKey *);
+  int 		tqslWritePub(const char *fname,TqslPublicKey *);
+  int 		tqslGenNewKeys(const char *callSign,char **,
 		     TqslPublicKey *);
-  int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
-  int tqslSignCert(TqslCert *cert,const char *caPrivKey,
-                 const char *caId,TqslPublicKey *pubKey,
-                 const char *certNum,const char *issueDate,
-                 char *expireDate,int selfSign);
-  int tqslSignData(const char *privKey,const unsigned char *data,
-		 TqslCert *cert,TqslSignature *signature,int len);
-  int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len);
+  int 		tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
+  int 		tqslSignCert(TqslCert *cert,const char *caPrivKey,
+			     const char *caId,TqslPublicKey *pubKey,
+			     const char *certNum,const char *issueDate,
+			     char *expireDate,int selfSign,char *call1,
+			     char *call2,char *call3);
+  int 		tqslSignData(const char *privKey,const unsigned char *data,
+			     TqslCert *cert,TqslSignature *signature,int len);
+  int 		tqslVerifyData(unsigned char *data,TqslSignature *signature,
+			       int len);
   
 #ifdef __cplusplus
 }

@@ -144,8 +144,14 @@ int main(int argc, char *argv[])
   if (privKey == NULL)
     return(-4);
 
+
+  // warning debug call.  You must change the calls to real calls of
+  // the CA rep that signs the cert.
+
+  fprintf(stderr,"Warning!!! Sign with test call signs\n");
+
   rc = tqslSignCert(&amCert,privKey,caId,&pubkey,certNum,issueStr,
-		    expStr,selfSign);
+		    expStr,selfSign,"W1TST","K2TST","N3TST");
 
   
   if (rc < 1)
