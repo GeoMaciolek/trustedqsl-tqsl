@@ -8,18 +8,24 @@
     revision             : $Id$
  ***************************************************************************/
 
+#define TQSLLIB_DEF
+
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "adif.h"
 #include <string.h>
 #include <errno.h>
+#include <ctype.h>
 #include <sys/stat.h>
 #ifdef __WIN32__
-#include <io.h>
+	#include <io.h>
+	#include <windows.h>
 #endif
 #include <openssl/err.h>
 #include <openssl/objects.h>
 #include <openssl/evp.h>
+
+#define TQSL_MAX_PATH_LEN 256
 
 #ifdef __WIN32__
 #define MKDIR(x,y) mkdir(x)
@@ -27,22 +33,25 @@
 #define MKDIR(x,y) mkdir(x,y)
 #endif
 
-int tQSL_Error = 0;
-ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
+DLLEXPORT int tQSL_Error = 0;
+DLLEXPORT TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
 const char *tQSL_BaseDir = 0;
-char tQSL_ErrorFile[256];
-char tQSL_CustomError[256];
+DLLEXPORT char tQSL_ErrorFile[256];
+DLLEXPORT char tQSL_CustomError[256];
 
-#define TQSL_NAME_ITEM_CALLSIGN "1.3.6.1.4.1.12348.1.1"
-#define TQSL_NAME_ITEM_QSO_NOT_BEFORE "1.3.6.1.4.1.12348.1.2"
-#define TQSL_NAME_ITEM_QSO_NOT_AFTER "1.3.6.1.4.1.12348.1.3"
-#define TQSL_NAME_ITEM_DXCC_ENTITY "1.3.6.1.4.1.12348.1.4"
+#define TQSL_OID_BASE "1.3.6.1.4.1.12348.1."
+#define TQSL_OID_CALLSIGN TQSL_OID_BASE "1"
+#define TQSL_OID_QSO_NOT_BEFORE TQSL_OID_BASE "2"
+#define TQSL_OID_QSO_NOT_AFTER TQSL_OID_BASE "3"
+#define TQSL_OID_DXCC_ENTITY TQSL_OID_BASE "4"
+#define TQSL_OID_SUPERCEDED_CERT TQSL_OID_BASE "5"
 
 static char *custom_objects[][3] = {
-	{ TQSL_NAME_ITEM_CALLSIGN, "AROcallsign", NULL },
-	{ TQSL_NAME_ITEM_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
-	{ TQSL_NAME_ITEM_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
-	{ TQSL_NAME_ITEM_DXCC_ENTITY, "dxccEntity", NULL }
+	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
+	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
+	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
+	{ TQSL_OID_DXCC_ENTITY, "dxccEntity", NULL },
+	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL }
 };
 
 static char *error_strings[] = {
@@ -52,16 +61,52 @@ static char *error_strings[] = {
 	"Operator aborted operation",						/* TQSL_OPERATOR_ABORT */
 	"No private key matches the selected certificate",	/* TQSL_NOKEY_ERROR */
 	"Buffer too small",	                                /* TQSL_BUFFER_ERROR */
-	"Invalid date string", 								/* TQSL_INVALID_DATE */
+	"Invalid date format", 								/* TQSL_INVALID_DATE */
 	"Certificate not initialized for signing",			/* TQSL_SIGNINIT_ERROR */
 	"Password not correct",								/* TQSL_PASSWORD_ERROR */
+	"Expected name",									/* TQSL_EXPECTED_NAME */
+	"Name exists",										/* TQSL_NAME_EXISTS */
+	"Name not found",									/* TQSL_NAME_NOT_FOUND */
+	"Invalid time format", 								/* TQSL_INVALID_TIME */
+	"Certificate QSO date out of range",				/* TQSL_CERT_DATE_MISMATCH */
+	"Certificate provider not found",					/* TQSL_PROVIDER_NOT_FOUND */
+	"No certificate for key",							/* TQSL_CERT_KEY_ONLY */
+	"Configuration file error",							/* TQSL_CONFIG_ERROR */
+	"No matching certificate found",					/* TQSL_CERT_NOT_FOUND */
 };
 
-int
+static int pmkdir(const char *path, int perm) {
+	char dpath[TQSL_MAX_PATH_LEN];
+	char npath[TQSL_MAX_PATH_LEN];
+	char *cp;
+
+	strncpy(dpath, path, sizeof dpath);
+	cp = strtok(dpath, "/\\");
+	npath[0] = 0;
+	while (cp) {
+		if (strlen(cp) > 0 && cp[strlen(cp)-1] != ':') {
+			strcat(npath, "/");
+			strcat(npath, cp);
+			if (MKDIR(npath, perm) != 0 && errno != EEXIST)
+				return 1;
+		} else
+			strcat(npath, cp);
+		cp = strtok(NULL, "/\\");
+	}
+	return 0;
+}
+
+DLLEXPORT int
 tqsl_init() {
 	static char semaphore = 0;
 	unsigned int i;
-	static char path[256];
+	static char path[TQSL_MAX_PATH_LEN];
+#ifdef __WIN32__
+	HKEY hkey;
+	DWORD dtype;
+	DWORD bsize = sizeof path;
+	int wval;
+#endif
 
 	ERR_clear_error();
 	tqsl_getErrorString();	/* Clear the error status */
@@ -81,7 +126,15 @@ tqsl_init() {
 			strncpy(path, cp, sizeof path);
 		else {
 #ifdef __WIN32__
-			strcpy(path, "C:/TQSL");
+			if ((wval = RegOpenKeyEx(HKEY_CURRENT_USER,
+				"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+				0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
+				wval = RegQueryValueEx(hkey, "AppData", 0, &dtype, (LPBYTE)path, &bsize);
+				RegCloseKey(hkey);
+			}
+			if (wval != ERROR_SUCCESS)
+				strcpy(path, "C:");
+			strcat(path, "/TrustedQSL");
 #else
 #ifdef LOTW_SERVER
 			strcpy(path, "/var/lotw/tqsl");
@@ -92,10 +145,10 @@ tqsl_init() {
 				strncat(path, ".tqsl", sizeof path - strlen(path));
 			} else
 				strcpy(path, ".tqsl");
-#endif	/* LOTW_SERVER */
+#endif  /* LOTW_SERVER */
 #endif  /* WINDOWS */
 		}
-		if ((i = MKDIR(path, 0700)) != 0 && errno != EEXIST) {
+		if (pmkdir(path, 0700)) {
 			strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 			tQSL_Error = TQSL_SYSTEM_ERROR;
 			return 1;
@@ -106,7 +159,19 @@ tqsl_init() {
 	return 0;
 }
 
-const char *
+DLLEXPORT int
+tqsl_setDirectory(const char *dir) {
+	static char path[TQSL_MAX_PATH_LEN];
+	if (strlen(dir) >= TQSL_MAX_PATH_LEN) {
+		tQSL_Error = TQSL_BUFFER_ERROR;
+		return 1;
+	}
+	strcpy(path, dir);
+	tQSL_BaseDir = path;
+	return 0;
+}
+
+DLLEXPORT const char *
 tqsl_getErrorString_v(int err) {
 	static char buf[256];
 	unsigned long openssl_err;
@@ -146,7 +211,16 @@ tqsl_getErrorString_v(int err) {
 			strncpy(buf, tQSL_ErrorFile, sizeof buf);
 			strncat(buf, ": ", sizeof buf - strlen(buf));
 		}
-		strncat(buf, adifGetError(tQSL_ADIF_Error), sizeof buf - strlen(buf));
+		strncat(buf, tqsl_adifGetError(tQSL_ADIF_Error), sizeof buf - strlen(buf));
+		return buf;
+	}
+	if (err == TQSL_CABRILLO_ERROR) {
+		buf[0] = 0;
+		if (strlen(tQSL_ErrorFile) > 0) {
+			strncpy(buf, tQSL_ErrorFile, sizeof buf);
+			strncat(buf, ": ", sizeof buf - strlen(buf));
+		}
+		strncat(buf, tqsl_cabrilloGetError(tQSL_Cabrillo_Error), sizeof buf - strlen(buf));
 		return buf;
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;
@@ -157,7 +231,7 @@ tqsl_getErrorString_v(int err) {
 	return error_strings[adjusted_err];
 }
 
-const char *
+DLLEXPORT const char *
 tqsl_getErrorString() {
 	const char *cp;
 	cp = tqsl_getErrorString_v(tQSL_Error);
@@ -167,7 +241,7 @@ tqsl_getErrorString() {
 	return cp;
 }
 
-int
+DLLEXPORT int
 tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outputlen) {
 	BIO *bio = NULL, *bio64 = NULL;
 	int n;
@@ -206,7 +280,7 @@ end:
 	return rval;
 }
 
-int
+DLLEXPORT int
 tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen) {
 	BIO *bio = NULL, *bio64 = NULL;
 	int n;
@@ -243,8 +317,8 @@ end:
 
 /* Convert a tQSL_Date field to an ISO-format date string
  */
-char *
-tqsl_convertDateToText(tQSL_Date *date, char *buf, int bufsiz) {
+DLLEXPORT char *
+tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz) {
 	char lbuf[10];
 	int len;
 	char *cp = buf;
@@ -276,7 +350,7 @@ tqsl_convertDateToText(tQSL_Date *date, char *buf, int bufsiz) {
 	return buf;
 }
 
-int
+DLLEXPORT int
 tqsl_isDateValid(const tQSL_Date *d) {
 	static int mon_days[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
 
@@ -297,7 +371,7 @@ tqsl_isDateValid(const tQSL_Date *d) {
 	return 1;
 }
 
-int
+DLLEXPORT int
 tqsl_isDateNull(const tQSL_Date *d) {
 	if (d == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -306,9 +380,62 @@ tqsl_isDateNull(const tQSL_Date *d) {
 	return (d->year == 0 && d->month == 0 && d->day == 0) ? 1 : 0;
 }
 
+/* Convert a tQSL_Time field to an ISO-format date string
+ */
+DLLEXPORT char *
+tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz) {
+	char lbuf[10];
+	int len;
+	char *cp = buf;
+	int bufleft = bufsiz-1;
+
+	if (time == NULL || time == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return NULL;
+	}
+	if (!tqsl_isTimeValid(time))
+		return NULL;
+	len = sprintf(lbuf, "%02d:", time->hour);
+	strncpy(cp, lbuf, bufleft);
+	cp += len;
+	bufleft -= len;
+	len = sprintf(lbuf, "%02d:", time->minute);
+	if (bufleft > 0)
+		strncpy(cp, lbuf, bufleft);
+	cp += len;
+	bufleft -= len;
+	len = sprintf(lbuf, "%02d", time->second);
+	if (bufleft > 0)
+		strncpy(cp, lbuf, bufleft);
+	cp += len;
+	bufleft -= len;
+	if (bufleft > 0)
+		strcpy(cp, "Z");
+	bufleft -= 1;
+	if (bufleft < 0)
+		return NULL;
+	buf[bufsiz-1] = '\0';
+	return buf;
+}
+
+DLLEXPORT int
+tqsl_isTimeValid(const tQSL_Time *t) {
+	if (t == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 0;
+	}
+	if (t->hour < 0 || t->hour > 23)
+		return 0;
+	if (t->minute < 0 || t->minute > 59)
+		return 0;
+	if (t->second < 0 || t->second > 59)
+		return 0;
+	return 1;
+}
+
 /* Compare two tQSL_Date values, returning -1, 0, 1
  */
-int
+DLLEXPORT int
 tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b) {
 	if (a == NULL || b == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -331,7 +458,7 @@ tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b) {
 
 /* Fill a tQSL_Date struct with the date from a text string
  */
-int
+DLLEXPORT int
 tqsl_initDate(tQSL_Date *date, const char *str) {
 	const char *cp;
 
@@ -374,5 +501,55 @@ tqsl_initDate(tQSL_Date *date, const char *str) {
 	return 0;
 err:
 	tQSL_Error = TQSL_INVALID_DATE;
+		return 1;
+}
+
+/* Fill a tQSL_Time struct with the time from a text string
+ */
+DLLEXPORT int
+tqsl_initTime(tQSL_Time *time, const char *str) {
+	const char *cp;
+	int parts[3];
+	int i;
+
+	if (time == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	time->hour = time->minute = time->second = 0;
+	if (strlen(str) < 3) {
+		tQSL_Error = TQSL_INVALID_TIME;
+		return 1;
+	}
+	parts[0] = parts[1] = parts[2] = 0;
+	for (i = 0, cp = str; i < int(sizeof parts / sizeof parts[0]); i++) {
+		if (strlen(cp) < 2)
+			break;
+		if (!isdigit(*cp) || !isdigit(*(cp+1)))
+			goto err;
+		if (i == 0 && strlen(str) == 3) {
+			// Special case: HMM -- no colons, one-digit hour
+			parts[i] = *cp - '0';
+			++cp;
+		} else {
+			parts[i] = (*cp - '0') * 10 + *(cp+1) - '0';
+			cp += 2;
+		}
+		if (*cp == ':')
+			cp++;
+	}
+	
+	if (parts[0] < 0 || parts[0] > 23)
+		goto err;
+	if (parts[1] < 0 || parts[1] > 59)
+		goto err;
+	if (parts[2] < 0 || parts[2] > 59)
+		goto err;
+	time->hour = parts[0];
+	time->minute = parts[1];
+	time->second = parts[2];
+	return 0;
+err:
+	tQSL_Error = TQSL_INVALID_TIME;
 		return 1;
 }

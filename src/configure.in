@@ -1,5 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
-AC_INIT(openssl_cert.c)
+AC_INIT(openssl_cert.cpp)
+AC_CONFIG_HEADER(sysconfig.h)
 
 dnl Checks for programs.
 AC_PROG_CC
@@ -9,24 +10,98 @@ AC_PROG_RANLIB
 
 AC_MINGW32
 
+AC_SUBST(MINGW32)
+
+checkssldir(){
+  if test -z "$OPENSSL"; then
+    if test -e "$1/lib/libcrypto.a"; then
+      OPENSSL="$1"
+    fi
+  fi
+}
+
+checkexpatdir(){
+  if test -z "$EXPAT"; then
+    if test -e "$1/lib/libexpat.a"; then
+      EXPAT="$1"
+    fi
+  fi
+}
+
+
+dnl Check for OpenSSL
+AC_MSG_CHECKING([for OpenSSL library (libcrypto.a)])
 AC_ARG_WITH(openssl,
-  [  --with-openssl=DIR      location of OPENSSL files],
-  [ OPENSSL="$withval" ],
-  [ OPENSSL="../../openssl" ]
+  [  --with-openssl=DIR      location of OpenSSL files],
+  [ checkssldir "$withval" ],
+  [ checkssldir "$HOME/openssl"; checkssldir "/usr"; checkssldir "../../openssl" ]
 )
+if test -z "$OPENSSL"; then
+  AC_MSG_RESULT(Not found)
+  echo
+  echo "OpenSSL not found"
+  echo "Use --with-openssl option to fix this problem"
+  echo
+  exit 1
+fi
+AC_MSG_RESULT($OPENSSL)
 AC_SUBST(OPENSSL)
 
-export LIBRARY_PATH="$OPENSSL/lib"
+dnl Check for an openssl header file
+AC_MSG_CHECKING([for OpenSSL headers in $OPENSSL/include])
+if test ! -r "$OPENSSL/include/openssl/opensslv.h"; then
+  AC_MSG_RESULT(Not found)
+  echo
+  echo OpenSSL headers appear to be mising
+  echo
+  exit 1
+fi
+AC_MSG_RESULT(yes)
+
+dnl Check for expat
+AC_MSG_CHECKING([for expat library (libexpat.a)])
+AC_ARG_WITH(expat,
+  [  --with-expat=DIR        location of OpenSSL files],
+  [ checkexpatdir "$withval" ],
+  [ checkexpatdir "$HOME/expat"; checkexpatdir "/usr"; checkexpatdir "../../expat" ]
+)
+if test -z "$EXPAT"; then
+  AC_MSG_RESULT(Not found)
+  echo
+  echo "expat not found"
+  echo "Use --with-expat option to fix this problem"
+  echo
+  exit 1
+fi
+AC_MSG_RESULT($EXPAT)
+AC_SUBST(EXPAT)
+
+dnl Check for an expat header file
+AC_MSG_CHECKING([for expat headers in $EXPAT/include])
+if test ! -r "$EXPAT/include/expat.h"; then
+  AC_MSG_RESULT(Not found)
+  echo
+  echo expat headers appear to be mising
+  echo
+  exit 1
+fi
+AC_MSG_RESULT(yes)
+
+export LIBRARY_PATH="$OPENSSL/lib:$EXPAT/lib"
 
 dnl Checks for libraries.
 AC_CHECK_LIB(gdi32, main)
 AC_CHECK_LIB(crypto, MD5_Init)
+AC_CHECK_LIB(expat, XML_ParserCreate)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_TYPE_SIZE_T
 
+dnl Check for headers
+AC_CHECK_HEADERS(getopt.h)
+
 dnl Checks for library functions.
-AC_CHECK_FUNCS(mkdir strerror)
+AC_CHECK_FUNCS(mkdir strerror snprintf)
 
 AC_OUTPUT(Makefile.lib)

@@ -1,10 +1,34 @@
-adif.o: adif.c sysconfig.h adif.h
+adif.o: adif.cpp sysconfig.h adif.h tqsllib.h tqslerrno.h cabrillo.h
 
-openssl_cert.o: openssl_cert.c tqsllib.h tqslerrno.h openssl_cert.h \
-	 sysconfig.h adif.h
-
-test_openssl.o: test_openssl.cpp sysconfig.h tqsllib.h openssl_cert.h \
+cabrillo.o: cabrillo.cpp cabrillo.h tqsllib.h tqslerrno.h sysconfig.h \
 	 adif.h
 
-tqsllib.o: tqsllib.c tqsllib.h tqslerrno.h adif.h sysconfig.h
+converter.o: converter.cpp sysconfig.h tqsllib.h tqslerrno.h \
+	 tqslconvert.h tqslexc.h adif.h cabrillo.h
+
+dumptqsldata.o: dumptqsldata.cpp tqsllib.h sysconfig.h adif.h cabrillo.h
+
+gen_crq.o: gen_crq.cpp sysconfig.h tqsllib.h tqslexc.h adif.h cabrillo.h
+
+load_cert.o: load_cert.cpp sysconfig.h tqsllib.h adif.h cabrillo.h
+
+location.o: location.cpp sysconfig.h location.h tqsllib.h tqslerrno.h \
+	 xml.h adif.h cabrillo.h
+
+openssl_cert.o: openssl_cert.cpp tqsllib.h tqslerrno.h openssl_cert.h \
+	 sysconfig.h adif.h cabrillo.h
+
+station_loc.o: station_loc.cpp sysconfig.h tqsllib.h tqslexc.h adif.h \
+	 cabrillo.h
+
+test_openssl.o: test_openssl.cpp sysconfig.h tqsllib.h openssl_cert.h \
+	 adif.h cabrillo.h
+
+tqslconvert.o: tqslconvert.cpp sysconfig.h tqsllib.h tqslconvert.h \
+	 tqslerrno.h adif.h cabrillo.h
+
+tqsllib.o: tqsllib.cpp tqsllib.h tqslerrno.h adif.h sysconfig.h \
+	 cabrillo.h
+
+xml.o: xml.cpp xml.h sysconfig.h
 

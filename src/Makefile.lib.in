@@ -1,39 +1,65 @@
-LIBS=@LIBS@
+LIBS=-lexpat -lcrypto -liberty @LIBS@
 OPENSSL=@OPENSSL@
-CXXFLAGS = -O0 -g3 -Wall -I. -I../include -I$(OPENSSL)/include $(INCDIR) @DEFS@
-LDFLAGS = -L. -L$(OPENSSL)/lib $(LIBS) -lstdc++
+EXPAT=@EXPAT@
+CXXFLAGS = -O0 -g3 -Wall -I. -I../include -I$(WXWIN)/src/zlib -I$(OPENSSL)/include -I$(EXPAT)/include $(INCDIR) @DEFS@
+LDFLAGS = -L. -L$(OPENSSL)/lib -L$(EXPAT)/lib -L$(WXWIN)/lib $(LIBS) -lstdc++
 
-OBJS = tqsllib.o openssl_cert.o adif.o
+OBJS = tqsllib.o openssl_cert.o adif.o  xml.o location.o tqslconvert.o cabrillo.o
 
-PTARGETS = test_openssl
+PTARGETS = gen_crq load_cert station_loc dumptqsldata converter
 
-ifeq ($(WINDOWS),1)
+MINGW32=@MINGW32@
+
+ifeq ($(MINGW32),yes)
   TARGETS=$(PTARGETS) tqsllib.dll
+  ZLIB=zlib
+  MYLIB=tqsllibd
 else
   TARGETS=$(PTARGETS)
+  ZLIB=z
+  MYLIB = tqsllib
 endif
 
 SUPPORT_LIB = lotwsup
-MYLIB = tqsllib
 
 all: $(TARGETS)
 
-test_openssl$(OBJSUF): test_openssl.o lib$(MYLIB).a
-	gcc -o test_openssl$(OBJSUF) test_openssl.o -l$(MYLIB) $(LDFLAGS)
+gen_crq$(OBJSUF): gen_crq.o lib$(MYLIB).a
+	gcc -o gen_crq$(OBJSUF) gen_crq.o -l$(MYLIB) $(LDFLAGS) $(WINLDFLAGS) -l$(ZLIB)
+	
+load_cert$(OBJSUF): load_cert.o lib$(MYLIB).a
+	gcc -o load_cert$(OBJSUF) load_cert.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	
+converter$(OBJSUF): converter.o lib$(MYLIB).a
+	gcc -o converter$(OBJSUF) converter.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	
+station_loc$(OBJSUF): station_loc.o lib$(MYLIB).a
+	gcc -o station_loc$(OBJSUF) station_loc.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
+	
+dumptqsldata$(OBJSUF): dumptqsldata.o lib$(MYLIB).a
+	gcc -o dumptqsldata$(OBJSUF) dumptqsldata.o -l$(MYLIB) $(LDFLAGS) -l$(ZLIB)
 	
 include tqsllib.depends
 
-lib$(MYLIB).a: $(OBJS)
-	rm -f lib$(MYLIB).a
-	ar q lib$(MYLIB).a $(OBJS)
-	ranlib lib$(MYLIB).a
+libtqsllib.a: $(OBJS)
+	rm -f libtqsllib.a
+	ar q libtqsllib.a $(OBJS)
+	ranlib libtqsllib.a
 
-tqsllib.dll: lib$(MYLIB).a
-	dllwrap.exe --export-all-symbols --dllname tqsllib.dll \
-		--output-lib libtqsllibd.a libtqsllib.a -L$(OPENSSL)/lib -lcrypto -lgdi32
+libtqsllibd.a: tqsllib.dll
+
+tqsllib.dll: libtqsllib.a
+	dllwrap.exe --output-def tqsllib.def --output-exp tqsllib.exports --dllname tqsllib.dll \
+		--output-lib libtqsllibd.a libtqsllib.a -L$(OPENSSL)/lib \
+		-L$(EXPAT)/lib -lexpat -L$(WXWIN)/lib \
+		-lzlib -lcrypto -lgdi32 -lstdc++
+	strip tqsllib.dll
+
+clean:
+	rm -f *.exe *.dll *.o *.a *~ xxx.*
 
 %.o: %.cpp
 	g++ $(CXXFLAGS) -c -o $@ $*.cpp
 
 %.o: %.c
-	gcc $(CXXFLAGS) -c -o $@ $*.c
+	g++ $(CXXFLAGS) -c -o $@ $*.c

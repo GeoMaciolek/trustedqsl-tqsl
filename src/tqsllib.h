@@ -15,11 +15,38 @@
 #include "sysconfig.h"
 #endif
 
+#ifdef __WIN32__
+	#ifdef TQSLLIB_DEF
+		#define DLLEXPORT __declspec(dllexport)
+	#else
+		#define DLLEXPORT __declspec(dllimport)
+	#endif
+#else
+	#define DLLEXPORT
+#endif
+
 #include "adif.h"
+#include "cabrillo.h"
 
 /** \file
   * tQSL library functions.
   */
+
+/** Sizes */
+#define TQSL_PASSWORD_MAX            80
+#define TQSL_NAME_ELEMENT_MAX        256
+#define TQSL_CALLSIGN_MAX            13
+#define TQSL_CRQ_NAME_MAX            60
+#define TQSL_CRQ_ADDR_MAX            80
+#define TQSL_CRQ_CITY_MAX            80
+#define TQSL_CRQ_STATE_MAX           80
+#define TQSL_CRQ_POSTAL_MAX          20
+#define TQSL_CRQ_COUNTRY_MAX         80
+#define TQSL_CRQ_EMAIL_MAX           180
+#define TQSL_BAND_MAX                10
+#define TQSL_MODE_MAX                16
+#define TQSL_FREQ_MAX                20
+
 
 #define TQSL_CERT_CB_USER            0
 #define TQSL_CERT_CB_CA              1
@@ -34,6 +61,7 @@
 #define TQSL_CERT_CB_RESULT_TYPE(x)  ((x) & 0x0f00)
 
 typedef void * tQSL_Cert;
+typedef void * tQSL_Location;
 
 /** Struct that holds y-m-d */
 typedef struct {
@@ -42,24 +70,51 @@ typedef struct {
 	int day;
 } tQSL_Date;
 
+/** Struct that holds h-m-s */
+typedef struct {
+	int hour;
+	int minute;
+	int second;
+} tQSL_Time;
+
+/** Certificate provider data */
+typedef struct tqsl_provider_st {
+	char organizationName[TQSL_NAME_ELEMENT_MAX+1];
+	char organizationalUnitName[TQSL_NAME_ELEMENT_MAX+1];
+	char emailAddress[TQSL_NAME_ELEMENT_MAX+1];
+	char url[TQSL_NAME_ELEMENT_MAX+1];
+} TQSL_PROVIDER;
+
 /** Certificate request data */
 typedef struct tqsl_cert_req_st {
-	const char *callSign;
-	const char *name;
-	const char *address1;
-	const char *address2;
-	const char *city;
-	const char *state;
-	const char *postalCode;
-	const char *country;
-	const char *emailAddress;
+	char providerName[TQSL_NAME_ELEMENT_MAX+1];
+	char providerUnit[TQSL_NAME_ELEMENT_MAX+1];
+	char callSign[TQSL_CALLSIGN_MAX+1];
+	char name[TQSL_CRQ_NAME_MAX+1];
+	char address1[TQSL_CRQ_ADDR_MAX+1];
+	char address2[TQSL_CRQ_ADDR_MAX+1];
+	char city[TQSL_CRQ_CITY_MAX+1];
+	char state[TQSL_CRQ_STATE_MAX+1];
+	char postalCode[TQSL_CRQ_POSTAL_MAX+1];
+	char country[TQSL_CRQ_COUNTRY_MAX+1];
+	char emailAddress[TQSL_CRQ_EMAIL_MAX+1];
 	int dxccEntity;
 	tQSL_Date qsoNotBefore;
 	tQSL_Date qsoNotAfter;
-	const char *password;
+	char password[TQSL_PASSWORD_MAX+1];
 	tQSL_Cert signer;
 	char renew;
 } TQSL_CERT_REQ;
+
+/** QSO data */
+typedef struct {
+	char callsign[TQSL_CALLSIGN_MAX];
+	char band[TQSL_BAND_MAX];
+	char mode[TQSL_MODE_MAX];
+	tQSL_Date date;
+	tQSL_Time time;
+	char freq[TQSL_FREQ_MAX];
+} TQSL_QSO_RECORD;
 
 /// Base directory for tQSL library working files.
 extern const char *tQSL_BaseDir;
@@ -72,19 +127,27 @@ extern "C" {
   */
 /** @{ */
 
-/** Error code from most recent tQSL library call.
-  *
+/// Error code from most recent tQSL library call.
+/**
   * The values for the error code are defined in tqslerrno.h */
-extern int tQSL_Error;
-/** The ADIF error code (see adif.h) */
-extern ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
-/** File name of file giving error. (May be empty.) */
-extern char tQSL_ErrorFile[256];
-/** Custom error message string */
-extern char tQSL_CustomError[256];
+DLLEXPORT extern int tQSL_Error;
+/// The ADIF error code
+DLLEXPORT extern TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
+/// The ADIF error code
+DLLEXPORT extern TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
+/// File name of file giving error. (May be empty.)
+DLLEXPORT extern char tQSL_ErrorFile[256];
+/// Custom error message string
+DLLEXPORT extern char tQSL_CustomError[256];
 
 /** Initialize the tQSL library */
 int tqsl_init();
+
+/** Set the directory where the TQSL files are kept.
+  * May be called either before of after tqsl_init(), but should be called
+  * before calling any other functions in the library.
+  */
+int tqsl_setDirectory(const char *dir);
 
 /** Gets the error string for the current tQSL library error and resets the error status.
   * See tqsl_getErrorString_v().
@@ -126,6 +189,14 @@ int tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen);
   */
 int tqsl_initDate(tQSL_Date *date, const char *str);
 
+/** Initialize a tQSL_Time object from a time string.
+  *
+  * The time string must be HH[:]MM[[:]SS] format.
+  *
+  * Returns 0 on success, nonzero on failure
+  */
+int tqsl_initTime(tQSL_Time *time, const char *str);
+
 /** Compare two tQSL_Date objects.
   *
   * Returns:
@@ -141,7 +212,7 @@ int tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b);
   *
   * Returns a pointer to \c buf or NULL on error
   */
-char *tqsl_convertDateToText(tQSL_Date *date, char *buf, int bufsiz);
+char *tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz);
 
 /** Test whether a tQSL_Date contains a valid date value
   *
@@ -154,6 +225,19 @@ int tqsl_isDateValid(const tQSL_Date *d);
   * Returns 1 if the date is null
   */
 int tqsl_isDateNull(const tQSL_Date *d);
+
+/** Test whether a tQSL_Time contains a valid time value
+  *
+  * Returns 1 if the time is valid
+  */
+int tqsl_isTimeValid(const tQSL_Time *t);
+
+/** Converts a tQSL_Time object to a HH:MM:SSZ string.
+  *
+  * Returns a pointer to \c buf or NULL on error
+  */
+char *tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz);
+
 
 /** @} */
 
@@ -182,6 +266,10 @@ int tqsl_isDateNull(const tQSL_Date *d);
 
 /** @{ */
 
+#define TQSL_SELECT_CERT_WITHKEYS 1
+#define TQSL_SELECT_CERT_EXPIRED 2
+#define TQSL_SELECT_CERT_SUPERCEDED 4
+
 /** Get a list of certificates
   *
   * Selects a set of certificates from the user's certificate store
@@ -197,8 +285,9 @@ int tqsl_isDateNull(const tQSL_Date *d);
   * that have a QSO date range that encompasses this date will be
   * returned.
   * \li \c issuer - Optional issuer (DN) string to match.
-  * \li \c validonly - Only certificates currently valid for use
-  * will be returned if nonzero.
+  * \li \c flag - OR of TQSL_SELECT_CERT_EXPIRED (include expired
+  * certs), TQSL_SELECT_CERT_SUPERCEDED and TQSL_SELECT_CERT_WITHKEYS
+  * (keys that don't have associated certs will be returned).
   *
   * Returns 0 on success, nonzero on failure.
   *
@@ -207,7 +296,19 @@ int tqsl_isDateNull(const tQSL_Date *d);
   *
   */
 int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
-	const char *callsign, const char *date, const char *issuer, int validonly);
+	const char *callsign, int dxcc, const tQSL_Date *date, const char *issuer, int flag);
+
+/** Find out if the "certificate" is just a key pair.
+  */
+int tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly);
+
+/** Get the encoded certificate for inclusion in a GABBI file.
+  */
+int tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz);
+
+/** Get the issuer's serial number of the certificate.
+  */
+int tqsl_getCertificateSerial(tQSL_Cert cert, long *serial);
 
 /** Get the issuer (DN) string from a tQSL_Cert.
   *
@@ -219,6 +320,7 @@ int tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
   * Returns 0 on success, nonzero on failure.
   */
 int tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz);
+
 /** Get the issuer's organization name from a tQSL_Cert.
   *
   * \li \c cert - a tQSL_Cert object, normally one returned from
@@ -433,7 +535,7 @@ void tqsl_freeCertificate(tQSL_Cert cert);
   *
   *  TQSL_CERT_CB_CALL_TYPE(type) := TQSL_CERT_CB_MILESTONE | TQSL_CERT_CB_RESULT
   *
-  *  TQSL_CERT_CB_CERT_TYPE(type) := TQSL_CERT_CB_CA | TQSL_CERT_CB_CA | TQSL_CERT_CB_USER
+  *  TQSL_CERT_CB_CERT_TYPE(type) := TQSL_CERT_CB_ROOT | TQSL_CERT_CB_CA | TQSL_CERT_CB_USER
   *
   *  TQSL_CERT_CB_RESULT_TYPE(type) := TQSL_CERT_CB_PROMPT | TQSL_CERT_CB_WARNING | TQSL_CERT_CB_ERROR
   *
@@ -441,7 +543,18 @@ void tqsl_freeCertificate(tQSL_Cert cert);
   *
   *  TQSL_CERT_CB_RESULT_TYPE() is meaningful only if TQSL_CERT_CB_CALL_TYPE()==TQSL_CERT_CB_RESULT
   */
-int tqsl_importCertFile(const char *file, int(*cb)(int type, const char *));
+//int tqsl_importCertFile(const char *file, int(*cb)(int type, const char *));
+int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *));
+
+/** Get the number of certificate providers known to tqsllib.
+  */
+int tqsl_getNumProviders(int *n);
+
+/** Get the information for a certificate provider.
+  *
+  * \li \c idx is the index, 0 <= idx < tqsl_getNumProviders()
+  */
+int tqsl_getProvider(int idx, TQSL_PROVIDER *provider);
 
 /** Create a certificate-request Gabbi file.
   *
@@ -458,17 +571,60 @@ int tqsl_importCertFile(const char *file, int(*cb)(int type, const char *));
 int tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *req,
 	int(*pwcb)(char *pwbuf, int pwsize));
 
+/** Export User certificate (see tqsl_exportKeys() \c certs_flag parameter) */
+#define TQSL_EXPORT_USER	1
+/** Export CA certificate (see tqsl_exportKeys() \c certs_flag parameter) */
+#define TQSL_EXPORT_CA		2
+/** Export Root certificate (see tqsl_exportKeys() \c certs_flag parameter) */
+#define TQSL_EXPORT_ROOT	4
+/** Export User's private key (see tqsl_exportKeys() \c certs_flag parameter) */
+#define TQSL_EXPORT_PRIVATE	8
+
+/** Save a key pair  and/or certificates to a file in PKCS12 format.
+  *
+  * [This function is not yet implemented.]
+  *
+  * The tQSL_Cert must be initialized for signing (see tqsl_beginSigning())
+  * if the user certificate is being exported.
+  *
+  * \c certs_flag determines which certificates will be included in the
+  * file. It is the logical 'or' of TQSL_EXPORT_USER TQSL_EXPORT_CA
+  *
+  * The supplied \c password is used to encrypt the private key, if the private
+  * key is included in the export.
+  */
+int tqsl_exportKeys(tQSL_Cert cert, const char *filename, int certs_flag,
+	const char *password);
+
 /** @} */
 
 /** \defgroup Sign Signing API
+  *
+  * The Signing API uses a tQSL_Cert (see \ref CertStuff) to digitally
+  * sign a block of data.
   */
 /** @{ */
 
 /** Initialize the tQSL_Cert object for use in signing.
   *
   * This produces an unencrypted copy of the private key in memory.
+  *
+  * if \c password is not NULL, it must point to the password to use to decrypt
+  * the private key. If \c password is NULL and \c pwcb is not NULL, \c pwcb
+  * is called to get the password. If the private key is encrypted and both
+  * \c password and \c pwcb are NULL, or if the supplied password fails to
+  * decrypt the key, a TQSL_PASSWORD_ERROR error is returned.
+  *
+  * \c pwcb parameters: \c pwbuf is a pointer to a buffer of \c pwsize chars.
+  * The buffer should be NUL-terminated.
   */
 int tqsl_beginSigning(tQSL_Cert cert, char *password,  int(*pwcb)(char *pwbuf, int pwsize));
+
+/** Test whether the tQSL_Cert object is initialized for signing.
+  *
+  * Returns 0 if initialized. Sets tQSL_Error to TQSL_SIGNINIT_ERROR if not.
+  */
+int tqsl_checkSigningStatus(tQSL_Cert cert);
 
 /** Get the maximum size of a signature block that will be produced
   * when the tQSL_Cert is used to sign data. (Note that the size of the
@@ -481,13 +637,369 @@ int tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize);
   * tqsl_beginSigning() must have been called for
   * the tQSL_Cert object before calling this function.
   */
-int tqsl_signDataBlock(tQSL_Cert cert, unsigned char *data, int datalen, unsigned char *sig, int *siglen);
+int tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen);
+
+/** Sign a single QSO record
+  *
+  * tqsl_beginSigning() must have been called for
+  * the tQSL_Cert object before calling this function.
+  *
+  * \c loc must be a valid tQSL_Location object. See \ref Data.
+  */
+int tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *rec, unsigned char *sig, int *siglen);
 
 /** Terminate signing operations for this tQSL_Cert object.
   *
   * This zero-fills the unencrypted private key in memory.
   */
 int tqsl_endSigning(tQSL_Cert cert);
+
+/** @} */
+
+/** \defgroup Data Data API
+  *
+  * The Data API is used to form data into TrustedQSL records. A TrustedQSL record
+  * consists of a station record and a QSO record. Together, the two records
+  * fully describe one station's end of the QSO -- just as a paper QSL card does.
+  *
+  * The station record contains the callsign and geographic location of the
+  * station submitting the QSO record. The library manages the station records.
+  * The tqsl_xxxStationLocationCapture functions are used to generate and save
+  * a station record. The intent is to provide an interface that makes a step-by-step
+  * system (such as a GUI "wizard") easily implemented.
+  *
+  * The tqsl_getStationLocation() function is used to retrieve station records.
+  *
+  * With the necessary station location available, a signed GABBI output file can
+  * be generated using the tqsl_getGABBIxxxxx functions:
+  *
+  * \li tqsl_getGABBItCERT() - Returns a GABBI tCERT record for the given tQSL_Cert
+  * \li tqsl_getGABBItSTATION() - Returns a GABBI tSTATION record for the given
+  *    tQSL_Location
+  * \li tqsl_getGABBItCONTACT() - Returns a GABBI tCONTACT record for the given
+  *    TQSL_QSO_RECORD, using the given tQSL_Cert and tQSL_Location.
+  *
+  * The GABBI format requires that the tCERT record contain an integer identifier
+  * that is unique within the GABBI file. Similarly, each tSTATION record must
+  * contain a unique identifier. Aditionally, the tSTATION record must reference
+  * the identifier of a preceding tCERT record. Finally, each tCONTACT record must
+  * reference a preceding tSTATION record. (A GABBI processor uses these identifiers
+  * and references to tie the station and contact records together and to verify
+  * their signature via the certificate.) It is the responsibility of the caller
+  * to supply these identifiers and to ensure that the supplied references match
+  * the tQSL_Cert and tQSL_Location used to create the referenced GABBI records.
+  *
+  * Station Location Generation
+  *
+  * The station-location generation process involves determining the values
+  * for a number of station-location parameters. Normally this
+  * will be done by prompting the user for the values. The responses given
+  * by the user may determine which later fields are required. For example,
+  * if the user indicates that the DXCC entity is UNITED STATES, a later
+  * field would ask for the US state. This field would not be required if the
+  * DXCC entity were not in the US.
+  *
+  * To accommodate the dynamic nature of the field requirements, the fields
+  * are ordered such that dependent fields are queried after the field(s)
+  * on which they depend. To make this process acceptable in a GUI
+  * system, the fields are grouped into pages, where multiple fields may
+  * be displayed on the same page. The grouping is such that which fields
+  * are within the page is not dependent on any of the values of the
+  * fields within the page. That is, a page of fields contains the same
+  * fields no matter what value any of the fields contains. (However,
+  * the \em values of fields within the page can depend on the values
+  * of fields that precede them in the page.)
+  *
+  * Here is a brief overview of the sequence of events involved in
+  * generating a station location interactively, one field at a time:
+  *
+  * 1) Call tqsl_initStationLocationCapture() (new location) or tqsl_getStationLocation()
+  * (existing location).
+  *
+  * 2) For \c field from 0 to tqsl_getNumLocationField():
+  * \li Display the field label [tqsl_getLocationFieldDataLabel()]
+  * \li Get the field content from the user. This can be a selection
+  * from a list, an entered integer or an entered character string,
+  * depending on the value returned by tqsl_getLocationFieldInputType().
+  *
+  * 3) If tqsl_hasNextStationLocationCapture() returns 1, call
+  * tqsl_nextStationLocationCapture() and go back to step 2.
+  *
+  * In the case of a GUI system, you'll probably want to display the
+  * fields in pages. The sequence of events is a bit different:
+  *
+  * 1) Call tqsl_initStationLocationCapture() (new location) or tqsl_getStationLocation()
+  * (existing location).
+  *
+  * 2) For \c field from 0 to tqsl_getNumLocationField(),
+  * \li Display the field label [tqsl_getLocationFieldDataLabel()]
+  * \li Display the field-input control This can be a list-selection
+  * or an entered character string or integer, depending on the value
+  * returned by tqsl_getLocationFieldInputType().
+  *
+  * 3) Each time the user changes a field, call tqsl_updateStationLocationCapture().
+  * This may change the allowable selection for fields that follow the field
+  * the user changed, so the control for each of those fields should be updated
+  * as in step 2.
+  *
+  * 4) Once the user has completed entries for the page, if
+  * tqsl_hasNextStationLocationCapture() returns 1, call
+  * tqsl_nextStationLocationCapture() and go back to step 2.
+  *
+  * N.B. The first two fields in the station-location capture process are
+  * always call sign and DXCC entity, in that order. As a practical matter, these
+  * two fields must match the corresponding fields in the available certificates.
+  * The library will therefore constrain the values of these fields to match
+  * what's available in the certificate store. See \ref CertStuff.
+  */
+
+/** @{ */
+
+/* Location field input types */
+
+#define TQSL_LOCATION_FIELD_TEXT	1
+#define TQSL_LOCATION_FIELD_DDLIST	2
+#define TQSL_LOCATION_FIELD_LIST	3
+
+/* Location field data types */
+#define TQSL_LOCATION_FIELD_CHAR 1
+#define TQSL_LOCATION_FIELD_INT 2
+
+/** Begin the process of generating a station record */
+int tqsl_initStationLocationCapture(tQSL_Location *locp);
+
+/** Release the station-location resources. This should be called for
+  * any tQSL_Location that was initialized via tqsl_initStationLocationCapture()
+  * or tqsl_getStationLocation()
+  */
+int tqsl_endStationLocationCapture(tQSL_Location *locp);
+
+/** Update the pages based on the currently selected settings. */
+int tqsl_updateStationLocationCapture(tQSL_Location loc);
+
+//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);
+
+/** Get the current page number */
+int tqsl_getStationLocationCapturePage(tQSL_Location loc, int *page);
+
+/** Set the current page number.
+  * Typically, the page number will be 1 (the starting page) or a value
+  * obtained from tqsl_getStationLocationCapturePage().
+  */
+int tqsl_setStationLocationCapturePage(tQSL_Location loc, int page);
+
+/** Advance the page to the next one in the page sequence */
+int tqsl_nextStationLocationCapture(tQSL_Location loc);
+
+/** Return the page to the previous one in the page sequence. */
+int tqsl_prevStationLocationCapture(tQSL_Location loc);
+
+/** Returns 1 (in rval) if there is a next page */
+int tqsl_hasNextStationLocationCapture(tQSL_Location loc, int *rval);
+
+/** Returns 1 (in rval) if there is a previous page */
+int tqsl_hasPrevStationLocationCapture(tQSL_Location loc, int *rval);
+
+/** Save the station location data. Note that the name must have been
+  * set via tqsl_setStationLocationCaptureName if this is a new
+  * station location. If the \c overwrite parameter is zero and a
+  * station location of that name is already in existance, an error
+  * occurs with tQSL_Error set to TQSL_NAME_EXISTS.
+  */
+int tqsl_saveStationLocationCapture(tQSL_Location loc, int overwrite);
+
+/** Get the name of the station location */
+int tqsl_getStationLocationCaptureName(tQSL_Location loc, char *namebuf, int bufsiz);
+
+/** Set the name of the station location */
+int tqsl_setStationLocationCaptureName(tQSL_Location loc, const char *name);
+
+/** Get the number of saved station locations */
+int tqsl_getNumStationLocations(tQSL_Location loc, int *nloc);
+
+/** Get the name of the specified (by \c idx) saved station location */
+int tqsl_getStationLocationName(tQSL_Location loc, int idx, char *buf, int bufsiz);
+
+/** Get the call sign from the station location */
+int tqsl_getStationLocationCallSign(tQSL_Location loc, int idx, char *buf, int bufsiz);
+
+/** Retrieve a saved station location.
+  * Once finished wih the station location, tqsl_endStationLocationCapture()
+  * should be called to release resources.
+  */
+int tqsl_getStationLocation(tQSL_Location *loc, const char *name);
+
+/** Remove the stored station location by name. */
+int tqsl_deleteStationLocation(const char *name);
+
+/** Get the number of fields on the current station location page */
+int tqsl_getNumLocationField(tQSL_Location loc, int *numf);
+
+/** Get the number of characters in the label for the specified field */
+int tqsl_getLocationFieldDataLabelSize(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the label for the specified field */
+int tqsl_getLocationFieldDataLabel(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+
+/** Get the size of the GABBI name of the specified field */
+int tqsl_getLocationFieldDataGABBISize(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the GABBI name of the specified field */
+int tqsl_getLocationFieldDataGABBI(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+
+/** Get the input type of the input field.
+  *
+  * \c type will be one of TQSL_LOCATION_FIELD_TEXT, TQSL_LOCATION_FIELD_DDLIST
+  * or TQSL_LOCATION_FIELD_LIST
+  */
+int tqsl_getLocationFieldInputType(tQSL_Location loc, int field_num, int *type);
+
+/** Get the data type of the input field.
+  *
+  * \c type will be either TQSL_LOCATION_FIELD_CHAR or TQSL_LOCATION_FIELD_INT
+  */
+int tqsl_getLocationFieldDataType(tQSL_Location loc, int field_num, int *type);
+
+/** Get the length of the input field data. */
+int tqsl_getLocationFieldDataLength(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the character data from the specified field.
+  *
+  * If the field input type (see tqsl_getLocationFieldInputType()) is
+  * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, this will
+  * return the text of the selected item.
+  */
+int tqsl_getLocationFieldCharData(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+
+/** Get the integer data from the specified field.
+  *
+  * This is only meaningful if the field data type (see tqsl_getLocationFieldDataType())
+  * is TQSL_LOCATION_FIELD_INT.
+  */
+int tqsl_getLocationFieldIntData(tQSL_Location loc, int field_num, int *dat);
+
+/** If the field input type (see tqsl_getLocationFieldInputType()) is
+  * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, gets the
+  * index of the selected list item.
+  */
+int tqsl_getLocationFieldIndex(tQSL_Location loc, int field_num, int *dat);
+
+/** Get the number of items in the specified field's pick list. */
+int tqsl_getNumLocationFieldListItems(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the text of a specified item of a specified field */
+int tqsl_getLocationFieldListItem(tQSL_Location loc, int field_num, int item_idx, char *buf, int bufsiz);
+
+/** Set the text data of a specified field. */
+int tqsl_setLocationFieldCharData(tQSL_Location loc, int field_num, const char *buf);
+
+/** Set the integer data of a specified field.
+  */
+int tqsl_setLocationFieldIntData(tQSL_Location loc, int field_num, int dat);
+
+/** If the field input type (see tqsl_getLocationFieldInputType()) is
+  * TQSL_LOCATION_FIELD_DDLIST or TQSL_LOCATION_FIELD_LIST, sets the
+  * index of the selected list item.
+  */
+int tqsl_setLocationFieldIndex(tQSL_Location loc, int field_num, int dat);
+
+/** Get the \e changed status of a field. The changed flag is set to 1 if the
+  * field's pick list was changed during the last call to tqsl_updateStationLocationCapture
+  * or zero if the list was not changed.
+  */
+int tqsl_getLocationFieldChanged(tQSL_Location loc, int field_num, int *changed);
+
+/** Get the call sign from the station location. */
+int tqsl_getLocationCallSign(tQSL_Location loc, char *buf, int bufsiz);
+
+/** Get the DXCC entity from the station location. */
+int tqsl_getLocationDXCCEntity(tQSL_Location loc, int *dxcc);
+
+/** Get the number of DXCC entities in the master DXCC list.
+  */
+int tqsl_getNumDXCCEntity(int *number);
+
+/** Get a DXCC entity from the list of DXCC entities by its index.
+  */
+int tqsl_getDXCCEntity(int index, int *number, const char **name);
+
+/** Get the name of a DXCC Entity by its DXCC number.
+  */
+int tqsl_getDXCCEntityName(int number, const char **name);
+
+/** Get the number of Band entries in the Band list */
+int tqsl_getNumBand(int *number);
+
+/** Get a band by its index.
+  *
+  * \c name - The GAABI name of the band.
+  * \c spectrum - HF | VHF | UHF
+  * \c low - The low end of the band in kHz (HF) or MHz (VHF/UHF)
+  * \c high - The low high of the band in kHz (HF) or MHz (VHF/UHF)
+  *
+  * Note: \c spectrum, \c low and/or \c high may be NULL.
+  */
+int tqsl_getBand(int index, const char **name, const char **spectrum, int *low, int *high);
+
+/** Get the number of Mode entries in the Mode list */
+int tqsl_getNumMode(int *number);
+
+/** Get a mode by its index.
+  *
+  * \c mode - The GAABI mode name
+  * \c group - CW | PHONE | IMAGE | DATA
+  *
+  * Note: \c group may be NULL.
+  */
+int tqsl_getMode(int index, const char **mode, const char **group);
+
+int tqsl_clearADIFModes();
+
+/** Set the mapping of an ADIF mode to a TQSL mode.
+*/
+int tqsl_setADIFMode(const char *adif_item, const char *mode);
+
+/** Map an ADIF mode to its TQSL equivalent.
+  */
+int tqsl_getADIFMode(const char *adif_item, char *mode, int nmode);
+
+/** Get a GABBI record that contains the certificate.
+  *
+  * \c uid is the value for the CERT_UID field
+  *
+  * Returns the NULL pointer on error.
+  *
+  * N.B. On systems that distinguish text-mode files from binary-mode files,
+  * notably Windows, the GABBI records should be written in binary mode.
+  */
+const char *tqsl_getGABBItCERT(tQSL_Cert cert, int uid);
+
+/** Get a GABBI record that contains the Staion Location data.
+  *
+  * \li \c uid is the value for the STATION_UID field.
+  * \li \c certuid is the value of the asociated CERT_UID field.
+  *
+  * Returns the NULL pointer on error.
+  *
+  * N.B. On systems that distinguish text-mode files from binary-mode files,
+  * notably Windows, the GABBI records should be written in binary mode.
+  */
+const char *tqsl_getGABBItSTATION(tQSL_Location loc, int uid, int certuid);
+
+/** Get a GABBI record that contains the QSO data.
+  *
+  * \li \c uid is the value of the associated STATION_UID field.
+  *
+  * N.B.: If \c cert is not initialized for signing (see tqsl_beginSigning())
+  * the function will return with a TQSL_SIGNINIT_ERROR error.
+  *
+  * Returns the NULL pointer on error.
+  *
+  * N.B. On systems that distinguish text-mode files from binary-mode files,
+  * notably Windows, the GABBI records should be written in binary mode.
+  */
+const char *tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location loc, TQSL_QSO_RECORD *qso,
+	int stationuid);
 
 /** @} */
 

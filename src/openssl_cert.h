@@ -38,6 +38,14 @@ typedef struct {
 	int value_buf_size;
 } TQSL_X509_NAME_ITEM;
 
+namespace tqsllib {
+
+typedef enum { ROOTCERT = 0, CACERT, USERCERT } certtype;
+
+int tqsl_import_cert(const char *cert, certtype type, int(*cb)(int, const char *));
+
+} // namespace
+
 #if defined(LOTW_SERVER) || defined(OPENSSL_CERT_SOURCE)
 
 #ifdef __cplusplus
@@ -90,6 +98,9 @@ CLIENT_STATIC int tqsl_cert_get_subject_name_entry(X509 *cert, const char *obj_n
 /// Retrieve a name entry date from an X509 cert's subject name by name
 CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, tQSL_Date *date);
 
+/// Convert an ASN date
+CLIENT_STATIC int tqsl_get_asn1_date(ASN1_TIME *tm, tQSL_Date *date);
+
 /// Filter a list (stack) of certs based on (optional) call sign, qso date and issuer criteria
 /** Returns a (possibly empty) stack of certificates that match the criteria. Returns NULL
   * on error.
@@ -98,7 +109,7 @@ CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, t
   * stack is not altered.
   */
 CLIENT_STATIC TQSL_X509_STACK *tqsl_filter_cert_list(TQSL_X509_STACK *sk, const char *callsign,
-	const tQSL_Date *date, const char *issuer, int isvalid);
+	int dxcc, const tQSL_Date *date, const char *issuer, int isvalid);
 
 CLIENT_STATIC EVP_PKEY *tqsl_new_rsa_key(int nbits);
 
