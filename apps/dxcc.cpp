@@ -30,7 +30,7 @@ _ent_cmp(const void *a, const void *b) {
 
 bool
 DXCC::init() {
-	if (!_init) {
+//	if (!_init) {
 		if (tqsl_getNumDXCCEntity(&num_entities))
 			return false;
 		entity_list = new struct _dxcc_entity[num_entities];
@@ -38,7 +38,7 @@ DXCC::init() {
 			tqsl_getDXCCEntity(i, &(entity_list[i].number), &(entity_list[i].name));
 		}
 		qsort(entity_list, num_entities, sizeof (struct _dxcc_entity), &_ent_cmp);
-	}
+//	}
 	_init = true;
 	return _init;
 }
