@@ -53,6 +53,10 @@ __published:	// IDE-managed Components
  TDataSource *pubDS;
  TDataSource *certDs;
  TBitBtn *BitBtn1;
+ TAutoIncField *PrivTblPid;
+ TStringField *PrivTblCallSign;
+ TIntegerField *PrivTblKeyNum;
+ TStringField *PrivTblKey;
  void __fastcall CreateNewKeyPair1Click(TObject *Sender);
  void __fastcall ImportCertificate1Click(TObject *Sender);
  

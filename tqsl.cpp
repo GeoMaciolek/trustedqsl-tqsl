@@ -552,8 +552,8 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     fprintf(stderr,"pkey len is %d\n",
 	    strlen((char *)cert->data.publicKey.pkey));
 
-  strcpy(cert->data.issueDate,issueDate,10);
-  strcpy(cert->data.expireDate,expireDate,10);
+  strncpy(cert->data.issueDate,issueDate,10);
+  strncpy(cert->data.expireDate,expireDate,10);
   cert->data.issueDate[10] = 0;
   cert->data.expireDate[10] = 0;
   
@@ -758,3 +758,4 @@ int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len)
   return(1);
 
 }
+
