@@ -1,0 +1,48 @@
+TrustedQSL SDK
+
+What is?
+
+It is an open software digital signature scheme to sign amateur
+radio QSL cards.  It uses OpenSSL (www.openssl.org) crypto
+DSA library to create the digital signatures.  I picked openssl
+because it is portable and falls under the LGPL license which
+means that software authors that use tqsl library DOES NOT
+have to release source code.  
+
+The size of a cert which includes the public key is 358 bytes.
+The size of a signedQSL is around 1k.  This means that more than
+a 1000 signed trusted QSL could be stored on a single floppy.
+
+
+Currently working:
+
+qgenkey - This will create a public/private key pair.
+
+gencert - This will create a cert for the public key.  To be used
+only by CA's.  Still needs issue/expiration date functions.
+
+chkcert - This validate a cert.  Can be used by anyone to validate
+a public cert.
+
+TODO list (not in order):
+
+1. Make sure that Microsoft C++ will compile and like.
+
+2. Make a DLL useable by other languages other than Microsoft C++.
+
+3. Clean up functions.
+
+4. Add signing and validation functions (not hard because the
+	certs is just a special form of signing and validation.
+
+5. Get it into hands of software developers.
+
+6. Need portable and secure key rings.
+
+7. Need design and user guides
+
+8. Needs award sponsors and software developers participation
+in setting standard formats.
+
+
+

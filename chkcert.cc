@@ -53,9 +53,13 @@ int main(int argc, char *argv[])
   int 		optCnt=0;
   int 		c,errFlg=0;
 
-  while ((c = getopt(argc, argv, "C:a:d:")) != EOF)
+  while ((c = getopt(argc, argv, "C:a:d:s")) != EOF)
     switch (c) 
       {
+      case 's':
+	printf("size of cert is: %d\n",sizeof(amCert));
+	printf("size of qsl signature is: %d\n",sizeof(signedQSL));
+	return(1);
       case 'a':
 	strcpy(amCertFile,optarg);
 	optCnt++;
