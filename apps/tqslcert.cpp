@@ -61,6 +61,12 @@ static DocPaths docpaths(wxT("tqslcert"));
 IMPLEMENT_APP(CertApp)
 
 CertApp::CertApp() : wxApp() {
+#ifdef __WXMAC__	// Tell wx to put these items on the proper menu
+	wxApp::s_macAboutMenuItemId = long(tc_h_About);
+	wxApp::s_macPreferencesMenuItemId = long(tc_Preferences);
+	wxApp::s_macExitMenuItemId = long(tc_Quit);
+#endif
+
 	wxConfigBase::Set(new wxConfig(wxT("tqslcert")));
 }
 
@@ -141,9 +147,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 	file_menu->Append(tc_CRQWizard, wxT("&New Certificate Request..."));
 	file_menu->AppendSeparator();
 	file_menu->Append(tc_Load, wxT("&Load Certificate File"));
+#ifndef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->AppendSeparator();
+#endif
 	file_menu->Append(tc_Preferences, wxT("&Preferences..."));
+#ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
+#endif
 	file_menu->Append(tc_Quit, wxT("E&xit\tAlt-X"));
 
 	cert_menu = makeCertificateMenu(false);
@@ -156,7 +166,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 	if (wxFileNameFromPath(hhp) != wxT("")) {
 		if (help.AddBook(hhp)) {
 			help_menu->Append(tc_h_Contents, wxT("&Contents"));
+#ifndef __WXMAC__	// On Mac, About not on Help menu
 			help_menu->AppendSeparator();
+#endif
 		}
 	}
 	help_menu->Append(tc_h_About, wxT("&About"));
