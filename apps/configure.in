@@ -6,12 +6,17 @@ AC_CONFIG_HEADERS(sysconfig.h)
 AC_CANONICAL_HOST
 AC_CONFIG_SRCDIR(tqsl.cpp)
 
+TQSL_VERSION_MAJOR=`echo $VERSION | sed -e 's/\..*//'`
+TQSL_VERSION_MINOR=`echo $VERSION | sed -e 's/.*\.//'`
+AC_SUBST(TQSL_VERSION_MAJOR)
+AC_SUBST(TQSL_VERSION_MINOR)
 WINVER=`echo "$VERSION" | sed -e 's/\.//'`
 AC_SUBST(WINVER)
 
 dnl Set defines for platforms
 
 TQSLLIBFILE="tqsllib"
+tqslresources=
 tqslcertresources=
 dyn_lib_suf=".so"
 
@@ -23,6 +28,7 @@ case "$build_os" in
   mingw32) platform=-DWINDOWS
 	WINWD=`cmd /c cd`
 	TQSLLIBFILE="tqsllibd"
+    tqslresources="tqsl-resources.o"
 	tqslcertresources="tqslcert-resources.o"
 	;;
 esac
@@ -30,6 +36,7 @@ esac
 AC_SUBST(platform)
 AC_SUBST(add_targets)
 AC_SUBST(WINWD)
+AC_SUBST(tqslresources)
 AC_SUBST(tqslcertresources)
 
 dnl Checks for programs.
@@ -303,4 +310,4 @@ AC_CHECK_FUNCS(mkdir strerror)
 AC_PROG_INSTALL
 #AC_PREFIX_DEFAULT(/usr)
 
-AC_OUTPUT(Makefile tqslcert.rc setup.iss TrustedQSL.spec)
+AC_OUTPUT(Makefile tqsl.rc tqslcert.rc setup.iss TrustedQSL.spec)

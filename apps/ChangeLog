@@ -3,6 +3,8 @@ TQSL/TQSLCERT changes
 
 1.11
 ----
+Added command-line option -d. (See on-line help for details.)
+
 Modified string handling to be compatible with Unicode versions
 of wxWindows/wxWidgets.
 

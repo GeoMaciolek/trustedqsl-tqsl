@@ -33,8 +33,8 @@ EXTRA_PROGRAMS =
 
 bin_PROGRAMS = tqsl tqslcert @add_targets@
 
-tqsl_LDADD = @tqslcertresources@ @wxwin_libs@
-tqsl_DEPENDENCIES = @tqslcertresources@
+tqsl_LDADD = @tqslresources@ @wxwin_libs@
+tqsl_DEPENDENCIES = @tqslresources@
 
 tqslcert_LDADD = @tqslcertresources@ @wxwin_libs@
 tqslcert_DEPENDENCIES = @tqslcertresources@
@@ -128,6 +128,9 @@ dist/TrustedQSL/tqsl.app: tqsl $(srcdir)/tqslicons.icns $(srcdir)/Info.plist.in
 	    -e "s/ICONFILE/tqslicons.icns/g"  \
 	    -e "s/VERSION/$(VERSION)/g"   \
 	$(srcdir)/Info.plist.in > dist/TrustedQSL/tqsl.app/Contents/Info.plist
+
+tqsl-resources.o: tqsl.rc key.ico tqsl.ico tqsl-key1.ico
+	windres --include-dir=@WXDIR@/include -i tqsl.rc -o tqsl-resources.o $(RESFLAGS)
 
 tqslcert-resources.o: tqslcert.rc key.ico tqsl.ico tqsl-key1.ico
 	windres --include-dir=@WXDIR@/include -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)

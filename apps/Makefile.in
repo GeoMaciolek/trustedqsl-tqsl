@@ -98,6 +98,8 @@ STRIP = @STRIP@
 TOUCH = @TOUCH@
 TQSLINC = @TQSLINC@
 TQSLLIB = @TQSLLIB@
+TQSL_VERSION_MAJOR = @TQSL_VERSION_MAJOR@
+TQSL_VERSION_MINOR = @TQSL_VERSION_MINOR@
 VERSION = @VERSION@
 WINTQSLDIR = @WINTQSLDIR@
 WINVER = @WINVER@
@@ -146,6 +148,7 @@ sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 tqslcertresources = @tqslcertresources@
+tqslresources = @tqslresources@
 wxwin_libs = @wxwin_libs@
 WXWIN_STATIC = @wxwin_static@
 
@@ -162,8 +165,8 @@ EXTRA_PROGRAMS =
 
 bin_PROGRAMS = tqsl tqslcert @add_targets@
 
-tqsl_LDADD = @tqslcertresources@ @wxwin_libs@
-tqsl_DEPENDENCIES = @tqslcertresources@
+tqsl_LDADD = @tqslresources@ @wxwin_libs@
+tqsl_DEPENDENCIES = @tqslresources@
 
 tqslcert_LDADD = @tqslcertresources@ @wxwin_libs@
 tqslcert_DEPENDENCIES = @tqslcertresources@
@@ -201,7 +204,7 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = sysconfig.h
-CONFIG_CLEAN_FILES = tqslcert.rc setup.iss TrustedQSL.spec
+CONFIG_CLEAN_FILES = tqsl.rc tqslcert.rc setup.iss TrustedQSL.spec
 EXTRA_PROGRAMS =
 bin_PROGRAMS = tqsl$(EXEEXT) tqslcert$(EXEEXT) @add_targets@
 PROGRAMS = $(bin_PROGRAMS)
@@ -238,7 +241,8 @@ DATA = $(nobase_help_DATA)
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/configure ChangeLog \
 	INSTALL Makefile.am TrustedQSL.spec.in aclocal.m4 config.guess \
 	config.sub configure configure.in depcomp install-sh missing \
-	mkinstalldirs setup.iss.in sysconfig.h.in tqslcert.rc.in
+	mkinstalldirs setup.iss.in sysconfig.h.in tqsl.rc.in \
+	tqslcert.rc.in
 SOURCES = $(tqsl_SOURCES) $(tqslcert_SOURCES)
 
 all: $(BUILT_SOURCES) sysconfig.h
@@ -279,6 +283,8 @@ $(srcdir)/sysconfig.h.in:  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 
 distclean-hdr:
 	-rm -f sysconfig.h stamp-h1
+tqsl.rc: $(top_builddir)/config.status tqsl.rc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 tqslcert.rc: $(top_builddir)/config.status tqslcert.rc.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 setup.iss: $(top_builddir)/config.status setup.iss.in
@@ -674,6 +680,9 @@ dist/TrustedQSL/tqsl.app: tqsl $(srcdir)/tqslicons.icns $(srcdir)/Info.plist.in
 	    -e "s/ICONFILE/tqslicons.icns/g"  \
 	    -e "s/VERSION/$(VERSION)/g"   \
 	$(srcdir)/Info.plist.in > dist/TrustedQSL/tqsl.app/Contents/Info.plist
+
+tqsl-resources.o: tqsl.rc key.ico tqsl.ico tqsl-key1.ico
+	windres --include-dir=@WXDIR@/include -i tqsl.rc -o tqsl-resources.o $(RESFLAGS)
 
 tqslcert-resources.o: tqslcert.rc key.ico tqsl.ico tqsl-key1.ico
 	windres --include-dir=@WXDIR@/include -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
