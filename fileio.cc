@@ -28,11 +28,43 @@
 #include <openssl/bio.h>
 #include <openssl/bn.h>
 #include <string.h>
+
+#include "amcert.h"
 #include "sign.h"
 
 static char cvsID[] = "$Id$";
 
 extern int errno;
+
+void *readQpub(char *fname,char *typ)
+{
+
+  char	buf[500];
+  char	*retbuf;
+  int	rc;
+  int	fd;
+
+  fd = open(fname,O_RDONLY);
+  if (fd < 0)
+    return(NULL);
+
+  rc = read(fd,buf,500);
+  close(fd);  // we are done with it.
+  if (rc <= 0)
+    {
+      return(NULL);
+    }
+  
+  switch (buf[0])
+    {
+    case '1':
+      retbuf = (char *)malloc(sizeof(PublicKey));
+      memcpy(retbuf,buf,sizeof(PublicKey));
+
+      return((void*) retbuf);
+    }
+}
+  
 int writeSign(char *fname,unsigned char *sig,int len)
 {
   char	newName[500];
@@ -101,6 +133,36 @@ int readSign(char *fname,unsigned char *sig,int len)
   rc = read(fd,sig,len);
   close(fd);
   return(rc);
+}
+
+int getFileSize(char *fname)
+{
+  struct stat sbuf;
+  int rc;
+
+  rc = stat(fname,&sbuf);
+  if (rc < 0) 
+    return(0);
+  return(sbuf.st_size);
+}
+
+int readCert(char *fname,AmCertExtern *cert)
+{
+  int fileSize;
+  int rc;
+
+  fileSize = getFileSize(fname);
+  memset(cert,' ',sizeof(cert));
+ 
+  int fd;
+  fd = open(fname,O_RDONLY);
+  if (fd < 0)
+    return(-1);
+
+  rc = read(fd,cert,sizeof(AmCertExtern));
+  close(fd);
+  return(rc);
+
 }
 int sha1File(char *fname,unsigned char *hash)
 {

@@ -19,6 +19,8 @@
 */
 #ifndef SIGN_H
 #define SIGN_H
+
+#include "amcert.h"
 #define ERROR -1
 int 	sha1File(char *fname,unsigned char *);
 int 	writeSign(char *fname,unsigned char *sig,int len);
@@ -28,5 +30,7 @@ char 	*bin2hex(const unsigned char *binStr,int len);
 int 	writeSignAsc(char *fname, unsigned char *sig,int len);
 void 	hex2bin(char *hexStr,unsigned char *binStr,int len);
 int 	readSignAsc(char *fname,unsigned char *sig,int len);
+void 	*readQpub(char *fname,char *typ);
+int 	readCert(char *fname,AmCertExtern *cert);
 #endif SIGN_H
 

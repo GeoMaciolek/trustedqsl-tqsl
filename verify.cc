@@ -103,7 +103,7 @@ int main(int argc, char *argv[])
       BN_hex2bn(&dsa->q,qVal);
 
       readBig("pubkey.txt",&dsa->pub_key);
-      // DSA_print(bio_err,dsa,0);
+      DSA_print(bio_err,dsa,0);
       //      sigLen = readSign(argv[1],sigRet,99);
       sigLen = readSignAsc(argv[1],sigRet,99);
 	

@@ -30,10 +30,10 @@ const char gVal[] = "1A337E37A6C7B32C0DDAE04CF93BADC79BD4D781C39E5E9D141"
 
 const char qVal[] = "CEAAC08334A9071F79DF95789C938A81BFB7F24D";
 
-const int signSize=40;
+const int signSizeMax=120;
 const int CALL_SIZE=10;
 
-struct PubicKey
+struct PublicKey
 {
   char			pkType;
   char			callSign[12];
@@ -41,23 +41,34 @@ struct PubicKey
   unsigned char		pkey[176];
 };
 
-
-struct AmCertExtern
+struct AmCertData
 {
   char			certType;
   char			issueDate[10];
+  char			mark1;
   char			expireDate[10];
+  char			mark2;
   char			caID[10];
+  char			mark3;
   char			caPK[4];
+  char			mark4;
   char			caCertNum[6];
-  PubicKey		publicKey;
-  unsigned char		signature[signSize];
+  char			mark5;
+  PublicKey		publicKey;
+};
+struct AmCertExtern
+{
+  AmCertData		data;
+  char			mark6;
+  char		        sigSize[3];
+  char			mark7;
+  char			signature[signSizeMax];
 };
 
 struct qslSignature
 {
   char			sigType;
-  char			signature[signSize];
+  char			signature[signSizeMax];
   AmCertExtern		amCert;
 };
 

@@ -39,6 +39,7 @@ char *bin2hex(const unsigned char *binStr,int len)
       sprintf(value,"%02x",binStr[i]);
       strncpy(&tStr[j],value,2);
       j=j+2;
+      tStr[j] = 0;
     }
   return(tStr);
 }
@@ -58,5 +59,6 @@ void hex2bin(char *hexStr,unsigned char *binStr,int len)
       v = (unsigned char )strtol((const char *)b,NULL,16);
       binStr[j] = (unsigned char )v;
       j++;
+      binStr[j]=0;
     }
 }

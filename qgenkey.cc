@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   int 	i;
   char	callsign[200];
 
+  printf("sizeof Amcert: %d\n",sizeof(AmCertExtern));
 
   if (argc != 2)
     {
@@ -90,7 +91,16 @@ int main(int argc, char *argv[])
 	  
       fclose(fp);
     }      
- 
+  sprintf(fname,"%s.hpub",argv[1]);
+  fp = fopen(fname,"w");
+  if (fp)
+    {
+      printf("writing private key file %s\n",fname);
+      p = BN_bn2hex(dsa->pub_key);
+      fprintf(fp,"%s",p);
+	  
+      fclose(fp);
+    }    
   return(0);
 
 }
