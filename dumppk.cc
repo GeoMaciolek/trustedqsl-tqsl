@@ -8,9 +8,9 @@ int main(int argc,char *argv[])
   if (argc != 2)
     return(-1);
 
-  PublicKey  *pk;
+  TqslPublicKey  *pk;
   char  typ;
-  pk = (PublicKey *)readPubKey(argv[1],&typ);
+  pk = (TqslPublicKey *)readPubKey(argv[1],&typ);
   dumpPubKey(pk,stdout);
   return(0);
 

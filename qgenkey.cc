@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
   int 	i;
   char	callsign[200];
 
-  printf("sizeof Amcert: %d\n",sizeof(AmCertExtern));
+  printf("sizeof Amcert: %d\n",sizeof(TqslCert));
 
   if (argc != 2)
     {
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   fp = fopen(fname,"w");
   if (fp)
     {
-      PublicKey pk;
+      TqslPublicKey pk;
       initPublicKey(&pk);
       printf("writing public key file %s\n",fname);
       //      BN_print_fp(fp,dsa->p);

@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
   extern int 	optind;
   extern char 	*optarg;
 
-  AmCertExtern	amCert;
-  AmCertExtern	caCert;
+  TqslCert	amCert;
+  TqslCert	caCert;
 
   int		rc;
   char		amCertFile[100];
@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
       {
       case 's':
 	printf("size of cert is: %d\n",sizeof(amCert));
-	printf("size of qsl signature is: %d\n",sizeof(signedQSL));
+	printf("size of qsl signature is: %d\n",sizeof(TqslSignedQSL));
 	return(1);
       case 'a':
 	strcpy(amCertFile,optarg);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
       return(-1);
     }
 
-  memset(&caCert,' ',sizeof(AmCertExtern));  
+  memset(&caCert,' ',sizeof(TqslCert));  
   rc= readCert(caCertFile,&caCert);
   if (rc > 0)
     {
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 	}
     }
 
-  memset(&amCert,' ',sizeof(AmCertExtern));  
+  memset(&amCert,' ',sizeof(TqslCert));  
 
   rc= readCert(amCertFile,&amCert);
   if (rc > 0)

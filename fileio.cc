@@ -41,11 +41,11 @@ extern int errno;
 // read public key file which has a type 1 format
 // return NULL on error
 //
-PublicKey *readPubKey(char *fname,char *typ)
+TqslPublicKey *readPubKey(char *fname,char *typ)
 {
 
   char		buf[500];
-  PublicKey	*retbuf;
+  TqslPublicKey	*retbuf;
   int		rc;
   int		fd;
 
@@ -65,8 +65,8 @@ PublicKey *readPubKey(char *fname,char *typ)
   switch (buf[0])
     {
     case '1':
-      retbuf = new PublicKey;
-      memcpy(retbuf,buf,sizeof(PublicKey));
+      retbuf = new TqslPublicKey;
+      memcpy(retbuf,buf,sizeof(TqslPublicKey));
 
       return(retbuf);
     }
@@ -169,7 +169,7 @@ int getFileSize(char *fname)
 }
 
 // read a cert from a file.
-int readCert(char *fname,AmCertExtern *cert)
+int readCert(char *fname,TqslCert *cert)
 {
   int fileSize;
   int rc;
@@ -182,7 +182,7 @@ int readCert(char *fname,AmCertExtern *cert)
   if (fd < 0)
     return(-1);
 
-  rc = read(fd,cert,sizeof(AmCertExtern));
+  rc = read(fd,cert,sizeof(TqslCert));
   close(fd);
   return(rc);
 
@@ -201,7 +201,6 @@ int sha1File(char *fname,unsigned char *hash)
   rc = stat(fname,&sbuf);
   if (rc < 0)
     return(0);
-
   
   int fd;
 

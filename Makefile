@@ -6,35 +6,27 @@ CXXFLAGS = -g -Wall
 LIB = -lcrypto
 COMOBJ = fileio.o convert.o tqsllib.o 
 
-all:	sign verify qgenkey gencert chkcert dumpcert dumppk chkdate
+all:	tqgenkey tqgencert tqchkcert tqdumpcert tqdumppk chkdate
 
 
 chkdate: chkdate.o $(COMOBJ)
 	$(CXX) $(CXXFLAGS) -o chkdate chkdate.o  $(COMOBJ) $(LIB)
 
-sign:	sign.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o dsasign sign.o  $(COMOBJ) $(LIB)
+tqdumpcert:	dumpcert.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o tqdumpcert dumpcert.o  $(COMOBJ) $(LIB)
 
-dumpcert:	dumpcert.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o dumpcert dumpcert.o  $(COMOBJ) $(LIB)
+tqdumppk:	dumppk.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o tqdumppk dumppk.o  $(COMOBJ) $(LIB)
 
-dumppk:	dumppk.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o dumppk dumppk.o  $(COMOBJ) $(LIB)
+tqgenkey:	qgenkey.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o tqgenkey qgenkey.o  $(COMOBJ) $(LIB)
 
-qgenkey:	qgenkey.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o qgenkey qgenkey.o  $(COMOBJ) $(LIB)
+tqchkcert:	chkcert.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o tqchkcert chkcert.o  $(COMOBJ) $(LIB)
 
-chkcert:	chkcert.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o chkcert chkcert.o  $(COMOBJ) $(LIB)
+tqgencert:	gencert.o $(COMOBJ)
+	$(CXX) $(CXXFLAGS) -o tqgencert gencert.o  $(COMOBJ) $(LIB)
 
-gencert:	gencert.o $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o gencert gencert.o  $(COMOBJ) $(LIB)
-
-verify:	verify.o  $(COMOBJ)
-	$(CXX) $(CXXFLAGS) -o verify verify.o  $(COMOBJ) $(LIB)
-
-dsatest.o:	dsatest.cc
-	$(CXX) -c dsatest.cc
 
 clean:
 	rm -f sign verify qgenkey gencert chkcert dumpcert dumppk *.o *~ core *.exe

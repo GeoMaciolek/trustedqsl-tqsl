@@ -41,8 +41,8 @@ int main(int argc, char *argv[])
 
   char  	*pk;
   char		typ;
-  PublicKey   	*pubkey;
-  AmCertExtern	amCert;
+  TqslPublicKey *pubkey;
+  TqslCert	amCert;
 
   int		rc;
   FILE		*fp;

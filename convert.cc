@@ -97,7 +97,7 @@ char *bin2hex(const unsigned char *binStr,int len)
     }
   return(tStr);
 }
-void dumpPubKey(PublicKey *pk,FILE *fp)
+void dumpPubKey(TqslPublicKey *pk,FILE *fp)
 {
   fprintf(fp,"type: %c\n",pk->pkType);
   fprintf(fp,"call sign: %10.10s\n",pk->callSign);
@@ -105,7 +105,7 @@ void dumpPubKey(PublicKey *pk,FILE *fp)
   fprintf(fp,"pubkey: \n%176.176s\n",pk->pkey);
   return;
 }
-void dumpCert(AmCertExtern *cert,FILE *fp)
+void dumpCert(TqslCert *cert,FILE *fp)
 {
   fprintf(fp,"type: %c\n",cert->data.certType);
   fprintf(fp,"issue Date: %10.10s\n",cert->data.issueDate);

@@ -8,7 +8,8 @@ int main(int argc,char *argv[])
   if (argc != 2)
     return(-1);
 
-  AmCertExtern 	cert;
+  TqslCert 	cert;
+
   readCert(argv[1],&cert);
   dumpCert(&cert,stdout);
   return(0);

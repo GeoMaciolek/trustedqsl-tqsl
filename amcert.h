@@ -34,7 +34,7 @@ const int signSizeMax=120;
 const int pubKeySize=176;
 const int CALL_SIZE=10;
 
-struct PublicKey
+struct TqslPublicKey
 {
   char			pkType;
   char			callSign[12];
@@ -42,7 +42,7 @@ struct PublicKey
   unsigned char		pkey[pubKeySize];
 };
 
-struct AmCertData
+struct TqslCertData
 {
   char			certType;
   char			issueDate[10];
@@ -50,23 +50,23 @@ struct AmCertData
   char			caID[10];
   char			caPK[4];
   char			caCertNum[6];
-  PublicKey		publicKey;
+  TqslPublicKey		publicKey;
 };
-struct AmCertExtern
+struct TqslCert
 {
-  AmCertData		data;
+  TqslCertData		data;
   char		        sigSize[3];
   char			signature[signSizeMax];
 };
 
-struct qslSignature
+struct TqslSignature
 {
   char			sigType;
   char			signature[signSizeMax];
-  AmCertExtern		amCert;
+  TqslCert		cert;
 };
 
-struct signedQSL
+struct TqslSignedQSL
 {
   char			qslType;
   char			yourCall[CALL_SIZE];
@@ -85,8 +85,8 @@ struct signedQSL
   char			band[7];
   char			mode[10];
   char			itoa[10];
-  qslSignature		signature;
-  AmCertExtern		cert;
+  TqslSignature		signature;
+  TqslCert		cert;
 };
 
 

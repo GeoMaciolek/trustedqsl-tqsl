@@ -38,16 +38,17 @@ static char cvsID[] = "$Id$";
 static BIO *bio_err = NULL;
 
 
-void initPublicKey(PublicKey *pk)
+void initPublicKey(TqslPublicKey *pk)
 {
-   memset(pk,' ',sizeof(PublicKey));
+  cvsID = cvsID;
+  memset(pk,' ',sizeof(TqslPublicKey));
 }
-void initCert(AmCertExtern *cert)
+void initCert(TqslCert *cert)
 {
-   memset(cert,' ',sizeof(AmCertExtern));
+   memset(cert,' ',sizeof(TqslCert));
 }
 
-int validateCert(AmCertExtern *caCert, AmCertExtern *amCert)
+int validateCert(TqslCert *caCert, TqslCert *amCert)
 {
 
   DSA    	*dsa;
