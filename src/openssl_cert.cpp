@@ -162,6 +162,7 @@ using namespace tqsllib;
 	#define MKDIR(x,y) mkdir(x)
 #else
 	#define MKDIR(x,y) mkdir(x,y)
+	#include <unistd.h>
 #endif
 
 #ifdef __WIN32__

@@ -21,7 +21,6 @@
 
 #define PERL5	// Hack for older openssl c++ conflict
 #include <openssl/x509.h>
-#include <openssl/e_os.h>
 #undef PERL5
 
 #undef CLIENT_STATIC
