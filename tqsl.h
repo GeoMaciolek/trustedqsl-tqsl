@@ -105,8 +105,8 @@ extern "C"
   int tqslWriteCert(const char *fname,TqslCert *);
   int tqslReadPub(const char *fname,TqslPublicKey *);
   int tqslWritePub(const char *fname,TqslPublicKey *);
-  int tqslGenNewKeys(const char *callSign,const char *privFile,
-		    const char *pubFile);
+  int tqslGenNewKeys(const char *callSign,char **,
+		     TqslPublicKey *);
   int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
   int tqslSignCert(TqslCert *cert,const char *caPrivKey,
                  const char *caId,TqslPublicKey *pubKey,

@@ -23,6 +23,9 @@
 #include <string.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "tqsl.h"
 
@@ -72,13 +75,51 @@ int main(int argc, char *argv[])
       return(1);
     }
 
-  rc = tqslGenNewKeys(callsign,secretFile,pubFile);
+  TqslPublicKey pubKey;
+  char		*secretKey;
+    
+  rc = tqslGenNewKeys(callsign,&secretKey,&pubKey);
   if (rc <= 0)
     {
       fprintf(stderr,"Creation of public/private key pair failed! %d\n",rc);
       return(rc);
     }
 
+  int fd;
+
+  fd = open(pubFile,O_WRONLY|O_CREAT|O_TRUNC,0644);
+  if (fd >= 0)
+    {
+      rc = write(fd,&pubKey,sizeof(pubKey));
+      close(fd);
+      if (rc != sizeof(pubKey))
+	{
+	  fprintf(stderr,"writing public file failed\n");
+	  return(1);
+	}
+    }
+  else
+    {
+      fprintf(stderr,"creating public file failed\n");
+      return(2);
+    }	
+
+  fd = open(secretFile,O_WRONLY|O_CREAT|O_TRUNC,0600);
+  if (fd >= 0)
+    {
+      rc = write(fd,secretKey,strlen(secretKey));
+      close(fd);
+      if (rc != (int)strlen(secretKey))
+	{
+	  fprintf(stderr,"writing private file failed\n");
+	  return(1);
+	}
+    }
+  else
+    {
+      fprintf(stderr,"creating private file failed\n");
+      return(2);
+    }	 
   return(0);
 
 }
