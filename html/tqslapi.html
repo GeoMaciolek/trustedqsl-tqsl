@@ -1,0 +1,66 @@
+
+<H1 align=center>TrustedQSL C API </H1>
+<P align=center><STRONG>by Darryl Wagoner WA1GON</STRONG> </P>
+<P align=center>22 May 2002</P>
+<P>Summary </P>
+<P>Requirements </P>
+<P>List of Functions and data structures. </P>
+<P>All functions of the TrustedQSL API will be prefixed with tqsl_ and data 
+structures will be prefixed with tQSL_. The C API will be only a set up of C 
+wrappers for C++ class which will do the work. Data objects are opaque objects 
+which can't be access except thru TrustedQSL functions. </P>
+<H3 align=center>Function categories</H3>
+<P align=center><STRONG>PKI functions:</STRONG> </P>
+<P align=left><STRONG>tqsl_createCertReq(publicKey,etc)</STRONG> - Create a 
+Certificate Request to send to CA</P>
+<P align=left><STRONG>tqsl_readCert()</STRONG> - Read Certificate (and add to 
+certificate key ring ?)</P>
+<P align=left><STRONG>tqsl_readPrivateKey()</STRONG> - Read&nbsp;a private key 
+from private key ring.&nbsp; Call back for pass phrase.</P>
+<P align=left><STRONG>tqsl_rsaGenKey()</STRONG> - Create a RSA key pair.</P>
+<P align=left><STRONG>tqsl_writePrivateKey()</STRONG> - Write&nbsp;a private key 
+to private key ring.&nbsp; Call back for pass phrase.</P>
+<P align=left><STRONG>tqsl_signAdifFile(tQSL_station *,tQSL_privateKey, char 
+*filename, char *gabbiOut,error</STRONG> <STRONG>Call back, tKeys)</STRONG> - 
+Read in and sign each record of an ADIF file and write a corresponding Gabbi 
+record to the output file.</P>
+<P align=left><STRONG>tqsl_signCabrilloFile(tQSL_station *,tQSL_privateKey, char 
+*filename, char *gabbiOut,error</STRONG> <STRONG>Callback, tKeys)</STRONG> - 
+Read in and sign each record of an&nbsp;Cabrillo file and write a corresponding 
+Gabbi record to the output file.</P>
+<P align=left><STRONG>tqsl_signQSLRecord</STRONG>(tStation *, tContact *,tKeys 
+*) - Sign </P>
+<P align=left><STRONG>tqsl_validateGabbiQslFile</STRONG>(inputfile)&nbsp; - Read 
+a Gabbi file and validate the tQSL information.</P>
+<P align=left><STRONG>tqsl_validateGabbiEnumFile(inputfile)</STRONG> - Read and 
+validate a Gabbi format enum file.</P>
+<P align=left><STRONG>tqsl_validateGabbiSigListFile(inputfile)</STRONG> - Read 
+and validate a Gabbi format&nbsp;signature list&nbsp;file.</P>
+<P align=left>&nbsp;</P>
+<P align=left>&nbsp;</P>
+<P align=center><STRONG>Enumeration and Record functions</STRONG></P>
+<P>tQSL_contact <STRONG>*tqsl_createContact()</STRONG> - return pointer to new 
+contact record. </p>
+<p>tQSL_signingList <strong>*tqsl_createSigningList()</strong> - 
+returns pointer to a new 
+signing list record. This is an object the has a list of fields for an award
+sponsor that must be signed if present.  This list will also specify the 
+required files for the award sponsor.  This list is signed by the awards sponsor.</P>
+<p>tQSL_station <strong>*tqsl_createStation()</strong> - returns pointer to a new 
+station record. </P>
+<P><STRONG>tqsl_enumFields()</STRONG> - Returns a list of available field names. 
+</P>
+<P><STRONG>tqsl_freeContact(tQSL_contact *)</STRONG> - frees the contact record. 
+</P>
+<P><STRONG>tqsl_freeStation(tQSL_station *)</STRONG> - frees the station record. 
+</P>
+<P><STRONG>tqsl_fieldType(tQSL_Station *, fieldName)</STRONG> - Given a 
+field_name (from the list returned by enum_fields), returns: </P>
+<ol>
+<li><P>&nbsp;A field type, </P>
+<li><P>&nbsp;a maximum length, </P>
+<li><P>&nbsp;an "enumerated" flag. </P>
+</ol>
+<P>tqsl_setField(tQSL_Station, fieldName, value) - set the value of a field in 
+the station_record that's being built. Parsing Functions: </P>
+<P>&nbsp;</P>
