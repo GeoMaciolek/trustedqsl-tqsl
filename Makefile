@@ -2,6 +2,8 @@
 
 CC = gcc
 CXX = g++
+CC = insure
+CXX = insure
 CXXFLAGS = -g -Wall
 LIB = -lcrypto
 COMOBJ = fileio.o convert.o tqsllib.o tqsl.o readpriv.o

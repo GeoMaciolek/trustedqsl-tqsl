@@ -110,6 +110,7 @@ int main(int argc, char *argv[])
   if (rc != 0)
     {
       fprintf(stderr,"Problem reading message file %s\n",msgFile);  
+      free(msg);
       return(6);
     }     
      
@@ -117,6 +118,7 @@ int main(int argc, char *argv[])
   if (rc != 0)
     {
       fprintf(stderr,"Problem reading signature file %s\n",signFile);  
+      free(msg);
       return(7);
     }       
 
@@ -129,6 +131,8 @@ int main(int argc, char *argv[])
 	   signature.cert.data.publicKey.callSign);
   else
     printf("File %s could not be validated\n",msgFile);
+
+  free(msg);
   return(0);
   
 }

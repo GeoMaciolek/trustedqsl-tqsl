@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
   fwrite(&signature,sizeof(signature),1,fp);
   fclose(fp);
-
+  return(0);
 
   
 }
