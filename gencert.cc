@@ -128,7 +128,7 @@ int main(int argc, char *argv[])
       printf("-C CA-priv-key  - a file containing the CA's private key\n");
       printf("-n number       - the cert number assigned by the CA\n");
       printf("-i issue-date   - the date which the cert was created (mm/dd/yyyy)\n");
-      printf("-i expire-date  - the date which the cert will expire (mm/dd/yyyy)\n");
+      printf("-e expire-date  - the date which the cert will expire (mm/dd/yyyy)\n");
       printf("-I CA ID        - The CA's ID string must be the same for all certs.\n");
       printf("\n");
 
@@ -158,7 +158,7 @@ int main(int argc, char *argv[])
   readBig(caPrivFile,&dsa->priv_key);
 
   memset(&amCert,0,sizeof(amCert));
-  memset(&amCert,' ',sizeof(amCert)-1);
+  memset(&amCert,' ',sizeof(amCert));
   
   if (selfSign == 1)
     amCert.data.certType = '0';

@@ -26,7 +26,8 @@
 */
 const int signSizeMax=120;
 const int pubKeySize=176;
-const int CALL_SIZE=10; 
+const int CALL_SIZE=10;
+const int MaxCertSize=500; 
 
 struct TqslPublicKey
 {
@@ -92,7 +93,7 @@ extern "C"
   int tqslWriteCert(const char *fname,TqslCert *);
   int tqslGenNewKeys(const char *callSign,const char *privFile,
 		    const char *pubFile);
-  int tqslCheckCert(TqslCert *cert,TqslCert *CACert);
+  int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA);
   int tqslSignCert(TqslCert *cert,const char *caPrivFName,
 		 const char *caId,const char *pubKeyFName,
 		 const char *certNum,const char *issueDate,

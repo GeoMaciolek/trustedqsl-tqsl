@@ -34,7 +34,6 @@
 // #include <openssl/engine.h>
 extern int errno;
 
-
 static char cvsID[] = "$Id$";
 
 int	debugLevel = 0;
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
     }
 
   memset(&caCert,' ',sizeof(TqslCert));  
-  rc= readCert(caCertFile,&caCert);
+  rc= tqslReadCert(caCertFile,&caCert);
   if (rc > 0)
     {
       if (caCert.data.certType != '0')
@@ -96,7 +95,7 @@ int main(int argc, char *argv[])
 
   memset(&amCert,' ',sizeof(TqslCert));  
 
-  rc= readCert(amCertFile,&amCert);
+  rc= tqslReadCert(amCertFile,&amCert);
   if (rc > 0)
     {
       if ((amCert.data.certType != '1') && (amCert.data.certType != '0'))
@@ -109,9 +108,7 @@ int main(int argc, char *argv[])
        printf("Self signed Cert.\n");
     } 
 
-  rc = validateCert(&caCert, &amCert);
-
-
+  rc = tqslCheckCert(&caCert, &amCert,1);
   switch (rc)
     {
     case 1:
@@ -123,8 +120,6 @@ int main(int argc, char *argv[])
     default:
       printf("Error validating!  verify = %d\n",rc);
     }
-
-
   return(0);
 
 }

@@ -21,9 +21,13 @@
 #include <openssl/bio.h>
 #include <openssl/bn.h>
 #include <openssl/dsa.h>
+
+
+#include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <getopt.h>
 
 #include "sign.h"
 #include "tqsl.h"
@@ -31,90 +35,55 @@
 extern int errno;
 static char cvsID[] = "$Id$";
 int debugLevel;
-static BIO *bio_err = NULL;
+
 int main(int argc, char *argv[])
 {
 
-  DSA    *dsa;
-  char	*p;
-  int 	i;
-  char	callsign[200];
+  char		callsign[20];
+  int   	c,errFlg=0,optCnt=0;
+  char		pubFile[100];
+  char		secretFile[100];
+  int		rc;
 
   cvsID = cvsID;
-  if (argc != 2)
+
+  memset(pubFile,0,sizeof(pubFile));
+  memset(secretFile,0,sizeof(secretFile)); 
+  memset(callsign,0,sizeof(callsign));
+
+  while ((c = getopt(argc, argv, "c:s:p:")) != EOF)
+    switch (c) 
+      {
+      case 's':
+	strncpy(secretFile,optarg,99);
+	optCnt++;
+	break;
+      case 'c':
+        strncpy(callsign,optarg,19);
+        optCnt++;
+        break;
+      case 'p':
+        strncpy(pubFile,optarg,99);
+	optCnt++;
+	break;
+      default:
+	errFlg++;
+      }
+
+  if (optCnt != 3 || errFlg != 0)
     {
-      fprintf(stderr,"genkey callsign\n");
-      return(2);
-    }
-  
-  bio_err=BIO_new_fp(stderr,BIO_NOCLOSE);
-  strcpy(callsign,argv[1]);
-  for(i=0;i < (int)strlen(callsign);i++)
-    callsign[i] = toupper(callsign[i]);
-  dsa = DSA_new();
-  if (dsa == NULL)
-    {
+      printf("Usage: %s -s private-file -p public-file -c call-sign\n",
+	     argv[0]);
       return(1);
     }
 
-  // read common public values
-
-  BN_hex2bn(&dsa->p,pVal);
-  BN_hex2bn(&dsa->g,gVal);
-  BN_hex2bn(&dsa->q,qVal);
-
-
-  DSA_generate_key(dsa);
-  FILE *fp;
-
-  char fname[50];
-  sprintf(fname,"%s.pub",argv[1]);
-  fp = fopen(fname,"w");
-  if (fp)
+  rc = tqslGenNewKeys(callsign,secretFile,pubFile);
+  if (rc <= 0)
     {
-      TqslPublicKey pk;
-      initPublicKey(&pk);
-      printf("writing public key file %s\n",fname);
-      //      BN_print_fp(fp,dsa->p);
-      DSA_print(bio_err,dsa,0);
-      p = BN_bn2hex(dsa->pub_key);
-      //      if (debugLevel > 0)
-	printf("strlen of pubkey is %d\n",strlen(p));
-      //      fprintf(fp,"1%12.12s%5d%s",callsign,1,p);
-      pk.pkType = '1';
-      memcpy(&pk.callSign,callsign,strlen(callsign));
-      memcpy(&pk.pkey,p,strlen(p));
-      pk.pubkeyNum[0] = '1';
-
-      // should be move to fileio
-
-      fwrite(&pk,sizeof(pk),1,fp);
-      
-      printf("\n%s\n",p);
-	  
-      fclose(fp);
+      fprintf(stderr,"Creation of public/private key pair failed! %d\n",rc);
+      return(rc);
     }
 
-  sprintf(fname,"%s.prv",argv[1]);
-  fp = fopen(fname,"w");
-  if (fp)
-    {
-      printf("writing private key file %s\n",fname);
-      p = BN_bn2hex(dsa->priv_key);
-      fprintf(fp,"%s",p);
-	  
-      fclose(fp);
-    }      
-  sprintf(fname,"%s.hpub",argv[1]);
-  fp = fopen(fname,"w");
-  if (fp)
-    {
-      printf("writing private key file %s\n",fname);
-      p = BN_bn2hex(dsa->pub_key);
-      fprintf(fp,"%s",p);
-	  
-      fclose(fp);
-    }    
   return(0);
 
 }
