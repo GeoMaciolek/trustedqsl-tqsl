@@ -20,33 +20,31 @@
 
 #include <algorithm>
 
-#ifdef __WIN32__
-	#define TEXT_HEIGHT 24
-	#define LABEL_HEIGHT 18
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 10
-	#define VSEP 3
-	#define GEOM1 4
-#else
-	#define TEXT_HEIGHT 18
-	#define LABEL_HEIGHT TEXT_HEIGHT
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 12
-	#define VSEP 4
-	#define GEOM1 6
-#endif
+CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelpController *help,
+	const wxString& title) :
+	ExtWizard(parent, help, title), cert(xcert), _crq(crq)  {
 
-static char *error_title = "Certificate Request Error";
-
-static void set_font(wxWindow *w, wxFont& font) {
-#ifndef __WIN32__
-	w->SetFont(font);
-#endif
+	CRQ_ProviderPage *provider = new CRQ_ProviderPage(this, _crq);
+	CRQ_IntroPage *intro = new CRQ_IntroPage(this, _crq);
+	CRQ_NamePage *name = new CRQ_NamePage(this, _crq);
+	CRQ_EmailPage *email = new CRQ_EmailPage(this, _crq);
+	CRQ_PasswordPage *pw = new CRQ_PasswordPage(this);
+	CRQ_SignPage *sign = new CRQ_SignPage(this);
+	wxWizardPageSimple::Chain(provider, intro);
+	wxWizardPageSimple::Chain(intro, name);
+	wxWizardPageSimple::Chain(name, email);
+	wxWizardPageSimple::Chain(email, pw);
+	if (!cert)
+		wxWizardPageSimple::Chain(pw, sign);
+	_first = provider;
+	AdjustSize();
+	CenterOnParent();
 }
+
 
 // Page constructors
 
-BEGIN_EVENT_TABLE(CRQ_ProviderPage, wxWizardPageSimple)
+BEGIN_EVENT_TABLE(CRQ_ProviderPage, CRQ_Page)
 	EVT_COMBOBOX(ID_CRQ_PROVIDER, CRQ_ProviderPage::UpdateInfo)
 END_EVENT_TABLE()
 
@@ -55,27 +53,25 @@ prov_cmp(const TQSL_PROVIDER& p1, const TQSL_PROVIDER& p2) {
 	return strcasecmp(p1.organizationName, p2.organizationName) < 0;
 }
 
-CRQ_ProviderPage::CRQ_ProviderPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	set_font(this, font);
-	wxStaticText *st = new wxStaticText(this, -1, "\nThis will create a new certificate request file.\n\n"
+CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText *st = new wxStaticText(this, -1, "M");
+	int em_h = st->GetSize().GetHeight();
+	st->SetLabel("This will create a new certificate request file.\n\n"
 		"Once you supply the requested information and the\n"
 		"request file has been created, you must send the\n"
-		"request file to the certificate issuer."); //, wxPoint(0, 0), wxDefaultSize); //, wxST_NO_AUTORESIZE);
-	set_font(st, font);
-	wxSize size = st->GetBestSize();
-	int y = TEXT_HEIGHT * GEOM1;
-	st = new wxStaticText(this, -1, "Certificate Issuer:", wxPoint(0, y),
-		wxSize(size.GetWidth(), TEXT_HEIGHT));
-	y += LABEL_HEIGHT + VSEP;
-	tc_provider = new wxComboBox(this, ID_CRQ_PROVIDER, "", wxPoint(0, y),
-		wxSize(TEXT_WIDTH*28, TEXT_HEIGHT), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
-	tc_provider->SetFont(font);
-	y += TEXT_HEIGHT*2 + VSEP;
-	tc_provider_info = new wxStaticText(this, ID_CRQ_PROVIDER_INFO, "", wxPoint(0, y),
-		wxSize(size.GetWidth(), TEXT_HEIGHT*5));
-	y += tc_provider_info->GetSize().GetHeight();
+		"request file to the certificate issuer.");
+
+	sizer->Add(st, 0, wxALL, 10);
+	
+	sizer->Add(new wxStaticText(this, -1, "Certificate Issuer:"), 0, wxLEFT|wxRIGHT, 10);
+	tc_provider = new wxComboBox(this, ID_CRQ_PROVIDER, "", wxDefaultPosition,
+		wxDefaultSize, 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
+	sizer->Add(tc_provider, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
+	tc_provider_info = new wxStaticText(this, ID_CRQ_PROVIDER_INFO, "", wxDefaultPosition,
+		wxSize(0, em_h*5));
+	sizer->Add(tc_provider_info, 0, wxALL|wxEXPAND, 10);
 	int nprov = 0;
 	if (tqsl_getNumProviders(&nprov))
 		wxMessageBox(tqsl_getErrorString(), "Error");
@@ -96,9 +92,8 @@ CRQ_ProviderPage::CRQ_ProviderPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWi
 	tc_provider->SetSelection((selected < 0) ? 0 : selected);
 	if (providers.size() < 2 || selected >= 0)
 		tc_provider->Enable(false);
-	SetSize(size);
 	DoUpdateInfo();
-	Show(FALSE);
+	AdjustPage(sizer, "crq.htm");
 }
 
 void
@@ -107,15 +102,15 @@ CRQ_ProviderPage::DoUpdateInfo() {
 	if (sel >= 0) {
 		int idx = (int)(tc_provider->GetClientData(sel));
 		if (idx >=0 && idx < (int)providers.size()) {
-			provider = providers[idx];
+			Parent()->provider = providers[idx];
 			wxString info;
-			info = provider.organizationName;
-			if (provider.organizationalUnitName[0] != 0)
-				info += wxString("\n  ") + provider.organizationalUnitName;
-			if (provider.emailAddress[0] != 0)
-				info += wxString("\nEmail: ") + provider.emailAddress;
-			if (provider.url[0] != 0)
-				info += wxString("\nURL: ") + provider.url;
+			info = Parent()->provider.organizationName;
+			if (Parent()->provider.organizationalUnitName[0] != 0)
+				info += wxString("\n  ") + Parent()->provider.organizationalUnitName;
+			if (Parent()->provider.emailAddress[0] != 0)
+				info += wxString("\nEmail: ") + Parent()->provider.emailAddress;
+			if (Parent()->provider.url[0] != 0)
+				info += wxString("\nURL: ") + Parent()->provider.url;
 			tc_provider_info->SetLabel(info);
 		}
 	}
@@ -133,29 +128,44 @@ static wxDateTime::Month mons[] = {
 	wxDateTime::Aug, wxDateTime::Sep, wxDateTime::Oct, wxDateTime::Nov,
 	wxDateTime::Dec };
 
-CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	set_font(this, font);
-	int y = TEXT_HEIGHT;
-	wxStaticText *st = new wxStaticText(this, -1, "Call sign:", wxPoint(0, y),
-		wxSize(TEXT_WIDTH*10, TEXT_HEIGHT));
-	set_font(st, font);
-	tc_call = new wxTextCtrl(this, ID_CRQ_CALL, "", wxPoint(st->GetSize().GetWidth() + TEXT_WIDTH, y),
-		wxSize(TEXT_WIDTH*15, TEXT_HEIGHT));
-	tc_call->SetFont(font);
+BEGIN_EVENT_TABLE(CRQ_IntroPage, CRQ_Page)
+	EVT_TEXT(ID_CRQ_CALL, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_DXCC, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QBYEAR, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QBMONTH, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QBDAY, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QEYEAR, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QEMONTH, CRQ_Page::check_valid)
+	EVT_COMBOBOX(ID_CRQ_QEDAY, CRQ_Page::check_valid)
+END_EVENT_TABLE()
+
+CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText *dst = new wxStaticText(this, -1, "DXCC entity:");
+	wxStaticText *st = new wxStaticText(this, -1, "M", wxDefaultPosition, wxDefaultSize,
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
+	int em_h = st->GetSize().GetHeight();
+	int em_w = st->GetSize().GetWidth();
+	st->SetLabel("Call sign:");
+	st->SetSize(dst->GetSize());
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(st, 0, wxRIGHT, 5);
+	tc_call = new wxTextCtrl(this, ID_CRQ_CALL, "", wxDefaultPosition, wxSize(em_w*15, -1));
+	hsizer->Add(tc_call, 0, wxEXPAND, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
 	if (crq && crq->callSign) {
 		tc_call->SetValue(crq->callSign);
 		tc_call->Enable(false);
 	}
-	y += TEXT_HEIGHT + VSEP;
-	st = new wxStaticText(this, -1, "DXCC entity:", wxPoint(0, y),
-		wxSize(TEXT_WIDTH*10, TEXT_HEIGHT));
-	set_font(st, font);
-	tc_dxcc = new wxComboBox(this, ID_CRQ_DXCC, "", wxPoint(st->GetSize().GetWidth() + TEXT_WIDTH, y),
-		wxSize(TEXT_WIDTH*28, TEXT_HEIGHT), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
-	tc_dxcc->SetFont(font);
-	y += LABEL_HEIGHT + VSEP;
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(dst, 0, wxRIGHT, 5);
+	tc_dxcc = new wxComboBox(this, ID_CRQ_DXCC, "", wxDefaultPosition,
+		wxSize(em_w*25, -1), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
+	hsizer->Add(tc_dxcc, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxALL, 10);
 
 	DXCC dx;
 	bool ok = dx.getFirst();
@@ -183,12 +193,6 @@ CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPa
 	char *labels[] = { "QSO begin date:", "QSO end date:" };
 
 	int year = wxDateTime::GetCurrentYear();
-	int x;
-#ifdef __WIN32__
-	wxSize label_size = wxDefaultSize;
-#else
-	wxSize label_size(TEXT_WIDTH*10, TEXT_HEIGHT);
-#endif
 
 	int sels[2][3];
 	int dates[2][3];
@@ -202,32 +206,20 @@ CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPa
 	}
 	for (int i = 0; i < int(sizeof labels / sizeof labels[0]); i++) {
 		sels[i][0] = sels[i][1] = sels[i][2] = 0;
-	 	y += TEXT_HEIGHT + VSEP;
-		st = new wxStaticText(this, -1, labels[i], wxPoint(0, y), label_size);
-		set_font(st, font);
-		y += LABEL_HEIGHT;
-		x = TEXT_WIDTH*2;
-		st = new wxStaticText(this, -1, "Y", wxPoint(x, y), label_size);
-		set_font(st, font);
-		x += st->GetSize().GetWidth() + TEXT_WIDTH;
-		*(boxes[i][0].cb) = new wxComboBox(this, boxes[i][0].id, "", wxPoint(x, y),
-			wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
-		(*(boxes[i][0].cb))->SetFont(font);
-		x += (*(boxes[i][0].cb))->GetSize().GetWidth() + TEXT_WIDTH;
-		st = new wxStaticText(this, -1, "M", wxPoint(x, y), label_size);
-		set_font(st, font);
-		x += st->GetSize().GetWidth() + TEXT_WIDTH;
-		*(boxes[i][1].cb) = new wxComboBox(this, boxes[i][1].id, "", wxPoint(x, y),
-			wxSize(TEXT_WIDTH*6, TEXT_HEIGHT), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
-		(*(boxes[i][1].cb))->SetFont(font);
-		x += (*(boxes[i][1].cb))->GetSize().GetWidth() + TEXT_WIDTH;
-		st = new wxStaticText(this, -1, "D", wxPoint(x, y), label_size);
-		set_font(st, font);
-		x += st->GetSize().GetWidth() + TEXT_WIDTH;
-		*(boxes[i][2].cb) = new wxComboBox(this, boxes[i][2].id, "", wxPoint(x, y),
-			wxSize(TEXT_WIDTH*6, TEXT_HEIGHT), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
-		(*(boxes[i][2].cb))->SetFont(font);
-		x += (*(boxes[i][2].cb))->GetSize().GetWidth();
+		sizer->Add(new wxStaticText(this, -1, labels[i]), 0, wxBOTTOM, 5);
+		hsizer = new wxBoxSizer(wxHORIZONTAL);
+		hsizer->Add(new wxStaticText(this, -1, "Y"), 0, wxLEFT, 20);
+		*(boxes[i][0].cb) = new wxComboBox(this, boxes[i][0].id, "", wxDefaultPosition,
+			wxSize(em_w*8, -1), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
+		hsizer->Add(*(boxes[i][0].cb), 0, wxLEFT, 5);
+		hsizer->Add(new wxStaticText(this, -1, "M"), 0, wxLEFT, 10);
+		*(boxes[i][1].cb) = new wxComboBox(this, boxes[i][1].id, "", wxDefaultPosition,
+			wxSize(em_w*5, -1), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
+		hsizer->Add(*(boxes[i][1].cb), 0, wxLEFT, 5);
+		hsizer->Add(new wxStaticText(this, -1, "D"), 0, wxLEFT, 10);
+		*(boxes[i][2].cb) = new wxComboBox(this, boxes[i][2].id, "", wxDefaultPosition,
+			wxSize(em_w*5, -1), 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
+		hsizer->Add(*(boxes[i][2].cb), 0, wxLEFT, 5);
 		int iofst = 0;
 		if (i > 0) {
 			iofst++;
@@ -256,13 +248,9 @@ CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPa
 				sels[i][2] = j - 1 + iofst;
 			(*(boxes[i][2].cb))->Append(s);
 		}
-		y += VSEP;
+		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
 	}
-	SetSize(wxSize(x, y));
 	if (crq) {
-//		tc_qsobeginy->SetValue(wxString::Format("%d", crq->qsoNotBefore.year).c_str());
-//		tc_qsobeginm->SetValue(wxString::Format("%d", crq->qsoNotBefore.month).c_str());
-//		tc_qsobegind->SetValue(wxString::Format("%d", crq->qsoNotBefore.day).c_str());
 		tc_qsobeginy->SetSelection(sels[0][0]);
 		tc_qsobeginm->SetSelection(sels[0][1]);
 		tc_qsobegind->SetSelection(sels[0][2]);
@@ -273,9 +261,6 @@ CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPa
 			// Looks like this is a cert for an expired call sign,
 			// so keep the QSO end date as-is. Otherwise, leave it
 			// blank so CA can fill it in.
-//			tc_qsoendy->SetValue(wxString::Format("%d", crq->qsoNotAfter.year).c_str());
-//			tc_qsoendm->SetValue(wxString::Format("%d", crq->qsoNotAfter.month).c_str());
-//			tc_qsoendd->SetValue(wxString::Format("%d", crq->qsoNotAfter.day).c_str());
 			tc_qsoendy->SetSelection(sels[1][0]);
 			tc_qsoendm->SetSelection(sels[1][1]);
 			tc_qsoendd->SetSelection(sels[1][2]);
@@ -285,161 +270,226 @@ CRQ_IntroPage::CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPa
 		tc_qsobeginm->SetSelection(10);
 		tc_qsobegind->SetSelection(0);
 	}
-	Show(FALSE);
+	tc_status = new wxStaticText(this, -1, "", wxDefaultPosition, wxSize(0, em_h*2));
+	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	AdjustPage(sizer, "crq0.htm");
 }
 
-CRQ_NamePage::CRQ_NamePage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	SetFont(font);
-	wxStaticText *st = new wxStaticText(this, -1, "Name", wxPoint(0, TEXT_HEIGHT+VSEP), wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-	st->SetFont(font);
-	tc_name = new wxTextCtrl(this, ID_CRQ_NAME, "", wxPoint(TEXT_WIDTH*11, TEXT_HEIGHT+VSEP), wxSize(TEXT_WIDTH*30, TEXT_HEIGHT));
-	tc_name->SetFont(font);
+BEGIN_EVENT_TABLE(CRQ_NamePage, CRQ_Page)
+	EVT_TEXT(ID_CRQ_NAME, CRQ_Page::check_valid)
+	EVT_TEXT(ID_CRQ_ADDR1, CRQ_Page::check_valid)
+	EVT_TEXT(ID_CRQ_CITY, CRQ_Page::check_valid)
+END_EVENT_TABLE()
+
+CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText *zst = new wxStaticText(this, -1, "Zip/Postal");
+
+	wxStaticText *st = new wxStaticText(this, -1, "M", wxDefaultPosition, wxDefaultSize,
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
+	int em_w = st->GetSize().GetWidth();
+	int def_w = em_w * 20;
+	st->SetLabel("Name");
+	st->SetSize(zst->GetSize());
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(st, 0, wxRIGHT, 5);
+	tc_name = new wxTextCtrl(this, ID_CRQ_NAME, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_name, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxALL, 10);
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	wxString val;
 	if (crq && crq->name)
 		tc_name->SetValue(crq->name);
 	else if (config->Read("Name", &val))
 		tc_name->SetValue(val);
-	st = new wxStaticText(this, -1, "Address", wxPoint(0, (TEXT_HEIGHT+VSEP)*2), wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-	st->SetFont(font);
-	tc_addr1 = new wxTextCtrl(this, ID_CRQ_ADDR1, "", wxPoint(TEXT_WIDTH*11, (TEXT_HEIGHT+VSEP)*2), wxSize(TEXT_WIDTH*30, TEXT_HEIGHT));
-	tc_addr1->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "Address", wxDefaultPosition, zst->GetSize(),
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
+	tc_addr1 = new wxTextCtrl(this, ID_CRQ_ADDR1, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_addr1, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->address1)
 		tc_addr1->SetValue(crq->address1);
 	else if (config->Read("Addr1", &val))
 		tc_addr1->SetValue(val);
-	tc_addr2 = new wxTextCtrl(this, ID_CRQ_ADDR2, "", wxPoint(TEXT_WIDTH*11, (TEXT_HEIGHT+VSEP)*3), wxSize(TEXT_WIDTH*30, TEXT_HEIGHT));
-	tc_addr2->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "", wxDefaultPosition, zst->GetSize(),
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
+	tc_addr2 = new wxTextCtrl(this, ID_CRQ_ADDR2, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_addr2, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->address2)
 		tc_addr2->SetValue(crq->address2);
 	else if (config->Read("Addr2", &val))
 		tc_addr2->SetValue(val);
-	st = new wxStaticText(this, -1, "City", wxPoint(0, (TEXT_HEIGHT+VSEP)*4), wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-	st->SetFont(font);
-	tc_city = new wxTextCtrl(this, ID_CRQ_CITY, "", wxPoint(TEXT_WIDTH*11, (TEXT_HEIGHT+VSEP)*4), wxSize(TEXT_WIDTH*15, TEXT_HEIGHT));
-	tc_city->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "City", wxDefaultPosition, zst->GetSize(),
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
+	tc_city = new wxTextCtrl(this, ID_CRQ_CITY, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_city, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->city)
 		tc_city->SetValue(crq->city);
 	else if (config->Read("City", &val))
 		tc_city->SetValue(val);
-	st = new wxStaticText(this, -1, "State", wxPoint(TEXT_WIDTH*27, (TEXT_HEIGHT+VSEP)*4), wxSize(TEXT_WIDTH*6, TEXT_HEIGHT));
-	st->SetFont(font);
-	tc_state = new wxTextCtrl(this, ID_CRQ_STATE, "", wxPoint(TEXT_WIDTH*35, (TEXT_HEIGHT+VSEP)*4), wxSize(TEXT_WIDTH*6, TEXT_HEIGHT));
-	tc_state->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "State", wxDefaultPosition, zst->GetSize(),
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
+	tc_state = new wxTextCtrl(this, ID_CRQ_STATE, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_state, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->state)
 		tc_state->SetValue(crq->state);
 	else if (config->Read("State", &val))
 		tc_state->SetValue(val);
-	st = new wxStaticText(this, -1, "Zip/Postal", wxPoint(0, (TEXT_HEIGHT+VSEP)*5), wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-	st->SetFont(font);
-	tc_zip = new wxTextCtrl(this, ID_CRQ_ZIP, "", wxPoint(TEXT_WIDTH*11, (TEXT_HEIGHT+VSEP)*5), wxSize(TEXT_WIDTH*30, TEXT_HEIGHT));
-	tc_zip->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(zst, 0, wxRIGHT, 5);
+	tc_zip = new wxTextCtrl(this, ID_CRQ_ZIP, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_zip, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->postalCode)
 		tc_zip->SetValue(crq->postalCode);
 	else if (config->Read("ZIP", &val))
 		tc_zip->SetValue(val);
-	st = new wxStaticText(this, -1, "Country", wxPoint(0, (TEXT_HEIGHT+VSEP)*6), wxSize(TEXT_WIDTH*10, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-	st->SetFont(font);
-	tc_country = new wxTextCtrl(this, ID_CRQ_COUNTRY, "", wxPoint(TEXT_WIDTH*11, (TEXT_HEIGHT+VSEP)*6), wxSize(TEXT_WIDTH*30, TEXT_HEIGHT));
-	tc_country->SetFont(font);
+
+	hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, "Country", wxDefaultPosition, zst->GetSize(),
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
+	tc_country = new wxTextCtrl(this, ID_CRQ_COUNTRY, "", wxDefaultPosition, wxSize(def_w, -1));
+	hsizer->Add(tc_country, 1, 0, 0);
+	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	if (crq && crq->country)
 		tc_country->SetValue(crq->country);
 	else if (config->Read("Country", &val))
 		tc_country->SetValue(val);
-	SetSize(TEXT_WIDTH*42, (TEXT_HEIGHT+VSEP)*7);
-	Show(FALSE);
+	tc_status = new wxStaticText(this, -1, "");
+	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	AdjustPage(sizer, "crq1.htm");
 }
 
-CRQ_EmailPage::CRQ_EmailPage(wxWizard *parent, TQSL_CERT_REQ *crq) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	SetFont(font);
-	wxStaticText *st = new wxStaticText(this, -1, "Your e-mail address", wxPoint(0, TEXT_HEIGHT));
-	st->SetFont(font);
-	tc_email = new wxTextCtrl(this, ID_CRQ_NAME, "", wxPoint(0, (TEXT_HEIGHT)*2), wxSize(TEXT_WIDTH*40, TEXT_HEIGHT));
-	tc_email->SetFont(font);
+BEGIN_EVENT_TABLE(CRQ_EmailPage, CRQ_Page)
+	EVT_TEXT(ID_CRQ_EMAIL, CRQ_Page::check_valid)
+END_EVENT_TABLE()
+
+CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText *st = new wxStaticText(this, -1, "M");
+	int em_w = st->GetSize().GetWidth();
+	st->SetLabel("Your e-mail address");
+
+	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	tc_email = new wxTextCtrl(this, ID_CRQ_EMAIL, "", wxDefaultPosition, wxSize(em_w*30, -1));
+	sizer->Add(tc_email, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	wxString val;
 	if (crq && crq->emailAddress)
 		tc_email->SetValue(crq->emailAddress);
 	else if (config->Read("Email", &val))
 		tc_email->SetValue(val);
-	st = new wxStaticText(this, -1, "Note: The e-mail address you provide here is the\n"
+	sizer->Add(new wxStaticText(this, -1, "Note: The e-mail address you provide here is the\n"
 		"address to which the issued certificate will be sent.\n"
-		"Make sure it's the correct address!\n",
-		wxPoint(0, TEXT_HEIGHT*3 + VSEP));
-	st->SetFont(font);
-	Show(FALSE);
+		"Make sure it's the correct address!\n"), 0, wxALL, 10);
+	tc_status = new wxStaticText(this, -1, "");
+	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	AdjustPage(sizer, "crq2.htm");
 }
 
-CRQ_PasswordPage::CRQ_PasswordPage(wxWizard *parent) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	SetFont(font);
-	wxStaticText *st = new wxStaticText(this, -1,
-		"You may protect your private key for this certificate", wxPoint(0, TEXT_HEIGHT));
-	st->SetFont(font);
-	st = new wxStaticText(this, -1,
-		"using a password. Doing so is recommended.", wxPoint(0, TEXT_HEIGHT*2));
-	st->SetFont(font);
-	st = new wxStaticText(this, -1, "Password:", wxPoint(0, TEXT_HEIGHT*4));
-	st->SetFont(font);
-	tc_pw1 = new wxTextCtrl(this, ID_CRQ_PW1, "", wxPoint(0, (TEXT_HEIGHT)*5), wxSize(TEXT_WIDTH*40, TEXT_HEIGHT), wxTE_PASSWORD);
-	tc_pw1->SetFont(font);
-	st = new wxStaticText(this, -1, "Enter the password again for verification:", wxPoint(0, TEXT_HEIGHT*6));
-	st->SetFont(font);
-	tc_pw2 = new wxTextCtrl(this, ID_CRQ_PW2, "", wxPoint(0, (TEXT_HEIGHT)*7), wxSize(TEXT_WIDTH*40, TEXT_HEIGHT), wxTE_PASSWORD);
-	tc_pw2->SetFont(font);
-	st = new wxStaticText(this, -1, "DO NOT lose the password you choose!\n"
-		"You will be unable to use the certificate\nwithout this password!",
-		wxPoint(0, TEXT_HEIGHT*9));
-	Show(FALSE);
+BEGIN_EVENT_TABLE(CRQ_PasswordPage, CRQ_Page)
+	EVT_TEXT(ID_CRQ_PW1, CRQ_Page::check_valid)
+	EVT_TEXT(ID_CRQ_PW2, CRQ_Page::check_valid)
+END_EVENT_TABLE()
+
+CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	wxStaticText *st = new wxStaticText(this, -1, "M");
+	int em_w = st->GetSize().GetWidth();
+	st->SetLabel(
+"You may protect your private key for this certificate\n"
+"using a password. Doing so is recommended.\n\n"
+"Password:"
+	);
+
+	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	tc_pw1 = new wxTextCtrl(this, ID_CRQ_PW1, "", wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
+	sizer->Add(tc_pw1, 0, wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, "Enter the password again for verification:"),
+		0, wxLEFT|wxRIGHT|wxTOP, 10);
+	tc_pw2 = new wxTextCtrl(this, ID_CRQ_PW2, "", wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
+	sizer->Add(tc_pw2, 0, wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, "DO NOT lose the password you choose!\n"
+		"You will be unable to use the certificate\nwithout this password!"),
+		0, wxALL, 10);
+	tc_status = new wxStaticText(this, -1, "");
+	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	AdjustPage(sizer, "crq3.htm");
 }
 
-BEGIN_EVENT_TABLE(CRQ_SignPage, wxWizardPageSimple)
+BEGIN_EVENT_TABLE(CRQ_SignPage, CRQ_Page)
 	EVT_TREE_SEL_CHANGED(ID_CRQ_CERT, CRQ_SignPage::CertSelChanged)
+	EVT_RADIOBOX(ID_CRQ_SIGN, CRQ_Page::check_valid)
 END_EVENT_TABLE()
 
 
 void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
 	if (cert_tree->GetItemData(event.GetItem()))
 		choice->SetSelection(1);
+	wxCommandEvent dummy;
+	check_valid(dummy);
 }
 
-CRQ_SignPage::CRQ_SignPage(wxWizard *parent, wxSize& size) :  wxWizardPageSimple(parent) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	SetFont(font);
-	int y = 10;
-//	wxStaticText *st = new wxStaticText(this, -1, "Sign Certificate Request", wxPoint(0, y));
-//	st->SetFont(font);
-//	y += TEXT_HEIGHT*2;
+CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
+	:  CRQ_Page(parent) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	tc_status = new wxStaticText(this, -1, "M");
+	int em_h = tc_status->GetSize().GetHeight();
+	int em_w = tc_status->GetSize().GetWidth();
+
 	wxString choices[] = { "Unsigned", "Signed" };
 
-	choice = new wxRadioBox(this, ID_CRQ_SIGN, "Sign Request", wxPoint(0, y),
-		wxSize(size.GetWidth(), -1), 2, choices, 1, wxRA_SPECIFY_COLS);
-	y += choice->wxWindow::GetSize().GetHeight() + TEXT_HEIGHT;
-	cert_tree = new CertTree(this, ID_CRQ_CERT, wxPoint(0, y),
-		wxSize(size.GetWidth(), TEXT_HEIGHT*10), wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+	choice = new wxRadioBox(this, ID_CRQ_SIGN, "Sign Request", wxDefaultPosition,
+		wxSize(em_w*30, -1), 2, choices, 1, wxRA_SPECIFY_COLS);
+	sizer->Add(choice, 0, wxALL|wxEXPAND, 10);
+	cert_tree = new CertTree(this, ID_CRQ_CERT, wxDefaultPosition,
+		wxSize(em_w*30, em_h*10), wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+	sizer->Add(cert_tree, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND);
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	cert_tree->Build(0);
+	tc_status->SetLabel("");
+	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	AdjustPage(sizer, "crq4.htm");
 }	
+
+void
+CRQ_SignPage::refresh() {
+	if (cert_tree->Build(0, &(Parent()->provider)) > 0)
+		choice->SetSelection(1);
+	else
+		choice->SetSelection(0);
+}
 
 // Page validation
 
 bool
 CRQ_ProviderPage::TransferDataFromWindow() {
+	// Nothing to validate
 	return true;
 }
 
-
-bool
-CRQ_IntroPage::TransferDataFromWindow() {
+const char *
+CRQ_IntroPage::validate() {
 	wxString val = tc_call->GetValue();
 	bool ok = true;
 	const char *errmsg = "You must enter a valid call sign.";
+	static wxString msg;
 
 	if (val.Len() < 3)
 		ok = false;
@@ -457,38 +507,66 @@ CRQ_IntroPage::TransferDataFromWindow() {
 		}
 		ok = (ok && havealpha && havenumeric);
 	}
-	dxcc = (int)(tc_dxcc->GetClientData(tc_dxcc->GetSelection()));
-	if (dxcc < 1) {
+	Parent()->dxcc = (int)(tc_dxcc->GetClientData(tc_dxcc->GetSelection()));
+	if (Parent()->dxcc < 1) {
 		errmsg = "You must select a DXCC entity.";
 		ok = false;
 	}
 	if (ok) {
-		qsonotbefore.year = atoi(tc_qsobeginy->GetStringSelection());
-		qsonotbefore.month = atoi(tc_qsobeginm->GetStringSelection());
-		qsonotbefore.day = atoi(tc_qsobegind->GetStringSelection());
-		qsonotafter.year = atoi(tc_qsoendy->GetStringSelection());
-		qsonotafter.month = atoi(tc_qsoendm->GetStringSelection());
-		qsonotafter.day = atoi(tc_qsoendd->GetStringSelection());
-		if (!tqsl_isDateValid(&qsonotbefore)) {
-			errmsg = "QSO begin date: You must choose proper values for Year, Month and Day.";
+		Parent()->qsonotbefore.year = atoi(tc_qsobeginy->GetStringSelection());
+		Parent()->qsonotbefore.month = atoi(tc_qsobeginm->GetStringSelection());
+		Parent()->qsonotbefore.day = atoi(tc_qsobegind->GetStringSelection());
+		Parent()->qsonotafter.year = atoi(tc_qsoendy->GetStringSelection());
+		Parent()->qsonotafter.month = atoi(tc_qsoendm->GetStringSelection());
+		Parent()->qsonotafter.day = atoi(tc_qsoendd->GetStringSelection());
+		if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
+			errmsg = "QSO begin date: You must choose proper values for\nYear, Month and Day.";
 			ok = false;
-		} else if (!tqsl_isDateNull(&qsonotafter) && !tqsl_isDateValid(&qsonotafter)) {
-			errmsg = "QSO end date: You must either choose proper values for Year, Month and Day or leave all three blank.";
+		} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
+			errmsg = "QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.";
 			ok = false;
-		} else if (tqsl_isDateValid(&qsonotafter)
-			&& tqsl_compareDates(&qsonotbefore, &qsonotafter) > 0) {
+		} else if (tqsl_isDateValid(&Parent()->qsonotafter)
+			&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
 			errmsg = "QSO end date cannot be before QSO begin date.";
 			ok = false;
 		}
 	}
-	if (!ok)
-		wxMessageBox(errmsg, error_title);
-	else {
-		callsign = val;
-		callsign.MakeUpper();
-		tc_call->SetValue(callsign);
+
+	// Data looks okay, now let's make sure this isn't a duplicate request
+	// (unless it's a renewal).
+
+	if (ok && !Parent()->_crq) {
+		val.MakeUpper();
+		tQSL_Cert *certlist = 0;
+		int ncert = 0;
+		tqsl_selectCertificates(&certlist, &ncert, val.c_str(), Parent()->dxcc, 0,
+			&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
+		if (ncert > 0) {
+			for (int i = 0; i < ncert; i++)
+				tqsl_freeCertificate(certlist[i]);
+			wxString msg = wxString::Format("There is already a certificate for %s (DXCC=%d)",
+				val.c_str(), Parent()->dxcc);
+			errmsg = msg.c_str();
+			ok = false;
+		}
 	}
-	return ok;
+
+	if (!ok) {
+		tc_status->SetLabel(errmsg);
+		return errmsg;
+	}
+	tc_status->SetLabel("");
+	return 0;
+}
+
+bool
+CRQ_IntroPage::TransferDataFromWindow() {
+	if (validate())		// Should only happen when going Back
+		return true;
+	Parent()->callsign = tc_call->GetValue();
+	Parent()->callsign.MakeUpper();
+	tc_call->SetValue(Parent()->callsign);
+	return true;
 }
 
 static bool
@@ -502,90 +580,143 @@ cleanString(wxString &str) {
 	return str.IsEmpty();
 }
 
-bool
-CRQ_NamePage::TransferDataFromWindow() {
-	name = tc_name->GetValue();
-	addr1 = tc_addr1->GetValue();
-	addr2 = tc_addr2->GetValue();
-	city = tc_city->GetValue();
-	state = tc_state->GetValue();
-	zip = tc_zip->GetValue();
-	country = tc_country->GetValue();
+const char *
+CRQ_NamePage::validate() {
+	Parent()->name = tc_name->GetValue();
+	Parent()->addr1 = tc_addr1->GetValue();
+	Parent()->city = tc_city->GetValue();
 
 	const char *errmsg = 0;
 
-	if (cleanString(name))
+	if (cleanString(Parent()->name))
 		errmsg = "You must enter your name";
-	if (!errmsg && cleanString(addr1))
+	if (!errmsg && cleanString(Parent()->addr1))
 		errmsg = "You must enter your address";
-	cleanString(addr2);
-	if (!errmsg && cleanString(city))
+	if (!errmsg && cleanString(Parent()->city))
 		errmsg = "You must enter your city";
-	cleanString(state);
-	cleanString(zip);
-	cleanString(country);
-	if (errmsg) {
-		wxMessageBox(errmsg, error_title);
-		return false;
-	}
-	tc_name->SetValue(name);
-	tc_addr1->SetValue(addr1);
-	tc_addr2->SetValue(addr2);
-	tc_city->SetValue(city);
-	tc_state->SetValue(state);
-	tc_zip->SetValue(zip);
-	tc_country->SetValue(country);
+	tc_status->SetLabel(errmsg ? errmsg : "");
+	return errmsg;
+}
+
+bool
+CRQ_NamePage::TransferDataFromWindow() {
+	Parent()->name = tc_name->GetValue();
+	Parent()->addr1 = tc_addr1->GetValue();
+	Parent()->addr2 = tc_addr2->GetValue();
+	Parent()->city = tc_city->GetValue();
+	Parent()->state = tc_state->GetValue();
+	Parent()->zip = tc_zip->GetValue();
+	Parent()->country = tc_country->GetValue();
+
+	if (validate())
+		return true;
+
+	cleanString(Parent()->name);
+	cleanString(Parent()->addr1);
+	cleanString(Parent()->addr2);
+	cleanString(Parent()->city);
+	cleanString(Parent()->state);
+	cleanString(Parent()->zip);
+	cleanString(Parent()->country);
+	tc_name->SetValue(Parent()->name);
+	tc_addr1->SetValue(Parent()->addr1);
+	tc_addr2->SetValue(Parent()->addr2);
+	tc_city->SetValue(Parent()->city);
+	tc_state->SetValue(Parent()->state);
+	tc_zip->SetValue(Parent()->zip);
+	tc_country->SetValue(Parent()->country);
 	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write("Name", name);
-	config->Write("Addr1", addr1);
-	config->Write("Addr2", addr2);
-	config->Write("City", city);
-	config->Write("State", state);
-	config->Write("ZIP", zip);
-	config->Write("Country", country);
+	config->Write("Name", Parent()->name);
+	config->Write("Addr1", Parent()->addr1);
+	config->Write("Addr2", Parent()->addr2);
+	config->Write("City", Parent()->city);
+	config->Write("State", Parent()->state);
+	config->Write("ZIP", Parent()->zip);
+	config->Write("Country", Parent()->country);
 	return true;
 }
 
+const char *
+CRQ_EmailPage::validate() {
+	const char *errmsg = 0;
+	Parent()->email = tc_email->GetValue();
+	cleanString(Parent()->email);
+	int i = Parent()->email.First('@');
+	int j = Parent()->email.Last('.');
+	if (i < 1 || j < i+2 || j == (int)Parent()->email.length()-1)
+		errmsg = "You must enter a valid email address";
+	tc_status->SetLabel(errmsg ? errmsg : 0);
+	return errmsg;
+}
 
 bool
 CRQ_EmailPage::TransferDataFromWindow() {
-	email = tc_email->GetValue();
-	cleanString(email);
-	int i = email.First('@');
-	int j = email.Last('.');
-	if (i < 0 || j < i) {
-		wxMessageBox("You must enter a valid email address", error_title);
-		return false;
-	}
+	if (validate())
+		return true;
+	Parent()->email = tc_email->GetValue();
+	cleanString(Parent()->email);
 	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write("Email", email);
+	config->Write("Email", Parent()->email);
 	return true;
+}
+
+const char *
+CRQ_PasswordPage::validate() {
+	const char *errmsg = 0;
+	wxString pw1 = tc_pw1->GetValue();
+	wxString pw2 = tc_pw2->GetValue();
+	
+	if (pw1 != pw2)
+		errmsg = "The two copies of the password do not match.";
+	tc_status->SetLabel(errmsg ? errmsg : "");
+	return errmsg;
 }
 
 bool
 CRQ_PasswordPage::TransferDataFromWindow() {
-	wxString pw1 = tc_pw1->GetValue();
-	wxString pw2 = tc_pw2->GetValue();
-	
-	if (pw1 != pw2) {
-		wxMessageBox("The two copies of the password you entered do not match.", error_title);
-		return false;
-	}
-	password = pw1;
+	if (validate())
+		return true;
+	Parent()->password = tc_pw1->GetValue();
 	return true;
+}
+
+const char *
+CRQ_SignPage::validate() {
+	const char *errmsg = 0;
+
+	if (choice->GetSelection() == 1) {
+		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+		if (!data)
+			errmsg = "You must select a signing certificate from the list";
+	}
+	tc_status->SetLabel(errmsg ? errmsg : "");
+	return errmsg;
 }
 
 bool
 CRQ_SignPage::TransferDataFromWindow() {
-	if (choice->GetSelection() == 0)
-		cert = 0;
-	else {
-		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
-		if (!data) {
-			wxMessageBox("To sign the request you must select a certificate from the list");
-			return false;
+	if (validate())
+		return true;
+	Parent()->cert = 0;
+	if (choice->GetSelection() == 0) {
+		if (cert_tree->GetNumCerts() > 0) {
+			int rval = wxMessageBox(
+"You have one or more certificates that could be used\n"
+"to sign this certificate request.\n\n"
+"It is strongly recommended that you sign the request\n"
+"unless the certificates shown are not actually yours.\n"
+"Certificate issuers may choose not to permit unsigned\n"
+"certificate requests from existing certificate holders.\n\n"
+"Do you want to sign the certificate request?\n"
+"Select \"Yes\" to sign the request, \"No\" to continue without signing.",
+				"Warning", wxYES_NO, this);
+			if (rval == wxYES)
+				return false;
 		}
-		cert = data->getCert();
+	} else {
+		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+		if (data)
+		Parent()->cert = data->getCert();
 	}
 	return true;
 }

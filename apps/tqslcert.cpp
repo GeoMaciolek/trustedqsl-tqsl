@@ -15,6 +15,8 @@
 #include "tqslpaths.h"
 #include "crqwiz.h"
 #include "tqslcert_prefs.h"
+#include "getpassword.h"
+#include "loadcertwiz.h"
 #include "dxcc.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
@@ -25,7 +27,7 @@
 
 #include "util.h"
 
-#define VERSION "1.02beta"
+#define VERSION "1.04rc"
 
 #include "tqslcertbuild.h"
 
@@ -42,6 +44,9 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_Load, MyFrame::OnLoadCertificateFile)
 	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
+	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
+	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
+//	EVT_MENU(tc_c_Import, MyFrame::OnCertImport)
 //	EVT_MENU(tc_c_Sign, MyFrame::OnSign)
 	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
 	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
@@ -49,8 +54,6 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
 END_EVENT_TABLE()
 
-static int notifyCount;
-static int notifyImport(int type, const char *message);
 static wxString flattenCallSign(const wxString& call);
 
 static DocPaths docpaths("tqslcert");
@@ -74,21 +77,23 @@ CertApp::OnInit() {
 	MyFrame *frame = new MyFrame("tQSL Certificates", 50, 50, 450, 400);
 	frame->Show(TRUE);
 	SetTopWindow(frame);
-	notifyCount = 0;
-	for (int i = 1; i < argc; i++) {
-		if (tqsl_importTQSLFile(argv[i], notifyImport))
-			wxMessageBox(tqsl_getErrorString(), "Error");
-		else
-			wxMessageBox(wxString::Format("%d certificates loaded", notifyCount), "Notice");
+	if (argc > 1) {
+		notifyData nd;
+		for (int i = 1; i < argc; i++) {
+			if (tqsl_importTQSLFile(argv[i], notifyImport, &nd))
+				wxMessageBox(tqsl_getErrorString(), "Error", wxOK, frame);
+		}
+		wxMessageBox(nd.Message(), "Load Certificates", wxOK, frame);
 	}
 	if (wxConfig::Get()->Read("HasRun") == "") {
 		wxConfig::Get()->Write("HasRun", "yes");
 		frame->DisplayHelp();
-		wxMessageBox("Please review the introductory documentation before using this program.");
+		wxMessageBox("Please review the introductory documentation before using this program.",
+			"Notice", wxOK, frame);
 	}
 	int ncerts = frame->cert_tree->Build(CERTLIST_FLAGS);
 	if (ncerts == 0 && wxMessageBox("You have no certificate with which to sign log submissions. "
-		"Would you like to request a certificate now?", "Alert", wxYES_NO) == wxYES) {
+		"Would you like to request a certificate now?", "Alert", wxYES_NO, frame) == wxYES) {
 		wxCommandEvent e;
 		frame->CRQWizard(e);
 	}
@@ -100,12 +105,12 @@ makeCertificateMenu(bool enable, bool keyonly) {
 	wxMenu *cert_menu = new wxMenu;
 	cert_menu->Append(tc_c_Properties, "&Properties");
 	cert_menu->Enable(tc_c_Properties, enable);
-	cert_menu->Append(tc_c_Import, "&Import");
-	cert_menu->Enable(tc_c_Import, false);
-	cert_menu->Append(tc_c_Export, "&Export");
-	cert_menu->Enable(tc_c_Export, false);
+	cert_menu->Append(tc_c_Export, "&Save");
+	cert_menu->Enable(tc_c_Export, enable);
+	cert_menu->Append(tc_c_Delete, "&Delete");
+	cert_menu->Enable(tc_c_Delete, enable);
 	if (!keyonly) {
-//		cert_menu->Append(tc_c_Sign, "&Sign File");
+//		cert_menu->Append(tc_c_Sign, "S&ign File");
 //		cert_menu->Enable(tc_c_Sign, enable);
 		cert_menu->Append(tc_c_Renew, "&Renew Certificate");
 		cert_menu->Enable(tc_c_Renew, enable);
@@ -137,9 +142,10 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 	wxString hhp = docpaths.FindAbsoluteValidPath("tqslcert.hhp");
 //cerr << "Help: " << wxFileNameFromPath(hhp) << endl;
 	if (wxFileNameFromPath(hhp) != "") {
-		if (help.AddBook(hhp))
-		help_menu->Append(tc_h_Contents, "&Contents");
-		help_menu->AppendSeparator();
+		if (help.AddBook(hhp)) {
+			help_menu->Append(tc_h_Contents, "&Contents");
+			help_menu->AppendSeparator();
+		}
 	}
 	help_menu->Append(tc_h_About, "&About");
 
@@ -170,74 +176,26 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
-//	help.DisplayContents();
-//	help.Display("main.htm");
 	DisplayHelp();
 }
 
 void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageBox("tQSLCert V" VERSION "." BUILD "\n(c) 2001-2003\nAmerican Radio Relay League",
-		"About");
-}
-
-static int notifyImport(int type, const char *message) {
-	if (TQSL_CERT_CB_RESULT_TYPE(type) == TQSL_CERT_CB_ERROR)
-		return 1;
-	if (TQSL_CERT_CB_RESULT_TYPE(type) == TQSL_CERT_CB_WARNING) {
-		wxMessageBox(message, "Certificate Warning");
-		return 0;
-	}
-	if (TQSL_CERT_CB_RESULT_TYPE(type) != TQSL_CERT_CB_PROMPT)
-		return 0;
-	const char *nametype = 0;
-	const char *configkey = 0;
-	bool default_prompt = false;
-	switch (TQSL_CERT_CB_CERT_TYPE(type)) {
-		case TQSL_CERT_CB_ROOT:
-			nametype = "Trusted root";
-			configkey = "NotifyRoot";
-			default_prompt = true;
-			break;
-		case TQSL_CERT_CB_CA:
-			nametype = "Certificate Authority";
-			configkey = "NotifyCA";
-			break;
-		case TQSL_CERT_CB_USER:
-			nametype = "User";
-			configkey = "NotifyUser";
-			break;
-	}
-	if (!nametype)
-		return 0;
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	bool b;
-	config->Read(configkey, &b, default_prompt);
-	if (!b) {
-		notifyCount++;
-		return 0;
-	}
-	wxString s("Okay to install ");
-	s = s + nametype + " certificate?\n\n" + message;
-	if (wxMessageBox(s, "Install Certificate", wxYES_NO) == wxYES) {
-		notifyCount++;
-		return 0;
-	}
-	return 1;
+	wxString msg = "TQSLCert V" VERSION "." BUILD "\n(c) 2001-2003\nAmerican Radio Relay League\n\n";
+	int major, minor;
+	if (tqsl_getVersion(&major, &minor))
+		wxLogError(tqsl_getErrorString());
+	else
+		msg += wxString::Format("TrustedQSL library V%d.%d\n", major, minor);
+	if (tqsl_getConfigVersion(&major, &minor))
+		wxLogError(tqsl_getErrorString());
+	else
+		msg += wxString::Format("Configuration data V%d.%d", major, minor);
+	wxMessageBox(msg, "About", wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
 void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
-	notifyCount = 0;
-	wxString file = wxFileSelector("Load file", "", "",
-		TQSL_CRQ_FILE_EXT,
-		"tQSL Certificate files (*." TQSL_CERT_FILE_EXT ")|*." TQSL_CERT_FILE_EXT
-			"|All files (" ALLFILESWILD ")|" ALLFILESWILD,
-		wxOPEN | wxFILE_MUST_EXIST);
-	if (file.IsEmpty())
-		return;
-	if (tqsl_importTQSLFile(file.c_str(), notifyImport))
-		wxMessageBox(tqsl_getErrorString(), "Error");
-	else
-		wxMessageBox(wxString::Format("%d certificates loaded", notifyCount), "Notice");
+	LoadCertWiz lcw(this, &help, "Load Certificate File");
+	lcw.RunWizard();
 	cert_tree->Build(CERTLIST_FLAGS);
 }
 
@@ -300,29 +258,11 @@ void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
 	req = 0;
 }
 
-class CRQWiz : public wxWizard {
-public:
-	CRQWiz(wxWindow* parent, int id = -1, const wxString& title = wxEmptyString,
-		const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition)
-			: wxWizard(parent, id, title, bitmap, pos) { CenterOnParent(); }
-private:
-	void OnPageChanged(wxWizardEvent&);
-
-	DECLARE_EVENT_TABLE()
-};
-
-BEGIN_EVENT_TABLE(CRQWiz, wxWizard)
-	EVT_WIZARD_PAGE_CHANGED(-1, CRQWiz::OnPageChanged)
-END_EVENT_TABLE()
-
-void
-CRQWiz::OnPageChanged(wxWizardEvent&) {
-	GetCurrentPage()->SetFocus();
-}
-
 void MyFrame::CRQWizard(wxCommandEvent& event) {
 	char renew = (req != 0) ? 1 : 0;
-	CRQWiz *wiz = new CRQWiz(this, -1, "Certificate Request");
+	tQSL_Cert cert = (renew ? ((CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection()))->getCert() : 0);
+	CRQWiz wiz(req, cert, this, &help);
+/*
 	CRQ_ProviderPage *prov = new CRQ_ProviderPage(wiz, req);
 	CRQ_IntroPage *intro = new CRQ_IntroPage(wiz, req);
 	CRQ_NamePage *name = new CRQ_NamePage(wiz, req);
@@ -335,21 +275,23 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 	if (email->GetSize().GetWidth() > size.GetWidth())
 		size = email->GetSize();
 	CRQ_PasswordPage *pw = new CRQ_PasswordPage(wiz);
-	CRQ_SignPage *sign = new CRQ_SignPage(wiz, size);
+	CRQ_SignPage *sign = new CRQ_SignPage(wiz, size, &(prov->provider));
 	wxWizardPageSimple::Chain(prov, intro);
 	wxWizardPageSimple::Chain(intro, name);
 	wxWizardPageSimple::Chain(name, email);
 	wxWizardPageSimple::Chain(email, pw);
 	if (renew)
-		sign->cert = ((CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection()))->getCert();
+		sign->cert = ;
 	else
 		wxWizardPageSimple::Chain(pw, sign);
 
-	wiz->SetPageSize(size);
+	wiz.SetPageSize(size);
 
-	if (wiz->RunWizard(prov)) {
+*/
+
+	if (wiz.RunWizard()) {
 		// Where to put it?
-		wxString file = wxFileSelector("Save request", "", flattenCallSign(intro->callsign) + "." TQSL_CRQ_FILE_EXT,
+		wxString file = wxFileSelector("Save request", "", flattenCallSign(wiz.callsign) + "." TQSL_CRQ_FILE_EXT,
 			TQSL_CRQ_FILE_EXT,
 			"tQSL Cert Request files (*." TQSL_CRQ_FILE_EXT ")|*." TQSL_CRQ_FILE_EXT
 				"|All files (" ALLFILESWILD ")|" ALLFILESWILD,
@@ -358,27 +300,27 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			wxMessageBox("Request cancelled", "Cancel");
 		else {
 			TQSL_CERT_REQ req;
-			strncpy(req.providerName, prov->provider.organizationName, sizeof req.providerName);
-			strncpy(req.providerUnit, prov->provider.organizationalUnitName, sizeof req.providerUnit);
-			strncpy(req.callSign, intro->callsign.c_str(), sizeof req.callSign);
-			strncpy(req.name, name->name.c_str(), sizeof req.name);
-			strncpy(req.address1, name->addr1.c_str(), sizeof req.address1);
-			strncpy(req.address2, name->addr2.c_str(), sizeof req.address2);
-			strncpy(req.city, name->city.c_str(), sizeof req.city);
-			strncpy(req.state, name->state.c_str(), sizeof req.state);
-			strncpy(req.postalCode, name->zip.c_str(), sizeof req.postalCode);
-			if (name->country.IsEmpty())
+			strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
+			strncpy(req.providerUnit, wiz.provider.organizationalUnitName, sizeof req.providerUnit);
+			strncpy(req.callSign, wiz.callsign.c_str(), sizeof req.callSign);
+			strncpy(req.name, wiz.name.c_str(), sizeof req.name);
+			strncpy(req.address1, wiz.addr1.c_str(), sizeof req.address1);
+			strncpy(req.address2, wiz.addr2.c_str(), sizeof req.address2);
+			strncpy(req.city, wiz.city.c_str(), sizeof req.city);
+			strncpy(req.state, wiz.state.c_str(), sizeof req.state);
+			strncpy(req.postalCode, wiz.zip.c_str(), sizeof req.postalCode);
+			if (wiz.country.IsEmpty())
 				strncpy(req.country, "USA", sizeof req.country);
 			else
-				strncpy(req.country, name->country.c_str(), sizeof req.country);
-			strncpy(req.emailAddress, email->email.c_str(), sizeof req.emailAddress);
-			strncpy(req.password, pw->password.c_str(), sizeof req.password);
-			req.dxccEntity = intro->dxcc;
-			req.qsoNotBefore = intro->qsonotbefore;
-			req.qsoNotAfter = intro->qsonotafter;
-			req.signer = sign->cert;
+				strncpy(req.country, wiz.country.c_str(), sizeof req.country);
+			strncpy(req.emailAddress, wiz.email.c_str(), sizeof req.emailAddress);
+			strncpy(req.password, wiz.password.c_str(), sizeof req.password);
+			req.dxccEntity = wiz.dxcc;
+			req.qsoNotBefore = wiz.qsonotbefore;
+			req.qsoNotAfter = wiz.qsonotafter;
+			req.signer = wiz.cert;
 			if (req.signer) {
-				while (tqsl_beginSigning(req.signer, 0, getPassword)) {
+				while (tqsl_beginSigning(req.signer, 0, getPassword, 0)) {
 					if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 						wxMessageBox(tqsl_getErrorString(), "Error");
 						return;
@@ -386,19 +328,19 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				}
 			}
 			req.renew = renew ? 1 : 0;
-			if (tqsl_createCertRequest(file.c_str(), &req, 0))
+			if (tqsl_createCertRequest(file.c_str(), &req, 0, 0))
 				wxMessageBox(tqsl_getErrorString(), "Error");
 			else {
 				wxString msg = "Your may now send your new certificate request (";
 				msg += file ;
 				msg += ")";
-				if (prov->provider.emailAddress[0] != 0)
-					msg += wxString("\nto:\n   ") + prov->provider.emailAddress;
-				if (prov->provider.url[0] != 0) {
+				if (wiz.provider.emailAddress[0] != 0)
+					msg += wxString("\nto:\n   ") + wiz.provider.emailAddress;
+				if (wiz.provider.url[0] != 0) {
 					msg += "\n";
-					if (prov->provider.emailAddress[0] != 0)
+					if (wiz.provider.emailAddress[0] != 0)
 						msg += "or ";
-					msg += wxString("see:\n   ") + prov->provider.url;
+					msg += wxString("see:\n   ") + wiz.provider.url;
 				}
 				wxMessageBox(msg, "tQSLCert");
 			}
@@ -407,13 +349,14 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			cert_tree->Build(CERTLIST_FLAGS);
 		}
 	}
-	wiz->Destroy();
 }
 
 void MyFrame::OnTreeSel(wxTreeEvent& event) {
 	wxTreeItemId id = event.GetItem();
 	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(id);
 	cert_menu->Enable(tc_c_Properties, (data != NULL));
+	cert_menu->Enable(tc_c_Export, (data != NULL));
+	cert_menu->Enable(tc_c_Delete, (data != NULL));
 	int keyonly = 0;
 	if (data != NULL)
 		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
@@ -427,8 +370,71 @@ void MyFrame::OnCertProperties(wxCommandEvent& WXUNUSED(event)) {
 		displayCertProperties(data, this);
 }
 
+void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+	char call[40];
+	if (tqsl_getCertificateCallSign(data->getCert(), call, sizeof call)) {
+		wxMessageBox(tqsl_getErrorString(), "Error");
+		return;
+	}
+	wxString file_default = flattenCallSign(wxString(call));
+	int ko = 0;
+	tqsl_getCertificateKeyOnly(data->getCert(), &ko);
+	if (ko)
+		file_default += "-key-only";
+	file_default += ".p12";
+	wxString path = wxConfig::Get()->Read("CertFilePath", "");
+	wxString filename = wxFileSelector("Enter PKCS#12 file to save to", path,
+		file_default, ".p12", "PKCS#12 files (*.p12)|*.p12|All files (*.*)|*.*",
+		wxSAVE|wxOVERWRITE_PROMPT, this);
+	if (filename == "")
+		return;
+	wxConfig::Get()->Write("CertFilePath", wxPathOnly(filename));
+	GetNewPasswordDialog dial(this, "PKCS#12 Password",
+"Enter password for the PKCS#12 file.\n\n"
+"You will have to enter this password any time you\n"
+"load the file into TQSLCert (or any other PKCS#12\n"
+"compliant software)", true, &help, "save.htm");
+	if (dial.ShowModal() != wxID_OK)
+		return;	// Cancelled
+	int terr;
+	do {
+		terr = tqsl_beginSigning(data->getCert(), 0, getPassword, 0);
+		if (terr) {
+			if (tQSL_Error == TQSL_PASSWORD_ERROR)
+				continue;
+			if (tQSL_Error == TQSL_OPERATOR_ABORT)
+				return;
+			wxMessageBox(tqsl_getErrorString(), "Error", wxOK, this);
+		}
+	} while (terr);
+	if (tqsl_exportPKCS12File(data->getCert(), filename.c_str(), dial.Password().c_str()))
+		wxMessageBox(tqsl_getErrorString(), "Error", wxOK, this);
+	else
+		wxMessageBox(wxString("Certificate saved in file ") + filename, "Notice", wxOK, this);
+	tqsl_endSigning(data->getCert());
+}
+
+void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+	if (wxMessageBox(
+"This will permanently remove the certificate from your system.\n\n"
+"Are you sure this is what you want to do?", "Warning", wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		if (tqsl_deleteCertificate(data->getCert()))
+			wxMessageBox(tqsl_getErrorString(), "Error");
+		cert_tree->Build(CERTLIST_FLAGS);
+	}
+}
+
 /*
-	Just for testing
+
+//	Just for testing
 
 void MyFrame::OnSign(wxCommandEvent& WXUNUSED(event)) {
 	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
@@ -565,10 +571,10 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 					tqsl_convertDateToText(&date, buf, sizeof buf);
 				break;
 			case 10:
-				tqsl_getCertificateKeyOnly(cert, &keyonly);
-				if (keyonly)
-					strcpy(buf, "N/A");
-				else {
+//				tqsl_getCertificateKeyOnly(cert, &keyonly);
+//				if (keyonly)
+//					strcpy(buf, "N/A");
+//				else {
 					switch (tqsl_getCertificatePrivateKeyType(cert)) {
 						case TQSL_PK_TYPE_ERR:
 							wxMessageBox(tqsl_getErrorString(), "Error");
@@ -584,7 +590,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 							strcpy(buf, "Password protected");
 							break;
 					}
-				}
+//				}
 				break;
 		}
 		line_sizer->Add(
@@ -615,11 +621,12 @@ displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
 }
 
 int
-getPassword(char *buf, int bufsiz) {
-	wxString pw = wxGetPasswordFromUser("Enter the password to unlock the private key", "Enter password");
-	if (pw == "")
+getPassword(char *buf, int bufsiz, void *) {
+	GetPasswordDialog dial(wxGetApp().GetTopWindow(), "Enter password", "Enter the password to unlock the private key");
+	if (dial.ShowModal() != wxID_OK)
 		return 1;
-	strncpy(buf, pw.c_str(), bufsiz);
+	strncpy(buf, dial.Password().c_str(), bufsiz);
+	buf[bufsiz-1] = 0;
 	return 0;
 }
 
@@ -636,7 +643,7 @@ static wxString
 flattenCallSign(const wxString& call) {
 	wxString flat = call;
 	size_t idx;
-	while ((idx = flat.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWYYZ01234567890_")) != wxString::npos)
+	while ((idx = flat.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_")) != wxString::npos)
 		flat[idx] = '_';
 	return flat;
 }

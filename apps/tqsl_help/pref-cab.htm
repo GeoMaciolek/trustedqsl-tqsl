@@ -1,0 +1,42 @@
+<HTML><HEAD><TITLE>TQSL Preferences - Cabrillo Specs</TITLE></HEAD>
+<BODY>
+<H3>Preferences - Cabrillo Specs</H3>
+<P>
+The Cabrillo contest log file format varies depending on the particular contest.
+TQSL needs to know which field of the QSO line entry contains the call sign of
+the station that was worked. (Details of the Cabrillo format can be found at
+http://www.kkn.net/~trey/cabrillo/) It also needs to know whether the contest
+is an HF or VHF-and-above contest so that the frequency field of the Cabrillo
+file can be properly interpreted.
+<P>
+For ARRL contests and many other popular contests, TQSL already knows this information.
+For less popular contests, you may need to provide the information via the <B>Cabrillo Specs</B>
+tab. This also comes in handy if your logging software doesn't output the contest data
+correctly, or if the CONTEST name in the Cabrillo file is incorrect in some way, since
+the <B>Cabrillo Spec</B> entries override any built-in contest informartion.
+<P>
+A list of Cabrillo contest specifications is displayed:
+<P>
+<img src="pref-cab.bmp" width=363 height=370 border=0>
+<P>
+In this example, a Cabrillo file that contains <I>DL-DX-RTTY</I> in the CONTEST line
+will be treated as an HF contest that contains the call sign worked in field 8 of
+each QSO line. A Cabrillo file with a contest name of <I>JIDX-CW</I> is also an HF contest
+that contains the call sign worked in field 8.
+<P>
+To delete an entry, select it by clicking on the entry in the list, then select <b>Delete</b>.
+<P>
+To add an entry, select <b>Add</b> to get the <B>Add Contest</b> dialog:
+<P>
+<img src="addcont.bmp" width=208 height=252 border=0>
+<P>
+Type in the contest name as it will appear in the CONTEST line of the Cabrillo file.
+Check <B>HF<b> or <b>VHF</b> as appropriate (VHF includes UHF and microwave contests).
+Enter the field number of the call sign worked field. Fields are numbered with 1 being
+the first field after the &quot;QSO:&quot; line tag. For example:
+<PRE>
+QSO: 21042 CW 1997-11-01 2101 N5KO     1 B 74 SCV WA2VRR   1 A 74 VA
+</PRE>
+In this ARRL Sweepstakes log line the call sign worked (WA2VRR) appears in field 10.
+<P>
+</BODY></HEAD>

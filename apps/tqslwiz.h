@@ -15,8 +15,6 @@
 #include "sysconfig.h"
 #endif
 
-using namespace std;
-
 #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
@@ -27,7 +25,7 @@ using namespace std;
 	#include "wx/wx.h"
 #endif
 
-#include "wx/wizard.h"
+#include "extwizard.h"
 #include "wx/radiobox.h"
 
 #include "certtree.h"
@@ -44,13 +42,15 @@ using namespace std;
 
 class TQSLWizPage;
 
-class TQSLWizard : public wxWizard {
+class TQSLWizard : public ExtWizard {
 public:
-	TQSLWizard(tQSL_Location locp, wxWindow* parent, int id = -1, const wxString& title = wxEmptyString,
-		const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition);
+	TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
+
+//	TQSLWizard(tQSL_Location locp, wxWindow* parent, int id = -1, const wxString& title = wxEmptyString,
+//		const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition);
 
 	TQSLWizPage *GetPage(bool final = false);
-	TQSLWizPage *GetCurrentTQSLPage() const { return (TQSLWizPage *)GetCurrentPage(); }
+	TQSLWizPage *GetCurrentTQSLPage() { return (TQSLWizPage *)GetCurrentPage(); }
 	void SetLocationName(wxString& s) { sl_name = s; }
 	wxString GetLocationName() { return sl_name; }
 	TQSLWizPage *GetFinalPage() { return (_pages.size() > 0) ? _pages[0] : 0; }
@@ -67,9 +67,9 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-class TQSLWizPage : public wxWizardPage {
+class TQSLWizPage : public ExtWizard_Page {
 public:
-	TQSLWizPage(TQSLWizard *parent, tQSL_Location locp) : wxWizardPage(parent) { loc = locp; }
+	TQSLWizPage(TQSLWizard *parent, tQSL_Location locp) : ExtWizard_Page(parent) { loc = locp; }
 	virtual TQSLWizard *GetParent() const { return (TQSLWizard *)wxWindow::GetParent(); }
 
 	tQSL_Location loc;
@@ -85,10 +85,9 @@ public:
 	void UpdateFields(int noupdate_field = -1);
 	virtual TQSLWizPage *GetPrev() const;
 	virtual TQSLWizPage *GetNext() const;
+	void OnSize(wxSizeEvent&);
 private:
-	virtual void OnSetFocus(wxFocusEvent& event);
 	vector<void *> controls;
-
 	DECLARE_EVENT_TABLE()
 };
 
@@ -100,6 +99,7 @@ public:
 	TQSLWizPage *prev;
 	virtual bool TransferDataFromWindow();
 	void OnListbox(wxCommandEvent &);
+	virtual const char *validate();
 private:
 	wxListBox *namelist;
 	wxTextCtrl *newname;

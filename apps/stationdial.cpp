@@ -24,24 +24,7 @@ using namespace std;
 #include <algorithm>
 
 #include "tqsllib.h"
-
-#ifdef __WIN32__
-	#define TEXT_HEIGHT 24
-	#define LABEL_HEIGHT 18
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 10
-	#define VSEP 3
-	#define GEOM1 4
-#else
-	#define TEXT_HEIGHT 18
-	#define LABEL_HEIGHT TEXT_HEIGHT
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 12
-	#define VSEP 4
-	#define GEOM1 6
-#endif
-
-#define CONTROL_WIDTH (TEXT_WIDTH*60)
+#include "wxutil.h"
 
 #define GS_NAMELIST TQSL_ID_LOW
 #define GS_OKBUT TQSL_ID_LOW+1
@@ -51,6 +34,7 @@ using namespace std;
 #define GS_NEWBUT TQSL_ID_LOW+5
 #define GS_MODIFYBUT TQSL_ID_LOW+6
 #define GS_CMD_PROPERTIES TQSL_ID_LOW+7
+#define GS_HELPBUT TQSL_ID_LOW+8
 
 class TQSLStationListBox : public wxListBox {
 public:
@@ -108,16 +92,11 @@ itemLess(const item& s1, const item& s2) {
 	return (i < 0);
 }
 
-static void set_font(wxWindow *w, wxFont& font) {
-#ifndef __WIN32__
-	w->SetFont(font);
-#endif
-}
-
 BEGIN_EVENT_TABLE(TQSLGetStationNameDialog, wxDialog)
 	EVT_BUTTON(GS_OKBUT, TQSLGetStationNameDialog::OnOk)
 	EVT_BUTTON(GS_CANCELBUT, TQSLGetStationNameDialog::OnCancel)
 	EVT_BUTTON(GS_DELETEBUT, TQSLGetStationNameDialog::OnDelete)
+	EVT_BUTTON(GS_HELPBUT, TQSLGetStationNameDialog::OnHelp)
 	EVT_BUTTON(GS_NEWBUT, TQSLGetStationNameDialog::OnNew)
 	EVT_BUTTON(GS_MODIFYBUT, TQSLGetStationNameDialog::OnModify)
 	EVT_LISTBOX(GS_NAMELIST, TQSLGetStationNameDialog::OnNamelist)
@@ -188,29 +167,29 @@ TQSLGetStationNameDialog::RefreshList() {
 //cout << "sel(1): " << namelist->GetSelection() << endl;
 }
 
-TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, int id, const wxPoint& pos,
+TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpController *help, const wxPoint& pos,
 	bool i_issave, const wxString& title, bool i_editonly)
-	: wxDialog(parent, id, "Select Station Data", pos), issave(i_issave), editonly(i_editonly),
-	newbut(0), modbut(0), updating(false), firstFocused(false) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	set_font(this, font);
+	: wxDialog(parent, -1, "Select Station Data", pos), issave(i_issave), editonly(i_editonly),
+	newbut(0), modbut(0), updating(false), firstFocused(false), _help(help) {
 	wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+	wxSize text_size = getTextSize(this);
+	int control_width = text_size.GetWidth()*30;
 
 	if (title != "")
 		SetTitle(title);
 	else if (issave)
 		SetTitle("Save Station Data");
 	// List
-	namelist = new TQSLStationListBox(this, GS_NAMELIST, wxDefaultPosition, wxSize(CONTROL_WIDTH, TEXT_HEIGHT*10),
+	namelist = new TQSLStationListBox(this, GS_NAMELIST, wxDefaultPosition,
+		wxSize(control_width, text_size.GetHeight()*10),
 		0, 0, wxLB_MULTIPLE|wxLB_HSCROLL|wxLB_ALWAYS_SB);
 	sizer->Add(namelist, 1, wxALL|wxEXPAND, 10);
 	RefreshList();
 	sizer->Add(new wxStaticText(this, -1, issave ? "Enter a name for this Station Location" :
 		"Selected Station Location"), 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
 	name_entry = new wxTextCtrl(this, GS_NAMEENTRY, "", wxDefaultPosition,
-		wxSize(CONTROL_WIDTH, TEXT_HEIGHT));
+		wxSize(control_width, -1));
 	if (!issave)
 		name_entry->Enable(false);
 	sizer->Add(name_entry, 0, wxALL|wxEXPAND, 10);
@@ -228,6 +207,8 @@ TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, int id, con
 	delbut->Enable(FALSE);
 	button_sizer->Add(delbut, 0, wxALL|wxALIGN_TOP, 3);
 	button_sizer->Add(new wxStaticText(this, -1, ""), 1, wxEXPAND);
+	if (_help)
+		button_sizer->Add(new wxButton(this, GS_HELPBUT, "Help" ), 0, wxALL|wxALIGN_BOTTOM, 3);
 	if (!editonly)
 		button_sizer->Add(new wxButton(this, GS_CANCELBUT, "Cancel" ), 0, wxALL|wxALIGN_BOTTOM, 3);
 	okbut = new wxButton(this, GS_OKBUT, "OK" );
@@ -336,6 +317,12 @@ TQSLGetStationNameDialog::OnNew(wxCommandEvent&) {
 void
 TQSLGetStationNameDialog::OnModify(wxCommandEvent&) {
 	EndModal(wxID_MORE);
+}
+
+void
+TQSLGetStationNameDialog::OnHelp(wxCommandEvent&) {
+	if (_help)
+		_help->Display("stnloc.htm");
 }
 
 void

@@ -30,6 +30,7 @@ using namespace std;
 #include <wx/wxhtml.h>
 #include <wx/wfstream.h>
 
+#include <iostream>
 #include <fstream>
 #include <memory>
 #include <zlib.h>
@@ -45,7 +46,7 @@ using namespace std;
 #include "dxcc.h"
 #include "tqsl_prefs.h"
 
-#define VERSION "1.02beta"
+#define VERSION "1.04rc"
 
 #undef ALLOW_UNCOMPRESSED
 
@@ -74,7 +75,7 @@ enum {
 static char *ErrorTitle = "TQSL Error";
 
 static int
-getPassword(char *buf, int bufsiz) {
+getPassword(char *buf, int bufsiz, void *) {
 	wxString pw = wxGetPasswordFromUser("Enter the password to unlock the private key", "Enter password");
 	if (pw == "")
 		return 1;
@@ -132,6 +133,24 @@ init_modes() {
 	while (stat) {
 		value = config->Read(key, "");
 		tqsl_setADIFMode(key.c_str(), value.c_str());
+		stat = config->GetNextEntry(key, cookie);
+	}
+	config->SetPath("/");
+}
+
+static void
+init_contests() {
+	tqsl_clearCabrilloMap();
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	long cookie;
+	wxString key, value;
+	config->SetPath("/cabrilloMap");
+	bool stat = config->GetFirstEntry(key, cookie);
+	while (stat) {
+		value = config->Read(key, "");
+		int contest_type = atoi(value.c_str());
+		int callsign_field = atoi(value.AfterFirst(';').c_str());
+		tqsl_setCabrilloMapEntry(key.c_str(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
 	config->SetPath("/");
@@ -242,13 +261,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
-	file_menu->Append(tm_f_new, "&New...");
-	file_menu->Append(tm_f_edit, "&Open...");
-	file_menu->AppendSeparator();
-	file_menu->Append(tm_f_import_compress, "Sign...");
+	file_menu->Append(tm_f_import_compress, "&Sign existing ADIF or Cabrillo file...");
 #ifdef ALLOW_UNCOMPRESSED
-	file_menu->Append(tm_f_import, "&Sign Uncompressed...");
+	file_menu->Append(tm_f_import, "Sign &Uncompressed...");
 #endif
+	file_menu->AppendSeparator();
+	file_menu->Append(tm_f_new, "Create &New ADIF file...");
+	file_menu->Append(tm_f_edit, "&Edit existing ADIF file...");
 	file_menu->AppendSeparator();
 #ifdef ALLOW_UNCOMPRESSED
 	file_menu->Append(tm_f_compress, "Co&mpress...");
@@ -268,7 +287,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 	wxMenu *help_menu = new wxMenu;
 	help.UseConfig(wxConfig::Get());
 	wxString hhp = docpaths.FindAbsoluteValidPath("tqslapp.hhp");
-//cerr << "Help: " << wxFileNameFromPath(hhp) << endl;
 	if (wxFileNameFromPath(hhp) != "") {
 		if (help.AddBook(hhp))
 		help_menu->Append(tm_h_contents, "&Contents");
@@ -289,17 +307,22 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 }
 
 static wxString
-run_station_wizard(wxWindow *parent, tQSL_Location loc, wxString title = "Add Station Location",
-	wxString dataname = "") {
+run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
+	wxString title = "Add Station Location", wxString dataname = "") {
 	wxString rval("");
 	get_certlist("", 0);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
-	TQSLWizard *wiz = new TQSLWizard(loc, parent, -1, title);
+	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title);
+	wiz->GetPage(true);
 	TQSLWizPage *page = wiz->GetPage();
 	if (page == 0)
 		throw TQSLException("Error getting first wizard page");
-	wiz->SetPageSize(page->GetSize());
+	wiz->AdjustSize();
+	// Note: If dynamically created pages are larger than the pages already
+	// created (the initial page and the final page), the wizard will need to
+	// be resized, but we don't presently have that happening. (The final
+	// page is larger than all expected dynamic pages.)
 	bool okay = wiz->RunWizard(page);
 	rval = wiz->GetLocationName();
 	wiz->Destroy();
@@ -312,14 +335,22 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxString title = "Add St
 
 void
 MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
-//	help.DisplayContents();
 	help.Display("main.htm");
 }
 
 void
 MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageBox("TQSL V" VERSION "." BUILD "\n(c) 2001-2003\nAmerican Radio Relay League",
-		"About", wxOK|wxCENTRE|wxICON_INFORMATION, this);
+	wxString msg = "TQSL V" VERSION "." BUILD "\n(c) 2001-2003\nAmerican Radio Relay League\n\n";
+	int major, minor;
+	if (tqsl_getVersion(&major, &minor))
+		wxLogError(tqsl_getErrorString());
+	else
+		msg += wxString::Format("TrustedQSL library V%d.%d\n", major, minor);
+	if (tqsl_getConfigVersion(&major, &minor))
+		wxLogError(tqsl_getErrorString());
+	else
+		msg += wxString::Format("Configuration data V%d.%d", major, minor);
+	wxMessageBox(msg, "About", wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
 void
@@ -327,7 +358,7 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	tQSL_Location loc;
 	try {
 		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-		run_station_wizard(this, loc);
+		run_station_wizard(this, loc, &help);
 		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	}
 	catch (TQSLException& x) {
@@ -465,7 +496,7 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	} while (stat == TQSL_ADIF_GET_FIELD_SUCCESS || stat == TQSL_ADIF_GET_FIELD_NO_NAME_MATCH);
 	tqsl_endADIF(&adif);
 	try {
-		QSODataDialog dial(this, &recs);
+		QSODataDialog dial(this, &help, &recs);
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs, file);
 	} catch (TQSLException& x) {
@@ -477,7 +508,7 @@ void
 MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	QSORecordList recs;
 	try {
-		QSODataDialog dial(this, &recs);
+		QSODataDialog dial(this, &help, &recs);
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs);
 	} catch (TQSLException& x) {
@@ -494,16 +525,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 	wxString name, ext;
 	gzFile gout = 0;
 	ofstream out;
-
-	if (compressed)
-		gout = gzopen(outfile, "wb9");
-	else
-		out.open(outfile, ios::out|ios::trunc|ios::binary);
-
-	if ((compressed && !gout) || (!compressed && !out)) {
-		wxMessageBox(wxString("Unable to open ") + outfile, ErrorTitle, wxOK|wxCENTRE, this);
-		return false;
-	}
+	wxConfig *config = (wxConfig *)wxConfig::Get();
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
@@ -517,6 +539,18 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 	wxLogMessage("Signing using CALL=%s, DXCC=%d", callsign, dxcc);
 
 	init_modes();
+	init_contests();
+
+	if (compressed)
+		gout = gzopen(outfile, "wb9");
+	else
+		out.open(outfile, ios::out|ios::trunc|ios::binary);
+
+	if ((compressed && !gout) || (!compressed && !out)) {
+		wxMessageBox(wxString("Unable to open ") + outfile, ErrorTitle, wxOK|wxCENTRE, this);
+		return false;
+	}
+
 	ConvertingDialog *conv_dial = new ConvertingDialog(this, name.c_str());
 	int n = 0;
 	bool cancelled = false;
@@ -528,6 +562,9 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 			lineno = 0;
 	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.c_str(), certlist, ncerts, loc));
 		}
+		bool allow = false;
+		config->Read("BadCalls", &allow);
+		tqsl_setConverterAllowBadCall(conv, allow);
 		wxSplitPath(infile.c_str(), 0, &name, &ext);
 		if (ext != "")
 			name += "." + ext;
@@ -549,12 +586,15 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 						out << cp << endl;
 					}
    			}
+			if (cp == 0) {
+				wxSafeYield(conv_dial);
+				if (!conv_dial->running)
+					break;
+			}
    			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
-//cerr << "Unlock signing key" << endl;
    				tQSL_Cert cert;
    				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
-   				check_tqsl_error(tqsl_beginSigning(cert, 0, getPassword));
-//cerr << "End unlock" << endl;
+   				check_tqsl_error(tqsl_beginSigning(cert, 0, getPassword, 0));
    				continue;
    			}
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
@@ -566,11 +606,14 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
 					wxString msg = x.what();
 					if (lineno)
 						msg += wxString::Format(" on line %d", lineno);
+					const char *bad_text = tqsl_getConverterRecordText(conv);
+					if (bad_text)
+						msg += wxString("\n") + bad_text;
+					wxLogError(msg);
 					if (!ignore_err) {
-						if (wxMessageBox(wxString("Error: ") + msg + "\r\n\r\nIgnore errors?", "Error", wxYES_NO, this) == wxNO)
+						if (wxMessageBox(wxString("Error: ") + msg + "\n\nIgnore errors?", "Error", wxYES_NO, this) == wxNO)
 							throw x;
 					}
-					wxLogError(msg);
 					ignore_err = true;
 				}
 			}
@@ -593,7 +636,10 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, 
    		tqsl_endConverter(&conv);
    		delete conv_dial;
    	} catch (TQSLException& x) {
-//cerr << "Caught" << endl;
+		if (compressed)
+			gzclose(gout);
+		else
+			out.close();
    		this->Enable(TRUE);
    		delete conv_dial;
 		string msg = x.what();
@@ -623,7 +669,7 @@ MyFrame::SelectStationLocation(const wxString& title, bool editonly) {
    	tQSL_Location loc;
    	wxString selname;
    	do {
-   		TQSLGetStationNameDialog station_dial(this, -1, wxDefaultPosition, false, title, editonly);
+   		TQSLGetStationNameDialog station_dial(this, &help, wxDefaultPosition, false, title, editonly);
    		if (selname != "")
    			station_dial.SelectName(selname);
    		rval = station_dial.ShowModal();
@@ -632,12 +678,12 @@ MyFrame::SelectStationLocation(const wxString& title, bool editonly) {
    				return 0;
    			case wxID_APPLY:
    				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-   				selname = run_station_wizard(this, loc);
+   				selname = run_station_wizard(this, loc, &help);
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_MORE:
    		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().c_str()));
-   				selname = run_station_wizard(this, loc, "Edit Station Location", station_dial.Selected());
+   				selname = run_station_wizard(this, loc, &help, "Edit Station Location", station_dial.Selected());
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_OK:
@@ -814,7 +860,7 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 #endif // ALLOW_UNCOMPRESSED
 
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
-	Preferences dial(this);
+	Preferences dial(this, &help);
 	dial.ShowModal();
 }
 
@@ -888,5 +934,6 @@ QSLApp::OnInit() {
 			}
 		}
 	}
-	return TRUE;
+
+	return true;
 }

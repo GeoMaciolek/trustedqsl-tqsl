@@ -37,6 +37,8 @@
 #endif
 #include "tqsllib.h"
 
+class MyFrame;
+
 class CertApp : public wxApp {
 public:
 	CertApp();
@@ -53,12 +55,15 @@ public:
 	void CRQWizardRenew(wxCommandEvent& event);
 	void OnTreeSel(wxTreeEvent& event);
 	void OnCertProperties(wxCommandEvent& event);
+	void OnCertExport(wxCommandEvent& event);
+	void OnCertDelete(wxCommandEvent& event);
+//	void OnCertImport(wxCommandEvent& event);
 	void OnSign(wxCommandEvent& event);
 	void OnLoadCertificateFile(wxCommandEvent& event);
 	void OnPreferences(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
-	void DisplayHelp() { help.Display("main.htm"); }
+	void DisplayHelp(const char *file = "main.htm") { help.Display(file); }
 
 	CertTree *cert_tree;
 private:

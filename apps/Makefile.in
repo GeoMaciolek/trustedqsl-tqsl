@@ -1,13 +1,16 @@
-TQSLLIB=../src
+TQSLLIB=@TQSLLIB@
+TQSLINC=@TQSLINC@
+OPENSSL=@OPENSSL@
 LIBS=-lz -lexpat -lcrypto
-EXPAT=../../expat
-INCDIR = -I$(TQSLLIB) -I$(EXPAT)/include
+INCDIR = -I$(TQSLINC)
 BUILD=@BUILD@
 ifeq ($(BUILD),)
   BUILD=unofficial
 endif
-CXXFLAGS = -O0 -g3 -Wall $(INCDIR) @DEFS@ `wx-config --cflags`
-LDLIBS = $(LIBS) -L$(TQSLLIB) -ltqsllib `wx-config --libs`
+WXFLAGS=`wx-config --cflags`
+WXLIBS=`wx-config --libs`
+CXXFLAGS = -O0 -g3 -Wall $(INCDIR) @DEFS@ $(WXFLAGS)
+LDLIBS = -L$(OPENSSL)/lib -L$(TQSLLIB) -ltqsllib $(LIBS) $(WXLIBS)
 TQSLLIBFILE=$(TQSLLIB)/libtqsllib.a
 
 prefix=@prefix@
@@ -21,10 +24,11 @@ TARGETS = tqslcert tqsl
 
 all: $(TARGETS)
 
-TQSLCERT_OBJ = tqslcert.o crqwiz.o dxcc.o certtree.o tqslcert_prefs.o
+TQSLCERT_OBJ = tqslcert.o crqwiz.o dxcc.o certtree.o tqslcert_prefs.o \
+	getpassword.o extwizard.o loadcertwiz.o wxutil.o
 
-TQSL_OBJ = tqsl.o tqslwiz.o dxcc.o stationdial.o qsodatadialog.o \
-	tqslvalidator.o tqsl_prefs.o
+TQSL_OBJ = tqsl.o extwizard.o tqslwiz.o dxcc.o stationdial.o qsodatadialog.o \
+	tqslvalidator.o tqsl_prefs.o wxutil.o
 
 tqslcert: $(TQSLCERT_OBJ) $(TQSLLIBFILE)
 	$(CC) $(CXXFLAGS) $(LDFLAGS) -o $@ $(TQSLCERT_OBJ) $(LDLIBS) -lstdc++

@@ -15,33 +15,7 @@
 using namespace std;
 
 #include "tqslwiz.h"
-//#include "dxcc.h"
-
-//#include "wx/textctrl.h"
-
-#ifdef __WIN32__
-	#define TEXT_HEIGHT 24
-	#define LABEL_HEIGHT 18
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 10
-	#define VSEP 3
-	#define GEOM1 4
-#else
-	#define TEXT_HEIGHT 18
-	#define LABEL_HEIGHT TEXT_HEIGHT
-	#define TEXT_WIDTH 8
-	#define TEXT_POINTS 12
-	#define VSEP 4
-	#define GEOM1 6
-#endif
-
-#define CONTROL_WIDTH (TEXT_WIDTH*30)
-
-static void set_font(wxWindow *w, wxFont& font) {
-#ifndef __WIN32__
-	w->SetFont(font);
-#endif
-}
+#include "wxutil.h"
 
 BEGIN_EVENT_TABLE(TQSLWizard, wxWizard)
 	EVT_WIZARD_PAGE_CHANGED(-1, TQSLWizard::OnPageChanged)
@@ -49,18 +23,18 @@ END_EVENT_TABLE()
 
 BEGIN_EVENT_TABLE(TQSLWizCertPage, TQSLWizPage)
 	EVT_COMBOBOX(-1, TQSLWizCertPage::OnComboBoxEvent)
-	EVT_SET_FOCUS(TQSLWizCertPage::OnSetFocus)
+	EVT_SIZE(TQSLWizCertPage::OnSize)
 END_EVENT_TABLE()
 
 void
-TQSLWizard::OnPageChanged(wxWizardEvent&) {
+TQSLWizard::OnPageChanged(wxWizardEvent& ev) {
 	((TQSLWizPage *)GetCurrentPage())->SetFocus();
+	ExtWizard::OnPageChanged(ev);
 }
 
-TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow* parent, int id,
-	const wxString& title, const wxBitmap& bitmap, const wxPoint& pos)
-		: wxWizard(parent, id, title, bitmap, pos), page_changing(false),
-		loc(locp), _curpage(-1) {
+TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help,
+	const wxString& title) :
+	ExtWizard(parent, help, title), loc(locp), _curpage(-1) {
 
 	char buf[256];
 	if (!tqsl_getStationLocationCaptureName(locp, buf, sizeof buf)) {
@@ -92,11 +66,11 @@ TQSLWizard::GetPage(bool final) {
 	return _pages[page_num];
 }
 
-void
-TQSLWizCertPage::OnSetFocus(wxFocusEvent& event) {
-	if (controls.size() > 0)
-		((wxControl *)controls[0])->SetFocus();
+void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
+	TQSLWizPage::OnSize(ev);
+	UpdateFields();
 }
+
 
 TQSLWizPage *
 TQSLWizCertPage::GetPrev() const {
@@ -129,6 +103,8 @@ TQSLWizCertPage::GetNext() const {
 
 void
 TQSLWizCertPage::UpdateFields(int noupdate_field) {
+	wxSize text_size = getTextSize(this);
+
 	if (noupdate_field >= 0)
 		tqsl_updateStationLocationCapture(loc);
 	for (int i = noupdate_field+1; i < (int)controls.size(); i++) {
@@ -165,7 +141,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			if (text_width > 0) {
 				int w, h;
 				((wxComboBox *)controls[i])->GetSize(&w, &h);
-				((wxComboBox *)controls[i])->SetSize(text_width + TEXT_WIDTH*4, h);
+				((wxComboBox *)controls[i])->SetSize(text_width + text_size.GetWidth()*4, h);
 			}
 			if (noupdate_field < 0)
 				new_sel = selected;
@@ -179,7 +155,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			tqsl_getLocationFieldDataLength(loc, i, &len);
 			int w, h;
 			((wxTextCtrl *)controls[i])->GetSize(&w, &h);
-			((wxTextCtrl *)controls[i])->SetSize((len+1)*TEXT_WIDTH, h);
+			((wxTextCtrl *)controls[i])->SetSize((len+1)*text_size.GetWidth(), h);
 			if (noupdate_field < 0) {
 				char buf[256];
 				tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
@@ -205,12 +181,12 @@ TQSLWizCertPage::OnComboBoxEvent(wxCommandEvent& event) {
 	}
 }
 
-TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp) : TQSLWizPage(parent, locp) {
+TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
+	: TQSLWizPage(parent, locp) {
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+	int control_width = getTextSize(this).GetWidth() * 20;
+	
 	tqsl_getStationLocationCapturePage(loc, &loc_page);
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	set_font(this, font);
-	int y = TEXT_HEIGHT;
 	wxScreenDC sdc;
 	int label_w = 0;
 	int numf;
@@ -226,14 +202,13 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp) : TQSLW
 	wxCoord max_label_w, max_label_h;
 	// Measure width of longest expected label string
 	sdc.GetTextExtent("Longest label expected", &max_label_w, &max_label_h);
-	int control_x = label_w + TEXT_WIDTH;
 	for (int i = 0; i < numf; i++) {
+		wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 		char label[256];
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
-		wxStaticText *st = new wxStaticText(this, -1, label, wxPoint(0, y),
-			wxSize(label_w, TEXT_HEIGHT), wxALIGN_RIGHT|wxST_NO_AUTORESIZE);
-		set_font(st, font);
-		void *control_p = 0;
+		hsizer->Add(new wxStaticText(this, -1, label, wxDefaultPosition,
+			wxSize(label_w, -1), wxALIGN_RIGHT|wxST_NO_AUTORESIZE), 0, wxTOP, 5);
+		wxWindow *control_p = 0;
 		char gabbi_name[256];
 		tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
 		int in_type;
@@ -241,19 +216,20 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp) : TQSLW
 		switch(in_type) {
 			case TQSL_LOCATION_FIELD_DDLIST:
 			case TQSL_LOCATION_FIELD_LIST:
-				control_p = new wxComboBox(this, TQSL_ID_LOW+i, "", wxPoint(control_x, y), wxSize(CONTROL_WIDTH, TEXT_HEIGHT),
+				control_p = new wxComboBox(this, TQSL_ID_LOW+i, "", wxDefaultPosition, wxSize(control_width, -1),
 					0, 0, wxCB_DROPDOWN|wxCB_READONLY);
 				break;
 			case TQSL_LOCATION_FIELD_TEXT:
-				control_p = new wxTextCtrl(this, TQSL_ID_LOW+i, "", wxPoint(control_x, y), wxSize(CONTROL_WIDTH, TEXT_HEIGHT));
+				control_p = new wxTextCtrl(this, TQSL_ID_LOW+i, "", wxDefaultPosition, wxSize(control_width, -1));
 				break;
 		}
 		controls.push_back(control_p);
-		y += TEXT_HEIGHT+VSEP;
+		hsizer->Add(control_p, 0, wxLEFT|wxTOP, 5);
+		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
 	}
-	SetSize(max_label_w + TEXT_WIDTH + CONTROL_WIDTH, (TEXT_HEIGHT+VSEP)*10);
-	Show(FALSE);
+
 	UpdateFields();
+	AdjustPage(sizer, "stnloc1.htm");
 }
 
 TQSLWizCertPage::~TQSLWizCertPage() {
@@ -281,6 +257,7 @@ TQSLWizCertPage::TransferDataFromWindow() {
 BEGIN_EVENT_TABLE(TQSLWizFinalPage, TQSLWizPage)
 	EVT_LISTBOX(TQSL_ID_LOW, TQSLWizFinalPage::OnListbox)
 	EVT_LISTBOX_DCLICK(TQSL_ID_LOW, TQSLWizFinalPage::OnListbox)
+	EVT_TEXT(TQSL_ID_LOW+1, TQSLWizFinalPage::check_valid)
 END_EVENT_TABLE()
 
 void
@@ -294,32 +271,23 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 
 TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev) :
 	TQSLWizPage(parent, locp), prev(i_prev) {
-	wxFont font = GetFont();
-	font.SetPointSize(TEXT_POINTS);
-	set_font(this, font);
-	int y = TEXT_HEIGHT;
+	wxSize text_size = getTextSize(this);
+	int control_width = text_size.GetWidth()*30;
+	
+	int y = text_size.GetHeight();
 	sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *st = new wxStaticText(this, -1, "Station Data input complete");
-//	set_font(st, font);
 	sizer->Add(st, 0, wxALIGN_CENTER|wxTOP, 10);
 	st = new wxStaticText(this, -1, "Select or enter name of this station location");
-//	set_font(st, font);
 	sizer->Add(st, 0, wxALIGN_CENTER|wxBOTTOM, 10);
-//SetAutoLayout(TRUE);
-//	SetSizer(sizer);
-//	sizer->Fit(this);
-//	sizer->SetSizeHints(this);
-
-//	return;
 
 	// Title
-	set_font(st, font);
 	sizer->Add(st, 0, wxALIGN_CENTER|wxBOTTOM, 10);
 	// List of existing location names
-	namelist = new wxListBox(this, TQSL_ID_LOW, wxDefaultPosition, wxSize(CONTROL_WIDTH, TEXT_HEIGHT*10),
+	namelist = new wxListBox(this, TQSL_ID_LOW, wxDefaultPosition, wxSize(control_width, text_size.GetHeight()*10),
 		0, 0, wxLB_SINGLE|wxLB_HSCROLL|wxLB_NEEDED_SB);
-	sizer->Add(namelist, 1, wxEXPAND);
+	sizer->Add(namelist, 0, wxEXPAND);
 	int n;
 	tqsl_getNumStationLocations(locp, &n);
 	for (int i = 0; i < n; i++) {
@@ -336,28 +304,28 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 		namelist->SetSelection(0, FALSE);
 	// New name
 	st = new wxStaticText(this, -1, "Station Location Name");
-	set_font(st, font);
 	sizer->Add(st, 0, wxALIGN_LEFT|wxTOP, 10);
-	newname = new wxTextCtrl(this, TQSL_ID_LOW+1, "", wxPoint(0, y), wxSize(CONTROL_WIDTH, TEXT_HEIGHT));
+	newname = new wxTextCtrl(this, TQSL_ID_LOW+1, "", wxPoint(0, y), wxSize(control_width, -1));
 	sizer->Add(newname, 0, wxEXPAND);
 	newname->SetValue(parent->GetLocationName());
-	SetAutoLayout(TRUE);
-	SetSizer(sizer);
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
+	AdjustPage(sizer, "stnloc2.htm");
 }
 
 bool
 TQSLWizFinalPage::TransferDataFromWindow() {
-//	wxMessageBox(wxString::Format("this %d", this->GetClientSize().GetWidth()));
-
-//return true;
-
-	if (newname->GetValue().Trim() == "") {
-		wxMessageBox("You must enter a name for this station data", "TQSL");
-		return false;
-	}
+	if (validate())	// Must be a "back"
+		return true;
 	wxString s = newname->GetValue();
 	((TQSLWizard *)GetParent())->SetLocationName(s);
 	return true;
+}
+
+const char *
+TQSLWizFinalPage::validate() {
+	wxString val = newname->GetValue();
+	const char *errmsg = 0;
+	val.Trim();
+	if (val == "")
+		errmsg = "Station name must be provided";
+	return errmsg;
 }

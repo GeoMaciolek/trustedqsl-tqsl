@@ -13,18 +13,28 @@
 #endif
 
 #include <wx/filefn.h>
+#include <windows.h>
 
 class DocPaths : public wxPathList {
 public:
 	DocPaths(wxString subdir) : wxPathList() {
-#if defined(__WIN32__)
 		Add(wxGetHomeDir() + "/help/" + subdir);
+#if defined(__WIN32__)
+		HKEY hkey;
+		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\TrustedQSL",
+			0, KEY_READ, &hkey) == ERROR_SUCCESS) {
+
+			DWORD dtype;
+			char path[256];
+			DWORD bsize = sizeof path;
+			if (RegQueryValueEx(hkey, "HelpDir", 0, &dtype, (LPBYTE)path, &bsize)
+				== ERROR_SUCCESS) {
+				Add(wxString(path) + "/" + subdir);
+			}
+		}
 		Add("help/" + subdir);
 #else
-		Add(wxGetHomeDir() + "/" + subdir);
-		Add("/usr/share/doc/" + subdir);
-		Add("/usr/doc/" + subdir);
-		Add("/usr/lib/" + subdir);
+		Add("/usr/share/TrustedQSL/help/" + subdir);
 		Add(subdir);
 #endif
 	}

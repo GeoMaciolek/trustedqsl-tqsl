@@ -15,8 +15,6 @@
 #include "sysconfig.h"
 #endif
 
-using namespace std;
-
 #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
@@ -26,6 +24,8 @@ using namespace std;
 #ifndef WX_PRECOMP
 	#include "wx/wx.h"
 #endif
+
+#include "wx/wxhtml.h"
 
 #include <vector>
 
@@ -40,11 +40,12 @@ class TQSLStationListBox;
 
 class TQSLGetStationNameDialog : public wxDialog {
 public:
-	TQSLGetStationNameDialog(wxWindow *parent, int id, const wxPoint& pos = wxDefaultPosition,
+	TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpController *help = 0, const wxPoint& pos = wxDefaultPosition,
 		bool i_issave = false, const wxString& title = "", bool i_editonly = false);
 	void OnOk(wxCommandEvent& event);
 	void OnCancel(wxCommandEvent& event);
 	void OnDelete(wxCommandEvent& event);
+	void OnHelp(wxCommandEvent& event);
 	void OnNew(wxCommandEvent& event);
 	void OnModify(wxCommandEvent& event);
 	void OnNamelist(wxCommandEvent& event);
@@ -62,7 +63,7 @@ protected:
 	void OnSetFocus(wxFocusEvent& event);
 	TQSLStationListBox *namelist;
 	wxString _station_data_name;
-	vector<item> item_data;
+	std::vector<item> item_data;
 	wxString _selected;
 	bool issave, editonly;
 	wxTextCtrl *name_entry;
@@ -72,6 +73,7 @@ protected:
 	bool updating;
 	wxArrayInt sels;
 	bool firstFocused;
+	wxHtmlHelpController *_help;
 
 	DECLARE_EVENT_TABLE()
 };

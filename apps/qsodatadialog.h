@@ -15,8 +15,6 @@
 #ifndef QSODATADIALOG_H
 #define QSODATADIALOG_H
 
-using namespace std;
-
 #include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
@@ -30,6 +28,8 @@ using namespace std;
 #include "tqsllib.h"
 #include <wx/bmpbuttn.h>
 #include <wx/textctrl.h>
+#include <wx/wxhtml.h>
+
 #include <vector>
 
 /** Display and edit QSO data
@@ -47,12 +47,12 @@ public:
 	tQSL_Time _time;
 };
 
-typedef vector<QSORecord> QSORecordList;
+typedef std::vector<QSORecord> QSORecordList;
 
 class QSODataDialog : public wxDialog  {
 public: 
-	QSODataDialog(wxWindow *parent, QSORecordList *reclist = 0, wxWindowID id = -1,
-		const wxString& title = "QSO Data");
+	QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist = 0,
+		wxWindowID id = -1, const wxString& title = "QSO Data");
 	~QSODataDialog();
 	wxString GetMode() const;
 	bool SetMode(const wxString&);
@@ -63,6 +63,7 @@ public:
 private:
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);
+	void OnHelp(wxCommandEvent&);
 	void OnRecUp(wxCommandEvent&);
 	void OnRecDown(wxCommandEvent&);
 	void OnRecBottom(wxCommandEvent&);
@@ -73,6 +74,7 @@ private:
 	void UpdateControls();
 
 	wxTextCtrl *_recno_ctrl;
+	wxTextCtrl *_call_ctrl;
 	wxStaticText *_recno_label_ctrl;
 	wxBitmapButton *_recdown_ctrl, *_recup_ctrl, *_recbottom_ctrl, *_rectop_ctrl;
 	QSORecordList *_reclist;
@@ -80,6 +82,8 @@ private:
 	int _recno;
 	DECLARE_EVENT_TABLE()
 	bool _isend;
+	wxHtmlHelpController *_help;
+
 };
 
 #endif

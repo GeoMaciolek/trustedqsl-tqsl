@@ -61,6 +61,7 @@ using namespace std;
 #define QD_RECNEW TQSL_ID_LOW+13
 #define QD_RECDELETE TQSL_ID_LOW+14
 #define QD_RECNOLABEL TQSL_ID_LOW+15
+#define QD_HELP TQSL_ID_LOW+16
 
 static void set_font(wxWindow *w, wxFont& font) {
 #ifndef __WIN32__
@@ -130,6 +131,7 @@ init_valid_lists() {
 BEGIN_EVENT_TABLE(QSODataDialog, wxDialog)
 	EVT_BUTTON(QD_OK, QSODataDialog::OnOk)
 	EVT_BUTTON(QD_CANCEL, QSODataDialog::OnCancel)
+	EVT_BUTTON(QD_HELP, QSODataDialog::OnHelp)
 	EVT_BUTTON(QD_RECDOWN, QSODataDialog::OnRecDown)
 	EVT_BUTTON(QD_RECUP, QSODataDialog::OnRecUp)
 	EVT_BUTTON(QD_RECBOTTOM, QSODataDialog::OnRecBottom)
@@ -138,8 +140,8 @@ BEGIN_EVENT_TABLE(QSODataDialog, wxDialog)
 	EVT_BUTTON(QD_RECDELETE, QSODataDialog::OnRecDelete)
 END_EVENT_TABLE()
 
-QSODataDialog::QSODataDialog(wxWindow *parent, QSORecordList *reclist, wxWindowID id, const wxString& title)
-	: wxDialog(parent, id, title), _reclist(reclist), _isend(false) {
+QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist, wxWindowID id, const wxString& title)
+	: wxDialog(parent, id, title), _reclist(reclist), _isend(false), _help(help) {
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxFont font = GetFont();
 	font.SetPointSize(TEXT_POINTS);
@@ -153,8 +155,9 @@ QSODataDialog::QSODataDialog(wxWindow *parent, QSORecordList *reclist, wxWindowI
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(new wxStaticText(this, -1, "Call Sign:", wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxTextCtrl (this, QD_CALL, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
-		0, wxTextValidator(wxFILTER_NONE, &rec._call)), 0, wxALL, QD_MARGIN);
+	_call_ctrl = new wxTextCtrl (this, QD_CALL, "", wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
+		0, wxTextValidator(wxFILTER_NONE, &rec._call));
+	sizer->Add(_call_ctrl, 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// Date
 	sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -228,6 +231,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, QSORecordList *reclist, wxWindowI
 
 	topsizer->Add(new wxStaticLine(this, -1), 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
 	sizer = new wxBoxSizer(wxHORIZONTAL);
+	sizer->Add(new wxButton(this, QD_HELP, "Help"), 0, wxALL, 10);
 	sizer->Add(new wxButton(this, QD_CANCEL, "Cancel"), 0, wxALL, 10);
 	sizer->Add(new wxButton(this, QD_OK, "Ok"), 0, wxALL, 10);
 	topsizer->Add(sizer, 0, wxALIGN_CENTER);
@@ -296,6 +300,11 @@ QSODataDialog::OnCancel(wxCommandEvent&) {
 	EndModal(wxID_CANCEL);
 }
 
+void
+QSODataDialog::OnHelp(wxCommandEvent&) {
+	if (_help)
+		_help->Display("qsodata.htm");
+}
 
 void
 QSODataDialog::SetRecno(int new_recno) {
@@ -312,6 +321,7 @@ QSODataDialog::SetRecno(int new_recno) {
    		rec = (*_reclist)[_recno-1];
    		TransferDataToWindow();
    		UpdateControls();
+		_call_ctrl->SetFocus();
    	}
 }
 

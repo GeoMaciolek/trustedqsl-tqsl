@@ -1,0 +1,32 @@
+<HTML><HEAD><TITLE>TQSL Preferences - ADIF Modes</TITLE></HEAD>
+<BODY>
+<H3>Preferences - ADIF Modes</H3>
+<P>
+The ADIF MODE field is defined by the ADIF specification to have only a particular
+set of mode values. These values are not exactly the same as the mode values
+supported by TrustedQSL, but TQSL knows about that and will map defined ADIF modes to
+the appropriate TrustedQSL modes automatically.
+<P>
+However, many logging programs do not restrict the contents of the MODE field to the
+values listed in the ADIF specification. To handle that problem, the <b>ADIF Modes</b>
+tab of the <B>Preferences</B> dialog lets you map a MODE field value to one of the valid
+TrustedQSL modes.
+<P>
+A list of mappings is displayed, showing the present mappings. For example:
+<P>
+<img src="pref-adi.bmp" width=363 height=370 border=0>
+<P>
+In this example, when <I>BPSK</I> appears in the MODE field of an ADIF record during
+signing, <i>PSK31</i> will be output in the TrustedQSL file. Similarly, a mode of
+<i>MCW</i> will be output as <I>CW</I>.
+<P>
+To delete a mapping, click on the list entry to select it, then choose <B>Delete</b>.
+<P>
+To add a mapping, choose <B>Add</B> to get the <b>Add ADIF Mode Dialog</b>:
+<P>
+<img src="adifdial.bmp" width=266 height=282 border=0>
+<P>
+Type the ADIF mode into the <B>ADIF Mode</B> field. Then select the desired TrustedQSL
+mode from the list and choose <B>OK</B>.
+<P>
+</BODY></HEAD>
