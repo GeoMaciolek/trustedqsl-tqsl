@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="1" minorversion="1">
+<tqslconfig majorversion="1" minorversion="2">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -223,7 +223,7 @@
     <entity arrlId="193">OKINAWA</entity>
     <entity arrlId="194">OKINO TORI-SHIMA</entity>
     <entity arrlId="195">ANNOBON</entity>
-    <entity arrlId="196">PALESTINE</entity>
+    <entity arrlId="196">PALESTINE (DELETED)</entity>
     <entity arrlId="197">PALMYRA,  JARVIS ISLANDS</entity>
     <entity arrlId="198">PAPUA TERRITORY</entity>
     <entity arrlId="199">PETER 1 ISLAND</entity>
