@@ -383,6 +383,11 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	fputs("\ntQSL certificate request\n\n", out);
 	tqsl_write_adif_field(out, "eoh", 0, NULL, 0);
 	type = (req->signer != NULL) ? (req->renew ? "TQSL_CRQ_RENEWAL" : "TQSL_CRQ_ADDITIONAL") : "TQSL_CRQ_NEW";
+	int libmaj, libmin, configmaj, configmin;
+	tqsl_getVersion(&libmaj, &libmin);
+	tqsl_getConfigVersion(&configmaj, &configmin);
+	sprintf(buf, "Lib: V%d.%d, Config: %d, %d", libmaj, libmin, configmaj, configmin);
+	tqsl_write_adif_field(out, "TQSL_IDENT", 0, (unsigned char *)buf, -1);
 	tqsl_write_adif_field(out, type, 0, NULL, 0);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (unsigned char *)req->providerUnit, -1);
