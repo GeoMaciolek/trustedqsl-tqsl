@@ -678,16 +678,16 @@ tqslcert-resources.o: tqslcert.rc tqsl.ico tqsl-key1.ico
 	windres --include-dir=@WXDIR@/include -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
 
 quick.txt:
-	unix2dos < $(srcdir)/quick > quick.txt
+	unix2dos -n $(srcdir)/quick quick.txt
 
 ChangeLog.txt:
-	unix2dos < $(srcdir)/ChangeLog > ChangeLog.txt
+	unix2dos -n $(srcdir)/ChangeLog ChangeLog.txt
 
 LICENSE.txt:
-	unix2dos < $(srcdir)/LICENSE > LICENSE.txt
+	unix2dos -n $(srcdir)/LICENSE LICENSE.txt
 
 setup-is.iss: setup.iss
-	unix2dos < setup.iss > setup-is.iss
+	unix2dos -n setup.iss setup-is.iss
 
 installer: all tqsl-@WINVER@.exe
 
