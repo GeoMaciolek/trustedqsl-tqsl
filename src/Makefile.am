@@ -57,12 +57,16 @@ EXTRA_DIST = config.xml LICENSE tqsllib.spec.in tqsllib.spec \
 
 MOSTLYCLEANFILES = tqsllib$(DLLVER).dll tqsllib.def tqsllib.exports
 
-libtqsllibd.a: libtqsllib.la
+tqsllib-resources.o: tqsllib.rc
+	windres -i tqsllib.rc -o tqsllib-resources.o $(RESFLAGS)
+
+libtqsllibd.a: libtqsllib.la tqsllib-resources.o
 	dllwrap.exe --add-stdcall-alias --output-def tqsllib.def \
 	    --output-exp tqsllib.exports \
 		--dllname tqsllib$(DLLVER).dll \
-		--output-lib libtqsllibd.a .libs/libtqsllib.a -L$(OPENSSL)/lib \
-		-L$(EXPAT)/lib -lexpat -L$(ZLIB)/lib \
+		--output-lib libtqsllibd.a \
+		tqsllib-resources.o .libs/libtqsllib.a \
+		-L$(OPENSSL)/lib -L$(EXPAT)/lib -lexpat -L$(ZLIB)/lib \
 		-lz -lcrypto -lgdi32 -lstdc++
 	strip tqsllib$(DLLVER).dll
 

@@ -196,4 +196,4 @@ else
 fi
 AC_SUBST(DLLVER)
 
-AC_OUTPUT(Makefile tqsllib.spec)
+AC_OUTPUT(Makefile tqsllib.rc tqsllib.spec)

@@ -202,7 +202,7 @@ subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = sysconfig.h
-CONFIG_CLEAN_FILES = tqsllib.spec
+CONFIG_CLEAN_FILES = tqsllib.rc tqsllib.spec
 LIBRARIES = $(lib_LIBRARIES)
 
 libtqsllibd_a_AR = $(AR) cru
@@ -271,7 +271,7 @@ DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.in \
 	$(srcdir)/configure ChangeLog INSTALL Makefile.am aclocal.m4 \
 	config.guess config.sub configure configure.in depcomp \
 	install-sh ltmain.sh missing mkinstalldirs sysconfig.h.in \
-	tqsllib.spec.in
+	tqsllib.rc.in tqsllib.spec.in
 SOURCES = $(libtqsllibd_a_SOURCES) $(libtqsllib_la_SOURCES) $(converter_SOURCES) $(dumptqsldata_SOURCES) $(gen_crq_SOURCES) $(load_cert_SOURCES) $(station_loc_SOURCES)
 
 all: sysconfig.h
@@ -312,6 +312,8 @@ $(srcdir)/sysconfig.h.in:  $(top_srcdir)/configure.in $(ACLOCAL_M4)
 
 distclean-hdr:
 	-rm -f sysconfig.h stamp-h1
+tqsllib.rc: $(top_builddir)/config.status tqsllib.rc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $@
 tqsllib.spec: $(top_builddir)/config.status tqsllib.spec.in
 	cd $(top_builddir) && $(SHELL) ./config.status $@
 libLIBRARIES_INSTALL = $(INSTALL_DATA)
@@ -779,12 +781,16 @@ uninstall-am: uninstall-binPROGRAMS uninstall-dataDATA uninstall-docDATA \
 	uninstall-libLIBRARIES uninstall-libLTLIBRARIES
 
 
-libtqsllibd.a: libtqsllib.la
+tqsllib-resources.o: tqsllib.rc
+	windres -i tqsllib.rc -o tqsllib-resources.o $(RESFLAGS)
+
+libtqsllibd.a: libtqsllib.la tqsllib-resources.o
 	dllwrap.exe --add-stdcall-alias --output-def tqsllib.def \
 	    --output-exp tqsllib.exports \
 		--dllname tqsllib$(DLLVER).dll \
-		--output-lib libtqsllibd.a .libs/libtqsllib.a -L$(OPENSSL)/lib \
-		-L$(EXPAT)/lib -lexpat -L$(ZLIB)/lib \
+		--output-lib libtqsllibd.a \
+		tqsllib-resources.o .libs/libtqsllib.a \
+		-L$(OPENSSL)/lib -L$(EXPAT)/lib -lexpat -L$(ZLIB)/lib \
 		-lz -lcrypto -lgdi32 -lstdc++
 	strip tqsllib$(DLLVER).dll
 
