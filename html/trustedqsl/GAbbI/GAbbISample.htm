@@ -1,0 +1,378 @@
+<!DOCTYPE html PUBLIC "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+<meta name=Generator content="Microsoft Office HTML Filter 2.0">
+            
+  <meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+            
+  <meta name="Generator" content="Microsoft Word 97">
+  <title>Sample GAbbI File</title>
+                      
+  <meta name="Template" content="C:\PROGRAM FILES\MICROSOFT OFFICE\OFFICE\html.dot">
+</head>
+
+  <body>
+            
+<table cellspacing="0" border="0" width="100%" cellpadding="0">
+  <tbody>
+    <tr>
+      <td width="46%" valign="Middle" colspan="2" align="Left">         
+           
+      <p><code>/* 
+</code></p>
+      </td>
+    <td width="54%" valign="Middle">                     
+      <p> </p>
+         </td>
+    </tr>
+    <tr>
+         <td valign="Middle" colspan="3" align="Left">                  
+  
+      <p><code>Trusted Global Amateur Interchange Format Data for LOTW 
+</code></p>
+      </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                     
+      <p><code>*/
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                     
+      <p> </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                     
+      <p><code>&lt;<a href="gabbi.htm#HeaderCategory">category</a>:4&gt;tQSL
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                     
+      <p><tt> </tt></p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">              
+      <p><code>&lt;<a href="gabbi.htm#HeaderRec_Type">Rec_Type</a>:6&gt;Header
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>GAbbI header record, all fields are optional </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderVersion">GAbbI_Version</a>:4&gt;1.00
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>GAbbI Version </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderNStation">GAbbI_#_STATION_Recs</a>:1&gt;1
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Optional, but shall be correct if present </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderNContacts">GAbbI_#_CONTACT_Recs</a>:1&gt;1
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Optional, but shall be correct if present </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderSender">GAbbI_Sender</a>:4&gt;K1MK
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p> </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderCreated_By">GAbbI_Created_By</a>:12&gt;CT2LoTW 1.00 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Name and version of log program </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderCreated_On">GAbbI_Created_On</a>:20&gt;2001-11-30T00:10:00Z 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>ISO 8601 Date &amp; Time </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#HeaderSign">GAbbI_Sig_Algorithm</a>:3&gt;RSA
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>RSA (default), DSA or ECDSA </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#EOR">eor</a>&gt;
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>End of GAbbI header record </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code> 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                    
+      <p> </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationRec_Type">Rec_Type</a>:8&gt;tSTATION
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                    
+      <p>The <tt>tSTATION</tt>   record</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationCall">Call</a>:4&gt;K1MK
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>In the  <tt>tSTATION</tt> record, the <tt>Call</tt> field is "My" call </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationDXCC">DXCC</a>:3&gt;291
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>DXCC Entity</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationState">State</a>:2&gt;CT
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>U.S. State </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationCnty">Cnty</a>:13&gt;CT,LITCHFIELD
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>U.S. County </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationCQZ">CQZ</a>:2&gt;05 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>CQ Zone </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationITUZ">ITUZ</a>:2&gt;08 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>ITU Zone </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationGridSquare">GridSquare</a>:6&gt;FN31ko 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Maidenhead Grid Square </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationStation_GUID">Station_GUID</a>:1&gt;1
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Format of UID/GUID is still TBD </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationCert_Guid">Cert_GUID</a>:10&gt;0123456789
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Format of Certificate # is still TBD </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#EOR">eor</a>&gt;
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>End of <tt>tSTATION</tt> record</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#EOH">eoh</a>&gt;
+</code></p>
+      </td>
+   <td width="56%" valign="Middle" colspan="2">                  
+      <p>End of header area </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code> 
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                    
+      <p> </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactRec_Type">Rec_Type</a>:8&gt;tCONTACT
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>The <tt>tCONTACT</tt> record</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactCall">Call</a>:5&gt;CN8WW
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Here the <tt>CALL</tt> field is "His" call </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactBand">Band</a>:4&gt;160M
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Band is required</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactFreq">Freq</a>:6&gt;1.8271
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Frequency in MHz is optional </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactDate">QSO_Date</a>:10&gt;2001-11-27
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>YYYY-MM-DD </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactTime">QSO_Time</a>:9&gt;00:00:15Z
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>HH:MM:[SS]Z (UTC) </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationMode">Mode</a>:2&gt;CW
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>2 x Mode </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactRST">RST_Sent</a>:3&gt;599
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>RST </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#ContactStation_GUID">Station_GUID</a>:1&gt;1
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>Format of UID/GUID still TBD </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#StationSig">LoTW_Sign</a>:172&gt;ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+abcdefghijklmnopqratuvwxyz0123456789./ABC<br>
+DEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqr<br>
+stuvwxyz0123456789./ABCDEFGHIJKLMNOPQRSTU<br>
+VWXYZabcdefghijklmnop==
+</code></p>
+      </td>
+    <td width="56%" valign="Top" colspan="2">                   
+      <p>Signature w/1024-bit RSA key</p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#EOR">eor</a>&gt;
+</code></p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>End of <tt>tCONTACT</tt> record </p>
+         </td>
+    </tr>
+    <tr>
+      <td width="44%" valign="Middle" align="Left">                    
+      <p><code>&lt;<a href="gabbi.htm#EOF">eof</a>&gt;
+</code></p>
+      <p>       </p>
+      </td>
+    <td width="56%" valign="Middle" colspan="2">                  
+      <p>End of GAbbI logical file object </p>
+         </td>
+    </tr>
+           
+  </tbody>  
+</table>
+      
+</body>
+</html>
