@@ -73,7 +73,6 @@ int tqslReadCert(const char *fname,TqslCert *cert)
 int tqslWriteCert(const char *fname,TqslCert *cert)
 {
 
-  char		buf[MaxCertSize];
   int		rc;
   int		fd;
 
@@ -81,7 +80,7 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
   if (fd < 0)
     return(0);
 
-  rc = write(fd,buf,sizeof(TqslCert));
+  rc = write(fd,cert,sizeof(TqslCert));
   close(fd);  // we are done with it.
   return(rc);
 }
@@ -314,6 +313,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   memcpy(cert->signature,sigStr,sigLen*2);
   sprintf(tmpStr,"%03d",sigLen*2);
   memcpy(cert->sigSize,tmpStr,3);
+  DSA_free(dsa);
   return(0);
 
 }

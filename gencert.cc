@@ -48,7 +48,7 @@ char *readPrivKey(const char *fname)
   rc = -1;
   if (fkey)
     {
-      retStr = fgets(p,4999,fkey);
+      retStr = fgets(p,499,fkey);
       if (retStr != NULL)
         {
           //strip out eol
