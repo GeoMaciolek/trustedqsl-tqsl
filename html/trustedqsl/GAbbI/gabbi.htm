@@ -74,9 +74,9 @@ Trusted GAbbI</h1>
 <h1 align=center style='text-align:center'>Format</h1>
 
 <p align=center style='text-align:center'><b><span style='font-size:13.5pt'>May
-9, 2002</span></b></p>
+14, 2002</span></b></p>
 
-<p align=center style='text-align:center'>Version 0.11 </p>
+<p align=center style='text-align:center'>Version 0.20 </p>
 
 <p align=center style='text-align:center'>By Darryl Wagoner, WA1GON</p>
 
@@ -232,13 +232,13 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>6</span></p>
+  style='font-family:"Courier New"'>6</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>Base 64 encoded number (binary string). Line length of base64 encoded objects
-  shall be limited to 72 characters and lines shall be broken by use of
+  <p>Base 64 encoded number (binary string). Line length of base64 encoded
+  objects shall be limited to 72 characters and lines shall be broken by use of
   end-of-line character(s). Legal characters that may appear in the value field
   are [<tt><span style='font-size:10.0pt;font-family:"Courier New"'>A-Za-z0-9./=</span></tt>].</p>
   </td>
@@ -252,7 +252,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>B</span></p>
+  style='font-family:"Courier New"'>B</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -272,13 +272,13 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>C</span></p>
+  style='font-family:"Courier New"'>C</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>Character string. Valid characters that may appear in the value field are the
-  set of displayable characters (printable characters plus <tt><span
+  <p>Character string. Valid characters that may appear in the value field are
+  the set of displayable characters (printable characters plus <tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>&lt;SP&gt;</span></tt> and
   <tt><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;HT&gt;</span></tt>
   ). [TBR]</p>
@@ -293,7 +293,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>D</span></p>
+  style='font-family:"Courier New"'>D</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -314,16 +314,16 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>E</span></p>
+  style='font-family:"Courier New"'>E</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>A character string from an enumerated list of character strings. The
-  comparison of a <i>Field_Value</i> to an enumerated value is case insensitive.
-  Valid characters that may appear in the value field are the set of
-  displayable characters (printable characters plus <tt><span style='font-size:
-  10.0pt;font-family:"Courier New"'>&lt;SP&gt; </span></tt>and <tt><span
+  <p>A character string from an enumerated list of character strings. The comparison
+  of a <i>Field_Value</i> to an enumerated value is case insensitive. Valid
+  characters that may appear in the value field are the set of displayable
+  characters (printable characters plus <tt><span style='font-size:10.0pt;
+  font-family:"Courier New"'>&lt;SP&gt; </span></tt>and <tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>&lt;HT&gt;</span></tt> ).
   [TBR]</p>
   </td>
@@ -337,7 +337,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>F</span></p>
+  style='font-family:"Courier New"'>F</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -356,7 +356,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>H</span></p>
+  style='font-family:"Courier New"'>H</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -375,7 +375,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>I</span></p>
+  style='font-family:"Courier New"'>I</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -388,22 +388,21 @@ names, separator tags are to be treated as case insensitive.</p>
  <tr>
   <td width="16%" style='width:16.28%;border:solid windowtext 1.5pt;border-top:
   none;padding:.1in .1in .1in .1in'>
-  <p>Multi-Line</p>
+  <p>Multi-Line<a name="TypeMulti_Line"></a></p>
   </td>
   <td width="14%" style='width:14.6%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>M</span></p>
+  style='font-family:"Courier New"'>M</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>Character string. Legal characters that may appear in the value field are
-  displayable characters. An implementation independent end-of-line delimiter
-  (the two character sequence <tt><span style='font-size:10.0pt;font-family:
-  "Courier New"'>&lt;CR&gt;&lt;NL&gt;</span></tt> ) shall be transmitted to
-  signal logical line breaks. [TBR]</p>
+  <p>Character string. Legal characters that may appear in the value field are displayable
+  characters. An implementation independent end-of-line delimiter (the two
+  character sequence <tt><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;CR&gt;&lt;NL&gt;</span></tt>
+  ) shall be transmitted to signal logical line breaks. [TBR]</p>
   </td>
  </tr>
  <tr>
@@ -415,7 +414,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>N</span></p>
+  style='font-family:"Courier New"'>N</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -426,8 +425,8 @@ names, separator tags are to be treated as case insensitive.</p>
   style='font-size:10.0pt;font-family:"Courier New"'>B</span></tt>, <tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>O</span></tt>, <tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>H</span></tt> or <tt><span
-  style='font-size:10.0pt;font-family:"Courier New"'>F</span></tt> are the preferred
-  alternatives.</p>
+  style='font-size:10.0pt;font-family:"Courier New"'>F</span></tt> are the
+  preferred alternatives.</p>
   </td>
  </tr>
  <tr>
@@ -439,7 +438,7 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>O</span></p>
+  style='font-family:"Courier New"'>O</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -458,16 +457,17 @@ names, separator tags are to be treated as case insensitive.</p>
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
   <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt;font-family:"Courier New"'>T</span></p>
+  style='font-family:"Courier New"'>T</span></p>
   </td>
   <td width="69%" style='width:69.12%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>Time in ISO 8601 format. Extended format i.e., <i>hh:mm:ss</i> Z is preferred,
-  but basic format, <i>hhmmss</i>Z, and basic format with reduced precision, <i>hhmm</i>Z,
-  are also permissible. Should the time zone designator ‘Z’ be omitted, UTC
-  shall be assumed. Legal characters that may appear in the value field are [<tt><span
-  style='font-size:10.0pt;font-family:"Courier New"'>0-9A-Z:</span></tt>].</p>
+  <p>Time in ISO 8601 format. Extended format i.e., <i>hh:mm:ss</i> Z is
+  preferred, but basic format, <i>hhmmss</i>Z, and basic format with reduced
+  precision, <i>hhmm</i>Z, are also permissible. Should the time zone
+  designator ‘Z’ be omitted, UTC shall be assumed. Legal characters that may
+  appear in the value field are [<tt><span style='font-size:10.0pt;font-family:
+  "Courier New"'>0-9A-Z:</span></tt>].</p>
   </td>
  </tr>
 </table>
@@ -543,14 +543,12 @@ font-family:"Courier New"'>tCERT</span></tt> record. </p>
   <td width="8%" style='width:8.38%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
-  href="#TypeInteger">I</a></span></p>
+  <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
   </td>
   <td width="12%" style='width:12.94%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'><span
-  style='font-size:10.0pt'>Y</span></p>
+  <p align=center style='margin:0in;margin-bottom:.0001pt;text-align:center'>Y</p>
   </td>
   <td width="14%" style='width:14.72%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -651,8 +649,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter"><span
-  style='font-size:10.0pt'>E</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">E</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -687,8 +685,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter"><span
-  style='font-size:10.0pt'>C</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">C</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -757,8 +755,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeFloat"><span
-  style='font-size:10.0pt'>F</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeFloat">F</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -796,8 +794,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter"><span
-  style='font-size:10.0pt'>E</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">E</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -832,8 +830,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeDate"><span
-  style='font-size:10.0pt'>D</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeDate">D</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -866,8 +864,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeTime"><span
-  style='font-size:10.0pt'>T</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeTime">T</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -902,8 +900,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter"><span
-  style='font-size:10.0pt'>E</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">E</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -937,8 +935,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter"><span
-  style='font-size:10.0pt'>C</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeCharacter">C</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -971,8 +969,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeBase64"><span
-  style='font-size:10.0pt'>6</span></a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeBase64">6</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -1006,7 +1004,8 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
+  <p align=center style='text-align:center'><span style='font-size:10.0pt'><a
+  href="#TypeInteger">I</a></span></p>
   </td>
   <td width="6%" style='width:6.52%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
@@ -1027,10 +1026,9 @@ field. Each GAbbI file shall contain at least one <tt><span style='font-size:
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>This is a two digit (locally) Unique
   Identifier (UID) of the </span><tt><span style='font-size:10.0pt;font-family:
-  "Courier New"'>tSTATION</span></tt><span style='font-size:10.0pt'> record
-  associated with this </span><tt><span style='font-size:10.0pt;font-family:
-  "Courier New"'>tCONTACT</span></tt><span style='font-size:10.0pt'> record.
-  Unique within a GAbbI logical file.</span></p>
+  "Courier New"'>tSTATION</span></tt><span style='font-size:10.0pt'> record associated
+  with this </span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>tCONTACT</span></tt><span
+  style='font-size:10.0pt'> record. Unique within a GAbbI logical file.</span></p>
   </td>
  </tr>
 </table>
@@ -1376,8 +1374,8 @@ file.. </p>
 <h3>tSTATION (Trusted Station) Record:</h3>
 
 <p style='text-align:justify'>The <tt><span style='font-size:10.0pt;font-family:
-"Courier New"'>tSTATION</span></tt> record contains information that is common to
-a set of logical QSL records; each logical QSL record provides the trusted
+"Courier New"'>tSTATION</span></tt> record contains information that is common
+to a set of logical QSL records; each logical QSL record provides the trusted
 (signed) set of information needed to confirm a QSO. Each GAbbI file shall
 contain at least one <tt><span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span></tt>
 record </p>
@@ -1396,27 +1394,27 @@ will supersede any default value for that field that may have been established
 by the appearance of the same field in the linked <tt><span style='font-size:
 10.0pt;font-family:"Courier New"'>tSTATION</span></tt> record.</p>
 
-<table border=0 cellspacing=0 cellpadding=0 width="99%" style='width:99.3%;
- margin-left:6.0pt;border-collapse:collapse;'>
+<table border=0 cellspacing=0 cellpadding=0 width="99%" style='width:99.22%;
+ margin-left:6.6pt;border-collapse:collapse;'>
  <thead>
   <tr>
-   <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;
+   <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;
    padding:.05in .05in .05in .05in'>
    <h4>Name</h4>
    </td>
-   <td width="3%" style='width:3.98%;border:solid windowtext 1.5pt;border-left:
+   <td width="4%" style='width:4.02%;border:solid windowtext 1.5pt;border-left:
    none;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Type</h4>
    </td>
-   <td width="6%" style='width:6.48%;border:solid windowtext 1.5pt;border-left:
+   <td width="6%" style='width:6.5%;border:solid windowtext 1.5pt;border-left:
    none;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Required</h4>
    </td>
-   <td width="7%" style='width:7.42%;border:solid windowtext 1.5pt;border-left:
+   <td width="7%" style='width:7.4%;border:solid windowtext 1.5pt;border-left:
    none;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Category</h4>
    </td>
-   <td width="6%" style='width:6.92%;border:solid windowtext 1.5pt;border-left:
+   <td width="6%" style='width:6.9%;border:solid windowtext 1.5pt;border-left:
    none;padding:.05in .05in .05in .05in'>
    <h4 align=center style='text-align:center'>Max Size (chars)</h4>
    </td>
@@ -1427,79 +1425,78 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </tr>
  </thead>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>ADM_SUB1</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>6</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p style='text-align:justify'><span style='font-size:10.0pt'>The top-level
-  administrative subdivision of a country. Examples of an </span><tt><span
+  administrative subdivision of a country as specified in <a
+  href="http://www.iso.org/iso/en/prods-services/iso3166ma/04background-on-iso-3166/iso3166-2.html">ISO
+  3166-2</a>.</span> <span style='font-size:10.0pt'>The </span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB1</span></tt><span
-  style='font-size:10.0pt'> are a State (USA), Province (Canada; Spain), an
-  Oblast (Russia), a Canton (Switzerland), a County (Great Britain; Ireland), a
-  Prefecture (Japan), <i>etc</i>. The enumeration of such administrative
-  subdivisions shall be as given in ISO-3166-2.</span> </p>
+  style='font-size:10.0pt'> subdivision might be a State (USA), a Province
+  (Canada; Spain), an Oblast (Russia), a Canton (Switzerland), a County (Great Britain;
+  Ireland), a Prefecture (Japan), <i>etc</i>. The enumeration of these
+  subdivisions shall be as given in <a
+  href="http://geotags.com/iso3166/countries.html">ISO 3166-2</a>.</span> </p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>ADM_SUB2</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>64</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>The administrative subdivision below the
-  division in </span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB1</span></tt><span
-  style='font-size:10.0pt'>. Examples of a </span><tt><span style='font-size:
-  10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt><span style='font-size:
-  10.0pt'> are County/Parish (<a href="#StationUS_County">USA</a>), Gun (<a
-  href="#StationJA_Gun">Japan</a>), <i>etc</i>. The value of </span><tt><span
-  style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt><span
+  <p><span style='font-size:10.0pt'>The administrative subdivision that is
+  subordinate to &nbsp;the subdivision in </span><tt><span style='font-size:
+  10.0pt;font-family:"Courier New"'>ADM_SUB1</span></tt><span style='font-size:
+  10.0pt'>. Examples of &nbsp;</span><tt><span style='font-size:10.0pt;
+  font-family:"Courier New"'>ADM_SUB2</span></tt><span style='font-size:10.0pt'>
+  are a County/Parish (<a href="#StationUS_County">USA</a>), a Gun (<a
+  href="#StationJA_Gun">Japan</a>), a City (<a href="#StationJA_City">Japan</a>),
+  a Province (<a href="#StationCL_Province">Chile</a>), <i>etc</i>. The value
+  of </span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt><span
   style='font-size:10.0pt'> is treated as case insensitive. If a record
   contains the </span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt><span
   style='font-size:10.0pt'> field, then the record shall also contain the </span><tt><span
@@ -1508,72 +1505,68 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>ADM_SUB3</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>64</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>The administrative subdivision below the
-  division in </span><tt><span style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt><span
-  style='font-size:10.0pt'>. Examples include City (<a href="#StationJA_City">Japan</a>).
-  Town ,Village, <i>etc</i>. The value of </span><tt><span style='font-size:
-  10.0pt;font-family:"Courier New"'>ADM_SUB3</span></tt><span style='font-size:
-  10.0pt'> is treated as case insensitive. If a record contains the </span><tt><span
+  <p><span style='font-size:10.0pt'>The administrative subdivision that is
+  subordinate to the subdivision in </span><tt><span style='font-size:10.0pt;
+  font-family:"Courier New"'>ADM_SUB2</span></tt><span style='font-size:10.0pt'>.
+  Examples include Municipality (<a href="#StationCL_City">Chile</a>), City, Town
+  ,Village, <i>etc</i>. The value of </span><tt><span style='font-size:10.0pt;
+  font-family:"Courier New"'>ADM_SUB3</span></tt><span style='font-size:10.0pt'>
+  is treated as case insensitive. If a record contains the </span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB3</span></tt><span
   style='font-size:10.0pt'> field, then the </span><tt><span style='font-size:
   10.0pt;font-family:"Courier New"'>ADM_SUB1</span></tt><span style='font-size:
-  10.0pt'> and/or the </span><tt><span style='font-size:10.0pt;font-family:
-  "Courier New"'>ADM_SUB2</span></tt><span style='font-size:10.0pt'> field
-  shall be present in the record.</span></p>
+  10.0pt'> field shall be present and the </span><tt><span style='font-size:
+  10.0pt;font-family:"Courier New"'>ADM_SUB2 </span></tt><span
+  style='font-size:10.0pt'>field , or a field of category Adm_Sub2, may be
+  present in the record.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>CALL</span><a name=StationCall></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Y</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>15</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1586,29 +1579,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
-  font-family:"Courier New"'>CL_CITY</span></p>
+  font-family:"Courier New"'>CL_CITY</span><a name="StationCL_City"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub3</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>6</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1621,29 +1611,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
-  font-family:"Courier New"'>CL_PROVINCE</span></p>
+  font-family:"Courier New"'>CL_PROVINCE</span><a name="StationCL_Province"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub2</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>2</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1655,29 +1642,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>CONT</span><a name=StationCont></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>2</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1690,29 +1674,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>CQZ</span><a name=StationCQZ></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>2</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1727,29 +1708,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>DIG</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1760,29 +1738,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>DOK</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>3</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1796,29 +1771,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>DXCC</span><a name=StationDXCC></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Y</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>3</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1831,29 +1803,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>EMAIL_ADDRESS</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>64</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1864,29 +1833,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>GRIDSQUARE</span><a name=StationGridSquare></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>6</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1896,77 +1862,71 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   Maidenhead grid square designator is acceptable. Format for interchanges
   shall be AANN and AANNaa. Comparison of values of </span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>GRIDSQUARE</span></tt><span
-  style='font-size:10.0pt'> is insensitive to case. For stations located on
-  grid intersections, multiple instances of the </span><tt><span
-  style='font-size:10.0pt;font-family:"Courier New"'>GRIDSQUARE</span></tt><span
+  style='font-size:10.0pt'> is insensitive to case. For stations located on grid
+  intersections, multiple instances of the </span><tt><span style='font-size:
+  10.0pt;font-family:"Courier New"'>GRIDSQUARE</span></tt><span
   style='font-size:10.0pt'> field may appear in a single </span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span></tt><span
   style='font-size:10.0pt'> record, up to a maximum of four.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>IOTA</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>6</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>RSGB Islands on the Air (IOTA) Program reference
-  number. Format for interchange shall be six characters consisting of a
-  two-letter continental abbreviation in upper case immediately followed by a
-  hyphen immediately followed by three numeric characters that must include any
-  leading zeroes. Comparison of IOTA designators shall be case insensitive.
-  Consult the RSGB IOTA Program reference numbers <a
+  <p><span style='font-size:10.0pt'>RSGB Islands on the Air (IOTA) Program
+  reference number. Format for interchange shall be six characters consisting
+  of a two-letter continental abbreviation in upper case immediately followed
+  by a hyphen immediately followed by three numeric characters that must
+  include any leading zeroes. Comparison of IOTA designators shall be case
+  insensitive. Consult the RSGB IOTA Program reference numbers <a
   href="http://www.rsgbiota.org/refindex.htm">list</a> for legal values of the
   enumeration.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>ITUZ</span><a name=StationITUZ></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>2</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -1981,29 +1941,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>JAG</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2013,29 +1970,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>JP_CITY</span><a name="StationJA_City"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub2</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>4</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2044,33 +1998,31 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   <p><span style='font-size:10.0pt'>Japanese City (Shi). Format for interchange
   is the JCC reference number for the city (from <a
   href="http://www.jarl.or.jp/English/4_Library/A-4-5_jcc-jcg/jcc-list.txt">JARL
-  list</a>) as four numeric digits including any leading zeros. </span></p>
+  list</a>) as four numeric digits including any leading zeros. <i>N.B</i>.:
+  JARL’s internal numbering scheme for prefectures differs from ISO 3166-2.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>JP_GUN</span><a name="StationJA_Gun"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub2</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2079,33 +2031,31 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   <p><span style='font-size:10.0pt'>Japanese Gun. Format for interchange is the
   JCG reference number for the Gun (from <a
   href="http://www.jarl.or.jp/English/4_Library/A-4-5_jcc-jcg/jcg-list.txt">JARL
-  list</a>) as five numeric digits including any leading zeros. </span></p>
+  list</a>) as five numeric digits including any leading zeros. <i>N.B</i>.:
+  JARL’s internal numbering scheme for prefectures differs from ISO 3166-2.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>LOCATION</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>64</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2119,29 +2069,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>MAILING_ADDRESS</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
+  <p align=center style='text-align:center'><a href="#TypeMulti_Line">M</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>256</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2152,29 +2099,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>NZ_COUNTY</span><a name=StationMode></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub2</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>3</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2191,29 +2135,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>OPERATOR</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>15</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2222,36 +2163,33 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   <p><span style='font-size:10.0pt'>Operator of the station given in </span><span
   style='font-size:10.0pt;font-family:"Courier New"'>CALL</span><span
   style='font-size:10.0pt'> field for this contact. Typically used for a guest
-  operator or multiple operators using a single call sign. Call sign is
-  insensitive to case. Legal value for call sign characters are [</span><tt><span
+  operator or multiple operators using a single call sign. Call sign is insensitive
+  to case. Legal value for call sign characters are [</span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>A&#8209;Z0&#8209;9/</span></tt><span
   style='font-size:10.0pt'>].</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>POSTAL_CODE</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>10</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2262,29 +2200,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>REC_TYPE</span><a name="StationRec_Type"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Y</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>10</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2297,30 +2232,27 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>REPEATER</span><a name=ftnref7></a><a
   href="#FootNote8"><sup>[8]</sup></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>15</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2333,29 +2265,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>SAT_MODE</span><a href="#FootNote7"><sup>[7]</sup></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2372,64 +2301,58 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>SAT_NAME</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Format for interchange shall be the designation
-  of the satellite used in upper case (RS-10, AO-10, FO-20, <i>etc</i>.). See <a
-  href="TableSatellites.html#TableSatellite">Table 7</a> legal values of the
-  enumeration.</span></p>
+  <p><span style='font-size:10.0pt'>Format for interchange shall be the
+  designation of the satellite used in upper case (RS-10, AO-10, FO-20, <i>etc</i>.).
+  See <a href="TableSatellites.html#TableSatellite">Table 7</a> legal values of
+  the enumeration.</span></p>
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>SDOK</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>8</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2442,29 +2365,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>STATION_TYPE</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>12</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2476,29 +2396,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>STATION_UID</span><a name="StationStation_GUID"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Y</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>2</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2510,61 +2427,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
-  none;padding:.05in .05in .05in .05in'>
-  <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
-  font-family:"Courier New"'>TENTEN</span></p>
-  </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'><a href="#TypeInteger">I</a></p>
-  </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'>N</p>
-  </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
-  <p>&nbsp;</p>
-  </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
-  <p align=center style='text-align:center'>7</p>
-  </td>
-  <td width="63%" style='width:63.34%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
-  <p><span style='font-size:10.0pt'>Ten-X International member number</span></p>
-  </td>
- </tr>
- <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>TX_PWR</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeFloat">F</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>8</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2577,29 +2459,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>URL</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">C</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>256</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2610,41 +2489,39 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>US_COUNTY</span><a name="StationUS_County"></a></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>Adm_Sub2</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>5</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p><span style='font-size:10.0pt'>US County. The value is a five (5)
-  character &nbsp;code consisting of the two letter alpha state code taken from
-  FIPS Pub 5-2 followed by &nbsp;the three digit numeric code for the county
-  (or independent city) taken from FIPS Pub. 6-4. <i>E.g.</i>, Autauga County,
-  Alabama would be represented as </span><tt><span style='font-size:10.0pt;
-  font-family:"Courier New"'>AL001 </span></tt><span style='font-size:10.0pt'>and
-  Apache County, Arizona would be represented as </span><tt><span
+  character &nbsp;code consisting of the two-letter state alpha code from <a
+  href="http://www.itl.nist.gov/fipspubs/fip5-2.htm">FIPS Pub. 5-2</a> followed
+  by &nbsp;the three digit numeric code for the county (or independent city) taken
+  from <a href="http://www.itl.nist.gov/fipspubs/fip6-4.htm">FIPS Pub. 6-4</a>.
+  <i>E.g.</i>, Autauga County, Alabama is represented as </span><tt><span
+  style='font-size:10.0pt;font-family:"Courier New"'>AL001 </span></tt><span
+  style='font-size:10.0pt'>and Apache County, Arizona is represented as </span><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>AZ001</span></tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>.</span><span
   style='font-size:10.0pt'> For stations located on a county line, two
@@ -2656,29 +2533,26 @@ by the appearance of the same field in the linked <tt><span style='font-size:
   </td>
  </tr>
  <tr>
-  <td width="11%" style='width:11.86%;border:solid windowtext 1.5pt;border-top:
+  <td width="11%" style='width:11.84%;border:solid windowtext 1.5pt;border-top:
   none;padding:.05in .05in .05in .05in'>
   <p style='margin:0in;margin-bottom:.0001pt'><span style='font-size:10.0pt;
   font-family:"Courier New"'>WAE</span></p>
   </td>
-  <td width="3%" style='width:3.98%;border-top:none;border-left:none;
+  <td width="4%" style='width:4.02%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'><a href="#TypeCharacter">E</a></p>
   </td>
-  <td width="6%" style='width:6.48%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.5%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>N</p>
   </td>
-  <td width="7%" style='width:7.42%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="7%" style='width:7.4%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p>&nbsp;</p>
   </td>
-  <td width="6%" style='width:6.92%;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
-  padding:.05in .05in .05in .05in'>
+  <td width="6%" style='width:6.9%;border-top:none;border-left:none;border-bottom:
+  solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;padding:.05in .05in .05in .05in'>
   <p align=center style='text-align:center'>3</p>
   </td>
   <td width="63%" style='width:63.34%;border-top:none;border-left:none;
@@ -2814,9 +2688,9 @@ name and its meaning to more than one record type..</p>
   <td width="86%" style='width:86.0%;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.5pt;border-right:solid windowtext 1.5pt;
   padding:.1in .1in .1in .1in'>
-  <p>This record contains the common information describing a series of QSOs. Typically,
-  this is information that describes the sender and his/her station. All <tt><span
-  style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span></tt>
+  <p>This record contains the common information describing a series of QSOs.
+  Typically, this is information that describes the sender and his/her station.
+  All <tt><span style='font-size:10.0pt;font-family:"Courier New"'>tSTATION</span></tt>
   records shall precede the <tt><span style='font-size:10.0pt;font-family:"Courier New"'>&lt;</span></tt><a
   href="#EOH"><span style='font-size:10.0pt;font-family:"Courier New"'>eoh</span></a><tt><span
   style='font-size:10.0pt;font-family:"Courier New"'>&gt;</span></tt> tag. </p>
@@ -2943,7 +2817,8 @@ categories:</p>
 
 <h4>Adm_Sub<i>#</i>:</h4>
 
-<p>An implicit hierarchy of fields exists starting with DXCC entity:</p>
+<p>The fields describing administrative subdivisions constitute an implicit
+hierarchy starting with the DXCC entity:</p>
 
 <pre style='margin-left:2.0in'>+---DXCC</pre><pre style='margin-left:2.0in'>&nbsp;&nbsp;&nbsp;&nbsp; |</pre><pre
 style='margin-left:2.0in'>&nbsp;&nbsp;&nbsp;&nbsp; +---Adm_Sub1</pre><pre
@@ -2952,41 +2827,44 @@ style='margin-left:2.0in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 style='margin-left:2.0in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |</pre><pre
 style='margin-left:2.0in'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; +---Adm_Sub3</pre>
 
-<p style='text-align:justify'><br>
-If GAbbI writer specifies a value for a field under the &quot;<tt><span
-style='font-size:10.0pt;font-family:"Courier New"'>Adm_Sub</span></tt> &quot;
-hierarchy, the writer shall also specify a fully consistent set of values for
-its superior fields in the hierarchy up to and including DXCC entity.</p>
+<p style='text-align:justify'>If a GAbbI writer specifies the value for a field
+from the &quot;<tt><span style='font-size:10.0pt;font-family:"Courier New"'>Adm_Sub</span></tt>
+&quot; hierarchy, the writer shall also specify a fully consistent set of values
+for all the superior fields in the hierarchy up to and including DXCC entity.</p>
 
 <p style='text-align:justify'>A reader shall treat the appearance of a single
 field from the &quot;<tt><span style='font-size:10.0pt;font-family:"Courier New"'>Adm_Sub</span></tt>
 &quot; hierarchy as an implicit specification of a value for each of the
-superior fields in the hierarchy up to and including DXCC entity. E.g., <tt><span
+superior fields in the hierarchy up to and including DXCC entity. <i>E.g.</i>, <tt><span
 style='font-size:10.0pt;font-family:"Courier New"'>US_COUNTY == HI001</span></tt>
-should be interpreted by a reader as specifying <tt><span style='font-size:
-10.0pt;font-family:"Courier New"'>SUB_GOV1 == US-HI</span></tt> and <tt><span
-style='font-size:10.0pt;font-family:"Courier New"'>DXCC == 110</span></tt>
-(Hawaii) in addition to the county; and <tt><span style='font-size:10.0pt;
-font-family:"Courier New"'>JP_CITY == 2701</span></tt> (Kobe) should be read as
-specifying <tt><span style='font-size:10.0pt;font-family:"Courier New"'>SUB_GOV1
-== JA-28 </span></tt>(Hyôgo) and <tt><span style='font-size:10.0pt;font-family:
-"Courier New"'>DXCC == 339</span></tt> (Japan) in addition to the city. When
-more than one field in the &quot;<tt><span style='font-size:10.0pt;font-family:
-"Courier New"'>Adm_Sub</span></tt>&quot; hierarchy appears in a record, the
-values specified implicitly and explicitly at every level of the hierarchy
-shall be identical. In the event an inconsistency amongst the fields of the
-&quot;<tt><span style='font-size:10.0pt;font-family:"Courier New"'>Adm_Sub</span></tt>
-&quot; hierarchy is detected, the reader shall issue an error message and may
-discard the record.</p>
+(Hawaii County) should be interpreted by a reader as specifying <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>SUB_GOV1 == US-HI</span></tt>
+(State of Hawaii) and <tt><span style='font-size:10.0pt;font-family:"Courier New"'>DXCC
+== 110</span></tt> (Hawaii) in addition to the county; and <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>JP_CITY == 2701</span></tt> (Kobe)
+should be read as specifying <tt><span style='font-size:10.0pt;font-family:
+"Courier New"'>SUB_GOV1 == JP-28 </span></tt>(Hyôgo Prefecture) and <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>DXCC == 339</span></tt>
+(Japan) in addition to the city. When more than one field in the &quot;<tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>Adm_Sub</span></tt>&quot;
+hierarchy appears in a record, the values specified implicitly and explicitly
+at every level of the hierarchy shall be identical. In the event an
+inconsistency amongst the fields of the &quot;<tt><span style='font-size:10.0pt;
+font-family:"Courier New"'>Adm_Sub</span></tt> &quot; hierarchy is detected,
+the reader shall issue an error message and may discard the record.</p>
 
-<p style='text-align:justify'>Typically, enumerations of administrative
-subdivisions below the top-level subdivision are not provided by either ISO
-3166-2 or FIPS Pub. 10-4. When the field value of an Adm_Sub# field is &nbsp;of
-enumeration type and both ISO 3166-2 and FIPS Pub. 10-4 are silent regarding
-legal values for the enumeration, a unique field name shall be employed to
-indicate the presence of a non-standard enumeration. An Adm_Sub# field that
-must be uniquely distinguished shall have a field name that begins with the ISO
-3166-1 Alpha-2 (two letter) code element followed by an underscore (`<tt><span
+<p style='text-align:justify'>The values of the fields <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB2</span></tt> and <tt><span
+style='font-size:10.0pt;font-family:"Courier New"'>ADM_SUB3 </span></tt>are
+character strings. The values of fields belonging to the Adm_Sub2 and Adm_Sub3
+categories are enumerations. Enumerations of administrative subdivisions below
+the top-level are not provided by <a
+href="http://geotags.com/iso3166/countries.html">ISO 3166-2</a> (or <a
+href="http://www.nima.mil/gns/html/fips/fips_files.html">FIPS Pub. 10-4</a>). A
+field which is a member of category Adm_Sub2 or category Adm_Sub3 shall have a
+uniquely distinguished field name that shall begin with the <a
+href="http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/index.html">ISO
+3166-1</a> alpha-2 (two-letter) code element followed by an underscore (`<tt><span
 style='font-size:10.0pt;font-family:"Courier New"'>_</span></tt>’). </p>
 
 <h3><a href="GAbbISample.html">GAbbI Sample File</a></h3>
