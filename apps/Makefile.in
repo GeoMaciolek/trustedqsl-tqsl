@@ -154,7 +154,7 @@ WXRSRC = $(WXDIR)/lib/lib`$(WXCONFIG) --basename`-`$(WXCONFIG) --version`.rsrc
 helpdir = $(datadir)
 
 AM_CXXFLAGS = -Wall `$(WXCONFIG) --cxxflags` -I$(TQSLINC) -I$(ZLIB)/include -I$(EXPAT)/include
-AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib
+AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib -L$(OPENSSL)/lib
 
 BUILT_SOURCES = tqslbuild.h tqslcertbuild.h helpdir
 
@@ -195,7 +195,7 @@ CLEANFILES = tqslbuild.h tqslcertbuild.h tqsl-@WINVER@.exe ChangeLog.txt \
 nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
-	licenses/LICENSE LICENSE TrustedQSL.spec.in TrustedQSL.spec \
+	LICENSE TrustedQSL.spec.in TrustedQSL.spec \
 	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
 	touchver.pl tqsl.ico tqsl-key1.ico setup.iss.in wpwd.bat tqslcert.rc.in
 
@@ -248,11 +248,10 @@ DIST_SOURCES = $(tqsl_SOURCES) $(tqsl_app_SOURCES) $(tqslcert_SOURCES) \
 	$(tqslcert_app_SOURCES)
 DATA = $(nobase_help_DATA)
 
-DIST_COMMON = README $(srcdir)/Makefile.in $(srcdir)/configure \
-	ChangeLog INSTALL Makefile.am TrustedQSL.spec.in aclocal.m4 \
-	config.guess config.sub configure configure.in depcomp \
-	install-sh missing mkinstalldirs setup.iss.in sysconfig.h.in \
-	tqslcert.rc.in
+DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/configure ChangeLog \
+	INSTALL Makefile.am TrustedQSL.spec.in aclocal.m4 config.guess \
+	config.sub configure configure.in depcomp install-sh missing \
+	mkinstalldirs setup.iss.in sysconfig.h.in tqslcert.rc.in
 SOURCES = $(tqsl_SOURCES) $(tqsl_app_SOURCES) $(tqslcert_SOURCES) $(tqslcert_app_SOURCES)
 
 all: $(BUILT_SOURCES) sysconfig.h
@@ -431,7 +430,7 @@ distcleancheck_listfiles = find . -type f -print
 distdir: $(DISTFILES)
 	$(am__remove_distdir)
 	mkdir $(distdir)
-	$(mkinstalldirs) $(distdir)/. $(distdir)/help/tqslapp $(distdir)/help/tqslcert $(distdir)/licenses
+	$(mkinstalldirs) $(distdir)/. $(distdir)/help/tqslapp $(distdir)/help/tqslcert
 	@srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`; \
 	topsrcdirstrip=`echo "$(top_srcdir)" | sed 's|.|.|g'`; \
 	list='$(DISTFILES)'; for file in $$list; do \

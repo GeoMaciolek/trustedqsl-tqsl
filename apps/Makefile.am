@@ -4,6 +4,9 @@
 LIBS = @LIBS@ $(openssl_static)
 TQSLINC=@TQSLINC@
 TQSLLIB=@TQSLLIB@
+ZLIB=@ZLIB@
+EXPAT=@EXPAT@
+OPENSSL=@OPENSSL@
 WXDIR=@WXDIR@
 WXWIN_STATIC=@wxwin_static@
 BUILD=@BUILD@
@@ -22,7 +25,7 @@ datadir = @datadir@/TrustedQSL
 helpdir = $(datadir)
 
 AM_CXXFLAGS = -Wall `$(WXCONFIG) --cxxflags` -I$(TQSLINC) -I$(ZLIB)/include -I$(EXPAT)/include
-AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib
+AM_LDFLAGS = -L$(TQSLLIB) -L$(ZLIB)/lib -L$(EXPAT)/lib -L$(OPENSSL)/lib
 
 BUILT_SOURCES = tqslbuild.h tqslcertbuild.h helpdir
 
@@ -60,7 +63,7 @@ CLEANFILES = tqslbuild.h tqslcertbuild.h tqsl-@WINVER@.exe ChangeLog.txt \
 nobase_help_DATA = help/tqslcert/*.* help/tqslapp/*.*
 
 EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
-	licenses/LICENSE LICENSE TrustedQSL.spec.in TrustedQSL.spec \
+	LICENSE TrustedQSL.spec.in TrustedQSL.spec \
 	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
 	touchver.pl tqsl.ico tqsl-key1.ico setup.iss.in wpwd.bat tqslcert.rc.in
 
