@@ -87,9 +87,13 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
   int		rc;
   int		fd;
 
-  fd = open(fname,O_WRONLY);
+  fd = open(fname,O_WRONLY|O_CREAT);
   if (fd < 0)
-    return(0);
+    {
+      fprintf(stderr,"errno = %d\n",errno);
+      perror("open cert write");
+      return(0);
+    }
 
   rc = write(fd,cert,sizeof(TqslCert));
   close(fd);  // we are done with it.
@@ -169,7 +173,6 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
   if (fp)
     {
       p = BN_bn2hex(dsa->priv_key);
-      fprintf(fp,"%s",p);
       fwrite (p,strlen(p),1,fp);
       fclose(fp);
     }     
