@@ -4,7 +4,7 @@ CC = gcc
 CXX = g++
 CXXFLAGS = -g
 LIB = -lcrypto
-COMOBJ = fileio.o convert.o tqsllib.o
+COMOBJ = fileio.o convert.o tqsllib.o getopt.o
 
 all:	sign verify qgenkey gencert chkcert
 
