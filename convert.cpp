@@ -80,56 +80,6 @@ int chkDate(const char *sdate)
   return(1);
   
 }
-char *bin2hex(const unsigned char *binStr,int len)
-{
-  char *tStr;
-  char	value[4];
-  tStr = (char *) malloc(len*3);
-
-  if (tStr == NULL)
-    return(tStr);
-
-  int i,j=0;
-
-  for(i=0;i<len;i++)
-    {
-      sprintf(value,"%02x",binStr[i]);
-      strncpy(&tStr[j],value,2);
-      j=j+2;
-      tStr[j] = 0;
-    }
-  return(tStr);
-}
-
-void dumpCert(TqslCert *cert,FILE *fp)
-{
-  fprintf(fp,"type: %c\n",cert->data.certType);
-  fprintf(fp,"issue Date: %10.10s\n",cert->data.issueDate);
-  fprintf(fp,"expire Date: %10.10s\n",cert->data.expireDate);
-  fprintf(fp,"CA id: %10.10s\n",cert->data.caID);
-  fprintf(fp,"CA Cert#: %6.6s\n",cert->data.caCertNum);
-  // dumpPubKey(&cert->data.publicKey,fp);
-  fprintf(fp,"sig: \n%120.120s\n",cert->signature);
-  return;
-}
-void hex2bin(char *hexStr,unsigned char *binStr,int len)
-{
-  long	v;
-  int i;
-  int j=0;
-  unsigned char	b[3];
-
-  b[2] = 0;
-  for(i=0;i<len;i=i+2)
-    {
-      b[0] = hexStr[i];
-      b[1] = hexStr[i+1];
-      v = (unsigned char )strtol((const char *)b,NULL,16);
-      binStr[j] = (unsigned char )v;
-      j++;
-      binStr[j]=0;
-    }
-}
 
 
 static char base64_table[] =

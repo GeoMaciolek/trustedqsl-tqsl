@@ -50,6 +50,179 @@ int debugLevel=0;
 
 static char cvsID[] = "$Id$";
 
+char *tqslBin2Hex(const unsigned char *binStr,int len)
+{
+  char *tStr;
+  char	value[4];
+  tStr = (char *) malloc(len*3);
+
+  if (tStr == NULL)
+    return(tStr);
+
+  int i,j=0;
+
+  for(i=0;i<len;i++)
+    {
+      sprintf(value,"%02x",binStr[i]);
+      strncpy(&tStr[j],value,2);
+      j=j+2;
+      tStr[j] = 0;
+    }
+  return(tStr);
+}
+
+
+void tqslHex2Bin(char *hexStr,unsigned char *binStr,int len)
+{
+  long	v;
+  int i;
+  int j=0;
+  unsigned char	b[3];
+
+  b[2] = 0;
+  for(i=0;i<len;i=i+2)
+    {
+      b[0] = hexStr[i];
+      b[1] = hexStr[i+1];
+      v = (unsigned char )strtol((const char *)b,NULL,16);
+      binStr[j] = (unsigned char )v;
+      j++;
+      binStr[j]=0;
+    }
+}
+
+int    tqslSha1(const unsigned char * uStr,int len,unsigned char *hash)
+{
+ unsigned char *rStr;
+ rStr = SHA1(uStr,len,hash);
+ if (rStr == NULL)
+   return(0);
+ return(SHA_DIGEST_LENGTH);
+
+}
+//
+// this key encryptions isn't very strong, but the real protect is
+// that the private key should be kept on a secure computer and it
+// is more a "kid sister" protect.
+//
+//  This is a trade off.  We need to validate that the password is
+//  correct, but if we give away the whole key then the password will
+// converge very quickly
+//
+int tqslDecryptPriv(char *privKeyStr,char *clrPass,char *oldPrivHashStr)
+{
+
+  unsigned char keyHash[60];    // has the hash of the private key
+  unsigned char privBin[30];    // has the binary bits for the private key
+  unsigned char passHash[30];   // has the hash of the password
+  int hashLen;
+  int len;
+
+
+  // first get the encrypted key in binary format
+  len = strlen(privKeyStr);
+  tqslHex2Bin(privKeyStr,privBin,len);
+
+  // create a hash based upon password
+  len = strlen(clrPass);
+  hashLen = tqslSha1((unsigned char *)clrPass,len,passHash);
+  if (hashLen == 0)
+   {
+     return(0);
+   }
+
+  // XOR the hash with the binary private key
+  int i;
+  for(i=0;i < hashLen;i++)
+   {
+     privBin[i] = privBin[i] ^ passHash[i];
+   }
+
+  // ok if all goes well we should have the original private key
+  // we hash it and compare it to the hash we had from the original
+  len = strlen(privKeyStr)/2;
+  hashLen = tqslSha1(privBin,len,keyHash);
+  if (hashLen < 1)
+   {
+     return(0);
+   }
+
+  char *newPrivHashStr;
+  char *ePrivStr;
+
+  newPrivHashStr = tqslBin2Hex(keyHash,hashLen);
+
+  // we only want to check the first 4 bytes 
+  if (strncmp(newPrivHashStr,oldPrivHashStr,4) != 0)
+   {
+     // we have a problem.  The hash doesn't match.
+     // this means that the password is wrong.
+     free(newPrivHashStr);
+     return(0);
+   }
+
+  len = strlen(privKeyStr)/2;
+  ePrivStr = tqslBin2Hex(privBin,len);
+  if (ePrivStr == NULL)
+   return(0);
+  strcpy(privKeyStr,ePrivStr);
+  free(ePrivStr);
+  return(1);
+
+}
+int tqslEncryptPriv(char *privKeyStr,char *clrPass,char *privHashStr)
+{
+
+  unsigned char keyHash[60];    // has the hash of the private key
+  unsigned char privBin[30];    // has the binary bits for the private key
+  unsigned char passHash[30];   // has the hash of the password
+  int hashLen;
+  int len;
+
+  // get the private key back into binary format
+  len  = strlen(privKeyStr);
+  tqslHex2Bin(privKeyStr,privBin,len);
+
+  // hash it so we can sanity check the decryption
+  len =  strlen(privKeyStr)/2 ;
+  hashLen = tqslSha1(privBin,len,keyHash);
+  if (hashLen < 1)
+   {
+     return(0);
+   }
+
+  char *hashStr;
+  hashStr = tqslBin2Hex(keyHash,hashLen);
+  strncpy(privHashStr,hashStr,4);  //  put it into the return buf
+
+  privHashStr[4] = 0;    // we are only going to check the
+
+  // ok hash the password.
+  len = strlen(clrPass);
+  hashLen = tqslSha1((unsigned char *)clrPass,len,passHash);
+  if (hashLen == 0)
+   {
+     return(0);
+   }
+
+  int i;
+  // XOR them together
+  for(i=0;i < hashLen;i++)
+   {
+     privBin[i] = privBin[i] ^ passHash[i];
+   }
+
+  char *cPrivStr;
+  len =  strlen(privKeyStr)/2;
+  cPrivStr = tqslBin2Hex(privBin,len);
+  if (cPrivStr == NULL)
+   return(0);
+
+  // This should be the clear text of the private key
+  strcpy(privKeyStr,cPrivStr);
+  free(cPrivStr);
+  return(1);
+}
 static void packCert(TqslCert *cert,char *certStr)
 {
  
@@ -490,13 +663,13 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
 
 
   if (debugLevel > 1)
-    fprintf(stderr,"hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH));
+    fprintf(stderr,"hash: %s\n",tqslBin2Hex(hash,SHA_DIGEST_LENGTH));
 
   unsigned char 	sigRet[500];
   int			sigLen;
 
   sigLen = strlen(cert->signature);
-  hex2bin(cert->signature,sigRet,sigLen);
+  tqslHex2Bin(cert->signature,sigRet,sigLen);
   
   sigLen = (sigLen/2);
   rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
@@ -576,7 +749,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   if (debugLevel > 0)
     {
       char *p;
-      p = bin2hex(hash,SHA_DIGEST_LENGTH);
+      p = tqslBin2Hex(hash,SHA_DIGEST_LENGTH);
       printf("hash: %s\n",p); 
       printf("amcert: %s\n", (char *)cert);
     }
@@ -587,12 +760,12 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     {
       char *hv;
       printf("siglen = %d\n",sigLen);
-      hv = bin2hex(sigRet,sigLen);
+      hv = tqslBin2Hex(sigRet,sigLen);
       printf("sigret: %s\n",hv);
     }
 
   char *sigStr;
-  sigStr = bin2hex(sigRet,sigLen);
+  sigStr = tqslBin2Hex(sigRet,sigLen);
   strcpy(cert->signature,sigStr);
   //  sprintf(tmpStr,"%d",sigLen*2);
   //  memcpy(cert->sigSize,tmpStr,3);
@@ -709,7 +882,7 @@ int tqslSignData(const char *privKey,const unsigned char *data,
   if (rc <= 0)
     return(0);
 
-  hexSign = bin2hex(sigRet,sigLen);
+  hexSign = tqslBin2Hex(sigRet,sigLen);
   strcpy(signature->signature,hexSign);
   signature->sigType = '1';
   signature->cert = *cert;
@@ -746,7 +919,7 @@ int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len)
   unsigned int 		sigLen;
 
   sigLen = strlen(signature->signature);
-  hex2bin(signature->signature,sigRet,sigLen);
+  tqslHex2Bin(signature->signature,sigRet,sigLen);
   
   sigLen = (sigLen/2);
 

@@ -18,12 +18,17 @@ __published:	// IDE-managed Components
  TEdit *callSignEd;
  TLabel *Label1;
  TButton *Button1;
- TSaveDialog *savePrvDlg;
  TwwTable *prvTbl;
  TAutoIncField *prvTblPid;
  TIntegerField *prvTblKeyNum;
- TStringField *prvTblKey;
  TButton *Button2;
+ TStringField *prvTblCallSign;
+ TStringField *prvTblKey;
+ TStringField *prvTblChkHash;
+ TEdit *pass1Ed;
+ TEdit *pass2Ed;
+ TLabel *Label2;
+ TLabel *Label3;
  void __fastcall Button1Click(TObject *Sender);
 
 

@@ -39,9 +39,6 @@ __published:	// IDE-managed Components
  TTable *certTbl;
  TTable *pubTbl;
  TTable *PrivTbl;
- TLabel *Label1;
- TLabel *Label2;
- TLabel *Label3;
  TMenuItem *Sign1;
  TMenuItem *CAFunctions1;
  TMenuItem *Signacertificate1;
@@ -57,6 +54,7 @@ __published:	// IDE-managed Components
  TStringField *PrivTblCallSign;
  TIntegerField *PrivTblKeyNum;
  TStringField *PrivTblKey;
+ TStringField *PrivTblChkHash;
  void __fastcall CreateNewKeyPair1Click(TObject *Sender);
  void __fastcall ImportCertificate1Click(TObject *Sender);
  

@@ -21,20 +21,28 @@ __fastcall TgenKeyFm::TgenKeyFm(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
 {
- char  callsign[100];
- //const char *secretFile = "c:\\src\\tpriv.prv";
- //const char *pubFile = "c:\\src\\tpriv.pub";
- char secretFile[200];
- char pubFile[200];
+ char  callsign[20];
+
+ char  clrPass[200];
+ // unsigned char
+
  TqslPublicKey pubKey;
  char		*secretKey;
 
  int rc;
 
+  if (pass2Ed->Text != pass1Ed->Text)
+   {
+      ShowMessage("Password Mismatch");
+      return;
+   }
   if (callSignEd->Text.Length() < 3)
-   return;
+   {
+     ShowMessage("Call Sign invalid");
+     return;
+   }
 
-  callSignEd->Text = UpperCase( callSignEd->Text);
+  strcpy(clrPass,pass2Ed->Text.c_str());
   rc = tqslGenNewKeys(callSignEd->Text.c_str(),&secretKey,&pubKey);
 
   if (rc < 1)
@@ -42,6 +50,25 @@ void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
      ShowMessage("Key pair creation failed");
      return;
    }
+
+  char privHashStr[60];
+  char dummyStr[60];
+
+
+  rc = tqslEncryptPriv(secretKey,clrPass,privHashStr);
+  if (rc < 1)
+   {
+     ShowMessage("Failed encrypting private key");
+     return;
+   }
+  strcpy(dummyStr,secretKey);
+  rc = tqslDecryptPriv(dummyStr,clrPass,privHashStr);
+  if (rc < 1)
+   {
+     ShowMessage("Failed decrypting private key");
+     return;
+   }
+
 
   char *pkStr;
   char tmpStr[10];
@@ -78,6 +105,7 @@ void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
      tqslFm->PrivTbl->Insert();
      tqslFm->PrivTbl->FieldByName("KeyNum")->AsInteger =
        tqslFm->pubTbl->FieldByName("Kid")->AsInteger;
+     tqslFm->PrivTbl->FieldByName("ChkHash")->AsString = privHashStr;
      tqslFm->PrivTbl->FieldByName("Key")->AsString = secretKey;
      tqslFm->PrivTbl->FieldByName("CallSign")->AsString = callSignEd->Text;
      tqslFm->PrivTbl->Post();

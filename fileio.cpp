@@ -134,7 +134,7 @@ int writeSignHex(char *fname, unsigned char *sig,int len)
     return(-1);
 
   char *t;
-  t = bin2hex(sig,len);
+  t = tqslBin2Hex(sig,len);
   write(fd,t,len*2);
   close(fd);
   free(t);
@@ -160,7 +160,7 @@ int readSignHex(char *fname,unsigned char *sig,int len)
   int rc;
   rc = read(fd,txtSign,len);
   close(fd);
-  hex2bin(txtSign,sig,rc);
+  tqslHex2Bin(txtSign,sig,rc);
   return(rc/2);
 }
 //
@@ -195,10 +195,10 @@ int getFileSize(char *fname)
   return(sbuf.st_size);
 }
 
+#if 0
 // read a cert from a file.
 int readCert(char *fname,TqslCert *cert)
 {
-  int fileSize;
   int rc;
 
   fileSize = getFileSize(fname);
@@ -212,8 +212,8 @@ int readCert(char *fname,TqslCert *cert)
   rc = read(fd,cert,sizeof(TqslCert));
   close(fd);
   return(rc);
-
 }
+#endif
 
 //
 // sha1 hash a file
@@ -358,6 +358,8 @@ int readBig(const char *fname,BIGNUM **bn)
   return(errno);
 #endif
 }
+
+
 
 
 

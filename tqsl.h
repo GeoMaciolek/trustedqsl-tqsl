@@ -102,7 +102,11 @@ struct TqslSignedQSL
 extern "C"
 {
 #endif
-
+  int tqslEncryptPriv(char *privKeyStr,char *clrPass,char *privHashStr);
+  int tqslDecryptPriv(char *privKeyStr,char *clrPass,char *oldPrivHashStr);
+  void tqslHex2Bin(char *hexStr,unsigned char *binStr,int len);
+  char *tqslBin2Hex(const unsigned char *binStr,int len);
+  
   char * 	tqslSigToStr(TqslSignature *);
   int 		tqslStrToSig(TqslSignature *,char *);
 
@@ -111,7 +115,7 @@ extern "C"
 
   char * 	tqslCertToStr(TqslCert *);
   int 		tqslStrToCert(TqslCert *,const char *);
-
+  int    tqslSha1(const unsigned char *,int,unsigned char *);
   int 		tqslReadCert(const char *fname,TqslCert *);
   int 		tqslWriteCert(const char *fname,TqslCert *);
   int 		tqslReadPub(const char *fname,TqslPublicKey *);
