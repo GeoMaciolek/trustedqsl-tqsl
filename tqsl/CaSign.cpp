@@ -115,8 +115,9 @@ void __fastcall TgenCertFm::signBtnClick(TObject *Sender)
      }
 
   rc = tqslSignCert(&amCert,privKey,privTblCallSign->AsString.c_str(),
-   &pubKey, pubKey.pubkeyNum,iStr, eStr, self,amTbl1CallSign->AsString.c_str(),
-   amTbl2CallSign->AsString.c_str(), amTbl3CallSign->AsString.c_str());
+   &pubKey, privTblKeyNum->AsString.c_str(),iStr, eStr, self,
+   amTbl1CallSign->AsString.c_str(), amTbl2CallSign->AsString.c_str(),
+   amTbl3CallSign->AsString.c_str());
 
 
    if (rc > 0)
