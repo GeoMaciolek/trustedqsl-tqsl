@@ -37,15 +37,15 @@ CFLAG2 = -D_RTLDLL;USEPACKAGES \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -H=$(BCB)\lib\vcl35.csm
 CFLAG3 = -Tkh30000
-PFLAGS = -D_RTLDLL;USEPACKAGES \
-  -U"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
+PFLAGS = -U..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
+  -D_RTLDLL;USEPACKAGES \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -$Y -$W -$O- -v -JPHN -M
 RFLAGS = -D_RTLDLL;USEPACKAGES \
   -i"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include
 AFLAGS = /i"d:\program files\borland\cbuilder3\projects" /i$(BCB)\include \
   /i$(BCB)\include\vcl /ic:\include /d_RTLDLL /dUSEPACKAGES /mx /w2 /zd
-LFLAGS = -L"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
+LFLAGS = -L..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
   -aa -Tpe -x -Gn -v
 IFLAGS =
 # ---------------------------------------------------------------------------
