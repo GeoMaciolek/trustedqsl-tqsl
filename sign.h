@@ -37,7 +37,7 @@ int 		readSignHex(char *fname,unsigned char *sig,int len);
 TqslPublicKey 	*readPubKey(char *fname,char *typ);
 int 		readCert(char *fname,TqslCert *cert);
 int 		validateCert(TqslCert *caCert, TqslCert *amCert);
-void 		initPublicKey(TqslPublicKey *pk);
+//void 		initPublicKey(TqslPublicKey *pk);
 void		dumpCert(TqslCert *cert,FILE *fp);
 void		dumpPubKey(TqslPublicKey *pk,FILE *fp);
 int		chkDate(const char *);

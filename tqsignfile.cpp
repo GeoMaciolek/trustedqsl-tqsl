@@ -106,7 +106,7 @@ int main(int argc, char *argv[])
   fd = open(msgFile,O_RDONLY);
   if (fd < 0)
     {
-      fprintf(stderr,"Problem opening private key file %s\n",msgFile);  
+      fprintf(stderr,"Problem opening message key file %s\n",msgFile);  
       return(5);
     }
 
@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
   rc = read(fd,msg,fs);
   if (rc != fs)
     {
-      fprintf(stderr,"Problem reading private key file %s\n",msgFile);  
+      fprintf(stderr,"Problem reading message key file %s\n",msgFile);  
       return(6);
     }     
      

@@ -35,35 +35,47 @@
 #ifndef BYTE_ORDER
 #define BYTE_ORDER LITTLE_ENDIAN
 #endif
-const int signSizeMax=120;
-const int pubKeySize=176;
+const int signSizeMax=500;
+const int pubKeySize=200;
 const int CALL_SIZE=10;
 const int MaxCertSize=500; 
 
 struct TqslPublicKey
-{
-  char			pkType;
-  char			callSign[12];
-  char			pubkeyNum[5];
+{                                        
+  char			pkType;          
+  char			callSign[13];    
+  char			pubkeyNum[6];    
   unsigned char		pkey[pubKeySize];
-};
+};                                       
 
 struct TqslCertData
-{
-  char			certType;
-  char			issueDate[10];
-  char			expireDate[10];
-  char			caID[10];
-  char			caPK[4];
-  char			caCertNum[6];
-  TqslPublicKey		publicKey;
-};
+{                                        
+  char			certType;        
+  char			issueDate[11];   
+  char			expireDate[11];  
+  char			caID[11];        
+  char			caCertNum[7];    
+  TqslPublicKey		publicKey;       
+};                                       
+
 struct TqslCert
-{
-  TqslCertData		data;
-  char		        sigSize[3];
-  char			signature[signSizeMax];
-};
+{      						//position  size 
+  TqslCertData		data;                   //0          73
+  // char		        sigSize[3];             //73          3
+  char			signature[signSizeMax]; //76        120
+};                                              // total size 196
+
+// hex string encoded cert postions
+const int CertTypePos = 0;
+const int CertIssuePos = 1;
+const int CertExpirePos = 11;
+const int CertCaIDPos = 21;
+const int CertCaPkPos = 31;
+const int CertNoPos = 35;
+const int CertCallPos = 42;
+const int CertPkNumPos = 54;
+const int CertPkPos = 59;
+
 
 struct TqslSignature
 {

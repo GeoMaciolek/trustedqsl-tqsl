@@ -41,6 +41,7 @@ int main(int argc, char *argv[])
   int   	c,errFlg=0,optCnt=0;
   char		pubFile[100];
   char		secretFile[100];
+  char		pkNum[20];
   int		rc;
 
   cvsID = cvsID;
@@ -49,7 +50,7 @@ int main(int argc, char *argv[])
   memset(secretFile,0,sizeof(secretFile)); 
   memset(callsign,0,sizeof(callsign));
 
-  while ((c = getopt(argc, argv, "c:s:p:")) != EOF)
+  while ((c = getopt(argc, argv, "c:s:p:n:")) != EOF)
     switch (c) 
       {
       case 's':
@@ -64,13 +65,17 @@ int main(int argc, char *argv[])
         strncpy(pubFile,optarg,99);
 	optCnt++;
 	break;
+      case 'n':
+	strcpy(pkNum,optarg);
+	optCnt++;
+	break;
       default:
 	errFlg++;
       }
 
-  if (optCnt != 3 || errFlg != 0)
+  if (optCnt != 4 || errFlg != 0)
     {
-      printf("Usage: %s -s private-file -p public-file -c call-sign\n",
+      printf("Usage: %s -s private-file -p public-file -c call-sign -n pk#\n",
 	     argv[0]);
       return(1);
     }
@@ -85,24 +90,16 @@ int main(int argc, char *argv[])
       return(rc);
     }
 
-  int fd;
+  strcpy(pubKey.pubkeyNum,pkNum);
 
-  fd = open(pubFile,O_WRONLY|O_CREAT|O_TRUNC,0644);
-  if (fd >= 0)
-    {
-      rc = write(fd,&pubKey,sizeof(pubKey));
-      close(fd);
-      if (rc != sizeof(pubKey))
-	{
-	  fprintf(stderr,"writing public file failed\n");
-	  return(1);
-	}
-    }
-  else
-    {
-      fprintf(stderr,"creating public file failed\n");
-      return(2);
-    }	
+  int fd;
+  FILE *fout;
+
+  rc = tqslWritePub(pubFile,&pubKey);
+  if (rc < 1)
+    fprintf(stderr,"Failed to write public key file %s\n",pubFile);
+   
+
 
   fd = open(secretFile,O_WRONLY|O_CREAT|O_TRUNC,0600);
   if (fd >= 0)

@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 		    expStr,selfSign);
 
   
-  if (rc != 0)
+  if (rc < 1)
     {
       printf("Signed failed\n");
       return(1);

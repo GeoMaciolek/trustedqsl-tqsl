@@ -76,7 +76,6 @@ int main(int argc, char *argv[])
       return(-1);
     }
 
-  memset(&caCert,' ',sizeof(TqslCert));  
   rc= tqslReadCert(caCertFile,&caCert);
   if (rc > 0)
     {
@@ -86,8 +85,6 @@ int main(int argc, char *argv[])
 	  return(1);
 	}
     }
-
-  memset(&amCert,' ',sizeof(TqslCert));  
 
   rc= tqslReadCert(amCertFile,&amCert);
   if (rc > 0)

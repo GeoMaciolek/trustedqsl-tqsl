@@ -44,66 +44,236 @@ __declspec(dllimport) DSA * _DSA_new(void);
 //
 // All functions return 0 for failed and no zero on success
 //
-
-void initPublicKey(TqslPublicKey *pk)
-{
-  memset(pk,' ',sizeof(TqslPublicKey));
-}
-void initCert(TqslCert *cert)
-{
-   memset(cert,' ',sizeof(TqslCert));
-}
-static char cvsID[] = "$Id$";
 int debugLevel=0;
 
+static void packCert(TqslCert *cert,char *certStr)
+{
+ 
+  char tmpStr[50];
+
+  certStr[0]=cert->data.certType;
+  certStr[1] = '\0';
+  strcat(certStr,cert->data.issueDate);
+  strcat(certStr,cert->data.expireDate);
+  strcat(certStr,cert->data.caID);
+  strcat(certStr,cert->data.caCertNum);
+
+  sprintf(tmpStr,"%c",cert->data.publicKey.pkType);
+  strncat(certStr,tmpStr,1);
+  strcat(certStr,cert->data.publicKey.callSign);
+  strcat(certStr,cert->data.publicKey.pubkeyNum);
+
+  if (debugLevel > 4)
+    fprintf(stderr,"pkey len is %d\n",
+	    strlen((char *)cert->data.publicKey.pkey));
+  strcat(certStr,(char *)cert->data.publicKey.pkey);
+}
+static void initPublicKey(TqslPublicKey *pk)
+{
+  memset(pk,0,sizeof(TqslPublicKey));
+}
+static void initCert(TqslCert *cert)
+{
+   memset(cert,0,sizeof(TqslCert));
+}
+static char cvsID[] = "$Id$";
+
+
+static void stripNL(char *buf)
+{
+  int i,j;
+  // strip out any newline or cr
+  j=0;
+  for(i=0;i< (int)strlen(buf);i++)
+    {
+      if (buf[i] == '\n' || buf[i] ==  '\r')
+	continue;
+      buf[j] = buf[i];
+      j++;
+
+    }
+  buf[j] = '\0';   // tie the ribbon on it
+}
+
+static int getFileSize(const char *fname)
+{
+  struct stat sbuf;
+  int rc;
+
+  cvsID = cvsID;
+  rc = stat(fname,&sbuf);
+  if (rc < 0) 
+    return(-1);
+  return(sbuf.st_size);
+
+}
 int tqslReadCert(const char *fname,TqslCert *cert)
 {
-
-  char		buf[MaxCertSize];
   int		rc;
   int		fd;
+  char		*buf,*tok,*sbuf;
 #ifndef __BCPLUSPLUS__
   cvsID = cvsID;  // avoid warnigns
 #endif
 
-  fd = open(fname,O_RDONLY);
-  if (fd < 0)
+
+  int fs;
+
+  fs = getFileSize(fname);
+  if (fs < 10)
+    {
+      return(0);
+    }
+
+  buf = (char *)malloc(fs+1);
+  sbuf = buf;       // save address for free
+  if (buf == NULL)
     return(0);
 
-  rc = read(fd,buf,MaxCertSize);
-  close(fd);  // we are done with it.
-  if (rc <= 0)
+  fd = open(fname,O_RDONLY);
+  if (fd < 0)
     {
+      free(sbuf);
+      return(0);
+    }
+
+  rc = read(fd,buf,fs);
+  close(fd);  // we are done with it.
+  if (rc != fs)
+    {
+      free(sbuf);
+      return(0);
+    }
+
+  // make sure it is the correct type
+  if (buf[0] != '0' && buf[0] != '1')
+    {
+      free(sbuf);
+      return(0);
+    }
+
+  // cert type
+  tok = strtok(buf,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
       return(0);
     }
   
-  switch (buf[0])
+  cert->data.certType = tok[0];
+
+
+  // issue Date
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
     {
-    case '1':
-    case '0':
-      memcpy(cert,buf,sizeof(TqslCert));
-      return(1);
-    default:
+      free(sbuf);
       return(0);
     }
-  return(0);
+  strcpy(cert->data.issueDate,tok);
+
+  // expire Date
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->data.expireDate,tok);
+
+
+  // CA id
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->data.caID,tok);
+
+  // CA cert #
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->data.caCertNum,tok);
+
+
+  // Pk type
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  cert->data.publicKey.pkType = tok[0];
+
+
+  // call sign
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->data.publicKey.callSign,tok);
+
+
+  // call sign
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->data.publicKey.pubkeyNum,tok);
+
+
+  // public key
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy((char *)cert->data.publicKey.pkey,tok);
+
+  // signature
+  tok = strtok(NULL,"|");
+  if (tok == NULL)
+    {
+      free(sbuf);
+      return(0);
+    }
+  strcpy(cert->signature,tok);
+
+  return(1);
 }
 int tqslWriteCert(const char *fname,TqslCert *cert)
 {
 
-  int		rc;
-  int		fd;
 
-  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
-  if (fd < 0)
+  FILE		*fd;
+
+  fd = fopen(fname,"w");
+  if (fd == NULL)
     return(0);
 
-  rc = write(fd,cert,sizeof(TqslCert));
-  close(fd);  // we are done with it.
-  if (rc >= 0)
-    return(rc);
-  else
-    return(0);
+  // first do cert except for pub key 
+  fprintf(fd,"%c|%s|%s|%s|%s|",cert->data.certType,cert->data.issueDate,
+	  cert->data.expireDate,cert->data.caID,cert->data.caCertNum);
+
+  // now do pub key
+  fprintf(fd,"%c|%s|%s|%s|",
+	  cert->data.publicKey.pkType,cert->data.publicKey.callSign,
+	  cert->data.publicKey.pubkeyNum,cert->data.publicKey.pkey);
+
+  fprintf(fd,"%s",cert->signature);
+
+  fclose(fd);  // we are done with it.
+  return(1);
 }
 
 // tqslGenNewKeys
@@ -124,7 +294,7 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
   //
   // make sure call sign isn't too long
   //
-
+  memset(newCall,0,CALL_SIZE+1);
   if ((int)strlen(callSign) > CALL_SIZE)
     callLen =  CALL_SIZE;
   else
@@ -154,9 +324,9 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
   pubKey->pkType = '1';
   p = BN_bn2hex(dsa->pub_key);
 
-  // using memcpy instead of strcpy to avoid coping nulls
-  memcpy(&pubKey->callSign,newCall,strlen(callSign));
-  memcpy(&pubKey->pkey,p,strlen(p));
+
+  strcpy(pubKey->callSign,newCall);
+  strcpy((char *)pubKey->pkey,p);
   pubKey->pubkeyNum[0] = '1';
 
 
@@ -170,11 +340,20 @@ int tqslGenNewKeys(const char *callSign,char **privKey,
 int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
 {
   DSA    	*dsa;
-  int 		i;
+
   int		rc;
+  char		certStr[700];
+
 
   if (cert->data.certType == '0' || CACert == NULL)  // then selfsigned
     CACert = cert;
+
+  packCert(cert,certStr);   // pack the cert into standard format
+
+  if (debugLevel > 1)
+    fprintf(stderr,"certStr: %s\n",certStr);
+
+  //  packCert(CACert,caCertStr);
 
   // do we need to check the CA Cert?
   if (chkCA > 0)
@@ -199,30 +378,20 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
   strncpy(pkhex,(const char *)CACert->data.publicKey.pkey,pubKeySize);
   pkhex[pubKeySize] = '\0';
 
+
   BN_hex2bn(&dsa->pub_key,pkhex);
 
   unsigned char hash[40];
-  unsigned char *amPtr;
-  amPtr = (unsigned char *)cert;
-  SHA1(amPtr,sizeof(cert->data),hash);
+  SHA1((const unsigned char *)certStr,strlen(certStr),hash);
 
+
+  if (debugLevel > 1)
+    fprintf(stderr,"hash: %s\n",bin2hex(hash,SHA_DIGEST_LENGTH));
 
   unsigned char 	sigRet[500];
-  unsigned int 		sigLen;
-  char			sigsize[5];
+  int			sigLen;
 
-  for(i=0;i<3;i++)
-    {
-      if (cert->sigSize[i] == ' ')
-	{
-	  sigsize[i] = '\0';
-	  break;
-	}
-      sigsize[i] = cert->sigSize[i];
-      sigsize[i+1] = '\0';
-    }
-
-  sigLen = atol(sigsize);
+  sigLen = strlen(cert->signature);
   hex2bin(cert->signature,sigRet,sigLen);
   
   sigLen = (sigLen/2);
@@ -243,7 +412,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
 
   DSA    	*dsa;
   int		rc;
-  char		tmpStr[50];
+  char		certStr[500];
 
   dsa = DSA_new();
   if (dsa == NULL)
@@ -265,7 +434,8 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     }
 
   memset(cert,0,sizeof(TqslCert));
-  memset(cert,' ',sizeof(TqslCert));
+  memset(certStr,0,sizeof(certStr));
+  //  memset(cert,' ',sizeof(TqslCert));
   
   if (selfSign == 1)
     cert->data.certType = '0';
@@ -273,21 +443,22 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     cert->data.certType = '1';
 
   cert->data.publicKey = *pubKey;
-  sprintf(tmpStr,"%-10.10s       ",issueDate);
-  memcpy(cert->data.issueDate,tmpStr,10);
-
-  sprintf(tmpStr,"%-10.10s       ",expireDate);
-  memcpy(cert->data.expireDate,tmpStr,10);
-
   
-  sprintf(tmpStr,"%-10.10s       ",caId);
-  memcpy(&cert->data.caID,tmpStr,10);
+  if (debugLevel > 4)
+    fprintf(stderr,"pkey len is %d\n",
+	    strlen((char *)cert->data.publicKey.pkey));
 
-  sprintf(tmpStr,"%s      ",certNum);
-  memcpy(&cert->data.caCertNum,tmpStr,6);
+  strcpy(cert->data.issueDate,issueDate);
+  strcpy(cert->data.expireDate,expireDate);
+  strcpy(cert->data.caID,caId);
+  strcpy(cert->data.caCertNum,certNum);
+
+  packCert(cert,certStr);
 
   unsigned char hash[40];
-  SHA1((unsigned char *)&cert->data,sizeof(TqslCertData),hash);
+  if (debugLevel > 1)
+    fprintf(stderr,"certStr: %s\n",certStr);
+  SHA1((unsigned char *)certStr,strlen(certStr),hash);
 
   unsigned char sigRet[500];
   unsigned int sigLen;
@@ -312,9 +483,9 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
 
   char *sigStr;
   sigStr = bin2hex(sigRet,sigLen);
-  memcpy(cert->signature,sigStr,sigLen*2);
-  sprintf(tmpStr,"%03d",sigLen*2);
-  memcpy(cert->sigSize,tmpStr,3);
+  strcpy(cert->signature,sigStr);
+  //  sprintf(tmpStr,"%d",sigLen*2);
+  //  memcpy(cert->sigSize,tmpStr,3);
   DSA_free(dsa);
 
   if (rc >= 0)
@@ -329,18 +500,77 @@ int tqslReadPub(const char *fname,TqslPublicKey *pubkey)
 
   int		rc;
   int		fd;
-
-  fd = open(fname,O_RDONLY);
-  if (fd < 0)
-    return(0);
-
-  rc = read(fd,pubkey,sizeof(TqslPublicKey));
-  close(fd);  // we are done with it.
-  if (rc <= 0)
+  char		*buf,*tok,*sbuf;
+  int		fs;
+ 
+  fs = getFileSize(fname);
+  if (fs < 10)
     {
       return(0);
     }
-  
+
+  buf = (char *)malloc(fs+1);
+  sbuf = buf;       // save address for free
+  if (buf == NULL)
+    return(0);
+
+  buf[fs] = '\0';
+
+  fd = open(fname,O_RDONLY);
+  if (fd < 0)
+    {
+      free(sbuf);
+      return(0);
+    }
+
+  rc = read(fd,buf,fs);
+  close(fd);  // we are done with it.
+  if (rc < fs)  // make sure we read the complete file
+    {
+      free(sbuf);
+      return(0);
+    }
+
+  stripNL(buf);
+
+  if (buf[0] == '1')  //  Type 1 Public key
+    {
+
+      tok = strtok(buf,"|");
+      if (tok == NULL)
+	{
+	  free(sbuf);
+	  return(0);
+	}
+      pubkey->pkType = *tok;
+
+      tok = strtok(NULL,"|");
+      if (tok == NULL)
+	{
+	  free(sbuf);
+	  return(0);
+	}
+      strcpy(pubkey->callSign,tok);
+
+      tok = strtok(NULL,"|");
+      if (tok == NULL)
+	{
+	  free(sbuf);
+	  return(0);
+	}
+      strcpy(pubkey->pubkeyNum,tok);
+
+      tok = strtok(NULL,"|");
+      if (tok == NULL)
+	{
+	  free(sbuf);
+	  return(0);
+	}
+      strcpy((char *)pubkey->pkey,tok);
+      
+
+    }
+  free(sbuf);
   return(1);
 
 }
@@ -348,16 +578,22 @@ int tqslReadPub(const char *fname,TqslPublicKey *pubkey)
 int tqslWritePub(const char *fname,TqslPublicKey *pubkey)
 {
 
-  int		rc;
-  int		fd;
+  FILE		*fout;
 
-  fd = open(fname,O_WRONLY|O_CREAT|O_TRUNC,0644);
-  if (fd < 0)
-    return(0);
-
-  rc = write(fd,pubkey,sizeof(TqslPublicKey));
-  close(fd);  // we are done with it.
-  return(1);
+  fout = fopen(fname,"w");
+  if (fout != NULL)
+    {
+      fprintf(fout,"%c|%s|%s|%s\n",
+	      pubkey->pkType,pubkey->callSign,pubkey->pubkeyNum,
+	      pubkey->pkey);
+      fclose(fout);
+      return(1);
+    }
+  else
+    {
+      return(0);
+    }	
+  
 }
 
 int tqslSignData(const char *privKey,const unsigned char *data,
