@@ -34,7 +34,9 @@
 #include "tqsl.h"
 #include "sign.h"
 
-
+//
+// All functions return 0 for failed and no zero on success
+//
 
 static char cvsID[] = "$Id$";
 int debugLevel=0;
@@ -82,7 +84,10 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
 
   rc = write(fd,cert,sizeof(TqslCert));
   close(fd);  // we are done with it.
-  return(rc);
+  if (rc >= 0)
+    return(rc);
+  else
+    return(0);
 }
 
 // tqslGenNewKeys
@@ -115,7 +120,7 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
   dsa = DSA_new();
   if (dsa == NULL)
     {
-      return(-3);
+      return(0);
     }
 
   // read common public values
@@ -126,7 +131,7 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
 
   rc = DSA_generate_key(dsa);
   if (rc == 0)
-    return(-4);
+    return(0);
   FILE *fp;
 
   // save public key file
@@ -149,7 +154,7 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
       fclose(fp);
     }
   else
-    return(-1);
+    return(0);
 
   fp = fopen(privFile,"w");
   if (fp)
@@ -160,10 +165,9 @@ int tqslGenNewKeys(const char *callSign,const char *privFile,
       fclose(fp);
     }     
   else
-    return(-2);
+    return(0);
 
   return(1);
-
 
 }
 
@@ -187,7 +191,7 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
   dsa = DSA_new();
   if (dsa == NULL)
     {
-      return(1);
+      return(0);
     }
 
   // read common public values
@@ -230,7 +234,11 @@ int tqslCheckCert(TqslCert *cert,TqslCert *CACert,int chkCA)
   rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
   DSA_free(dsa);
   ERR_remove_state(0);  // clean up error queue
-  return(rc);
+
+  if (rc >= 0)
+    return(rc);
+  else
+    return(0);
 }
 int tqslSignCert(TqslCert *cert,const char *caPrivKey,
                  const char *caId,TqslPublicKey *pubKey,
@@ -245,7 +253,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   dsa = DSA_new();
   if (dsa == NULL)
     {
-      return(1);
+      return(0);
     }
 
   // read common public values
@@ -254,12 +262,11 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   BN_hex2bn(&dsa->g,gVal);
   BN_hex2bn(&dsa->q,qVal);
 
-  //  readBig(caPrivFile,&dsa->priv_key);
   rc = BN_hex2bn(&dsa->priv_key,caPrivKey);
   if (rc == 0)
     {
       DSA_free(dsa);
-      return(-3);
+      return(0);
     }
 
   memset(cert,0,sizeof(TqslCert));
@@ -299,7 +306,7 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
     }
 
   rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
-
+  
   if (debugLevel > 3)
     {
       char *hv;
@@ -314,7 +321,11 @@ int tqslSignCert(TqslCert *cert,const char *caPrivKey,
   sprintf(tmpStr,"%03d",sigLen*2);
   memcpy(cert->sigSize,tmpStr,3);
   DSA_free(dsa);
-  return(0);
+
+  if (rc >= 0)
+    return(rc);
+  else
+    return(0);
 
 }
 
@@ -332,7 +343,7 @@ int tqslReadPub(const char *fname,TqslPublicKey *pubkey)
   close(fd);  // we are done with it.
   if (rc <= 0)
     {
-      return(rc);
+      return(0);
     }
   
   return(1);
@@ -347,9 +358,117 @@ int tqslWritePub(const char *fname,TqslPublicKey *pubkey)
 
   fd = open(fname,O_WRONLY);
   if (fd < 0)
-    return(fd);
+    return(0);
 
   rc = write(fd,pubkey,sizeof(TqslPublicKey));
   close(fd);  // we are done with it.
-  return(rc);
+  return(1);
+}
+
+int tqslSignData(const char *privKey,const unsigned char *data,
+		 TqslCert *cert,TqslSignature *signature, int len)
+{
+
+  DSA    	*dsa;
+  int		rc;
+
+  dsa = DSA_new();
+  if (dsa == NULL)
+    {
+      return(0);
+    }
+
+  BN_hex2bn(&dsa->p,pVal);
+  BN_hex2bn(&dsa->g,gVal);
+  BN_hex2bn(&dsa->q,qVal);
+
+  rc = BN_hex2bn(&dsa->priv_key,privKey);
+  if (rc == 0)
+    {
+      DSA_free(dsa);
+      return(0);
+    } 
+
+
+  memset(signature,0,sizeof(TqslSignature));
+  memset(signature,' ',sizeof(TqslSignature));
+
+
+  unsigned char hash[40];
+
+
+  SHA1(data,len,hash);
+
+  unsigned char 	sigRet[500];
+  unsigned int 		sigLen;
+  char 			*hexSign;
+
+  rc = DSA_sign(1,hash,SHA_DIGEST_LENGTH,sigRet,&sigLen,dsa);
+  DSA_free(dsa);
+  if (rc <= 0)
+    return(0);
+
+  hexSign = bin2hex(sigRet,sigLen);
+  memcpy(&signature->signature,hexSign,strlen(hexSign));
+  signature->sigType = '1';
+  char tStr[20];
+  sprintf(tStr,"%d    ",sigLen*2);
+  memcpy(signature->sigSize,tStr,3);
+  signature->cert = *cert;
+
+  return(1);
+
+  
+}
+int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len)
+{
+  DSA    	*dsa;
+  int		rc;
+
+  dsa = DSA_new();
+  if (dsa == NULL)
+    {
+      return(0);
+    }
+
+  BN_hex2bn(&dsa->p,pVal);
+  BN_hex2bn(&dsa->g,gVal);
+  BN_hex2bn(&dsa->q,qVal);
+
+  char pkhex[200];
+  strncpy(pkhex,(const char *)signature->cert.data.publicKey.pkey,pubKeySize);
+  pkhex[pubKeySize] = '\0';
+  BN_hex2bn(&dsa->pub_key,pkhex);
+
+  unsigned char hash[40];
+
+  SHA1(data,len,hash);
+
+  unsigned char 	sigRet[500];
+  unsigned int 		sigLen;
+  char			sigsize[5];
+
+  for(int i=0;i<3;i++)
+    {
+      if (signature->sigSize[i] == ' ')
+	{
+	  sigsize[i] = '\0';
+	  break;
+	}
+      sigsize[i] = signature->sigSize[i];
+      sigsize[i+1] = '\0';
+    }
+
+  sigLen = atol(sigsize);
+  hex2bin(signature->signature,sigRet,sigLen);
+  
+  sigLen = (sigLen/2);
+
+  rc = DSA_verify(1,hash,SHA_DIGEST_LENGTH,sigRet,sigLen,dsa);
+  DSA_free(dsa);
+  if (rc <= 0)
+    return(0);
+
+  return(1);
+
 }

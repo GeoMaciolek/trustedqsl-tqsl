@@ -57,6 +57,7 @@ struct TqslCert
 struct TqslSignature
 {
   char			sigType;
+  char			sigSize[3];
   char			signature[signSizeMax];
   TqslCert		cert;
 };
@@ -100,10 +101,9 @@ extern "C"
                  const char *caId,TqslPublicKey *pubKey,
                  const char *certNum,const char *issueDate,
                  char *expireDate,int selfSign);
-  int tqslSignData(const char *privKeyFname,const unsigned char *data,
-		 TqslCert *cert,TqslSignature *signature);
-  int tqslVerifyData(TqslCert *cert,unsigned char *data,
-		     TqslSignature *signature);
+  int tqslSignData(const char *privKey,const unsigned char *data,
+		 TqslCert *cert,TqslSignature *signature,int len);
+  int tqslVerifyData(unsigned char *data,TqslSignature *signature,int len);
   
 #ifdef __cplusplus
 }
