@@ -43,12 +43,12 @@ tqslSignCert - Sign a cert.  This is used by CA to create a cert.
 tqslCheckCert - This function validate that a cert is validate
 and has not been tampered with.
 
-*** Not done yet! ***
-
 tqslSignData - Sign a message with a private key
 
 tqslVerifyData - validates who the message is from and that it hasn't
 been tampered with.
+
+*** Not done yet! ***
 
 tqslSignQSL - Sign a QSL record. 
 
@@ -61,21 +61,18 @@ TODO list (not in order):
 
 2. Make a DLL useable by other languages other than Microsoft C++.
 
-3. Clean up functions.
+3. Clean up functions (pretty much done.  Need more comments).
 
-4. Add signing and validation functions (not hard because the
-	certs is just a special form of signing and validation.
+4. Get it into hands of software developers.
 
-5. Get it into hands of software developers.
+5.  Need portable and secure key rings.
 
-6. Need portable and secure key rings.
+6. Need design and user guides
 
-7. Need design and user guides
-
-8. Needs award sponsors and software developers participation
+7. Needs award sponsors and software developers participation
 in setting standard formats.
 
-9. Need (CRL) Cert Revocation List support.  I don't expect this to
+8. Need (CRL) Cert Revocation List support.  I don't expect this to
 be used often because the only reason to revoke a cert is if
 the private key has been compromised.  Award sponsors may keep
 a list of amateurs that are not trusted, but that is different
