@@ -23,11 +23,24 @@ AC_ARG_WITH(tqsllib,
 )
 AC_SUBST(TQSLLIB)
 
-export LIBRARY_PATH="$OPENSSL/lib:$TQSLLIB"
+AC_ARG_WITH(expat,
+  [  --with-expat=DIR        location of expat library],
+  [ EXPAT="$withval" ],
+  [ EXPAT="../../expat" ]
+)
+AC_SUBST(EXPAT)
+
+export LIBRARY_PATH="$OPENSSL/lib:$TQSLLIB:$EXPAT"
 
 dnl Checks for libraries.
 dnl Replace `main' with a function in -lcrypto:
 AC_CHECK_LIB(crypto, MD5_Init)
+
+AC_ARG_WITH(build,
+  [  --with-build=BUILDID    set build ID],
+  [  BUILD=$withval ]
+)
+AC_SUBST(BUILD)
 
 dnl Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -35,5 +48,8 @@ AC_TYPE_SIZE_T
 
 dnl Checks for library functions.
 AC_CHECK_FUNCS(mkdir strerror)
+
+AC_PROG_INSTALL
+AC_PREFIX_DEFAULT(/usr)
 
 AC_OUTPUT(Makefile Makefile.g95)

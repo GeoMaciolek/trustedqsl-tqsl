@@ -35,6 +35,23 @@
 #endif
 #include "tqsllib.h"
 
+#include <vector>
+
+class CRQ_ProviderPage : public wxWizardPageSimple {
+public:
+	CRQ_ProviderPage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
+	virtual bool TransferDataFromWindow();
+	TQSL_PROVIDER provider;
+private:
+	void DoUpdateInfo();
+	void UpdateInfo(wxCommandEvent&);
+	std::vector<TQSL_PROVIDER> providers;
+	wxComboBox *tc_provider;
+	wxStaticText *tc_provider_info;
+
+	DECLARE_EVENT_TABLE()
+};
+
 class CRQ_IntroPage : public wxWizardPageSimple {
 public:
 	CRQ_IntroPage(wxWizard *parent, TQSL_CERT_REQ *crq = 0);
@@ -65,6 +82,15 @@ public:
 	wxString email;
 private:
 	wxTextCtrl *tc_email;
+};
+
+class CRQ_PasswordPage : public wxWizardPageSimple {
+public:
+	CRQ_PasswordPage(wxWizard *parent);
+	virtual bool TransferDataFromWindow();
+	wxString password;
+private:
+	wxTextCtrl *tc_pw1, *tc_pw2;
 };
 
 class CRQ_SignPage : public wxWizardPageSimple {

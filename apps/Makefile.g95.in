@@ -1,38 +1,65 @@
 OPENSSLDIR=@OPENSSL@
 TQSLLIBDIR=@TQSLLIB@
 TQSLLIB=@TQSLLIB@
-EXTRALIBS = -L$(TQSLLIBDIR) -ltqsllib -L$(OPENSSLDIR)/lib -lcrypto 
+EXPAT=@EXPAT@
+# LIBTQSL can be tqsllib or tqsllibd for static or DLL linkage, respectively
+LIBTQSL=tqsllibd
+EXTRALIBS = -L$(TQSLLIBDIR) -l$(LIBTQSL) -L$(OPENSSLDIR)/lib -L$(EXPAT)/lib -lexpat -lcrypto
 INCDIR = -I$(TQSLLIBDIR) -I$(OPENSSLDIR)/include
-#CXXFLAGS = -O0 -g3 -Wall $(INCDIR) -DHAVE_CONFIG_H `wx-config --cflags`
+BUILD=@BUILD@
+ifeq ($(BUILD),)
+  BUILD=unofficial
+endif
 CYYFLAGS = $(INCDIR) -DHAVE_CONFIG_H
-#LDLIBS = $(LIBS) -L../tqsllib -ltqsllib `wx-config --libs`
-TQSLLIBFILE=$(TQSLLIBDIR)/libtqsllib.a
-#EXTRALDFLAGS = $(LIBS)
+TQSLLIBFILE=$(TQSLLIBDIR)/lib$(LIBTQSL).a
 
+# The WXWIN environment variable must be set to the root of
+# the wxWindows installation
 WXDIR=$(WXWIN)
 
+# makeg95.env provides the mingw and windres options needed.
 include $(WXDIR)/src/makeg95.env
 
-TARGETS = tqslcert
+TARGETS = tqslcert tqsl
 
 all: $(TARGETS)
 
 TQSLCERT_OBJ = tqslcert.o crqwiz.o dxcc.o tqslcert-resources.o certtree.o \
 	 tqslcert_prefs.o
 
+TQSL_OBJ = tqsl.o stationdial.o dxcc.o tqslcert-resources.o tqslwiz.o qsodatadialog.o \
+	tqslvalidator.o tqsl_prefs.o
+
 tqslcert: $(TQSLCERT_OBJ) $(TQSLLIBFILE)
 	$(CC) $(LDFLAGS) -o $@ $(TQSLCERT_OBJ) $(LDLIBS) -lstdc++
 
+tqsl: $(TQSL_OBJ) $(TQSLLIBFILE)
+	$(CC) $(LDFLAGS) -o $@ $(TQSL_OBJ) $(LDLIBS) -lstdc++
+
 include apps.depends
 
-tqslcert-resources.o: tqslcert.rc
+tqslcertbuild.h: buildskel.h
+	cp buildskel.h tqslcertbuild.h
+
+tqslcert.o:
+	perl touchver.pl tqslcertbuild.h BUILD $(BUILD)
+	$(CC) $(CPPFLAGS) $(CYYFLAGS) -fexceptions -frtti -c -o $@ $*.cpp
+	
+tqslbuild.h: buildskel.h
+	cp buildskel.h tqslbuild.h
+
+tqsl.o:
+	perl touchver.pl tqslbuild.h BUILD $(BUILD)
+	$(CC) $(CPPFLAGS) $(CYYFLAGS) -fexceptions -frtti -c -o $@ $*.cpp
+	
+tqslcert-resources.o: tqslcert.rc tqsl.ico
 	windres -i tqslcert.rc -o tqslcert-resources.o $(RESFLAGS)
 
 %.o: %.cpp
-	$(CC) $(CPPFLAGS) $(CYYFLAGS) -c -o $@ $*.cpp
+	$(CC) $(CPPFLAGS) $(CYYFLAGS) -fexceptions -frtti -c -o $@ $*.cpp
 
 clean:
-	rm -f $(TARGETS) *.o *.a *~ xxx.*
+	rm -f *.exe *.o *.a *~ xxx.*
 
 distclean:
 	$(MAKE) clean

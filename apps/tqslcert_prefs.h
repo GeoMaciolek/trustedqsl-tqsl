@@ -31,12 +31,23 @@
 #include "wx/checkbox.h"
 #include "tqslcertctrls.h"
 
+#define DEFAULT_CABRILLO_FILES "log cbr"
+#define DEFAULT_ADIF_FILES "adi"
+
 class KeyPrefs : public wxPanel {
 public:
 	KeyPrefs(wxWindow *parent);
 	virtual bool TransferDataFromWindow();
 private:
 	wxCheckBox *root_cb, *ca_cb, *user_cb;
+};
+
+class FilePrefs : public wxPanel {
+public:
+	FilePrefs(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
+private:
+	wxTextCtrl *cabrillo, *adif;
 };
 
 class Preferences : public wxDialog {
@@ -47,6 +58,7 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	KeyPrefs *keyprefs;
+	FilePrefs *fileprefs;
 };
 
 #endif	// __TQSLCERT_PREFS_H

@@ -15,9 +15,9 @@
 #include "sysconfig.h"
 #endif
 
-void displayCertProperties(CertTreeItemData *item);
+void displayCertProperties(CertTreeItemData *item, wxWindow *parent = 0);
 int getPassword(char *buf, int bufsiz);
 void displayTQSLError(const char *pre);
-wxMenu *makeCertificateMenu(bool enable);
+wxMenu *makeCertificateMenu(bool enable, bool keyonly = false);
 
 #endif	// __util_h

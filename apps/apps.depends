@@ -1,14 +1,41 @@
 certtree.o: certtree.cpp certtree.h tqslcertctrls.h util.h dxcc.h \
-	 sysconfig.h $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h
+	 $(TQSLLIB)/tqslerrno.h cert.xpm nocert.xpm sysconfig.h \
+	 $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h $(TQSLLIB)/cabrillo.h
 
 crqwiz.o: crqwiz.cpp crqwiz.h dxcc.h util.h tqslcertctrls.h sysconfig.h \
-	 certtree.h $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h
+	 certtree.h $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h \
+	 $(TQSLLIB)/cabrillo.h
 
 dxcc.o: dxcc.cpp dxcc.h sysconfig.h
 
-tqslcert.o: tqslcert.cpp tqslapp.h tqslcert.h crqwiz.h dxcc.h \
-	 $(TQSLLIB)/tqsllib.h $(TQSLLIB)/tqslerrno.h util.h sysconfig.h \
-	 certtree.h tqslcertctrls.h $(TQSLLIB)/adif.h
+qsodatadialog.o: qsodatadialog.cpp sysconfig.h qsodatadialog.h \
+	 tqslvalidator.h left.xpm right.xpm bottom.xpm top.xpm \
+	 $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h $(TQSLLIB)/cabrillo.h
 
-tqslcert_prefs.o: tqslcert_prefs.cpp tqslcert_prefs.h sysconfig.h
+stationdial.o: stationdial.cpp sysconfig.h stationdial.h tqslwiz.h \
+	 tqslexcept.h $(TQSLLIB)/tqsllib.h certtree.h $(TQSLLIB)/adif.h \
+	 $(TQSLLIB)/cabrillo.h
+
+tqsl.o: tqsl.cpp sysconfig.h tqslwiz.h qsodatadialog.h \
+	 $(TQSLLIB)/tqslerrno.h tqslexcept.h tqslpaths.h stationdial.h \
+	 $(TQSLLIB)/tqslconvert.h $(TQSLLIB)/adif.h dxcc.h tqsl_prefs.h \
+	 tqslbuild.h certtree.h $(TQSLLIB)/tqsllib.h \
+	 $(TQSLLIB)/cabrillo.h
+
+tqsl_prefs.o: tqsl_prefs.cpp tqsl_prefs.h sysconfig.h
+
+tqslcert.o: tqslcert.cpp tqslapp.h tqslcert.h tqslpaths.h crqwiz.h \
+	 tqslcert_prefs.h dxcc.h $(TQSLLIB)/tqsllib.h \
+	 $(TQSLLIB)/tqslerrno.h util.h tqslcertbuild.h sysconfig.h \
+	 certtree.h tqslcertctrls.h $(TQSLLIB)/adif.h \
+	 $(TQSLLIB)/cabrillo.h
+
+tqslcert_prefs.o: tqslcert_prefs.cpp tqslcert_prefs.h sysconfig.h \
+	 tqslcertctrls.h
+
+tqslvalidator.o: tqslvalidator.cpp sysconfig.h tqslvalidator.h \
+	 $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h $(TQSLLIB)/cabrillo.h
+
+tqslwiz.o: tqslwiz.cpp sysconfig.h tqslwiz.h dxcc.h certtree.h \
+	 $(TQSLLIB)/tqsllib.h $(TQSLLIB)/adif.h $(TQSLLIB)/cabrillo.h
 

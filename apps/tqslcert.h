@@ -58,6 +58,7 @@ public:
 	void OnPreferences(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
+	void DisplayHelp() { help.Display("main.htm"); }
 
 	CertTree *cert_tree;
 private:

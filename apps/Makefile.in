@@ -1,21 +1,53 @@
-TQSLLIB=@TQSLLIB@
-LIBS=-lcrypto
-INCDIR = -I$(TQSLLIB)
+TQSLLIB=../src
+LIBS=-lz -lexpat -lcrypto
+EXPAT=../../expat
+INCDIR = -I$(TQSLLIB) -I$(EXPAT)/include
+BUILD=@BUILD@
+ifeq ($(BUILD),)
+  BUILD=unofficial
+endif
 CXXFLAGS = -O0 -g3 -Wall $(INCDIR) @DEFS@ `wx-config --cflags`
 LDLIBS = $(LIBS) -L$(TQSLLIB) -ltqsllib `wx-config --libs`
 TQSLLIBFILE=$(TQSLLIB)/libtqsllib.a
 
-TARGETS = tqslcert
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+INSTALL=@INSTALL@
+BINDIR=@bindir@
+DOCDIR=@datadir@/doc
+ETCDIR=/etc
+
+TARGETS = tqslcert tqsl
 
 all: $(TARGETS)
 
 TQSLCERT_OBJ = tqslcert.o crqwiz.o dxcc.o certtree.o tqslcert_prefs.o
 
+TQSL_OBJ = tqsl.o tqslwiz.o dxcc.o stationdial.o qsodatadialog.o \
+	tqslvalidator.o tqsl_prefs.o
+
 tqslcert: $(TQSLCERT_OBJ) $(TQSLLIBFILE)
 	$(CC) $(CXXFLAGS) $(LDFLAGS) -o $@ $(TQSLCERT_OBJ) $(LDLIBS) -lstdc++
 
+tqsl: $(TQSL_OBJ) $(TQSLLIBFILE)
+	$(CC) $(CXXFLAGS) $(LDFLAGS) -o $@ $(TQSL_OBJ) $(LDLIBS) -lstdc++
+
 include apps.depends
 
+tqslcertbuild.h: buildskel.h
+	cp buildskel.h tqslcertbuild.h
+
+tqslcert.o:
+	perl touchver.pl tqslcertbuild.h BUILD $(BUILD)
+	g++ $(CXXFLAGS) -c -o $@ $*.cpp
+	
+tqslbuild.h: buildskel.h
+	cp buildskel.h tqslbuild.h
+
+tqsl.o:
+	perl touchver.pl tqslbuild.h BUILD $(BUILD)
+	g++ $(CXXFLAGS) -c -o $@ $*.cpp
+	
 %.o: %.cpp
 	g++ $(CXXFLAGS) -c -o $@ $*.cpp
 
@@ -24,6 +56,19 @@ clean:
 
 distclean:
 	$(MAKE) clean
-	rm -f config.status config.cache confiog.log \
+	rm -f config.status config.cache config.log \
 	Makefile Makefile.g95
 
+install:
+	strip $(TARGETS)
+	$(INSTALL) -d $(BINDIR) $(DOCDIR)/tqslcert $(DOCDIR)/tqslapp $(ETCDIR)/tqsl
+	$(INSTALL) -C $(TARGETS) $(BINDIR)
+	$(INSTALL) -C tqslcert_help/*.* $(DOCDIR)/tqslcert
+	$(INSTALL) -C tqsl_help/*.* $(DOCDIR)/tqslapp
+	$(INSTALL) -C ../licenses/* $(DOCDIR)/tqslapp
+	$(INSTALL) -C ../lotwdb/config.xml $(ETCDIR)/tqsl
+
+uninstall:
+	cd $(BINDIR)
+	rm -f $(TARGETS)
+	rm -rf $(DOCDIR)/tqslcert $(DOCDIR)/tqslapp $(ETCDIR)/tqsl

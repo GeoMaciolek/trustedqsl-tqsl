@@ -25,7 +25,6 @@
 	#include "wx/wx.h"
 #endif
 
-#define ADIF_BOOLEAN	// HACK!
 #include "tqsllib.h"
 
 #include "wx/treectrl.h"
@@ -45,10 +44,11 @@ public:
 	CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style);
 	virtual ~CertTree();
-	int Build();
+	int Build(int flags = TQSL_SELECT_CERT_WITHKEYS);
 	void OnItemActivated(wxTreeEvent& event);
 	void OnRightDown(wxMouseEvent& event);
 	bool useContextMenu;
+	CertTreeItemData *GetItemData(int id) { return (CertTreeItemData *)wxTreeCtrl::GetItemData(id); }
 
 	DECLARE_EVENT_TABLE()
 

@@ -10,12 +10,21 @@
 
 #include "certtree.h"
 #include <map>
+#include <vector>
+#include <algorithm>
 
 #include "tqslcertctrls.h"
 #include "util.h"
 #include "dxcc.h"
 #include "tqslerrno.h"
 #include <errno.h>
+#include <wx/imaglist.h>
+
+using namespace std;
+
+#include "cert.xpm"
+#include "nocert.xpm"
+#include "folder.xpm"
 
 ///////////// Certificate Tree Control ////////////////
 
@@ -29,7 +38,16 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style) :
 		wxTreeCtrl(parent, id, pos, size, style) {
 	useContextMenu = true;
+	wxBitmap certbm(cert_xpm);
+	wxBitmap no_certbm(nocert_xpm);
+	wxBitmap folderbm(folder_xpm);
+	wxImageList *il = new wxImageList(16, 16, false, 3);
+	il->Add(certbm);
+	il->Add(no_certbm);
+	il->Add(folderbm);
+	SetImageList(il);
 }
+
 
 CertTree::~CertTree() {
 }
@@ -39,35 +57,36 @@ CertTreeItemData::~CertTreeItemData() {
 		tqsl_freeCertificate(_cert);
 }
 
-int
-CertTree::Build() {
-	typedef map<wxString,wxTreeItemId> idmap;
+typedef pair<wxString,int> certitem;
+typedef vector<certitem> certlist;
 
-	idmap issuers;
+static bool
+cl_cmp(const certitem& i1, const certitem& i2) {
+	return i1.first < i2.first;
+}
+
+int
+CertTree::Build(int flags) {
+	typedef map<wxString,certlist> issmap;
+	issmap issuers;
 
 	DeleteAllItems();
-	wxTreeItemId rootId = AddRoot("tQSL Certificates");
+	wxTreeItemId rootId = AddRoot("tQSL Certificates", 2);
 	tQSL_Cert *certs;
 	int ncerts = 0;
-	if (tqsl_selectCertificates(&certs, &ncerts, 0, 0, 0, 0)) {
+	if (tqsl_selectCertificates(&certs, &ncerts, 0, 0, 0, 0, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || errno != ENOENT)
 			displayTQSLError("Error while accessing certificate store");
 		return ncerts;
 	}
-	for (int i = 0; i < ncerts; i++) {
+	// Separate certs into lists by issuer
+	for (int i = 0; i < ncerts; i++) {	
 		char issname[129];
 		if (tqsl_getCertificateIssuerOrganization(certs[i], issname, sizeof issname)) {
 			displayTQSLError("Error parsing certificate for issuer");
 			return ncerts;
 		}
-		wxTreeItemId id = issuers[issname];
-		if (!id.IsOk()) {
-			id = rootId;
-			id = AppendItem(id, issname);
-			Expand(id);
-			issuers[issname] = id;
-		}
-		char callsign[129];
+		char callsign[129] = "";
 		if (tqsl_getCertificateCallSign(certs[i], callsign, sizeof callsign - 4)) {
 			displayTQSLError("Error parsing certificate for call sign");
 			return ncerts;
@@ -86,8 +105,20 @@ CertTree::Build() {
 			entityName = "<UNKNOWN ENTITY>";
 		strncat(callsign, dxcc.name(), sizeof callsign - strlen(callsign));
 		callsign[sizeof callsign-1] = 0;
-		CertTreeItemData *cert = new CertTreeItemData(certs[i]);
-		AppendItem(id, callsign, -1, -1, cert);
+		issuers[issname].push_back(make_pair(wxString(callsign),i));
+	}
+	// Sort each issuer's list and add items to tree
+	issmap::iterator iss_it;
+	for (iss_it = issuers.begin(); iss_it != issuers.end(); iss_it++) {
+		wxTreeItemId id = AppendItem(rootId, iss_it->first, 2);
+		certlist& list = iss_it->second;
+		sort(list.begin(), list.end(), cl_cmp);
+		for (int i = 0; i < (int)list.size(); i++) {
+			CertTreeItemData *cert = new CertTreeItemData(certs[list[i].second]);
+			int keyonly = 1;
+			tqsl_getCertificateKeyOnly(certs[list[i].second], &keyonly);
+			AppendItem(id, list[i].first, (keyonly ? 1 : 0), -1, cert);
+		}
 		Expand(id);
 	}
 	Expand(rootId);
@@ -97,7 +128,7 @@ CertTree::Build() {
 void
 CertTree::OnItemActivated(wxTreeEvent& event) {
 	wxTreeItemId id = event.GetItem();
-	displayCertProperties((CertTreeItemData *)GetItemData(id));
+	displayCertProperties((CertTreeItemData *)GetItemData(id), this);
 }
 
 void
@@ -107,7 +138,11 @@ CertTree::OnRightDown(wxMouseEvent& event) {
 	wxTreeItemId id = HitTest(event.GetPosition());
 	if (id && GetItemData(id)) {
 		SelectItem(id);
-		wxMenu *cm = makeCertificateMenu(true);
+		tQSL_Cert cert = GetItemData(id)->getCert();
+		int keyonly = 1;
+		if (cert)
+			tqsl_getCertificateKeyOnly(cert, &keyonly);
+		wxMenu *cm = makeCertificateMenu(true, keyonly);
 		PopupMenu(cm, event.GetPosition());
 		delete cm;
 	}
