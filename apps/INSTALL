@@ -70,16 +70,25 @@ those locations to configure. See:
 
 3) Building the Applications under Mac OS X
 
+You'll need to have the Mac developer's tools, Xcode 1.5, installed.
+
 This is done in much the same manner as building under Linux/Unix, above.
 However, you ought *not* do "make install." Simply do:
 
 ./configure
 make
 
-This will result in the directories tqsl.app and tqslcert.app, which
-comprise complete Mac OS X applications. Simply move them to your
-system's Applications folder or the location of your choice, then
-launch the applications from Finder.
+This will result in the directories dist/TrustedQSL/tqsl.app and
+tqslcert.app, which comprise complete Mac OS X applications. You
+can simply move the dist/TrustedQSL folder to your system's
+Applications folder or the location of your choice, then launch
+the applications from Finder. If you want to distribute the built
+applications:
+
+make dmg
+
+will make TrustedQSL.dmg, a Mac distributable disk image containing
+the TrustedQSL folder.
 
 ===================================================================
 
