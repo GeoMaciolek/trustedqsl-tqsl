@@ -1,0 +1,48 @@
+Trusted QSL (tQSL) library
+2001-06-04 J. Bloom, KE3Z
+
+THIS IS VERY MUCH A WORK IN PROGRESS!
+
+To build this library you'll need to have the OpenSSL library
+(www.openssl.org).
+
+NOTE: Part of this library is exported from a separate source tree
+used in LOTW server development. That accounts for some of the
+weirdness you'll see in the source files.
+
+BUILD
+=====
+Linux/Unix
+----------
+./configure [--with-openssl=DIR]
+make -f Makefile.lib
+
+This will make the library (libtqsllib.a) and a simple test
+program, test_openssl. If the OpenSSL files aren't where the
+compiler can find them, use the -with-openssl option to specify
+the openssl base directory, whcih should contain lib and
+include directories. Example:
+   ./configure --with-openssl=/usr/local
+
+Windows
+-------
+The library is built and tested under MinGW. To build it, you
+need to install MinGW and use it to build the OpenSSL library.
+You also need MSYS (available from the MinGW site) or a similar
+environment. With that, you can follow the instructions given
+above under Linux/Unix. A DLL will also be created. It will
+contain the exported symbols that are extern in tqsllib.h
+
+TESTING
+=======
+./test_openssl
+
+Running the test will cause a bunch of messages to be sent to
+stdout. A test cert store and key store will also be created in
+$HOME/.tqsl.
+
+DOCUMENTATION
+=============
+API documentation can be found in the doxygen directory. You can
+rebuild the documentation by simply running doxygen using the
+Doxyfile configuration file.

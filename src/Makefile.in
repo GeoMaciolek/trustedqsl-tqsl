@@ -1,0 +1,37 @@
+LIBS=@LIBS@
+CXXFLAGS = -O0 -g3 -Wall -I. -I../include $(INCDIR) @DEFS@
+LDFLAGS = -L. -L../lotwdb -L../../openssl $(LIBS) -lstdc++
+
+OBJS = tqsllib.o openssl_cert.o adif.o
+
+SUPPORT_LIB = lotwsup
+MYLIB = tqsllib
+
+TARGETS = test_openssl
+
+all: lib$(MYLIB).a
+
+tqsllib.o: tqsllib.c tqsllib.h
+
+adif.o: adif.c adif.h
+
+openssl_cert.o: openssl_cert.c openssl_cert.h tqsllib.h
+
+lib$(MYLIB).a: $(OBJS)
+	rm -f lib$(MYLIB).a
+	ar q lib$(MYLIB).a $(OBJS)
+	ranlib lib$(MYLIB).a
+
+%.o: %.cpp
+	g++ $(CXXFLAGS) -c -o $@ $*.cpp
+
+%.o: %.c
+	gcc $(CXXFLAGS) -c -o $@ $*.c
+
+clean:
+	rm -f $(TARGETS) *.o *.a *~ xxx.*
+
+distclean:
+	$(MAKE) clean
+	rm -rf config.status config.cache config.log doxygen \
+      reqtmp Makefile Makefile.lib

@@ -1,0 +1,55 @@
+LIBS=@LIBS@
+OPENSSL=@OPENSSL@
+CXXFLAGS = -O0 -g3 -Wall -I. -I../include -I$(OPENSSL)/include $(INCDIR) @DEFS@
+LDFLAGS = -L. -L$(OPENSSL)/lib $(LIBS) -lstdc++
+WINDOWS=@WINDOWS@
+
+OBJS = tqsllib.o openssl_cert.o adif.o
+
+PTARGETS = test_openssl
+
+ifeq ($(WINDOWS),1)
+  TARGETS=$(PTARGETS) tqsllib.dll
+else
+  TARGETS=$(PTARGETS)
+endif
+
+SUPPORT_LIB = lotwsup
+MYLIB = tqsllib
+
+all: $(TARGETS)
+
+tqsllib.o: tqsllib.c tqsllib.h
+
+adif.o: adif.c adif.h
+
+openssl_cert.o: openssl_cert.c openssl_cert.h tqsllib.h
+
+test_openssl$(OBJSUF): test_openssl.o lib$(MYLIB).a
+	gcc -o test_openssl$(OBJSUF) test_openssl.o -l$(MYLIB) $(LDFLAGS)
+	
+test_openssl.o: test_openssl.cpp
+	g++ $(CXXFLAGS) -c -o $@ test_openssl.cpp
+
+lib$(MYLIB).a: $(OBJS)
+	rm -f lib$(MYLIB).a
+	ar q lib$(MYLIB).a $(OBJS)
+	ranlib lib$(MYLIB).a
+
+tqsllib.dll: lib$(MYLIB).a
+	dllwrap.exe --export-all-symbols --dllname tqsllib.dll \
+		--output-lib libtqsllibd.a libtqsllib.a -L$(OPENSSL)/lib -lcrypto -lgdi32
+
+%.o: %.cpp
+	g++ $(CXXFLAGS) -c -o $@ $*.cpp
+
+%.o: %.c
+	gcc $(CXXFLAGS) -c -o $@ $*.c
+
+clean:
+	rm -f $(TARGETS) *.o *.a *~ xxx.*
+
+distclean:
+	$(MAKE) -f Makefile.lib clean
+	rm -rf config.status config.cache config.log doxygen \
+		reqtmp Makefile Makefile.lib
