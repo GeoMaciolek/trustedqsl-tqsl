@@ -22,7 +22,6 @@ __published:	// IDE-managed Components
  TMenuItem *ImportPrivateKey1;
  TMenuItem *ImportCertificate1;
  TMenuItem *ImportPublicKey1;
- TMenuItem *ImportPublicKey2;
  TMenuItem *KeyCreate1;
  TMenuItem *CreateNewKeyPair1;
  TMenuItem *ListKeys1;
@@ -39,7 +38,6 @@ __published:	// IDE-managed Components
  TTable *certTbl;
  TTable *pubTbl;
  TTable *PrivTbl;
- TMenuItem *Sign1;
  TMenuItem *CAFunctions1;
  TMenuItem *Signacertificate1;
  TAutoIncField *pubTblKid;
@@ -59,13 +57,27 @@ __published:	// IDE-managed Components
  TMenuItem *Help1;
  TMenuItem *About1;
  TMenuItem *DebugLevel1;
+ TDatabase *adb;
+ TMenuItem *Exports1;
+ TMenuItem *ExportOwnCertificates1;
+ TMenuItem *ExportPublicKeys1;
+ TMenuItem *ExportPrivateKey1;
+ TBooleanField *pubTblSigned;
+ TMenuItem *MaintainCertsandKeys1;
  void __fastcall CreateNewKeyPair1Click(TObject *Sender);
- void __fastcall ImportCertificate1Click(TObject *Sender);
- 
  void __fastcall Signacertificate1Click(TObject *Sender);
  void __fastcall About1Click(TObject *Sender);
  void __fastcall ValidateCertificates1Click(TObject *Sender);
  void __fastcall DebugLevel1Click(TObject *Sender);
+ 
+ void __fastcall ExportOwnCertificates1Click(TObject *Sender);
+ void __fastcall ImportCertificate1Click(TObject *Sender);
+ 
+ void __fastcall ExportPublicKeys1Click(TObject *Sender);
+ void __fastcall ExportPrivateKey1Click(TObject *Sender);
+ void __fastcall ImportPublicKey1Click(TObject *Sender);
+ void __fastcall ImportPrivateKey1Click(TObject *Sender);
+ void __fastcall MaintainCertsandKeys1Click(TObject *Sender);
 private:	// User declarations
 public:		// User declarations
  __fastcall TtqslFm(TComponent* Owner);

@@ -90,7 +90,6 @@ void __fastcall TgenCertFm::signBtnClick(TObject *Sender)
     }
   eStr[10] = 0;
   iStr[10] = 0;
-  //char numStr[20];
 
   // cert number is the same as the public key number.
   // This should be ok because a cert is unique based upon
@@ -211,6 +210,7 @@ void __fastcall TgenCertFm::signBtnClick(TObject *Sender)
      certMm->Lines->Clear();
      certMm->Lines->Add(certStr);
      free(certStr);
+     ShowMessage("Certificate has been created.");
      return;
      }
    else

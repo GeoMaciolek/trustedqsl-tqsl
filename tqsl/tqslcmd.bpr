@@ -14,10 +14,12 @@ BCB = $(MAKEDIR)\..
 VERSION = BCB.03
 # ---------------------------------------------------------------------------
 PROJECT = tqslcmd.exe
-OBJFILES = tqslcmd.obj main.obj genkeys.obj CaSign.obj about.obj caValid.obj debug.obj
+OBJFILES = tqslcmd.obj main.obj genkeys.obj CaSign.obj about.obj caValid.obj debug.obj \
+  savecert.obj impcert.obj savepubk.obj savepk.obj impPubkey.obj tblbrow.obj
 RESFILES = tqslcmd.res
 DEFFILE =
-RESDEPEN = $(RESFILES) main.dfm genkeys.dfm CaSign.dfm about.dfm caValid.dfm debug.dfm
+RESDEPEN = $(RESFILES) main.dfm genkeys.dfm CaSign.dfm about.dfm caValid.dfm debug.dfm \
+  savecert.dfm impcert.dfm savepubk.dfm savepk.dfm impPubkey.dfm tblbrow.dfm
 LIBFILES = ..\tqsllib.lib ..\libeay32.lib
 LIBRARIES = IP40_C3.lib
 SPARELIBS = VCL35.lib vcldb35.lib IP40_C3.lib VCLX35.lib bcbsmp35.lib
@@ -33,25 +35,25 @@ DEBUGLIBPATH = $(BCB)\lib\debug
 RELEASELIBPATH = $(BCB)\lib\release
 # ---------------------------------------------------------------------------
 CFLAG1 = -Od -Hc -w -Ve -r- -k -y -v -vi- -c -b- -w-par -w-inl -Vx -tW
-CFLAG2 = -D_RTLDLL;USEPACKAGES \
+CFLAG2 = -DUSEPACKAGES \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -H=$(BCB)\lib\vcl35.csm
 CFLAG3 = -Tkh30000
-PFLAGS = -D_RTLDLL;USEPACKAGES \
+PFLAGS = -DUSEPACKAGES \
   -U..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
   -I"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include \
   -$Y -$W -$O- -v -JPHN -M
-RFLAGS = -D_RTLDLL;USEPACKAGES \
+RFLAGS = -DUSEPACKAGES \
   -i"d:\program files\borland\cbuilder3\projects";$(BCB)\include;$(BCB)\include\vcl;c:\include
 AFLAGS = /i"d:\program files\borland\cbuilder3\projects" /i$(BCB)\include \
-  /i$(BCB)\include\vcl /ic:\include /d_RTLDLL /dUSEPACKAGES /mx /w2 /zd
+  /i$(BCB)\include\vcl /ic:\include /dUSEPACKAGES /mx /w2 /zd
 LFLAGS = -L..\..\..\..\delphi\prolib\source;"d:\program files\borland\cbuilder3\projects";..\..\..\delphi\prolib\source;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
   -aa -Tpe -x -Gn -v
 IFLAGS =
 # ---------------------------------------------------------------------------
 ALLOBJ = c0w32.obj $(PACKAGES) sysinit.obj $(OBJFILES)
 ALLRES = $(RESFILES)
-ALLLIB = $(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib
+ALLLIB = $(LIBFILES) $(LIBRARIES) import32.lib cp32mt.lib
 # ---------------------------------------------------------------------------
 !ifdef IDEOPTIONS
 

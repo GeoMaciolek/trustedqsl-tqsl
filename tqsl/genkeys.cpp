@@ -21,10 +21,7 @@ __fastcall TgenKeyFm::TgenKeyFm(TComponent* Owner)
 //---------------------------------------------------------------------------
 void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
 {
- char  callsign[20];
-
  char  clrPass[200];
- // unsigned char
 
  TqslPublicKey pubKey;
  char		*secretKey;
@@ -79,11 +76,12 @@ void __fastcall TgenKeyFm::Button1Click(TObject *Sender)
      tqslFm->pubTbl->Insert();
      tqslFm->pubTbl->FieldByName("PublicKey")->AsString = pkStr;
      tqslFm->pubTbl->FieldByName("CallSign")->AsString = callSignEd->Text;
+     tqslFm->pubTbl->FieldByName("Signed")->AsBoolean = false; 
      tqslFm->pubTbl->Post();
      tqslFm->pubTbl->Refresh();
      tqslFm->pubTbl->Edit();
      sprintf(tmpStr,"%s",
-       tqslFm->pubTbl->FieldByName("Kid")->AsString);
+       tqslFm->pubTbl->FieldByName("Kid")->AsString.c_str());
      strncpy(pubKey.pubkeyNum,tmpStr,sizeof(pubKey.pubkeyNum)-1);
      pubKey.pubkeyNum[sizeof(pubKey.pubkeyNum)-1] = '\0';
      pkStr = tqslPubKeyToStr(&pubKey);
