@@ -24,6 +24,11 @@ make
 %install
 rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install-strip
+mkdir -p $RPM_BUILD_ROOT/usr/share/applications
+cp tqsl.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqsl.desktop
+cp tqslcert.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqslcert.desktop
+mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
+cp icons/key48.png $RPM_BUILD_ROOT/usr/share/pixmaps/TrustedQSL.png
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -36,3 +41,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/bin/tqslcert
 /usr/share/TrustedQSL/help/tqslcert
 /usr/share/TrustedQSL/help/tqslapp
+/usr/share/applications/TrustedQSL-tqsl.desktop
+/usr/share/applications/TrustedQSL-tqslcert.desktop
+/usr/share/pixmaps/TrustedQSL.png

@@ -32,15 +32,15 @@ These applications make use of the wxWindows/wxWidgets GUI
 framework. (http://www.wxwindows.org/) Version 2.4.2 or later
 is required. (2.5.x recommended for Mac OS X.) For Unix and
 Mac OS X, follow the build instructions found there, or install
-the wxWindows/wxWidgets packagaes appropriate for your platform.
+the wxWindows/wxWidgets packages appropriate for your platform.
 
 Building under Windows also requires Inno Setup (version 3 or
 later), http://www.jrsoftware.org/isinfo.php.
 
 For Windows, the installable wxWindows package targets VC++.
-It is perhaps possible to build these applications under VC++,
+It may be possible to build these applications under VC++,
 but these instructions cover building the application under
-the MSYS/MinGW environment used to build the tqsllin library.
+the MSYS/MinGW environment used to build the tqsllib library.
 (Note that to run the applications does *not* require any special
 environment.)
 
@@ -73,7 +73,7 @@ those locations to configure. See:
 You'll need to have the Mac developer's tools, Xcode 1.5, installed.
 
 This is done in much the same manner as building under Linux/Unix, above.
-However, you ought *not* do "make install." Simply do:
+However, you ought *not* do "make install." Using Terminal, simply do:
 
 ./configure
 make
@@ -87,8 +87,8 @@ applications:
 
 make dmg
 
-will make TrustedQSL.dmg, a Mac distributable disk image containing
-the TrustedQSL folder.
+will make TrustedQSL-1.11.dmg, a Mac distributable disk image
+containing the TrustedQSL applications folder and document files.
 
 ===================================================================
 

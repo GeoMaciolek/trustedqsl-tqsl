@@ -63,7 +63,7 @@ EXTRA_DIST = tqslbuild.h.in tqslcertbuild.h.in \
 	LICENSE TrustedQSL.spec.in TrustedQSL.spec \
 	help/tqslapp/*.* help/tqslcert/*.* Info.plist.in quick \
 	touchver.pl key.ico tqsl.ico tqsl-key1.ico setup.iss.in tqslcert.rc.in \
-	icons/*.* tqslicons.icns
+	icons/*.* tqslicons.icns tqsl.desktop tqslcert.desktop
 
 tqslbuild.h: tqslbuild.h.in Makefile
 	$(PERL) $(srcdir)/touchver.pl $(srcdir)/tqslbuild.h.in BUILD $(BUILD)
@@ -75,10 +75,13 @@ tqslcertbuild.h: tqslcertbuild.h.in Makefile
 	$(CP) $(srcdir)/tqslcertbuild.h.in tqslcertbuild.h
 	$(TOUCH) $(srcdir)/tqslcertbuild.h.in
 
-dmg: TrustedQSL.dmg
+dmg: TrustedQSL-$(VERSION).dmg
 
-TrustedQSL.dmg: dist/TrustedQSL/tqslcert.app dist/TrustedQSL/tqsl.app
-	hdiutil create -srcfolder ./dist -volname TrustedQSL -nouuid -noanyowners TrustedQSL.dmg
+TrustedQSL-$(VERSION).dmg: dist/TrustedQSL/tqslcert.app dist/TrustedQSL/tqsl.app
+	echo "" | cat ChangeLog - $(TQSLINC)/../share/doc/ChangeLog > dist/ChangeLog.txt
+	cp LICENSE dist/LICENSE.txt
+	cp quick dist/Quick\ Start.txt
+	hdiutil create -srcfolder ./dist -volname TrustedQSL -nouuid -noanyowners TrustedQSL-$(VERSION).dmg
 
 dist/TrustedQSL/tqslcert.app: tqslcert $(srcdir)/tqslicons.icns $(srcdir)/Info.plist.in
 	$(MKDIR) -p dist
@@ -133,7 +136,9 @@ quick.txt:
 	unix2dos -n $(srcdir)/quick quick.txt
 
 ChangeLog.txt:
-	unix2dos -n $(srcdir)/ChangeLog ChangeLog.txt
+	unix2dos -n $(srcdir)/ChangeLog ChangeLog1.txt
+	unix2dos -n $(TQSLINC)/../share/doc/ChangeLog ChangeLog2.txt
+	echo -e "\r\n" | cat ChangeLog1.txt - ChangeLog2.txt > ChangeLog.txt
 
 LICENSE.txt:
 	unix2dos -n $(srcdir)/LICENSE LICENSE.txt
