@@ -39,7 +39,9 @@ int chkDate(const char *sdate)
   k = 0;
   long d,y,m;
 
+#ifndef __BCPLUSPLUS__
   cvsID = cvsID;
+#endif
   for (i=0;i<strlen(sdate);i++)
     {
       if (sdate[i] == '\0')

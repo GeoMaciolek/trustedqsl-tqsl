@@ -19,9 +19,13 @@
 */
 #include <stdio.h>
 #include <sys/types.h>
+#ifdef __BCPLUSPLUS__
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <fcntl.h>
-#include <netinet/in.h>
+
 #include <sys/stat.h>
 #include <openssl/sha.h>
 #include <openssl/dsa.h>
@@ -38,6 +42,27 @@ static char cvsID[] = "$Id$";
 extern int errno;
 #endif
 
+unsigned
+ntoh (unsigned long x)
+{
+#if BYTE_ORDER == LITTLE_ENDIAN
+  x = (x << 24) | ((x & 0xff00) << 8) | ((x & 0xff0000) >> 8) | (x >> 24);
+#endif
+
+  return x;
+}
+
+unsigned long
+hton (unsigned long x)
+
+{
+#if BYTE_ORDER == LITTLE_ENDIAN
+  x = (x << 24) | ((x & 0xff00) << 8) | ((x & 0xff0000) >> 8) | (x >> 24);
+#endif
+
+  return x;
+}
+
 // read public key file which has a type 1 format
 // return NULL on error
 //
@@ -49,7 +74,9 @@ TqslPublicKey *readPubKey(char *fname,char *typ)
   int		rc;
   int		fd;
 
+#ifndef __BCPLUSPLUS__
   cvsID = cvsID;  // avoid warnigns
+#endif
 
   fd = open(fname,O_RDONLY);
   if (fd < 0)
@@ -258,7 +285,7 @@ int storeDSA(DSA *dsa)
     {
       return ERROR;
     }
-  DER_to_file = htonl(DER_size);
+  DER_to_file = hton(DER_size);
   fwrite(&DER_to_file,sizeof(int),1,f);
   fwrite(buf,sizeof(char),DER_size,f);
   fclose(f);
@@ -277,7 +304,7 @@ int loadDSA(DSA *dsa)
   if (f == NULL)
     return ERROR;
   fread(&DER_size,sizeof(int),1,f);
-  DER_size = ntohl(DER_size);
+  DER_size = ntoh(DER_size);
   fread(buf,sizeof(char),DER_size,f);
   fclose(f);
   if (d2i_DSAPrivateKey(&dsa, &ptr, DER_size) == NULL)

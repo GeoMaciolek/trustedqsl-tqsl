@@ -22,7 +22,11 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
+#ifdef __BCPLUSPLUS__
+#include <io.h>
+#else
 #include <unistd.h>
+#endif
 #include <ctype.h>
 
 #include <openssl/bio.h>
@@ -34,30 +38,33 @@
 #include "tqsl.h"
 #include "sign.h"
 
+#ifdef __BCPLUSPLUS__
+__declspec(dllimport) DSA * _DSA_new(void);
+#endif
 //
 // All functions return 0 for failed and no zero on success
 //
 
-static char cvsID[] = "$Id$";
-int debugLevel=0;
-
 void initPublicKey(TqslPublicKey *pk)
 {
-  cvsID = cvsID;
   memset(pk,' ',sizeof(TqslPublicKey));
 }
 void initCert(TqslCert *cert)
 {
    memset(cert,' ',sizeof(TqslCert));
 }
+static char cvsID[] = "$Id$";
+int debugLevel=0;
+
 int tqslReadCert(const char *fname,TqslCert *cert)
 {
 
   char		buf[MaxCertSize];
   int		rc;
   int		fd;
-
+#ifndef __BCPLUSPLUS__
   cvsID = cvsID;  // avoid warnigns
+#endif
 
   fd = open(fname,O_RDONLY);
   if (fd < 0)
@@ -87,13 +94,9 @@ int tqslWriteCert(const char *fname,TqslCert *cert)
   int		rc;
   int		fd;
 
-  fd = open(fname,O_WRONLY|O_CREAT);
+  fd = open(fname,O_WRONLY);
   if (fd < 0)
-    {
-      fprintf(stderr,"errno = %d\n",errno);
-      perror("open cert write");
-      return(0);
-    }
+    return(0);
 
   rc = write(fd,cert,sizeof(TqslCert));
   close(fd);  // we are done with it.

@@ -134,7 +134,7 @@ int main(int argc, char *argv[])
     }
 
   rc = tqslReadPub(amPkFile,&pubkey);
-  if (rc <  0)
+  if (rc == 0)
     {
       fprintf(stderr,"Unable to read public key file %s\n",amPkFile);
       return(2);
@@ -148,7 +148,7 @@ int main(int argc, char *argv[])
 		    expStr,selfSign);
 
   
-  if (rc < 1)
+  if (rc != 0)
     {
       printf("Signed failed\n");
       return(1);
