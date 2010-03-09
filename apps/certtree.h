@@ -48,7 +48,7 @@ public:
 	void OnItemActivated(wxTreeEvent& event);
 	void OnRightDown(wxMouseEvent& event);
 	bool useContextMenu;
-	CertTreeItemData *GetItemData(int id) { return (CertTreeItemData *)wxTreeCtrl::GetItemData(id); }
+	CertTreeItemData *GetItemData(wxTreeItemId id) { return (CertTreeItemData *)wxTreeCtrl::GetItemData(id); }
 	int GetNumCerts() const { return _ncerts; }
 
 private:
