@@ -163,7 +163,7 @@ TQSLGetStationNameDialog::RefreshList() {
 }
 
 TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpController *help, const wxPoint& pos,
-	bool i_issave, const wxString& title, bool i_editonly)
+	bool i_issave, const wxString& title, const wxString& okLabel, bool i_editonly)
 	: wxDialog(parent, -1, wxT("Select Station Data"), pos), issave(i_issave), editonly(i_editonly),
 	newbut(0), modbut(0), updating(false), firstFocused(false), _help(help) {
 	wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -206,7 +206,7 @@ TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpC
 		button_sizer->Add(new wxButton(this, GS_HELPBUT, wxT("Help") ), 0, wxALL|wxALIGN_BOTTOM, 3);
 	if (!editonly)
 		button_sizer->Add(new wxButton(this, GS_CANCELBUT, wxT("Cancel") ), 0, wxALL|wxALIGN_BOTTOM, 3);
-	okbut = new wxButton(this, GS_OKBUT, wxT("OK") );
+	okbut = new wxButton(this, GS_OKBUT, okLabel );
 	button_sizer->Add(okbut, 0, wxALL|wxALIGN_BOTTOM, 3);
 	topsizer->Add(button_sizer, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 7);
 	hack = (namelist->GetCount() > 0) ? true : false;
@@ -301,7 +301,7 @@ cout << "OnNamelist hack" << endl;
 void
 TQSLGetStationNameDialog::OnDblClick(wxCommandEvent& event) {
 	OnNamelist(event);
-	OnOk(event);
+	EndModal(wxID_MORE);
 }
 
 void
@@ -383,7 +383,7 @@ TQSLGetStationNameDialog::SelectName(const wxString& name) {
 	namelist->GetSelections(sels);
 	for (int i = 0; i < (int)sels.GetCount(); i++)
 		namelist->Deselect(sels[i]);
-	for (int i = 0; i < namelist->GetCount(); i++) {
+	for (int i = 0; i < (int) namelist->GetCount(); i++) {
 		if (name == *(wxString *)namelist->GetClientData(i)) {
 			namelist->SetSelection(i, TRUE);
 			break;
