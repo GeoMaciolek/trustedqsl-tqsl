@@ -71,7 +71,31 @@ You also may not want to install the library into system directories:
 
 ./configure --disable-shared --prefix=$HOME/tqsllib
 make
-make install
+sudo make install
+
+To build a universal binary with compatibility from MacOS 10.4 upwards:
+
+./configure \
+    --with-tqsllib=/usr/local  --with-tqslinc=/usr/local \
+    --with-expat=/usr/local --with-wxwindows=/usr/local \
+    CC=gcc-4.0 LD=gcc-4.0 CXX=c++-4.0 \
+    CFLAGS="\
+	-I /usr/include/c++/4.0.0 \
+	-isysroot /Developer/SDKs/MacOSX10.4u.sdk \
+	-arch ppc -arch i386 \
+	-mmacosx-version-min=10.4 \
+	-fno-stack-protector"  \
+    CXXFLAGS="\
+	-isysroot /Developer/SDKs/MacOSX10.4u.sdk \
+	-arch ppc -arch i386 \
+	-mmacosx-version-min=10.4 \
+	-fno-stack-protector"  \
+    LDFLAGS="\
+	-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk \
+	-mmacosx-version-min=10.4 \
+	-arch ppc -arch i386 " \
+make
+sudo make install
 
 ===================================================================
 
@@ -128,7 +152,7 @@ cd
 tar -xzf openssl-0.9.7e.tar.gz
 cd openssl-0.9.7e
 ./config no-shared --prefix=$HOME/openssl mingw
-make install_sw
+make install_sw CC=gcc
 
 STEP 3) Compile the expat library (1.95.8)
 
