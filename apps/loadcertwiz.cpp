@@ -154,6 +154,7 @@ LCW_IntroPage::LCW_IntroPage(LoadCertWiz *parent, LCW_Page *tq6next)
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
 	_p12but = new wxRadioButton(this, ID_LCW_P12, wxT(""), wxDefaultPosition, wxDefaultSize, wxRB_GROUP);
+	_p12but->SetValue(true);
 	butsizer->Add(_p12but, 0, wxALIGN_TOP, 0);
 	butsizer->Add(new wxStaticText(this, -1,
 wxT("PKCS#12 (.p12) certificate file - A file you've saved that contains\n"
