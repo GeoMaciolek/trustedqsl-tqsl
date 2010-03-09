@@ -3,6 +3,8 @@ TQSL/TQSLCERT changes
 
 1.12
 ----
+Add checkbox to allow bypassing state selection.
+
 Fix crash on Windows when new certificate request wizard is started.
 
 Added support for validating zone numbers and requiring them.
