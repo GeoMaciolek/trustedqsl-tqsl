@@ -11,7 +11,7 @@ die "$file: $!\n" if (!open IN, "<$file");
 my $gotit = 0;
 
 while($line = <IN>) {
-	if ($line =~ m/^(\s*#define\s+$define\s+")\D*(\d+)/) {
+	if ($line =~ m/^(\s*#define\s+$define\s+")$lead\.(\d+)/) {
 		$line = "$1$lead." . ($2+1) . $';
 		$gotit = 1;
 	}
