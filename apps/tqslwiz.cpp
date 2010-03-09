@@ -17,6 +17,10 @@ using namespace std;
 #include "tqslwiz.h"
 #include "wxutil.h"
 
+#define TQSL_LOCATION_FIELD_UPPER	1
+#define TQSL_LOCATION_FIELD_MUSTSEL	2
+#define TQSL_LOCATION_FIELD_SELNXT	4
+
 BEGIN_EVENT_TABLE(TQSLWizard, wxWizard)
 	EVT_WIZARD_PAGE_CHANGED(-1, TQSLWizard::OnPageChanged)
 END_EVENT_TABLE()
@@ -61,6 +65,7 @@ TQSLWizard::GetPage(bool final) {
 		_pages[page_num] = new TQSLWizFinalPage(this, loc, GetCurrentTQSLPage());
 	else
 		_pages[page_num] = new TQSLWizCertPage(this, loc);
+	_curpage = page_num;
 	if (page_num == 0)
 		((TQSLWizFinalPage *)_pages[0])->prev = GetCurrentTQSLPage();
 	return _pages[page_num];
@@ -107,6 +112,18 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 
 	if (noupdate_field >= 0)
 		tqsl_updateStationLocationCapture(loc);
+	if (noupdate_field <= 0) {
+		int flags;
+		tqsl_getLocationFieldFlags(loc, 0, &flags);
+		if (flags == TQSL_LOCATION_FIELD_SELNXT) {
+			int index;
+			tqsl_getLocationFieldIndex(loc, 0, &index);
+			wxWindow *but = GetParent()->FindWindow(wxID_FORWARD);
+		        if (but) {
+        			but->Enable(index > 0);
+			}
+		}
+	}
 	for (int i = noupdate_field+1; i < (int)controls.size(); i++) {
 		int changed;
 		tqsl_getLocationFieldChanged(loc, i, &changed);
@@ -175,7 +192,7 @@ TQSLWizCertPage::OnComboBoxEvent(wxCommandEvent& event) {
 	switch (in_type) {
 		case TQSL_LOCATION_FIELD_DDLIST:
 		case TQSL_LOCATION_FIELD_LIST:
-			tqsl_setLocationFieldIndex(loc, control_idx, event.m_commandInt);
+			tqsl_setLocationFieldIndex(loc, control_idx, event.GetInt());
 			UpdateFields(control_idx);
 			break;
 	}
