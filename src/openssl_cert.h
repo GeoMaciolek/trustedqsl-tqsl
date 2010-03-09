@@ -15,7 +15,37 @@
   * OpenSSL X509 certificate interface functions.
   */
 
-#include "openssl/x509.h"
+#include <openssl/opensslv.h>
+#if (OPENSSL_VERSION_NUMBER == 0x10000003L)
+/* broken header file - fix by override */
+#define i2d_ASN1_SET i2d_ASN1_SET_buggy
+#define d2i_ASN1_SET d2i_ASN1_SET_buggy
+#define ASN1_seq_unpack ASN1_seq_unpack_buggy
+#define ASN1_seq_pack ASN1_seq_pack_buggy
+#include <openssl/asn1.h>
+#undef i2d_ASN1_SET
+#undef d2i_ASN1_SET
+#undef ASN1_seq_unpack
+#undef ASN1_seq_pack
+#ifdef __cplusplus
+extern "C" {
+#endif
+int i2d_ASN1_SET(void *a, unsigned char **pp,
+                 i2d_of_void *i2d, int ex_tag, int ex_class,
+                 int is_set);
+void *d2i_ASN1_SET(void *a, const unsigned char **pp,
+                   long length, d2i_of_void *d2i,
+                   void (*free_func)(void*), int ex_tag,
+                   int ex_class);
+void *ASN1_seq_unpack(const unsigned char *buf, int len,
+                      d2i_of_void *d2i, void (*free_func)(void*));
+unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
+                             unsigned char **buf, int *len );
+#ifdef __cplusplus
+}
+#endif
+#endif /* buggy openssl header */
+#include <openssl/x509.h>
 
 #undef CLIENT_STATIC
 #ifndef LOTW_SERVER
@@ -72,26 +102,32 @@ CLIENT_STATIC TQSL_X509_STACK *tqsl_ssl_load_certs_from_file(const char *filenam
 CLIENT_STATIC const char *tqsl_ssl_verify_cert(X509 *cert, TQSL_X509_STACK *cacerts, TQSL_X509_STACK *rootcerts, int purpose,
 	int (*cb)(int ok, X509_STORE_CTX *ctx), TQSL_X509_STACK **chain = 0);
 
+#if 0	/* unused */
 /// Get the number of name entries in an X509 name object
 CLIENT_STATIC int tqsl_get_name_count(X509_NAME *name);
 
 /// Retrieve a name entry from an X509 name object by index
 CLIENT_STATIC int tqsl_get_name_index(X509_NAME *name, int index, TQSL_X509_NAME_ITEM *name_item);
+#endif
 
 /// Retrieve a name entry from an X509 name object by name
 CLIENT_STATIC int tqsl_get_name_entry(X509_NAME *name, const char *obj_name, TQSL_X509_NAME_ITEM *name_item);
 
+#if 0 	/* unused */
 /// Get the number of name entries in an X509 cert's subject name
 CLIENT_STATIC int tqsl_cert_get_subject_name_count(X509 *cert);
 
 /// Retrieve a name entry from an X509 cert's subject name by index
 CLIENT_STATIC int tqsl_cert_get_subject_name_index(X509 *cert, int index, TQSL_X509_NAME_ITEM *name_item);
+#endif
 
 /// Retrieve a name entry from an X509 cert's subject name by name
 CLIENT_STATIC int tqsl_cert_get_subject_name_entry(X509 *cert, const char *obj_name, TQSL_X509_NAME_ITEM *name_item);
 
+#if 0	/* unused */
 /// Retrieve a name entry date from an X509 cert's subject name by name
 CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, tQSL_Date *date);
+#endif
 
 /// Convert an ASN date
 CLIENT_STATIC int tqsl_get_asn1_date(ASN1_TIME *tm, tQSL_Date *date);

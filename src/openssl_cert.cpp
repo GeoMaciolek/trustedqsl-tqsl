@@ -179,6 +179,11 @@ using namespace tqsllib;
 #define TQSL_OPEN_APPEND "a"
 #endif
 
+#if (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x10000000L
+#define uni2asc OPENSSL_uni2asc
+#define asc2uni OPENSSL_asc2uni
+#endif
+
 static char *tqsl_trim(char *buf);
 static int tqsl_check_parm(const char *p, const char *parmName);
 static TQSL_CERT_REQ *tqsl_copy_cert_req(TQSL_CERT_REQ *userreq);
@@ -197,6 +202,8 @@ static bool safe_strncpy(char *dest, const char *src, int size);
 static int tqsl_ssl_error_is_nofile();
 static int tqsl_unlock_key(const char *pem, EVP_PKEY **keyp, const char *password, int (*cb)(char *,int,void *),void *);
 static int tqsl_replace_key(const char *callsign, const char *path, map<string,string>& newfields, int (*cb)(int, const char *,void *),void *);
+static int tqsl_self_signed_is_ok(int ok, X509_STORE_CTX *ctx);
+static int tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx);
 
 /* Private data structures */
 
@@ -1050,7 +1057,7 @@ tqsl_getCertificatePrivateKeyType(tQSL_Cert cert) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
-	if (tqsl_beginSigning(cert, "", 0, 0)) {		// Try to unlock the key using no password
+	if (tqsl_beginSigning(cert, (char *) "", 0, 0)) {		// Try to unlock the key using no password
 		if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 			tqsl_getErrorString();	// Clear the error
 			return TQSL_PK_TYPE_ENC;
@@ -1178,7 +1185,7 @@ tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, uns
 	}
 	EVP_VerifyInit(&ctx, EVP_sha1());
 	EVP_VerifyUpdate(&ctx, data, datalen);
-	if (!EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key)) {
+	if (!EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key) <= 0) {
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1288,7 +1295,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 							sk_ASN1_TYPE_push(attrib->value.set, val);
 #if (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x00906000
 							attrib->set = 1;
-#elif (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x00907000
+#elif (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00907000
 							attrib->single = 0;
 #else
 #error "Unexpected OpenSSL version; check X509_ATTRIBUTE struct compatibility"
@@ -1394,7 +1401,7 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 		 * those certificates (including the user certificate).
 		 */
 
-		cp = tqsl_ssl_verify_cert(TQSL_API_TO_CERT(cert)->cert, ca_sk, root_sk, 0, NULL, &chain);
+		cp = tqsl_ssl_verify_cert(TQSL_API_TO_CERT(cert)->cert, ca_sk, root_sk, 0, &tqsl_expired_is_ok, &chain);
 		if (cp) {
 			if (chain)
 				sk_X509_free(chain);
@@ -1479,7 +1486,11 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 
 	/* Form into PKCS12 data */
 	p12 = PKCS12_init(NID_pkcs7_data);
+#if (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00908000
+	ASN1_seq_pack_PKCS7(safes, (int(*)(PKCS7*, unsigned char**))i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#else
 	ASN1_seq_pack_PKCS7(safes, (int(*)())i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#endif
 		&(p12)->authsafes->d.data->length);
 	sk_PKCS7_pop_free(safes, PKCS7_free);
 	safes = 0;
@@ -2278,6 +2289,8 @@ tqsl_ssl_verify_cert(X509 *cert, STACK_OF(X509) *cacerts, STACK_OF(X509) *rootce
 		return "Out of memory";
 	}
 	X509_STORE_CTX_init(ctx, store, cert, cacerts);
+	if (cb != NULL)
+		X509_STORE_CTX_set_verify_cb(ctx,cb);
 	if (rootcerts)
 		X509_STORE_CTX_trusted_stack(ctx, rootcerts);
 	if (purpose >= 0)
@@ -2286,7 +2299,7 @@ tqsl_ssl_verify_cert(X509 *cert, STACK_OF(X509) *cacerts, STACK_OF(X509) *rootce
 	rval = X509_verify_cert(ctx);
 	errm = X509_verify_cert_error_string(ctx->error);
 	if (chain) {
-		if (rval)
+		if (rval && ctx->chain)
 			*chain = sk_X509_dup(ctx->chain);
 		else
 			*chain = 0;
@@ -2343,6 +2356,7 @@ tqsl_get_name_stuff(X509_NAME_ENTRY *entry, TQSL_X509_NAME_ITEM *name_item) {
 	return 1;
 }
 
+#if 0	/* unused */
 /* Get a name entry from an X509_NAME by its index.
  */
 CLIENT_STATIC int
@@ -2364,6 +2378,7 @@ tqsl_get_name_index(X509_NAME *name, int index, TQSL_X509_NAME_ITEM *name_item) 
 	entry = X509_NAME_get_entry(name, index);
 	return tqsl_get_name_stuff(entry, name_item);
 }
+#endif
 
 /* Get a name entry from an X509_NAME by its name.
  */
@@ -2390,6 +2405,7 @@ tqsl_get_name_entry(X509_NAME *name, const char *obj_name, TQSL_X509_NAME_ITEM *
 	return 0;
 }
 
+#if 0	/* unused */
 /* Get the number of name entries in an X509_NAME
  */
 CLIENT_STATIC int
@@ -2418,6 +2434,7 @@ tqsl_cert_get_subject_name_index(X509 *cert, int index, TQSL_X509_NAME_ITEM *nam
 		return 0;
 	return tqsl_get_name_index(X509_get_subject_name(cert), index, name_item);
 }
+#endif
 
 /* Get a name entry from a cert's subject name by its name.
  */
@@ -2434,6 +2451,7 @@ tqsl_cert_get_subject_name_entry(X509 *cert, const char *obj_name, TQSL_X509_NAM
 	return tqsl_get_name_entry(name, obj_name, name_item);
 }
 
+#if 0	/* unused */
 /* Get a date entry from a cert's subject DN into a tQSL_Date object.
  */
 CLIENT_STATIC int
@@ -2451,6 +2469,7 @@ tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, tQSL_Date *date) {
 		return 0;
 	return !tqsl_initDate(date, buf);
 }
+#endif
 
 /* Initialize the tQSL (really OpenSSL) random number generator
  * Return 0 on error.
@@ -2529,6 +2548,15 @@ tqsl_write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned
 static int
 tqsl_self_signed_is_ok(int ok, X509_STORE_CTX *ctx) {
 	if (ctx->error == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT)
+		return 1;
+	if (ctx->error == X509_V_ERR_CERT_UNTRUSTED)
+		return 1;
+	return ok;
+}
+
+static int
+tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx) {
+	if (ctx->error == X509_V_ERR_CERT_HAS_EXPIRED)
 		return 1;
 	return ok;
 }
@@ -2616,9 +2644,9 @@ tqsl_handle_ca_cert(const char *pem, X509 *x, int (*cb)(int, const char *, void 
 		if (!tqsl_ssl_error_is_nofile())
 			return 1;
 	}
-	cp = tqsl_ssl_verify_cert(x, NULL, root_sk, 0, NULL);
+	cp = tqsl_ssl_verify_cert(x, NULL, root_sk, 0, &tqsl_expired_is_ok);
 	sk_X509_free(root_sk);
-	if (cp != NULL) {
+	if (cp) {
 		strncpy(tQSL_CustomError, cp, sizeof tQSL_CustomError);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 1;
@@ -2656,10 +2684,10 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 			return 1;
 		}
 	}
-	cp = tqsl_ssl_verify_cert(x, ca_sk, root_sk, 0, NULL);
+	cp = tqsl_ssl_verify_cert(x, ca_sk, root_sk, 0, &tqsl_expired_is_ok);
 	sk_X509_free(ca_sk);
 	sk_X509_free(root_sk);
-	if (cp != NULL) {
+	if (cp) {
 		strncpy(tQSL_CustomError, cp, sizeof tQSL_CustomError);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 1;
