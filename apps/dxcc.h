@@ -20,6 +20,7 @@ public:
 	DXCC() {};
 	int number() const { return _number; }
 	const char * name() const { return _name; }
+	const char * zonemap() const { return _zonemap; }
 	bool getFirst();
 	bool getNext();
 	bool getByEntity(int e);
@@ -28,6 +29,7 @@ private:
 	static bool _init;
 	int _number, _index;
 	const char *_name;
+	const char *_zonemap;
 };
 
 #endif // __dxcc_h

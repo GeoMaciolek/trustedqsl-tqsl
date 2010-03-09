@@ -21,6 +21,7 @@ static int num_entities = 0;
 static struct _dxcc_entity {
 	int number;
 	const char *name;
+	const char *zonemap;
 } *entity_list = 0;
 
 static int
@@ -36,6 +37,7 @@ DXCC::init() {
 		entity_list = new struct _dxcc_entity[num_entities];
 		for (int i = 0; i < num_entities; i++) {
 			tqsl_getDXCCEntity(i, &(entity_list[i].number), &(entity_list[i].name));
+			tqsl_getDXCCZoneMap(entity_list[i].number, &(entity_list[i].zonemap));
 		}
 		qsort(entity_list, num_entities, sizeof (struct _dxcc_entity), &_ent_cmp);
 //	}
@@ -59,6 +61,7 @@ DXCC::getNext() {
 	_index = newidx;
 	_number = entity_list[newidx].number;
 	_name = entity_list[newidx].name;
+	_zonemap = entity_list[newidx].zonemap;
 	return true;
 }
 
@@ -66,6 +69,7 @@ bool
 DXCC::getByEntity(int e) {
 	_number = 0;
 	_name = "<NONE>";
+	_zonemap = "";
 	if (!init())
 		return false;
 	for (int i = 0; i < num_entities; i++) {
@@ -73,6 +77,7 @@ DXCC::getByEntity(int e) {
 			_index = i;
 			_number = entity_list[i].number;
 			_name = entity_list[i].name;
+			_zonemap = entity_list[i].zonemap;
 			return true;
 		}
 	}
