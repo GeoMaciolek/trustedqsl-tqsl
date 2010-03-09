@@ -1,8 +1,7 @@
-TrustedQSL
-==========
+tqsllib
+=======
 
-This is the TrustedQSL application suite, part of the TrustedQSL
-project:
+This is the TrustedQSL library, part of the TrustedQSL project:
 
 http://sourceforge.net/projects/trustedqsl/
 
@@ -11,42 +10,34 @@ Contents
 
 1) Prerequisites
 
-2) Building the Applications under Unix
+2) Building the Library under Linux/Unix
 
-3) Building the Applications under Mac OS X
+3) Building the Library under Mac OS X
 
-4) Building the Applications under Windows.
+4) Building the Library under Windows.
 
 ===================================================================
 
 1) Prerequisites
 
-These applications require the tqsllib library. First build and
-install that library and its prerequisites.
+The TrustedQSL library depends on several other libraries:
+
+OpenSSL (http://www.openssl.org/)
+expat 1.x XML parser library (http://expat.sourceforge.net/)
+zlib (http://www.gzip.org/zlib/)
+
+Most Unix and unix-like workstations will have these available. For
+those systems that do not, the packages are easily built. Instructions
+for building under the Windows environment are given below under
+"Building the "Library under Windows."
 
 In the instructions that follow, the versions of other packages
-that were used to build the TrustedQSL package as of the date this
+that were used to build the tqsllib package as of the date this
 document was last updated are given in parentheses.
-
-These applications make use of the wxWindows/wxWidgets GUI
-framework. (http://www.wxwindows.org/) Version 2.4.2 or later
-is required. (2.5.x recommended for Mac OS X.) For Unix and
-Mac OS X, follow the build instructions found there, or install
-the wxWindows/wxWidgets packages appropriate for your platform.
-
-Building under Windows also requires Inno Setup (version 3 or
-later), http://www.jrsoftware.org/isinfo.php.
-
-For Windows, the installable wxWindows package targets VC++.
-It may be possible to build these applications under VC++,
-but these instructions cover building the application under
-the MSYS/MinGW environment used to build the tqsllib library.
-(Note that to run the applications does *not* require any special
-environment.)
 
 ===================================================================
 
-2) Building the Applications under Linux/Unix
+2) Building the Library under Linux/Unix
 
 The quick answer:
 
@@ -54,81 +45,144 @@ The quick answer:
 make
 make install
 
-That will install the Applications under /usr/local/bin and the
-initial configuration data under /usr/local/share/tqsl.
+That will install the library under /usr/local. It also will install
+the needed header files under /usr/local/include and a sample program
+that dumps the configuration file, dumptqsldata, under /usr/local/bin.
 
 You can change the install location via:
 ./configure --prefix=/foo/bar
 
-If you installed the tqsllib library or its dependent libraries
-in locations that configure can't find, you'll need to specify
-those locations to configure. See:
+By default, both shared and static versions of the library are built.
+You can change that using the standard libtool options, and you can also
+specify the location of needed libraries. For details, see:
 
 ./configure --help
 
 ===================================================================
 
-3) Building the Applications under Mac OS X
-
-You'll need to have the Mac developer's tools, Xcode 1.5, installed.
+3) Building the Library under Mac OS X
 
 This is done in much the same manner as building under Linux/Unix, above.
-However, you ought *not* do "make install." Using Terminal, simply do:
+However, it is desirable to *not* build a dylib (shared library). Rather,
+use a static library so that applications will not have to distribute and
+manage the dylib as a system file.
 
-./configure
+You also may not want to install the library into system directories:
+
+./configure --disable-shared --prefix=$HOME/tqsllib
 make
+sudo make install
 
-This will result in the directories dist/TrustedQSL/tqsl.app and
-tqslcert.app, which comprise complete Mac OS X applications. You
-can simply move the dist/TrustedQSL folder to your system's
-Applications folder or the location of your choice, then launch
-the applications from Finder. If you want to distribute the built
-applications:
+To build a universal binary with compatibility from MacOS 10.4 upwards:
 
-make dmg
-
-will make TrustedQSL-1.11.dmg, a Mac distributable disk image
-containing the TrustedQSL applications folder and document files.
+./configure \
+    --with-tqsllib=/usr/local  --with-tqslinc=/usr/local \
+    --with-expat=/usr/local --with-wxwindows=/usr/local \
+    CC=gcc-4.0 LD=gcc-4.0 CXX=c++-4.0 \
+    CFLAGS="\
+	-I /usr/include/c++/4.0.0 \
+	-isysroot /Developer/SDKs/MacOSX10.4u.sdk \
+	-arch ppc -arch i386 \
+	-mmacosx-version-min=10.4 \
+	-fno-stack-protector"  \
+    CXXFLAGS="\
+	-isysroot /Developer/SDKs/MacOSX10.4u.sdk \
+	-arch ppc -arch i386 \
+	-mmacosx-version-min=10.4 \
+	-fno-stack-protector"  \
+    LDFLAGS="\
+	-Wl,-syslibroot,/Developer/SDKs/MacOSX10.4u.sdk \
+	-mmacosx-version-min=10.4 \
+	-arch ppc -arch i386 " \
+make
+sudo make install
 
 ===================================================================
 
-4) Building the Applications under Windows
+4) Building the Library under Windows
 
-Before you can build the applications under Windows you must
-first build the tqsllib DLL. In doing so, you will set up the
-MSYS/MinGW environment as needed.
+The end result of building under Windows will be a single DLL,
+TQSLLIB2.DLL.
 
-STEP 1) Install needed other packages
+Building under Windows is a bit more complicated to set
+up since the build environment has to mimic the unix environment
+that is native to the other platforms. For this purpose, we used
+the MSYS/MinGW environment. You also will certainly need to obtain
+and build the prerequisite software. What follows is a complete
+guide to installing and building everything:
 
-Install wxWindows/WxWidgets [wxMSW] (2.4.2)
+Along with the software packages listed under Prerequisites, above,
+the development enviromnent is set up my obtaining and installing the
+following:
 
-(The wxMSW installation suggests that you set an environment
-variable, WXWIN, to the base directory of your installation.
-The following directions assume you did that.)
+MinGW, MSYS and the MSYS Developer's Toolkit (DTK) (http://www.mingw.org/)
 
-Install Inno Setup (5.0.7)
+STEP 1) Set up the build environment
 
-STEP 2) Build the wxWindows/wxWidgets library
+Install MinGW (3.1.0-1)
+Install MSYS (1.0.10)
 
-cd $WXWIN
-mkdir build
-cd build
-../configure --disable-threads --with-msw --disable-shared --prefix=$HOME/wx
-make install
+Note: MSYS should be installed to a directory path that does not
+contain any spaces!
 
-STEP 3) Build the TrustedQSL applications
+Install MSYS DTK (1.0.1)
 
-Note: If you installed Inno Setup in a location other that its
-default, configure may need the --with-inno switch. For assistance,
-see:
+The rest of the procedure is performed from within an MSYS shell.
+Launch MSYS via the Windows Start menu. (It will be in the MinGW
+program group unless you explicitly installed it elsewhere.)
 
-./configure --help
+**NOTE**
+Since MSYS simulates a Unix-type environment, you should take note
+of the following:
+
+  A) In paths, directories are separated by a forward slash (/) not
+  a backslash (\).
+
+  B) Unix commands are case-sensitive.
+
+  C) The 'cd' command changes the current directory. If given with
+  no arguments, it changes to the "home" directory. Each of the
+  following steps is begun from the home directory.
+
+STEP 2) Compile OpenSSL (0.9.7e)
+
+Install the openssl source.
 
 cd
-tar -xzf TrustedQSL-1.11.tar.gz
-cd TrustedQSL-1.11
-./configure --without-openssl
-make installer
+tar -xzf openssl-0.9.7e.tar.gz
+cd openssl-0.9.7e
+./config no-shared --prefix=$HOME/openssl mingw
+make install_sw CC=gcc
 
-This should result in a file, tqsl-111.exe. This is an executable
-setup file that will install the TrustedQSL applications.
+STEP 3) Compile the expat library (1.95.8)
+
+Install the expat source
+
+cd
+tar -xzf expat-1.95.8.tar.gz
+cd expat-1.95.8
+./configure --disable-shared --prefix=$HOME/expat
+make installlib
+
+STEP 4) Compile the zlib library (1.2.1)
+
+Install the zlib source
+
+cd
+tar -xzf zlib-1.2.1.tar.gz
+cd zlib-1.2.1
+./configure --prefix=$HOME/zlib
+make install
+
+STEP 5) Compile the tqsllib library (1.6)
+
+Install the tsqllib source
+
+cd
+tar -xzf tqsllib-1.6.tar.gz
+cd tqsllib-1.6
+./configure --disable-shared --prefix=$HOME/tqsllib
+make install
+
+This should result in the creation of the tqsllib2.dll
+file and the dumptqsldata.exe file, both in $HOME/tqsllib/bin.
