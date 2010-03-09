@@ -1,6 +1,21 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.12
+----
+Fix crash on Windows when new certificate request wizard is started.
+
+Added support for validating zone numbers and requiring them.
+
+Allowed batch mode (-x) without displaying windows
+
+When double-clicking an entry on the "Edit Station Locations" dialog, open
+that entry for edit, don't just close the modal dialog.
+
+Change the "OK" button on the "Edit Station Locations" dialog to "Close"
+as it that's what it does.
+
+
 1.11
 ----
 Added command-line option -d. (See on-line help for details.)
