@@ -8,6 +8,10 @@
     revision             : $Id$
  ***************************************************************************/
 
+#ifdef HAVE_CONFIG_H
+#include "sysconfig.h"
+#endif
+
 #define TQSLLIB_DEF
 
 #include "tqsllib.h"
