@@ -38,8 +38,7 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
 	notebook = new wxNotebook(this, -1);
-	wxNotebookSizer *nbs = new wxNotebookSizer(notebook);
-	topsizer->Add(nbs, 1, wxGROW);
+	topsizer->Add(notebook, 1, wxGROW);
 	fileprefs = new FilePrefs(notebook);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -280,7 +279,7 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 
 static wxString
 fix_ext_str(const wxString& oldexts) {
-	static char *delims = ".,;: ";
+	static const char *delims = ".,;: ";
 
 	char *str = new char[oldexts.Length() + 1];
 	strcpy(str, oldexts.mb_str());
