@@ -25,8 +25,7 @@ Preferences::Preferences(wxWindow *parent) : wxDialog(parent, -1, wxString(wxT("
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
 	wxNotebook *notebook = new wxNotebook(this, -1);
-	wxNotebookSizer *nbs = new wxNotebookSizer(notebook);
-	topsizer->Add(nbs, 1, wxGROW);
+	topsizer->Add(notebook, 1, wxGROW);
 	keyprefs = new KeyPrefs(notebook);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
