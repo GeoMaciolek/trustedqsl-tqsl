@@ -1142,13 +1142,6 @@ update_page(int page, TQSL_LOCATION *loc) {
 								field.items.push_back(item);
 								iok = enumlist.getNextElement(enumitem);
 							}
-							// Put selectable "none" entry at the end to permit bypass
-							if (field.flags & TQSL_LOCATION_FIELD_SELNXT) {
-								TQSL_LOCATION_ITEM item;
-								item.label = "[None]";
-								field.items.push_back(item);
-							}
-							break;
 						}
 						ok = config_field.getNextElement(enumlist);
 					} // enum loop
@@ -1181,12 +1174,6 @@ update_page(int page, TQSL_LOCATION *loc) {
 							item.zonemap = enumitem.getAttribute("zonemap").first;
 							field.items.push_back(item);
 							iok = enumlist.getNextElement(enumitem);
-						}
-						// Put selectable "none" entry at the end to permit bypass
-						if (field.flags & TQSL_LOCATION_FIELD_SELNXT) {
-							TQSL_LOCATION_ITEM item;
-							item.label = "[None]";
-							field.items.push_back(item);
 						}
 					} else {
 						// No enums supplied
@@ -1984,7 +1971,6 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 			XMLElement fd;
 			fd.setPretext(sd.getPretext() + "  ");
 			fd.setElementName(field.gabbi_name);
-			string text;
 			switch (field.input_type) {
 				case TQSL_LOCATION_FIELD_DDLIST:
 				case TQSL_LOCATION_FIELD_LIST:
@@ -2210,8 +2196,15 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 			if (f.input_type == TQSL_LOCATION_FIELD_DDLIST || f.input_type == TQSL_LOCATION_FIELD_LIST) {
 				if (f.idx < 0 || f.idx >= (int)f.items.size())
 					s = "";
-				else
+				else {
+					/* Alaska counties are stored as 'pseudo-county|real-county'
+					 * so output just the real county name
+					 */
 					s = f.items[f.idx].text;
+					size_t pos = s.find("|");
+					if (pos != string::npos)
+						s = s.substr(++pos, string::npos);
+				}
 			} else if (f.data_type == TQSL_LOCATION_FIELD_INT) {
 				char buf[20];
 				sprintf(buf, "%d", f.idata);
