@@ -24,6 +24,7 @@
 #include <ctype.h>
 #include <set>
 
+#include <locale.h>
 //#include <iostream>
 
 using namespace std;
@@ -264,6 +265,7 @@ static const char *notypes[] = { "D","T","M","N","C","" };
 
 static const char *
 tqsl_infer_band(const char* infreq) {
+	setlocale(LC_NUMERIC, "C");
 	double freq = atof(infreq);
 	double freq_khz = freq * 1000.0;
 	int nband = 0;

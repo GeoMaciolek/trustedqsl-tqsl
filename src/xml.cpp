@@ -131,7 +131,7 @@ XMLElement::parseFile(const char *filename) {
 
 static struct {
 	char c;
-	char *ent;
+	const char *ent;
 } xml_entity_table[] = {
 	{ '"', "&quot;" },
 	{ '\'', "&apos;" },
