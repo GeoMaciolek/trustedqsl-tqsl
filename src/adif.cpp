@@ -159,63 +159,63 @@ strCmpNoCase( const char *cs, const char *ct )
 }
 
 
-DLLEXPORT char *
+DLLEXPORT const char *
 tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status )
 {
-	char *result;
+	const char *result;
 
 	switch( status )
 	{
 		case TQSL_ADIF_GET_FIELD_SUCCESS:
-			result = "ADIF success";
+			result = (char *) "ADIF success";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NO_NAME_MATCH:
-			result = "ADIF field no name match";
+			result = (char *) "ADIF field no name match";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH:
-			result = "ADIF field no type match";
+			result = (char *) "ADIF field no type match";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NO_RANGE_MATCH:
-			result = "ADIF field no range match";
+			result = (char *) "ADIF field no range match";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH:
-			result = "ADIF field no enumeration match";
+			result = (char *) "ADIF field no enumeration match";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NO_RESULT_ALLOCATION:
-			result = "ADIF field no result allocation";
+			result = (char *) "ADIF field no result allocation";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_NAME_LENGTH_OVERFLOW:
-			result = "ADIF field name length overflow";
+			result = (char *) "ADIF field name length overflow";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW:
-			result = "ADIF field data length overflow";
+			result = (char *) "ADIF field data length overflow";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_SIZE_OVERFLOW:
-			result = "ADIF field size overflow";
+			result = (char *) "ADIF field size overflow";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_TYPE_OVERFLOW:
-			result = "ADIF field type overflow";
+			result = (char *) "ADIF field type overflow";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE:
-			result = "ADIF erroneously executing default state";
+			result = (char *) "ADIF erroneously executing default state";
 			break;
 
 		case TQSL_ADIF_GET_FIELD_EOF:
-			result = "ADIF reached End of File";
+			result = (char *) "ADIF reached End of File";
 			break;
 
 		default:
-			result = "ADIF unknown error";
+			result = (char *) "ADIF unknown error";
 			break;
 	}
 
