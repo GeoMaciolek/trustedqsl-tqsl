@@ -1,6 +1,15 @@
 TQSLLIB changes
 ===============
 
+2.1
+---
+Added support for specifying zone numbers for entities, states, and provinces 
+Force proper zones for entities, states when possible.
+
+Update configuration file to correspond to ADIF specifications for county names.
+
+Ignore expired certificates during import/export
+
 2.0
 ---
 The Windows DLL has changed to use __stdcall. This makes it
