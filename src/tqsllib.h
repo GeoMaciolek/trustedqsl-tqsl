@@ -889,6 +889,16 @@ DLLEXPORT int tqsl_getLocationFieldInputType(tQSL_Location loc, int field_num, i
   */
 DLLEXPORT int tqsl_getLocationFieldDataType(tQSL_Location loc, int field_num, int *type);
 
+/** Get the flags for the input field.
+  *
+  * \c flags  will be either
+  * TQSL_LOCATION_FIELD_UPPER		Field is to be uppercased on input
+  * TQSL_LOCATION_FIELD_MUSTSEL		Value must be selected
+  * TQSL_LOCATION_FIELD_SELNXT		Value must be selected to allow Next/Finish
+  *
+  */
+DLLEXPORT int tqsl_getLocationFieldFlags(tQSL_Location loc, int field_num, int *flags);
+
 /** Get the length of the input field data. */
 DLLEXPORT int tqsl_getLocationFieldDataLength(tQSL_Location loc, int field_num, int *rval);
 
@@ -955,6 +965,10 @@ DLLEXPORT int tqsl_getDXCCEntity(int index, int *number, const char **name);
 /** Get the name of a DXCC Entity by its DXCC number.
   */
 DLLEXPORT int tqsl_getDXCCEntityName(int number, const char **name);
+
+/** Get the zonemap  of a DXCC Entity by its DXCC number.
+  */
+DLLEXPORT int tqsl_getDXCCZoneMap(int number, const char **zonemap);
 
 /** Get the number of Band entries in the Band list */
 DLLEXPORT int tqsl_getNumBand(int *number);
