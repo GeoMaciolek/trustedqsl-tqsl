@@ -81,6 +81,7 @@ public:
 	~TQSLWizCertPage();
 	virtual bool TransferDataFromWindow();
 	void OnComboBoxEvent(wxCommandEvent&);
+	void OnCheckBoxEvent(wxCommandEvent&);
 	int loc_page;
 	void UpdateFields(int noupdate_field = -1);
 	virtual TQSLWizPage *GetPrev() const;
@@ -88,6 +89,7 @@ public:
 	void OnSize(wxSizeEvent&);
 private:
 	std::vector<void *> controls;
+	wxCheckBox *okEmptyCB;
 	DECLARE_EVENT_TABLE()
 };
 
