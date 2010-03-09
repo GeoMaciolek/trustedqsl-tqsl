@@ -3,6 +3,10 @@ TQSLLIB changes
 
 2.1
 ---
+Handle Alaskan administratitive areas by allowing them to be selected while
+outputting the correct county name in the station data exportd with a signed
+log.
+
 Added support for specifying zone numbers for entities, states, and provinces 
 Force proper zones for entities, states when possible.
 
