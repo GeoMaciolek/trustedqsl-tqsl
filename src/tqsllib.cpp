@@ -48,7 +48,7 @@ DLLEXPORTDATA char tQSL_CustomError[256];
 #define TQSL_OID_CRQ_ISSUER_ORGANIZATION TQSL_OID_BASE "6"
 #define TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT TQSL_OID_BASE "7"
 
-static char *custom_objects[][3] = {
+static const char *custom_objects[][3] = {
 	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
 	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
 	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
@@ -58,7 +58,7 @@ static char *custom_objects[][3] = {
 	{ TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT, "tqslCRQIssuerOrganizationalUnit", NULL },
 };
 
-static char *error_strings[] = {
+static const char *error_strings[] = {
 	"Memory allocation failure",                        /* TQSL_ALLOC_ERROR */
 	"Unable to initialize random number generator",     /* TQSL_RANDOM_ERROR */
 	"Invalid argument",                                 /* TQSL_ARGUMENT_ERROR */
@@ -117,7 +117,15 @@ tqsl_init() {
 
 	/* OpenSSL API tends to change between minor version numbers, so make sure
 	 * we're using the right version */
-	if ((SSLeay() & 0xfffff000) != (OPENSSL_VERSION_NUMBER & 0xfffff000)) {
+	long SSLver = SSLeay();
+	int SSLmajor = (SSLver >> 28) & 0xff;
+	int SSLminor = (SSLver >> 20) & 0xff;
+	int TQSLmajor = (OPENSSL_VERSION_NUMBER >> 28) & 0xff;
+	int TQSLminor =  (OPENSSL_VERSION_NUMBER >> 20) & 0xff;
+
+	if (SSLmajor != TQSLmajor || 
+		(SSLminor != TQSLminor && 
+		(SSLmajor != 9 && SSLminor != 7 && TQSLminor == 6))) {
 		tQSL_Error = TQSL_OPENSSL_VERSION_ERROR;
 		return 1;
 	}
@@ -279,7 +287,8 @@ tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outp
 	bio = BIO_push(bio64, bio);
 	if (BIO_write(bio, data, datalen) < 1)
 		goto err;
-	BIO_flush(bio);
+	if (BIO_flush(bio) != 1)
+		goto err;;
 	n = BIO_get_mem_data(bio, &memp);
 	if (n > outputlen-1) {
 		tQSL_Error = TQSL_BUFFER_ERROR;	
