@@ -40,7 +40,9 @@ GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 	sizer->Add(_pw, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
-	butsizer->Add(new wxButton(this, GPW_ID_OK, wxT("Ok")), 0, 0, 0);
+	wxButton *okButton = new wxButton(this, GPW_ID_OK, wxT("Ok"));
+	butsizer->Add(okButton, 0, 0, 0);
+	okButton->SetDefault();
 	butsizer->Add(new wxButton(this, GPW_ID_CAN, wxT("Cancel")), 0, wxLEFT, 20);
 	if (_help && _helpfile != wxT(""))
 		butsizer->Add(new wxButton(this, GPW_ID_HELP, wxT("Help")), 0, wxLEFT, 20);
@@ -139,6 +141,7 @@ GetNewPasswordDialog::PWChange(wxCommandEvent&) {
 	if (pw1 != wxT(""))
 		_pwstatus->SetLabel(wxT("Password confirmed"));
 	_okbut->Enable(true);
+	_okbut->SetDefault();
 }
 
 void
