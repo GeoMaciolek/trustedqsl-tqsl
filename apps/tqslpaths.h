@@ -56,9 +56,31 @@ public:
 
                 CFRelease(mainBundleURL);
 
-                Add(wxString(npath) + wxT("Contents/Resources/Help/"));
+/* The wxWindows converters don't have a c_str to wxSting converter
+ * so it crashes on attempts to wxString the path.
+ * This quick and dirty conversion to wchar fixes that.
+ */
+		size_t l = strlen(npath) * 5;
+		wchar_t *np = (wchar_t *)malloc(l);
+		char *src = npath;
+#if (SIZEOF_WCHAR_T == 2)
+		wxInt16 *dst = (wxInt16 *np);
+#elif (SIZEOF_WCHAR_T == 4)
+		wxInt32 *dst = (wxInt32 *) np;
+#else
+#error "unrecognized wchar_t size"
+#endif
+		while (*src) {
+			*dst++ = *src++;
+		}
+		*dst++ = 0;
+		*dst++ = 0;
+		wxString foo(np);
+		Add(foo + wxT("Contents/Resources/Help/"));
+		Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
 #else
 		Add(wxT("/usr/share/TrustedQSL/help/") + subdir);
+		Add(wxT("/usr/local/share/TrustedQSL/help/") + subdir);
 		Add(subdir);
 #endif
 	}
