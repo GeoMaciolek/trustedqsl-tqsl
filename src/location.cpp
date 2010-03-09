@@ -44,6 +44,7 @@ public:
 	TQSL_LOCATION_ITEM() : ivalue(0) {}
 	std::string text;
 	std::string label;
+	std::string zonemap;
 	int ivalue;
 };
 
@@ -142,8 +143,8 @@ public:
 
 bool
 operator< (const Band& o1, const Band& o2) {
-	static char *suffixes[] = { "M", "CM", "MM"};
-	static char *prefix_chars = "0123456789.";
+	static const char *suffixes[] = { "M", "CM", "MM"};
+	static const char *prefix_chars = "0123456789.";
 	// get suffixes
 	string b1_suf = o1.name.substr(o1.name.find_first_not_of(prefix_chars));
 	string b2_suf = o2.name.substr(o2.name.find_first_not_of(prefix_chars));
@@ -182,7 +183,7 @@ operator< (const Satellite& o1, const Satellite& o2) {
 
 bool
 operator< (const Mode& o1, const Mode& o2) {
-	static char *groups[] = { "CW", "PHONE", "IMAGE", "DATA" };
+	static const char *groups[] = { "CW", "PHONE", "IMAGE", "DATA" };
 	// m1 < m2 if m1 is a modegroup and m2 is not
 	if (o1.mode == o1.group) {
 		if (o2.mode != o2.group)
@@ -217,6 +218,7 @@ static XMLElement tqsl_xml_config;
 static int tqsl_xml_config_major = -1;
 static int tqsl_xml_config_minor = 0;
 static IntMap DXCCMap;
+static IntMap DXCCZoneMap;
 static vector< pair<int,string> > DXCCList;
 static vector<Band> BandList;
 static vector<Mode> ModeList;
@@ -497,10 +499,15 @@ init_dxcc() {
 	bool ok = dxcc.getFirstElement("entity", dxcc_entity);
 	while (ok) {
 		pair<string,bool> rval = dxcc_entity.getAttribute("arrlId");
+		pair<string,bool> zval = dxcc_entity.getAttribute("zonemap");
 		if (rval.second) {
 			int num = atoi(rval.first.c_str());
 			DXCCMap[num] = dxcc_entity.getText();
+			if (zval.second) 
+				DXCCZoneMap[num] = zval.first.c_str();
 			DXCCList.push_back(make_pair(num, dxcc_entity.getText()));
+
+
 		}
 		ok = dxcc.getNextElement(dxcc_entity);
 	}
@@ -718,6 +725,28 @@ tqsl_getDXCCEntityName(int number, const char **name) {
 		return 1;
 	}
 	*name = it->second.c_str();
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getDXCCZoneMap(int number, const char **zonemap) {
+	if (zonemap == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_dxcc())
+		return 1;
+	IntMap::const_iterator it;
+	it = DXCCZoneMap.find(number);
+	if (it == DXCCMap.end()) {
+		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		return 1;
+	}
+	const char *map = it->second.c_str();
+	if (!map || map[0] == '\0')
+		*zonemap = NULL;
+	else
+		*zonemap = map;
 	return 0;
 }
 
@@ -944,6 +973,36 @@ init_loc_maps() {
 	return 0;
 }
 
+static bool inMap(int value, bool cqz, bool ituz, const char *map) {
+/*
+ * Parse the zone map and return true if the value is a valid zone number
+ * The maps are colon-separated number pairs, with a list of pairs comma separated.
+ */
+	int cq, itu;
+	bool result = false;
+	char *mapcopy = strdup(map);
+	char *mapPart = strtok(mapcopy, ",");
+
+	// No map or empty string -> all match
+	if (!map || map[0] == '\0')
+		return true;
+	while (mapPart) {
+		sscanf(mapPart, "%d:%d", &itu, &cq);
+		if (cqz && (cq == value)) {
+			result = true;
+			goto out;
+		}
+		else if (ituz && (itu == value)) {
+			result = true;
+			goto out;
+		}
+		mapPart = strtok(NULL, ",");
+	} 
+out:
+	free (mapcopy);
+	return result;
+}
+
 static TQSL_LOCATION_FIELD *
 get_location_field(int page, const string& gabbi, TQSL_LOCATION *loc) {
 	if (page == 0)
@@ -962,6 +1021,10 @@ get_location_field(int page, const string& gabbi, TQSL_LOCATION *loc) {
 static int
 update_page(int page, TQSL_LOCATION *loc) {
 	TQSL_LOCATION_PAGE& p = loc->pagelist[page-1];
+	int dxcc;
+	int current_entity = 0;
+	int loaded_cqz = 0;
+	int loaded_ituz = 0;
 	for (int i = 0; i < (int)p.fieldlist.size(); i++) {
 		TQSL_LOCATION_FIELD& field = p.fieldlist[i];
 		field.changed = false;
@@ -975,7 +1038,6 @@ update_page(int page, TQSL_LOCATION *loc) {
 				tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, 1);
 				for (int i = 0; i < ncerts; i++) {
 					char callsign[40];
-					int dxcc;
 					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
 					tqsl_getCertificateDXCCEntity(certlist[i], &dxcc);
 					char ibuf[10];
@@ -1076,8 +1138,15 @@ update_page(int page, TQSL_LOCATION *loc) {
 								TQSL_LOCATION_ITEM item;
 								item.text = enumitem.getAttribute("value").first;
 								item.label = enumitem.getText();
+								item.zonemap = enumitem.getAttribute("zonemap").first;
 								field.items.push_back(item);
 								iok = enumlist.getNextElement(enumitem);
+							}
+							// Put selectable "none" entry at the end to permit bypass
+							if (field.flags & TQSL_LOCATION_FIELD_SELNXT) {
+								TQSL_LOCATION_ITEM item;
+								item.label = "[None]";
+								field.items.push_back(item);
 							}
 							break;
 						}
@@ -1089,10 +1158,15 @@ update_page(int page, TQSL_LOCATION *loc) {
 				}
 			} else {
 				// No dependencies
-				if (field.items.size() == 0) {
+				TQSL_LOCATION_FIELD *ent = get_location_field(page, "DXCC", loc);
+				current_entity = atoi(ent->cdata.c_str());
+				bool cqz = field.gabbi_name == "CQZ";
+				bool ituz = field.gabbi_name == "ITUZ";
+				if (field.items.size() == 0 || (cqz && current_entity != loaded_cqz) || (ituz && current_entity != loaded_ituz)) {
 					XMLElement enumlist;
 					if (config_field.getFirstElement("enums", enumlist)) {
 						field.items.clear();
+						field.changed = true;
 						if (!(field.flags & TQSL_LOCATION_FIELD_MUSTSEL)) {
 							TQSL_LOCATION_ITEM item;
 							item.label = "[None]";
@@ -1104,8 +1178,15 @@ update_page(int page, TQSL_LOCATION *loc) {
 							TQSL_LOCATION_ITEM item;
 							item.text = enumitem.getAttribute("value").first;
 							item.label = enumitem.getText();
+							item.zonemap = enumitem.getAttribute("zonemap").first;
 							field.items.push_back(item);
 							iok = enumlist.getNextElement(enumitem);
+						}
+						// Put selectable "none" entry at the end to permit bypass
+						if (field.flags & TQSL_LOCATION_FIELD_SELNXT) {
+							TQSL_LOCATION_ITEM item;
+							item.label = "[None]";
+							field.items.push_back(item);
 						}
 					} else {
 						// No enums supplied
@@ -1113,11 +1194,21 @@ update_page(int page, TQSL_LOCATION *loc) {
 							// This a list field
 							int lower = atoi(config_field.getAttribute("lower").first.c_str());
 							int upper = atoi(config_field.getAttribute("upper").first.c_str());
+							const char *zoneMap;
+							/* Get the map */
+							if (tqsl_getDXCCZoneMap(current_entity, &zoneMap)) {
+								zoneMap = NULL;
+							}
 							if (upper < lower) {
 								tQSL_Error = TQSL_CONFIG_ERROR;
 								return 1;
 							}
 							field.items.clear();
+							field.changed = true;
+							if (cqz)
+								loaded_cqz = current_entity;
+							if (ituz)
+								loaded_ituz = current_entity;
 							if (!(field.flags & TQSL_LOCATION_FIELD_MUSTSEL)) {
 								TQSL_LOCATION_ITEM item;
 								item.label = "[None]";
@@ -1125,19 +1216,63 @@ update_page(int page, TQSL_LOCATION *loc) {
 							}
 							char buf[40];
 							for (int j = lower; j <= upper; j++) {
-								sprintf(buf, "%d", j);
-								TQSL_LOCATION_ITEM item;
-								item.text = buf;
-								item.ivalue = j;
-								field.items.push_back(item);
+								if (!zoneMap || inMap(j, cqz, ituz, zoneMap)) {
+									sprintf(buf, "%d", j);
+									TQSL_LOCATION_ITEM item;
+									item.text = buf;
+									item.ivalue = j;
+									field.items.push_back(item);
+								}
 							}
 						} // intype != TEXT
 					} // enums supplied
-				} // itemlist not empty
+				} // itemlist not empty and current entity
 			} // no dependencies
 		} // field name not CALL|DXCC
 	} // field loop
 
+	/* Sanity check zones */
+	bool zonesok = true;
+	TQSL_LOCATION_FIELD *state = get_location_field(page, "US_STATE", loc);
+	if (!state)
+		state = get_location_field(page, "CA_PROVINCE", loc);
+	if (state && state->idx > 0) {
+		TQSL_LOCATION_FIELD *cqz = get_location_field(page, "CQZ", loc);
+		TQSL_LOCATION_FIELD *ituz = get_location_field(page, "ITUZ", loc);
+		const char *stateZoneMap = state->items[state->idx].zonemap.c_str();
+
+		int currentCQ = cqz->idata;
+		int currentITU = ituz->idata;
+
+		if (!inMap(currentITU, false, true, stateZoneMap)) {
+			int wantedITUZ = atoi(stateZoneMap);
+			for (int i = 0; i < (int)ituz->items.size(); i++) {
+				if (atoi(ituz->items[i].text.c_str()) == wantedITUZ) {
+					ituz->idx = i;
+					ituz->cdata = ituz->items[i].text;
+					ituz->idata = ituz->items[i].ivalue;
+					zonesok = false;
+					break;
+				}
+			}
+		}
+		if (!inMap(currentCQ, true, false, stateZoneMap)) {
+			while (*stateZoneMap != ':')
+				stateZoneMap++;
+			int wantedCQZ = atoi(++stateZoneMap);
+			for (int i = 0; i < (int)cqz->items.size(); i++) {
+				if (atoi(cqz->items[i].text.c_str()) == wantedCQZ) {
+					cqz->idx = i;
+					cqz->cdata = cqz->items[i].text;
+					cqz->idata = cqz->items[i].ivalue;
+					zonesok = false;
+					break;
+				}
+			}
+		}
+		if (!zonesok)
+			update_page(page-1, loc);
+	}
 	p.complete = true;
 	return 0;
 }
@@ -1460,6 +1595,20 @@ tqsl_getLocationFieldDataType(tQSL_Location locp, int field_num, int *type) {
 		return 1;
 	}
 	*type = fl[field_num].data_type;
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getLocationFieldFlags(tQSL_Location locp, int field_num, int *flags) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp)))
+		return 1;
+	TQSL_LOCATION_FIELDLIST &fl = loc->pagelist[loc->page-1].fieldlist;
+	if (flags == 0 || field_num < 0 || field_num >= (int)fl.size()) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	*flags = fl[field_num].flags;
 	return 0;
 }
 

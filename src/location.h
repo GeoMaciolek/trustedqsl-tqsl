@@ -14,5 +14,6 @@
 // TQSL_LOCATION_FIELD flag bits
 #define TQSL_LOCATION_FIELD_UPPER	1
 #define TQSL_LOCATION_FIELD_MUSTSEL 2
+#define TQSL_LOCATION_FIELD_SELNXT 4
 
 #endif	// __location_h
