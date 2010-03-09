@@ -1,7 +1,7 @@
 Summary: The TrustedQSL library
 Name: tqsllib
 Version: @VERSION@
-Release: 1
+Release: 2
 Copyright: Custom BSD-like
 Group: Development/Libraries
 Source: tqsllib-%{version}.tar.gz
