@@ -90,7 +90,7 @@ extern "C" {
 #endif
 
 /** Get the ADIF error message that corresponds to a particular error value */
-DLLEXPORT char *tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status );
+DLLEXPORT const char *tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status );
 
 /** Initialize an ADIF file for reading */
 DLLEXPORT int tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename);

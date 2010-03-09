@@ -227,7 +227,7 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 		return 0;
 	}
 	int freq = atoi(fp->value);
-	char *band = 0;
+	const char *band = 0;
 	if (cab->contest->type == TQSL_CABRILLO_HF) {
 		if (freq < 30) {
 			// Handle known CT misbehavior
@@ -303,8 +303,8 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 static int
 mode_xlat(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	static struct {
-		char *cmode;
-		char *gmode;
+		const char *cmode;
+		const char *gmode;
 	} modes[] = {
 		{"CW", "CW"}, {"PH", "Phone"}, {"FM", "Phone"}, {"RY", "RTTY"}
 	};
@@ -472,7 +472,7 @@ tqsl_endCabrillo(tQSL_Cabrillo *cabp) {
 
 DLLEXPORT const char *
 tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
-	char *msg = 0;
+	const char *msg = 0;
 	switch (err) {
 		case TQSL_CABRILLO_NO_ERROR:
 			msg = "Cabrillo success";
