@@ -204,7 +204,7 @@ void MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxString msg = wxT("TQSLCert V" VERSION "." BUILD "\n(c) 2001-2005\nAmerican Radio Relay League\n\n");
+	wxString msg = wxT("TQSLCert V" VERSION "." BUILD "\n(c) 2001-2010\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
 		wxLogError(wxString(tqsl_getErrorString(), wxConvLocal));
@@ -531,7 +531,7 @@ END_EVENT_TABLE()
 CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 		wxDialog(parent, -1, wxT("Certificate Properties"), wxDefaultPosition, wxSize(400, 15 * LABEL_HEIGHT))
 {
-	char *labels[] = {
+	const char *labels[] = {
 		"Begins: ", "Expires: ", "Organization: ", "", "Serial: ", "Operator: ",
 		"Call sign: ", "DXCC Entity: ", "QSO Start Date: ", "QSO End Date: ", "Key: "
 	};
