@@ -619,33 +619,33 @@
            <enum value="2nd (SE)" />
            <enum value="3rd (SC)" />
            <enum value="4th (C)" />
-           <enum value="Aleutians East" adif="3rd (SC)" />
-           <enum value="Aleutians West" adif="3rd (SC)" />
-           <enum value="Anchorage" adif="3rd (SC)" />
-           <enum value="Bethel" adif="4th (C)"/>
-           <enum value="Bristol Bay" adif="3rd (SC)" />
-           <enum value="Denali" adif="4th (C)" />
-           <enum value="Dillingham" adif="3rd (SC) "/>
-           <enum value="Fairbanks North Star" adif="4th (C)"/>
-           <enum value="Haines" adif="1st (SE)"/>
-           <enum value="Juneau" adif="1st (SE)"/>
-           <enum value="Kenai Peninsula" adif="3rd (SC)" />
-           <enum value="Ketchikan Gateway" adif="1st (SE)"/>
-           <enum value="Kodiak Island" adif="3rd (SC)" />
-           <enum value="Lake and Peninsula" adif="3rd (SC)" />
-           <enum value="Matanuska Susitna" adif="3rd (SC)" />
-           <enum value="Nome" adif="2nd (SE)" />
-           <enum value="North Slope" adif="2nd (SE)" />
-           <enum value="Northwest Arctic" adif="2nd (SE)" />
-           <enum value="Prince Wales Ketchikan" adif="1st (SE)"/>
-           <enum value="Sitka" adif="1st (SE)"/>
-           <enum value="Skagway Hoonah Angoon" adif="1st (SE)"/>
-           <enum value="Southeast Fairbanks" adif="4th (C)"/>
-           <enum value="Valdez Cordova" adif="3rd (SC)" />
-           <enum value="Wade Hampton" adif="2nd (SE)" />
-           <enum value="Wrangell Petersburg" adif="1st (SE)" />
-           <enum value="Yakutat" />
-           <enum value="Yukon Koyukuk" adif="4th (C)"/>
+           <enum value="Aleutians East|3rd (SC)" />
+           <enum value="Aleutians West|3rd (SC)" />
+           <enum value="Anchorage|3rd (SC)" />
+           <enum value="Bethel|4th (C)"/>
+           <enum value="Bristol Bay|3rd (SC)" />
+           <enum value="Denali|4th (C)" />
+           <enum value="Dillingham|3rd (SC) "/>
+           <enum value="Fairbanks North Star|4th (C)"/>
+           <enum value="Haines|1st (SE)"/>
+           <enum value="Juneau|1st (SE)"/>
+           <enum value="Kenai Peninsula|3rd (SC)" />
+           <enum value="Ketchikan Gateway|1st (SE)"/>
+           <enum value="Kodiak Island|3rd (SC)" />
+           <enum value="Lake and Peninsula|3rd (SC)" />
+           <enum value="Matanuska Susitna|3rd (SC)" />
+           <enum value="Nome|2nd (SE)" />
+           <enum value="North Slope|2nd (SE)" />
+           <enum value="Northwest Arctic|2nd (SE)" />
+           <enum value="Prince Wales Ketchikan|1st (SE)"/>
+           <enum value="Sitka|1st (SE)"/>
+           <enum value="Skagway Hoonah Angoon|1st (SE)"/>
+           <enum value="Southeast Fairbanks|4th (C)"/>
+           <enum value="Valdez Cordova|3rd (SC)" />
+           <enum value="Wade Hampton|2nd (SE)" />
+           <enum value="Wrangell Petersburg|1st (SE)" />
+           <enum value="Yakutat|1st(SE)" />
+           <enum value="Yukon Koyukuk|4th (C)"/>
          </enums>
          <enums dependency="AL">
            <enum value="Autauga" />
@@ -4012,15 +4012,15 @@
        <sigspec name="LOTW" version="1.0">
          <tCONTACT>
            <BAND required="1" />
-   	<BAND_RX />
+        <BAND_RX />
            <CALL required="1" />
            <FREQ />
-   	<FREQ_RX />
+        <FREQ_RX />
            <MODE required="1" />
-   	<PROP_MODE />
+        <PROP_MODE />
            <QSO_DATE required="1" />
            <QSO_TIME required="1" />
-   	<SAT_NAME />
+        <SAT_NAME />
          </tCONTACT>
          <tSTATION>
            <CA_PROVINCE />
