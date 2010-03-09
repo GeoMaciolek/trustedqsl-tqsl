@@ -300,17 +300,17 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 		topsizer->Add(_recno_label_ctrl, 0, wxALIGN_CENTER|wxALL, 5);
 		_recno = 1;
 		sizer = new wxBoxSizer(wxHORIZONTAL);
-		_recbottom_ctrl = new wxBitmapButton(this, QD_RECBOTTOM, wxBitmap(bottom), wxDefaultPosition, wxSize(18, TEXT_HEIGHT)),
+		_recbottom_ctrl = new wxBitmapButton(this, QD_RECBOTTOM, wxBitmap(bottom_xpm), wxDefaultPosition, wxSize(18, TEXT_HEIGHT)),
 		sizer->Add(_recbottom_ctrl, 0, wxTOP|wxBOTTOM, 5);
-		_recdown_ctrl = new wxBitmapButton(this, QD_RECDOWN, wxBitmap(left), wxDefaultPosition, wxSize(18, TEXT_HEIGHT));
+		_recdown_ctrl = new wxBitmapButton(this, QD_RECDOWN, wxBitmap(left_xpm), wxDefaultPosition, wxSize(18, TEXT_HEIGHT));
 		sizer->Add(_recdown_ctrl, 0, wxTOP|wxBOTTOM, 5);
 		_recno_ctrl = new wxTextCtrl(this, QD_RECNO, wxT("1"), wxDefaultPosition,
 			wxSize(4*TEXT_WIDTH,TEXT_HEIGHT));
 		_recno_ctrl->Enable(FALSE);
 		sizer->Add(_recno_ctrl, 0, wxALL, 5);
-		_recup_ctrl = new wxBitmapButton(this, QD_RECUP, wxBitmap(right), wxDefaultPosition, wxSize(18, TEXT_HEIGHT));
+		_recup_ctrl = new wxBitmapButton(this, QD_RECUP, wxBitmap(right_xpm), wxDefaultPosition, wxSize(18, TEXT_HEIGHT));
 		sizer->Add(_recup_ctrl, 0, wxTOP|wxBOTTOM, 5);
-		_rectop_ctrl = new wxBitmapButton(this, QD_RECTOP, wxBitmap(top), wxDefaultPosition, wxSize(18, TEXT_HEIGHT)),
+		_rectop_ctrl = new wxBitmapButton(this, QD_RECTOP, wxBitmap(top_xpm), wxDefaultPosition, wxSize(18, TEXT_HEIGHT)),
 		sizer->Add(_rectop_ctrl, 0, wxTOP|wxBOTTOM, 5);
 		if (_reclist->size() > 0)
 			rec = *(_reclist->begin());
@@ -489,6 +489,6 @@ QSODataDialog::UpdateControls() {
 	_recup_ctrl->Enable(_recno < (int)_reclist->size());
 	_rectop_ctrl->Enable(_recno < (int)_reclist->size());
    	_recno_ctrl->SetValue(wxString::Format(wxT("%d"), _recno));
-	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%s"), _reclist->size(),
+	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%s"), (int)_reclist->size(),
 		(_reclist->size() == 1) ? wxT("") : wxT("s")));
 }
