@@ -1,5 +1,5 @@
 /* XPM */
-static char *top[]={
+static const char *top_xpm[]={
 "10 10 30 1",
 "a c None",
 "g c #000000",

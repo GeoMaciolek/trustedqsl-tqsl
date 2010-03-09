@@ -1,5 +1,5 @@
 /* XPM */
-static char * broken_cert_xpm[] = {
+static const char * broken_cert_xpm[] = {
 "16 16 17 1",
 " 	c #FDFDFDFDFDFD",
 ".	c #D7D7D7D7D7D7",

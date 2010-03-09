@@ -1,5 +1,5 @@
 /* XPM */
-static char * nocert_xpm[] = {
+static const char * nocert_xpm[] = {
 "16 16 17 1",
 " 	c None",
 ".	c #FE0706",
