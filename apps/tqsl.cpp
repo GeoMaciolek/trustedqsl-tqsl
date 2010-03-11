@@ -52,7 +52,6 @@ using namespace std;
 
 #include "tqslbuild.h"
 
-static DocPaths docpaths(wxT("tqslapp"));
 
 enum {
 	tm_f_import = 7000,
@@ -380,6 +379,7 @@ MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
 
+	DocPaths docpaths(wxT("tqslapp"));
 	// File menu
 	wxMenu *file_menu = new wxMenu;
 	file_menu->Append(tm_f_import_compress, wxT("&Sign existing ADIF or Cabrillo file..."));

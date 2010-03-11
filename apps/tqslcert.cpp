@@ -54,7 +54,6 @@ END_EVENT_TABLE()
 
 static wxString flattenCallSign(const wxString& call);
 
-static DocPaths docpaths(wxT("tqslcert"));
 
 /////////// Application //////////////
 
@@ -142,6 +141,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 	wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)),
 	cert_tree(0), req(0) {
 
+	DocPaths docpaths(wxT("tqslcert"));
 	wxMenu *file_menu = new wxMenu;
 
 	file_menu->Append(tc_CRQWizard, wxT("&New Certificate Request..."));
