@@ -3867,8 +3867,8 @@
          </enums>
          <enums dependency="291">
            <enum value="AL" zonemap="8:4">Alabama</enum>
-           <enum value="AZ" zonemap="6:3">Arizona</enum>
-           <enum value="AR" zonemap="8:4">Arkansas</enum>
+           <enum value="AZ" zonemap="6:3,7:3">Arizona</enum>
+           <enum value="AR" zonemap="7:4,8:4">Arkansas</enum>
            <enum value="CA" zonemap="6:3">California</enum>
            <enum value="CO" zonemap="7:4">Colorado</enum>
            <enum value="CT" zonemap="8:5">Connecticut</enum>
@@ -3877,19 +3877,19 @@
            <enum value="FL" zonemap="8:5">Florida</enum>
            <enum value="GA" zonemap="8:5">Georgia</enum>
            <enum value="ID" zonemap="6:3">Idaho</enum>
-           <enum value="IL" zonemap="8:4">Illinois</enum>
+           <enum value="IL" zonemap="7:4,8:4">Illinois</enum>
            <enum value="IN" zonemap="8:4">Indiana</enum>
            <enum value="IA" zonemap="7:4">Iowa</enum>
            <enum value="KS" zonemap="7:4">Kansas</enum>
            <enum value="KY" zonemap="8:4">Kentucky</enum>
-           <enum value="LA" zonemap="7:4">Louisiana</enum>
+           <enum value="LA" zonemap="7:4,8:4">Louisiana</enum>
            <enum value="ME" zonemap="8:5">Maine</enum>
            <enum value="MD" zonemap="8:5">Maryland</enum>
            <enum value="MA" zonemap="8:5">Massachusetts</enum>
-           <enum value="MI" zonemap="8:4">Michigan</enum>
+           <enum value="MI" zonemap="7:4,8:4">Michigan</enum>
            <enum value="MN" zonemap="7:4">Minnesota</enum>
-           <enum value="MS" zonemap="8:4">Mississippi</enum>
-           <enum value="MO" zonemap="7:4">Missouri</enum>
+           <enum value="MS" zonemap="7:4,8:4">Mississippi</enum>
+           <enum value="MO" zonemap="7:4,8:4">Missouri</enum>
            <enum value="MT" zonemap="6:4,7:4">Montana</enum>
            <enum value="NE" zonemap="7:4">Nebraska</enum>
            <enum value="NV" zonemap="6:3">Nevada</enum>
@@ -3906,14 +3906,14 @@
            <enum value="RI" zonemap="8:5">Rhode Island</enum>
            <enum value="SC" zonemap="8:5">South Carolina</enum>
            <enum value="SD" zonemap="7:4">South Dakota</enum>
-           <enum value="TN" zonemap="8:4">Tennessee</enum>
+           <enum value="TN" zonemap="7:4,8:4">Tennessee</enum>
            <enum value="TX" zonemap="7:4">Texas</enum>
-           <enum value="UT" zonemap="6:3">Utah</enum>
+           <enum value="UT" zonemap="6:3,7:3">Utah</enum>
            <enum value="VT" zonemap="8:5">Vermont</enum>
            <enum value="VA" zonemap="8:5">Virginia</enum>
            <enum value="WA" zonemap="6:3">Washington</enum>
            <enum value="WV" zonemap="8:5">West Virginia</enum>
-           <enum value="WI" zonemap="8:4">Wisconsin</enum>
+           <enum value="WI" zonemap="7:4,8:4">Wisconsin</enum>
            <enum value="WY" zonemap="6:4,7:4">Wyoming</enum>
          </enums>
          <enums dependency="6">
