@@ -2823,7 +2823,7 @@ fixed_password_callback(char *buf, int bufsiz, int verify, void *userdata) {
 		strncpy(buf, (char *)userdata, bufsiz);
 	else
 		buf[0] = 0;
-	return 0;
+	return strlen(buf);
 }
 
 static void *prompt_userdata;
