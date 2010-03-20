@@ -110,6 +110,7 @@ private:
 	wxTextCtrl *tc_name, *tc_addr1, *tc_addr2, *tc_city, *tc_state,
 		*tc_zip, *tc_country;
 	wxStaticText *tc_status;
+	bool initialized;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -122,6 +123,7 @@ public:
 private:
 	wxTextCtrl *tc_email;
 	wxStaticText *tc_status;
+	bool initialized;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -134,6 +136,7 @@ public:
 private:
 	wxTextCtrl *tc_pw1, *tc_pw2;
 	wxStaticText *tc_status;
+	bool initialized;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -149,6 +152,7 @@ private:
 	wxRadioBox *choice;
 	CertTree *cert_tree;
 	wxStaticText *tc_status;
+	bool initialized;
 
 	DECLARE_EVENT_TABLE()
 };
