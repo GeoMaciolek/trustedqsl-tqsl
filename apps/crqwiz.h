@@ -96,6 +96,7 @@ private:
 	wxComboBox *tc_qsobeginy, *tc_qsobeginm, *tc_qsobegind, *tc_dxcc;
 	wxComboBox *tc_qsoendy, *tc_qsoendm, *tc_qsoendd;
 	wxStaticText *tc_status;
+	bool initialized;		// Set true when validating makes sense
 
 	DECLARE_EVENT_TABLE()
 };
