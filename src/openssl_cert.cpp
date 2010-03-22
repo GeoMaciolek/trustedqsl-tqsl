@@ -2704,10 +2704,12 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	char name[256];
 	char value[256];
 	FILE *out;
-	string subjid, msg;
+	long serial;
+	string subjid, msg, callsign;
 	TQSL_X509_NAME_ITEM item;
 	int len, rval;
 	string stype = "Unknown";
+
 	if (type == TQSL_CERT_CB_ROOT)
 		stype = "Trusted Root Authority";
 	else if (type == TQSL_CERT_CB_CA)
@@ -2722,6 +2724,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	item.value_buf_size = sizeof value;
 	if (tqsl_cert_get_subject_name_entry(cert, "AROcallsign", &item)) {
 		// Subject contains a call sign (probably a user cert)
+		callsign = value;
 		subjid = string("  ") + value;
 		if (tqsl_cert_get_subject_name_entry(cert, "commonName", &item))
 			subjid += string(" (") + value + ")";
@@ -2751,7 +2754,6 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	}
 	/* Check each certificate */
 	if (sk != NULL) {
-		long serial;
 		int i, n;
 
 		serial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
@@ -2810,6 +2812,22 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
 		return 1;
+	}
+	if (type != TQSL_CERT_CB_USER)
+		return 0;
+
+	// Look for other certs with this callsign and delete them.
+	tQSL_Cert *certs;
+	int ncerts;
+	long certserial;
+
+	if (!tqsl_selectCertificates(&certs, &ncerts, callsign.c_str(), 0, 0, 0, 0)) {
+		for (int i = 0; i < ncerts; i++) {
+			if (!tqsl_getCertificateSerial(certs[i], &certserial) &&
+			    certserial != serial) {
+				tqsl_deleteCertificate(certs[i]);
+			}
+		}
 	}
 	return 0;
 }
