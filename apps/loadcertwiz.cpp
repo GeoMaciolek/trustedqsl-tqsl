@@ -95,7 +95,8 @@ notifyImport(int type, const char *message, void *data) {
 					break;
 				case TQSL_CERT_CB_ERROR:
 					counts->error++;
-					wxMessageBox(wxString(message, wxConvLocal), wxT("Error"));
+					// Errors get posted later
+					// wxMessageBox(wxString(message, wxConvLocal), wxT("Error"));
 					break;
 				case TQSL_CERT_CB_LOADED:
 					counts->loaded++;
