@@ -3,8 +3,13 @@ TQSLLIB changes
 
 2.1
 ---
+Delete old user certificate when importing another one for the same callsign.
+
+Require selection of states for US, provinces for Canada (with ability to
+override when not appropriate.)
+
 Handle Alaskan administratitive areas by allowing them to be selected while
-outputting the correct county name in the station data exportd with a signed
+outputting the correct county name in the station data exported with a signed
 log.
 
 Added support for specifying zone numbers for entities, states, and provinces 
@@ -12,7 +17,12 @@ Force proper zones for entities, states when possible.
 
 Update configuration file to correspond to ADIF specifications for county names.
 
-Ignore expired certificates during import/export
+Ignore expired certificates during import/export when an expired CA
+certificate is signed by a valid root cert.
+
+Support OpenSSL 0.9 through 1.0 beta.
+
+Fix security bug in certificate validation.
 
 2.0
 ---
