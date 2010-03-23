@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.1
 ---
+Don't allow certificate import to overwrite a newer certificate.
+
 Delete old user certificate when importing another one for the same callsign.
 
 Require selection of states for US, provinces for Canada (with ability to
