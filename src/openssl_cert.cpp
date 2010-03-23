@@ -1813,8 +1813,22 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 		if (tqsl_import_cert(it->pem.c_str(), CACERT, cb, userdata))
 			goto imp_end;
 	for (it = usercerts.begin(); it != usercerts.end(); it++)
-		if (tqsl_import_cert(it->pem.c_str(), USERCERT, cb, userdata))
+		if (tqsl_import_cert(it->pem.c_str(), USERCERT, cb, userdata)) {
+			char savepath[1024], badpath[1024];
+			strncpy(badpath, path, sizeof(badpath));
+			strncat(badpath, ".bad", sizeof(badpath));
+			badpath[sizeof(badpath)-1] = '\0';
+			if (!rename(path, badpath)) {
+				strncpy(savepath, path, sizeof(savepath));
+				strncat(savepath, ".save", sizeof(savepath));
+				savepath[sizeof(savepath)-1] = '\0';
+				if (rename(savepath, path))  // didn't work
+					rename(badpath, path);
+				else
+					unlink(badpath);
+			}
 			goto imp_end;
+		}
 
 	tQSL_Error = TQSL_NO_ERROR;
 	rval = 0;
@@ -2708,7 +2722,11 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	string subjid, msg, callsign;
 	TQSL_X509_NAME_ITEM item;
 	int len, rval;
+	vector<tqsl_imported_cert> *certlist;
+	vector<tqsl_imported_cert>::iterator it;
+	tQSL_Date newExpires;
 	string stype = "Unknown";
+	ASN1_TIME *tm;
 
 	if (type == TQSL_CERT_CB_ROOT)
 		stype = "Trusted Root Authority";
@@ -2726,6 +2744,14 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		// Subject contains a call sign (probably a user cert)
 		callsign = value;
 		subjid = string("  ") + value;
+		tm = X509_get_notAfter(cert);
+		if (tm)
+			tqsl_get_asn1_date(tm, &newExpires);
+		else {
+			newExpires.year = 9999;
+			newExpires.month = 1;
+			newExpires.day = 1;
+		}
 		if (tqsl_cert_get_subject_name_entry(cert, "commonName", &item))
 			subjid += string(" (") + value + ")";
 		len = sizeof value-1;
@@ -2755,6 +2781,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	/* Check each certificate */
 	if (sk != NULL) {
 		int i, n;
+		tQSL_Date expires;
 
 		serial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 		n = sk_X509_num(sk);
@@ -2768,6 +2795,34 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 			if (cp != NULL && !strcmp(cp, issuer)) {
 				if (serial == ASN1_INTEGER_get(X509_get_serialNumber(x)))
 					break;	/* We have a match */
+			}
+
+			if (type == TQSL_CERT_CB_USER) {
+				item.name_buf = name;
+				item.name_buf_size = sizeof name;
+				item.value_buf = value;
+				item.value_buf_size = sizeof value;
+				if (tqsl_cert_get_subject_name_entry(x, "AROcallsign", &item)) {
+					if (value == callsign) {
+						/*
+						 * If it's another cert for 
+						 * this call, is it older?
+						 */
+						tm = X509_get_notAfter(x);
+						if (tm) 
+							tqsl_get_asn1_date(tm, &expires);
+						else {
+							expires.year = 0;
+							expires.month = 0;
+							expires.day = 0;
+						}
+						if (tqsl_compareDates(&newExpires, &expires) < 0) {
+							tQSL_Error = TQSL_CUSTOM_ERROR;
+							strcpy(tQSL_CustomError, "A newer certificate for this callsign is already installed");
+							return 1;
+						}
+					}
+				}
 			}
 		}
 		sk_X509_free(sk);
@@ -2821,7 +2876,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	int ncerts;
 	long certserial;
 
-	if (!tqsl_selectCertificates(&certs, &ncerts, callsign.c_str(), 0, 0, 0, 0)) {
+	if (!tqsl_selectCertificates(&certs, &ncerts, callsign.c_str(), 0, 0, 0, TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED)) {
 		for (int i = 0; i < ncerts; i++) {
 			if (!tqsl_getCertificateSerial(certs[i], &certserial) &&
 			    certserial != serial) {
@@ -2919,6 +2974,7 @@ tqsl_close_key_file(void) {
 static int
 tqsl_replace_key(const char *callsign, const char *path, map<string,string>& newfields, int (*cb)(int, const char *, void *), void *userdata) {
 	char newpath[300];
+	char savepath[300];
 	map<string,string> fields;
 	vector< map<string,string> > records;
 	vector< map<string,string> >::iterator it;
@@ -2958,6 +3014,8 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 		records.push_back(newfields);
 	strcpy(newpath, path);
 	strcat(newpath, ".new");
+	strcpy(savepath, path);
+	strcat(savepath, ".save");
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		goto trk_end;
@@ -2977,7 +3035,11 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	out = 0;
 
 	/* Output file looks okay. Replace the old file with the new one. */
-	if (unlink(path) && errno != ENOENT) {
+	if (unlink(savepath) && errno != ENOENT) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		goto trk_end;
+	}
+	if (rename(path, savepath) && errno != ENOENT) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		goto trk_end;
 	}
