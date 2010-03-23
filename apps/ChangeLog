@@ -3,6 +3,9 @@ TQSL/TQSLCERT changes
 
 1.12
 ----
+Fix windows wxWidgets crashes with several wizards (cert renew, new cert,
+etc.)
+
 Add checkbox to allow bypassing state selection.
 
 Fix crash on Windows when new certificate request wizard is started.
@@ -15,8 +18,11 @@ When double-clicking an entry on the "Edit Station Locations" dialog, open
 that entry for edit, don't just close the modal dialog.
 
 Change the "OK" button on the "Edit Station Locations" dialog to "Close"
-as it that's what it does.
+as that's what it does.
 
+Update password dialogs to enable "enter" to activate when possible.
+
+Add "-p <password>" and "-o <output-file>" arguments to tqsl.
 
 1.11
 ----
