@@ -737,7 +737,6 @@ end:
 		RSA_free(rsa);
 	return rval;
 }
-
 DLLEXPORT int
 tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly) {
 	if (tqsl_init())
@@ -2097,7 +2096,19 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 			len = sizeof buf-1;
 			if (!tqsl_get_cert_ext(x, "supercededCertificate", (unsigned char *)buf, &len, NULL)) {
 				buf[len] = 0;
-				superceded_certs.insert(buf);
+				string sup = buf;
+				superceded_certs.insert(sup);
+				/* Fix - the extension as inserted by ARRL
+				 * reads ".../Email=lotw@arrl.org", not
+				 * the expected ".../emailAddress=".
+				 * save both forms in case this gets
+				 * changed at the LoTW site
+				 */
+				size_t pos = sup.find("/Email");
+				if (pos != string::npos) {
+					sup.replace(pos, 6, "/emailAddress");
+					superceded_certs.insert(sup);
+				}
 			}
 		}
 	}
@@ -2134,6 +2145,12 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 				sup += ";";
 				sprintf(buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
 				sup += buf;
+				set<string>::iterator it;
+				for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
+					if (*it == sup)
+						ok = 0;
+				}
+
 				if (superceded_certs.find(sup) != superceded_certs.end())
 					ok = 0;
 			}
@@ -2865,22 +2882,6 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
 		return 1;
-	}
-	if (type != TQSL_CERT_CB_USER)
-		return 0;
-
-	// Look for other certs with this callsign and delete them.
-	tQSL_Cert *certs;
-	int ncerts;
-	long certserial;
-
-	if (!tqsl_selectCertificates(&certs, &ncerts, callsign.c_str(), 0, 0, 0, TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED)) {
-		for (int i = 0; i < ncerts; i++) {
-			if (!tqsl_getCertificateSerial(certs[i], &certserial) &&
-			    certserial != serial) {
-				tqsl_deleteCertificate(certs[i]);
-			}
-		}
 	}
 	return 0;
 }
