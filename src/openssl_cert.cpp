@@ -2722,8 +2722,6 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	string subjid, msg, callsign;
 	TQSL_X509_NAME_ITEM item;
 	int len, rval;
-	vector<tqsl_imported_cert> *certlist;
-	vector<tqsl_imported_cert>::iterator it;
 	tQSL_Date newExpires;
 	string stype = "Unknown";
 	ASN1_TIME *tm;
