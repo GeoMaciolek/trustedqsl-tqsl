@@ -53,6 +53,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 END_EVENT_TABLE()
 
 static wxString flattenCallSign(const wxString& call);
+static int showAllCerts(void);
 
 
 /////////// Application //////////////
@@ -94,7 +95,7 @@ CertApp::OnInit() {
 		wxMessageBox(wxT("Please review the introductory documentation before using this program."),
 			wxT("Notice"), wxOK, frame);
 	}
-	int ncerts = frame->cert_tree->Build(CERTLIST_FLAGS);
+	int ncerts = frame->cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 	if (ncerts == 0 && wxMessageBox(wxT("You have no certificate with which to sign log submissions.\n"
 		"Would you like to request a certificate now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
 		wxCommandEvent e;
@@ -183,7 +184,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	cert_tree->Build(CERTLIST_FLAGS);
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 
 }
 
@@ -197,6 +198,7 @@ void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	Preferences dial(this);
 	dial.ShowModal();
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 }
 
 void MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
@@ -225,7 +227,7 @@ void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	LoadCertWiz lcw(this, &help, wxT("Load Certificate File"));
 	lcw.RunWizard();
-	cert_tree->Build(CERTLIST_FLAGS);
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 }
 
 void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
@@ -375,7 +377,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			}
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			cert_tree->Build(CERTLIST_FLAGS);
+			cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 		}
 	}
 }
@@ -461,7 +463,7 @@ wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n"
 "ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
-		cert_tree->Build(CERTLIST_FLAGS);
+		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 	}
 }
 
@@ -680,3 +682,19 @@ flattenCallSign(const wxString& call) {
 		flat[idx] = '_';
 	return flat;
 }
+
+static int
+showAllCerts(void) {
+
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	int ret = 0;
+	bool b;
+	config->Read(wxT("ShowSuperceded"), &b, false);
+	if (b) 
+		ret |= TQSL_SELECT_CERT_SUPERCEDED;
+	config->Read(wxT("ShowExpired"), &b, false);
+	if (b) 
+		ret |= TQSL_SELECT_CERT_EXPIRED;
+	return ret;
+}
+

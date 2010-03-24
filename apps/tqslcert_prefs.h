@@ -42,12 +42,13 @@ private:
 	wxCheckBox *root_cb, *ca_cb, *user_cb;
 };
 
-class FilePrefs : public wxPanel {
+class CertPrefs : public wxPanel {
 public:
-	FilePrefs(wxWindow *parent);
+	CertPrefs(wxWindow *parent);
 	virtual bool TransferDataFromWindow();
 private:
-	wxTextCtrl *cabrillo, *adif;
+	wxCheckBox *showSuperceded_cb;
+	wxCheckBox *showExpired_cb;
 };
 
 class Preferences : public wxDialog {
@@ -58,7 +59,7 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	KeyPrefs *keyprefs;
-	FilePrefs *fileprefs;
+	CertPrefs *certprefs;
 };
 
 #endif	// __TQSLCERT_PREFS_H
