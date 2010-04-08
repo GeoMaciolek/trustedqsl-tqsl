@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.1
 ---
+Prompt user to save their certificate after importing a .tq6 signed certificate.
+
 Fix filtering of superceded certificates so they are not displayed by default.
 
 Don't allow certificate import to overwrite a newer certificate.
