@@ -301,6 +301,32 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *,voi
 	return 0;
 }
 
+int
+tqsl_get_pem_serial(const char *pem, long *serial) {
+	BIO *bio;
+	X509 *cert;
+
+	if (tqsl_init())
+		return 1;
+	if (pem == NULL || serial == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	bio = BIO_new_mem_buf((void *)pem, strlen(pem));
+	if (bio == NULL) {
+		tQSL_Error = TQSL_OPENSSL_ERROR;
+		return 1;
+	}
+	cert = PEM_read_bio_X509(bio, NULL, NULL, NULL);
+	BIO_free(bio);	
+	if (cert == NULL) {
+		tQSL_Error = TQSL_OPENSSL_ERROR;
+		return 1;
+	}
+	*serial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
+	return 0;
+}
+
 } // namespace
 
 /********** PUBLIC API FUNCTIONS ***********/

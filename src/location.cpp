@@ -2545,3 +2545,35 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 	}
 	return 0;
 }
+
+/*
+ * Get the first user certificate from a .tq6 file
+*/
+DLLEXPORT int
+tqsl_getSerialFromTQSLFile(const char *file, long *serial) {
+	XMLElement topel;
+	if (!topel.parseFile(file)) {
+		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_CONFIG_ERROR;
+		return 1;
+	}
+	XMLElement tqsldata;
+	if (!topel.getFirstElement("tqsldata", tqsldata)) {
+		tQSL_Error = TQSL_CONFIG_ERROR;
+		return 1;
+	}
+	XMLElement section;
+	bool stat = tqsldata.getFirstElement("tqslcerts", section);
+	if (stat) {
+		XMLElement cert;
+		bool cstat = section.getFirstElement("usercert", cert);
+		if (cstat) {
+			if (tqsl_get_pem_serial(cert.getText().c_str(), serial)) {
+				tQSL_Error = TQSL_CONFIG_ERROR;
+				return 1;
+			}
+			return 0;
+		}
+	}
+	return 1;
+}

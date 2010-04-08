@@ -576,6 +576,16 @@ DLLEXPORT void tqsl_freeCertificate(tQSL_Cert cert);
   */
 DLLEXPORT int tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *message, void *userdata), void *user);
 
+/** Get the serial for the first user cert from a .tq6 file
+  * used to support asking the user to save their cert after import
+  * \li \c file is the path to the file
+  * \li \c serial is where the serial number is returned
+  *
+  * Returns 0 on success, nonzero on failure.
+  *
+  */
+DLLEXPORT int tqsl_getSerialFromTQSLFile(const char *file, long *serial);
+
 /** Get the number of certificate providers known to tqsllib.
   */
 DLLEXPORT int tqsl_getNumProviders(int *n);
