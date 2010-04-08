@@ -72,6 +72,7 @@
        <cabrillocontest field="8" type="HF">IARU-HF</cabrillocontest>
        <cabrillocontest field="9" type="HF">NA-SPRINT-CW</cabrillocontest>
        <cabrillocontest field="9" type="HF">NA-SPRINT-SSB</cabrillocontest>
+       <cabrillocontest field="9" type="HF">NA-SPRINT-RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">NAQP-CW</cabrillocontest>
        <cabrillocontest field="8" type="HF">NAQP-RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">NAQP-SSB</cabrillocontest>
@@ -487,19 +488,19 @@
        <field Id="CALL" flags="0" intype="2" label="Call Sign" len="13" type="C" />
        <field Id="CA_PROVINCE" flags="4" intype="2" label="Province" len="2" type="C">
          <enums>
-           <enum value="AB" zonemap="2:4,3:4">Alberta</enum>
+           <enum value="AB" zonemap="2:4">Alberta</enum>
            <enum value="BC" zonemap="2:3">British Columbia</enum>
-           <enum value="MB" zonemap="4:4">Manitoba</enum>
+           <enum value="MB" zonemap="3:4,4:4">Manitoba</enum>
            <enum value="NB" zonemap="9:5">New Brunswick</enum>
-           <enum value="NF" zonemap="9:5,9:2">Newfoundland</enum>
-           <enum value="NT" zonemap="1:1">Northwest Territories</enum>
+           <enum value="NF" zonemap="9:5,9:5">Newfoundland</enum>
+           <enum value="NT" zonemap="3:1,3:2,3:4,4:1,4:2,4:4,75:1,75:2,75:4">Northwest Territories</enum>
            <enum value="NS" zonemap="9:5">Nova Scotia</enum>
-           <enum value="NU" zonemap="2:2,3:2,4:2,75:2,2:1,3:1,4:1,75:1">Nunavut</enum>
-           <enum value="ON" zonemap="4:4">Ontario</enum>
+           <enum value="NU" zonemap="4:2,9:2">Nunavut</enum>
+           <enum value="ON" zonemap="3:4,4:4">Ontario</enum>
            <enum value="PE" zonemap="9:5">Prince Edward Island</enum>
-           <enum value="PQ" zonemap="9:2">Quebec</enum>
+           <enum value="PQ" zonemap="4:2,4:5,9:2,9:5">Quebec</enum>
            <enum value="SK" zonemap="3:4">Saskatchewan</enum>
-           <enum value="YT" zonemap="1:75">Yukon Territory</enum>
+           <enum value="YT" zonemap="2:1">Yukon Territory</enum>
          </enums>
        </field>
        <field Id="CONT" flags="0" intype="2" label="Continent" len="2" type="C">
@@ -3914,7 +3915,7 @@
            <enum value="WA" zonemap="6:3">Washington</enum>
            <enum value="WV" zonemap="8:5">West Virginia</enum>
            <enum value="WI" zonemap="7:4,8:4">Wisconsin</enum>
-           <enum value="WY" zonemap="6:4,7:4">Wyoming</enum>
+           <enum value="WY" zonemap="7:4">Wyoming</enum>
          </enums>
          <enums dependency="6">
            <enum value="AK" zonemap="1:1,2:1">Alaska</enum>
@@ -3968,6 +3969,7 @@
        <mode group="DATA">DATA</mode>
        <mode group="DATA">DOMINO</mode>
        <mode group="DATA">DOMINOF</mode>
+       <mode group="DATA">DSTAR</mode>
        <mode group="IMAGE">FAX</mode>
        <mode group="PHONE">FM</mode>
        <mode group="DATA">FMHELL</mode>
@@ -4005,6 +4007,7 @@
        <mode group="DATA">PSKAM10</mode>
        <mode group="DATA">PSKAM31</mode>
        <mode group="DATA">PSKAM50</mode>
+       <mode group="DATA">PSKFEC31</mode>
        <mode group="DATA">PSKHELL</mode>
        <mode group="DATA">Q15</mode>
        <mode group="DATA">QPSK31</mode>
