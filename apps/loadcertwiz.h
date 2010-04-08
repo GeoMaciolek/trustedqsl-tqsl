@@ -28,9 +28,11 @@ public:
 	bool RunWizard();
 	void ResetNotifyData();
 	notifyData *GetNotifyData() { return _nd; }
+	wxWindow *Parent() { return _parent; }
 private:
 	LCW_Page *_first;
 	class notifyData *_nd;
+	wxWindow *_parent;
 };
 
 class LCW_Page : public ExtWizard_Page {

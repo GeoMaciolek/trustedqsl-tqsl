@@ -17,6 +17,7 @@
 #include "tqslcertctrls.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
+#include "tqslcert.h"
 
 wxString
 notifyData::Message() const {
@@ -142,6 +143,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	wxWizardPageSimple::Chain(intro, p12pw);
 	wxWizardPageSimple::Chain(p12pw, final);
 	_first = intro;
+	_parent = parent;
 	AdjustSize();
 	CenterOnParent();
 }
@@ -177,6 +179,42 @@ wxT("TQSL (.tq6) certificate file - A file you received from a certificate\n"
 	AdjustPage(sizer, wxT("lcf.htm"));
 }
 
+static void
+export_new_cert(ExtWizard *_parent, const char *filename) {
+	long newserial;
+	if (!tqsl_getSerialFromTQSLFile(filename, &newserial)) {
+
+		MyFrame *frame = (MyFrame *)(((LoadCertWiz *)_parent)->Parent());
+		wxTreeItemIdValue cookie;
+		wxTreeItemId root = frame->cert_tree->GetRootItem();
+		wxTreeItemId prov = frame->cert_tree->GetFirstChild(root, cookie); // First child is the providers
+		wxTreeItemId item = frame->cert_tree->GetFirstChild(prov, cookie);// Then it's certs
+		while (item.IsOk()) {
+			tQSL_Cert cert;
+			CertTreeItemData *id = frame->cert_tree->GetItemData(item);
+			if (id && (cert = id->getCert())) {
+				long serial;
+				if (!tqsl_getCertificateSerial(cert, &serial)) {
+					if (serial == newserial) {
+						wxCommandEvent e;
+	    					if (wxMessageBox(
+wxT("You will not be able to use this tq6 file to recover your\n"
+"certificate if it gets lost. For security purposes, you should\n"
+"back up your certificate on removable media for safe-keeping.\n\n"
+"Would you like to back up your certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+							return;
+						}
+						frame->cert_tree->SelectItem(item);
+						frame->OnCertExport(e);
+						break;
+					}
+				}
+			}
+			item = frame->cert_tree->GetNextChild(prov, cookie);
+		}
+	}
+}
+
 bool
 LCW_IntroPage::TransferDataFromWindow() {
 	wxString ext(wxT("p12"));
@@ -202,6 +240,10 @@ LCW_IntroPage::TransferDataFromWindow() {
 			if (tqsl_importTQSLFile(filename.mb_str(), notifyImport,
 				((LoadCertWiz *)_parent)->GetNotifyData()))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
+			else {
+				wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+				export_new_cert(_parent, filename.mb_str());
+			}
 		} else
 			((LCW_P12PasswordPage*)GetNext())->SetFilename(filename);
 	}

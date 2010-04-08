@@ -86,6 +86,8 @@ CertApp::OnInit() {
 		for (int i = 1; i < argc; i++) {
 			if (tqsl_importTQSLFile(wxString(argv[i], wxConvLocal).mb_str(), notifyImport, &nd))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK, frame);
+			else
+				wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
 		}
 		wxMessageBox(nd.Message(), wxT("Load Certificates"), wxOK, frame);
 	}
@@ -100,6 +102,13 @@ CertApp::OnInit() {
 		"Would you like to request a certificate now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
 		wxCommandEvent e;
 		frame->CRQWizard(e);
+	}
+	wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
+	if (pend != wxT("")) {
+		if (wxMessageBox(wxT("Are you ready to load your new certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
+			wxCommandEvent e;
+			frame->OnLoadCertificateFile(e);
+		}
 	}
 	if (ncerts > 0) {
 		TQ_WXCOOKIE cookie;
@@ -374,6 +383,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 					msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
 				}
 				wxMessageBox(msg, wxT("tQSLCert"));
+				wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
 			}
 			if (req.signer)
 				tqsl_endSigning(req.signer);
