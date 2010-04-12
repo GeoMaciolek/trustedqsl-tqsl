@@ -185,7 +185,7 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 	if (!tqsl_getSerialFromTQSLFile(filename, &newserial)) {
 
 		MyFrame *frame = (MyFrame *)(((LoadCertWiz *)_parent)->Parent());
-		wxTreeItemIdValue cookie;
+		TQ_WXCOOKIE cookie;
 		wxTreeItemId root = frame->cert_tree->GetRootItem();
 		wxTreeItemId prov = frame->cert_tree->GetFirstChild(root, cookie); // First child is the providers
 		wxTreeItemId item = frame->cert_tree->GetFirstChild(prov, cookie);// Then it's certs

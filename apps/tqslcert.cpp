@@ -105,11 +105,30 @@ CertApp::OnInit() {
 	}
 	wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
 	if (pend != wxT("")) {
-		if (wxMessageBox(wxT("Are you ready to load your new certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
-			wxCommandEvent e;
-			frame->OnLoadCertificateFile(e);
+		bool found = false;
+		tQSL_Cert *certs;
+		int ncerts = 0;
+		if (!tqsl_selectCertificates(&certs, &ncerts, pend.mb_str(), 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS)) {
+			for (int i = 0; i < ncerts; i++) {
+				int keyonly;
+				if (!tqsl_getCertificateKeyOnly(certs[i], &keyonly)) {
+					if (!found && keyonly)
+						found = true;
+				}
+				tqsl_freeCertificate(certs[i]);
+			}
+		}
+
+		if (!found) {
+			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+		} else {
+			if (wxMessageBox(wxT("Are you ready to load your new certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
+				wxCommandEvent e;
+				frame->OnLoadCertificateFile(e);
+			}
 		}
 	}
+
 	if (ncerts > 0) {
 		TQ_WXCOOKIE cookie;
 		wxTreeItemId it = frame->cert_tree->GetFirstChild(frame->cert_tree->GetRootItem(), cookie);
