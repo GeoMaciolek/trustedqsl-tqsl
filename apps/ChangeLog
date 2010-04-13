@@ -3,7 +3,10 @@ TQSL/TQSLCERT changes
 
 1.12
 ----
-Remember certificate requests and prompt to import the .tq6.
+When asking for the password to unlock a private key, say what callsign it's
+for.
+
+Remember certificate requests and assist the user with importing the .tq6.
 
 Prompt user to save their certificate after importing a .tq6 signed certificate.
 

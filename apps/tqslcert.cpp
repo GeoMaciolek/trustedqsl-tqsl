@@ -379,7 +379,11 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			req.qsoNotAfter = wiz.qsonotafter;
 			req.signer = wiz.cert;
 			if (req.signer) {
-				while (tqsl_beginSigning(req.signer, 0, getPassword, 0)) {
+				char buf[40];
+				void *call = 0;
+				if (!tqsl_getCertificateCallSign(req.signer, buf, sizeof(buf)))
+					call = &buf;
+				while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
 					if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 						wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
 						return;
@@ -462,7 +466,7 @@ wxT("Enter password for the PKCS#12 file.\n\n"
 		return;	// Cancelled
 	int terr;
 	do {
-		terr = tqsl_beginSigning(data->getCert(), 0, getPassword, 0);
+		terr = tqsl_beginSigning(data->getCert(), 0, getPassword, (void *)&call);
 		if (terr) {
 			if (tQSL_Error == TQSL_PASSWORD_ERROR)
 				continue;
@@ -519,7 +523,7 @@ void MyFrame::OnSign(wxCommandEvent& WXUNUSED(event)) {
 	if (sig == "")
 		return;
 	tQSL_Cert cert = data->getCert();
-	if (tqsl_beginSigning(cert, NULL, getPassword)) {
+	if (tqsl_beginSigning(cert, NULL, getPassword, 0)) {
 		if (tQSL_Error != TQSL_OPERATOR_ABORT)
 			wxMessageBox(tqsl_getErrorString(), "Error");
 		return;
@@ -685,8 +689,13 @@ displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
 }
 
 int
-getPassword(char *buf, int bufsiz, void *) {
-	GetPasswordDialog dial(wxGetApp().GetTopWindow(), wxT("Enter password"), wxT("Enter the password to unlock the private key"));
+getPassword(char *buf, int bufsiz, void *callsign) {
+	wxString prompt(wxT("Enter the password to unlock the private key"));
+	
+	if (callsign) 
+	    prompt = prompt + wxT(" for ") + wxString((const char *)callsign, wxConvLocal);
+
+	GetPasswordDialog dial(wxGetApp().GetTopWindow(), wxT("Enter password"), prompt);
 	if (dial.ShowModal() != wxID_OK)
 		return 1;
 	strncpy(buf, dial.Password().mb_str(), bufsiz);
