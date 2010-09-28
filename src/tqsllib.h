@@ -343,6 +343,16 @@ DLLEXPORT int tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz);
   */
 DLLEXPORT int tqsl_getCertificateSerial(tQSL_Cert cert, long *serial);
 
+/** Get the issuer's serial number of the certificate as a hexadecimal string.
+  * Needed for certs with long serial numbers (typically root certs).
+  */
+DLLEXPORT int tqsl_getCertificateSerialExt(tQSL_Cert cert, char *serial, int serialsiz);
+
+/** Get the length of the issuer's serial number of the certificate as it will be
+  * returned by tqsl_getCertificateSerialExt.
+  */
+DLLEXPORT int tqsl_getCertificateSerialLength(tQSL_Cert cert);
+
 /** Get the issuer (DN) string from a tQSL_Cert.
   *
   * \li \c cert - a tQSL_Cert object, normally one returned from

@@ -888,6 +888,42 @@ tqsl_getCertificateSerial(tQSL_Cert cert, long *serial) {
 }
 
 DLLEXPORT int
+tqsl_getCertificateSerialExt(tQSL_Cert cert, char *serial, int serialsiz) {
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || serial == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert)) || serialsiz < 1) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	BIGNUM *bn = BN_new();
+	ASN1_INTEGER_to_BN(X509_get_serialNumber(TQSL_API_TO_CERT(cert)->cert), bn);
+	char *s = BN_bn2hex(bn);
+	strncpy(serial, s, serialsiz);
+	serial[serialsiz-1] = 0;
+	OPENSSL_free(s);
+	BN_free(bn);
+	return 0;
+}
+
+DLLEXPORT int
+tqsl_getCertificateSerialLength(tQSL_Cert cert) {
+	int rval;
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || serial == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert)) || serialsiz < 1) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	BIGNUM *bn = BN_new();
+	ASN1_INTEGER_to_BN(X509_get_serialNumber(TQSL_API_TO_CERT(cert)->cert), bn);
+	char *s = BN_bn2hex(bn);
+	rval = strlen(s);
+	OPENSSL_free(s);
+	BN_free(bn);
+	return rval;
+}
+
+DLLEXPORT int
 tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz) {
 	char *cp;
 
@@ -2761,7 +2797,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	char name[256];
 	char value[256];
 	FILE *out;
-	long serial;
+	BIGNUM *bserial, *oldserial;
 	string subjid, msg, callsign;
 	TQSL_X509_NAME_ITEM item;
 	int len, rval;
@@ -2823,8 +2859,9 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	if (sk != NULL) {
 		int i, n;
 		tQSL_Date expires;
+		bserial = BN_new();
+		ASN1_INTEGER_to_BN(X509_get_serialNumber(cert), bserial);
 
-		serial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 		n = sk_X509_num(sk);
 		for (i = 0; i < n; i++) {
 			char buf[256];
@@ -2834,7 +2871,11 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 			x = sk_X509_value(sk, i);
 			cp = X509_NAME_oneline(X509_get_issuer_name(x), buf, sizeof buf);
 			if (cp != NULL && !strcmp(cp, issuer)) {
-				if (serial == ASN1_INTEGER_get(X509_get_serialNumber(x)))
+				oldserial = BN_new();
+				ASN1_INTEGER_to_BN(X509_get_serialNumber(x), oldserial);
+				int result = BN_ucmp(bserial, oldserial);
+				BN_free(oldserial);
+				if (result == 0)
 					break;	/* We have a match */
 			}
 
@@ -2860,12 +2901,15 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 						if (tqsl_compareDates(&newExpires, &expires) < 0) {
 							tQSL_Error = TQSL_CUSTOM_ERROR;
 							strcpy(tQSL_CustomError, "A newer certificate for this callsign is already installed");
+							BN_free(bserial);
+							sk_X509_free(sk);
 							return 1;
 						}
 					}
 				}
 			}
 		}
+		BN_free(bserial);
 		sk_X509_free(sk);
 		if (i < n) {	/* Have a match -- cert is already in the file */
 			if (cb != NULL) {
