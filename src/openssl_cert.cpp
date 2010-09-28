@@ -910,7 +910,7 @@ tqsl_getCertificateSerialLength(tQSL_Cert cert) {
 	int rval;
 	if (tqsl_init())
 		return 1;
-	if (cert == NULL || serial == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert)) || serialsiz < 1) {
+	if (cert == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
