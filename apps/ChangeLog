@@ -1,6 +1,10 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.13
+----
+No functional changes. Update to sync to updated tqsllib; updated build tools.
+
 1.12
 ----
 When asking for the password to unlock a private key, say what callsign it's

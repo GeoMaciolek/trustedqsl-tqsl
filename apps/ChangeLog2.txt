@@ -1,6 +1,12 @@
 TQSLLIB changes
 ===============
 
+2.2
+---
+Fixed bug in handling of certificates with long serial numbers (typically root certs).
+
+Added workaround for OpenSSL 1.0a bug.
+
 2.1
 ---
 Prompt user to save their certificate after importing a .tq6 signed certificate.
