@@ -131,6 +131,42 @@
 
 #define TQSLLIB_DEF
 
+#include <openssl/opensslv.h>
+
+/* Ugly workaround for Openssl 1.0 bug per:
+ * http://rt.openssl.org/Ticket/Display.html?user=guest&pass=guest&id=2123
+ */
+#if (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x10000000L
+#define i2d_ASN1_SET i2d_ASN1_SET_buggy
+#define d2i_ASN1_SET d2i_ASN1_SET_buggy
+#define ASN1_seq_unpack ASN1_seq_unpack_buggy
+#define ASN1_seq_pack ASN1_seq_pack_buggy
+#include <openssl/asn1.h>
+#undef i2d_ASN1_SET
+#undef d2i_ASN1_SET
+#undef ASN1_seq_unpack
+#undef ASN1_seq_pack
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+int i2d_ASN1_SET(void *a, unsigned char **pp,
+                 i2d_of_void *i2d, int ex_tag, int ex_class,
+                 int is_set);
+void *d2i_ASN1_SET(void *a, const unsigned char **pp,
+                   long length, d2i_of_void *d2i,
+                   void (*free_func)(void*), int ex_tag,
+                   int ex_class);
+void *ASN1_seq_unpack(const unsigned char *buf, int len,
+                      d2i_of_void *d2i, void (*free_func)(void*));
+unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
+                             unsigned char **buf, int *len );
+#ifdef __cplusplus
+}
+#endif
+
+#endif	// OpenSSL v1.0
+
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "openssl_cert.h"
