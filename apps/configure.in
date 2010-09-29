@@ -1,6 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT(TrustedQSL, 1.12, lotw-help@arrl.org, TrustedQSL)
+AC_INIT(TrustedQSL, 1.13, lotw-help@arrl.org, TrustedQSL)
 AM_INIT_AUTOMAKE
 AC_CONFIG_HEADERS(sysconfig.h)
 AC_CANONICAL_HOST
