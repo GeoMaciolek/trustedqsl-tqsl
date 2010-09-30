@@ -36,6 +36,8 @@ Source: "@WINWD@\quick.txt"; DestDir: "{app}"; Flags: ignoreversion
 Source: "@WINTQSLDIR@\share\tqsl\config.xml"; DestDir: "{app}"; Flags: ignoreversion
 Source: "@WINWD@\LICENSE.txt"; DestDir: "{app}\licenses"; Flags: ignoreversion
 Source: "@WINWD@\ChangeLog.txt"; DestDir: "{app}"; Flags: ignoreversion
+Source: "@MINGWDLLDIR@\@STDCDLL@"; DestDir: "{app}"; Flags: ignoreversion
+Source: "@MINGWDLLDIR@\@LIBCDLL@"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

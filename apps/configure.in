@@ -30,12 +30,21 @@ case "$build_os" in
 	TQSLLIBFILE="tqsllibd"
     tqslresources="tqsl-resources.o"
 	tqslcertresources="tqslcert-resources.o"
+	curdir=`pwd`
+	cd /mingw/bin
+	MINGWDLLDIR=`cmd /c cd`
+	STDCDLL=`find . -name "libstdc++*.dll" | sed -e 's/^.*\///'`
+	LIBCDLL=`find . -name "libgcc*.dll" | sed -e 's/^.*\///'`
+	cd $curdir
 	;;
 esac
 
 AC_SUBST(platform)
 AC_SUBST(add_targets)
 AC_SUBST(WINWD)
+AC_SUBST(MINGWDLLDIR)
+AC_SUBST(STDCDLL)
+AC_SUBST(LIBCDLL)
 AC_SUBST(tqslresources)
 AC_SUBST(tqslcertresources)
 
