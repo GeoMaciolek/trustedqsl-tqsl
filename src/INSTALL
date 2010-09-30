@@ -149,10 +149,10 @@ STEP 2) Compile OpenSSL (0.9.7e)
 Install the openssl source.
 
 cd
-tar -xzf openssl-0.9.7e.tar.gz
-cd openssl-0.9.7e
-./config no-shared --prefix=$HOME/openssl mingw
-make install_sw CC=gcc
+tar -xzf openssl-1.0.0a.tar.gz
+cd openssl-1.0.0a
+./config no-shared --prefix=$HOME/openssl
+make install_sw
 
 STEP 3) Compile the expat library (1.95.8)
 
@@ -179,8 +179,8 @@ STEP 5) Compile the tqsllib library (1.6)
 Install the tsqllib source
 
 cd
-tar -xzf tqsllib-1.6.tar.gz
-cd tqsllib-1.6
+tar -xzf tqsllib-2.2.tar.gz
+cd tqsllib-2.2
 ./configure --disable-shared --prefix=$HOME/tqsllib
 make install
 
