@@ -276,7 +276,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 PLATFORM = @platform@
 INCLUDES = -I$(OPENSSL)/include -I$(EXPAT)/include -I$(ZLIB)/include
-AM_CXXFLAGS = -g3 -O -Wall $(LOTW_SERVER) $(PLATFORM) -DCONFDIR=\"$(datadir)\"
+AM_CXXFLAGS = -fpermissive -g3 -O -Wall $(LOTW_SERVER) $(PLATFORM) -DCONFDIR=\"$(datadir)\"
 AM_LDFLAGS = @ldflags@ -L$(OPENSSL)/lib -L$(EXPAT)/lib -L$(ZLIB)/lib
 EXTRA_LIBRARIES = libtqsllibd.a
 lib_LIBRARIES = @add_libraries@
