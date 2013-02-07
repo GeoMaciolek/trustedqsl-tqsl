@@ -100,8 +100,9 @@ getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 		"%s -- %s\n(This is the password you made up when you\nrequested the certificate.)"),
 		wxString(call, wxConvLocal).c_str(), wxString(dxccname, wxConvLocal).c_str());
 
-	wxString pw = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""),
-		wxGetApp().GetTopWindow());
+	wxWindow* top = wxGetApp().GetTopWindow();
+	top->SetFocus();
+	wxString pw = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
 	if (pw == wxT(""))
 		return 1;
 	strncpy(buf, pw.mb_str(), bufsiz);
