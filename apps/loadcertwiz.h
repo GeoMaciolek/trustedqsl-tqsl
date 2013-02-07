@@ -77,12 +77,14 @@ public:
 		int loaded, error, duplicate;
 	};
 	struct counts root, ca, user, pkey, config;
+	wxString errors;
 	notifyData() {
 		root.loaded = root.error = root.duplicate = 0;
 		ca.loaded = ca.error = ca.duplicate = 0;
 		user.loaded = user.error = user.duplicate = 0;
 		pkey.loaded = pkey.error = pkey.duplicate = 0;
 		config.loaded = config.error = config.duplicate = 0;
+		errors = wxT("");
 	}
 	wxString Message() const;
 };

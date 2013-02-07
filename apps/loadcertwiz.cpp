@@ -22,11 +22,13 @@
 wxString
 notifyData::Message() const {
 	return wxString::Format(
-		wxT("Root Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
+		wxT("Import Messages:\n%s\n\n"
+		"Root Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
 		"CA Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
 		"User Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
 		"Private Keys:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
 		"Configuration Data:\n     Loaded: %d  Duplicate: %d  Error: %d"),
+		errors.c_str(),
 		root.loaded, root.duplicate, root.error,
 		ca.loaded, ca.duplicate, ca.error,
 		user.loaded, user.duplicate, user.error,
@@ -96,8 +98,8 @@ notifyImport(int type, const char *message, void *data) {
 					break;
 				case TQSL_CERT_CB_ERROR:
 					counts->error++;
-					// Errors get posted later
 					// wxMessageBox(wxString(message, wxConvLocal), wxT("Error"));
+					nd->errors = nd->errors + wxString(message, wxConvLocal) + wxT("\n");
 					break;
 				case TQSL_CERT_CB_LOADED:
 					counts->loaded++;
