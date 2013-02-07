@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <errno.h>
 #include "tqsllib.h"
 #include "tqslerrno.h"
 
@@ -77,6 +78,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	adif->sentinel = 0x3345;
 	if ((adif->fp = fopen(filename, "rb")) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
 		goto err;

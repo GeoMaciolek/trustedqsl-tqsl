@@ -19,6 +19,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <errno.h>
 #ifdef __WIN32__
 	#include <io.h>
 	#include <windows.h>
@@ -34,6 +35,7 @@
 #endif
 
 DLLEXPORTDATA int tQSL_Error = 0;
+DLLEXPORTDATA int tQSL_Errno = 0;
 DLLEXPORTDATA TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
 const char *tQSL_BaseDir = 0;
 DLLEXPORTDATA char tQSL_ErrorFile[256];
@@ -172,6 +174,7 @@ tqsl_init() {
 		if (pmkdir(path, 0700)) {
 			strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 			tQSL_Error = TQSL_SYSTEM_ERROR;
+			tQSL_Errno = errno;
 			return 1;
 		}
 		tQSL_BaseDir = path;

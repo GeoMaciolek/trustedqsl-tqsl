@@ -147,6 +147,8 @@ DLLEXPORTDATA extern TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
 DLLEXPORTDATA extern char tQSL_ErrorFile[256];
 /// Custom error message string
 DLLEXPORTDATA extern char tQSL_CustomError[256];
+/// System errno - stored when tQSL_Error == TQSL_SYSTEM_ERROR
+DLLEXPORTDATA extern int tQSL_Errno;
 
 /** Initialize the tQSL library
   *

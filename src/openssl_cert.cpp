@@ -447,6 +447,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	if ((out = fopen(filename, TQSL_OPEN_WRITE)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto end;
 	}
 	fputs("\ntQSL certificate request\n\n", out);
@@ -528,6 +529,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	tqsl_write_adif_field(out, "eor", 0, NULL, 0);
 	if (fclose(out) == EOF) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto end;
 	}
 	out = NULL;
@@ -538,6 +540,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		goto end;
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto end;
 	}
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
@@ -592,6 +595,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	tqsl_write_adif_field(out, "eor", 0, NULL, 0);
 	if (fclose(out) == EOF) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto end;
 	}
 	out = NULL;
@@ -2021,10 +2025,12 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 	// Looks like the new file is okay, commit it
 	if (unlink(path) && errno != ENOENT) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto dc_end;
 	}
 	if (rename(newpath, path)) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto dc_end;
 	}
 
@@ -2336,6 +2342,7 @@ tqsl_ssl_load_certs_from_file(const char *filename) {
 	if ((cfile = fopen(filename, "r")) == NULL) {
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return NULL;
 	}
 	if ((in = BIO_new_fp(cfile, 0)) == NULL) {
@@ -2696,6 +2703,7 @@ tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncat(path, "/certs", size - strlen(path));
 	if (MKDIR(path, 0700) && errno != EEXIST) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return NULL;
 	}
 	strncat(path, "/", size - strlen(path));
@@ -2731,6 +2739,7 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 	if (MKDIR(path, 0700) && errno != EEXIST) {
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return 0;
 	}
 	strncat(path, "/", size - strlen(path));
@@ -2975,12 +2984,14 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	if ((out = fopen(path, "a")) == NULL) {
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return 1;
 	}
 	fwrite(pem, 1, strlen(pem), out);
 	if (fclose(out) == EOF) {
 		strncpy(tQSL_ErrorFile, certfile, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return 1;
 	}
 	msg = "Loaded:\n" + subjid;
@@ -3123,6 +3134,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	strcat(savepath, ".save");
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto trk_end;
 	}
 	for (it = records.begin(); it != records.end(); it++) {
@@ -3135,6 +3147,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	}
 	if (fclose(out) == EOF) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto trk_end;
 	}
 	out = 0;
@@ -3142,14 +3155,17 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	/* Output file looks okay. Replace the old file with the new one. */
 	if (unlink(savepath) && errno != ENOENT) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto trk_end;
 	}
 	if (rename(path, savepath) && errno != ENOENT) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto trk_end;
 	}
 	if (rename(newpath, path)) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto trk_end;
 	}
 	if (cb) {
@@ -3237,8 +3253,16 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		return rval;
 	if (!tqsl_make_key_path(aro, path, sizeof path))
 		goto end_nokey;
-	if (tqsl_open_key_file(path))
+	if (tqsl_open_key_file(path)) {
+		/* Friendly error for file not found, permission errors */
+		if (tQSL_Errno == ENOENT || tQSL_Errno == EPERM) {
+			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+				"Can't open private key for callsign %s: %s", 
+				aro, strerror(tQSL_Errno));
+			tQSL_Error = TQSL_CUSTOM_ERROR;
+		}
 		return rval;
+	}
 	if ((cert_key = X509_get_pubkey(cert)) == NULL)
 		goto err;
 	if (crq != NULL) {
@@ -3317,6 +3341,7 @@ tqsl_make_key_list(vector< map<string,string> > & keys) {
 	DIR *dir = opendir(path.c_str());
 	if (dir == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		return 1;
 	}
 	struct dirent *ent;

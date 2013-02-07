@@ -19,6 +19,7 @@
 #include <cstdio>
 #include <cstring>
 #include <ctype.h>
+#include <errno.h>
 
 #ifndef HAVE_SNPRINTF
 #include <stdarg.h>
@@ -396,6 +397,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	cab->field_idx = -1;
 	if ((cab->fp = fopen(filename, "r")) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
 		goto err;
 	}
 	char *cp;
@@ -440,6 +442,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	if (cp == 0) {
 		if (ferror(cab->fp)) {
 			tQSL_Error = TQSL_SYSTEM_ERROR;
+			tQSL_Errno = errno;
 			goto err;
 		}
 		tQSL_Cabrillo_Error = terrno;
@@ -549,6 +552,7 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 		if (cp == 0) {
 			if (ferror(cab->fp)) {
 				tQSL_Error = TQSL_SYSTEM_ERROR;
+				tQSL_Errno = errno;
 				goto err;
 			} else {
 				*error = TQSL_CABRILLO_EOF;
