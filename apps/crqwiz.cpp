@@ -315,6 +315,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_name = new wxTextCtrl(this, ID_CRQ_NAME, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_name, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxALL, 10);
+	tc_name->SetMaxLength(TQSL_CRQ_NAME_MAX);
 
 	s = wxT("");
 	if (crq && crq->address1)
@@ -327,6 +328,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_addr1 = new wxTextCtrl(this, ID_CRQ_ADDR1, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_addr1, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_addr1->SetMaxLength(TQSL_CRQ_ADDR_MAX);
 
 	s = wxT("");
 	if (crq && crq->address2)
@@ -339,6 +341,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_addr2 = new wxTextCtrl(this, ID_CRQ_ADDR2, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_addr2, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_addr2->SetMaxLength(TQSL_CRQ_ADDR_MAX);
 
 	s = wxT("");
 	if (crq && crq->city)
@@ -351,6 +354,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_city = new wxTextCtrl(this, ID_CRQ_CITY, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_city, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_city->SetMaxLength(TQSL_CRQ_CITY_MAX);
 
 	s = wxT("");
 	if (crq && crq->state)
@@ -363,6 +367,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_state = new wxTextCtrl(this, ID_CRQ_STATE, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_state, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_state->SetMaxLength(TQSL_CRQ_STATE_MAX);
 
 	s = wxT("");
 	if (crq && crq->postalCode)
@@ -374,6 +379,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_zip = new wxTextCtrl(this, ID_CRQ_ZIP, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_zip, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_zip->SetMaxLength(TQSL_CRQ_POSTAL_MAX);
 
 	s = wxT("");
 	if (crq && crq->country)
@@ -386,6 +392,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	tc_country = new wxTextCtrl(this, ID_CRQ_COUNTRY, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_country, 1, 0, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_country->SetMaxLength(TQSL_CRQ_COUNTRY_MAX);
 	tc_status = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer, wxT("crq1.htm"));
@@ -414,6 +421,7 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_email = new wxTextCtrl(this, ID_CRQ_EMAIL, s, wxDefaultPosition, wxSize(em_w*30, -1));
 	sizer->Add(tc_email, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+	tc_email->SetMaxLength(TQSL_CRQ_EMAIL_MAX);
 	sizer->Add(new wxStaticText(this, -1, wxT("Note: The e-mail address you provide here is the\n"
 		"address to which the issued certificate will be sent.\n"
 		"Make sure it's the correct address!\n")), 0, wxALL, 10);
