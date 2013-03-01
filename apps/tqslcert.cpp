@@ -19,13 +19,14 @@
 #include "loadcertwiz.h"
 #include "dxcc.h"
 #include "tqsllib.h"
+#include "tqslbuild.h"
 #include "tqslerrno.h"
 #include "util.h"
 #include <map>
 
 #include "util.h"
 
-#include "tqslcertbuild.h"
+#include "key.xpm"
 
 using namespace std;
 
@@ -84,7 +85,7 @@ CertApp::OnInit() {
 	if (argc > 1) {
 		notifyData nd;
 		for (int i = 1; i < argc; i++) {
-			if (tqsl_importTQSLFile(wxString(argv[i], wxConvLocal).mb_str(), notifyImport, &nd))
+			if (tqsl_importTQSLFile(wxString(argv[i]).mb_str(wxConvLocal), notifyImport, &nd))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK, frame);
 			else
 				wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
@@ -98,8 +99,8 @@ CertApp::OnInit() {
 			wxT("Notice"), wxOK, frame);
 	}
 	int ncerts = frame->cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
-	if (ncerts == 0 && wxMessageBox(wxT("You have no certificate with which to sign log submissions.\n"
-		"Would you like to request a certificate now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
+	if (ncerts == 0 && wxMessageBox(wxT("You have no certificate with which to sign log submissions.\n")
+		wxT("Would you like to request a certificate now?"), wxT("Alert"), wxYES_NO, frame) == wxYES) {
 		wxCommandEvent e;
 		frame->CRQWizard(e);
 	}
@@ -134,9 +135,9 @@ CertApp::OnInit() {
 		wxTreeItemId it = frame->cert_tree->GetFirstChild(frame->cert_tree->GetRootItem(), cookie);
 		while (it.IsOk()) {
 			if (frame->cert_tree->GetItemText(it) == wxT("Test Certificate Authority")) {
-				wxMessageBox(wxT("You must delete your beta-test certificates (the ones\n"
-					"listed under \"Test Certificate Authority\") to ensure proprer\n"
-					"operation of the TrustedQSL software."), wxT("Warning"), wxOK, frame);
+				wxMessageBox(wxT("You must delete your beta-test certificates (the ones\n")
+					wxT("listed under \"Test Certificate Authority\") to ensure proprer\n")
+					wxT("operation of the TrustedQSL software."), wxT("Warning"), wxOK, frame);
 				break;
 			}
 			it = frame->cert_tree->GetNextChild(frame->cert_tree->GetRootItem(), cookie);
@@ -208,12 +209,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h) :
 	menu_bar->Append(help_menu, wxT("&Help"));
 	SetMenuBar(menu_bar);
 
+	SetIcon(wxIcon(key_xpm));
+
 	cert_tree = new CertTree(this, tc_CertTree, wxDefaultPosition,
 		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
-
 }
 
 MyFrame::~MyFrame() {
@@ -234,14 +236,14 @@ void MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxString msg = wxT("TQSLCert V" VERSION "." BUILD "\n(c) 2001-2010\nAmerican Radio Relay League\n\n");
+	wxString msg = wxT("TQSLCert V")  wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(wxString(tqsl_getErrorString(), wxConvLocal));
+		wxLogError(wxT("%s"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(wxString(tqsl_getErrorString(), wxConvLocal));
+		wxLogError(wxT("%s"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
 	msg += wxVERSION_STRING;
@@ -350,10 +352,10 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 
 	if (wiz.RunWizard()) {
 		// Where to put it?
-		wxString file = wxFileSelector(wxT("Save request"), wxT(""), flattenCallSign(wiz.callsign) + wxT("." TQSL_CRQ_FILE_EXT),
+		wxString file = wxFileSelector(wxT("Save request"), wxT(""), flattenCallSign(wiz.callsign) + wxT(".") wxT(TQSL_CRQ_FILE_EXT),
 			wxT(TQSL_CRQ_FILE_EXT),
-			wxT("tQSL Cert Request files (*." TQSL_CRQ_FILE_EXT ")|*." TQSL_CRQ_FILE_EXT
-				"|All files (" ALLFILESWILD ")|" ALLFILESWILD),
+			wxT("tQSL Cert Request files (*.") wxT(TQSL_CRQ_FILE_EXT) wxT(")|*.") wxT(TQSL_CRQ_FILE_EXT)
+				wxT("|All files (") wxT(ALLFILESWILD) wxT(")|") wxT(ALLFILESWILD),
 			wxSAVE | wxOVERWRITE_PROMPT);
 		if (file.IsEmpty())
 			wxMessageBox(wxT("Request cancelled"), wxT("Cancel"));
@@ -458,10 +460,10 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
 	GetNewPasswordDialog dial(this, wxT("PKCS#12 Password"),
-wxT("Enter password for the PKCS#12 file.\n\n"
-"You will have to enter this password any time you\n"
-"load the file into TQSLCert (or any other PKCS#12\n"
-"compliant software)"), true, &help, wxT("save.htm"));
+wxT("Enter password for the PKCS#12 file.\n\n")
+wxT("You will have to enter this password any time you\n")
+wxT("load the file into TQSLCert (or any other PKCS#12\n")
+wxT("compliant software)"), true, &help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled
 	int terr;
@@ -488,12 +490,12 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 		return;
 
 	if (wxMessageBox(
-wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n"
-"This will permanently remove the certificate from your system.\n"
-"You will NOT be able to recover it by loading a .TQ6 file.\n"
-"You WILL be able to recover it from a .P12 file only if you\n"
-"have created one via the Certificate menu's Save command.\n\n"
-"ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n")
+wxT("This will permanently remove the certificate from your system.\n")
+wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
+wxT("You WILL be able to recover it from a .P12 file only if you\n")
+wxT("have created one via the Certificate menu's Save command.\n\n")
+wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
 		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
