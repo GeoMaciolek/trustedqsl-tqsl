@@ -21,7 +21,7 @@
 
 using namespace std;
 
-#if defined(MAC)
+#if defined(__APPLE__)
   #define HEIGHT_ADJ(x) ((x)*4/2)
 #else
   #define HEIGHT_ADJ(x) ((x)*3/2)
@@ -62,7 +62,10 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	contestmap = new ContestMap(notebook);
 	notebook->AddPage(contestmap, wxT("Cabrillo Specs"));
 
-	SetAutoLayout(true);
+	//don't let the user play with these
+	//onlinePrefs=new OnlinePrefs(notebook);
+	//notebook->AddPage(onlinePrefs, wxT("Server Setup"));
+
 	SetSizer(topsizer);
 	topsizer->Fit(this);
 	topsizer->SetSizeHints(this);
@@ -71,7 +74,7 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 }
 
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	if (!fileprefs->TransferDataFromWindow())
+	if (!fileprefs->TransferDataFromWindow() /* || !onlinePrefs->TransferDataFromWindow()*/)
 		return;
 	Close(true);
 }
@@ -140,7 +143,7 @@ void ModeMap::SetModeList() {
 	}
 	config->SetPath(wxT("/"));
 	for (ModeSet::iterator it = modemap.begin(); it != modemap.end(); it++) {
-		map->Append(it->first + wxT(" -> ") + it->second, (void *)it->first.c_str());
+		map->Append(it->first + wxT(" -> ") + it->second, (void*)it->first.c_str()); //char_str on >=2.9
 	}
 	if (map->GetCount() > 0)
 		map->SetSelection(0);
@@ -301,6 +304,115 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("ADIFFiles"), fix_ext_str(adif->GetValue()));
 	config->Write(wxT("BadCalls"), badcalls->GetValue());
 	config->Write(wxT("DateRange"), daterange->GetValue());
+	return true;
+}
+
+BEGIN_EVENT_TABLE(OnlinePrefs, PrefsPanel)
+	EVT_CHECKBOX(ID_PREF_ONLINE_DEFAULT, OnlinePrefs::OnShowHide)
+END_EVENT_TABLE()
+
+OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm")) {
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	config->SetPath(wxT("/LogUpload"));
+	SetAutoLayout(true);
+
+	wxClientDC dc(this);
+	wxCoord char_width, char_height;
+	dc.GetTextExtent(wxString(wxT('M'), FILE_TEXT_WIDTH), &char_width, &char_height);
+	
+	wxString uplURL = config->Read(wxT("UploadURL"), DEFAULT_UPL_URL);
+	wxString uplPOST = config->Read(wxT("PostField"), DEFAULT_UPL_FIELD);
+	wxString uplStatusRE = config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
+	wxString uplStatOK = config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK);
+	wxString uplMsgRE = config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
+	bool uplVerifyCA=config->Read(wxT("VerifyCA"), DEFAULT_UPL_VERIFYCA);
+
+	defaults=(
+		(uplURL==DEFAULT_UPL_URL) &&
+		(uplPOST==DEFAULT_UPL_FIELD) &&
+		(uplStatusRE==DEFAULT_UPL_STATUSRE) &&
+		(uplStatOK==DEFAULT_UPL_STATUSOK) &&
+		(uplMsgRE==DEFAULT_UPL_MESSAGERE) &&
+		(uplVerifyCA==DEFAULT_UPL_VERIFYCA));
+
+
+
+
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	useDefaults=new wxCheckBox(this, ID_PREF_ONLINE_DEFAULT, wxT("Use Defaults"));
+	useDefaults->SetValue(defaults);
+	sizer->Add(useDefaults, 0, wxTop|wxCENTER|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Upload URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	
+	uploadURL = new wxTextCtrl(this, ID_PREF_ONLINE_URL, uplURL, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(uploadURL, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("HTTP POST Field:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	
+	postField = new wxTextCtrl(this, ID_PREF_ONLINE_FIELD, uplPOST, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(postField, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Status RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	statusRegex = new wxTextCtrl(this, ID_PREF_ONLINE_STATUSRE, uplStatusRE, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(statusRegex, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Successful Status Message:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	statusSuccess = new wxTextCtrl(this, ID_PREF_ONLINE_STATUSOK, uplStatOK, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(statusSuccess, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Message RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	messageRegex= new wxTextCtrl(this, ID_PREF_ONLINE_MESSAGERE, uplMsgRE, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(messageRegex, 0, wxLEFT|wxRIGHT, 10);
+
+	verifyCA = new wxCheckBox(this, ID_PREF_ONLINE_VERIFYCA, wxT("Verify server certificate"));
+	verifyCA->SetValue(uplVerifyCA);
+	sizer->Add(verifyCA, 0, wxLEFT|wxRIGHT|wxTOP|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+
+	config->SetPath(wxT("/"));
+	
+	
+
+	SetSizer(sizer);
+
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
+	ShowHide();
+}
+
+void OnlinePrefs::ShowHide() {
+	defaults=useDefaults->GetValue();
+	for (int i=1; i<12; i++) GetSizer()->Show(i, !defaults); //12 items in sizer; hide all but checkbox
+
+	Layout();
+  //wxNotebook caches best size
+	GetParent()->InvalidateBestSize();
+  GetParent()->Fit();
+	GetGrandParent()->Fit();
+}
+
+bool OnlinePrefs::TransferDataFromWindow() {
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+
+	if (defaults) {
+		config->DeleteGroup(wxT("/LogUpload"));
+	} else {
+		config->SetPath(wxT("/LogUpload"));
+		config->Write(wxT("UploadURL"), uploadURL->GetValue());
+		config->Write(wxT("PostField"), postField->GetValue());
+		config->Write(wxT("StatusRegex"), statusRegex->GetValue());
+		config->Write(wxT("StatusSuccess"), statusSuccess->GetValue());
+		config->Write(wxT("MessageRegex"), messageRegex->GetValue());
+		config->Write(wxT("VerifyCA"), verifyCA->GetValue());
+		config->SetPath(wxT("/"));
+	}
+
 	return true;
 }
 

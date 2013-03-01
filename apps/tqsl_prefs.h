@@ -38,6 +38,14 @@
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
 #define DEFAULT_ADIF_FILES wxT("adi")
 
+//online
+#define DEFAULT_UPL_URL wxT("https://p1k.arrl.org/lotw/upload")
+#define DEFAULT_UPL_FIELD wxT("upfile")
+#define DEFAULT_UPL_STATUSRE wxT("<!-- .UPL. ([^-]+) -->")
+#define DEFAULT_UPL_STATUSOK wxT("accepted")
+#define DEFAULT_UPL_MESSAGERE wxT("<!-- .UPLMESSAGE. ([^-]+) -->")
+#define DEFAULT_UPL_VERIFYCA true
+
 enum {		// Window IDs
 	ID_OK_BUT,
 	ID_CAN_BUT,
@@ -55,6 +63,13 @@ enum {		// Window IDs
 	ID_PREF_CAB_DELETE,
 	ID_PREF_CAB_ADD,
 	ID_PREF_CAB_EDIT,
+	ID_PREF_ONLINE_DEFAULT,
+	ID_PREF_ONLINE_URL,
+	ID_PREF_ONLINE_FIELD,
+	ID_PREF_ONLINE_STATUSRE,
+	ID_PREF_ONLINE_STATUSOK,
+	ID_PREF_ONLINE_MESSAGERE,
+	ID_PREF_ONLINE_VERIFYCA
 };
 
 class PrefsPanel : public wxPanel {
@@ -73,6 +88,19 @@ public:
 private:
 	wxTextCtrl *cabrillo, *adif;
 	wxCheckBox *badcalls, *daterange;
+};
+
+class OnlinePrefs : public PrefsPanel {
+public:
+	OnlinePrefs(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
+	void ShowHide();
+	void OnShowHide(wxCommandEvent&) { ShowHide(); }
+	DECLARE_EVENT_TABLE()
+private:
+	wxTextCtrl *uploadURL, *postField, *statusRegex, *statusSuccess, *messageRegex;
+	wxCheckBox *verifyCA, *useDefaults;
+	bool defaults;
 };
 
 typedef std::map <wxString, wxString> ModeSet;
@@ -122,6 +150,7 @@ private:
 	FilePrefs *fileprefs;
 	ModeMap *modemap;
 	ContestMap *contestmap;
+	OnlinePrefs *onlinePrefs;
 	wxHtmlHelpController *_help;
 };
 
