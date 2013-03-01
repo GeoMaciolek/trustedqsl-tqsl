@@ -108,7 +108,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 			entityName = dxcc.name();
 		else
 			entityName = "<UNKNOWN ENTITY>";
-		strncat(callsign, dxcc.name(), sizeof callsign - strlen(callsign));
+		strncat(callsign, dxcc.name(), sizeof callsign - strlen(callsign)-1);
 		callsign[sizeof callsign-1] = 0;
 		issuers[wxString(issname, wxConvLocal)].push_back(make_pair(wxString(callsign, wxConvLocal),i));
 	}
