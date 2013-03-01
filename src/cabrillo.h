@@ -68,22 +68,22 @@ extern "C" {
 #endif
 
 /** Get the Cabrillo error message that corresponds to a particular error value */
-DLLEXPORT const char *tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err);
+DLLEXPORT const char* CALLCONVENTION tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err);
 
 /** Initialize a Cabrillo file for reading */
-DLLEXPORT int tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename);
+DLLEXPORT int CALLCONVENTION tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename);
 
 /** Get the Contest name as specified in the Cabrillo CONTEST line */
-DLLEXPORT int tqsl_getCabrilloContest(tQSL_Cabrillo cab, char *buf, int bufsiz);
+DLLEXPORT int CALLCONVENTION tqsl_getCabrilloContest(tQSL_Cabrillo cab, char *buf, int bufsiz);
 
 /** Get the Frequency type (HF or VHF) as determined by the contest */
-DLLEXPORT int tqsl_getCabrilloFreqType(tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type);
+DLLEXPORT int CALLCONVENTION tqsl_getCabrilloFreqType(tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type);
 
 /** Get the current line number (starting from 1) of the input file */
-DLLEXPORT int tqsl_getCabrilloLine(tQSL_Cabrillo cab, int *lineno);
+DLLEXPORT int CALLCONVENTION tqsl_getCabrilloLine(tQSL_Cabrillo cab, int *lineno);
 
 /** Get the text of the current Cabrillo record */
-DLLEXPORT const char * tqsl_getCabrilloRecordText(tQSL_Cabrillo cab);
+DLLEXPORT const char* CALLCONVENTION tqsl_getCabrilloRecordText(tQSL_Cabrillo cab);
 
 /** Get the next field of the Cabrillo record
   *
@@ -93,10 +93,10 @@ DLLEXPORT const char * tqsl_getCabrilloRecordText(tQSL_Cabrillo cab);
   *
   * \c err == \c TQSL_CABRILLO_EOF when there is no more data available.
   */
-DLLEXPORT int tqsl_getCabrilloField(tQSL_Cabrillo cab, tqsl_cabrilloField *field, TQSL_CABRILLO_ERROR_TYPE *err);
+DLLEXPORT int CALLCONVENTION tqsl_getCabrilloField(tQSL_Cabrillo cab, tqsl_cabrilloField *field, TQSL_CABRILLO_ERROR_TYPE *err);
 
 /** Finish reading a Cabrillo file and release its resources */
-DLLEXPORT int tqsl_endCabrillo(tQSL_Cabrillo *cabp);
+DLLEXPORT int CALLCONVENTION tqsl_endCabrillo(tQSL_Cabrillo *cabp);
 
 #ifdef __cplusplus
 }

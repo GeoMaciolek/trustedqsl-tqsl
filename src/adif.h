@@ -90,10 +90,10 @@ extern "C" {
 #endif
 
 /** Get the ADIF error message that corresponds to a particular error value */
-DLLEXPORT const char *tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status );
+DLLEXPORT const char* CALLCONVENTION tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status );
 
 /** Initialize an ADIF file for reading */
-DLLEXPORT int tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename);
+DLLEXPORT int  CALLCONVENTION tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename);
 
 /** Get the next field from an ADIF file
   *
@@ -111,22 +111,22 @@ DLLEXPORT int tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename);
   *    be used to populate the \c data member of \c field. The caller is
   *    responsible for freeing this memory, if needed.
   */
-DLLEXPORT int tqsl_getADIFField(tQSL_ADIF adif, tqsl_adifFieldResults *field, TQSL_ADIF_GET_FIELD_ERROR *status,
+DLLEXPORT int  CALLCONVENTION tqsl_getADIFField(tQSL_ADIF adif, tqsl_adifFieldResults *field, TQSL_ADIF_GET_FIELD_ERROR *status,
 	const tqsl_adifFieldDefinitions *adifFields, const char * const *typesDefined,
 	unsigned char *(*allocator)(size_t) );
 
 /** Get the current line number (starting from 1) of the input file */
-DLLEXPORT int tqsl_getADIFLine(tQSL_ADIF adif, int *lineno);
+DLLEXPORT int  CALLCONVENTION tqsl_getADIFLine(tQSL_ADIF adif, int *lineno);
 
 /** End and release an ADIF file */
-DLLEXPORT int tqsl_endADIF(tQSL_ADIF *adifp);
+DLLEXPORT int  CALLCONVENTION tqsl_endADIF(tQSL_ADIF *adifp);
 
 /** Form an ADIF field string.
   *
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the text should be written in binary mode.
   */
-DLLEXPORT int tqsl_adifMakeField(const char *fieldname, char type, const unsigned char *value, int len,
+DLLEXPORT int  CALLCONVENTION tqsl_adifMakeField(const char *fieldname, char type, const unsigned char *value, int len,
 	unsigned char *buf, int buflen);
 
 #ifdef __cplusplus

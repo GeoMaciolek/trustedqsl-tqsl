@@ -8,9 +8,6 @@
     revision             : $Id$
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
 
 #define TQSLLIB_DEF
 
@@ -21,17 +18,7 @@
 #include <ctype.h>
 #include <errno.h>
 
-#ifndef HAVE_SNPRINTF
-#include <stdarg.h>
-static int
-snprintf(char *str, int, const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	int rval = vsprintf(str, fmt, ap);
-	va_end(ap);
-	return rval;
-}
-#endif	// HAVE_SNPRINTF
+#include "winstrdefs.h"
 
 #define TQSL_CABRILLO_MAX_RECORD_LENGTH 120
 
@@ -380,7 +367,7 @@ tqsl_free_cab(struct TQSL_CABRILLO *cab) {
 	free(cab);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	TQSL_CABRILLO_ERROR_TYPE terrno;
 	if (filename == NULL) {
@@ -464,7 +451,7 @@ err:
 
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_endCabrillo(tQSL_Cabrillo *cabp) {
 	TQSL_CABRILLO *cab;
 	if (cabp == 0)
@@ -477,7 +464,7 @@ tqsl_endCabrillo(tQSL_Cabrillo *cabp) {
 	return 0;
 }
 
-DLLEXPORT const char *
+DLLEXPORT const char* CALLCONVENTION
 tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
 	const char *msg = 0;
 	switch (err) {
@@ -516,7 +503,7 @@ tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
 	return msg;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRILLO_ERROR_TYPE *error) {
 	TQSL_CABRILLO *cab;
 	cabrillo_field_def *fp;
@@ -610,7 +597,7 @@ err:
 	return 1;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCabrilloContest(tQSL_Cabrillo cabp, char *buf, int bufsiz) {
 	TQSL_CABRILLO *cab;
 	if ((cab = check_cabrillo(cabp)) == 0)
@@ -627,7 +614,7 @@ tqsl_getCabrilloContest(tQSL_Cabrillo cabp, char *buf, int bufsiz) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCabrilloFreqType(tQSL_Cabrillo cabp, TQSL_CABRILLO_FREQ_TYPE *type) {
 	TQSL_CABRILLO *cab;
 	if ((cab = check_cabrillo(cabp)) == 0)
@@ -640,7 +627,7 @@ tqsl_getCabrilloFreqType(tQSL_Cabrillo cabp, TQSL_CABRILLO_FREQ_TYPE *type) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCabrilloLine(tQSL_Cabrillo cabp, int *lineno) {
 	TQSL_CABRILLO *cab;
 	if ((cab = check_cabrillo(cabp)) == 0)
@@ -653,7 +640,7 @@ tqsl_getCabrilloLine(tQSL_Cabrillo cabp, int *lineno) {
 	return 0;
 }
 
-DLLEXPORT const char *
+DLLEXPORT const char* CALLCONVENTION
 tqsl_getCabrilloRecordText(tQSL_Cabrillo cabp) {
 	TQSL_CABRILLO *cab;
 	if ((cab = check_cabrillo(cabp)) == 0)

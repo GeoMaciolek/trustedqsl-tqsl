@@ -63,7 +63,7 @@ free_adif(TQSL_ADIF *adif) {
 	}
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	if (filename == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -96,7 +96,7 @@ err:
 
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_endADIF(tQSL_ADIF *adifp) {
 	TQSL_ADIF *adif;
 	if (adifp == 0)
@@ -107,7 +107,7 @@ tqsl_endADIF(tQSL_ADIF *adifp) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getADIFLine(tQSL_ADIF adifp, int *lineno) {
 	TQSL_ADIF *adif;
 	if (!(adif = check_adif(adifp)))
@@ -161,7 +161,7 @@ strCmpNoCase( const char *cs, const char *ct )
 }
 
 
-DLLEXPORT const char *
+DLLEXPORT const char* CALLCONVENTION
 tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status )
 {
 	const char *result;
@@ -513,7 +513,7 @@ tqsl_adifGetField( tqsl_adifFieldResults *field, FILE *filehandle,
 	return( status );
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getADIFField(tQSL_ADIF adifp, tqsl_adifFieldResults *field, TQSL_ADIF_GET_FIELD_ERROR *status,
 	const tqsl_adifFieldDefinitions *adifFields, const char * const *typesDefined,
 	unsigned char *(*allocator)(size_t) ) {
@@ -546,7 +546,7 @@ tqsl_condx_copy(const unsigned char *src, int slen, unsigned char *dest, int *le
 
 /* Output an ADIF field to a file descriptor.
  */
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_adifMakeField(const char *fieldname, char type, const unsigned char *value, int len,
 	unsigned char *buf, int buflen) {
 	if (fieldname == NULL || buf == NULL || buflen <= 0) {	/* Silly caller */
