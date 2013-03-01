@@ -12,10 +12,12 @@
 #include "sysconfig.h"
 #endif
 
-using namespace std;
 
 #include "tqslwiz.h"
 #include "wxutil.h"
+
+
+using namespace std;
 
 #define TQSL_LOCATION_FIELD_UPPER	1
 #define TQSL_LOCATION_FIELD_MUSTSEL	2
@@ -73,7 +75,7 @@ TQSLWizard::GetPage(bool final) {
 }
 
 void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
-	TQSLWizPage::OnSize(ev);
+	TQSLWizPage::OnSize(ev); //fix this
 	UpdateFields();
 }
 
@@ -138,11 +140,12 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 	}
 	for (int i = noupdate_field+1; i < (int)controls.size(); i++) {
 		int changed;
-		tqsl_getLocationFieldChanged(loc, i, &changed);
-		if (noupdate_field >= 0 && !changed)
-			continue;
 		int in_type;
+		tqsl_getLocationFieldChanged(loc, i, &changed);
 		tqsl_getLocationFieldInputType(loc, i, &in_type);
+
+		if (noupdate_field >= 0 && !changed && in_type != TQSL_LOCATION_FIELD_BADZONE)
+			continue;
 		if (in_type == TQSL_LOCATION_FIELD_DDLIST || in_type == TQSL_LOCATION_FIELD_LIST) {
 			// Update this list
 			int text_width = 0;
@@ -196,6 +199,20 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
 				((wxTextCtrl *)controls[i])->SetValue(wxString(buf, wxConvLocal));
 			}
+		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
+			int len;
+			tqsl_getLocationFieldDataLength(loc, i, &len);
+			int w, h;
+			((wxStaticText *)controls[i])->GetSize(&w, &h);
+			((wxStaticText *)controls[i])->SetSize((len+1)*text_size.GetWidth(), h);
+			char buf[256];
+			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
+			((wxStaticText *)controls[i])->SetLabel(wxString(buf, wxConvLocal));
+			if (strlen(buf) == 0) {
+				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(true);
+			} else {
+				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(false);
+			}
 		}
 	}
 }
@@ -247,14 +264,16 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	for (int i = 0; i < numf; i++) {
 		wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 		char label[256];
+		int in_type, flags;
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
-		hsizer->Add(new wxStaticText(this, -1, wxString(label, wxConvLocal), wxDefaultPosition,
-			wxSize(label_w, -1), wxALIGN_RIGHT|wxST_NO_AUTORESIZE), 0, wxTOP, 5);
+		tqsl_getLocationFieldInputType(loc, i, &in_type);
+		if (in_type != TQSL_LOCATION_FIELD_BADZONE) {
+			hsizer->Add(new wxStaticText(this, -1, wxString(label, wxConvLocal), wxDefaultPosition,
+				wxSize(label_w, -1), wxALIGN_RIGHT|wxST_NO_AUTORESIZE), 0, wxTOP, 5);
+		}
 		wxWindow *control_p = 0;
 		char gabbi_name[256];
 		tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
-		int in_type, flags;
-		tqsl_getLocationFieldInputType(loc, i, &in_type);
 		tqsl_getLocationFieldFlags(loc, i, &flags);
 		switch(in_type) {
 			case TQSL_LOCATION_FIELD_DDLIST:
@@ -268,6 +287,10 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				break;
 			case TQSL_LOCATION_FIELD_TEXT:
 				control_p = new wxTextCtrl(this, TQSL_ID_LOW+i, wxT(""), wxDefaultPosition, wxSize(control_width, -1));
+				break;
+			case TQSL_LOCATION_FIELD_BADZONE:
+				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
+					wxSize(label_w*4, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE), 0, wxTOP, 5;
 				break;
 		}
 		controls.push_back(control_p);
@@ -337,11 +360,11 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Station Data input complete"));
 	sizer->Add(st, 0, wxALIGN_CENTER|wxTOP, 10);
+	
+	// Title
 	st = new wxStaticText(this, -1, wxT("Select or enter name of this station location"));
 	sizer->Add(st, 0, wxALIGN_CENTER|wxBOTTOM, 10);
 
-	// Title
-	sizer->Add(st, 0, wxALIGN_CENTER|wxBOTTOM, 10);
 	// List of existing location names
 	namelist = new wxListBox(this, TQSL_ID_LOW, wxDefaultPosition, wxSize(control_width, text_size.GetHeight()*10),
 		0, 0, wxLB_SINGLE|wxLB_HSCROLL|wxLB_NEEDED_SB);
