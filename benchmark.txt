@@ -1,0 +1,35 @@
+500k unique qsos, 100+ mins cpu time, 50MB input, memory usage more than 370MB
+
+create a file including 5k dups and 5k new
+
+5:26:47 480k
+5:29:23 490k
+
+down to 64 qsos/sec from 100+ qsos/sec
+
+Signing using CALL=KC2YWE, DXCC=291
+C:\Users\Robert\Documents\src\tqsl\out.adi: wrote 500000 records to C:\Users\Robert\Documents\src\tqsl\out.tq8
+C:\Users\Robert\Documents\src\tqsl\out.tq8 is ready to be emailed or uploaded
+
+
+input adi is 50439kb
+output tq8 is 81972kb
+
+db is 50232k
+
+take another 5k new qsos
+interleave with 5k dupes
+
+file size=1009 kb
+
+cpu time 1m23s=120/sec
+
+Signing using CALL=KC2YWE, DXCC=291
+C:\Users\Robert\Documents\src\tqsl\test-dupe.adi: 5000 QSO records were duplicates
+C:\Users\Robert\Documents\src\tqsl\test-dupe.adi: wrote 5000 records to C:\Users\Robert\Documents\src\tqsl\test-dupe.tq8
+C:\Users\Robert\Documents\src\tqsl\test-dupe.tq8 is ready to be emailed or uploaded
+
+
+re-running 10k qsos all dupes
+
+cpu time 1m23s=120/sec

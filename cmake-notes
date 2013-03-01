@@ -1,0 +1,123 @@
+========================================
+ Robert Mead, KC2YWE
+ - CMake conversion notes
+ - 1/16/2013
+========================================
+
+- Requires cmake version 2.8 for expat package check. If this proves
+  to be an issue, we can package our own and bump the version down to
+  (I think) 2.6 which is the earliest supported version at this time
+  anyway.
+
+- Made an executive decision to remove sysconfig.h. It could be
+  re-created by cmake if necessary, but it's only used for the
+  purposes of determining the existence of snprintf and getopt. Getopt
+  is used for two command-line checking programs, which aren't
+  compiled by default anyway, and only barely for them. And if it's
+  not available, the program doesn't handle that case anyway.
+
+- Non-standard prefix for libraries are supported with
+  CMAKE_PREFIX_PATH. Other library-specific stuff comes later.
+
+== Linux notes == 
+
+sudo apt-get install libssl-dev libwxgtk2.8-dev libexpat-dev zlib1g-dev
+cmake . && make
+(use cmake -i or cmake -D... if you want to build the test programs)
+
+== Windows notes ==
+
+!! Not for the faint of heart. Much more difficult than a Unix.
+
+Tested on VC++ 2010, but it should work almost identically on the
+other VS versions, and should also be feasible with cygwin or mingw
+(using the appropriate cmake generator flag). Make sure you have the
+right platforms of all libraries (x86 vs x64)
+
+You probably want everything compiled statically if you're trying to
+distribute, or if you don't want to mess with your path. This
+complicates most of the below instructions since the installers seem
+to provide mostly shared libraries so you'll have to build
+openssl/expat/zlib yourself...
+
+OpenSSL: 
+ Download OpenSSL source, follow the directions to build and
+ install. You'll need nasm and ActivePerl (for the config). Set the
+ prefix as c:\openssl. Build for a static build, install, then make a
+ folder in the output library directory and move the .libs there.
+ - Tested with v1.0.1c
+
+EXPAT: http://expat.sourceforge.net/ 
+ Big mess. Open the .dsw, converting if necessary. Change libexpatMT
+ to libexpat in the output file properties. Build and put the .libs
+ where you'll remember tham for specifying them in the cmake library
+ path. To link expat statically, you need to define 'XML_STATIC'. The
+ cmakelists already does this if it's on win32, so you'll want to
+ undefine that if you're using a dynamic library instead.
+ - Tested with v2.1.0
+
+zlib: http://www.zlib.net/ or via Gnuwin32
+ cmake .
+ msbuild /p:Configuration=Debug ALL_BUILD.vcxproj
+ msbuild /p:Configuration=Release ALL_BUILD.vcxproj
+ 
+ ZLIB seems to disagres with running a release version in a debug
+ build and crashes. So you'll want both. The FindZLIB.cmake module
+ handles linking the appropriate version based on your build config.
+
+ Add ";zlib-x.y.z" to your CMAKE_INCLUDE_PATH and
+ ";zlib-x.y.z\Release" to your CMAKE_LIBRARY_PATH (note the semicolon
+ as path separator)
+
+ - Tested with v1.2.7
+
+wxWidgets: http://www.wxwidgets.org/downloads/
+ Follow the SVNBuild instructions.
+ - Tested with v2.8.12. Should work with any 2.8.x or previous. 2.9 is
+   out for now because of a number of problems, mostly with the
+   location wizard. If you can figure it out please let us know! Being
+   stuck on 2.8 is a huge hassle.
+
+This should give you a VS solution that you can build.
+
+== OSX Notes ==
+
+Tested on Mountain Lion, 10.8.2
+
+I recommend installng Homebrew for dependencies:
+  http://mxcl.github.com/homebrew/
+ 
+You'll probably also want to install the xcode command line tools
+(under preferences).
+
+You'll get pretty close with 'brew install cmake' because
+OSX includes zlib, expat, and openssl libraries
+
+However - since we currently only support wxWidgets 2.8, you'll need
+to do some work. These instructions are written from OSX v10.8
+(Mountain Lion) and they'll be easier for <10.6 if you're using
+that. 
+
+First, if you don't have the 10.6 SDK (needed for a Carbon
+dependency), acquire it. Searching for "MacOSX10.6.sdk" should get you
+pretty far, or it's in historical XCode distributions. Extract it into
+/SDKs/.
+
+Get wxWidgets v2.8.12 for OSX. Compile with:
+
+./configure --with-macosx-sdk=/SDKs/MacOSX10.6.sdk/ \
+--with-macosx-version-min=10.6 CFLAGS="-arch i386" --disable-shared \
+CXXFLAGS="-arch i386" CPPFLAGS="-arch i386" LDFLAGS="-arch i386" \
+OBJCFLAGS="-arch i386" OBJCXXFLAGS="-arch i386"
+
+make && sudo make install
+
+Once you've gotten wxWidgets set up and installed, you should be
+pretty much good. Just make sure to run cmake to build 32-bit
+binaries:
+
+cmake . -DCMAKE_CXX_FLAGS="-m32"
+make
+
+Generating an XCode project seems to work fine as well. Just call
+cmake with `-G "Xcode"' like any other generator.
