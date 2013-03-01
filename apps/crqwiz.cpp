@@ -18,6 +18,8 @@
 #include "wx/datetime.h"
 #include "wx/config.h"
 
+#include "winstrdefs.h"
+
 #include <algorithm>
 
 #include <iostream>
@@ -63,10 +65,10 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
 	int em_h = st->GetSize().GetHeight();
 	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(wxT("This will create a new certificate request file.\n\n"
-		"Once you supply the requested information and the\n"
-		"request file has been created, you must send the\n"
-		"request file to the certificate issuer."));
+	st->SetLabel(wxT("This will create a new certificate request file.\n\n")
+		wxT("Once you supply the requested information and the\n")
+		wxT("request file has been created, you must send the\n")
+		wxT("request file to the certificate issuer."));
 	st->SetSize(em_w * 30, em_h * 5);
 
 	sizer->Add(st, 0, wxALL, 10);
@@ -422,9 +424,9 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	tc_email = new wxTextCtrl(this, ID_CRQ_EMAIL, s, wxDefaultPosition, wxSize(em_w*30, -1));
 	sizer->Add(tc_email, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	tc_email->SetMaxLength(TQSL_CRQ_EMAIL_MAX);
-	sizer->Add(new wxStaticText(this, -1, wxT("Note: The e-mail address you provide here is the\n"
-		"address to which the issued certificate will be sent.\n"
-		"Make sure it's the correct address!\n")), 0, wxALL, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Note: The e-mail address you provide here is the\n")
+		wxT("address to which the issued certificate will be sent.\n")
+		wxT("Make sure it's the correct address!\n")), 0, wxALL, 10);
 	tc_status = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer, wxT("crq2.htm"));
@@ -445,9 +447,9 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	int em_w = st->GetSize().GetWidth();
 	int em_h = st->GetSize().GetHeight();
 	st->SetLabel(
-wxT("You may protect your private key for this certificate\n"
-"using a password. Doing so is recommended.\n\n"
-"Password:")
+wxT("You may protect your private key for this certificate\n")
+wxT("using a password. Doing so is recommended.\n\n")
+wxT("Password:")
 	);
 	st->SetSize(em_w * 30, em_h * 5);
 
@@ -458,8 +460,8 @@ wxT("You may protect your private key for this certificate\n"
 		0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_pw2 = new wxTextCtrl(this, ID_CRQ_PW2, wxT(""), wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
 	sizer->Add(tc_pw2, 0, wxLEFT|wxRIGHT, 10);
-	sizer->Add(new wxStaticText(this, -1, wxT("DO NOT lose the password you choose!\n"
-		"You will be unable to use the certificate\nwithout this password!")),
+	sizer->Add(new wxStaticText(this, -1, wxT("DO NOT lose the password you choose!\n")
+		wxT("You will be unable to use the certificate\nwithout this password!")),
 		0, wxALL, 10);
 	tc_status = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
@@ -627,15 +629,15 @@ CRQ_IntroPage::TransferDataFromWindow() {
 		return true;
 	if (Parent()->dxcc == 0)
 		wxMessageBox(
-			wxT("You have selected DXCC Entity NONE\n\n"
-			"QSO records signed using the certificate will not\n"
-			"be valid for DXCC award credit (but will be valid \n"
-			"for other applicable awards). If the certificate is\n"
-			"to be used for signing QSOs from maritime/marine\n"
-			"mobile, shipboard, or air mobile operations, that is\n"
-			"the correct selection. Otherwise, you probably\n"
-			"should use the \"Back\" button to return to the DXCC\n"
-			"page after clicking \"OK\""),
+			wxT("You have selected DXCC Entity NONE\n\n")
+			wxT("QSO records signed using the certificate will not\n")
+			wxT("be valid for DXCC award credit (but will be valid \n")
+			wxT("for other applicable awards). If the certificate is\n")
+			wxT("to be used for signing QSOs from maritime/marine\n")
+			wxT("mobile, shipboard, or air mobile operations, that is\n")
+			wxT("the correct selection. Otherwise, you probably\n")
+			wxT("should use the \"Back\" button to return to the DXCC\n")
+			wxT("page after clicking \"OK\""),
 			wxT("TQSLCert Warning"));
 	Parent()->callsign = tc_call->GetValue();
 	Parent()->callsign.MakeUpper();
@@ -784,14 +786,14 @@ CRQ_SignPage::TransferDataFromWindow() {
 	if (choice->GetSelection() == 0) {
 		if (cert_tree->GetNumCerts() > 0) {
 			int rval = wxMessageBox(
-wxT("You have one or more certificates that could be used\n"
-"to sign this certificate request.\n\n"
-"It is strongly recommended that you sign the request\n"
-"unless the certificates shown are not actually yours.\n"
-"Certificate issuers may choose not to permit unsigned\n"
-"certificate requests from existing certificate holders.\n\n"
-"Do you want to sign the certificate request?\n"
-"Select \"Yes\" to sign the request, \"No\" to continue without signing."),
+wxT("You have one or more certificates that could be used\n")
+wxT("to sign this certificate request.\n\n")
+wxT("It is strongly recommended that you sign the request\n")
+wxT("unless the certificates shown are not actually yours.\n")
+wxT("Certificate issuers may choose not to permit unsigned\n")
+wxT("certificate requests from existing certificate holders.\n\n")
+wxT("Do you want to sign the certificate request?\n")
+wxT("Select \"Yes\" to sign the request, \"No\" to continue without signing."),
 				wxT("Warning"), wxYES_NO, this);
 			if (rval == wxYES)
 				return false;
