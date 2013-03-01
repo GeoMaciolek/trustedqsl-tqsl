@@ -1,33 +1,47 @@
-<HTML><HEAD><TITLE>TQSL Preferences - Options</TITLE></HEAD>
+<HTML><HEAD><TITLE>Configuring TQSL</TITLE></HEAD>
+
+<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+
 <BODY>
-<H3>Preferences - Options</H3>
+<H3>Configuring TQSL</H3>
 <P>
-This tab lets you set several options:
+This tab provides control over several settings that govern TQSL's operation:
+<UL>
+<LI><a href="pref-opt.htm#daterange">Prompt for QSO Date Range</a></li>
+<LI><a href="pref-opt.htm#extensions">Specify ADIF and Cabrillo File Extensions</a></li>
+<LI><a href="pref-opt.htm#nonamateur">Allow Nonamateur Callsigns</a></li>
+</UL>
 <P>
+<a name="daterange"></a>
+<H5>Prompt for QSO Date Range</H5>
+This checkbox determines whether <b>TQSL</b> will display the <A HREF="daterng.htm"> QSO Date Range dialog</a>
+when <a href="signupload.htm">Submitting a Log File to LoTW via the Internet</a> or when
+<a href="signupload.htm">Submitting a Log File from a Computer without Internet Access</a>. 
+<p>
+The <b>QSO Date Range</b> dialog can be used to prevent QSOs already submitted to LoTW that haven't been subsequently modified from being submitted again,
+sparing LoTW from processing QSOs that have already been processed. 
+
+<P>
+<a name="extensions"></a>
+<H5>Specify ADIF and Cabrillo File Extensions</H5>
+Because there are no standard file extensions (.XXX) consistently used
+for ADIF AND Cabrillo files, TQSL lets you specify the extensions used on your system for each
+file types. The <a href="signupload.htm">Select File to Sign and Upload</a> and
+<a href="signupload.htm">Select File to Sign and Save</a> dialogs set their <b>Files of type</b>
+selectors based on the extensions specified on this tab:
+<p>
 <img src="pref-opt.bmp" width=363 height=370 border=0>
 <P>
-There is no absolute standard for the file extensions (.XXX) used
-for Cabrillo and ADIF files. Several <i>de facto</i> extensions are in use.
+In the example shown above, files whose names end in <code>.log</code> or <code>.cab</code>
+will be treated as Cabrillo files, while those with names ending in <code>.adi</code> or
+<code>.ADI</code> are ADIF files. When using an operating system like <b>Windows</b> that doesn't distinguish
+case in file names, the two ADIF entries shown in this example would be unneccessary.
 <P>
-TQSL lets you specify the extensions used on your system for the different
-file types. This is useful when you select the <B>Sign existing ADIF or Cabrillo file</B>
-choice from the <B>File</B> menu, as you can then select which kinds of file to show in
-the file selection dialog.
-<P>
-In the example shown above, files whose names end in &quot;.log&quot; or &quot;.cab&quot;
-will be treated as Cabrillo files, while those with names ending in &quot;.adi&quot; or
-&quot;.ADI&quot; are ADIF files. (On a system such as <I>Windows</I> that doesn't distinguish
-case in file names, the two ADIF entries would be unneccessary.)
-<P>
-The <B>Options</b> tab also provides a checkbox that allows you to choose whether TQSL
-should treat a nonamateur call-worked as an error. Some systems (notably ARRL's <i>Logbook
-of the World</i>) will not allow nonamateur call signs to be entered. By default, this
-box is unchecked, and nonamateur call signs are treated as errors. (Note: The check for
-nonamateur call signs is rudimentary. It's possible to get a call sign that is not a
-valid ITU identification past the check, but most common logging errors will be caught.)
-<P>
-Another checkbox allows you to select whether <i>TQSL</i> should prompt you for a QSO date
-range when signing an existing ADIF or Cabrillo file. (This is on by default.) See
-<A HREF="daterng.htm">Setting a Signing Date Range</A> for details.
+<a name="nonamateur"></a>
+<H5>Allow Nonamateur Callsigns</H5>
+The <B>Allow nonamateur call signs</b> checkbox lets you to choose whether TQSL
+should treat a nonamateur call-worked as an error. LoTW does not accept nonamateur 
+callsigns, so this option is by default disabled.
+
 <P>
 </BODY></HEAD>

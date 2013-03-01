@@ -1,22 +1,99 @@
-<HTML><HEAD><TITLE>Station Locations</TITLE></HEAD>
+<HTML><HEAD><TITLE>TQSL Defining or Modifying a Station Location</TITLE></HEAD>
+
+<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+
 <BODY>
-<H3>Managing Station Locations</H3>
+<H3>Defining or Modifying a Station Location</H3>
 <P>
-A station location describes the call sign, geographic location and
-political subdivisions of a particular station operation. Station locations are tied
-to digital cerificates, which in turn contain the station call sign and DXCC entity. There
-may be more than one station location for a particular call-sign/dxcc-entity, allowing for
-portable and mobile operation. (Note that in the context of TrustedQSL, call signs such
-as KE3Z and KE3Z/7 are treated as two separate call signs, each of which must have its
-own digital certificate to be used for signing QSO data files for the respective call sign.)
+A <i>Station Location</i> specifies a <A HREF="glossary.htm#callsign_certificate">Callsign Certificate</a> and an operating location.
 <P>
-When you elect to sign a file, <I>TQSL</I> displays a station-location dialog
-that lets you select an existing station location or add a new one. You also can
-edit or delete an existing station location from this dialog. (Adding new station
-locations can also be done via the <b>Station</b> menu.)
-<P>
-<img src="stnloc.bmp" width="601" height="291" border="2">
-<P>
-Next: <A HREF="stnloc1.htm">Adding and Editing Station Locations</A>
-<P>
+
+<H5>Defining a Station Location</H5>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>1.</td><td>In the TQSL window, select the <b>Station</b> menu's <b>Add Location</b> command; the <b>Add Station Location</b> dialog will appear</td></tr>
+	<tr><td>2.</td><td>In the <b>Add Station Location</b> dialog, specify your callsign, grid square, ITU zone, CQ zone, and IOTA tag</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="addstnl.bmp" width=430 height=393 border=2></td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.a</td><td>select your callsign</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.b</td><td>specify the <b>Grid Square</b> in which your station is located (this is particularly important if you operate on VHF or UHF frequencies or via Satellites, as it provides Grid Square credit to your QSO partners pursuing VUCC awards)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.c</td><td>specify the <b>ITU Zone</b> in which your station is located</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.d</td><td>specify the <b>CQ Zone</b> in which your station is located</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.e</td><td>if your station is located on an island, specify its <b>IOTA tag</b>; use a two-character continent abbreviation followed by a dash and a 3 digit number, e.g. <CODE>OC-005</CODE>. If you do not know your IOTA designation, you can find this information in http://www.rsgbiota.org</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.f</td><td>click the <b>Next</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;</td><td>note: if the <b>DXCC Entity</b>, <b>ITU Zone</b>, and <b>CQ Zone</b> are mutually inconsistent, an
+	<b><i>Invalid zone selections for DXCC entity</i></b> message will be displayed, and the <b>Next</b> 
+	button will be disabled; you must select consistent <b>ITU</b> and <b>CQ</b> zones before proceeding.</td></tr>
+</table>
+
+<p>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>3.</td><td>If your callsign's DXCC entity is in Canada, Russia, or the United States, the <b>Add Station Location</b> dialog will prompt you to specify your Province, Oblast, or State and County respectively. 
+	The example below shows this for a station in the United States:</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="addstnl0.bmp" width=430 height=393 border=2></td></tr>
+</table>
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.a</td><td>in the <b>Add Station Location</b> dialog, select your US <b>State</b> (this is particularly important as it provides US State credit to your QSO partners pursuing WAS awards)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>select your US <b>County</b></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.c</td><td>click the <b>Next</b> button</td></tr>
+</table>
+
+<p>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>4.</td><td>in the <b>Add Station Location</b> dialog, specify a <b>Station Location Name</b></td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="savestnl.bmp" width=430 height=393 border=2></td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.a</td><td>to make this name meaningful, it is recommended that it incorporate both your callsign and town name, or callsign and location name (see <A HREF="stnloc.htm#additional">Additional Information</a> below)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.b</td><td>click the <b>Finish</b> button</td></tr>
+</table>
+
+<H5>Modifying a Station Location</H5>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>1.</td><td>In the TQSL window, select the <b>Station</b> menu's <b>Edit Locations</b> command; the <b>Edit Station Locations</b> dialog will appear</td></tr>
+	<tr><td>2.</td><td>In the <b>Edit Station Locations</b> dialog, click on the name of the Station Location you wish to modify, and click the <b>Edit...</b> button; the <b>Edit Station Locations</b> dialog will appear</td></tr>	
+	<tr><td>3.</td><td>In the <b>Edit Station Location</b> dialog, select a different callsign, or modify the grid square, ITU zone, CQ zone, or IOTA tag as desired.</td></tr>
+	<tr><td>4.</td><td>Click the <b>Next</b> button. Note: if the <b>DXCC Entity</b>, <b>ITU Zone</b>, and <b>CQ Zone</b> are mutually inconsistent, an
+	<b><i>Invalid zone selections for DXCC entity</i></b> message will be displayed, and the <b>Next</b> 
+	button will be disabled; you must select consistent <b>ITU</b> and <b>CQ</b> zones before proceeding</td></tr>
+	<tr><td>5.</td><td>if your station is in the United States, select a different state or county as desired</td></tr>
+	<tr><td>6.</td><td>Click the <b>Next</b> button</td></tr>
+	<tr><td>7.</td><td>Modify the <b>Station Location Name<b> as desired</td></tr>
+	<tr><td>8.</td><td>Click the <b>Finish</b> button</td></tr>
+</table>
+
+<p>
+<a name="additional"></a>
+<H5>Additional Information</H5>
+<UL>
+<LI>If you always operate with the same callsign and from one location, use a name that combines them both, e.g. <code>K9UW(Amherst)</code> or <code>AA5AU-Louisiana</code>. 
+If you operate with more than one callsign or from more than one location, see this <a href="example1.htm">example</a>.</LI>
+<LI>You can <a href="moving.htm">move a Station Location from one computer to another</a>
+</UL>
 </BODY></HEAD>
+

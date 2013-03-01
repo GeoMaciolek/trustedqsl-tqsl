@@ -1,11 +1,14 @@
-<HTML><HEAD><TITLE>Signing</TITLE></HEAD>
+<HTML><HEAD><TITLE>TQSL Command Line Interface</TITLE></HEAD>
+
+<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+
 <BODY>
-<H3>TQSL Command Line</H3>
+<H3>Command Line Interface</H3>
 <P>
 When starting TQSL you may provide command-line options that affect how TQSL runs. Some of the
-options require an argument, separated from the option letter by one or more spaces. (Arguments that
+options require an argument, separated from the option letter by one or more spaces. Arguments that
 contain spaces or other shell-special characters should be quoted in a manner suitable for the
-operating system and shell that's being used.) If more than
+operating system and shell that's being used. If more than
 one option is specified, each option must be separated from the preceding one by one or more
 spaces.
 <P>
@@ -13,22 +16,33 @@ Each option represents an action for TQSL to take. The options are executed in t
 appear on the command line - left to right. After processing the options (except for option
 <b>-x</b>) TQSL enters its normal menu-driven mode of operation.
 <P>
-<TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0>
+<TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0 valign="top">
 <TR><TD COLSPAN=2 align="center"><B>TQSL Options</B></TD></TR>
 <TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
 
 <TR><TD><b>-d</b></TD>
-<TD>Suppress date-range dialog. If present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
-be shown for files that follow this option on the command line.</TD></TR>
+<TD>Suppress the date-range dialog. If present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
+be displayed for files that follow this option on the command line.</TD></TR>
 
 <TR><TD><b>-l</b> location_name</TD>
-<TD>Selects an existing station location. This location will be used for the commands that follow.
-If the station location doesn't exist, TQSL will just exit.</TD></TR>
+<TD>Select an existing station location. This location will be used for the commands that follow.
+If the station location doesn't exist, TQSL will exit.</TD></TR>
 
 <TR><TD><b>-s</b></TD>
 <TD>Add or edit station location. If there is a preceding <b>-l</b> option the specified
 location will be edited. If there is no preceding <b>-l</b> option, a new station
 location is being added.</TD></TR>
+
+<TR><TD><b>-u</b></TD>
+<TD>Upload the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A> to LoTW over the Internet<p>
+Return Codes<BR>
+&nbsp;&nbsp;0 - success<BR>
+&nbsp;&nbsp;1 - cancelled, or no action required<BR>
+&nbsp;&nbsp;2 - rejected by LoTW server<BR>
+&nbsp;&nbsp;3 - unexpected response from LotW server<BR>
+&nbsp;&nbsp;4 - TQSL error<BR>
+&nbsp;&nbsp;5 - TQSLLIB error (likely an invalid filename)<BR>
+</TD></TR>
 
 <TR><TD><b>-x</b></TD>
 <TD>Exit TQSL. If this argument is used it should be the last one on the command line.
@@ -44,7 +58,7 @@ option that selects the station location to be used for signing, the <b>Select S
 Location for Signing</b> dialog will be presented.)
 File names that contain spaces or other shell-special characters should be quoted in a manner
 suitable for the operating system and shell that's being used.<P>
-N.B.: If the private key needed to sign a log is protected by a password, the user will
+Note: If the private key needed to sign a log is protected by a password, the user will
 be prompted to supply that password for each file being signed.
 </TD></TR>
 

@@ -1,4 +1,4 @@
-// This file is updated automatically
+// Define the build of TQSL
 
-#define BUILD "unofficial.740"
-
+#define VERSION "@TQSLVERSION@"
+#define BUILD "[@BUILD@]"

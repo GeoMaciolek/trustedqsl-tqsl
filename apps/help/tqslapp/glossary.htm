@@ -1,35 +1,43 @@
-<HTML><HEAD><TITLE>TrustedQSL Glossary</TITLE></HEAD>
+<HTML><HEAD><TITLE>TQSL Glossary of Terms</TITLE></HEAD>
+
+<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+
 <BODY>
-<H3>TrustedQSL Glossary</H3>
+<H3>Glossary of Terms</H3>
 <P>
 <a name="adif"></a>
-<b>ADIF</b> (Amateur Data Interchange Format) -- A log-data file format that many
-log programs can output. See http://www.hosenose.com/adif/ for details.
+<b>ADIF</b> (Amateur Data Interchange Format) -- A log file format that many logging applications can export. It is not necessary to view or modify ADIF files in order to use TQSL, but for more information, see <b><code>http://www.adif.org/</code></b> .
 <P>
 <a name="cabrillo"></a>
-<b>Cabrillo</b> -- A log-data file format used for the submission of
-contest logs. See http://www.kkn.net/~trey/cabrillo/ for details.
+<b>Cabrillo</b> -- A log file format used for the submission of contest logs. It is not necessary to view or modify Cabrillo files in order to use TQSL, but for more information, see <b><code>http://www.kkn.net/~trey/cabrillo/</code></b> .
 <P>
-<a name="digital_certificate"></a>
-<b>Digital Certificate</b> -- A file that contains a unique set of signing keys
-to be used for creating digital signatures.
+<a name="callsign_certificate"></a>
+<b>Callsign Certificate</b> -- A unique file <A HREF="certreq.htm#">issued by the ARRL to a user</a> that is used to <b>digitally sign</b> a log file, thereby confirming its authenticity.
 <P>
 <a name="digital_signature"></a>
-<b>Digital Signature</b> -- A data block that uniquely ties a digital certificate
-to a specific message (block of text or data). Using the <i>digital signature</i>
-and its associated digital certificate,
-TrustedQSL programs can verify that the message was signed by the holder
-of the certificate and that the message was not altered after being signed.
+<b>Digital Signature</b> -- A cryptographic means of enabling a sender to convey information to a receiver in a manner that assures the receiver that 
+<UL>
+<LI>the information comes from the sender</LI>
+<LI>the information has not been subsequently modified</LI></UL>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;LoTW users employ the TQSL application to generate a digitally signed log file containing their QSOs for submission to LoTW.
 <P>
-<a name="signing"></a>
-<b>Signing</b> -- Creating a <a href="#digital_signature">digital signature</a> of a message
-(a block of text or data). In TrustedQSL, the QSO data records are <i>signed</i>.
+<a name="signed_log_file"></a>
+<b>Digital Signed Log File</b> -- A log file that has been <b>digitally signed</b> by TQSL and can be submitted to LoTW.
+<P>
+
+<a name="log_file"></a>
+<b>Log File</b> -- A file containing QSO records in either <b>ADIF</b> or <b>Cabrillo</b> format.
 <P>
 <a name="station_location"></a>
-<b>Station Location</b> -- A station location describes call sign, geographic location and
-political subdivisions of a particular station operation. Station locations are tied
-to digital certificates, which in turn contain the station call sign and DXCC entity. There
-may be more than one station location for a particular call-sign/dxcc-entity, allowing for
-portable and mobile operation.
+<b>Station Location</b> -- a collection of information specifying a <b>Callsign Certificate</b> and an operating location:
+   <UL>
+   <LI>a DXCC entity</LI>
+   <LI>a State</LI>
+   <LI>a County</LI>
+   <LI>a Grid Square</LI>
+   <LI>a CQ zone</LI>
+   <LI>an ITU zone</LI>
+   <LI>an IOTA identifier</LI>
+   </UL>
 <P>
 </BODY></HEAD>

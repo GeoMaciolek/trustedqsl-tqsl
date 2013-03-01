@@ -18,12 +18,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "American Radio Relay League, Inc.\000"
       VALUE "FileDescription", "TrustedQSL\000"
-      VALUE "FileVersion", "@VERSION@\000"
+      VALUE "FileVersion", "@TQSLVERSION@\000"
       VALUE "InternalName", "TQSLCERT\000"
       VALUE "LegalCopyright", "Copyright  2005 American Radio Relay League.\000"
       VALUE "OriginalFilename", "tqslcert.exe\000"
       VALUE "ProductName", "TQSLCert\000"
-      VALUE "ProductVersion", "@VERSION@\000"
+      VALUE "ProductVersion", "@TQSLVERSION@\000"
     END
   END
 
