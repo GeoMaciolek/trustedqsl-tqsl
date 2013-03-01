@@ -456,30 +456,6 @@ get_certlist(string callsign, int dxcc) {
 		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, 0);
 }
 
-class MyHtmlHelpController : public wxHtmlHelpController {
-public:
-	MyHtmlHelpController(long style = wxHF_DEFAULT_STYLE, wxWindow *parent = NULL)
-	: wxHtmlHelpController(style, parent) { }
-	virtual void OnLinkClicked(const wxHtmlLinkInfo& link);
-};
-
-void MyHtmlHelpController::OnLinkClicked(const wxHtmlLinkInfo& link) {
-	wxString url = link.GetHref();
-	if ( url.StartsWith(wxT("http:")) || url.StartsWith(wxT("mailto:")) ) {
-	// pass http/mailto URL to user's preferred browser/emailer
-#ifdef __WXMAC__
-	// wxLaunchDefaultBrowser doesn't work on Mac with IE
-	// but it's easier just to use the Mac OS X open command
-	// silently fail if unable - why annoy the user?
-	wxExecute(wxT("open ") + url, wxEXEC_ASYNC);
-#else
-	wxLaunchDefaultBrowser(url);
-#endif
-	} else {
-		Display(url);
-	}
-}
-
 class MyFrame : public wxFrame {
 public:
 	MyFrame(const wxString& title, int x, int y, int w, int h);
@@ -508,7 +484,7 @@ public:
 	void DoCheckForUpdates(bool quiet);
 
 	wxTextCtrl *logwin;
-	MyHtmlHelpController help;
+	wxHtmlHelpController help;
 
 
 	DECLARE_EVENT_TABLE()
@@ -647,7 +623,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 }
 
 static wxString
-run_station_wizard(wxWindow *parent, tQSL_Location loc, MyHtmlHelpController *help = 0,
+run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
 	wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
 	wxString rval(wxT(""));
 	get_certlist("", 0);
