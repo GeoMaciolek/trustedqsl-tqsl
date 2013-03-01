@@ -300,8 +300,9 @@ cout << "OnNamelist hack" << endl;
 
 void
 TQSLGetStationNameDialog::OnDblClick(wxCommandEvent& event) {
-	OnNamelist(event);
-	EndModal(wxID_MORE);
+	if(editonly) { OnNamelist(event); EndModal(wxID_MORE); }
+	else { UpdateControls(); OnOk(event); } //updatecontrols sets up the text field that ok checks
+	
 }
 
 void
@@ -373,7 +374,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 		plist.ShowModal();
 	}
 	catch (TQSLException& x) {
-		wxLogError(wxString(x.what(), wxConvLocal));
+		wxLogError(wxT("%s"), x.what());
 	}
 }
 
@@ -396,9 +397,9 @@ TQSLGetStationNameDialog::SelectName(const wxString& name) {
 int
 TQSLGetStationNameDialog::ShowModal() {
 	if (namelist->GetCount() == 0 && !issave)
-		wxMessageBox(wxT("You have no Station Locations defined.\n\n"
-			"You must define at least one Station Location to use for signing.\n"
-			"Use the \"New\" Button of the dialog you're about to see to\ndefine a Station Location."),
+		wxMessageBox(wxT("You have no Station Locations defined.\n\n")
+			wxT("You must define at least one Station Location to use for signing.\n")
+			wxT("Use the \"New\" Button of the dialog you're about to see to\ndefine a Station Location."),
 			wxT("TQSL Warning"), wxOK, this);
 	return wxDialog::ShowModal();
 }
