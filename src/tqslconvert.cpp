@@ -8,9 +8,6 @@
     revision             : $Id$
  ***************************************************************************/
 
-#ifdef HAVE_CONFIG_H
-#include "sysconfig.h"
-#endif
 
 #define TQSLLIB_DEF
 
@@ -18,16 +15,22 @@
 
 #include "tqslconvert.h"
 #include <stdio.h>
+#include <errno.h>
 #include "tqslerrno.h"
 #include <cstring>
 #include <string>
+#include <vector>
 #include <ctype.h>
 #include <set>
+#include <db.h>
 
 #include <locale.h>
 //#include <iostream>
 
+#include "winstrdefs.h"
+
 using namespace std;
+
 
 static bool checkCallSign(const string& call);
 
@@ -58,6 +61,11 @@ public:
 	set <string> satellites;
 	string rec_text;
 	tQSL_Date start, end;
+	DB *seendb;
+	DB_ENV* dbenv;
+	DB_TXN* txn;
+	char serial[512];
+	bool allow_dupes;
 };
 
 inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
@@ -70,9 +78,14 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	need_station_rec = false;
 	rec_done = true;
 	allow_bad_calls = false;
+	allow_dupes = true; //by default, don't change existing behavior (also helps with commit)
 	memset(&rec, 0, sizeof rec);
 	memset(&start, 0, sizeof start);
 	memset(&end, 0, sizeof end);
+	seendb = NULL;
+	dbenv = NULL;
+	txn = NULL;
+	memset(&serial, 0, sizeof serial);
 	// Init the band data
 	const char *val;
 	int n = 0;
@@ -119,6 +132,8 @@ inline TQSL_CONVERTER::~TQSL_CONVERTER() {
 	tqsl_endADIF(&adif);
 	if (certs_used)
 		delete[] certs_used;
+	if (seendb)
+		seendb->close(seendb, 0);
 	sentinel = 0;
 }
 
@@ -133,17 +148,7 @@ inline void TQSL_CONVERTER::clearRec() {
 
 using namespace tqsllib;
 
-#ifndef HAVE_SNPRINTF
-#include <stdarg.h>
-static int
-snprintf(char *str, int, const char *fmt, ...) {
-	va_list ap;
-	va_start(ap, fmt);
-	int rval = vsprintf(str, fmt, ap);
-	va_end(ap);
-	return rval;
-}
-#endif	// HAVE_SNPRINTF
+
 
 static char *
 tqsl_strtoupper(char *str) {
@@ -175,7 +180,7 @@ static tqsl_adifFieldDefinitions adif_qso_record_fields[] = {
 	{ "eor", "", TQSL_ADIF_RANGE_TYPE_NONE, 0, 0, 0, NULL },
 };
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_beginADIFConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *certs,
 	int ncerts, tQSL_Location loc) {
 	if (tqsl_init())
@@ -201,7 +206,7 @@ tqsl_beginADIFConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_beginCabrilloConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *certs,
 	int ncerts, tQSL_Location loc) {
 	if (tqsl_init())
@@ -227,10 +232,17 @@ tqsl_beginCabrilloConverter(tQSL_Converter *convp, const char *filename, tQSL_Ce
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_endConverter(tQSL_Converter *convp) {
 	if (!convp || CAST_TQSL_CONVERTER(*convp) == 0)
 		return 0;
+
+	TQSL_CONVERTER* conv;
+
+	if ((conv = check_conv(convp))) {
+		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
+		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+	}
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
 		delete CAST_TQSL_CONVERTER(*convp);
 	*convp = 0;
@@ -290,7 +302,7 @@ tqsl_infer_band(const char* infreq) {
 	return "";
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Date *end) {
 	TQSL_CONVERTER *conv;
 	if (!(conv = check_conv(convp)))
@@ -306,17 +318,78 @@ tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Dat
 	return 0;
 }
 
-DLLEXPORT const char *
+DLLEXPORT const char* CALLCONVENTION
 tqsl_getConverterGABBI(tQSL_Converter convp) {
 	TQSL_CONVERTER *conv;
+	char signdata[1024];
+
 	if (!(conv = check_conv(convp)))
 		return 0;
 	if (conv->need_station_rec) {
 		int uid = conv->cert_idx + conv->base_idx;
 		conv->need_station_rec = false;
-		return tqsl_getGABBItSTATION(conv->loc, uid, uid);
+		const char *tStation = tqsl_getGABBItSTATION(conv->loc, uid, uid);
+		tqsl_getCertificateSerialExt(conv->certs[conv->cert_idx], conv->serial, sizeof(conv->serial));
+		return tStation;
+	}
+	if (!conv->allow_dupes && !conv->seendb) {
+		bool dbinit_cleanup=false;
+		string fixedpath=tQSL_BaseDir; //must be first because of gotos
+		size_t found=fixedpath.find('\\');
+
+		if (db_env_create(&conv->dbenv, 0)) {
+			// can't make env handle
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+
+		//bdb complains about \\s in path on windows... 
+
+		while (found!=string::npos) {
+			fixedpath.replace(found, 1, "/");
+			found=fixedpath.find('\\');
+		}
+
+		if (conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE, 0600)) {
+			// can't open environment
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+
+		if (db_create(&conv->seendb, conv->dbenv, 0)) {
+			// can't create db
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+
+#ifndef DB_TXN_BULK
+#define DB_TXN_BULK 0
+#endif
+		if (conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK)) {
+			// can't start a txn
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+
+		if (conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600)) {
+			// can't open the db
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+
+
+dbinit_end:
+		if (dbinit_cleanup) {
+			tQSL_Error = TQSL_DB_ERROR;
+			tQSL_Errno = errno;
+			if (conv->txn) conv->txn->abort(conv->txn);
+			if (conv->seendb) conv->seendb->close(conv->seendb, 0);
+			if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+			return 0;
+		}
 	}
 	TQSL_ADIF_GET_FIELD_ERROR stat;
+
 	if (conv->rec_done) {
 //cerr << "Getting rec" << endl;
 		conv->rec_done = false;
@@ -504,14 +577,46 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 			return tqsl_getGABBItCERT(conv->certs[conv->cert_idx], conv->cert_idx + conv->base_idx);
 		}
 	}
-	const char *grec = tqsl_getGABBItCONTACT(conv->certs[conv->cert_idx], conv->loc, &(conv->rec),
-		conv->cert_idx + conv->base_idx);
-	if (grec)
+	const char *grec = tqsl_getGABBItCONTACTData(conv->certs[conv->cert_idx], conv->loc, &(conv->rec),
+		conv->cert_idx + conv->base_idx, signdata, sizeof(signdata));
+	if (grec) {
 		conv->rec_done = true;
+		if (!conv->allow_dupes) {
+			// Lookup uses signdata and cert serial number
+			DBT dbkey, dbdata;
+			char temp[2];
+			memset(&dbkey, 0, sizeof dbkey);
+			memset(&dbdata, 0, sizeof dbdata);
+			// append signing key serial
+			strncat(signdata, conv->serial, sizeof(signdata) - strlen(signdata)-1);
+			dbkey.size = strlen(signdata);
+			dbkey.data = signdata;
+			dbdata.size = sizeof(temp);
+			dbdata.data = temp;
+			int dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+			if (0 == dbget_err) {
+				//lookup was successful; thus duplicate
+				tQSL_Error = TQSL_DUPLICATE_QSO;
+				return 0;
+			} else if (dbget_err != DB_NOTFOUND) {
+				//non-zero return, but not "not found" - thus error
+				tQSL_Error = TQSL_DB_ERROR;
+				return 0;
+				// could be more specific but there's very little the user can do at this point anyway
+			}
+			temp[0] = 'D';
+			dbdata.size = 1;
+			if (0 != conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0)) {
+				tQSL_Error = TQSL_DB_ERROR;
+				return 0;
+			}
+			
+		}
+	}
 	return grec;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getConverterCert(tQSL_Converter convp, tQSL_Cert *certp) {
 	TQSL_CONVERTER *conv;
 	if (!(conv = check_conv(convp)))
@@ -524,7 +629,7 @@ tqsl_getConverterCert(tQSL_Converter convp, tQSL_Cert *certp) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getConverterLine(tQSL_Converter convp, int *lineno) {
 	TQSL_CONVERTER *conv;
 	if (!(conv = check_conv(convp)))
@@ -541,7 +646,7 @@ tqsl_getConverterLine(tQSL_Converter convp, int *lineno) {
 	return 0;
 }
 
-DLLEXPORT const char *
+DLLEXPORT const char* CALLCONVENTION
 tqsl_getConverterRecordText(tQSL_Converter convp) {
 	TQSL_CONVERTER *conv;
 	if (!(conv = check_conv(convp)))
@@ -549,12 +654,45 @@ tqsl_getConverterRecordText(tQSL_Converter convp) {
 	return conv->rec_text.c_str();
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_setConverterAllowBadCall(tQSL_Converter convp, int allow) {
 	TQSL_CONVERTER *conv;
 	if (!(conv = check_conv(convp)))
 		return 1;
 	conv->allow_bad_calls = (allow != 0);
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_setConverterAllowDuplicates(tQSL_Converter convp, int allow) {
+	TQSL_CONVERTER *conv;
+	if (!(conv = check_conv(convp)))
+		return 1;
+	conv->allow_dupes = (allow != 0);
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_converterRollBack(tQSL_Converter convp) {
+	TQSL_CONVERTER *conv;
+
+	if (!(conv = check_conv(convp)))
+		return 1;
+	if (!conv->seendb)
+		return 1;
+	conv->txn->abort(conv->txn);
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_converterCommit(tQSL_Converter convp) {
+	TQSL_CONVERTER *conv;
+
+	if (!(conv = check_conv(convp)))
+		return 1;
+	if (!conv->seendb)
+		return 1;
+	conv->txn->commit(conv->txn, 0);
 	return 0;
 }
 
