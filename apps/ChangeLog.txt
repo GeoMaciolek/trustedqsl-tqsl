@@ -1,0 +1,228 @@
+TQSL/TQSLCERT changes
+=====================
+
+1.14
+----
+Major feature additions:
+
+ - Upload log files directly from TrustedQSL! Simply choose "sign and upload" 
+   from the File menu and your log will signed and uploaded automatically with
+   no extra work.
+   
+    - Command line flag '-u' has been added to expose this functionality to 
+	  tools authors. The return value to determine whether the upload
+      succeeded or failed, and why
+	  
+	  0=success; log signed and uploaded and accepted without incident
+	  1=soft fail (empty log?)
+	  2=active reject (the server recieved the log and decided to reject it)
+	  3=passive reject (the server is probably down; unexpected response)
+      4=hard fail (internal error)
+	  5=tqsllib internal error (probably a bad filename)
+ 
+ - Automatically check for updates. If a new version is available, you will be
+   periodically prompted to download and install it. You can also check manually
+   
+ - Duplicate checking. Any QSOs that have been successfully uploaded to Logbook
+   of the World or saved to a file are registered in a databse. Any exact
+   duplicates are automatically stripped from future logs. This can be disabled
+   on a case-by-case basis, in case a log was signed but never uploaded, or
+   there was a server issue that led to an upload going unprocessed.
+   
+ - Installer on Windows is now a Microsoft Windows Installer package, instead of
+   an executable. This will allow for easier and cleaner upgrades
+ 
+Minor changes:
+
+ - TQSL/TQSLCERT now have window icons
+ 
+ - Double-clicking an entry in the "Choose station location" window for signing
+   now selects it, instead of opening it for editing
+   
+ - Command line parsing has been rewritten and should be more robust. Also,
+   command-line documentation is available with '-h' 
+   
+ - Files to sign and save are now prompted before location and date range
+ 
+ - The build number is now shown in the About box; please include this when
+   asking for help
+   
+ - The final confirmation before signing includes the signing station location
+ 
+ - Dozens of bug fixes and potential or real crashes fixed.
+
+TQSL/TQSLCERT and the rest of TrustedQSL now built with the CMake build system
+
+TQSL/TQSLCERT are now built with MSVC on Windows.
+
+** Windows 98 support has been dropped. This will be one of the last releases
+to support Windows 2000. 
+
+** This will be one of the last releases to support OS X on PowerPC systems.
+
+1.13
+----
+No functional changes. Update to sync to updated tqsllib; updated build tools.
+
+1.12
+----
+When asking for the password to unlock a private key, say what callsign it's
+for.
+
+Remember certificate requests and assist the user with importing the .tq6.
+
+Prompt user to save their certificate after importing a .tq6 signed certificate.
+
+Suppress display of superceded certificates, controlled by a tqslcert
+preference setting.
+
+Fix windows wxWidgets crashes with several wizards (cert renew, new cert,
+etc.)
+
+Add checkbox to allow bypassing state selection.
+
+Fix crash on Windows when new certificate request wizard is started.
+
+Added support for validating zone numbers and requiring them.
+
+Allowed batch mode (-x) without displaying windows
+
+When double-clicking an entry on the "Edit Station Locations" dialog, open
+that entry for edit, don't just close the modal dialog.
+
+Change the "OK" button on the "Edit Station Locations" dialog to "Close"
+as that's what it does.
+
+Update password dialogs to enable "enter" to activate when possible.
+
+Add "-p <password>" and "-o <output-file>" arguments to tqsl.
+
+
+1.11
+----
+Added command-line option -d. (See on-line help for details.)
+
+Modified string handling to be compatible with Unicode versions
+of wxWindows/wxWidgets.
+
+Certificate request wizard now checks for date overlap of request with
+existing certificates. This allows non-overlapping requests to be
+generated. (TQSLCERT)
+
+Help-contents file tags now contain "type" parameter so that
+packages built with wxWindows >= 2.4 will show the help
+contents properly.
+
+1.10
+----
+Added command-line parameters and help page for same. (TQSL)
+
+Windows build now links the expat library statically, eliminating the
+need for libexpat.dll. (TQSL/TQSLCERT)
+
+1.09
+----
+ADIF editor now handles seconds in the TIME_ON field. (TQSL)
+
+User now gets chance to re-enter failed password during signing.
+(TQSL)
+
+Expanded explanation of QSO date-range dialog during signing. (TQSL)
+
+After loading new configuration data, DXCC list in CRQ wizard was hosed.
+(TQSLCERT)
+
+1.08
+----
+Added start-up warning if beta-test certificates are present.
+(TQSLCERT)
+
+Added version ident to outgoing .tq8 file. (TQSL)
+
+Added display of certificate info to getPassword dialog. (TQSL)
+
+1.07
+----
+Fixed GetPassword bug that kept the password from being accepted
+when trying to unlock the key during Certificate/Save. (TQSLCERT)
+
+1.06
+----
+Added support for new QSO data fields (propagation, satellite,
+rx band and rx freq. (TQSL)
+
+Added support for DXCC=NONE. (TQSLCERT)
+
+1.05
+----
+Now using TQSLLIB V1.2
+
+Added QSO Date Range dialog. (TQSL)
+
+1.04
+----
+"Delete" button in Preferences/ADIF_Modes wasn't getting
+enabled (Windows only). (TQSL)
+
+Assertion eror when adding Cabrillo mode to empty list
+in Preferences/Cabrillo_Specs (Windows only). (TQSL)
+
+Completed help files.
+
+1.03
+----
+Changed File menu items to be more descriptive (TQSL)
+
+Added optional call-sign format checking during signing. (TQSL)
+
+Added user-editable table of Cabrillo CONTEST
+specifications. (TQSL)
+
+Improved error reporting during log signing. (TQSL)
+
+Errors in log caused signing to be noncancellable. (TQSL)
+
+After signing error, same output file couldn't be reused. (TQSL)
+
+Added user data pointer to tqsllib callback functions. (TQSLLIB)
+
+Added PKCS#12 import and export. (TQSLLIB)
+
+Refactored wizard code for more consistent display. (TQSLCERT/TQSL)
+
+Added Certificate/Save and Certificate/Delete and added PKCS#12
+support to File/Load_Certificate_File. (TQSLCERT)
+
+Added broken-certificate indicator to certificate list. (TQSLCERT)
+
+Improved error trapping and reporting in certificate-request
+wizard (TQSLCERT)
+
+1.02
+----
+TQSL now gives the user the option of ignoring errors that occur during
+signing. Errors are still reported, however.
+
+Fixed ADIF parser zero-length-field problem. (TQSLLIB)
+
+Fixed certificate reqest wizard State field focus problem. (TQSLCERT)
+
+Added "Edit Locations" command to Station menu. (TQSL)
+
+Fixed mishanding of ITU zone and CQ zone data in station location. (TQSLLIB)
+
+Improved MODE handling in both TQSL and TQSLLIB. There is now a table of
+mode aliases that can be added to by the user, allowing the user to map
+nonstandard ADIF MODE values to ones acceptable to TQSL. This is applied
+both during File/Sign and File/Open operations.
+
+Fixed Cabrillo converter typo in ARRL-VHF-JAN contest. (TQSLLIB)
+
+1.01
+----
+Fixed error-return value when certificate not found during signing. (TQSLLIB)
+
+Fixed certificate selection criteria during signing and add station location.
+(Was allowing use of certificates not yet loaded.)
+
+Added ADIF frequency-to-band conversion. (TQSLLIB)

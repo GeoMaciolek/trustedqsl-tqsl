@@ -1,0 +1,71 @@
+<HTML><HEAD><TITLE>TQSL Accepting an Initial Callsign Certificate</TITLE></HEAD>
+
+<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+
+<BODY>
+<H3>Accepting an Initial Callsign Certificate</H3>
+<P>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>1.</td><td>You will receive email from the ARRL containing a message and an attached file named <CODE>YourCallsign.tq6</CODE></td></tr>
+</table>
+
+<table border="0" valign="top" align="left"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>1.a</td><td>The attached file contains your <i>Initial Callsign Certificate</i> -- save it into the folder <CODE>C:\MyLotWCertificates</CODE></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>1.b</td><td>The message will contain a <b>Web Account Username</b> and a <b>Web Account Password</b>; be sure to record these, as they are required to view your uploaded QSOs and LoTW-generated confirmations via https://p1k.arrl.org/lotwuser/default</td></tr>
+</table>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>2.</td><td>To proceed, the <CODE>YourCallsign.tq5</CODE> file must be present in <CODE>C:\MyLotW\Certificates</CODE> ; if you deleted this file, or initiated the request from a different computer, you'll have to start over by requesting a new Callsign Certificate from the ARRL</td></tr>
+	<tr><td>3.</td><td>Start the application <b>TQSLCERT</b>; the <b>tQSL Certificates</b> window will appear</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.a</td><td>In the <b>tQSL Certificates</b> window, select the <b>File:Load Certificate File</b> menu item; the <b>Load Certificate File</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>In the <b>Load Certificate File</b> dialog, set the <b>type of certificate</b> to <CODE>TQSL (.tq6)</CODE<, and click the <b>Next</b> button; the <b>Select Certificate File</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.c</td><td>In the <b>Select Certificate File</b> dialog, select the file <CODE>YourCallsign.tq6</CODE> in your <CODE>C:\MyLotW\Certificates</CODE> folder, and click the <b>Open</b> button; a small <b>Install Certificate</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.d</td><td>In the <b>Install Certificate</b> dialog, you'll be asked if its okay to install a trusted root certificate; click the <b>Yes</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.e</td><td>In the <b>Load Certificate File</b> dialog, click the <b>Finish</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.f</td><td>The <b>tQSL Certificates</b> dialog should now show an entry for your Callsign Certificate, with a yellow medal icon: <img src="TQSLCert.bmp" width=17 height=19></td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<col style="width:50px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.f.1.</td><td>Click on the entry for your Callsign Certificate to select it</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.f.2.</td><td>Create a <i>Certificate Container file</i> by selecting the <b>Certificate:Save</b> menu item; the <b>Enter PKCS#12 file to save to</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.f.3.</td><td>In the <b>Enter PKCS#12 file to save to</b> dialog, set the <b>Save in</b> folder to <CODE>C:\MyLotWCertificates</CODE>, set the <b>File name</b> to <CODE>YourCallsign.p12</CODE>, and click the <b>Save</b> button; a <b>PKCS#12 Password</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.f.4.</td><td>In the <b>PKCS#12 Password<b> dialog, specify the same password in both textboxes, and click the <b>OK</b> button; be certain to remember this password, as you'll need it whenever you use this Callsign Certificate to submit QSOs to LoTW</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.g</td><td>Terminate <b>tQSL Certificates</b> by selecting its <b>File:Exit</b> menu item</td></tr>
+</table>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>4.</td><td>Configure your <b>Backup and Restore</b> application to include <CODE>YourCallsign.p12</CODE> in the list of files it backs up</td></tr>
+	<tr><td>5.</td><td>At the completion of this phase, the folder <CODE>C:\MyLotWCertificates</CODE> will contain</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the <i>Certificate Request file</i> <CODE>YourCallsign.tq5</CODE> -- request sent to ARRL (no longer needed)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the <i>Certificate file</i> <CODE>YourCallsign.tq6</CODE> -- contains your actual Callsign Certificate, but in a form that cannot be moved or copied</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the <i>Certificate Container file</i>  <CODE>YourCallsign.p12</CODE> -- contains your Callsign Certificate in a form that can be moved, backed-up, and recovered; <b>be sure to make a backup copy!</b> You can use the <b>tQSL Certificates</b> application to extract <CODE>YourCallsign.tq6</CODE> from <CODE>YourCallsign.p12</CODE> if needed</td></tr>
+</table>
+
+<p>
+A table illustrating the icons used by <b>Windows</b> to designate the above-mentioned LoTW file types in <b>Windows Explorer</b> is provided <A HREF="files-icons.htm">here</a>.
+
+</BODY>
