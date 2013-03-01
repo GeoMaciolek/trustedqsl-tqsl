@@ -39,7 +39,7 @@ extern "C" {
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-DLLEXPORT int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename,
+DLLEXPORT int CALLCONVENTION tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename,
 	tQSL_Cert *certs, int ncerts, tQSL_Location loc);
 
 /** Initiates the conversion process for a Cabrillo file.
@@ -51,11 +51,11 @@ DLLEXPORT int tqsl_beginADIFConverter(tQSL_Converter *conv, const char *filename
   * tqsl_endConverter() should be called to free the resources when the conversion
   * is finished.
   */
-DLLEXPORT int tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename,
+DLLEXPORT int CALLCONVENTION tqsl_beginCabrilloConverter(tQSL_Converter *conv, const char *filename,
 	tQSL_Cert *certs, int ncerts, tQSL_Location loc);
 
 /** End the conversion process by freeing the used resources. */
-DLLEXPORT int tqsl_endConverter(tQSL_Converter *conv);
+DLLEXPORT int CALLCONVENTION tqsl_endConverter(tQSL_Converter *conv);
 
 /** Configure the converter to allow (allow != 0) or disallow (allow == 0)
   * nonamateur call signs in the CALL field. (Note: the test for
@@ -65,7 +65,32 @@ DLLEXPORT int tqsl_endConverter(tQSL_Converter *conv);
   * \c allow defaults to 0 when tqsl_beginADIFConverter or
   * tqsl_beginCabrilloConverter is called.
   */
-DLLEXPORT int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
+DLLEXPORT int CALLCONVENTION tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
+
+/** Configure the converter to allow (allow != 0) or disallow (allow == 0)
+  * duplicate QSOs in a signed log.
+  * Duplicate detection is done using QSO details, location details, and
+  * certificate serial number.
+  *
+  * \c allow defaults to 1 for backwards compatibility when tqsl_beginADIFConverter or
+  * tqsl_beginCabrilloConverter is called.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_setConverterAllowDuplicates(tQSL_Converter convp, int allow);
+
+/** Roll back insertions into the duplicates database.
+  *
+  * This is called when cancelling creating a log, and causes any records
+  * added to the duplicates database to be removed so re-processing that
+  * log does not cause the records to be mis-marked as duplicates.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_converterRollBack(tQSL_Converter convp);
+
+/** Commits insertions into the duplicates database.
+  *
+  * This is called when a log is created normally and without issue, and so
+  * the presumption is that we are "done" with these QSOs.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_converterCommit(tQSL_Converter convp);
 
 /** Set QSO date filtering in the converter.
   *
@@ -74,7 +99,8 @@ DLLEXPORT int tqsl_setConverterAllowBadCall(tQSL_Converter conv, int allow);
   * that date will be ignored. Either or both may be NULL (or point to an
   * invalid date) to disable date filtering for the respective range.
   */
-DLLEXPORT int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start,
+
+DLLEXPORT int CALLCONVENTION tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *start,
 	tQSL_Date *end);
 
 /** This is the main converter function. It returns a single GABBI
@@ -86,6 +112,9 @@ DLLEXPORT int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *st
   * is active (see ::tqsl_useADIFConverterDateFilter) and the QSO date is
   * outside the specified range. This is a non-fatal error.
   *
+  * tQSL_Error is set to TQSL_DUPLICATE_QSO if the QSO has already been
+  * processed on the current computer.
+  *
   * N.B. On systems that distinguish text-mode files from binary-mode files,
   * notably Windows, the GABBI records should be written in binary mode.
   *
@@ -95,20 +124,20 @@ DLLEXPORT int tqsl_setADIFConverterDateFilter(tQSL_Converter conv, tQSL_Date *st
   * initialized for signing, and then this function can be called again. No
   * data records will be lost in this process.
   */
-DLLEXPORT const char *tqsl_getConverterGABBI(tQSL_Converter conv);
+DLLEXPORT const char* CALLCONVENTION tqsl_getConverterGABBI(tQSL_Converter conv);
 
 /** Get the certificate used to sign the most recent QSO record. */
-DLLEXPORT int tqsl_getConverterCert(tQSL_Converter conv, tQSL_Cert *certp);
+DLLEXPORT int CALLCONVENTION tqsl_getConverterCert(tQSL_Converter conv, tQSL_Cert *certp);
 
 /** Get the input-file line number last read by the converter, starting
   * at line 1. */
-DLLEXPORT int tqsl_getConverterLine(tQSL_Converter conv, int *lineno);
+DLLEXPORT int CALLCONVENTION tqsl_getConverterLine(tQSL_Converter conv, int *lineno);
 
 /** Get the text of the last record read by the converter.
   *
   * Returns NULL on error.
   */
-DLLEXPORT const char *tqsl_getConverterRecordText(tQSL_Converter conv);
+DLLEXPORT const char* CALLCONVENTION tqsl_getConverterRecordText(tQSL_Converter conv);
 
 /** @} */
 
