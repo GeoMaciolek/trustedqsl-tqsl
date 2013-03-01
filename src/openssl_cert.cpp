@@ -131,6 +131,53 @@
 
 #define TQSLLIB_DEF
 
+
+
+#include "tqsllib.h"
+#include "tqslerrno.h"
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <string.h>
+#include <errno.h>
+#include <ctype.h>
+#include <map>
+#include <vector>
+#include <set>
+#include <string>
+
+#ifdef _WIN32
+    #include <direct.h>
+	#define MKDIR(x,y) _mkdir(x)
+#else
+	#define MKDIR(x,y) mkdir(x,y)
+	#include <unistd.h>
+    #include <dirent.h>
+#endif
+
+#include "winstrdefs.h"
+
+#ifdef _MSC_VER //is a visual studio compiler
+#include "windirent.h"
+#endif
+
+#define tqsl_malloc malloc
+#define tqsl_calloc calloc
+#define tqsl_free free
+
+#define TQSL_OBJ_TO_API(x) ((void *)(x))
+#define TQSL_API_TO_OBJ(x,type) ((type)(x))
+#define TQSL_API_TO_CERT(x) TQSL_API_TO_OBJ((x), tqsl_cert *)
+
+
+
+#include "openssl_cert.h"
+#include <openssl/err.h>
+#include <openssl/pem.h>
+#include <openssl/rand.h>
+#undef X509_NAME //http://www.mail-archive.com/openssl-users@openssl.org/msg59116.html
+#include <openssl/x509.h>
+#include <openssl/x509v3.h>
+#include <openssl/pkcs12.h>
 #include <openssl/opensslv.h>
 
 /* Ugly workaround for Openssl 1.0 bug per:
@@ -167,45 +214,7 @@ unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
 
 #endif	// OpenSSL v1.0
 
-#include "tqsllib.h"
-#include "tqslerrno.h"
-#include "openssl_cert.h"
-#include <openssl/err.h>
-#include <openssl/pem.h>
-#include <openssl/rand.h>
-#include <openssl/x509.h>
-#include <openssl/x509v3.h>
-#include <openssl/pkcs12.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <string.h>
-#include <errno.h>
-#include <ctype.h>
-#include <dirent.h>
-#include <map>
-#include <vector>
-#include <set>
-#include <string>
-
-using namespace std;
-using namespace tqsllib;
-
-#define tqsl_malloc malloc
-#define tqsl_calloc calloc
-#define tqsl_free free
-
-#define TQSL_OBJ_TO_API(x) ((void *)(x))
-#define TQSL_API_TO_OBJ(x,type) ((type)(x))
-#define TQSL_API_TO_CERT(x) TQSL_API_TO_OBJ((x), tqsl_cert *)
-
-#ifdef __WIN32__
-	#define MKDIR(x,y) mkdir(x)
-#else
-	#define MKDIR(x,y) mkdir(x,y)
-	#include <unistd.h>
-#endif
-
-#ifdef __WIN32__
+#ifdef _WIN32
 #define TQSL_OPEN_READ  "rb"
 #define TQSL_OPEN_WRITE  "wb"
 #define TQSL_OPEN_APPEND "ab"
@@ -219,6 +228,11 @@ using namespace tqsllib;
 #define uni2asc OPENSSL_uni2asc
 #define asc2uni OPENSSL_asc2uni
 #endif
+
+
+using namespace std;
+using namespace tqsllib;
+
 
 static char *tqsl_trim(char *buf);
 static int tqsl_check_parm(const char *p, const char *parmName);
@@ -367,7 +381,7 @@ tqsl_get_pem_serial(const char *pem, long *serial) {
 
 /********** PUBLIC API FUNCTIONS ***********/
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	int (*pwcb)(char *pwbuf, int pwsize,void *),void *userdata) {
 	TQSL_CERT_REQ *req = NULL;
@@ -618,7 +632,7 @@ end:
 	return rval;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getSelectedCertificate(tQSL_Cert *cert, tQSL_Cert **certlist,
 	int idx) {
 	
@@ -633,7 +647,7 @@ tqsl_getSelectedCertificate(tQSL_Cert *cert, tQSL_Cert **certlist,
 }
 
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flags) {
 	int withkeys = flags & TQSL_SELECT_CERT_WITHKEYS;
@@ -803,7 +817,7 @@ end:
 		RSA_free(rsa);
 	return rval;
 }
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly) {
 	if (tqsl_init())
 		return 1;
@@ -815,7 +829,7 @@ tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 	BIO *bio = NULL;
 	int len;
@@ -850,7 +864,7 @@ end:
 	return rval;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz) {
 	char nbuf[40];
 	TQSL_X509_NAME_ITEM item;
@@ -878,7 +892,7 @@ tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz) {
 }
 
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateAROName(tQSL_Cert cert, char *buf, int bufsiz) {
 	char nbuf[40];
 	TQSL_X509_NAME_ITEM item;
@@ -897,7 +911,7 @@ tqsl_getCertificateAROName(tQSL_Cert cert, char *buf, int bufsiz) {
 }
 
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateEmailAddress(tQSL_Cert cert, char *buf, int bufsiz) {
 	char nbuf[40];
 	TQSL_X509_NAME_ITEM item;
@@ -915,7 +929,7 @@ tqsl_getCertificateEmailAddress(tQSL_Cert cert, char *buf, int bufsiz) {
 	return !tqsl_cert_get_subject_name_entry(TQSL_API_TO_CERT(cert)->cert, "emailAddress", &item);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateSerial(tQSL_Cert cert, long *serial) {
 	if (tqsl_init())
 		return 1;
@@ -927,7 +941,7 @@ tqsl_getCertificateSerial(tQSL_Cert cert, long *serial) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateSerialExt(tQSL_Cert cert, char *serial, int serialsiz) {
 	if (tqsl_init())
 		return 1;
@@ -945,7 +959,7 @@ tqsl_getCertificateSerialExt(tQSL_Cert cert, char *serial, int serialsiz) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateSerialLength(tQSL_Cert cert) {
 	int rval;
 	if (tqsl_init())
@@ -963,7 +977,7 @@ tqsl_getCertificateSerialLength(tQSL_Cert cert) {
 	return rval;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz) {
 	char *cp;
 
@@ -980,7 +994,7 @@ tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz) {
 }
 
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz) {
 	char nbuf[40];
 	TQSL_X509_NAME_ITEM item;
@@ -1012,7 +1026,7 @@ tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz) {
 	return !tqsl_get_name_entry(iss, "organizationName", &item);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int bufsiz) {
 	char nbuf[40];
 	TQSL_X509_NAME_ITEM item;
@@ -1044,7 +1058,7 @@ tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int bufsi
 	return !tqsl_get_name_entry(iss, "organizationalUnitName", &item);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateQSONotBeforeDate(tQSL_Cert cert, tQSL_Date *date) {
 	char datebuf[40];
 	int len = (sizeof datebuf) -1;
@@ -1067,7 +1081,7 @@ tqsl_getCertificateQSONotBeforeDate(tQSL_Cert cert, tQSL_Date *date) {
 	return tqsl_initDate(date, (char *)datebuf);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateQSONotAfterDate(tQSL_Cert cert, tQSL_Date *date) {
 	char datebuf[40];
 	int len = (sizeof datebuf) -1;
@@ -1090,7 +1104,7 @@ tqsl_getCertificateQSONotAfterDate(tQSL_Cert cert, tQSL_Date *date) {
 	return tqsl_initDate(date, (char *)datebuf);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date) {
 	ASN1_TIME *tm;
 
@@ -1111,7 +1125,7 @@ tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date) {
 	return tqsl_get_asn1_date(tm, date);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date) {
 	ASN1_TIME *tm;
 
@@ -1128,7 +1142,7 @@ tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date) {
 	return tqsl_get_asn1_date(tm, date);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc) {
 	char buf[40];
 	int len = sizeof buf;
@@ -1150,7 +1164,7 @@ tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificatePrivateKeyType(tQSL_Cert cert) {
 	if (tqsl_init())
 		return 1;
@@ -1186,12 +1200,12 @@ tqsl_getCertificatePrivateKeyType(tQSL_Cert cert) {
 }
 */
 
-DLLEXPORT void
+DLLEXPORT void CALLCONVENTION
 tqsl_freeCertificate(tQSL_Cert cert) {
 	tqsl_cert_free(TQSL_API_TO_CERT(cert));
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_beginSigning(tQSL_Cert cert, char *password, int(*pwcb)(char *, int,void *),void *userdata) {
 	if (tqsl_init())
 		return 1;
@@ -1213,7 +1227,7 @@ tqsl_beginSigning(tQSL_Cert cert, char *password, int(*pwcb)(char *, int,void *)
 		&(TQSL_API_TO_CERT(cert)->crq), password, pwcb, userdata);
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize) {
 	if (tqsl_init())
 		return 1;
@@ -1229,7 +1243,7 @@ tqsl_getMaxSignatureSize(tQSL_Cert cert, int *sigsize) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_checkSigningStatus(tQSL_Cert cert) {
 	if (tqsl_init())
 		return 1;
@@ -1244,7 +1258,7 @@ tqsl_checkSigningStatus(tQSL_Cert cert) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int *siglen) {
 	EVP_MD_CTX ctx;
 	unsigned int slen = *siglen;
@@ -1269,7 +1283,7 @@ tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsig
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsigned char *sig, int siglen) {
 	EVP_MD_CTX ctx;
 	unsigned int slen = siglen;
@@ -1293,7 +1307,7 @@ tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, uns
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_endSigning(tQSL_Cert cert) {
 	if (tqsl_init())
 		return 1;
@@ -1308,7 +1322,7 @@ tqsl_endSigning(tQSL_Cert cert) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestAddress1(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1318,7 +1332,7 @@ tqsl_getCertificateRequestAddress1(tQSL_Cert cert, char *buf, int bufsiz) {
 	return 0;
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestAddress2(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1328,7 +1342,7 @@ tqsl_getCertificateRequestAddress2(tQSL_Cert cert, char *buf, int bufsiz) {
 	return 0;
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestCity(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1338,7 +1352,7 @@ tqsl_getCertificateRequestCity(tQSL_Cert cert, char *buf, int bufsiz) {
 	return 0;
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestState(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1348,7 +1362,7 @@ tqsl_getCertificateRequestState(tQSL_Cert cert, char *buf, int bufsiz) {
 	return 0;
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestPostalCode(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1358,7 +1372,7 @@ tqsl_getCertificateRequestPostalCode(tQSL_Cert cert, char *buf, int bufsiz) {
 	return 0;
 }
 	
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateRequestCountry(tQSL_Cert cert, char *buf, int bufsiz) {
 	if (tqsl_check_crq_field(cert, buf, bufsiz))
 		return 1;
@@ -1422,7 +1436,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 }
 
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password) {
 	STACK_OF(X509) *root_sk = 0, *ca_sk = 0, *chain = 0;
 	const char *cp;
@@ -1587,10 +1601,14 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 
 	/* Form into PKCS12 data */
 	p12 = PKCS12_init(NID_pkcs7_data);
-#if (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00908000
-	ASN1_seq_pack_PKCS7(safes, (int(*)(PKCS7*, unsigned char**))i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#if OPENSSL_VERSION_NUMBER >= 0x10000000L //from http://www.redhat.com/archives/fedora-extras-commits/2009-August/msg08568.html
+	ASN1_seq_pack((STACK_OF(OPENSSL_BLOCK)*)safes, (int(*)(void*, unsigned char**))i2d_PKCS7, &(p12)->authsafes->d.data->data,
 #else
-	ASN1_seq_pack_PKCS7(safes, (int(*)())i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#if (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00908000
+        ASN1_seq_pack_PKCS7(safes, (int(*)(PKCS7*, unsigned char**))i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#else
+        ASN1_seq_pack_PKCS7(safes, (int(*)())i2d_PKCS7, &(p12)->authsafes->d.data->data,
+#endif
 #endif
 		&(p12)->authsafes->d.data->length);
 	sk_PKCS7_pop_free(safes, PKCS7_free);
@@ -1663,7 +1681,7 @@ tqsl_get_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, string& str) {
 	return 0;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
 	int (*pwcb)(char *,int, void *), int(*cb)(int, const char *,void *), void *userdata) {
 	PKCS12 *p12 = 0;
@@ -1917,11 +1935,11 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 		if (tqsl_import_cert(it->pem.c_str(), USERCERT, cb, userdata)) {
 			char savepath[1024], badpath[1024];
 			strncpy(badpath, path, sizeof(badpath));
-			strncat(badpath, ".bad", sizeof(badpath));
+			strncat(badpath, ".bad", sizeof(badpath)-strlen(badpath)-1);
 			badpath[sizeof(badpath)-1] = '\0';
 			if (!rename(path, badpath)) {
 				strncpy(savepath, path, sizeof(savepath));
-				strncat(savepath, ".save", sizeof(savepath));
+				strncat(savepath, ".save", sizeof(savepath)-strlen(savepath)-1);
 				savepath[sizeof(savepath)-1] = '\0';
 				if (rename(savepath, path))  // didn't work
 					rename(badpath, path);
@@ -1955,7 +1973,7 @@ imp_end:
 	return rval;
 }
 
-DLLEXPORT int
+DLLEXPORT int CALLCONVENTION
 tqsl_deleteCertificate(tQSL_Cert cert) {
 	if (tqsl_init())
 		return 1;
@@ -2133,7 +2151,7 @@ tqsl_check_parm(const char *p, const char *parmName) {
 	if (strlen(p) == 0) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		strncpy(tQSL_CustomError, "Missing parameter: ", sizeof tQSL_CustomError);
-		strncat(tQSL_CustomError, parmName, sizeof tQSL_CustomError - strlen(tQSL_CustomError));
+		strncat(tQSL_CustomError, parmName, sizeof tQSL_CustomError - strlen(tQSL_CustomError)-1);
 		return 1;
 	}
 	return 0;
@@ -2766,7 +2784,7 @@ tqsl_ssl_error_is_nofile() {
 	if (tQSL_Error == TQSL_OPENSSL_ERROR &&
 		ERR_GET_LIB(l) == ERR_LIB_SYS && ERR_GET_FUNC(l) == SYS_F_FOPEN)
 		return 1;
-	if (tQSL_Error == TQSL_SYSTEM_ERROR && errno == ENOENT)
+	if (tQSL_Error == TQSL_SYSTEM_ERROR && tQSL_Errno == ENOENT)
 		return 1;
 	return 0;
 }
@@ -3107,7 +3125,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	BIO_free(bio);
 	bio = 0;
 	if (tqsl_open_key_file(path)) {
-		if (tQSL_Error != TQSL_SYSTEM_ERROR || errno != ENOENT)
+		if (tQSL_Error != TQSL_SYSTEM_ERROR || tQSL_Errno != ENOENT)
 			return 1;
 		tQSL_Error = TQSL_NO_ERROR;
 	}
