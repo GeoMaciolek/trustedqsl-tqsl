@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="1" minorversion="20">
+<tqslconfig majorversion="1" minorversion="19">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -4113,7 +4113,7 @@
         <enum value="HI" zonemap="61:31">Hawaii</enum>
       </enums>
       <enums dependency="291">
-        <enum value="AL" zonemap="08:05">Alabama</enum>
+        <enum value="AL" zonemap="08:04">Alabama</enum>
         <enum value="AZ" zonemap="06:03,07:03">Arizona</enum>
         <enum value="AR" zonemap="07:04,08:04">Arkansas</enum>
         <enum value="CA" zonemap="06:03">California</enum>
@@ -4143,7 +4143,7 @@
         <enum value="NH" zonemap="08:05">New Hampshire</enum>
         <enum value="NJ" zonemap="08:05">New Jersey</enum>
         <enum value="NM" zonemap="07:04">New Mexico</enum>
-        <enum value="NY" zonemap="08:03">New York</enum>
+        <enum value="NY" zonemap="08:05">New York</enum>
         <enum value="NC" zonemap="08:05">North Carolina</enum>
         <enum value="ND" zonemap="07:04">North Dakota</enum>
         <enum value="OH" zonemap="08:04">Ohio</enum>
