@@ -14,8 +14,6 @@
 
 #include "getpassword.h"
 
-using namespace std;
-
 #define GPW_ID_LOW 6400
 
 #define GPW_ID_PW1 GPW_ID_LOW
