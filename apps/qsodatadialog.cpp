@@ -34,7 +34,7 @@ using namespace std;
 	#define TEXT_POINTS 10
 	#define VSEP 3
 	#define GEOM1 4
-#elif defined(MAC)
+#elif defined(__APPLE__)
         #define TEXT_HEIGHT 24
         #define LABEL_HEIGHT 18
         #define TEXT_WIDTH 8
@@ -383,7 +383,7 @@ QSODataDialog::TransferDataToWindow() {
 	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
 	else
-		wxLogWarning(wxString(wxT("QSO Data: Invalid Mode ignored - ")) + rec._mode.Upper());
+		wxLogWarning(wxT("QSO Data: Invalid Mode ignored - %s"), (const char*) rec._mode.Upper().mb_str());
 	if ((it = find(valid_bands.begin(), valid_bands.end(), rec._band.Upper())) != valid_bands.end())
 		_band = distance(valid_bands.begin(), it);
 	if ((it = find(valid_rxbands.begin(), valid_rxbands.end(), rec._rxband.Upper())) != valid_rxbands.end())
@@ -426,8 +426,13 @@ QSODataDialog::SetRecno(int new_recno) {
 //   		(*_reclist)[_recno-1] = rec;
 		if (new_recno > (int)_reclist->size()) {
 			new_recno = _reclist->size() + 1;
-			QSORecord blankrec;
-			_reclist->push_back(blankrec);
+			QSORecord newrec;
+			// Copy QSO fields from current record
+			if (_recno > 0) {
+				newrec = (*_reclist)[_recno-1];
+				newrec._call = wxT("");
+			}
+			_reclist->push_back(newrec);
 		}
    		_recno = new_recno;
    		rec = (*_reclist)[_recno-1];
