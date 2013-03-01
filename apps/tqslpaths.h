@@ -12,7 +12,7 @@
 #include "sysconfig.h"
 #endif
 
-#ifdef MAC
+#ifdef __APPLE__
 #include "Carbon.h"
 #endif
 
@@ -25,7 +25,7 @@ class DocPaths : public wxPathList {
 public:
 	DocPaths(wxString subdir) : wxPathList() {
 		Add(wxGetHomeDir() + wxT("/help/") + subdir);
-#if defined(__WIN32__)
+#if defined(_WIN32)
 		HKEY hkey;
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\TrustedQSL",
 			0, KEY_READ, &hkey) == ERROR_SUCCESS) {
@@ -39,7 +39,7 @@ public:
 			}
 		}
 		Add(wxT("help/") + subdir);
-#elif defined(MAC)
+#elif defined(__APPLE__)
                 CFURLRef mainBundleURL;
                 FSRef bundleFSRef;
                 char npath[1024];
