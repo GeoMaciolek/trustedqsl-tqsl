@@ -21,14 +21,19 @@
 
 wxString
 notifyData::Message() const {
+	
+	wxString msgs = errors;
+	if (!wxIsEmpty(errors))
+		msgs = wxT("Import Messages: ") + errors + wxT("\n");
+
 	return wxString::Format(
-		wxT("Import Messages:\n%s\n\n"
-		"Root Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
-		"CA Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
-		"User Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
-		"Private Keys:\n     Loaded: %d  Duplicate: %d  Error: %d\n"
-		"Configuration Data:\n     Loaded: %d  Duplicate: %d  Error: %d"),
-		errors.c_str(),
+		wxT("%s")
+		wxT("Root Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("CA Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("User Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Private Keys:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Configuration Data:\n     Loaded: %d  Duplicate: %d  Error: %d"),
+		msgs.c_str(),
 		root.loaded, root.duplicate, root.error,
 		ca.loaded, ca.duplicate, ca.error,
 		user.loaded, user.duplicate, user.error,
@@ -123,10 +128,10 @@ static wxString pw_helpfile;
 static int
 GetNewPassword(char *buf, int bufsiz, void *) {
 	GetNewPasswordDialog dial(0, wxT("New Password"),
-wxT("Enter password for private key.\n\n"
-"This password will have to be entered each time\n"
-"you use the key/certificate for signing or when\n"
-"saving the key."), true, pw_help, pw_helpfile);
+wxT("Enter password for private key.\n\n")
+wxT("This password will have to be entered each time\n")
+wxT("you use the key/certificate for signing or when\n")
+wxT("saving the key."), true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().mb_str(), bufsiz);
 		buf[bufsiz-1] = 0;
@@ -162,9 +167,9 @@ LCW_IntroPage::LCW_IntroPage(LoadCertWiz *parent, LCW_Page *tq6next)
 	_p12but->SetValue(true);
 	butsizer->Add(_p12but, 0, wxALIGN_TOP, 0);
 	butsizer->Add(new wxStaticText(this, -1,
-wxT("PKCS#12 (.p12) certificate file - A file you've saved that contains\n"
-"a certificate and/or private key. This file is typically password\n"
-"protected and you'll need to provide a password in order to open it.")),
+wxT("PKCS#12 (.p12) certificate file - A file you've saved that contains\n")
+wxT("a certificate and/or private key. This file is typically password\n")
+wxT("protected and you'll need to provide a password in order to open it.")),
 		0, wxLEFT, 5);
 
 	sizer->Add(butsizer, 0, wxALL, 10);
@@ -173,8 +178,8 @@ wxT("PKCS#12 (.p12) certificate file - A file you've saved that contains\n"
 	butsizer->Add(new wxRadioButton(this, ID_LCW_TQ6, wxT(""), wxDefaultPosition, wxDefaultSize, 0),
 		0, wxALIGN_TOP, 0);
 	butsizer->Add(new wxStaticText(this, -1,
-wxT("TQSL (.tq6) certificate file - A file you received from a certificate\n"
-"issuer that contains the issued certificate and/or configuration data.")),
+wxT("TQSL (.tq6) certificate file - A file you received from a certificate\n")
+wxT("issuer that contains the issued certificate and/or configuration data.")),
 		0, wxLEFT, 5);
 
 	sizer->Add(butsizer, 0, wxALL, 10);
@@ -200,10 +205,10 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 					if (serial == newserial) {
 						wxCommandEvent e;
 	    					if (wxMessageBox(
-wxT("You will not be able to use this tq6 file to recover your\n"
-"certificate if it gets lost. For security purposes, you should\n"
-"back up your certificate on removable media for safe-keeping.\n\n"
-"Would you like to back up your certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+wxT("You will not be able to use this tq6 file to recover your\n")
+wxT("certificate if it gets lost. For security purposes, you should\n")
+wxT("back up your certificate on removable media for safe-keeping.\n\n")
+wxT("Would you like to back up your certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);
