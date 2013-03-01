@@ -14,6 +14,8 @@
 #include "dxcc.h"
 #include "tqsllib.h"
 
+#include "winstrdefs.h"
+
 bool DXCC::_init = false;
 
 static int num_entities = 0;
