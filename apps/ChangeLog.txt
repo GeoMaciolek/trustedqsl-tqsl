@@ -5,50 +5,57 @@ TQSL/TQSLCERT changes
 ----
 Major feature additions:
 
- - Upload log files directly from TrustedQSL! Simply choose "sign and upload" 
+ - Upload log files directly from TrustedQSL! Simply choose "sign and upload"
    from the File menu and your log will signed and uploaded automatically with
    no extra work.
-   
-    - Command line flag '-u' has been added to expose this functionality to 
-	  tools authors. The return value to determine whether the upload
-      succeeded or failed, and why
-	  
-	  0=success; log signed and uploaded and accepted without incident
-	  1=soft fail (empty log?)
-	  2=active reject (the server recieved the log and decided to reject it)
-	  3=passive reject (the server is probably down; unexpected response)
-      4=hard fail (internal error)
-	  5=tqsllib internal error (probably a bad filename)
- 
+
+ - Command line flag '-u' has been added to expose this functionality to
+   tools authors. The return value to determine whether the upload
+   succeeded or failed, and why
+
+          0=success; log signed and uploaded and accepted without incident
+          1=soft fail (empty log?)
+          2=active reject (the server recieved the log and decided to reject it)
+          3=passive reject (the server is probably down; unexpected response)
+          4=hard fail (internal error)
+          5=tqsllib internal error (probably a bad filename)
+
  - Automatically check for updates. If a new version is available, you will be
    periodically prompted to download and install it. You can also check manually
-   
+
  - Duplicate checking. Any QSOs that have been successfully uploaded to Logbook
    of the World or saved to a file are registered in a databse. Any exact
    duplicates are automatically stripped from future logs. This can be disabled
    on a case-by-case basis, in case a log was signed but never uploaded, or
    there was a server issue that led to an upload going unprocessed.
-   
+
+ - TQSL will now ensure that the CQ and ITU zones, and subdivisions if any
+   (US state/county, Canadian province, Russian oblast) are valid with respect
+   to each other. This should reduce the incidence of swapped CQ/ITU zones and
+   in general should help ensure that more accurate location data is uploaded.
+   When an attempt is made to use a location with errors (such as CQ/ITU
+   zones being reversed) the user is notified to correct the errors.
+
  - Installer on Windows is now a Microsoft Windows Installer package, instead of
    an executable. This will allow for easier and cleaner upgrades
- 
+
 Minor changes:
 
  - TQSL/TQSLCERT now have window icons
- 
+
  - Double-clicking an entry in the "Choose station location" window for signing
    now selects it, instead of opening it for editing
-   
+
  - Command line parsing has been rewritten and should be more robust. Also,
-   command-line documentation is available with '-h' 
-   
+   command-line documentation is available with '-h'
+
  - Files to sign and save are now prompted before location and date range
- 
+
  - The build number is now shown in the About box; please include this when
    asking for help
-   
+
  - The final confirmation before signing includes the signing station location
- 
+
  - Dozens of bug fixes and potential or real crashes fixed.
 
 TQSL/TQSLCERT and the rest of TrustedQSL now built with the CMake build system
@@ -56,7 +63,7 @@ TQSL/TQSLCERT and the rest of TrustedQSL now built with the CMake build system
 TQSL/TQSLCERT are now built with MSVC on Windows.
 
 ** Windows 98 support has been dropped. This will be one of the last releases
-to support Windows 2000. 
+to support Windows 2000.
 
 ** This will be one of the last releases to support OS X on PowerPC systems.
 
