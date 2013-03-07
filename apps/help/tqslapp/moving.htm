@@ -5,4 +5,61 @@
 <BODY>
 <H3>Moving Callsign Certificates and Station Locations from One Computer to Another</H3>
 <P>
+
+If you have TQSL and TQSLCert running on one computer (the <i>source</i>) and wish to set it up on a second computer (the <i>destination</i>), you must
+
+<UL>
+<LI><a href="installation.htm">Install TQSL and TQSLCert on the <i>destination</i> computer</a></li>
+<LI>Copy each of your <a href="glossary.htm#callsign_certifcate">Callsign Certificates</a> from the <i>source</i> to the <i>destination</i></li>
+<LI>Copy each of your <a href="glossary.htm#station_location">Station Locations</a> from the <i>source</i> to the <i>destination</i></li>
+</UL>
+<p>
+<H5>Moving a Callsign Certificate to Another Computer</H5>
+A <a href="files-icons.htm">Callsign Certificate file</a>, whose <i>filename extension</i> is <code>.tq6</code>, cannot be simply copied from one computer to another. 
+Only a <a href="files-icons.htm">Certificate Container</a> file, whose <i>extension</i> is <code>.p12</code>, can be moved in this manner. 
+<p>
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>1.</td><td>If you have not created a Certificate Container file for the Callsign Certificate you wish to move, do so by following <a href="certaccept.htm">the instructions in step 3.f</a></td></tr>
+	<tr><td>2.</td><td>Copy the Certificate Container file from the <i>source</i> computer to the <i>destination</i> computer</td></tr>
+	<tr><td>3.</td><td>On the <i>destination</i> computer, run the <b>TQSLCert</b> application</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.a</td><td>Open the <b>File</b> menu and select the <b>Load Certificate File</b> command; the <b>Load Certificate file</b> dialog will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>In the <b>Load Certificate file</b> dialog, Select <b>PKCS#12(.p12) certificate file</b>, and click the <b>Next</b> button; the <b>Select Certificate File</b> dialog will appear.</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.c</td><td>In the <b>Select Certificate File</b> dialog, select the Certificate Container file you copied in step 2 above, and click the <b>Open</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.d</td><td>In the <b>Load Certificate file</b> dialog, enter the password you specified when you created the Certificate Container file, and click the <b>Next</b> button; the <b>New Password</b> dialog will appear.</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.e</td><td>In the <b>New Password</b> dialog, specify a password in both textboxes (you can use the same password you supplied in step 3.d), and click the <b>Ok</b> button; the <b>Load Certificate file</b> dialog should display <I>Loading complete</i></td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>In the <b>Load Certificate file</b> dialog, click the <b>Finish</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>In the <b>tQSL Certificates</b> window, select the <b>File</b> menu's <b>Exit</b> command</td></tr>
+	</table>
+	
+<H5>Moving a Station Location to Another Computer</H5>
+
+<b>Windows</b>
+<p>
+TQSL stores all of your <a href="glossary.htm#station_location">Station Locations</a> in a file named <code>station_data</code>, 
+which can simply be copied from one computer to another. No matter what version of Windows you're using, you can navigate to 
+the <i>source</i> computer's folder that contains this file and the <i>destination</i> computer's folder that will receive this 
+file with the following two steps in <b>Windows Explorer</b>:
+<OL>
+<LI>double-click <b>Computer</b> or <b>My Computer</b></LI>
+<LI>In Windows Explorer's <b>Address</b> bar, type <code>"%AppData%\TrustedQSL</code> and strike the Enter key
+</OL>
+
+<p>
+<b>Apple OS X</b>
+<p>If the operating system is OS X, the <code>station_data</code> file resides in the folder <code>~/.tqsl</code>
+<p>
+<b>Linux</b>
+<p>If the operating system is Linux, the <code>station_data</code> file resides in the folder <code>~/.tqsl</code>
+<p>
+<b>Copying the <code>station_data</code> file</b>
+<p>
+After you've found the <code>station_data</code> file on <i>source</i> computer and identified the proper location on the <i>destination</i> computer, simply copy the file from the <i>source</i> 
+to the proper folder on the <i>destination</i>. Then start <b>TQSL</b> on the <i>destination</i> computer,
+open the <b>Station</b> menu, and select the <b>Edit locations</b> command; the <b>Edit Station Locations</b> dialog should now list your station locations.
 </BODY>

@@ -5,4 +5,52 @@
 <BODY>
 <H3>Accepting an Additional Callsign Certificate</H3>
 <P>
+These instructions assume that  your <a href="glossary.htm#callsign_certificate">Callsign Certificates</a> reside in the folder <CODE>C:\MyLoTWCertificates</CODE> (if you've stored them in a different folder, adjust the instructions accordingly).
+<p>
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>1.</td><td>You will receive email from the ARRL containing an attached file named <code>theCallsign.tq6</code> -- save this fileinto the folder <CODE>C:\MyLoTWCertificates</CODE></td></tr>
+	<tr><td>2.</td><td>To proceed, the file <CODE>theCallsign.tq5</CODE> must be present in <CODE>C:\MyLoTWCertificates</CODE>; if you deleted this file, you'll have to start over by requesting a new certificate from the ARRL</td></tr>
+	<tr><td>3.</td><td>Start the <b>TQSLCert</b>application; the <b>tQSL Certificates</b> window will appear</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.a</td><td>in the <b>tQSL Certificates</b> window, open the <b>File</b> menu and select the <b>Load Certificate File</b> command; the <b>Load Certificate File</b> window will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.b</td><td>in the <b>Load Certificate File</b> window, set the <b>type of certificate</b> to <code>TQSL (.tq6)</code>, and click the <b>Next</b> button; the <b>Select Certificate File</b> window will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.c</td><td>in the <b>Select Certificate File</b> window, select the file <CODE>C:\MyLoTWCertificates\theCallsign.tq6</code> and click the <b>Open</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.d</td><td>in the <b>Load Certificate File</b> window, click the <b>Finish</b> button</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.e</td><td>the <b>tQSL Certificates</b> window should now show an entry for your certificate with a yellow medal icon: <img src="TQSLCert.bmp" width=17 height=19></td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<col style="width:50px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.e.1.</td><td>click on this entry to select it</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.e.2.</td><td>open the <b>Certificate<b> menu and select the <b>Save</b> command; the <b>Enter PKCS#12 file to save to</b> window will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.e.3.</td><td>in the <b>Enter PKCS#12 file to save to</b> window, set the <b>Save in</b> folder to <CODE>C:\MyLoTWCertificates</CODE>, set the <b>File name</b> to <code>theCallsign.p12</code>, and click the <b>Save</b> button; a <b>PKCS#12 Password</b> window will appear</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>3.e.4.</td><td>in the <b>PKCS#12 Password</b> window, specify a password in both textboxes, and click the OK button; be sure to remember this password, as you'll be prompted to present it when using this Callsign Certificate to submit QSOs to LotW.</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.f</td><td>terminate <b>tQSL Certificates</b> by opening its <b>File</b> menau and selecting the <b>Exit</b> command</td></tr>
+</table>
+
+<table border="0" valign="top" align="left">
+	<col style="width:30px">
+	<tr><td>4.</td><td>Configure your Backup and Restore application to include <CODE>C:\MyLoTWCertificates\theCallsign.p12</code> in the list of files it backs up</td></tr>
+	<tr><td>5.</td><td>At the completion of these actions, the folder <CODE>C:\MyLoTWCertificates</CODE> will contain</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the file <code>theCallsign.tq6</code> -- contains the actual Callsign Certificate, but in a form that cannot be moved to another folder or saved on an archival storage device</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the file <code>theCallsign.p12</code> -- contains the Callsign Certificate in a form that can be moved, backed-up, and recovered; you can use the <b>tQSL Certificates</b> application to extract <code>YourCallsign.tq6</code> from <code>YourCallsign.tq12</code> if needed</td></tr>
+</table>
+
 </BODY>
