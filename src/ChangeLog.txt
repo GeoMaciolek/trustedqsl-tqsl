@@ -3,6 +3,10 @@ TQSLLIB changes
 
 2.3
 ---
+Add a mechanism to the location definition process to allow enforcement
+of proper zone number combinations. A status message is returned to allow
+the caller to report illogical selections.
+
 Duplicate checking database. No changes necessary for exising code. However
 new or updated code is strongly encouraged to enable duplicate checking
 and commit or discard a particular signing instance as appropriate

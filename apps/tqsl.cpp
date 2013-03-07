@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqsl.cpp,v 1.13 2010/03/19 21:31:02 k1mu Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -119,8 +119,8 @@ getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqsl_getDXCCEntityName(dxcc, &dxccname);
 	
 	wxString message = wxString::Format(wxT("Enter the password to unlock the private key for\n"
-		wxT("%s -- %s\n(This is the password you made up when you\nrequested the certificate.)")),
-		wxString(call, wxConvLocal).c_str(), wxString(dxccname, wxConvLocal).c_str());
+		wxT("%hs -- %hs\n(This is the password you made up when you\nrequested the certificate.)")),
+		call, dxccname);
 
 	wxWindow* top = wxGetApp().GetTopWindow();
 	top->SetFocus();
@@ -354,13 +354,13 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		int newq = qso_count - dupes;
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
 		wxT("to have already been uploaded to LoTW, and ")
-		wxT("%d QSO%s new.\n\n")
+		wxT("%d QSO%hs new.\n\n")
 		wxT("Press 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
 		wxT("Press 'Cancel' to abandon processing this log file.\n")
 		wxT("Press 'Allow Duplicates' to re-process this log ")
 		wxT("while allowing duplicate QSOs."),
 			dupes, newq, 
-			(newq == 1) ? wxT("which is") : wxT("s which are"));
+			(newq == 1) ? "which is" : "s which are");
 	}
 	sizer->Add(new wxStaticText(this, -1, message), 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -453,7 +453,7 @@ static void
 get_certlist(string callsign, int dxcc) {
 	free_certlist();
 	tqsl_selectCertificates(&certlist, &ncerts,
-		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, 0);
+		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
 }
 
 class MyFrame : public wxFrame {
@@ -659,11 +659,11 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
 	msg += wxVERSION_STRING;
@@ -681,7 +681,7 @@ AddEditStationLocation(tQSL_Location loc, const wxString& title = wxT("Add Stati
 		run_station_wizard(frame, loc, &(frame->help), title);
 	}
 	catch (TQSLException& x) {
-		wxLogError(wxT("%s"), x.what());
+		wxLogError(wxT("%hs"), x.what());
 	}
 }
 
@@ -689,17 +689,22 @@ void
 MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	tQSL_Location loc;
 	if (tqsl_initStationLocationCapture(&loc)) {
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
 	AddEditStationLocation(loc);
 	if (tqsl_endStationLocationCapture(&loc)) {
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
 }
 
 void
 MyFrame::EditStationLocation(wxCommandEvent& WXUNUSED(event)) {
-	SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+	try {
+		SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+	}
+	catch (TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
+	}
 }
 
 void
@@ -805,12 +810,12 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	TQSL_ADIF_GET_FIELD_ERROR stat;
 	tQSL_ADIF adif;
 	if (tqsl_beginADIF(&adif, file.mb_str())) {
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
 	QSORecord rec;
 	do {
 		if (tqsl_getADIFField(adif, &field, &stat, fielddefs, defined_types, adif_alloc)) {
-			wxLogError(wxT("%s"), tqsl_getErrorString());
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		}
 		if (stat == TQSL_ADIF_GET_FIELD_SUCCESS) {
 			if (!strcasecmp(field.name, "CALL"))
@@ -864,7 +869,7 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs, file.mb_str());
 	} catch (TQSLException& x) {
-		wxLogError(wxT("%s"), x.what());
+		wxLogError(wxT("%hs"), x.what());
 	}
 }
 
@@ -876,7 +881,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs);
 	} catch (TQSLException& x) {
-		wxLogError(wxT("%s"), x.what());
+		wxLogError(wxT("%hs"), x.what());
 	}
 }
 
@@ -899,8 +904,7 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 		return false;
 	}
 
-	wxLogMessage(wxT("Signing using CALL=%s, DXCC=%d"), wxString(callsign, wxConvLocal).c_str(),
-		dxcc);
+	wxLogMessage(wxT("Signing using CALL=%hs, DXCC=%d"), callsign, dxcc);
 
 	init_modes();
 	init_contests();
@@ -948,9 +952,9 @@ restart:
 		int major = 0, minor = 0, config_major = 0, config_minor = 0;
 		tqsl_getVersion(&major, &minor);
 		tqsl_getConfigVersion(&config_major, &config_minor);
-		wxString ident = wxString::Format(wxT("%s Lib: V%d.%d Config: V%d.%d AllowDupes: %s"), wxString(iam, wxConvLocal).c_str(),
+		wxString ident = wxString::Format(wxT("%hs Lib: V%d.%d Config: V%d.%d AllowDupes: %hs"), iam,
 			major, minor, config_major, config_minor,
-			allow_dupes ? wxT("true") : wxT("false"));
+			allow_dupes ? "true" : "false");
 		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), (int)ident.length(), ident.c_str());
 		gabbi_ident += wxT("\n");
 
@@ -1390,7 +1394,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		} else { //error
 			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
 			// was turned into garbage otherwise
-			wxLogMessage(wxT("Couldn't upload the file: CURL returned %s"), wxString::FromAscii(errorbuf).c_str());
+			wxLogMessage(wxT("Couldn't upload the file: CURL returned %hs"), errorbuf);
 			retval=4;
 		}
 		if (this) upload->Destroy();
@@ -1410,31 +1414,61 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 }
 
+// Verify that a certificate exists for this station location
+// before allowing the location to be edited
+static bool verify_cert(tQSL_Location loc) {
+	char call[128];
+	tQSL_Cert *certlist;
+	int ncerts;
+	// Get the callsign from the location
+	check_tqsl_error(tqsl_getLocationCallSign(loc, call, sizeof(call)));
+	// See if there is a certificate for that call
+	tqsl_selectCertificates(&certlist, &ncerts, call, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);	
+	if (ncerts == 0) {
+		wxMessageBox(wxString::Format(wxT("There are no certificates for callsign %hs. This location cannot be edited."), call), wxT("No Certificate"), wxOK|wxICON_EXCLAMATION);
+		return false;
+	}
+	for (int i = 0; i  < ncerts; i++)
+		tqsl_freeCertificate(certlist[i]);
+	return true;
+}
+
 tQSL_Location
 MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, bool editonly) {
    	int rval;
    	tQSL_Location loc;
    	wxString selname;
+	char errbuf[512];
    	do {
    		TQSLGetStationNameDialog station_dial(this, &help, wxDefaultPosition, false, title, okLabel, editonly);
    		if (selname != wxT(""))
    			station_dial.SelectName(selname);
    		rval = station_dial.ShowModal();
    		switch (rval) {
-   			case wxID_CANCEL:
+   			case wxID_CANCEL:	// User hit Close
    				return 0;
-   			case wxID_APPLY:
+   			case wxID_APPLY:	// User hit New
    				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
    				selname = run_station_wizard(this, loc, &help);
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
-   			case wxID_MORE:
+   			case wxID_MORE:		// User hit Edit
    		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
-   				selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
-   				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+				if (verify_cert(loc)) {		// Check if there is a certificate before editing
+					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+					if (strlen(errbuf) > 0) {
+						wxMessageBox(wxString::Format(wxT("%hs"), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+					}
+   					selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
+   					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+				}
    				break;
-   			case wxID_OK:
+   			case wxID_OK:		// User hit OK
    		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
+				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+				if (strlen(errbuf) > 0) {
+					wxMessageBox(wxString::Format(wxT("%hs"), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+				}
    				break;
    		}
    	} while (rval != wxID_OK);
@@ -1546,7 +1580,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 	if (!check) return; //if we really weren't supposed to check, get out of here
 
-	wxString updateURL=config->Read(wxT("UpdateURL"), wxT("http://www.rmead.com/tqslupdate/tqslupdate.txt"));
+	wxString updateURL=config->Read(wxT("UpdateURL"), wxT("https://p1k.arrl.org/lotw/tqslupdate"));
 
 	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
 
@@ -1609,7 +1643,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 			} else {
 				if (!silent)
-					wxMessageBox(wxString::Format(wxT("Version %s is the newest available"), wxT(VERSION)), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
+					wxMessageBox(wxString::Format(wxT("Version %hs is the newest available"), VERSION), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 			}
 		} else {
 			if(!silent)
@@ -1618,7 +1652,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 		
 	} else {
 		if(!silent)
-			wxMessageBox(wxString::Format(wxT("Error checking for updates:\n%s"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			wxMessageBox(wxString::Format(wxT("Error checking for updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 	}
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval
@@ -1700,8 +1734,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
-                                          wxT("Station Location: %s\nCall sign: %s\nDXCC: %s\nIs this correct?")), infile.c_str(), wxString::FromAscii(loc_name).c_str(),
-			wxString(callsign, wxConvLocal).c_str(), wxString(dxcc.name(), wxConvLocal).c_str()),
+                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
+			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
 			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			ConvertLogFile(loc, infile, outfile, compressed);
 		else
@@ -1759,8 +1793,8 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
-                                          wxT("Station Location: %s\nCall sign: %s\nDXCC: %s\nIs this correct?")), infile.c_str(), wxString::FromAscii(loc_name).c_str(),
-			wxString(callsign, wxConvLocal).c_str(), wxString(dxcc.name(), wxConvLocal).c_str()),
+                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
+			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
 			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			UploadLogFile(loc, infile);
 		else
@@ -1854,8 +1888,8 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 		} while (in.gcount() == sizeof buf);
 		gzclose(gout);
 	}
-	wxLogMessage(wxString::Format("%s written to %s file %s", infile.c_str(),
-		wxString(uncompress ? "uncompressed" : "compressed", wxConvLocal).c_str(),
+	wxLogMessage(wxString::Format("%s written to %hs file %s", infile.c_str(),
+		uncompress ? "uncompressed" : "compressed",
 		outfile.c_str()));
 }
 
@@ -1978,7 +2012,7 @@ QSLApp::OnInit() {
 			frame = GUIinit();
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
-				wxLogError(wxT("%s"), tqsl_getErrorString());
+				wxLogError(wxT("%hs"), tqsl_getErrorString());
 			}
 			AddEditStationLocation(loc);
 		} else

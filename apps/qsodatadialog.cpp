@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: qsodatadialog.cpp,v 1.7 2013/03/01 12:59:37 k1mu Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -494,6 +494,6 @@ QSODataDialog::UpdateControls() {
 	_recup_ctrl->Enable(_recno < (int)_reclist->size());
 	_rectop_ctrl->Enable(_recno < (int)_reclist->size());
    	_recno_ctrl->SetValue(wxString::Format(wxT("%d"), _recno));
-	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%s"), (int)_reclist->size(),
-		(_reclist->size() == 1) ? wxT("") : wxT("s")));
+	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%hs"), (int)_reclist->size(),
+		(_reclist->size() == 1) ? "" : "s"));
 }

@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqslcert.cpp,v 1.15 2013/03/01 13:02:41 k1mu Exp $
  ***************************************************************************/
 
 #include <iostream>
@@ -239,11 +239,11 @@ void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxString msg = wxT("TQSLCert V")  wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
 	msg += wxVERSION_STRING;
