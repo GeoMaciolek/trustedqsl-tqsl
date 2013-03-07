@@ -1457,7 +1457,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				if (verify_cert(loc)) {		// Check if there is a certificate before editing
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
-						wxMessageBox(wxString::Format(wxT("%hs"), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+						wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
    					selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
@@ -1467,7 +1467,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
    		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
 				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 				if (strlen(errbuf) > 0) {
-					wxMessageBox(wxString::Format(wxT("%hs"), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+					wxMessageBox(wxString::Format(wxT("%hs\nThis should be corrected before signing a log file."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 				}
    				break;
    		}

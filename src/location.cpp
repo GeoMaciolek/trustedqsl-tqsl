@@ -1923,11 +1923,11 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 	}
 	if (bad_cqz && bad_ituz) {
 		snprintf(loc->data_errors, sizeof(loc->data_errors),
-			"This station location is configured with invalid CQ zone %d and invalid ITU zone %d. These should be corrected before signing your log.", bad_cqz, bad_ituz);
+			"This station location is configured with invalid CQ zone %d and invalid ITU zone %d.", bad_cqz, bad_ituz);
 	} else if (bad_cqz) {
-		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid CQ zone %d. This should be corrected before signing your log.", bad_cqz);
+		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid CQ zone %d.", bad_cqz);
 	} else if (bad_ituz) {
-		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid ITU zone %d. This should be corrected before signing your log.", bad_ituz);
+		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid ITU zone %d.", bad_ituz);
 	}
 	return 0;
 }
