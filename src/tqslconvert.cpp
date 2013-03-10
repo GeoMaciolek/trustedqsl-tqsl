@@ -240,6 +240,7 @@ tqsl_endConverter(tQSL_Converter *convp) {
 	TQSL_CONVERTER* conv;
 
 	if ((conv = check_conv(convp))) {
+		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
 	}

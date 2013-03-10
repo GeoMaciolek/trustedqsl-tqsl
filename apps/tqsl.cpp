@@ -1084,7 +1084,10 @@ restart:
 			infile.c_str(), duplicates);
 	}
 	//if (!cancelled) tqsl_converterCommit(conv);
-	if (cancelled) tqsl_endConverter(&conv);
+	if (cancelled || processed == 0) { 
+		tqsl_converterRollBack(conv);
+		tqsl_endConverter(&conv);
+	}
 	return cancelled;
 }
 
