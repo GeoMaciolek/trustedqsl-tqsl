@@ -1712,6 +1712,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		wxString deftype = compressed ? wxT("tq8") : wxT("tq7");
 		filter = compressed ? wxT("TQSL compressed data files (*.tq8)|*.tq8")
 			: wxT("TQSL data files (*.tq7)|*.tq7");
+		basename += wxT(".") + deftype;
    		wxString outfile = wxFileSelector(wxT("Select file to write to"),
    			path, basename, deftype, filter + wxT("|All files (*.*)|*.*"),
    			wxSAVE|wxOVERWRITE_PROMPT, this);
