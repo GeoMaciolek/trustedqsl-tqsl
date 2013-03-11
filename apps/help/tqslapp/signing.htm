@@ -13,7 +13,20 @@ To <A HREF="glossary.htm#digital_signature">digitally sign</A> a <A HREF="glossa
 	<tr><td>1.</td><td>Verify that all of the QSOs in the log file were made with the same <i>Station Callsign</i> (the callsign you used over the air during the QSO), and from the same location. If this isn't the case, use your logging application or a text editor to split the log file into multiple log files, each of whose QSOs were made with the same Station Callsign from the same operating location, and separately submit each log file</td></tr>
 	<tr><td>2.</td><td>Start <b>TQSL</b>. If you do this before receiving your <b>Initial Callsign Certificate</b>, an <b>Alert</b> window will appear that informs you that you have no Certificate, and asks if you want to request one; click the <b>Yes</b> button, and proceed as described <a href="certreq.htm">here</a>.</td></tr>
 	<tr><td>3.</td><td>Select the <B>File</B> menu's <B>Sign and save ADIF or Cabrillo File...</B> command</td></tr>
-	<tr><td>4.</td><td>In the <b>Select File to Sign</b> dialog, navigate to the folder containing the log file you wish to submit, select that log file, and click the <b>Open</b>button</td></tr>
+	<tr><td>4.</td><td>In the <b>Select File to Sign</b> dialog, navigate to the folder containing the log file you wish to submit, select that log file, and click the <b>Open</b> button</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.a</td><td>Set the <b>Files of type</b> selector to <i>ADIF files</i> or <i>Cabrillo files</i> (see <a HREF="signing.htm#options">Options)</a>;
+	you can digitally sign Cabrillo log files for <A HREF="cabrillo.htm">these contests</A> without <A HREF="pref-cab.htm">additional configuration</A>.</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.b</td><td>Navigate to the folder containing the log file you wish to submit</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.c</td><td>Select log file you wish to submit</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.d</td><td>Click the <b>Open</b> button</td></tr>
+</table>
+
+<table border="0" valign="top" align="left">
 	<tr><td>5.</td><td>In the <b>Select file to write to</b> dialog, navigate to the folder where you want the digitally signed log file created, specify the name of the file to be created, and click the <b>Save</b>button</td></tr>	
 	<tr><td>6.</td><td>In the <b>Select Station Location for Signing</b> dialog, select the <A HREF="glossary.htm#station_location">Station Location</A> that specifies the Callsign and operating location used to make the log file's QSOs, and click the <b>Ok</b> button </td></tr>
 </table>
@@ -41,7 +54,7 @@ To <A HREF="glossary.htm#digital_signature">digitally sign</A> a <A HREF="glossa
 	<table border="0" valign="top"></td></tr>
 	<col style="width:30px">
 	<col style="width:40px">
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>9.a</td><td>Click the <b>Exclude duplicates</b> button to continue processing, ignoring the duplicate QSOs (recommended)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>9.a</td><td>Click the <b>Exclude duplicates</b> button to continue processing, ignoring the duplicate QSOs (recom
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>9.b</td><td>Click the <b>Cancel</b> button to abandon processing so you can either select a log file that doesn't contain duplicate QSOs, or use the <A HREF="pref-opt.htm#daterange">QSO Date Range</a> dialog to exclude duplicate QSOs</a></td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>9.c</td><td>Click the <b>Allow Duplicates</b> button to submit the duplicate QSOs; note that the <A HREF="glossary.htm#digital_signature">digitally signed</a> log file submitted to LoTW will be marked as containing duplicate QSOs</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;</td><td>Note: if all QSOs in the log file are duplicates, the <b>Exclude duplicates</b> button will not be displayed</td></tr>
@@ -68,7 +81,15 @@ To <A HREF="glossary.htm#digital_signature">digitally sign</A> a <A HREF="glossa
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>11.f</td><td>Click the <b>Upload file</b> button</td></tr>
 </table>
 
-
+&nbsp;<p>
+<a name="options"></a>
+<H5>Options</H5>
+<UL>
+<LI>If your logging application does not ensure that only new or newly modified QSOs are presented to TQSL for submission to LoTW, enabling the <A HREF="pref-opt.htm#daterange">Prompt for QSO Date Range option</a> will help
+ spare LoTW from having to process QSOs that it's already processed.</LI>
+<LI>You can <A HREF="pref-opt.htm#extensions">change the file extensions</A> displayed when you set the <b>Files of type</b> selector in step 4.a above.</LI>
+<LI>You can <A HREF="pref-opt.htm#nonamateur">enable or disable the submission of nonamateur callsigns.</A></LI>
+</UL>
 
 
 </BODY></HEAD>
