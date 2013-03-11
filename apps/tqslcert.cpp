@@ -396,7 +396,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			if (tqsl_createCertRequest(file.mb_str(), &req, 0, 0))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
 			else {
-				wxString msg = wxT("Your may now send your new certificate request (");
+				wxString msg = wxT("You may now send your new certificate request (");
 				msg += file ;
 				msg += wxT(")");
 				if (wiz.provider.emailAddress[0] != 0)
