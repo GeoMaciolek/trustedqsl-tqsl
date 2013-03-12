@@ -1971,6 +1971,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_SWITCH, wxT("x"), wxT("batch"),	wxT("Exit after processing log (otherwise start normally)") },
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
+		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
 	};
@@ -1979,9 +1980,12 @@ QSLApp::OnInit() {
 	parser.SetDesc(cmdLineDesc);
 	// only allow "-" for options, otherwise "/path/something.adif" 
 	// is parsed as "-path"
-	parser.SetSwitchChars(wxT("-"));
-	parser.Parse(true);
+	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
+	if (parser.Parse(true)!=0) return false; // exit if help or syntax error
 	// Send errors to 'stderr' if in batch mode. -- KD6PAG
+
+	// print version and exit
+	if (parser.Found(wxT("v"))) { cerr<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
