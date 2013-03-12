@@ -1473,7 +1473,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 					if (strlen(errbuf) > 0) {
 						wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
-   					selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
+					char loccall[512];
+					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+					selname = run_station_wizard(this, loc, &help, wxString::Format("Edit Station Location : %hs - %hs", loccall, station_dial.Selected().mb_str()), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				}
    				break;
