@@ -1,7 +1,9 @@
-tqsllib
-=======
+TQSL/tqsllib
+==================
 
-This is the TrustedQSL library, part of the TrustedQSL project:
+TQSL is the TrustedQSL application suite and tqsllib is the 
+TrustedQSL library. These are the two major components of the
+TrustedQSL project:
 
 http://sourceforge.net/projects/trustedqsl/
 
@@ -20,17 +22,22 @@ Contents
 
 1) Prerequisites
 
+The TQSL applications depend upon the tqsllib library. First you
+should build and install that library and its prerequisites.
+
 The TrustedQSL library depends on several other libraries:
 
-OpenSSL (http://www.openssl.org/)
-expat 1.x XML parser library (http://expat.sourceforge.net/)
-zlib (http://www.gzip.org/zlib/)
-Berkeley DB (http://www.oracle.com/technetwork/products/berkeleydb/downloads/index.html)
+OpenSSL (http://www.openssl.org/) - OpenSSL 1.0.1e was used for TQSL 1.14.
+expat 1.x XML parser library (http://expat.sourceforge.net/) - expat 2.1.0
+zlib (http://zlib.net/) zlib 1.2.7
+Berkeley DB (http://www.oracle.com/technetwork/products/berkeleydb/downloads/index.html) - BDb 5.3.21
+wxWidgets (http://wxwidgets.org/downloads) - wxWidgets 2.8.12.
+curl - (http://curl.haxx.se/download.html) - curl 7.29.0
 
 Most Unix and unix-like workstations will have these available. For
 those systems that do not, the packages are easily built. Instructions
 for building under the Windows environment are given below under
-"Building the "Library under Windows."
+"Building under Windows."
 
 In the instructions that follow, the versions of other packages
 that were used to build the tqsllib package as of the date this
@@ -38,19 +45,18 @@ document was last updated are given in parentheses.
 
 ===================================================================
 
-2) Building the Library under Linux/Unix
+2) Building under Linux/Unix
 
 The quick answer:
 
-From the parent directory (just above this 'src' directory
-cd ..
+From the parent directory 
 cmake .
 make
 make install
 
-That will install the library under /usr/local. It also will install
-the needed header files under /usr/local/include and a sample program
-that dumps the configuration file, dumptqsldata, under /usr/local/bin.
+That will install the library and applications under /usr/local. It
+also will install the needed header files under /usr/local/include.
+Configuration and help files will be installed in /usr/local/share.
 
 You can change the install location via:
 cmake -DCMAKE_INSTALL_PREFIX=/foo/bar .
@@ -60,9 +66,15 @@ CMake option TQSLLIB_STATIC can be set to cause a static library to be
 built, either by using 'cmake -i' or by adding '-DTQSLLIB_STATIC=YES'
 to the cmake command above.
 
+If you installed the tqsllib library or its dependent libraries
+in locations that configure can't find, you'll need to specify
+those locations to cmake.
+
 ===================================================================
 
-3) Building the Library under Mac OS X
+3) Building under Mac OS X
+
+You'll need to have the Mac developer's tools, Xcode 1.5, installed.
 
 This is done in much the same manner as building under Linux/Unix, above.
 
@@ -103,14 +115,22 @@ cmake  \
         $* .
 
 make
-sudo make install
+
+The build will result in the directories dist/TrustedQSL/tqsl.app and
+tqslcert.app, which comprise complete Mac OS X applications. You
+can simply move the dist/TrustedQSL folder to your system's
+Applications folder or the location of your choice, then launch
+the applications from Finder. If you want to distribute the built
+applications:
+
+./osx_createdmg.sh
+
+will make TrustedQSL-1.14.dmg, a Mac distributable disk image
+containing the TrustedQSL applications folder and document files.
 
 ===================================================================
 
-4) Building the Library under Windows
-
-The end result of building under Windows will be a single DLL,
-TQSLLIB2.DLL.
+4) Building under Windows
 
 See file WindowsBuildSetup.txt in the toplevel directory for details
-on how to set up MSVC to compile tqsllib.
+on how to set up MSVC to compile TQSL.
