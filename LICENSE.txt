@@ -3,6 +3,9 @@ License Terms and Conditions
 Copyright (C) 2001-2003 American Radio Relay League, Inc. All rights
 reserved.
 
+Portions (C) 2003-2013 The TrustedQSL Developers. Please see the AUTHORS.txt
+file for contributors
+
 Redistribution and use in source and binary forms, with or without
 modification, are permitted provided that the following conditions
 are met:
