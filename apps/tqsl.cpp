@@ -1067,18 +1067,27 @@ restart:
 			tqsl_endConverter(&conv);
 			return cancelled;
 		}
-		DupesDialog dial(this, processed, duplicates);
-		int choice = dial.ShowModal();
-		if (choice == TQSL_DP_CAN) {
-			wxLogMessage(wxT("Cancelled"));
-			tqsl_converterRollBack(conv);
-			tqsl_endConverter(&conv);
-			return true;
-		}
-		if (choice == TQSL_DP_ALLOW) {
-			allow_dupes = true;
-			tqsl_converterRollBack(conv);
-			goto restart;
+		if (this) { //only if GUI - otherwise act as if default action was taken
+			DupesDialog dial(this, processed, duplicates);
+			int choice = dial.ShowModal();
+			if (choice == TQSL_DP_CAN) {
+				wxLogMessage(wxT("Cancelled"));
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				return true;
+			}
+			if (choice == TQSL_DP_ALLOW) {
+				allow_dupes = true;
+				tqsl_converterRollBack(conv);
+				goto restart;
+			}
+		} else {
+			if (processed==duplicates) { //default action here is cancel
+				wxLogMessage(wxT("All QSOs are duplicates; aborted"));
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				return true;
+			}
 		}
 		wxLogMessage(wxT("%s: %d QSO records were duplicates"),
 			infile.c_str(), duplicates);

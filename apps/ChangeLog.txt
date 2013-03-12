@@ -14,7 +14,7 @@ Major feature additions:
    succeeded or failed, and why
 
           0=success; log signed and uploaded and accepted without incident
-          1=soft fail (empty log?)
+          1=soft fail (empty or all dupe log?)
           2=active reject (the server recieved the log and decided to reject it)
           3=passive reject (the server is probably down; unexpected response)
           4=hard fail (internal error)
