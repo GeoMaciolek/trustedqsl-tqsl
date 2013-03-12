@@ -1342,6 +1342,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 		UploadDialog* upload;
 
+		wxLogMessage(wxT("Attempting to upload %d QSOs"), numrecs);
+
 		if(this) {
 			upload=new UploadDialog(this);
 
