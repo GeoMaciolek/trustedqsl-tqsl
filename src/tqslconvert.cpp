@@ -351,7 +351,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 			found=fixedpath.find('\\');
 		}
 
-		if (conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE, 0600)) {
+		if (conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600)) {
 			// can't open environment
 			dbinit_cleanup=true;
 			goto dbinit_end;
