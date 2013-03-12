@@ -1475,7 +1475,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 					}
 					char loccall[512];
 					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-					selname = run_station_wizard(this, loc, &help, wxString::Format("Edit Station Location : %hs - %s", loccall, station_dial.Selected().c_str()), station_dial.Selected());
+					selname = run_station_wizard(this, loc, &help, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				}
    				break;
