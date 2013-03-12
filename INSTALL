@@ -1,0 +1,116 @@
+tqsllib
+=======
+
+This is the TrustedQSL library, part of the TrustedQSL project:
+
+http://sourceforge.net/projects/trustedqsl/
+
+===================================================================
+Contents
+
+1) Prerequisites
+
+2) Building the Library under Linux/Unix
+
+3) Building the Library under Mac OS X
+
+4) Building the Library under Windows.
+
+===================================================================
+
+1) Prerequisites
+
+The TrustedQSL library depends on several other libraries:
+
+OpenSSL (http://www.openssl.org/)
+expat 1.x XML parser library (http://expat.sourceforge.net/)
+zlib (http://www.gzip.org/zlib/)
+Berkeley DB (http://www.oracle.com/technetwork/products/berkeleydb/downloads/index.html)
+
+Most Unix and unix-like workstations will have these available. For
+those systems that do not, the packages are easily built. Instructions
+for building under the Windows environment are given below under
+"Building the "Library under Windows."
+
+In the instructions that follow, the versions of other packages
+that were used to build the tqsllib package as of the date this
+document was last updated are given in parentheses.
+
+===================================================================
+
+2) Building the Library under Linux/Unix
+
+The quick answer:
+
+From the parent directory (just above this 'src' directory
+cd ..
+cmake .
+make
+make install
+
+That will install the library under /usr/local. It also will install
+the needed header files under /usr/local/include and a sample program
+that dumps the configuration file, dumptqsldata, under /usr/local/bin.
+
+You can change the install location via:
+cmake -DCMAKE_INSTALL_PREFIX=/foo/bar .
+
+By default, only a shared version of the library is built.
+CMake option TQSLLIB_STATIC can be set to cause a static library to be
+built, either by using 'cmake -i' or by adding '-DTQSLLIB_STATIC=YES'
+to the cmake command above.
+
+===================================================================
+
+3) Building the Library under Mac OS X
+
+This is done in much the same manner as building under Linux/Unix, above.
+
+You will need to download and compile Berkeley DB 5.3 or later. The version
+of Berekeley DB shipped with OS X (as of 10.8) is out of date.
+
+You also may not want to install the library into system directories:
+
+cmake -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib .
+make
+sudo make install
+
+To build a universal binary with compatibility from MacOS 10.4 upwards:
+
+#!/bin/sh
+PATH=$HOME/wx/bin:$PATH
+arch_flags="-arch ppc -arch i386"
+sdk="/Developer/SDKs/MacOSX10.4u.sdk"
+ver_min="10.4"
+CMAKE_PREFIX_PATH="/Users/rmurphy/bdb/ /Users/rmurphy/wx/"
+
+cmake  \
+    -DCMAKE_BUILD_TYPE=Debug \
+    -DCMAKE_OSX_ARCHITECTURES="ppc;i386" \
+    -DCMAKE_LINKER=/usr/bin/gcc-4.0 \
+    -DCMAKE_CXX_COMPILER=/usr/bin/c++-4.0 \
+    -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 \
+    -DBDB_PREFIX=/Users/rmurphy/bdb \
+    -DCMAKE_OSX_SYSROOT=$sdk \
+    -DCMAKE_CXX_FLAGS=" -I $HOME/bdb/include  -I /usr/include/c++/4.0.0 \
+        -I $sdk/System/Library/Frameworks/Carbon.framework/Headers \
+	-isysroot $sdk  -mmacosx-version-min=$ver_min \
+	-fno-stack-protector $arch_flags"  \
+    -DCMAKE_EXE_LINKER_FLAGS=" -Wl,-syslibroot,$sdk \
+	-mmacosx-version-min=$ver_min  $arch_flags " \
+    -DCMAKE_SHARED_LINKER_FLAGS=" -Wl,-syslibroot,$sdk \
+	-mmacosx-version-min=$ver_min $arch_flags " \
+        $* .
+
+make
+sudo make install
+
+===================================================================
+
+4) Building the Library under Windows
+
+The end result of building under Windows will be a single DLL,
+TQSLLIB2.DLL.
+
+See file WindowsBuildSetup.txt in the toplevel directory for details
+on how to set up MSVC to compile tqsllib.
