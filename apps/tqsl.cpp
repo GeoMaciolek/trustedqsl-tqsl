@@ -1998,7 +1998,7 @@ QSLApp::OnInit() {
 	// Send errors to 'stderr' if in batch mode. -- KD6PAG
 
 	// print version and exit
-	if (parser.Found(wxT("v"))) { cerr<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
+	if (parser.Found(wxT("v"))) { cout<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
