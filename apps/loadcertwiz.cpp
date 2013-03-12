@@ -128,10 +128,17 @@ static wxString pw_helpfile;
 static int
 GetNewPassword(char *buf, int bufsiz, void *) {
 	GetNewPasswordDialog dial(0, wxT("New Password"),
-wxT("Enter password for private key.\n\n")
+wxT("Enter a password for this private key.\n\n")
+wxT("If you are using a computer system that is\n")
+wxT("shared with others, you should specify a\n")
+wxT("password to protect this key. However, if\n")
+wxT("you are using a computer in a private residence\n")
+wxT("no password need be specified.\n\n")
 wxT("This password will have to be entered each time\n")
 wxT("you use the key/certificate for signing or when\n")
-wxT("saving the key."), true, pw_help, pw_helpfile);
+wxT("saving the key.\n\n")
+wxT("Leave the password blank and press 'Ok' unless you want to\n")
+wxT("use a password.\n\n"), true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().mb_str(), bufsiz);
 		buf[bufsiz-1] = 0;
@@ -168,7 +175,7 @@ LCW_IntroPage::LCW_IntroPage(LoadCertWiz *parent, LCW_Page *tq6next)
 	butsizer->Add(_p12but, 0, wxALIGN_TOP, 0);
 	butsizer->Add(new wxStaticText(this, -1,
 wxT("PKCS#12 (.p12) certificate file - A file you've saved that contains\n")
-wxT("a certificate and/or private key. This file is typically password\n")
+wxT("a certificate and/or private key. This file may be password\n")
 wxT("protected and you'll need to provide a password in order to open it.")),
 		0, wxLEFT, 5);
 
@@ -279,7 +286,7 @@ LCW_FinalPage::refresh() {
 LCW_P12PasswordPage::LCW_P12PasswordPage(LoadCertWiz *parent) : LCW_Page(parent) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("Enter password to unlock PKCS#12 file:"));
+	wxStaticText *st = new wxStaticText(this, -1, wxT("Enter the password to unlock the .p12 file:"));
 	sizer->Add(st, 0, wxALL, 10);
 
 	_pwin = new wxTextCtrl(this, -1, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);

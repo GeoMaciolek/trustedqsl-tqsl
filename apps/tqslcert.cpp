@@ -460,10 +460,16 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
 	GetNewPasswordDialog dial(this, wxT("PKCS#12 Password"),
-wxT("Enter password for the PKCS#12 file.\n\n")
-wxT("You will have to enter this password any time you\n")
+wxT("Enter the password for the .p12 file.\n\n")
+wxT("If you are using a computer system that is shared\n")
+wxT("with others, you should specify a password to\n")
+wxT("protect this certificate. However, if you are using\n")
+wxT("a computer in a private residence, no password need be specified.\n\n")
+wxT("You will have to enter the password any time you\n")
 wxT("load the file into TQSLCert (or any other PKCS#12\n")
-wxT("compliant software)"), true, &help, wxT("save.htm"));
+wxT("compliant software)\n\n")
+wxT("Leave the password blank and press 'Ok' unless you want to\n")
+wxT("use a password.\n\n"), true, &help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled
 	int terr;

@@ -448,7 +448,12 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	int em_h = st->GetSize().GetHeight();
 	st->SetLabel(
 wxT("You may protect your private key for this certificate\n")
-wxT("using a password. Doing so is recommended.\n\n")
+wxT("using a password. If you are using a computer system that\n")
+wxT("is shared with others, you should specify a password to\n")
+wxT("protect this certificate. However, if you are using a\n")
+wxT("computer in a private residence, no password need be specified.\n\n")
+wxT("Leave the password blank and press 'Next' unless you want to\n")
+wxT("use a password.\n\n")
 wxT("Password:")
 	);
 	st->SetSize(em_w * 30, em_h * 5);
