@@ -360,7 +360,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		wxT("Press 'Allow Duplicates' to re-process this log ")
 		wxT("while allowing duplicate QSOs."),
 			dupes, newq, 
-			(newq == 1) ? "which is" : "s which are");
+			(newq == 1) ? " which is" : "s which are");
 	}
 	sizer->Add(new wxStaticText(this, -1, message), 0, wxALL|wxALIGN_CENTER, 10);
 
