@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqslpaths.h,v 1.7 2013/03/01 13:09:28 k1mu Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -61,8 +61,7 @@ public:
 //		Add(wxString((const char *)npath, wxConvLocal) + wxT("Contents/Resources/Help/"));
 		Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
 #else
-		Add(wxT("/usr/share/TrustedQSL/help/") + subdir);
-		Add(wxT("/usr/local/share/TrustedQSL/help/") + subdir);
+		Add(wxT(CONFDIR) wxT("help/") + subdir);
 		Add(subdir);
 #endif
 	}

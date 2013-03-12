@@ -75,6 +75,14 @@ set(TQSL_RCFILE ${OSX_ICONFILE})
 set(TQSLCERT_RCFILE ${OSX_ICONFILE})
 endif()
 
+if(NOT WIN32) #rpath setup
+SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
+SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
+endif()
+
+
 set(TQSLCERT_SRC tqslcert.cpp crqwiz.cpp dxcc.cpp certtree.cpp tqslcert_prefs.cpp getpassword.cpp extwizard.cpp loadcertwiz.cpp wxutil.cpp)
 set(TQSLCERT_HDR certtree.h tqslcertctrls.h util.h dxcc.h crqwiz.h getpassword.h extwizard.h tqslcert_prefs.h getpassword.h loadcertwiz.h wxutil.h tqslbuild.h)
 set(TQSLCERT_XPM cert.xpm nocert.xpm broken-cert.xpm folder.xpm key.xpm)
@@ -90,3 +98,10 @@ add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQ
 target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
 target_link_libraries(tqsl ${TQSLLIB_NAME}
   ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY})
+
+if(NOT APPLE AND NOT WIN32)
+add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
+install(TARGETS tqsl DESTINATION bin)
+install(TARGETS tqslcert DESTINATION bin)
+install(DIRECTORY help DESTINATION share/TrustedQSL)
+endif()

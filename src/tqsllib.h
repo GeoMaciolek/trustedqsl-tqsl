@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqsllib.h,v 1.14 2013/03/01 13:26:44 k1mu Exp $
  ***************************************************************************/
 
 #ifndef TQSLLIB_H
@@ -886,6 +886,14 @@ DLLEXPORT int CALLCONVENTION tqsl_getStationLocationCallSign(tQSL_Location loc, 
   * should be called to release resources.
   */
 DLLEXPORT int CALLCONVENTION tqsl_getStationLocation(tQSL_Location *loc, const char *name);
+
+/** Get any errors returned from parsing the selected station location.
+  * This should be called after tqsl_getStationLocation to determine if
+  * any of the existing fields failed validation. Currently only zone
+  * data is validated here, but future validations for things like
+  * properly formatted grid squares is likely.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_getStationLocationErrors(tQSL_Location loc, char *buf, int bufsiz);
 
 /** Remove the stored station location by name. */
 DLLEXPORT int CALLCONVENTION tqsl_deleteStationLocation(const char *name);

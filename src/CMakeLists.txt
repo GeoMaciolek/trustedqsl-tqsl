@@ -44,7 +44,13 @@ add_library(${TQSLLIBNAME} SHARED ${TQSLLIB_SRC} ${TQSLLIB_HDR} ${TQSLLIB_RCFILE
 target_link_libraries(${TQSLLIBNAME} ${OPENSSL_LIBRARIES} ${EXPAT_LIBRARIES} ${ZLIB_LIBRARIES} ${BDB_LIBRARIES} ${CARBON_LIBRARY})
 include_directories(${OPENSSL_INCLUDE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DIR} ${BDB_INCLUDE_DIR} ${CARBON_INCLUDE_DIR})
 
-
+if(NOT APPLE AND NOT WIN32)
+set_source_files_properties(location.cpp PROPERTIES COMPILE_DEFINITIONS CONFDIR="${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/")
+set(HEADERS_TO_INSTALL tqsllib.h tqslerrno.h cabrillo.h adif.h tqslconvert.h)
+install(TARGETS tqsllib DESTINATION lib)
+install(FILES config.xml DESTINATION share/TrustedQSL)
+install(FILES ${HEADERS_TO_INSTALL} DESTINATION include)
+endif()
 
 option(BUILD_ALL_EXTRAPROGS "Build all extra programs")
 

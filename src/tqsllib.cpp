@@ -74,7 +74,7 @@ static const char *error_strings[] = {
 	"Name exists",						/* TQSL_NAME_EXISTS */
 	"Name not found",					/* TQSL_NAME_NOT_FOUND */
 	"Invalid time format",					/* TQSL_INVALID_TIME */
-	"Certificate QSO date out of range",			/* TQSL_CERT_DATE_MISMATCH */
+	"QSO date is not within the date range specified on your Callsign Certificate",	/* TQSL_CERT_DATE_MISMATCH */
 	"Certificate provider not found",			/* TQSL_PROVIDER_NOT_FOUND */
 	"No certificate for key",				/* TQSL_CERT_KEY_ONLY */
 	"Configuration file error",				/* TQSL_CONFIG_ERROR */

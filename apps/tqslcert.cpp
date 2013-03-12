@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqslcert.cpp,v 1.15 2013/03/01 13:02:41 k1mu Exp $
  ***************************************************************************/
 
 #include <iostream>
@@ -239,11 +239,11 @@ void MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	wxString msg = wxT("TQSLCert V")  wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(wxT("%s"), tqsl_getErrorString());
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
 		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
 	msg += wxVERSION_STRING;
@@ -396,7 +396,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			if (tqsl_createCertRequest(file.mb_str(), &req, 0, 0))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
 			else {
-				wxString msg = wxT("Your may now send your new certificate request (");
+				wxString msg = wxT("You may now send your new certificate request (");
 				msg += file ;
 				msg += wxT(")");
 				if (wiz.provider.emailAddress[0] != 0)
@@ -460,10 +460,16 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
 	GetNewPasswordDialog dial(this, wxT("PKCS#12 Password"),
-wxT("Enter password for the PKCS#12 file.\n\n")
-wxT("You will have to enter this password any time you\n")
+wxT("Enter the password for the .p12 file.\n\n")
+wxT("If you are using a computer system that is shared\n")
+wxT("with others, you should specify a password to\n")
+wxT("protect this certificate. However, if you are using\n")
+wxT("a computer in a private residence, no password need be specified.\n\n")
+wxT("You will have to enter the password any time you\n")
 wxT("load the file into TQSLCert (or any other PKCS#12\n")
-wxT("compliant software)"), true, &help, wxT("save.htm"));
+wxT("compliant software)\n\n")
+wxT("Leave the password blank and press 'Ok' unless you want to\n")
+wxT("use a password.\n\n"), true, &help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled
 	int terr;

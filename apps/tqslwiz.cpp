@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: tqslwiz.cpp,v 1.6 2013/03/01 13:12:57 k1mu Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -289,8 +289,12 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				control_p = new wxTextCtrl(this, TQSL_ID_LOW+i, wxT(""), wxDefaultPosition, wxSize(control_width, -1));
 				break;
 			case TQSL_LOCATION_FIELD_BADZONE:
+				wxCoord w, h;
+				int tsize;
+				tqsl_getLocationFieldDataLength(loc, i, &tsize);
+				sdc.GetTextExtent(wxString("X", wxConvLocal), &w, &h);
 				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
-					wxSize(label_w*4, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE), 0, wxTOP, 5;
+					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE), 0, wxTOP, 5;
 				break;
 		}
 		controls.push_back(control_p);

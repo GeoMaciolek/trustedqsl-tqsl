@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: location.cpp,v 1.14 2013/03/01 13:20:30 k1mu Exp $
  ***************************************************************************/
 
 
@@ -113,6 +113,7 @@ public:
 	std::string tSTATION;
 	std::string tCONTACT;
 	std::string sigspec;
+	char data_errors[512];
 };
 
 class Band {
@@ -291,7 +292,7 @@ tqsl_load_xml_config() {
 
 	default_path = string(npath) + "Contents/Resources/config.xml";
 #else
-	default_path = "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
+	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
 
 	string user_path = string(tQSL_BaseDir) + "/config.xml";
@@ -1027,9 +1028,9 @@ static int
 update_page(int page, TQSL_LOCATION *loc) {
 	TQSL_LOCATION_PAGE& p = loc->pagelist[page-1];
 	int dxcc;
-	int current_entity = 0;
-	int loaded_cqz = 0;
-	int loaded_ituz = 0;
+	int current_entity = -1;
+	int loaded_cqz = -1;
+	int loaded_ituz = -1;
 	for (int i = 0; i < (int)p.fieldlist.size(); i++) {
 		TQSL_LOCATION_FIELD& field = p.fieldlist[i];
 		field.changed = false;
@@ -1040,7 +1041,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 				p.hash.clear();
 				tQSL_Cert *certlist;
 				int ncerts;
-				tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, 1);
+				tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
 				for (int i = 0; i < ncerts; i++) {
 					char callsign[40];
 					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
@@ -1249,7 +1250,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 		}
 	}
 
-	if (state && state->idx >= 0) {
+	if (state && state->items.size() > 0) {
 		TQSL_LOCATION_FIELD *cqz = get_location_field(page, "CQZ", loc);
 		TQSL_LOCATION_FIELD *ituz = get_location_field(page, "ITUZ", loc);
 		string szm = state->items[state->idx].zonemap;
@@ -1264,7 +1265,6 @@ update_page(int page, TQSL_LOCATION *loc) {
 		if (zerr) {
 			if(!zonesok) {
 				zerr->cdata = zone_error;
-				return 1;
 			} else {
 				zerr->cdata = "";
 			}
@@ -1418,7 +1418,7 @@ find_next_page(TQSL_LOCATION *loc) {
 			TQSL_LOCATION_FIELD *fp = get_location_field(0, dependsOn, loc);
 			//if (fp->idx>=fp->items.size()) { cerr<<"!! " __FILE__ "(" << __LINE__ << "): Was going to index out of fp->items"<<endl; }
 			//else {
-			if (fp->items[fp->idx].text == dependency) {
+			if (fp->items.size() > fp->idx && fp->items[fp->idx].text == dependency) {
 				p.next = pit->first;
 				break;	// Found next page
 			//}
@@ -1866,6 +1866,9 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		return 1;
 	}
 	loc->page = 1;
+	loc->data_errors[0] = '\0';
+	int bad_ituz = 0;
+	int bad_cqz = 0;
 	while(1) {
 		TQSL_LOCATION_PAGE& page = loc->pagelist[loc->page-1];
 		for (int fidx = 0; fidx < (int)page.fieldlist.size(); fidx++) {
@@ -1884,6 +1887,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 					switch (field.input_type) {
 						case TQSL_LOCATION_FIELD_DDLIST:
 						case TQSL_LOCATION_FIELD_LIST:
+							exists = false;
 							for (int i = 0; i < (int)field.items.size(); i++) {
 								string cp = field.items[i].text;
 								int q = strcasecmp(field.cdata.c_str(), cp.c_str());
@@ -1891,8 +1895,15 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 									field.idx = i;
 									field.cdata = cp;
 									field.idata = field.items[i].ivalue;
+									exists = true;
 									break;
 								}
+							}
+							if (!exists) {
+								if (field.gabbi_name == "CQZ")
+									bad_cqz = atoi(field.cdata.c_str());
+								else if (field.gabbi_name == "ITUZ")
+									bad_ituz = atoi(field.cdata.c_str());
 							}
 							break;
 						case TQSL_LOCATION_FIELD_TEXT:
@@ -1910,6 +1921,24 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 			break;
 		tqsl_nextStationLocationCapture(loc);
 	}
+	if (bad_cqz && bad_ituz) {
+		snprintf(loc->data_errors, sizeof(loc->data_errors),
+			"This station location is configured with invalid CQ zone %d and invalid ITU zone %d.", bad_cqz, bad_ituz);
+	} else if (bad_cqz) {
+		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid CQ zone %d.", bad_cqz);
+	} else if (bad_ituz) {
+		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid ITU zone %d.", bad_ituz);
+	}
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getStationLocationErrors(tQSL_Location locp, char *buf, int bufsiz) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp)))
+		return 1;
+	strncpy(buf, loc->data_errors, bufsiz);
+	buf[bufsiz-1] = 0;
 	return 0;
 }
 

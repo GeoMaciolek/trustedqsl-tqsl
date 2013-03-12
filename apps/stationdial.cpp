@@ -5,7 +5,7 @@
     copyright            : (C) 2002 by ARRL
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id$
+    revision             : $Id: stationdial.cpp,v 1.6 2013/03/01 13:00:59 k1mu Exp $
  ***************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -374,7 +374,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 		plist.ShowModal();
 	}
 	catch (TQSLException& x) {
-		wxLogError(wxT("%s"), x.what());
+		wxLogError(wxT("%hs"), x.what());
 	}
 }
 
