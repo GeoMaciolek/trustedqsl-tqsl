@@ -6,7 +6,7 @@ TQSLLIBPATH=`pwd`/src/libtqsllib.dylib
 
 mkdir tmp-dmg
 cp apps/ChangeLog.txt tmp-dmg/ChangeLog.txt
-cp LICENSE tmp-dmg/LICENSE.txt
+cp LICENSE.txt tmp-dmg/
 cp apps/quick "tmp-dmg/Quick Start.txt"
 mkdir tmp-dmg/TrustedQSL
 cp -r apps/tqsl.app tmp-dmg/TrustedQSL
