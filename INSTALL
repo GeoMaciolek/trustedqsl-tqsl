@@ -87,14 +87,25 @@ cmake -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib .
 make
 sudo make install
 
-To build a universal binary with compatibility from MacOS 10.4 upwards:
+To build a universal binary with compatibility from MacOS 10.4 upwards,
+use the following shell script:
 
 #!/bin/sh
+# 
+# Adjust this to where you've installed wxWidgets
+#
 PATH=$HOME/wx/bin:$PATH
+#
+# Adjust this to where you've installed Berkeley DB 5.x
+#
+bdb=$HOME/bdb
 arch_flags="-arch ppc -arch i386"
+#
+# You need to download and install the OSX 10.4 universal SDK
+# to build a universal binary. gcc 4.0 is also needed.
+#
 sdk="/Developer/SDKs/MacOSX10.4u.sdk"
 ver_min="10.4"
-CMAKE_PREFIX_PATH="/Users/rmurphy/bdb/ /Users/rmurphy/wx/"
 
 cmake  \
     -DCMAKE_BUILD_TYPE=Debug \
@@ -102,7 +113,7 @@ cmake  \
     -DCMAKE_LINKER=/usr/bin/gcc-4.0 \
     -DCMAKE_CXX_COMPILER=/usr/bin/c++-4.0 \
     -DCMAKE_C_COMPILER=/usr/bin/gcc-4.0 \
-    -DBDB_PREFIX=/Users/rmurphy/bdb \
+    -DBDB_PREFIX=$bdb \
     -DCMAKE_OSX_SYSROOT=$sdk \
     -DCMAKE_CXX_FLAGS=" -I $HOME/bdb/include  -I /usr/include/c++/4.0.0 \
         -I $sdk/System/Library/Frameworks/Carbon.framework/Headers \
@@ -113,15 +124,13 @@ cmake  \
     -DCMAKE_SHARED_LINKER_FLAGS=" -Wl,-syslibroot,$sdk \
 	-mmacosx-version-min=$ver_min $arch_flags " \
         $* .
-
 make
 
-The build will result in the directories dist/TrustedQSL/tqsl.app and
-tqslcert.app, which comprise complete Mac OS X applications. You
-can simply move the dist/TrustedQSL folder to your system's
-Applications folder or the location of your choice, then launch
-the applications from Finder. If you want to distribute the built
-applications:
+The build will result in the directories apps/tqsl.app and
+apps/tqslcert.app, which comprise complete Mac OS X applications. You
+can simply move those folders to your system's Applications folder
+or the location of your choice, then launch the applications from
+Finder. If you want to distribute the built applications:
 
 ./osx_createdmg.sh
 
