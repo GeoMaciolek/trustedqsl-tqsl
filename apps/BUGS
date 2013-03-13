@@ -1,6 +1,0 @@
-Known problems
-==============
-
-Macintosh build: The help navigation tree (left-hand pane of the help window) doesn't display. This isn't an issue on the Windows or Linux builds.
-
-The applications (tqsl, tqslcert) crash when the Macintosh build is made using a Unicode build of wxWidgets.
