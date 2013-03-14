@@ -468,7 +468,7 @@ wxT("a computer in a private residence, no password need be specified.\n\n")
 wxT("You will have to enter the password any time you\n")
 wxT("load the file into TQSLCert (or any other PKCS#12\n")
 wxT("compliant software)\n\n")
-wxT("Leave the password blank and press 'Ok' unless you want to\n")
+wxT("Leave the password blank and click 'Ok' unless you want to\n")
 wxT("use a password.\n\n"), true, &help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled

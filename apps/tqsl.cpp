@@ -346,7 +346,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
 		wxT("to have already been signed for upload to LoTW, and no new QSOs.\n\n")
 		wxT("Click 'Cancel' to abandon processing this log file (Recommended).\n")
-		wxT("Press 'Allow Duplicates' to re-process this ")
+		wxT("Click 'Allow Duplicates' to re-process this ")
 		wxT("log while allowing duplicate QSOs."),
 			qso_count);
 
@@ -355,9 +355,9 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
 		wxT("to have already been signed for upload to LoTW, and ")
 		wxT("%d QSO%hs new.\n\n")
-		wxT("Press 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
-		wxT("Press 'Cancel' to abandon processing this log file.\n")
-		wxT("Press 'Allow Duplicates' to re-process this log ")
+		wxT("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
+		wxT("Click 'Cancel' to abandon processing this log file.\n")
+		wxT("Click 'Allow Duplicates' to re-process this log ")
 		wxT("while allowing duplicate QSOs."),
 			dupes, newq, 
 			(newq == 1) ? " which is" : "s which are");

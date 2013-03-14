@@ -137,7 +137,7 @@ wxT("no password need be specified.\n\n")
 wxT("This password will have to be entered each time\n")
 wxT("you use the key/certificate for signing or when\n")
 wxT("saving the key.\n\n")
-wxT("Leave the password blank and press 'Ok' unless you want to\n")
+wxT("Leave the password blank and click 'Ok' unless you want to\n")
 wxT("use a password.\n\n"), true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().mb_str(), bufsiz);
