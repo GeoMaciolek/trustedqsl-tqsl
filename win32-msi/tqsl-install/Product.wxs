@@ -116,8 +116,8 @@
     
     <Property Id="QSONEXIT" Value="1"/>
     <UI>
-      <Publish Dialog="MyExitDialog" Control="Finish" Event="DoAction" Value="CAChangelog">CLONEXIT</Publish>
-      <Publish Dialog="MyExitDialog" Control="Finish" Event="DoAction" Value="CAQuickstart">QSONEXIT</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Event="DoAction" Value="CAChangelog">CLONEXIT AND NOT Installed</Publish>
+      <Publish Dialog="MyExitDialog" Control="Finish" Event="DoAction" Value="CAQuickstart">QSONEXIT AND NOT Installed</Publish>
       <!--<Publish Dialog="MyExitDialog" Control="Finish" Order="1" Event="DoAction" Value="CAQuickStart">CBShowQuickStart</Publish>-->
     </UI>
     

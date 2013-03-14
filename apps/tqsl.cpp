@@ -344,7 +344,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 
 	if (qso_count == dupes) {
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
-		wxT("to have already been uploaded to LoTW, and no new QSOs.\n\n")
+		wxT("to have already been signed for upload to LoTW, and no new QSOs.\n\n")
 		wxT("Click 'Cancel' to abandon processing this log file (Recommended).\n")
 		wxT("Press 'Allow Duplicates' to re-process this ")
 		wxT("log while allowing duplicate QSOs."),
@@ -353,7 +353,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 	} else {
 		int newq = qso_count - dupes;
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
-		wxT("to have already been uploaded to LoTW, and ")
+		wxT("to have already been signed for upload to LoTW, and ")
 		wxT("%d QSO%hs new.\n\n")
 		wxT("Press 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
 		wxT("Press 'Cancel' to abandon processing this log file.\n")
@@ -1149,7 +1149,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 
 		wxLogMessage(wxT("%s: wrote %d records to %s"), infile.c_str(), numrecs,
 			outfile.c_str());
-		wxLogMessage(wxT("%s is ready to be emailed or uploaded"), outfile.c_str());
+		wxLogMessage(wxT("%s is ready to be emailed or uploaded.\nNote: TQSL assumes that this file will be uploaded to LoTW.\nResubmitting these QSOs will cause them to be reported as duplicates."), outfile.c_str());
 	}
 
 	return cancelled;
@@ -1473,7 +1473,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 					if (strlen(errbuf) > 0) {
 						wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
-   					selname = run_station_wizard(this, loc, &help, wxT("Edit Station Location"), station_dial.Selected());
+					char loccall[512];
+					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+					selname = run_station_wizard(this, loc, &help, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				}
    				break;
@@ -1996,7 +1998,7 @@ QSLApp::OnInit() {
 	// Send errors to 'stderr' if in batch mode. -- KD6PAG
 
 	// print version and exit
-	if (parser.Found(wxT("v"))) { cerr<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
+	if (parser.Found(wxT("v"))) { cout<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;

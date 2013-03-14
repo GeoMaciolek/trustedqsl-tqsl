@@ -30,11 +30,11 @@ as well as a static tqsllib library and API documentation.
 
 %build
 # use --disable-docs because RPM handles docs itself
-./configure --prefix=/usr --disable-docs
+cmake -DCMAKE_INSTALL_PREFIX=/usr .
 make
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install-strip
+make install
 
 %clean
 rm -rf $RPM_BUILD_ROOT

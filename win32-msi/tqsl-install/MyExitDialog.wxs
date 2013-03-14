@@ -27,9 +27,9 @@
 
               <!-- Quickstart - must be separate because otherwise text isn't transparent -->
               <Control Id="ShowQuickstartCheckBox" Type="CheckBox" X="135" Y="90" Width="10" Height="10" Property="QSONEXIT" Hidden="yes" CheckBoxValue="1">
-                <Condition Action="show">NOT Installed</Condition>
+                <Condition Action="show">NOT Installed </Condition>
               </Control>
-              <Control Id="ShowQuickstartCheckBoxText" Type="Text" X="150" Y="90" Width="150" Height="10" Transparent="yes" Text="Read Quick Start">
+              <Control Id="ShowQuickstartCheckBoxText" Type="Text" X="150" Y="90" Width="150" Height="10" Transparent="yes" Hidden="yes" Text="Read Quick Start">
                 <Condition Action="show">NOT Installed</Condition>
               </Control>
               
@@ -37,7 +37,7 @@
               <Control Id="ShowChangelogCheckBox" Type="CheckBox" X="135" Y="110" Width="10" Height="10" Property="CLONEXIT" Hidden="yes" CheckBoxValue="1">
                 <Condition Action="show">NOT Installed</Condition>
               </Control>
-              <Control Id="ShowChangelogCheckBoxText" Type="Text" X="150" Y="110" Width="150" Height="10" Transparent="yes" Text="Read What's New">
+              <Control Id="ShowChangelogCheckBoxText" Type="Text" X="150" Y="110" Width="150" Height="10" Transparent="yes" Hidden="yes" Text="Read What's New">
                 <Condition Action="show">NOT Installed</Condition>
               </Control>
 

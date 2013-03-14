@@ -6,7 +6,7 @@ Copyright: Custom BSD-like
 Group: Applications/Ham Radio
 Source: %{name}-%{version}.tar.gz
 BuildRoot: /var/tmp/%{name}-buildroot
-Requires: tqsllib >= 1.2, wxwin
+Requires: tqsllib >= 2.3, wxwin
 BuildPrereq: tqsllib-devel
 
 %description
@@ -18,12 +18,12 @@ contains the GUI applications tqslcert and tqsl.
 %setup -q -n TrustedQSL-%{version}
 
 %build
-./configure --prefix=/usr ${TQSL_CONFIG_OPTS}
+cmake -DCMAKE_INSTALL_PREFIX=/usr ${TQSL_CONFIG_OPTS} .
 make
 
 %install
 rm -rf $RPM_BUILD_ROOT
-make DESTDIR=$RPM_BUILD_ROOT install-strip
+make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/usr/share/applications
 cp tqsl.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqsl.desktop
 cp tqslcert.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqslcert.desktop
