@@ -36,7 +36,7 @@ string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\2" TQSL_VERSION_MINOR TQSLVERSION)
 find_program(GIT_PROG git "C:\\Program Files (x86)\\Git\\bin" "C:\\Program Files\\Git\\bin")
 
 if(GIT_PROG) #we can use git
-execute_process(COMMAND ${GIT_PROG} log -1 --pretty=%h RESULT_VARIABLE GITERROR ERROR_QUIET OUTPUT_VARIABLE HEAD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${GIT_PROG} describe RESULT_VARIABLE GITERROR ERROR_QUIET OUTPUT_VARIABLE HEAD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
 	if(NOT GITERROR) #git ran alright
 		set(BUILD ${HEAD_COMMIT})
 	endif()
