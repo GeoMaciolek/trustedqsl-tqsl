@@ -1417,7 +1417,7 @@ find_next_page(TQSL_LOCATION *loc) {
 			TQSL_LOCATION_FIELD *fp = get_location_field(0, dependsOn, loc);
 			//if (fp->idx>=fp->items.size()) { cerr<<"!! " __FILE__ "(" << __LINE__ << "): Was going to index out of fp->items"<<endl; }
 			//else {
-			if (fp->items.size() > fp->idx && fp->items[fp->idx].text == dependency) {
+			if ((int)fp->items.size() > fp->idx && fp->items[fp->idx].text == dependency) {
 				p.next = pit->first;
 				break;	// Found next page
 			//}
