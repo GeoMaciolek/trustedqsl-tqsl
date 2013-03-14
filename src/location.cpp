@@ -1004,7 +1004,6 @@ static bool inMap(int cqvalue, int ituvalue, bool cqz, bool ituz, const char *ma
 		}
 		mapPart = strtok(NULL, ",");
 	} 
-out:
 	free (mapcopy);
 	return result;
 }
@@ -1058,7 +1057,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 					TQSL_LOCATION_ITEM item;
 					item.text = call_p->first;
 					if (item.text == field.cdata)
-						field.idx = field.items.size();
+						field.idx = (int)field.items.size();
 					field.items.push_back(item);
 				}
 				if (field.items.size() > 0)
