@@ -226,7 +226,7 @@ void UploadDialog::OnDone(wxCommandEvent&) {
 
 int UploadDialog::doUpdateProgress(double dltotal, double dlnow, double ultotal, double ulnow) {
 	if (cancelled) return 1;
-	if (ultotal>0.0000001) progress->SetValue(100*(ulnow/ultotal));
+	if (ultotal>0.0000001) progress->SetValue((int)(100*(ulnow/ultotal)));
 	return 0;
 }
 
