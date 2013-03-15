@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 
-  
 <?define var.helpSrc="help"?>
 
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
@@ -32,6 +31,9 @@
       <Component Id="cmpECC79BD9AB3BAC4C8FA34B94D0061EF3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil6A0BBEF8C843772E433A8A132E8C8F6C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\adifdial.bmp" />
       </Component>
+      <Component Id="cmpD1763364716E9CFA679350F00E5C4FBA" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil2307A3E3D7D5E65E6055C2A12AA9EEB1" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\cabrillo.htm" />
+      </Component>
       <Component Id="cmpD2A582DE11404499A149744D390F4845" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil788063B5EEFBD24D2E932ACCA0834CA2" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\certaccept.htm" />
       </Component>
@@ -56,14 +58,8 @@
       <Component Id="cmp04B9E0F1BE7366E913A98D0B490BAC37" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil908ECFA1D809855C4B7CBFBA84454F54" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\daterng.htm" />
       </Component>
-      <Component Id="cmp14CCBFC6C1EBCA1089330C3C1FB62329" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
-        <File Id="fil3B73DB9D2B7523E55B996B8CEDB17D9A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\duplicate orig.bmp" />
-      </Component>
       <Component Id="cmpF04E504F3E318C52E1B0D346EF022C11" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filCB4051CCE14CBA5EA916FA95FBDCAB31" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\duplicate.bmp" />
-      </Component>
-      <Component Id="cmp9C792F4F2C7E8F22116A706F7219D53C" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
-        <File Id="fil095DC3140222CD1D00BAE8331B900128" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\duplicate.jpg" />
       </Component>
       <Component Id="cmp8773D272DA738CA878021A534201C160" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filE777CDDE331505399A288395EF332B70" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\example1.htm" />
