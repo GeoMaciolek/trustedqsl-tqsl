@@ -104,6 +104,13 @@
         </DirectorySearch>  
       </RegistrySearch>
     </Property>
+    
+    <!-- remember previous install dir -->
+
+    <Property Id="APPLICATIONFOLDER">
+      <RegistrySearch Id='PreviousInstall' Type='directory'  Root='HKLM' Key='Software\TrustedQSL' Name='InstallPath' />
+    </Property>
+    
     <InstallExecuteSequence>
       <Custom Action="RemoveInnoVersion" After="InstallInitialize">ISINNOINSTALLED</Custom>
     </InstallExecuteSequence>

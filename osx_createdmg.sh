@@ -5,7 +5,6 @@ WORKDIR=`mktemp -d /tmp/tqsl.XXXXX` || exit 1
 
 /bin/echo -n "Copying files to image directory... "
 
-mkdir $WORKDIR
 cp apps/ChangeLog.txt $WORKDIR/ChangeLog.txt
 cp LICENSE.txt $WORKDIR/
 cp apps/quick "$WORKDIR/Quick Start.txt"

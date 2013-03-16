@@ -294,7 +294,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				tqsl_getLocationFieldDataLength(loc, i, &tsize);
 				sdc.GetTextExtent(wxString("X", wxConvLocal), &w, &h);
 				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
-					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE), 0, wxTOP, 5;
+					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE);
 				break;
 		}
 		controls.push_back(control_p);

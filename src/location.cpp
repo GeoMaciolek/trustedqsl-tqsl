@@ -1004,7 +1004,6 @@ static bool inMap(int cqvalue, int ituvalue, bool cqz, bool ituz, const char *ma
 		}
 		mapPart = strtok(NULL, ",");
 	} 
-out:
 	free (mapcopy);
 	return result;
 }
@@ -1058,7 +1057,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 					TQSL_LOCATION_ITEM item;
 					item.text = call_p->first;
 					if (item.text == field.cdata)
-						field.idx = field.items.size();
+						field.idx = (int)field.items.size();
 					field.items.push_back(item);
 				}
 				if (field.items.size() > 0)
@@ -1418,7 +1417,7 @@ find_next_page(TQSL_LOCATION *loc) {
 			TQSL_LOCATION_FIELD *fp = get_location_field(0, dependsOn, loc);
 			//if (fp->idx>=fp->items.size()) { cerr<<"!! " __FILE__ "(" << __LINE__ << "): Was going to index out of fp->items"<<endl; }
 			//else {
-			if (fp->items.size() > fp->idx && fp->items[fp->idx].text == dependency) {
+			if ((int)fp->items.size() > fp->idx && fp->items[fp->idx].text == dependency) {
 				p.next = pit->first;
 				break;	// Found next page
 			//}
@@ -1830,7 +1829,7 @@ tqsl_deleteStationLocation(const char *name) {
 			return tqsl_dump_station_data(sfile);
 		}
 	}
-	return TQSL_NAME_NOT_FOUND;
+	return TQSL_LOCATION_NOT_FOUND;
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -1862,7 +1861,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		}
 	}
 	if (!exists) {
-		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		tQSL_Error = TQSL_LOCATION_NOT_FOUND;
 		return 1;
 	}
 	loc->page = 1;
@@ -2450,7 +2449,7 @@ tqsl_getLocationCallSign(tQSL_Location locp, char *buf, int bufsiz) {
 			return 0;
 		}
 	}
-	tQSL_Error = TQSL_NAME_NOT_FOUND;
+	tQSL_Error = TQSL_CALL_NOT_FOUND;
 	return 1;
 }
 

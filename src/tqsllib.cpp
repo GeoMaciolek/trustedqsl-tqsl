@@ -72,7 +72,7 @@ static const char *error_strings[] = {
 	"Password not correct",					/* TQSL_PASSWORD_ERROR */
 	"Expected name",					/* TQSL_EXPECTED_NAME */
 	"Name exists",						/* TQSL_NAME_EXISTS */
-	"Name not found",					/* TQSL_NAME_NOT_FOUND */
+	"Data for this DXCC entity could not be found",		/* TQSL_NAME_NOT_FOUND */
 	"Invalid time format",					/* TQSL_INVALID_TIME */
 	"QSO date is not within the date range specified on your Callsign Certificate",	/* TQSL_CERT_DATE_MISMATCH */
 	"Certificate provider not found",			/* TQSL_PROVIDER_NOT_FOUND */
@@ -84,6 +84,8 @@ static const char *error_strings[] = {
 	"Date out of range",					/* TQSL_DATE_OUT_OF_RANGE */
 	"Duplicate QSO suppressed",				/* TQSL_DUPLICATE_QSO */
 	"Database error",					/* TQSL_DB_ERROR */
+	"The selected location could not be found",		/* TQSL_LOCATION_NOT_FOUND */
+	"The selected callsign could not be found",		/* TQSL_CALL_NOT_FOUND */
 };
 
 static int pmkdir(const char *path, int perm) {

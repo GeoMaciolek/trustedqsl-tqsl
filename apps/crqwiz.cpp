@@ -452,7 +452,7 @@ wxT("using a password. If you are using a computer system that\n")
 wxT("is shared with others, you should specify a password to\n")
 wxT("protect this certificate. However, if you are using a\n")
 wxT("computer in a private residence, no password need be specified.\n\n")
-wxT("Leave the password blank and press 'Next' unless you want to\n")
+wxT("Leave the password blank and click 'Next' unless you want to\n")
 wxT("use a password.\n\n")
 wxT("Password:")
 	);

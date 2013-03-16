@@ -226,7 +226,7 @@ void UploadDialog::OnDone(wxCommandEvent&) {
 
 int UploadDialog::doUpdateProgress(double dltotal, double dlnow, double ultotal, double ulnow) {
 	if (cancelled) return 1;
-	if (ultotal>0.0000001) progress->SetValue(100*(ulnow/ultotal));
+	if (ultotal>0.0000001) progress->SetValue((int)(100*(ulnow/ultotal)));
 	return 0;
 }
 
@@ -346,7 +346,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
 		wxT("to have already been signed for upload to LoTW, and no new QSOs.\n\n")
 		wxT("Click 'Cancel' to abandon processing this log file (Recommended).\n")
-		wxT("Press 'Allow Duplicates' to re-process this ")
+		wxT("Click 'Allow Duplicates' to re-process this ")
 		wxT("log while allowing duplicate QSOs."),
 			qso_count);
 
@@ -355,9 +355,9 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		message = wxString::Format(wxT("This log contains %d QSO(s) which appear ")
 		wxT("to have already been signed for upload to LoTW, and ")
 		wxT("%d QSO%hs new.\n\n")
-		wxT("Press 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
-		wxT("Press 'Cancel' to abandon processing this log file.\n")
-		wxT("Press 'Allow Duplicates' to re-process this log ")
+		wxT("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
+		wxT("Click 'Cancel' to abandon processing this log file.\n")
+		wxT("Click 'Allow Duplicates' to re-process this log ")
 		wxT("while allowing duplicate QSOs."),
 			dupes, newq, 
 			(newq == 1) ? " which is" : "s which are");
@@ -450,10 +450,12 @@ free_certlist() {
 }
 
 static void
-get_certlist(string callsign, int dxcc) {
+get_certlist(string callsign, int dxcc, bool expired) {
 	free_certlist();
 	tqsl_selectCertificates(&certlist, &ncerts,
-		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
+		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, 
+		expired ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED :
+			  TQSL_SELECT_CERT_WITHKEYS);
 }
 
 class MyFrame : public wxFrame {
@@ -624,9 +626,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 static wxString
 run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
-	wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
+	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
 	wxString rval(wxT(""));
-	get_certlist("", 0);
+	get_certlist("", 0, expired);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title);
@@ -675,10 +677,10 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 }
 
 static void
-AddEditStationLocation(tQSL_Location loc, const wxString& title = wxT("Add Station Location")) {
+AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location")) {
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
-		run_station_wizard(frame, loc, &(frame->help), title);
+		run_station_wizard(frame, loc, &(frame->help), expired, title);
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
@@ -691,7 +693,7 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	if (tqsl_initStationLocationCapture(&loc)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
-	AddEditStationLocation(loc);
+	AddEditStationLocation(loc, false);
 	if (tqsl_endStationLocationCapture(&loc)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
@@ -892,13 +894,14 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 	int dxcc;
 	wxString name, ext;
 	bool allow_dupes = false;
+	bool restarting = false;
 
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
 
-	get_certlist(callsign, dxcc);
+	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
 		wxMessageBox(wxT("No matching certs for QSO"), ErrorTitle, wxOK|wxCENTRE, this);
 		return false;
@@ -909,7 +912,8 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 	init_modes();
 	init_contests();
 
-	
+	DateRangeDialog dial(this);
+
 restart:
 
 	ConvertingDialog *conv_dial = new ConvertingDialog(this, infile.mb_str());
@@ -929,10 +933,11 @@ restart:
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
 		if (range && !suppressdate) {
-			DateRangeDialog dial(this);
-			if (dial.ShowModal() != wxOK) {
-				wxLogMessage(wxT("Cancelled"));
-				return false;
+			if (!restarting) {
+				if (dial.ShowModal() != wxOK) {
+					wxLogMessage(wxT("Cancelled"));
+					return false;
+				}
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
 		}
@@ -1079,6 +1084,7 @@ restart:
 			if (choice == TQSL_DP_ALLOW) {
 				allow_dupes = true;
 				tqsl_converterRollBack(conv);
+				restarting = true;
 				goto restart;
 			}
 		} else {
@@ -1463,7 +1469,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
    				return 0;
    			case wxID_APPLY:	// User hit New
    				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-   				selname = run_station_wizard(this, loc, &help);
+   				selname = run_station_wizard(this, loc, &help, false);
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_MORE:		// User hit Edit
@@ -1475,7 +1481,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 					}
 					char loccall[512];
 					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-					selname = run_station_wizard(this, loc, &help, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
+					selname = run_station_wizard(this, loc, &help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				}
    				break;
@@ -2035,9 +2041,9 @@ QSLApp::OnInit() {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
 			}
-			AddEditStationLocation(loc);
+			AddEditStationLocation(loc, true);
 		} else
-			AddEditStationLocation(loc, wxT("Edit Station Location"));
+			AddEditStationLocation(loc, false, wxT("Edit Station Location"));
 	}
 	if (parser.GetParamCount()>0) {
 		infile = parser.GetParam(0);
