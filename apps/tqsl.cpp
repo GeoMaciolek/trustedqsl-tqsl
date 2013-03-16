@@ -450,11 +450,11 @@ free_certlist() {
 }
 
 static void
-get_certlist(string callsign, int dxcc, bool deleted) {
+get_certlist(string callsign, int dxcc, bool expired) {
 	free_certlist();
 	tqsl_selectCertificates(&certlist, &ncerts,
 		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, 
-		deleted ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED :
+		expired ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED :
 			  TQSL_SELECT_CERT_WITHKEYS);
 }
 
@@ -626,9 +626,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 static wxString
 run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
-	bool deleted = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
+	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
 	wxString rval(wxT(""));
-	get_certlist("", 0, deleted);
+	get_certlist("", 0, expired);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title);
@@ -677,10 +677,10 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 }
 
 static void
-AddEditStationLocation(tQSL_Location loc, bool deleted = false, const wxString& title = wxT("Add Station Location")) {
+AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location")) {
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
-		run_station_wizard(frame, loc, &(frame->help), deleted, title);
+		run_station_wizard(frame, loc, &(frame->help), expired, title);
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
