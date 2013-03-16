@@ -7,12 +7,16 @@ different menu during installation.) The installer also lets you place
 shortcuts to these programs on your desktop.
 
 To install on Mac OS X, open the disk image file (.dmg) and drag the
-application icons to your Applications folder. On a Mac OS X 10.8 or later
-system, you may need to grant permission for the applications to run.
-To do that, right click on the application icon, then choose Open. You
-will receive an "Are you sure" dialog box. Click the "Open" button to
-permit the application to open. You will only need to do this once for
-a given TQSL release.
+application icons to your Applications folder. If you are replacing
+an existing installation of TrustedQSL, you should choose "Replace All"
+when prompted if the existing files should be replaced. You could also
+drag the existing folder to the trash first as no user data will be lost.
+
+On a Mac OS X 10.8 or later system, you may need to grant permission for
+the applications to run.  To do that, right click on the application icon,
+then choose Open. You will receive an "Are you sure" dialog box. Click
+the "Open" button to permit the application to open. You will only need
+to do this once for a given TQSL release.
 
 Instructions for installing on Linux can be found in the INSTALL document
 included with the source code.
