@@ -100,7 +100,8 @@ public:
 
 class TQSL_LOCATION {
 public:
-	TQSL_LOCATION() : sentinel(0x5445), page(0), cansave(false), sign_clean(false) {}
+	TQSL_LOCATION() : sentinel(0x5445), page(0), cansave(false), sign_clean(false), cert_flags(TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED), newflags(false) {}
+
 	~TQSL_LOCATION() { sentinel = 0; }
 	int sentinel;
 	int page;
@@ -114,6 +115,8 @@ public:
 	std::string tCONTACT;
 	std::string sigspec;
 	char data_errors[512];
+	int cert_flags;
+	bool newflags;
 };
 
 class Band {
@@ -1034,13 +1037,15 @@ update_page(int page, TQSL_LOCATION *loc) {
 		TQSL_LOCATION_FIELD& field = p.fieldlist[i];
 		field.changed = false;
 		if (field.gabbi_name == "CALL") {
-			if (field.items.size() == 0) {
+			if (field.items.size() == 0 || loc->newflags) {
 				// Build list of call signs from available certs
 				field.changed = true;
+				field.items.clear();
+				loc->newflags = false;
 				p.hash.clear();
 				tQSL_Cert *certlist;
 				int ncerts;
-				tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
+				tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, loc->cert_flags);
 				for (int i = 0; i < ncerts; i++) {
 					char callsign[40];
 					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
@@ -1399,6 +1404,22 @@ tqsl_setStationLocationCapturePage(tQSL_Location locp, int page) {
 	loc->page = page;
 	return 0;
 }
+
+DLLEXPORT int CALLCONVENTION
+tqsl_setStationLocationCertFlags(tQSL_Location locp, int flags) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp)))
+		return 1;
+	if (loc->cert_flags != flags)
+		loc->cert_flags = flags;
+		loc->newflags = true;
+		loc->page = 1;
+		if (update_page(1, loc))
+			return 1;
+	}
+	return 0;
+}
+
 
 static int
 find_next_page(TQSL_LOCATION *loc) {

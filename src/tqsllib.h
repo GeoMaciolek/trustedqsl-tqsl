@@ -846,6 +846,11 @@ DLLEXPORT int CALLCONVENTION tqsl_getStationLocationCapturePage(tQSL_Location lo
   */
 DLLEXPORT int CALLCONVENTION tqsl_setStationLocationCapturePage(tQSL_Location loc, int page);
 
+/** Set the certificate flags used in a location page.
+  * This is used to enable expired certs (or disable).
+  */
+DLLEXPORT int CALLCONVENTION tqsl_setStationLocationCertFlags(tQSL_Location loc, int flags);
+
 /** Advance the page to the next one in the page sequence */
 DLLEXPORT int CALLCONVENTION tqsl_nextStationLocationCapture(tQSL_Location loc);
 
