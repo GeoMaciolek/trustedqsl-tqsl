@@ -1829,7 +1829,7 @@ tqsl_deleteStationLocation(const char *name) {
 			return tqsl_dump_station_data(sfile);
 		}
 	}
-	return TQSL_NAME_NOT_FOUND;
+	return TQSL_LOCATION_NOT_FOUND;
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -1861,7 +1861,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		}
 	}
 	if (!exists) {
-		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		tQSL_Error = TQSL_LOCATION_NOT_FOUND;
 		return 1;
 	}
 	loc->page = 1;
@@ -2449,7 +2449,7 @@ tqsl_getLocationCallSign(tQSL_Location locp, char *buf, int bufsiz) {
 			return 0;
 		}
 	}
-	tQSL_Error = TQSL_NAME_NOT_FOUND;
+	tQSL_Error = TQSL_CALL_NOT_FOUND;
 	return 1;
 }
 
