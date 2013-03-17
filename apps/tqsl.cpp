@@ -631,7 +631,7 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	get_certlist("", 0, expired);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
-	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title);
+	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title, expired);
 	wiz->GetPage(true);
 	TQSLWizPage *page = wiz->GetPage();
 	if (page == 0)

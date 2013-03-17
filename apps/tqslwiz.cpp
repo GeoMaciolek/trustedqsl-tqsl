@@ -40,7 +40,7 @@ TQSLWizard::OnPageChanged(wxWizardEvent& ev) {
 }
 
 TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help,
-	const wxString& title) :
+	const wxString& title, bool expired) :
 	ExtWizard(parent, help, title), loc(locp), _curpage(-1) {
 
 	char buf[256];
@@ -48,6 +48,7 @@ TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpControlle
 		wxString s(buf, wxConvLocal);
 		SetLocationName(s);
 	}
+	tqsl_setStationLocationCertFlags(locp, expired ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED : TQSL_SELECT_CERT_WITHKEYS);
 	tqsl_setStationLocationCapturePage(locp, 1);
 }
 

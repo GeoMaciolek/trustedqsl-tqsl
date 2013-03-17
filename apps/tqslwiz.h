@@ -44,7 +44,7 @@ class TQSLWizPage;
 
 class TQSLWizard : public ExtWizard {
 public:
-	TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
+	TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString, bool expired = false);
 
 //	TQSLWizard(tQSL_Location locp, wxWindow* parent, int id = -1, const wxString& title = wxEmptyString,
 //		const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition);
@@ -56,6 +56,7 @@ public:
 	TQSLWizPage *GetFinalPage() { return (_pages.size() > 0) ? _pages[0] : 0; }
 
 	bool page_changing;
+	bool expired;
 private:
 	void OnPageChanged(wxWizardEvent&);
 	wxString sl_name;
