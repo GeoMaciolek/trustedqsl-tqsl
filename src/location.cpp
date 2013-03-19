@@ -1410,7 +1410,7 @@ tqsl_setStationLocationCertFlags(tQSL_Location locp, int flags) {
 	TQSL_LOCATION *loc;
 	if (!(loc = check_loc(locp)))
 		return 1;
-	if (loc->cert_flags != flags)
+	if (loc->cert_flags != flags) {
 		loc->cert_flags = flags;
 		loc->newflags = true;
 		loc->page = 1;
