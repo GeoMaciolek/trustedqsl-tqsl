@@ -476,10 +476,10 @@ public:
 	void OnFileCompress(wxCommandEvent& event);
 #endif
 	void OnPreferences(wxCommandEvent& event);
-	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, const char *password = NULL);
+	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, bool newqsos = false, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	bool ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppresdate=false, const char* password=NULL);
-	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, const char* password=NULL);
+	bool ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, bool newqos = false, const char* password=NULL);
+	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, bool newqsos = false, const char* password=NULL);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
@@ -887,7 +887,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
-bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, const char* password) {
+bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, bool newqsos, const char* password) {
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -1093,6 +1093,11 @@ restart:
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
 				return true;
+			} else if (!newqsos) {
+				wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), processed, duplicates);
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				return true;
 			}
 		}
 		wxLogMessage(wxT("%s: %d QSO records were duplicates"),
@@ -1108,7 +1113,7 @@ restart:
 
 bool
 MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
-	bool compressed, bool suppressdate, const char *password) {
+	bool compressed, bool suppressdate, bool newqsos, const char *password) {
 	
 	gzFile gout = 0;
 	ofstream out;
@@ -1126,7 +1131,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	wxString output;
 	int numrecs=0;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, password);
+	bool cancelled=this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, newqsos, password);
 
 	if (cancelled || numrecs==0)
 		wxLogMessage(wxT("No records output"));
@@ -1241,11 +1246,11 @@ protected:
 	}
 };
 
-int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, const char* password) {
+int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, bool newqsos, const char* password) {
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, password);
+	bool cancelled=this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, newqsos, password);
 
 	if (cancelled || numrecs==0) {
 		wxLogMessage(wxT("No records to upload"));
@@ -1978,6 +1983,7 @@ QSLApp::OnInit() {
 	tQSL_Location loc = 0;
 	wxString locname;
 	bool suppressdate = false;
+	bool newqsos = false;
 	bool quiet = false;
 	bool upload=false;
 	char *password = NULL;
@@ -1995,6 +2001,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_SWITCH, wxT("x"), wxT("batch"),	wxT("Exit after processing log (otherwise start normally)") },
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
+		{ wxCMD_LINE_SWITCH, wxT("n"), wxT("newQSOs"),  wxT("Process new QSOs only, suppressing duplicates") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
@@ -2035,8 +2042,12 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("d"))) {
 		suppressdate = true;
 	}
+	if (parser.Found(wxT("n"))) {
+		newqsos = true;
+	}
 	if (parser.Found(wxT("u"))) {
 		upload=true;
+		newqsos = true;
 	}
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
@@ -2075,7 +2086,7 @@ QSLApp::OnInit() {
 	}
 	if (upload) {
 		try {
-			int val=frame->UploadLogFile(loc, infile, true, suppressdate, password);
+			int val=frame->UploadLogFile(loc, infile, true, suppressdate, newqsos, password);
 			exit(val);
 		} catch (TQSLException& x) {
 			wxString s;
@@ -2087,7 +2098,7 @@ QSLApp::OnInit() {
 		}
 	} else {
 		try {
-			frame->ConvertLogFile(loc, infile, path, true, suppressdate, password);
+			frame->ConvertLogFile(loc, infile, path, true, suppressdate, newqsos, password);
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
