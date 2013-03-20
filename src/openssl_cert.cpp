@@ -2897,13 +2897,13 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		len = sizeof value-1;
 		if (!tqsl_get_cert_ext(cert, "dxccEntity", (unsigned char *)value, &len, NULL)) {
 			value[len] = 0;
-			subjid += string("\n  DXCC = ") + value;
+			subjid += string("  DXCC = ") + value;
 		}
 	} else if (tqsl_cert_get_subject_name_entry(cert, "organizationName", &item)) {
 		// Subject contains an organization (probably a CA or root CA cert)
 		subjid = string("  ") + value;
 		if (tqsl_cert_get_subject_name_entry(cert, "organizationalUnitName", &item))
-			subjid += string("\n  ") + value;
+			subjid += string(" ") + value;
 	}
 	if (subjid == "") {
 		// If haven't found a displayable subject name we undertand, use the raw DN
@@ -2977,7 +2977,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		if (i < n) {	/* Have a match -- cert is already in the file */
 			if (cb != NULL) {
 				int rval;
-				string msg = "Duplicate " + stype + " certificate:\n" + subjid;
+				string msg = "Duplicate " + stype + " certificate: " + subjid;
 
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {
@@ -2991,7 +2991,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 	}
 	/* Cert is not a duplicate. Append it to the certificate file */
 	if (cb != NULL) {
-		msg = "Adding " + stype + " cert for:\n" + subjid;
+		msg = "Adding " + stype + " cert for: " + subjid;
 
 		rval = (*cb)(TQSL_CERT_CB_MILESTONE | type | TQSL_CERT_CB_PROMPT, msg.c_str(), userdata);
 		if (rval) {
@@ -3012,7 +3012,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		tQSL_Errno = errno;
 		return 1;
 	}
-	msg = "Loaded:\n" + subjid;
+	msg = "Loaded: " + subjid;
 	rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
@@ -3187,7 +3187,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 		goto trk_end;
 	}
 	if (cb) {
-		string msg = string("Loaded private key for:\n  ") + callsign;
+		string msg = string("Loaded private key for: ") + callsign;
 		(*cb)(TQSL_CERT_CB_RESULT + TQSL_CERT_CB_PKEY + TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
 	}
 	rval = 0;

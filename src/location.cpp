@@ -2572,20 +2572,11 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		int curmajor, curminor;
 		if (tqsl_getConfigVersion(&curmajor, &curminor))
 			return 1;
-		const char *msg =  "Newer config already present";
-		if (major == curmajor) {
-			if (minor == curminor)
-				msg = "Same config version already present";
-			else if (minor > curminor)
-				msg = 0;
-		} else if (major > curmajor)
-			msg = 0;
-		if (msg) {
-			if (cb)
-				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_DUPLICATE | TQSL_CERT_CB_CONFIG,
-					msg, userdata);
+		if (major < curmajor)
 			return 0;
-		}
+		if (major == curmajor)
+			if (minor <= curminor)
+				return 0;
 
 		// Save the configuration file
 		string fn = string(tQSL_BaseDir) + "/config.xml";

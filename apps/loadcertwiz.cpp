@@ -22,17 +22,17 @@
 wxString
 notifyData::Message() const {
 	
-	wxString msgs = errors;
-	if (!wxIsEmpty(errors))
-		msgs = wxT("Import Messages: ") + errors + wxT("\n");
+	wxString msgs = status;
+	if (!wxIsEmpty(status))
+		msgs = status + wxT("\n");
 
 	return wxString::Format(
 		wxT("%s")
-		wxT("Root Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("CA Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("User Certificates:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Private Keys:\n     Loaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Configuration Data:\n     Loaded: %d  Duplicate: %d  Error: %d"),
+		wxT("Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("User Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d"),
 		msgs.c_str(),
 		root.loaded, root.duplicate, root.error,
 		ca.loaded, ca.duplicate, ca.error,
@@ -97,6 +97,7 @@ notifyImport(int type, const char *message, void *data) {
 				break;
 		}
 		if (counts) {
+			if (message) nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
 			switch (TQSL_CERT_CB_RESULT_TYPE(type)) {
 				case TQSL_CERT_CB_DUPLICATE:
 					counts->duplicate++;
@@ -104,7 +105,6 @@ notifyImport(int type, const char *message, void *data) {
 				case TQSL_CERT_CB_ERROR:
 					counts->error++;
 					// wxMessageBox(wxString(message, wxConvLocal), wxT("Error"));
-					nd->errors = nd->errors + wxString(message, wxConvLocal) + wxT("\n");
 					break;
 				case TQSL_CERT_CB_LOADED:
 					counts->loaded++;
@@ -269,7 +269,8 @@ LCW_FinalPage::LCW_FinalPage(LoadCertWiz *parent) : LCW_Page(parent) {
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Loading complete"));
 	sizer->Add(st, 0, wxALL, 10);
-	tc_status = new wxStaticText(this, -1, wxT(""));
+//	tc_status = new wxStaticText(this, -1, wxT(""));
+	tc_status = new wxTextCtrl(this, -1, wxT(""),wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
 	sizer->Add(tc_status, 1, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer);
 }
@@ -278,9 +279,9 @@ void
 LCW_FinalPage::refresh() {
 	const notifyData *nd = ((LoadCertWiz *)_parent)->GetNotifyData();
 	if (nd)
-		tc_status->SetLabel(nd->Message());
+		tc_status->SetValue(nd->Message());
 	else
-		tc_status->SetLabel(wxT("No status information available"));
+		tc_status->SetValue(wxT("No status information available"));
 }
 
 LCW_P12PasswordPage::LCW_P12PasswordPage(LoadCertWiz *parent) : LCW_Page(parent) {
