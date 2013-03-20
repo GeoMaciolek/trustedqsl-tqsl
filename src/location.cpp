@@ -300,8 +300,15 @@ tqsl_load_xml_config() {
 
 	string user_path = string(tQSL_BaseDir) + "/config.xml";
 
-	default_config.parseFile(default_path.c_str());
-	user_config.parseFile(user_path.c_str());
+	int default_status = default_config.parseFile(default_path.c_str());
+	int user_status = user_config.parseFile(user_path.c_str());
+	if (default_status != XML_PARSE_NO_ERROR && user_status != XML_PARSE_NO_ERROR) {
+		if (user_status == XML_PARSE_SYSTEM_ERROR)
+			tQSL_Error = TQSL_CONFIG_ERROR;
+		else
+			tQSL_Error = TQSL_CONFIG_SYNTAX_ERROR;
+		return 1;
+	}
 
 	int default_major = -1;
 	int default_minor = 0;
@@ -326,7 +333,7 @@ tqsl_load_xml_config() {
 			return 0;
 	}
 	if (user_major < 0) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CONFIG_SYNTAX_ERROR;
 		return 1;
 	}
 	tqsl_xml_config	= user_config;
@@ -342,11 +349,11 @@ tqsl_get_xml_config_section(const string& section, XMLElement& el) {
 	XMLElement top;
 	if (!tqsl_xml_config.getFirstElement("tqslconfig", top)) {
 		tqsl_xml_config.clear();
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CONFIG_SYNTAX_ERROR;
 		return 1;
 	}
 	if (!top.getFirstElement(section, el)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CONFIG_SYNTAX_ERROR;
 		return 1;
 	}
 	return 0;
@@ -426,12 +433,14 @@ make_sign_data(TQSL_LOCATION *loc) {
 	loc->sign_clean = false;
 	XMLElement sigspecs;
 	if (tqsl_get_xml_config_section("sigspecs", sigspecs)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - it does not have a sigspecs section");
 		return 1;
 	}
 	XMLElement sigspec;
 	if (!sigspecs.getFirstElement("sigspec", sigspec)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - it does not have a sigspec section");
 		return 1;
 	}
 	loc->sigspec = "SIGN_";
@@ -441,22 +450,26 @@ make_sign_data(TQSL_LOCATION *loc) {
 	
 	tCONTACT_sign.clear();
 	if (!sigspec.getFirstElement("tCONTACT", tCONTACT_sign)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - missing sigspec.tCONTACT");
 		return 1;
 	}
 	if (tCONTACT_sign.getElementList().size() == 0) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - empty sigspec.tCONTACT");
 		return 1;
 	}
 	XMLElement tSTATION;
 	if (!sigspec.getFirstElement("tSTATION", tSTATION)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - missing sigspec.tSTATION");
 		return 1;
 	}
 	XMLElement specfield;
 	bool ok;
 	if (!(ok = tSTATION.getFirstElement(specfield))) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - missing tSTATION.specfield");
 		return 1;
 	}
 	do {
@@ -910,7 +923,8 @@ tqsl_setADIFMode(const char *adif_item, const char *mode) {
 		return 1;
 	}
 	if (init_adif_map()) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - ADIF map invalid");
 		return 1;
 	}
 	string umode = string_toupper(mode);
@@ -925,7 +939,8 @@ tqsl_getADIFMode(const char *adif_item, char *mode, int nmode) {
 		return 1;
 	}
 	if (init_adif_map()) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - ADIF map invalid");
 		return 1;
 	}
 	string orig = adif_item;
@@ -955,7 +970,8 @@ init_loc_maps() {
 		pair <string, bool> Id = config_page.getAttribute("Id");
 		int page_num = atoi(Id.first.c_str());
 		if (!Id.second || page_num < 1) {	// Must have the Id!
-			tQSL_Error = TQSL_CONFIG_ERROR;
+			tQSL_Error = TQSL_CUSTOM_ERROR;
+			strcpy(tQSL_CustomError, "TQSL Configuration file invalid - page missing ID");
 			return 1;
 		}
 		tqsl_page_map[page_num] = config_page;
@@ -968,7 +984,8 @@ init_loc_maps() {
 	for (ok = config_fields.getFirstElement("field", config_field); ok; ok = config_fields.getNextElement(config_field)) {
 		pair <string, bool> Id = config_field.getAttribute("Id");
 		if (!Id.second) {	// Must have the Id!
-			tQSL_Error = TQSL_CONFIG_ERROR;
+			tQSL_Error = TQSL_CUSTOM_ERROR;
+			strcpy(tQSL_CustomError, "TQSL Configuration file invalid - field missing ID");
 			return 1;
 		}
 		tqsl_field_map[Id.first] = config_field;
@@ -1116,7 +1133,8 @@ update_page(int page, TQSL_LOCATION *loc) {
 		} else {
 			if (tqsl_field_map.find(field.gabbi_name) == tqsl_field_map.end()) {
 				// Shouldn't happen!
-				tQSL_Error = TQSL_CONFIG_ERROR;
+				tQSL_Error = TQSL_CUSTOM_ERROR;
+				strcpy(tQSL_CustomError, "TQSL Configuration file invalid - field map mismatch.");
 				return 1;
 			}
 			XMLElement config_field = tqsl_field_map.find(field.gabbi_name)->second;
@@ -1158,7 +1176,8 @@ update_page(int page, TQSL_LOCATION *loc) {
 						ok = config_field.getNextElement(enumlist);
 					} // enum loop
 				} else {
-					tQSL_Error = TQSL_CONFIG_ERROR;
+					tQSL_Error = TQSL_CUSTOM_ERROR;
+					strcpy(tQSL_CustomError, "TQSL Configuration file invalid - dependent field not found.");
 					return 1;
 				}
 			} else {
@@ -1200,7 +1219,8 @@ update_page(int page, TQSL_LOCATION *loc) {
 								zoneMap = NULL;
 							}
 							if (upper < lower) {
-								tQSL_Error = TQSL_CONFIG_ERROR;
+								tQSL_Error = TQSL_CUSTOM_ERROR;
+								strcpy(tQSL_CustomError, "TQSL Configuration file invalid - field range order incorrect.");
 								return 1;
 							}
 							field.items.clear();
@@ -1284,7 +1304,8 @@ make_page(TQSL_LOCATION_PAGELIST& pagelist, int page_num) {
 		return 1;
 
 	if (tqsl_page_map.find(page_num) == tqsl_page_map.end()) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strcpy(tQSL_CustomError, "TQSL Configuration file invalid - page reference could not be found.");
 		return 1;
 	}
 
@@ -1299,7 +1320,8 @@ make_page(TQSL_LOCATION_PAGELIST& pagelist, int page_num) {
 	while (field_ok) {
 		string field_name = config_pageField.getText();
 		if (field_name == "" || tqsl_field_map.find(field_name) == tqsl_field_map.end()) {
-			tQSL_Error = TQSL_CONFIG_ERROR;	// Page references undefined field
+			tQSL_Error = TQSL_CUSTOM_ERROR;
+			strcpy(tQSL_CustomError, "TQSL Configuration file invalid - page references undefined field.");
 			return 1;
 		}
 		XMLElement& config_field = tqsl_field_map[field_name];
@@ -1850,7 +1872,8 @@ tqsl_deleteStationLocation(const char *name) {
 			return tqsl_dump_station_data(sfile);
 		}
 	}
-	return TQSL_LOCATION_NOT_FOUND;
+	tQSL_Error = TQSL_LOCATION_NOT_FOUND;
+	return 1;
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -2534,14 +2557,19 @@ tqsl_getProvider(int idx, TQSL_PROVIDER *provider) {
 DLLEXPORT int CALLCONVENTION
 tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), void *userdata) {
 	XMLElement topel;
-	if (!topel.parseFile(file)) {
+	int status = topel.parseFile(file);
+	if (status) {
 		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		if (status == XML_PARSE_SYSTEM_ERROR) 
+			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
+		else
+			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
 		return 1;
 	}
 	XMLElement tqsldata;
 	if (!topel.getFirstElement("tqsldata", tqsldata)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
 		return 1;
 	}
 	XMLElement section;
@@ -2620,14 +2648,19 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 DLLEXPORT int CALLCONVENTION
 tqsl_getSerialFromTQSLFile(const char *file, long *serial) {
 	XMLElement topel;
-	if (!topel.parseFile(file)) {
+	int status =  topel.parseFile(file);
+	if (status) {
 		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		if (status == XML_PARSE_SYSTEM_ERROR) 
+			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
+		else
+			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
 		return 1;
 	}
 	XMLElement tqsldata;
 	if (!topel.getFirstElement("tqsldata", tqsldata)) {
-		tQSL_Error = TQSL_CONFIG_ERROR;
+		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
 		return 1;
 	}
 	XMLElement section;
@@ -2637,7 +2670,8 @@ tqsl_getSerialFromTQSLFile(const char *file, long *serial) {
 		bool cstat = section.getFirstElement("usercert", cert);
 		if (cstat) {
 			if (tqsl_get_pem_serial(cert.getText().c_str(), serial)) {
-				tQSL_Error = TQSL_CONFIG_ERROR;
+				strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
+				tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
 				return 1;
 			}
 			return 0;

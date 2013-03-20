@@ -59,7 +59,10 @@ public:
 	XMLElementAttributeList& getAttributeList() { return _attributes; }
 	XMLElementList& getElementList() { return _elements; }
 	/// Parse an XML file and add its element tree to this element
-	bool parseFile(const char *filename);
+	int parseFile(const char *filename);
+#define XML_PARSE_NO_ERROR 0
+#define XML_PARSE_SYSTEM_ERROR 1
+#define XML_PARSE_SYNTAX_ERROR 2
 	/// Get the first attribute of the element
     /** Provides the attribute key and value. Returns \c false if the
       * element contains no attributes */

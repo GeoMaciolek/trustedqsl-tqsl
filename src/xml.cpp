@@ -97,12 +97,12 @@ XMLElement::parseFile(const char *filename) {
 }
 */
 
-bool
+int
 XMLElement::parseFile(const char *filename) {
 	gzFile in = gzopen(filename, "rb");
 
 	if (!in)
-		return false;	// Failed to open file
+		return XML_PARSE_SYSTEM_ERROR;	// Failed to open file
 	char buf[256];
 	XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *)this);
@@ -117,7 +117,7 @@ XMLElement::parseFile(const char *filename) {
 		if (XML_Parse(xp, buf, rcount, 0) == 0) {
 			gzclose(in);
 			XML_ParserFree(xp);
-			return false;
+			return XML_PARSE_SYNTAX_ERROR;
 		}
 	}
 	gzclose(in);
@@ -125,7 +125,7 @@ XMLElement::parseFile(const char *filename) {
 	if (rval)
 		rval = (XML_Parse(xp, "", 0, 1) != 0);
 	XML_ParserFree(xp);
-	return rval;
+	return (rval ? XML_PARSE_NO_ERROR : XML_PARSE_SYNTAX_ERROR);
 }
 
 
