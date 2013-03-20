@@ -1963,6 +1963,11 @@ bool
 QSLApp::OnInit() {
 	MyFrame *frame = 0;
 
+	int major, minor;
+	if (tqsl_getConfigVersion(&major, &minor)) {
+		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
+		exit (1);
+	}
 	//short circuit if no arguments
 
 	if (argc<=1) {

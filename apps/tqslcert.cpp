@@ -79,6 +79,11 @@ CertApp::~CertApp() {
 
 bool
 CertApp::OnInit() {
+	int major, minor;
+	if (tqsl_getConfigVersion(&major, &minor)) {
+		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
+		exit (1);
+	}
 	MyFrame *frame = new MyFrame(wxT("tQSL Certificates"), 50, 50, 450, 400);
 	frame->Show(TRUE);
 	SetTopWindow(frame);
