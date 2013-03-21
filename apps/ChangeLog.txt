@@ -39,6 +39,16 @@ Major feature additions:
  - Installer on Windows is now a Microsoft Windows Installer package, instead of
    an executable. This will allow for easier and cleaner upgrades
 
+ - Added a new command line option, '-a', to allow command line users to
+   control user interaction. This option takes a value from the set ask,
+   abort, new, or all. For '-a ask', TQSL will ask users how to handle
+   duplicates and date mismatches. '-a abort' will cause signing to terminate
+   immediately when an error occurs. '-a new' will cause new records only to
+   be output, and '-a all' will cause all of the input records (including
+   duplicates) to be signed. Prompts for errors (date ranges bad, bad
+   callsigns) will be suppressed for '-a new' or '-a all', but cause immediate
+   aborts when '-a abort' is used. '-a ask' prompts the user in those cases.
+
 Minor changes:
 
  - TQSL/TQSLCERT now have window icons
