@@ -681,7 +681,9 @@ tqsl_converterRollBack(tQSL_Converter convp) {
 		return 1;
 	if (!conv->seendb)
 		return 1;
-	conv->txn->abort(conv->txn);
+	if (conv->txn)
+		conv->txn->abort(conv->txn);
+	conv->txn = NULL;
 	return 0;
 }
 
@@ -693,7 +695,8 @@ tqsl_converterCommit(tQSL_Converter convp) {
 		return 1;
 	if (!conv->seendb)
 		return 1;
-	conv->txn->commit(conv->txn, 0);
+	if (conv->txn)
+		conv->txn->commit(conv->txn, 0);
 	return 0;
 }
 
