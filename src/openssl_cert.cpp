@@ -2710,7 +2710,8 @@ tqsl_self_signed_is_ok(int ok, X509_STORE_CTX *ctx) {
 
 static int
 tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx) {
-	if (ctx->error == X509_V_ERR_CERT_HAS_EXPIRED)
+	if (ctx->error == X509_V_ERR_CERT_HAS_EXPIRED ||
+	    ctx->error == X509_V_ERR_CERT_UNTRUSTED)
 		return 1;
 	return ok;
 }
