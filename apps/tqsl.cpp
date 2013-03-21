@@ -2085,7 +2085,10 @@ QSLApp::OnInit() {
 		else if (!act.CmpNoCase(wxT("ask")))
 			action = TQSL_ACTION_ASK;
 		else {
-			cerr<< "The action parameter " << act.c_str() << " is not recognized";
+			char tmp[100];
+			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
+			tmp[sizeof tmp -1] = '\0';
+			cerr << "The action parameter " << tmp << " is not recognized" << endl;
 			exit(1);
 		}
 	}
