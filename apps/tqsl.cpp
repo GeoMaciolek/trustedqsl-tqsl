@@ -2047,10 +2047,13 @@ QSLApp::OnInit() {
 	// is parsed as "-path"
 	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
 	if (parser.Parse(true)!=0) return false; // exit if help or syntax error
-	// Send errors to 'stderr' if in batch mode. -- KD6PAG
 
 	// print version and exit
-	if (parser.Found(wxT("v"))) { cout<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
+	if (parser.Found(wxT("v"))) { 
+		wxMessageOutput::Set(new wxMessageOutputStderr);
+		wxMessageOutput::Get()->Printf(wxT("TQSL Version " VERSION " " BUILD "\n"));
+		return false;
+	}
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
