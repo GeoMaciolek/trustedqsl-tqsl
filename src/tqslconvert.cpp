@@ -132,8 +132,6 @@ inline TQSL_CONVERTER::~TQSL_CONVERTER() {
 	tqsl_endADIF(&adif);
 	if (certs_used)
 		delete[] certs_used;
-	if (seendb)
-		seendb->close(seendb, 0);
 	sentinel = 0;
 }
 
@@ -239,7 +237,7 @@ tqsl_endConverter(tQSL_Converter *convp) {
 
 	TQSL_CONVERTER* conv;
 
-	if ((conv = check_conv(convp))) {
+	if ((conv = check_conv(*convp))) {
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
