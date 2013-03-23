@@ -1106,6 +1106,7 @@ abortSigning:
 			if (choice == TQSL_DP_ALLOW) {
 				allow_dupes = true;
 				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
 				restarting = true;
 				goto restart;
 			}
@@ -1125,6 +1126,7 @@ abortSigning:
 			} else if (action == TQSL_ACTION_ALL) {
 				allow_dupes = true;
 				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
 				restarting = true;
 				goto restart;
 			}
