@@ -909,7 +909,7 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 
 	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
-		wxString msg = wxString::Format(wxT("There are no valid certificates for callsign %hs. Signing aborted"), callsign);
+		wxString msg = wxString::Format(wxT("There are no valid certificates for callsign %hs.\nSigning aborted.\n"), callsign);
 		throw TQSLException(msg.mb_str());
 		return false;
 	}
@@ -2139,7 +2139,10 @@ QSLApp::OnInit() {
 	if (upload) {
 		try {
 			int val=frame->UploadLogFile(loc, infile, true, suppressdate, action, password);
-			exit(val);
+			if (quiet)
+				exit(val);
+			else
+				return true;	// Run the GUI
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
@@ -2149,12 +2152,15 @@ QSLApp::OnInit() {
 			if (quiet)
 				exit(5);
 			else
-				return true;		// Allow GUI to display status
+				return true;
 		}
 	} else {
 		try {
 			frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
-			exit(0);
+			if (quiet)
+				exit(0);
+			else
+				return true;
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
@@ -2164,10 +2170,12 @@ QSLApp::OnInit() {
 			if (quiet)
 				exit(5);
 			else
-				return true;		// Allow GUI to display status
-			return true;
+				return true;
 		}
 	}
-	return false;
+	if (quiet)
+		return false;
+	else
+		return true;
 }
 
