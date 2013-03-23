@@ -909,7 +909,8 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 
 	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
-		wxMessageBox(wxT("No matching certs for QSO"), ErrorTitle, wxOK|wxCENTRE, this);
+		wxString msg = wxString::Format(wxT("There are no valid certificates for callsign %hs. Signing aborted"), callsign);
+		throw TQSLException(msg.mb_str());
 		return false;
 	}
 
@@ -2083,7 +2084,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("a"), &act)) {
 		if (!act.CmpNoCase(wxT("abort")))
 			action = TQSL_ACTION_ABORT;
-		else if (!act.CmpNoCase(wxT("new")))
+		else if (!act.CmpNoCase(wxT("compliant")))
 			action = TQSL_ACTION_NEW;
 		else if (!act.CmpNoCase(wxT("all")))
 			action = TQSL_ACTION_ALL;
@@ -2145,17 +2146,26 @@ QSLApp::OnInit() {
 				s = infile + wxT(": ");
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
-			exit(5);
+			if (quiet)
+				exit(5);
+			else
+				return true;		// Allow GUI to display status
 		}
 	} else {
 		try {
 			frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
+			exit(0);
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
 				s = infile + wxT(": ");
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
+			if (quiet)
+				exit(5);
+			else
+				return true;		// Allow GUI to display status
+			return true;
 		}
 	}
 	return false;
