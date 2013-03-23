@@ -241,7 +241,13 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		// close files and clean up converters, if any
+		if (conv->adif) tqsl_endADIF(&conv->adif);
+		if (conv->cab) tqsl_endCabrillo(&conv->cab);
 	}
+
+
+	
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
 		delete CAST_TQSL_CONVERTER(*convp);
 	*convp = 0;
