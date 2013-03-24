@@ -93,7 +93,8 @@ enum {
 	TQSL_ACTION_ASK = 0,
 	TQSL_ACTION_ABORT = 1,
 	TQSL_ACTION_NEW = 2,
-	TQSL_ACTION_ALL = 3
+	TQSL_ACTION_ALL = 3,
+	TQSL_ACTION_UNSPEC = 4
 };
 
 #define TQSL_CD_MSG TQSL_ID_LOW
@@ -329,7 +330,7 @@ DateRangeDialog::OnCancel(wxCommandEvent&) {
 
 class DupesDialog : public wxDialog {
 public:
-	DupesDialog(wxWindow *parent = 0, int qso_count=0, int dupes=0);
+	DupesDialog(wxWindow *parent = 0, int qso_count=0, int dupes=0, int action=TQSL_ACTION_ASK);
 private:
 	void OnOk(wxCommandEvent&);	
 	void OnCancel(wxCommandEvent&);
@@ -343,7 +344,7 @@ BEGIN_EVENT_TABLE(DupesDialog, wxDialog)
 	EVT_BUTTON(TQSL_DP_ALLOW, DupesDialog::OnAllow)
 END_EVENT_TABLE()
 
-DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
+DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action) :
 		wxDialog(parent, -1, wxString(wxT("Duplicate QSOs Detected"))) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxString message;
@@ -363,17 +364,39 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes) :
 		wxT("%d QSO%hs new.\n\n")
 		wxT("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n")
 		wxT("Click 'Cancel' to abandon processing this log file.\n")
-		wxT("Click 'Allow Duplicates' to re-process this log ")
+		wxT("Click 'Allow duplicates' to re-process this log ")
 		wxT("while allowing duplicate QSOs."),
 			dupes, newq, 
 			(newq == 1) ? " which is" : "s which are");
+	}
+
+	if (action==TQSL_ACTION_UNSPEC) {
+		if (qso_count==dupes) {
+			message+=
+				wxT("\n\nThe program (such as a logger) that has started TrustedQSL does not appear to be duplicate-handling aware.\n")
+				wxT("Please check for an updated version of this software.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
+				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not expectecting TrustedQSL to exit without signing a log may produce\n")
+				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
+		} else {
+			message+=
+				wxT("\n\nThe program (such as a logger) that has started TrustedQSL does not appear to be duplicate-handling aware.\n")
+				wxT("Please check for an updated version of this software.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
+				wxT(" is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly\n")
+				wxT(" set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'\n")
+				wxT(" and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though\n")
+				wxT(" they would not be in this specific batch\n")
+				wxT("Choosing 'Cancel' is usually safe, but a defective logger not expectecting TrustedQSL to exit without signing a log may produce\n")
+				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
+		}
 	}
 	sizer->Add(new wxStaticText(this, -1, message), 0, wxALL|wxALIGN_CENTER, 10);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	if (qso_count!=dupes) hsizer->Add(new wxButton(this, TQSL_DP_OK, wxT("Exclude duplicates")), 0, wxRIGHT, 5);
 	hsizer->Add(new wxButton(this, TQSL_DP_CAN, wxT("Cancel")), 0, wxLEFT, 10);
-	hsizer->Add(new wxButton(this, TQSL_DP_ALLOW, wxT("Allow Duplicates")), 0, wxLEFT, 20);
+	hsizer->Add(new wxButton(this, TQSL_DP_ALLOW, wxT("Allow duplicates")), 0, wxLEFT, 20);
 	sizer->Add(hsizer, 0, wxALIGN_CENTER|wxALL, 10);
 	SetAutoLayout(TRUE);
 	SetSizer(sizer);
@@ -1043,6 +1066,7 @@ restart:
 								ignore_err = true;
 								break;
 							case TQSL_ACTION_ASK:
+							case TQSL_ACTION_UNSPEC:
 								break;			// The error will show as a popup
 						}
 					}
@@ -1095,8 +1119,8 @@ abortSigning:
 			tqsl_endConverter(&conv);
 			return cancelled;
 		}
-		if (this || action == TQSL_ACTION_ASK) { //if GUI or want to ask the user
-			DupesDialog dial(this, processed, duplicates);
+		if (this || action == TQSL_ACTION_ASK || action==TQSL_ACTION_UNSPEC) { //if GUI or want to ask the user
+			DupesDialog dial(this, processed, duplicates, action);
 			int choice = dial.ShowModal();
 			if (choice == TQSL_DP_CAN) {
 				wxLogMessage(wxT("Cancelled"));
@@ -2017,7 +2041,7 @@ QSLApp::OnInit() {
 	tQSL_Location loc = 0;
 	wxString locname;
 	bool suppressdate = false;
-	int action = TQSL_ACTION_ASK;
+	int action = TQSL_ACTION_UNSPEC;
 	bool quiet = false;
 	bool upload=false;
 	char *password = NULL;
@@ -2037,7 +2061,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
-		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
+		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display this command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
 	};
