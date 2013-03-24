@@ -68,7 +68,7 @@ public:
 	LCW_FinalPage(LoadCertWiz *parent);
 	virtual void refresh();
 private:
-	wxStaticText *tc_status;
+	wxTextCtrl *tc_status;
 };
 
 class notifyData {
@@ -77,14 +77,14 @@ public:
 		int loaded, error, duplicate;
 	};
 	struct counts root, ca, user, pkey, config;
-	wxString errors;
+	wxString status;
 	notifyData() {
 		root.loaded = root.error = root.duplicate = 0;
 		ca.loaded = ca.error = ca.duplicate = 0;
 		user.loaded = user.error = user.duplicate = 0;
 		pkey.loaded = pkey.error = pkey.duplicate = 0;
 		config.loaded = config.error = config.duplicate = 0;
-		errors = wxT("");
+		status = wxT("");
 	}
 	wxString Message() const;
 };

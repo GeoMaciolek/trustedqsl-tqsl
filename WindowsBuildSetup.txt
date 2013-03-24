@@ -111,7 +111,7 @@ These downloads and installs should run in parallel. If you find yourself waitin
 	
 -- 2) Get the source --
 
-Decide where you want your source folder. I have mine in Documents\src. Right click in that folder and choose "Git clone...". Enter git://git.code.sf.net/p/trustedqsl/tqsl, click ok, and wait. It should create a folder called 'tqsl' in the folder you right-clicked in. Check it out and observe the folder structure. You'll see this document in there too ('WindowsBuildSetup.txt') - open it to make sure you're using the newest version. You should see a lot of Git options if you right-click in this folder; a Git tutorial will come later but you can play around for now. You can always delete the folder and re-clone it if you mess anything up.
+Decide where you want your source folder. I have mine in Documents\src. Right click in that folder and choose "Git clone...". Enter git://git.code.sf.net/p/trustedqsl/tqsl, click OK, and wait. It should create a folder called 'tqsl' in the folder you right-clicked in. Check it out and observe the folder structure. You'll see this document in there too ('WindowsBuildSetup.txt') - open it to make sure you're using the newest version. You should see a lot of Git options if you right-click in this folder; a Git tutorial will come later but you can play around for now. You can always delete the folder and re-clone it if you mess anything up.
 	
 -- 3) Libraries (order is irrelevant) --
 
@@ -199,7 +199,7 @@ Most of these happen from the "Developer Command Prompt for VS2012". Open it and
  Download and extract to C:\ (will make a new folder): http://zlib.net/
 	"zlib source code, version 1.2.7, tar.gz format" - "US (zlib.net)"
 
- ZLIB seems to disagres with running a release version in a debug build and crashes. So you'll want both. cmake will automatically set up the correct one to link based on the build type.
+ ZLIB seems to disagree with running a release version in a debug build and crashes. So you'll want both. cmake will automatically set up the correct one to link based on the build type.
  
  Also, we'll get our first taste of cmake.
   - Open your developer command prompt; 'cd \zlib-1.2.7'.

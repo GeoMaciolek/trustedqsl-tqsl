@@ -15,7 +15,7 @@ Major feature additions:
 
           0=success; log signed and uploaded and accepted without incident
           1=soft fail (empty or all dupe log?)
-          2=active reject (the server recieved the log and decided to reject it)
+          2=active reject (the server received the log and decided to reject it)
           3=passive reject (the server is probably down; unexpected response)
           4=hard fail (internal error)
           5=tqsllib internal error (probably a bad filename)
@@ -24,7 +24,7 @@ Major feature additions:
    periodically prompted to download and install it. You can also check manually
 
  - Duplicate checking. Any QSOs that have been successfully uploaded to Logbook
-   of the World or saved to a file are registered in a databse. Any exact
+   of the World or saved to a file are registered in a database. Any exact
    duplicates are automatically stripped from future logs. This can be disabled
    on a case-by-case basis, in case a log was signed but never uploaded, or
    there was a server issue that led to an upload going unprocessed.
@@ -38,6 +38,16 @@ Major feature additions:
 
  - Installer on Windows is now a Microsoft Windows Installer package, instead of
    an executable. This will allow for easier and cleaner upgrades
+
+ - Added a new command line option, '-a', to allow command line users to
+   control user interaction. This option takes a value from the set ask,
+   abort, new, or all. For '-a ask', TQSL will ask users how to handle
+   duplicates and date mismatches. '-a abort' will cause signing to terminate
+   immediately when an error occurs. '-a new' will cause new records only to
+   be output, and '-a all' will cause all of the input records (including
+   duplicates) to be signed. Prompts for errors (date ranges bad, bad
+   callsigns) will be suppressed for '-a new' or '-a all', but cause immediate
+   aborts when '-a abort' is used. '-a ask' prompts the user in those cases.
 
 Minor changes:
 
@@ -80,7 +90,7 @@ Remember certificate requests and assist the user with importing the .tq6.
 
 Prompt user to save their certificate after importing a .tq6 signed certificate.
 
-Suppress display of superceded certificates, controlled by a tqslcert
+Suppress display of superseded certificates, controlled by a tqslcert
 preference setting.
 
 Fix windows wxWidgets crashes with several wizards (cert renew, new cert,
@@ -171,7 +181,7 @@ Added QSO Date Range dialog. (TQSL)
 "Delete" button in Preferences/ADIF_Modes wasn't getting
 enabled (Windows only). (TQSL)
 
-Assertion eror when adding Cabrillo mode to empty list
+Assertion error when adding Cabrillo mode to empty list
 in Preferences/Cabrillo_Specs (Windows only). (TQSL)
 
 Completed help files.
@@ -212,11 +222,11 @@ signing. Errors are still reported, however.
 
 Fixed ADIF parser zero-length-field problem. (TQSLLIB)
 
-Fixed certificate reqest wizard State field focus problem. (TQSLCERT)
+Fixed certificate request wizard State field focus problem. (TQSLCERT)
 
 Added "Edit Locations" command to Station menu. (TQSL)
 
-Fixed mishanding of ITU zone and CQ zone data in station location. (TQSLLIB)
+Fixed mishandling of ITU zone and CQ zone data in station location. (TQSLLIB)
 
 Improved MODE handling in both TQSL and TQSLLIB. There is now a table of
 mode aliases that can be added to by the user, allowing the user to map

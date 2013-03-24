@@ -77,7 +77,7 @@ static const char *error_strings[] = {
 	"QSO date is not within the date range specified on your Callsign Certificate",	/* TQSL_CERT_DATE_MISMATCH */
 	"Certificate provider not found",			/* TQSL_PROVIDER_NOT_FOUND */
 	"No certificate for key",				/* TQSL_CERT_KEY_ONLY */
-	"Configuration file error",				/* TQSL_CONFIG_ERROR */
+	"Configuration file cannot be opened",			/* TQSL_CONFIG_ERROR */
 	"Certificate or private key not found",			/* TQSL_CERT_NOT_FOUND */
 	"PKCS#12 file not TQSL compatible",			/* TQSL_PKCS12_ERROR */
 	"Certificate not TQSL compatible",			/* TQSL_CERT_TYPE_ERROR */
@@ -86,6 +86,9 @@ static const char *error_strings[] = {
 	"Database error",					/* TQSL_DB_ERROR */
 	"The selected location could not be found",		/* TQSL_LOCATION_NOT_FOUND */
 	"The selected callsign could not be found",		/* TQSL_CALL_NOT_FOUND */
+	"The TQSL configuration file cannot be parsed",		/* TQSL_CONFIG_SYNTAX_ERROR */
+	"This file can not be processed due to a system error",	/* TQSL_FILE_SYSTEM_ERROR */
+	"The format of this file is incorrect.",		/* TQSL_FILE_SYNTAX_ERROR */
 };
 
 static int pmkdir(const char *path, int perm) {

@@ -132,8 +132,6 @@ inline TQSL_CONVERTER::~TQSL_CONVERTER() {
 	tqsl_endADIF(&adif);
 	if (certs_used)
 		delete[] certs_used;
-	if (seendb)
-		seendb->close(seendb, 0);
 	sentinel = 0;
 }
 
@@ -239,11 +237,17 @@ tqsl_endConverter(tQSL_Converter *convp) {
 
 	TQSL_CONVERTER* conv;
 
-	if ((conv = check_conv(convp))) {
+	if ((conv = check_conv(*convp))) {
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		// close files and clean up converters, if any
+		if (conv->adif) tqsl_endADIF(&conv->adif);
+		if (conv->cab) tqsl_endCabrillo(&conv->cab);
 	}
+
+
+	
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
 		delete CAST_TQSL_CONVERTER(*convp);
 	*convp = 0;
@@ -681,7 +685,9 @@ tqsl_converterRollBack(tQSL_Converter convp) {
 		return 1;
 	if (!conv->seendb)
 		return 1;
-	conv->txn->abort(conv->txn);
+	if (conv->txn)
+		conv->txn->abort(conv->txn);
+	conv->txn = NULL;
 	return 0;
 }
 
@@ -693,7 +699,8 @@ tqsl_converterCommit(tQSL_Converter convp) {
 		return 1;
 	if (!conv->seendb)
 		return 1;
-	conv->txn->commit(conv->txn, 0);
+	if (conv->txn)
+		conv->txn->commit(conv->txn, 0);
 	return 0;
 }
 

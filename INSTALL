@@ -79,7 +79,7 @@ You'll need to have the Mac developer's tools, Xcode 1.5, installed.
 This is done in much the same manner as building under Linux/Unix, above.
 
 You will need to download and compile Berkeley DB 5.3 or later. The version
-of Berekeley DB shipped with OS X (as of 10.8) is out of date.
+of Berkeley DB shipped with OS X (as of 10.8) is out of date.
 
 You also may not want to install the library into system directories:
 
@@ -141,5 +141,5 @@ containing the TrustedQSL applications folder and document files.
 
 4) Building under Windows
 
-See file WindowsBuildSetup.txt in the toplevel directory for details
+See file WindowsBuildSetup.txt in the top-level directory for details
 on how to set up MSVC to compile TQSL.

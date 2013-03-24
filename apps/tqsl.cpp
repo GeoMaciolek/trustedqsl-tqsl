@@ -89,6 +89,12 @@ enum {
 	tm_h_about,
 	tm_h_update
 };
+enum {
+	TQSL_ACTION_ASK = 0,
+	TQSL_ACTION_ABORT = 1,
+	TQSL_ACTION_NEW = 2,
+	TQSL_ACTION_ALL = 3
+};
 
 #define TQSL_CD_MSG TQSL_ID_LOW
 #define TQSL_CD_CANBUT TQSL_ID_LOW+1
@@ -476,10 +482,10 @@ public:
 	void OnFileCompress(wxCommandEvent& event);
 #endif
 	void OnPreferences(wxCommandEvent& event);
-	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, const char *password = NULL);
+	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	bool ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppresdate=false, const char* password=NULL);
-	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, const char* password=NULL);
+	bool ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
+	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
@@ -887,7 +893,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
-bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, const char* password) {
+bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, int action, const char* password) {
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -903,7 +909,8 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 
 	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
-		wxMessageBox(wxT("No matching certs for QSO"), ErrorTitle, wxOK|wxCENTRE, this);
+		wxString msg = wxString::Format(wxT("There are no valid certificates for callsign %hs.\nSigning aborted.\n"), callsign);
+		throw TQSLException(msg.mb_str());
 		return false;
 	}
 
@@ -1024,8 +1031,23 @@ restart:
 					const char *bad_text = tqsl_getConverterRecordText(conv);
 					if (bad_text)
 						msg += wxString(wxT("\n")) + wxString(bad_text, wxConvLocal);
-					// Only ask if not in batch mode or ignoring errors - KD6PAG
-					if (!ignore_err && this) {
+
+					if (!this) { // No GUI
+						switch (action) {
+						 	case TQSL_ACTION_ABORT:
+								cancelled = true;
+								ignore_err = true;
+								goto abortSigning;
+							case TQSL_ACTION_NEW:		// For ALL or NEW, let the signing proceed
+							case TQSL_ACTION_ALL:
+								ignore_err = true;
+								break;
+							case TQSL_ACTION_ASK:
+								break;			// The error will show as a popup
+						}
+					}
+					wxLogError(wxT("%s"), msg.c_str());
+					if (!ignore_err) {
 						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO)
 							throw x;
 					}
@@ -1038,12 +1060,13 @@ restart:
    			break;
 		} while (1);
    		cancelled = !conv_dial->running;
+
+abortSigning:
    		if (this)
 			this->Enable(TRUE);
 
    		if (cancelled) {
    			wxLogWarning(wxT("Signing cancelled"));
-			tqsl_converterRollBack(conv);
    		} else if (tQSL_Error != TQSL_NO_ERROR) {
    			check_tqsl_error(1);
 		}
@@ -1072,7 +1095,7 @@ restart:
 			tqsl_endConverter(&conv);
 			return cancelled;
 		}
-		if (this) { //only if GUI - otherwise act as if default action was taken
+		if (this || action == TQSL_ACTION_ASK) { //if GUI or want to ask the user
 			DupesDialog dial(this, processed, duplicates);
 			int choice = dial.ShowModal();
 			if (choice == TQSL_DP_CAN) {
@@ -1084,16 +1107,32 @@ restart:
 			if (choice == TQSL_DP_ALLOW) {
 				allow_dupes = true;
 				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
 				restarting = true;
 				goto restart;
 			}
 		} else {
-			if (processed==duplicates) { //default action here is cancel
-				wxLogMessage(wxT("All QSOs are duplicates; aborted"));
+			if (action == TQSL_ACTION_ABORT) {
+				if (processed==duplicates) {
+					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
+					tqsl_converterRollBack(conv);
+					tqsl_endConverter(&conv);
+					return true;
+				} else {
+					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), processed, duplicates);
+					tqsl_converterRollBack(conv);
+					tqsl_endConverter(&conv);
+					return true;
+				}
+			} else if (action == TQSL_ACTION_ALL) {
+				allow_dupes = true;
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
-				return true;
+				restarting = true;
+				goto restart;
 			}
+			// Otherwise it must be TQSL_ACTION_NEW, so fall through
+			// and output the new records.
 		}
 		wxLogMessage(wxT("%s: %d QSO records were duplicates"),
 			infile.c_str(), duplicates);
@@ -1108,7 +1147,7 @@ restart:
 
 bool
 MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
-	bool compressed, bool suppressdate, const char *password) {
+	bool compressed, bool suppressdate, int action, const char *password) {
 	
 	gzFile gout = 0;
 	ofstream out;
@@ -1126,7 +1165,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	wxString output;
 	int numrecs=0;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, password);
+	bool cancelled=this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, action, password);
 
 	if (cancelled || numrecs==0)
 		wxLogMessage(wxT("No records output"));
@@ -1241,11 +1280,11 @@ protected:
 	}
 };
 
-int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, const char* password) {
+int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, int action, const char* password) {
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, password);
+	bool cancelled=this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
 	if (cancelled || numrecs==0) {
 		wxLogMessage(wxT("No records to upload"));
@@ -1963,6 +2002,11 @@ bool
 QSLApp::OnInit() {
 	MyFrame *frame = 0;
 
+	int major, minor;
+	if (tqsl_getConfigVersion(&major, &minor)) {
+		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
+		exit (1);
+	}
 	//short circuit if no arguments
 
 	if (argc<=1) {
@@ -1973,6 +2017,7 @@ QSLApp::OnInit() {
 	tQSL_Location loc = 0;
 	wxString locname;
 	bool suppressdate = false;
+	int action = TQSL_ACTION_ASK;
 	bool quiet = false;
 	bool upload=false;
 	char *password = NULL;
@@ -1982,6 +2027,7 @@ QSLApp::OnInit() {
 	wxCmdLineParser parser;
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
+		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, new or ask") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
 		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Station Location. Must be valid or fails silently") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
@@ -1991,6 +2037,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
+		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
 	};
@@ -2001,10 +2048,13 @@ QSLApp::OnInit() {
 	// is parsed as "-path"
 	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
 	if (parser.Parse(true)!=0) return false; // exit if help or syntax error
-	// Send errors to 'stderr' if in batch mode. -- KD6PAG
 
 	// print version and exit
-	if (parser.Found(wxT("v"))) { cout<<"TQSL Version " VERSION " " BUILD<<endl; return false; }
+	if (parser.Found(wxT("v"))) { 
+		wxMessageOutput::Set(new wxMessageOutputStderr);
+		wxMessageOutput::Get()->Printf(wxT("TQSL Version " VERSION " " BUILD "\n"));
+		return false;
+	}
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
@@ -2029,6 +2079,24 @@ QSLApp::OnInit() {
 	parser.Found(wxT("o"), &outfile);
 	if (parser.Found(wxT("d"))) {
 		suppressdate = true;
+	}
+	wxString act;
+	if (parser.Found(wxT("a"), &act)) {
+		if (!act.CmpNoCase(wxT("abort")))
+			action = TQSL_ACTION_ABORT;
+		else if (!act.CmpNoCase(wxT("compliant")))
+			action = TQSL_ACTION_NEW;
+		else if (!act.CmpNoCase(wxT("all")))
+			action = TQSL_ACTION_ALL;
+		else if (!act.CmpNoCase(wxT("ask")))
+			action = TQSL_ACTION_ASK;
+		else {
+			char tmp[100];
+			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
+			tmp[sizeof tmp -1] = '\0';
+			cerr << "The action parameter " << tmp << " is not recognized" << endl;
+			exit(1);
+		}
 	}
 	if (parser.Found(wxT("u"))) {
 		upload=true;
@@ -2070,27 +2138,44 @@ QSLApp::OnInit() {
 	}
 	if (upload) {
 		try {
-			int val=frame->UploadLogFile(loc, infile, true, suppressdate, password);
-			exit(val);
+			int val=frame->UploadLogFile(loc, infile, true, suppressdate, action, password);
+			if (quiet)
+				exit(val);
+			else
+				return true;	// Run the GUI
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
 				s = infile + wxT(": ");
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
-			exit(5);
+			if (quiet)
+				exit(5);
+			else
+				return true;
 		}
 	} else {
 		try {
-			frame->ConvertLogFile(loc, infile, path, true, suppressdate, password);
+			frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
+			if (quiet)
+				exit(0);
+			else
+				return true;
 		} catch (TQSLException& x) {
 			wxString s;
 			if (!infile.empty())
 				s = infile + wxT(": ");
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
+			if (quiet)
+				exit(5);
+			else
+				return true;
 		}
 	}
-	return false;
+	if (quiet)
+		return false;
+	else
+		return true;
 }
 
