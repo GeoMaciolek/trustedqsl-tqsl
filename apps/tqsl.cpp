@@ -376,7 +376,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 				wxT("\n\nThe program (such as a logger) that has started TrustedQSL does not appear to be duplicate-handling aware.\n")
 				wxT("Please check for an updated version of this software.\n")
 				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
-				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not expectecting TrustedQSL to exit without signing a log may produce\n")
+				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
 				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		} else {
 			message+=
@@ -387,7 +387,7 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 				wxT(" set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'\n")
 				wxT(" and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though\n")
 				wxT(" they would not be in this specific batch\n")
-				wxT("Choosing 'Cancel' is usually safe, but a defective logger not expectecting TrustedQSL to exit without signing a log may produce\n")
+				wxT("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
 				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		}
 	}
