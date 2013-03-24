@@ -12,7 +12,7 @@ the application to read the output file and either upload it or tell your user
 to upload it.
 
 The command line parser in 1.14 has been rewritten and is less
-forgiving of improperly formaatted command lines. 
+forgiving of improperly formatted command lines. 
 
 Command Line Options
 --------------------
@@ -70,7 +70,7 @@ in conjunction with the "-s" option to define a location for editing.
 This option can be used to create a new Station Location (-s without -l) or
 to edit an existing Station Location (when both -s and -l are provided).
 
-  -o, --output=<str>  	Output file name (defaults to input name minus extension plus .tq8
+  -o, --output=<str>  	Output file name (defaults to input name minus extension plus .tq8)
 
 This option instructs tqsl where the signed output file will be stored. If it
 is not provided, the output file will be written to the same location as the
@@ -106,7 +106,8 @@ that will be used to sign the log file.
   -v, --version       	Display the version information and exit
   -h, --help          	Display command line help
 
-These options allow
+These options allow the user to display the version number of tqsl or to
+obtain help on the command line usage.
 
 Command Line Usage
 ------------------
@@ -117,8 +118,8 @@ that application popups should be suppressed.
 
 Errors discovered during the signing process are sent to the standard error
 file. Callers would normally indicate where those messages should be sent
-by adding "2> file.txt" to the command line used to run tqsl. This tells
-the shell (windows or unix) to write the error messages to that file.
+by adding "2> file.txt" to the command line used to run tqsl. This directs
+the shell (Windows or Unix) to write the error messages to that file.
 
 An example usage for signing a log would be
 
@@ -164,7 +165,7 @@ duplicate QSOs should be handled (tqsl_setConverterAllowDuplicates).
 Using tqsllib
 -------------
 A minimal set of calls to permit an application to sign a log is the following.
-of course, error checking should be performed for each call.
+Of course, error checking should be performed for each call.
 
 	tqsl_getStationLocation(&loc, location_name);
 
