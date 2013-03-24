@@ -5,85 +5,107 @@
 <BODY>
 <H3>Command Line Interface</H3>
 <P>
-When starting TQSL you may provide command-line options that affect how TQSL runs. Some of the
-options require an argument, separated from the option letter by one or more spaces. Arguments that
+When starting TQSL, you may specify command line options that 
+<UL>
+<LI>initiate the definition or editing of a <A HREF="glossary.htm#station_location">Station Location</A></LI>
+<LI>initiate the <A HREF="glossary.htm#signed_log_file">signing of a log file</A>
+<LI>direct that a signed log file be uploaded to LoTW via the internet</LI>
+</UL>
+Most command line options are single-letter switches, some of which require an argument; such arguments should be separated from the switch letter by one or more spaces. Arguments that
 contain spaces or other shell-special characters should be quoted in a manner suitable for the
-operating system and shell that's being used. If more than
-one option is specified, each option must be separated from the preceding one by one or more
-spaces.
+operating system and shell that's being used. If more than one command line switch is specified, each switch must be 
+separated from the preceding switch by one or more spaces.
 <P>
-Each option represents an action for TQSL to take. The options are executed in the order they
-appear on the command line - left to right. After processing the options (except for option
-<b>-x</b>) TQSL enters its normal menu-driven mode of operation.
+A filename not preceded by a switch is assumed to be the name of a log file whose QSOs are to be signed.
+<P>
+After taking the actions specified by command line options, TQSL will enter its menu-driven mode of operation unless the <code>-q</code> or <code>-x</code>
+switch is present, in which case it will terminate.
 <P>
 <TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0 valign="top">
-<TR><TD COLSPAN=2 align="center"><B>TQSL Options</B></TD></TR>
 <TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
 
-<TR><TD><b>-d</b></TD>
-<TD>Suppress the date-range dialog. If present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
-be displayed for files that follow this option on the command line.</TD></TR>
-
-<TR><TD><b>-l</b> location_name</TD>
-<TD>Select an existing station location. This location will be used for the commands that follow.
-If the station location doesn't exist, TQSL will exit.</TD></TR>
-
-<TR><TD><b>-s</b></TD>
-<TD>Add or edit station location. If there is a preceding <b>-l</b> option the specified
-location will be edited. If there is no preceding <b>-l</b> option, a new station
-location is being added.</TD></TR>
-
-<TR><TD><b>-u</b></TD>
-<TD>Upload the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A> to LoTW over the Internet<p>
-Return Codes<BR>
-&nbsp;&nbsp;0 - success<BR>
-&nbsp;&nbsp;1 - cancelled, or no action required<BR>
-&nbsp;&nbsp;2 - rejected by LoTW server<BR>
-&nbsp;&nbsp;3 - unexpected response from LotW server<BR>
-&nbsp;&nbsp;4 - TQSL error<BR>
-&nbsp;&nbsp;5 - TQSLLIB error (likely an invalid filename)<BR>
+<TR><TD><code>-a</code></TD>
+<TD>The action to be taken if a duplicate or out-of-date-range QSO is encountered while signing a log file's QSOs:<BR>
+&nbsp;&nbsp;<code>-a ask&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>a dialog will be provided that prompts the user to specify how to proceed<BR>
+&nbsp;&nbsp;<code>-a abort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>no QSOs will be signed<BR>
+&nbsp;&nbsp;<code>-a compliant&nbsp;&nbsp;</code>neither duplicate QSO nor out-of-date-range QSOs will be signed; all other QSOs will be signed<BR>
+&nbsp;&nbsp;<code>-a all&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>all QSOs, including duplicates and out-of-date-range QSOs, will be signed<P>
+If no <code>-a</code> switch is specified and a duplicate or out-of-date-range QSO is encountered while signing QSOs, a dialog will be provided that prompts the user to specify how to proceed.
 </TD></TR>
 
-<TR><TD><b>-x</b></TD>
-<TD>Exit TQSL. If this argument is used it should be the last one on the command line.
-If this argument is not present, TQSL will begin normal operation after successfully
-processing all command-line arguments.</TD></TR>
+<TR><TD><code>-d</code></TD>
+<TD>Suppress the date-range dialog; if this switch is present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
+be displayed before signing a log.</TD></TR>
 
-<TR><TD>filename</TD>
-<TD>Any command-line parameter that is not an option or an option's argument will be
-treated as the name of a log file (ADIF or Cabrillo) to be signed. The resulting signed
-file (.tq8) will be placed in the same directory as the log file, overwriting any
-existing .tq8 file of the same name. (Note: If this option is not preceded by a <b>-l</b>
-option that selects the station location to be used for signing, the <b>Select Station
-Location for Signing</b> dialog will be presented.)
-File names that contain spaces or other shell-special characters should be quoted in a manner
-suitable for the operating system and shell that's being used.<P>
-Note: If the private key needed to sign a log is protected by a password, the user will
-be prompted to supply that password for each file being signed.
+<TR><TD><code>-h</code></TD>
+<TD>Display command line help.</TD></TR>
+
+<TR><TD><code>-l&nbsp;Station_Location</code></TD>
+<TD>Select a defined <A HREF="glossary.htm#station_location">Station Location</A> to be used when signing log files. If the specified Station Location contains embedded spaces, it must be 
+quoted in a manner suitable for the operating system and shell that's being used. If the specified Station Location doesn't exist, no QSOs will be signed or uploaded unless <code>-s</code> is also specified. 
+If <code>-l</code> is not present and a log file is being signed, a dialog will be provided that prompts the user to select a Station Location.</TD></TR>
+
+<TR><TD><code>-o&nbsp;Filename</code></TD>
+<TD>Specify the name of the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A> to be created. If the specified Filename contains embedded spaces, it must be 
+quoted in a manner suitable for the operating system and shell that's being used. If <code>-o</code> is not present, the specified log filename with its extension set to <code>.tq8</code> will be used.</TD></TR>
+
+<TR><TD><code>-p&nbsp;Password</code></TD>
+<TD>Specify the password that gains access to a password-protected Callsign Certificate when <A HREF="glossary.htm#signed_log_file">signing a log file</A>. If the specified Password contains 
+embedded spaces or other shell-special characters, it must be 
+quoted in a manner suitable for the operating system and shell that's being used. If <code>-p</code> is not present, a log file is being signed,
+and the specified or selected Station Location includes a password-protected Callsign Certificate, a dialog will be provided that prompts the user to specify the password.</TD></TR>
+
+<TR><TD><code>-q</code></TD>
+<TD>Operate in batch mode: error messages and return codes will be routed to STDERR, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
+
+<TR><TD><code>-s</code></TD>
+<TD>If the <code>-l</code> switch is also present, a dialog will be provided that enables the specified <A HREF="glossary.htm#station_location">Station Location</A> to be edited;
+otherwise, a dialog will be provided that enables a new Station Location to be defined.</TD></TR>
+
+<TR><TD><code>-u</code></TD>
+<TD>Instead of saving the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A>, upload it to LoTW over the Internet.<p>
+<code>Return Codes<BR>
+&nbsp;&nbsp;0&nbsp;&nbsp;success<BR>
+&nbsp;&nbsp;1&nbsp;&nbsp;cancelled, or no action required<BR>
+&nbsp;&nbsp;2&nbsp;&nbsp;rejected by LoTW server<BR>
+&nbsp;&nbsp;3&nbsp;&nbsp;unexpected response from LotW server<BR>
+&nbsp;&nbsp;4&nbsp;&nbsp;TQSL error<BR>
+&nbsp;&nbsp;5&nbsp;&nbsp;TQSLLIB error (likely an invalid filename)<BR></code>
+</TD></TR>
+
+<TR><TD><code>-v</code></TD>
+<TD>Display TQSL version information, and terminate.</TD></TR>
+
+<TR><TD><code>-x</code></TD>
+<TD>Operate in batch mode: error messages and return codes will be routed to STDERR, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
+
+<TR><TD><code>Filename</code></TD>
+<TD>A command line option that is not a single-letter switch or the argument associated with a single-letter switch will be
+considered the name of the ADIF or Cabrillo log file to be <A HREF="glossary.htm#signed_log_file">digitally signed</A> using the specified or selected Station Location. If the specified Filename 
+contains embedded spaces, it must be quoted in a manner suitable for the operating system and shell that's being used.
+If <code>-u</code> is present, the resulting signed log file will be uploaded to LoTW via the internet. Otherwise, the resulting signed log file will be saved in the Filename specified by the <code>-o</code> switch; 
+if <code>-o</code> is not present, the resulting log file will be saved in the same directory as the log file using the <code>.tq8</code> extension, overwriting any
+existing <code>.tq8</code> file of the same name.
 </TD></TR>
 
 </TABLE>
 <P>
 <B>Examples:</B>
 <P>
-Edit the &quot;Home&quot; station location:
+Without displaying the QSO date-range dialog and ignoring duplicate QSOs, digitally sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; Station Location, upload the digitally signed log file to LoTW, and then terminate:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -d -u -a new -x -l "CQWW Portable" "cqww log.adi" 
+</CODE>
+<P>
+Edit the &quot;Home&quot; station location before beginning menu-driven operation:
 <BR>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -l Home -s
 </CODE>
 <P>
-Add a station location, then exit:
+Add a station location, and then terminate:
 <BR>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -s -x
 </CODE>
-<P>
-Sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; station location and without displaying the QSO date-range dialog, then exit:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
-  tqsl -d -l "CQWW Portable" "cqww log.adi" -x
-</CODE>
-<P>
-Sign a set of log files using the &quot;Home&quot; station location, then exit:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
-  tqsl -l Home Jan.adi Feb.adi Mar.adi Jun.adi Jul.adi -x
-</CODE>
+
 <P>
 </BODY></HTML>
