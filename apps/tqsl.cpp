@@ -2051,7 +2051,7 @@ QSLApp::OnInit() {
 	wxCmdLineParser parser;
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
-		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, new or ask") },
+		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
 		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Station Location. Must be valid or fails silently") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
