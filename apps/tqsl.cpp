@@ -1901,55 +1901,55 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 void
 MyFrame::OnFileCompress(wxCommandEvent& event) {
 	bool uncompress = (event.m_id == tm_f_uncompress);
-	wxString defin = uncompress ? "tq8" : "tq7";
-	wxString defout = uncompress ? "tq7" : "tq8";
-	wxString filt_uncompressed = "TQSL data files (*.tq7)|*.tq7|All files (*.*)|*.*";
-	wxString filt_compressed = "TQSL compressed data files (*.tq8)|*.tq8|All files (*.*)|*.*";
+	wxString defin = uncompress ? wxT("tq8") : wxT("tq7");
+	wxString defout = uncompress ? wxT("tq7") : wxT("tq8");
+	wxString filt_uncompressed = wxT("TQSL data files (*.tq7)|*.tq7|All files (*.*)|*.*");
+	wxString filt_compressed = wxT("TQSL compressed data files (*.tq8)|*.tq8|All files (*.*)|*.*");
 	wxString filtin = uncompress ? filt_compressed : filt_uncompressed;
 	wxString filtout = uncompress ? filt_uncompressed : filt_compressed;
 
 	wxString infile;
    	// Get input file
-	wxString path = wxConfig::Get()->Read("ExportPath", "");
-	infile = wxFileSelector(wxString("Select file to ") + (uncompress ? "Uncompress" : "Compress"),
-   		path, "", defin, filtin,
+	wxString path = wxConfig::Get()->Read(wxT("ExportPath"), wxT(""));
+	infile = wxFileSelector(wxString(wxT("Select file to ")) + (uncompress ? wxT("Uncompress") : wxT("Compress")),
+   		path, wxT(""), defin, filtin,
    		wxOPEN|wxFILE_MUST_EXIST, this);
-   	if (infile == "")
+   	if (infile.IsEmpty())
    		return;
 	ifstream in;
 	gzFile gin = 0;
 	if (uncompress)
-		gin = gzopen(infile.c_str(), "rb");
+		gin = gzopen(infile.mb_str(), "rb");
 	else
-		in.open(infile, ios::in | ios::binary);
+		in.open(infile.mb_str(), ios::in | ios::binary);
 	if ((uncompress && !gin) || (!uncompress && !in)) {
-		wxMessageBox(wxString("Unable to open ") + infile, ErrorTitle, wxOK|wxCENTRE, this);
+		wxMessageBox(wxString(wxT("Unable to open ")) + infile, ErrorTitle, wxOK|wxCENTRE, this);
 		return;
 	}
-	wxConfig::Get()->Write("ExportPath", wxPathOnly(infile));
+	wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(infile));
 	// Get output file
 	wxString basename;
 	wxSplitPath(infile.c_str(), 0, &basename, 0);
-	path = wxConfig::Get()->Read("ExportPath", "");
-	wxString deftype = uncompress ? "tq8" : "tq7";
-	wxString filter = uncompress ? "TQSL compressed data files (*.tq8)|*.tq8"
-		: "TQSL data files (*.tq7)|*.tq7";
-   	wxString outfile = wxFileSelector("Select file to write to",
+	path = wxConfig::Get()->Read(wxT("ExportPath"), wxT(""));
+	wxString deftype = uncompress ? wxT("tq8") : wxT("tq7");
+	wxString filter = uncompress ? wxT("TQSL compressed data files (*.tq8)|*.tq8")
+		: wxT("TQSL data files (*.tq7)|*.tq7");
+   	wxString outfile = wxFileSelector(wxT("Select file to write to"),
    		path, basename, defout, filtout,
    		wxSAVE|wxOVERWRITE_PROMPT, this);
-   	if (outfile == "")
+   	if (outfile.IsEmpty())
    		return;
-	wxConfig::Get()->Write("ExportPath", wxPathOnly(outfile));
+	wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(outfile));
 
 	gzFile gout = 0;
 	ofstream out;
 
 	if (uncompress)
-		out.open(outfile, ios::out | ios::trunc | ios::binary);
+		out.open(outfile.mb_str(), ios::out | ios::trunc | ios::binary);
 	else
-		gout = gzopen(outfile.c_str(), "wb9");
+		gout = gzopen(outfile.mb_str(), "wb9");
 	if ((uncompress && !out) || (!uncompress && !gout)) {
-		wxMessageBox(wxString("Unable to open ") + outfile, ErrorTitle, wxOK|wxCENTRE, this);
+		wxMessageBox(wxString(wxT("Unable to open ")) + outfile, ErrorTitle, wxOK|wxCENTRE, this);
 		if (uncompress)
 			gzclose(gin);
 		return;
@@ -1974,7 +1974,7 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 		} while (in.gcount() == sizeof buf);
 		gzclose(gout);
 	}
-	wxLogMessage(wxString::Format("%s written to %hs file %s", infile.c_str(),
+	wxLogMessage(wxString::Format(wxT("%s written to %hs file %s"), infile.c_str(),
 		uncompress ? "uncompressed" : "compressed",
 		outfile.c_str()));
 }
