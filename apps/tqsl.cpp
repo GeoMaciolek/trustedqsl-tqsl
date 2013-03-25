@@ -2051,9 +2051,9 @@ QSLApp::OnInit() {
 	wxCmdLineParser parser;
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
-		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, new or ask") },
+		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
-		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Station Location. Must be valid or fails silently") },
+		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
 		{ wxCMD_LINE_OPTION, wxT("o"), wxT("output"),	wxT("Output file name (defaults to input name minus extension plus .tq8") },
 		{ wxCMD_LINE_SWITCH, wxT("u"), wxT("upload"),	wxT("Upload after signing instead of saving") },
@@ -2061,7 +2061,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
-		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display this command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
+		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
 	};
@@ -2092,7 +2092,10 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
 		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
-			wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), ErrorTitle, wxOK|wxCENTRE, frame);
+			if (quiet)
+				wxLogError(wxT("%hs"), tqsl_getErrorString());
+			else
+				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), ErrorTitle, wxOK|wxCENTRE, frame);
 			return false;
 		}
 	}
