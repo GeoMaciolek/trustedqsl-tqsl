@@ -77,6 +77,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga3a7a0d56a0fe4e4ab6824d4392300f5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4f4bcaa003b55a882bd51f9134b482b9"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga4f4bcaa003b55a882bd51f9134b482b9">tqsl_setStationLocationCapturePage</a> (tQSL_Location loc, int page)</td></tr>
 <tr class="separator:ga4f4bcaa003b55a882bd51f9134b482b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaa3eaef77337bf860a6d2c45979972cc9"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#gaa3eaef77337bf860a6d2c45979972cc9">tqsl_setStationLocationCertFlags</a> (tQSL_Location loc, int flags)</td></tr>
+<tr class="separator:gaa3eaef77337bf860a6d2c45979972cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga96aec09f68f1bb438a1f51a2c598ffe9"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga96aec09f68f1bb438a1f51a2c598ffe9">tqsl_nextStationLocationCapture</a> (tQSL_Location loc)</td></tr>
 <tr class="separator:ga96aec09f68f1bb438a1f51a2c598ffe9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6cea48e8178ff047bbfff075a36a83be"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga6cea48e8178ff047bbfff075a36a83be">tqsl_prevStationLocationCapture</a> (tQSL_Location loc)</td></tr>
@@ -1964,6 +1966,33 @@ DLLEXPORT const char <br class="typebreak"/>
       </table>
 </div><div class="memdoc">
 <p>Set the current page number. Typically, the page number will be 1 (the starting page) or a value obtained from <a class="el" href="group__Data.html#ga3a7a0d56a0fe4e4ab6824d4392300f5c">tqsl_getStationLocationCapturePage()</a>. </p>
+
+</div>
+</div>
+<a class="anchor" id="gaa3eaef77337bf860a6d2c45979972cc9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_setStationLocationCertFlags </td>
+          <td>(</td>
+          <td class="paramtype">tQSL_Location&#160;</td>
+          <td class="paramname"><em>loc</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Set the certificate flags used in a location page. This is used to enable expired certs (or disable). </p>
 
 </div>
 </div>
