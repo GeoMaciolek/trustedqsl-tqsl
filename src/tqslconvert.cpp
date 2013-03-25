@@ -701,6 +701,7 @@ tqsl_converterCommit(tQSL_Converter convp) {
 		return 1;
 	if (conv->txn)
 		conv->txn->commit(conv->txn, 0);
+	conv->txn=NULL;
 	return 0;
 }
 
