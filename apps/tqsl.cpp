@@ -89,6 +89,8 @@ enum {
 	tm_h_about,
 	tm_h_update
 };
+
+// Action values
 enum {
 	TQSL_ACTION_ASK = 0,
 	TQSL_ACTION_ABORT = 1,
@@ -97,10 +99,49 @@ enum {
 	TQSL_ACTION_UNSPEC = 4
 };
 
+// Exit codes
+enum {
+	TQSL_EXIT_SUCCESS = 0,
+	TQSL_EXIT_CANCEL = 1,
+	TQSL_EXIT_REJECTED = 2,
+	TQSL_EXIT_UNEXP_RESP = 3,
+	TQSL_EXIT_TQSL_ERROR = 4,
+	TQSL_EXIT_LIB_ERROR = 5,
+	TQSL_EXIT_ERR_OPEN_INPUT = 6,
+	TQSL_EXIT_ERR_OPEN_OUTPUT = 7,
+	TQSL_EXIT_NO_QSOS = 8,
+	TQSL_EXIT_QSOS_SUPPRESSED = 9,
+	TQSL_EXIT_COMMAND_ERROR = 10
+};
+
 #define TQSL_CD_MSG TQSL_ID_LOW
 #define TQSL_CD_CANBUT TQSL_ID_LOW+1
 
 static wxString ErrorTitle(wxT("TQSL Error"));
+
+static void exitNow(int status) {
+	const char *errors[] = { "Success",
+				 "User Cancelled",
+				 "Upload Rejected",
+				 "Unexpected LoTW Response",
+				 "TQSL Error",
+				 "TQSLLib Error",
+				 "Error opening input file",
+				 "Error opening output file",
+				 "No QSOs written",
+				 "Some QSOs suppressed",
+				 "Unknown"
+				};
+	int stat = status;
+	if (stat > TQSL_EXIT_QSOS_SUPPRESSED || stat < 0) stat = TQSL_EXIT_QSOS_SUPPRESSED + 1;
+	// For command line errors, nothing is set up so output to cerr.
+	if (stat == TQSL_EXIT_COMMAND_ERROR) {
+		cerr << "Final Status: Command Syntax Error (" << TQSL_EXIT_COMMAND_ERROR << ")" << endl;
+	} else {
+		wxLogMessage(wxT("Final Status: %hs (%d)"), errors[stat], status);
+	}
+	exit(status);
+}
 
 /////////// Application //////////////
 
@@ -505,9 +546,9 @@ public:
 	void OnFileCompress(wxCommandEvent& event);
 #endif
 	void OnPreferences(wxCommandEvent& event);
-	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
+	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	bool ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
+	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
 	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
@@ -916,7 +957,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
-bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, int action, const char* password) {
+int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, int action, const char* password) {
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -934,7 +975,7 @@ bool MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& 
 	if (ncerts == 0) {
 		wxString msg = wxString::Format(wxT("There are no valid certificates for callsign %hs.\nSigning aborted.\n"), callsign);
 		throw TQSLException(msg.mb_str());
-		return false;
+		return TQSL_EXIT_TQSL_ERROR;
 	}
 
 	wxLogMessage(wxT("Signing using CALL=%hs, DXCC=%d"), callsign, dxcc);
@@ -953,6 +994,7 @@ restart:
 	int out_of_range = 0;
 	int duplicates = 0;
 	int processed = 0;
+	int errors = 0;
    	try {
    		if (tqsl_beginCabrilloConverter(&conv, infile.mb_str(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
@@ -966,7 +1008,7 @@ restart:
 			if (!restarting) {
 				if (dial.ShowModal() != wxOK) {
 					wxLogMessage(wxT("Cancelled"));
-					return false;
+					return TQSL_EXIT_CANCEL;
 				}
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
@@ -1044,6 +1086,7 @@ restart:
 			}
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
+				errors++;
 				try {
 					check_tqsl_error(1);
 				} catch (TQSLException& x) {
@@ -1117,7 +1160,7 @@ abortSigning:
 		if (cancelled) {
 			tqsl_converterRollBack(conv);
 			tqsl_endConverter(&conv);
-			return cancelled;
+			return TQSL_EXIT_CANCEL;
 		}
 		if (this || action == TQSL_ACTION_ASK || action==TQSL_ACTION_UNSPEC) { //if GUI or want to ask the user
 			DupesDialog dial(this, processed, duplicates, action);
@@ -1126,7 +1169,7 @@ abortSigning:
 				wxLogMessage(wxT("Cancelled"));
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
-				return true;
+				return TQSL_EXIT_CANCEL;
 			}
 			if (choice == TQSL_DP_ALLOW) {
 				allow_dupes = true;
@@ -1141,12 +1184,12 @@ abortSigning:
 					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
-					return true;
+					return TQSL_EXIT_NO_QSOS;
 				} else {
 					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), processed, duplicates);
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
-					return true;
+					return TQSL_EXIT_NO_QSOS;
 				}
 			} else if (action == TQSL_ACTION_ALL) {
 				allow_dupes = true;
@@ -1166,10 +1209,12 @@ abortSigning:
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
 	}
-	return cancelled;
+	if (cancelled) return TQSL_EXIT_CANCEL;
+	if (duplicates > 0 || out_of_range > 0 || errors > 0) return TQSL_EXIT_QSOS_SUPPRESSED;
+	return TQSL_EXIT_SUCCESS;
 }
 
-bool
+int
 MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	bool compressed, bool suppressdate, int action, const char *password) {
 	
@@ -1182,23 +1227,24 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		out.open(outfile.mb_str(), ios::out|ios::trunc|ios::binary);
 
 	if ((compressed && !gout) || (!compressed && !out)) {
-		wxMessageBox(wxString(wxT("Unable to open ")) + outfile, ErrorTitle, wxOK|wxCENTRE, this);
-		return false;
+		wxLogError(wxT("Unable to open %s for output"), outfile.c_str());
+		return TQSL_EXIT_ERR_OPEN_OUTPUT;
 	}
 
 	wxString output;
 	int numrecs=0;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, action, password);
+	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, action, password);
 
-	if (cancelled || numrecs==0)
+	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
 		wxLogMessage(wxT("No records output"));
-	else {
+		if (numrecs == 0) status = TQSL_EXIT_NO_QSOS;
+	} else {
 		if(compressed) { 
 			if (0>=gzwrite(gout, output.mb_str(), output.size()) || Z_OK!=gzclose(gout)) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
-				return true;
+				return TQSL_EXIT_LIB_ERROR;
 			}
 
 		} else {
@@ -1207,7 +1253,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 			if (out.fail()) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
-				return true;
+				return TQSL_EXIT_LIB_ERROR;
 			}
 			
 			
@@ -1221,7 +1267,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		wxLogMessage(wxT("%s is ready to be emailed or uploaded.\nNote: TQSL assumes that this file will be uploaded to LoTW.\nResubmitting these QSOs will cause them to be reported as duplicates."), outfile.c_str());
 	}
 
-	return cancelled;
+	return status;
 	
 }
 
@@ -1308,11 +1354,12 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
-	bool cancelled=this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
+	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
-	if (cancelled || numrecs==0) {
+	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
 		wxLogMessage(wxT("No records to upload"));
-		return 1;
+		if (numrecs == 0) status = TQSL_EXIT_NO_QSOS;
+		return status;
 	}
 	else {
 		//upload the file
@@ -1335,7 +1382,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 		if (!req) {
 			wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
-			return 4; 
+			return TQSL_EXIT_TQSL_ERROR; 
 		}
 
 
@@ -1391,7 +1438,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		if (compressedSize<0) { 
 			wxLogMessage(wxT("Error compressing before upload")); 
 			curl_easy_cleanup(req);
-			return 4;
+			return TQSL_EXIT_TQSL_ERROR;
 		}
 
 		struct curl_httppost* post=NULL, *lastitem=NULL;
@@ -1424,7 +1471,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 			if (thread.Run() != wxTHREAD_NO_ERROR) {
 				wxLogError(wxT("Could not spawn upload thread!"));
 			        upload->Destroy();
-				return 4;
+				return TQSL_EXIT_TQSL_ERROR;
 			}
 
 			upload->ShowModal();
@@ -1453,7 +1500,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 						wxLogMessage(wxT("Log uploaded successfully!"));
 					}
 
-					retval=0;
+					retval=TQSL_EXIT_SUCCESS;
 				} else { // failure, but site is working
 
 					if (uplMessageRE.Matches(uplresult)) { //and a message
@@ -1464,21 +1511,21 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 						wxLogMessage(wxT("Log upload was rejected!"));
 					}
 
-					retval=2;
+					retval=TQSL_EXIT_REJECTED;
 				}
 			} else { //site isn't working
 				wxLogMessage(wxT("Got an unexpected response on log upload! Maybe the site is down?"));
-				retval=3;
+				retval=TQSL_EXIT_UNEXP_RESP;
 			}
 
 		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
 			wxLogMessage(wxT("Upload cancelled"));
-			retval=1;
+			retval=TQSL_EXIT_CANCEL;
 		} else { //error
 			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
 			// was turned into garbage otherwise
 			wxLogMessage(wxT("Couldn't upload the file: CURL returned %hs"), errorbuf);
-			retval=4;
+			retval=TQSL_EXIT_TQSL_ERROR;
 		}
 		if (this) upload->Destroy();
 		curl_formfree(post);
@@ -1835,6 +1882,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		wxLogError(wxT("%s"), (const char *)s.c_str());
 	}
 	free_certlist();
+	return;
 }
 
 void
@@ -2029,7 +2077,7 @@ QSLApp::OnInit() {
 	int major, minor;
 	if (tqsl_getConfigVersion(&major, &minor)) {
 		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
-		exit (1);
+		exitNow (TQSL_EXIT_TQSL_ERROR);
 	}
 	//short circuit if no arguments
 
@@ -2122,7 +2170,7 @@ QSLApp::OnInit() {
 			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
 			tmp[sizeof tmp -1] = '\0';
 			cerr << "The action parameter " << tmp << " is not recognized" << endl;
-			exit(1);
+			exitNow(TQSL_EXIT_COMMAND_ERROR);
 		}
 	}
 	if (parser.Found(wxT("u"))) {
@@ -2167,7 +2215,7 @@ QSLApp::OnInit() {
 		try {
 			int val=frame->UploadLogFile(loc, infile, true, suppressdate, action, password);
 			if (quiet)
-				exit(val);
+				exitNow(val);
 			else
 				return true;	// Run the GUI
 		} catch (TQSLException& x) {
@@ -2177,15 +2225,15 @@ QSLApp::OnInit() {
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
 			if (quiet)
-				exit(5);
+				exitNow(TQSL_EXIT_LIB_ERROR);
 			else
 				return true;
 		}
 	} else {
 		try {
-			frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
+			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
 			if (quiet)
-				exit(0);
+				exitNow(val);
 			else
 				return true;
 		} catch (TQSLException& x) {
@@ -2195,7 +2243,7 @@ QSLApp::OnInit() {
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
 			if (quiet)
-				exit(5);
+				exitNow(TQSL_EXIT_LIB_ERROR);
 			else
 				return true;
 		}
