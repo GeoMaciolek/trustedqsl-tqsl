@@ -31,8 +31,8 @@ notifyData::Message() const {
 		wxT("Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("User Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d"),
+		wxT("Private Keys:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Configuration Data:\t\tLoaded: %d  Duplicate: %d  Error: %d"),
 		msgs.c_str(),
 		root.loaded, root.duplicate, root.error,
 		ca.loaded, ca.duplicate, ca.error,
