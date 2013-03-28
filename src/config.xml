@@ -725,8 +725,28 @@
       <pageField>RU_OBLAST</pageField>
       <pageField>ZERR</pageField>
     </page>
+    <page Id="11" follows="1" dependsOn="DXCC" dependency="318">
+      <pageField>CN_PROVINCE</pageField>
+      <pageField>ZERR</pageField>
+    </page>
+    <page Id="12" follows="1" dependsOn="DXCC" dependency="150">
+      <pageField>AU_STATE</pageField>
+      <pageField>ZERR</pageField>
+    </page>
   </locpages>
   <locfields>
+    <field Id="AU_STATE" type="C" len="3" label="State" intype="2" flags="0">
+      <enums>
+        <enum value="ACT" zonemap="59:30">Australian Capital Territory</enum>
+        <enum value="NSW" zonemap="59:30">New South Wales</enum>
+        <enum value="VIC" zonemap="59:30">Victoria</enum>
+        <enum value="QLD" zonemap="55:30">Queensland</enum>
+        <enum value="SA" zonemap="59:30">South Australia</enum>
+        <enum value="WA" zonemap="58:29">Western Australia</enum>
+        <enum value="TAS" zonemap="59:30">Tasmania</enum>
+        <enum value="NT" zonemap="55:29">Northern Territory</enum>
+      </enums>
+    </field>
     <field Id="CALL" type="C" len="13" label="Call Sign" intype="2" flags="0" />
     <field Id="CA_PROVINCE" type="C" len="2" label="Province" intype="2" flags="4">
       <enums>
@@ -743,6 +763,41 @@
         <enum value="PQ" zonemap="04:02,04:05,09:02,09:05">Quebec</enum>
         <enum value="SK" zonemap="03:04">Saskatchewan</enum>
         <enum value="YT" zonemap="02:01">Yukon Territory</enum>
+      </enums>
+    </field>
+    <field Id="CN_PROVINCE" type="C" len="2" label="Province" intype="2" flags="0">
+      <enums>
+        <enum value="AH" zonemap="43:24">Anhui</enum>
+        <enum value="BJ" zonemap="44:24">Beijing</enum>
+        <enum value="CQ" zonemap="43:24">Chongqing</enum>
+        <enum value="FJ" zonemap="44:24">Fujian</enum>
+        <enum value="GD" zonemap="44:24">Guangdong</enum>
+        <enum value="GS" zonemap="43:23">Gansu</enum>
+        <enum value="GX" zonemap="43:24,44:24">Guangxi</enum>
+        <enum value="GZ" zonemap="43:24">Guizhou</enum>
+        <enum value="HA" zonemap="44:24">Henan</enum>
+        <enum value="HB" zonemap="43:24,44:24">Hubei</enum>
+        <enum value="HE" zonemap="44:24">Hebei</enum>
+        <enum value="HI" zonemap="44:24">Hainan</enum>
+        <enum value="HL" zonemap="33:24">Heilongjiang</enum>
+        <enum value="HN" zonemap="43:24,44:24">Hunan</enum>
+        <enum value="JL" zonemap="33:24,43:24">Jilin</enum>
+        <enum value="JS" zonemap="44:24">Jiangsu</enum>
+        <enum value="JX" zonemap="44:24">Jiangxi</enum>
+        <enum value="LN" zonemap="44:24">Liaoning</enum>
+        <enum value="NM" zonemap="33:23,43:23,44:23">Nei Mongol</enum>
+        <enum value="NX" zonemap="43:23">Ningxia</enum>
+        <enum value="QH" zonemap="42:23,43:23">Qinghai</enum>
+        <enum value="SC" zonemap="43:24">Sichuan</enum>
+        <enum value="SD" zonemap="44:24">Shandong</enum>
+        <enum value="SH" zonemap="44:24">Shanghai</enum>
+        <enum value="SN" zonemap="43:23">Shaanxi</enum>
+        <enum value="SX" zonemap="44:24">Shanxi</enum>
+        <enum value="TJ" zonemap="44:24">Tianjin</enum>
+        <enum value="XJ" zonemap="42:23,43:23">Xinjiang</enum>
+        <enum value="XZ" zonemap="42:23,43:23">Xizang</enum>
+        <enum value="YN" zonemap="43:24">Yunnan</enum>
+        <enum value="ZJ" zonemap="44:24">Zhejiang</enum>
       </enums>
     </field>
     <field Id="CONT" type="C" len="2" label="Continent" intype="2" flags="0">
@@ -4129,11 +4184,11 @@
         <enum value="IA" zonemap="07:04">Iowa</enum>
         <enum value="KS" zonemap="07:04">Kansas</enum>
         <enum value="KY" zonemap="08:04">Kentucky</enum>
-        <enum value="LA" zonemap="08:04,07:04">Louisiana</enum>
+        <enum value="LA" zonemap="07:04,08:04">Louisiana</enum>
         <enum value="ME" zonemap="08:05">Maine</enum>
         <enum value="MD" zonemap="08:05">Maryland</enum>
         <enum value="MA" zonemap="08:05">Massachusetts</enum>
-        <enum value="MI" zonemap="08:04,07:04">Michigan</enum>
+        <enum value="MI" zonemap="07:04,08:04">Michigan</enum>
         <enum value="MN" zonemap="07:04">Minnesota</enum>
         <enum value="MS" zonemap="07:04,08:04">Mississippi</enum>
         <enum value="MO" zonemap="07:04,08:04">Missouri</enum>
@@ -4153,7 +4208,7 @@
         <enum value="RI" zonemap="08:05">Rhode Island</enum>
         <enum value="SC" zonemap="08:05">South Carolina</enum>
         <enum value="SD" zonemap="07:04">South Dakota</enum>
-        <enum value="TN" zonemap="08:04">Tennessee</enum>
+        <enum value="TN" zonemap="07:04,08:04">Tennessee</enum>
         <enum value="TX" zonemap="07:04">Texas</enum>
         <enum value="UT" zonemap="06:03,07:03">Utah</enum>
         <enum value="VT" zonemap="08:05">Vermont</enum>
