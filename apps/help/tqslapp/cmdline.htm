@@ -56,7 +56,7 @@ quoted in a manner suitable for the operating system and shell that's being used
 and the specified or selected Station Location includes a password-protected Callsign Certificate, a dialog will be provided that prompts the user to specify the password.</TD></TR>
 
 <TR><TD><code>-q</code></TD>
-<TD>Operate in batch mode: error messages and return codes will be routed to STDERR, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
+<TD>Operate in batch mode: status information will be routed to <b>stderr</b>, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
 
 <TR><TD><code>-s</code></TD>
 <TD>If the <code>-l</code> switch is also present, a dialog will be provided that enables the specified <A HREF="glossary.htm#station_location">Station Location</A> to be edited;
@@ -64,20 +64,13 @@ otherwise, a dialog will be provided that enables a new Station Location to be d
 
 <TR><TD><code>-u</code></TD>
 <TD>Instead of saving the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A>, upload it to LoTW over the Internet.<p>
-<code>Return Codes<BR>
-&nbsp;&nbsp;0&nbsp;&nbsp;success<BR>
-&nbsp;&nbsp;1&nbsp;&nbsp;cancelled, or no action required<BR>
-&nbsp;&nbsp;2&nbsp;&nbsp;rejected by LoTW server<BR>
-&nbsp;&nbsp;3&nbsp;&nbsp;unexpected response from LotW server<BR>
-&nbsp;&nbsp;4&nbsp;&nbsp;TQSL error<BR>
-&nbsp;&nbsp;5&nbsp;&nbsp;TQSLLIB error (likely an invalid filename)<BR></code>
 </TD></TR>
 
 <TR><TD><code>-v</code></TD>
 <TD>Display TQSL version information, and terminate.</TD></TR>
 
 <TR><TD><code>-x</code></TD>
-<TD>Operate in batch mode: error messages and return codes will be routed to STDERR, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
+<TD>Operate in batch mode: status information will be routed to <b>stderr</b>, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
 
 <TR><TD><code>Filename</code></TD>
 <TD>A command line option that is not a single-letter switch or the argument associated with a single-letter switch will be
@@ -89,12 +82,12 @@ existing <code>.tq8</code> file of the same name.
 </TD></TR>
 
 </TABLE>
-<P>
-<B>Examples:</B>
-<P>
-Without displaying the QSO date-range dialog and ignoring duplicate QSOs, digitally sign the &quot;cqww log.adi&quot; log file using the &quot;CQWW Portable&quot; Station Location, upload the digitally signed log file to LoTW, and then terminate:
+
+<H5>Invocation Examples:</H5>
+
+Without displaying the QSO date-range dialog and ignoring duplicate QSOs, digitally sign the &quot;<code>cqww log.adi</code>&quot; log file using the &quot;CQWW Portable&quot; Station Location, upload the digitally signed log file to LoTW, route <b>stderr</b> to the file <code>results.txt</code> and then terminate:
 <BR>&nbsp;&nbsp;&nbsp;<CODE>
-  tqsl -d -u -a new -x -l "CQWW Portable" "cqww log.adi" 
+  tqsl -d -u -a new -x -l "CQWW Portable" "cqww log.adi" 2>results.txt
 </CODE>
 <P>
 Edit the &quot;Home&quot; station location before beginning menu-driven operation:
@@ -107,5 +100,45 @@ Add a station location, and then terminate:
   tqsl -s -x
 </CODE>
 
-<P>
+<H5>Status Information</H5>
+
+If invoked with <code>-q</code> or <code>-x</code>, status information will be routed to <b>stderr</b>. The last line of <b>stderr</b> will have the following format:
+<code>HH:MM:SS AM/PM Final Status: Description (Code)</code>
+where
+<UL>
+<LI><code>HH:MM:SS AM/PM</code> is the timestamp</LI>
+<LI><code>Description</code> is a textual summary the status that contains no left or right parenthesis</LI>
+<LI><code>Code</code> is an integer uniquely identifying the status, as described in the following table</LI>
+</UL>
+<p>
+<TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0 valign="top">
+<TR><TD><B>Code</B></TD><TD><B>Description</B></TD></TR>
+
+<TR><TD><code>0</code></TD><TD>success: all qsos submitted were signed and saved or signed and uploaded</td></tr>
+<TR><TD><code>1</code></TD><TD>cancelled by user</td></tr>
+<TR><TD><code>2</code></TD><TD>rejected by LoTW</td></tr>
+<TR><TD><code>3</code></TD><TD>unexpected response from TQSL server</td></tr>
+<TR><TD><code>4</code></TD><TD>TQSL error</td></tr>
+<TR><TD><code>5</code></TD><TD>TQSLlib error</td></tr>
+<TR><TD><code>6</code></TD><TD>Unable to open input file</td></tr>
+<TR><TD><code>7</code></TD><TD>Unable to open output file</td></tr>
+<TR><TD><code>8</code></TD><TD>All QSOs were duplicates or out of date range</td></tr>
+<TR><TD><code>9</code></TD><TD>Some QSOs were duplicates or out of date range</td></tr>
+<TR><TD><code>10</code></TD><TD>Command Syntax Error</td></tr>
+</table>
+
+<H5>Status Examples:</H5>
+
+<code>05:57:39 PM: Warning: Signing cancelled</code><br>
+<code>05:57:39 PM: No records output</code><br>
+<code>05:57:39 PM: Final Status: cancelled by user (1)</code><br>
+<p>
+<code>06:05:56 PM: /home/rmurphy/k1mu.adi: 414 QSO records were duplicates</code><br>
+<code>06:05:56 PM: /home/rmurphy/k1mu.adi: wrote 1 records to /home/rmurphy/k1mu.tq8</code><br>
+<code>06:05:56 PM: /home/rmurphy/k1mu.tq8 is ready to be emailed or uploaded.</code><br>
+<code>Note: TQSL assumes that this file will be uploaded to LoTW.</code><br>
+<code>Resubmitting these QSOs will cause them to be reported as duplicates.</code><br>
+<code>06:05:56 PM: Final Status: Some QSOs were duplicates or out of date range (9)</code><br>
+
+<p>
 </BODY></HTML>
