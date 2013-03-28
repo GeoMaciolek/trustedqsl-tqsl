@@ -2119,7 +2119,7 @@ QSLApp::OnInit() {
 	// only allow "-" for options, otherwise "/path/something.adif" 
 	// is parsed as "-path"
 	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
-	if (parser.Parse(true)!=0) return false; // exit if help or syntax error
+	if (parser.Parse(true)!=0) exitNow(TQSL_EXIT_COMMAND_ERROR);
 
 	// print version and exit
 	if (parser.Found(wxT("v"))) { 
@@ -2128,6 +2128,19 @@ QSLApp::OnInit() {
 		return false;
 	}
 
+	// check for logical command switches
+	if (parser.Found(wxT("o")) && parser.Found(wxT("u"))) {
+		cerr << "Option -o cannot be used with -u" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR);
+	}
+	if ((parser.Found(wxT("o")) || parser.Found(wxT("u"))) && parser.Found(wxT("s"))) { 
+		cerr << "Option -s cannot be used with -u or -o" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR);
+	}
+	if (parser.Found(wxT("s")) && parser.GetParamCount() > 0) {
+		cerr << "Option -s cannot be used with an input file" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR);
+	}
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
 	}
