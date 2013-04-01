@@ -85,17 +85,10 @@ input file with the extension changed to ".tq8"
   -u        	Upload after signing instead of saving
 
 This option instructs tqsl to upload the log file after it is successfully
-signed. The exit status from tqsl can be used by a logging program to determine
-if the signing and upload succeeded:
-	0 - Success
-	1 - Cancelled, or no action (empty log)
-	2 - The log was rejected by the LoTW server
-	3 - The response from the LoTW server was unexpected
-	4 - An error occurred in tqsl
-	5 - An error occurred in tqsllib (invalid filename, bad file format)
+signed.
 
-  -x         	Operate in batch mode, not menu-driven mode.
   -q         	Operate in batch mode, not menu-driven mode.
+  -x         	Operate in batch mode, not menu-driven mode.
 
 If -x or -q are included on the command line, tqsl suppresses user dialogs
 and sends error messages to standard error. A logging application is expected
@@ -126,6 +119,42 @@ Errors discovered during the signing process are sent to the standard error
 file. Callers would normally indicate where those messages should be sent
 by adding "2> file.txt" to the command line used to run tqsl. This directs
 the shell (Windows or Unix) to write the error messages to that file.
+
+When operated in "batch" mode (i.e. -x or -q used), tqsl provides information
+that the calling program can use to determine if the signing operation
+succeeded. The first way is by capturing tqsl's exit status code. This
+provides information on success or failure using the following values:
+
+	0 - Success: all QSOs submitted were signed and saved or uploaded
+	1 - Cancelled by user
+	2 - The log was rejected by the LoTW server
+	3 - The response from the LoTW server was unexpected
+	4 - An error occurred in tqsl
+	5 - An error occurred in tqsllib (invalid filename, bad file format)
+	6 - Unable to open input file
+	7 - Unable to open output file
+	8 - All QSOs were duplicates or out of date range (no QSOs written)
+	9 - Some QSOs were duplicate or out of date range (some QSOs written)
+	10- Command syntax error
+
+This exit status is also written to stderr in a format that can be parsed
+by the calling application. The last output from tqsl will be of the format
+hh:mm:ss AM|PM Final Status: Description (code) 
+The first two fields are a timestamp, the words "Final Status: always appears.
+Following that is a short descriptive message giving the exit status. The
+last thing on the line is the numeeric exit code (as above) in parenthesis.
+
+Examples of output follows:
+05:57:39 PM: Warning: Signing cancelled
+05:57:39 PM: No records output
+05:57:39 PM: Final Status: cancelled by user (1)
+
+06:05:56 PM: /home/rmurphy/k1mu.adi: 414 QSO records were duplicates
+06:05:56 PM: /home/rmurphy/k1mu.adi: wrote 1 records to /home/rmurphy/k1mu.tq8
+06:05:56 PM: /home/rmurphy/k1mu.tq8 is ready to be emailed or uploaded.
+Note: TQSL assumes that this file will be uploaded to LoTW.
+Resubmitting these QSOs will cause them to be reported as duplicates.
+06:05:56 PM: Final Status: Some QSOs were duplicates or out of date range (9)
 
 An example usage for signing a log would be
 
