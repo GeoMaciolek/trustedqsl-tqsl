@@ -148,8 +148,6 @@ strCmpNoCase( const char *cs, const char *ct )
 {
 	int result;
 
-	result = 0;
-
 	/* until ASCIIZ terminator, compares as if cs & ct were all UPPER CASE */
 	while( ( 0 == ( result = ( toupper( *cs ) - toupper( *ct ) ) ) ) && ( 0 != *cs ) )
 	{

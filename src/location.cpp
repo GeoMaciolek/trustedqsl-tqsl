@@ -10,7 +10,7 @@
 
 
 #ifdef __APPLE__
-#include "Carbon.h"
+#include <CoreFoundation/CFBundle.h>
 #endif
 
 #define DXCC_TEST
@@ -281,19 +281,28 @@ tqsl_load_xml_config() {
 			default_path = string(wpath) + "/config.xml";
 	}
 #elif defined(__APPLE__)
-	CFURLRef mainBundleURL;
-	FSRef bundleFSRef;
-	char npath[1024];
+	// Get path to config.xml resource from bundle
+	CFBundleRef tqslBundle = CFBundleGetMainBundle();
+	CFURLRef configXMLURL = CFBundleCopyResourceURL(tqslBundle, CFSTR("config"), CFSTR("xml"), NULL);
+	if (!configXMLURL) {
+		// Unable to find config.xml
+		tQSL_Error = TQSL_CONFIG_ERROR;
+		return 1;
+	}
+	CFStringRef pathString = CFURLCopyFileSystemPath(configXMLURL, kCFURLPOSIXPathStyle);
+	CFRelease(configXMLURL);
 
-	mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFURLGetFSRef(mainBundleURL, &bundleFSRef);
-	FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath) - 1);
-	// if last char is not a /, append one
-	if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
-		strcat(npath,"/");
-	CFRelease(mainBundleURL);
-
-	default_path = string(npath) + "Contents/Resources/config.xml";
+	// Convert CFString path to config.xml to string object
+	CFIndex maxStringLengthInBytes = CFStringGetMaximumSizeForEncoding(CFStringGetLength(pathString), kCFStringEncodingUTF8);
+	char *pathCString = (char *)malloc(maxStringLengthInBytes);
+	if (!pathCString) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		return 1;
+	}
+	CFStringGetCString(pathString, pathCString, maxStringLengthInBytes, kCFStringEncodingASCII);
+	CFRelease(pathString);
+	default_path = string(pathCString);
+	free(pathCString);
 #else
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
@@ -2466,7 +2475,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 }
 
 DLLEXPORT const char* CALLCONVENTION
-tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid, string *qsosigndata) {
+tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid) {
 	return tqsl_getGABBItCONTACTData(cert, locp, qso, stationuid, NULL, 0);
 }
 
