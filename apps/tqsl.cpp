@@ -965,11 +965,14 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 	wxString name, ext;
 	bool allow_dupes = false;
 	bool restarting = false;
+	const char *dxccname = "Unknown";
 
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
+
+	tqsl_getDXCCEntityName(dxcc, &dxccname);
 
 	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
@@ -978,7 +981,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
-	wxLogMessage(wxT("Signing using CALL=%hs, DXCC=%d"), callsign, dxcc);
+	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs"), callsign, dxccname);
 
 	init_modes();
 	init_contests();
