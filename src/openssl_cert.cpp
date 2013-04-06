@@ -1850,10 +1850,12 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 								tQSL_Error = TQSL_OPERATOR_ABORT;
 								goto imp_end;
 							}
+							password = pw;
+						} else {
+							password = NULL;
 						}
-						password = pw;
 					}
-					if (password != 0 && *password != '\0') {
+					if (password && *password != '\0') {
 						cipher = EVP_des_ede3_cbc();
 						len = strlen(password);
 					} else {

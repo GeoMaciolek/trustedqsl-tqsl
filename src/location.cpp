@@ -284,25 +284,20 @@ tqsl_load_xml_config() {
 	// Get path to config.xml resource from bundle
 	CFBundleRef tqslBundle = CFBundleGetMainBundle();
 	CFURLRef configXMLURL = CFBundleCopyResourceURL(tqslBundle, CFSTR("config"), CFSTR("xml"), NULL);
-	if (!configXMLURL) {
-		// Unable to find config.xml
-		tQSL_Error = TQSL_CONFIG_ERROR;
-		return 1;
-	}
-	CFStringRef pathString = CFURLCopyFileSystemPath(configXMLURL, kCFURLPOSIXPathStyle);
-	CFRelease(configXMLURL);
+	if (configXMLURL) {
+		CFStringRef pathString = CFURLCopyFileSystemPath(configXMLURL, kCFURLPOSIXPathStyle);
+		CFRelease(configXMLURL);
 
-	// Convert CFString path to config.xml to string object
-	CFIndex maxStringLengthInBytes = CFStringGetMaximumSizeForEncoding(CFStringGetLength(pathString), kCFStringEncodingUTF8);
-	char *pathCString = (char *)malloc(maxStringLengthInBytes);
-	if (!pathCString) {
-		tQSL_Error = TQSL_SYSTEM_ERROR;
-		return 1;
+		// Convert CFString path to config.xml to string object
+		CFIndex maxStringLengthInBytes = CFStringGetMaximumSizeForEncoding(CFStringGetLength(pathString), kCFStringEncodingUTF8);
+		char *pathCString = (char *)malloc(maxStringLengthInBytes);
+		if (pathCString) {
+			CFStringGetCString(pathString, pathCString, maxStringLengthInBytes, kCFStringEncodingASCII);
+			CFRelease(pathString);
+			default_path = string(pathCString);
+			free(pathCString);
+		}
 	}
-	CFStringGetCString(pathString, pathCString, maxStringLengthInBytes, kCFStringEncodingASCII);
-	CFRelease(pathString);
-	default_path = string(pathCString);
-	free(pathCString);
 #else
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
@@ -2188,7 +2183,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while (ok) {
 		string eln=specfield.getElementName();
 		const char *elname = eln.c_str();
 		const char *value = 0;
@@ -2240,7 +2235,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	return tqsl_signDataBlock(cert, (const unsigned char *)rec_sign_data.c_str(), rec_sign_data.size(), sig, siglen);
 }
 
@@ -2349,7 +2344,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while(ok) {
 		string en=specfield.getElementName();
 		const char *elname = en.c_str();
 		const char *value = 0;
@@ -2401,7 +2396,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	unsigned char sig[129];
 	int siglen = sizeof sig;
 	rec_sign_data = string_toupper(rec_sign_data);

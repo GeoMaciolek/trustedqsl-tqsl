@@ -2085,7 +2085,7 @@ QSLApp::OnInit() {
 	//short circuit if no arguments
 
 	if (argc<=1) {
-		frame=GUIinit();
+		GUIinit();
 		return true;
 	}
 

@@ -13,7 +13,7 @@
 #endif
 
 #ifdef __APPLE__
-#include "Carbon.h"
+#include <CoreFoundation/CFBundle.h>
 #endif
 
 #include <wx/filefn.h>
@@ -40,26 +40,38 @@ public:
 		}
 		Add(wxT("help/") + subdir);
 #elif defined(__APPLE__)
-                CFURLRef mainBundleURL;
-                FSRef bundleFSRef;
-                char npath[1024];
+		CFBundleRef tqslBundle = CFBundleGetMainBundle();
+		CFURLRef bundleURL = CFBundleCopyBundleURL(tqslBundle);
+		CFURLRef resourcesURL = CFBundleCopyResourcesDirectoryURL(tqslBundle);
+		if (bundleURL && resourcesURL) {
+			CFStringRef bundleString = CFURLCopyFileSystemPath(bundleURL, kCFURLPOSIXPathStyle);
+			CFStringRef resString = CFURLCopyFileSystemPath(resourcesURL, kCFURLPOSIXPathStyle);
+			CFRelease(bundleURL);
+			CFRelease(resourcesURL);
 
-                mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-                CFURLGetFSRef(mainBundleURL, &bundleFSRef);
-                FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath)
- - 1);
-                // if last char is not a /, append one
-                if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
-                {
-                        strcat(npath,"/");
-                }
+			CFIndex lenB = CFStringGetMaximumSizeForEncoding(CFStringGetLength(bundleString), kCFStringEncodingUTF8);
+			CFIndex lenR = CFStringGetMaximumSizeForEncoding(CFStringGetLength(resString), kCFStringEncodingUTF8);
 
-                CFRelease(mainBundleURL);
+			char *npath = (char *) malloc(lenB  + lenR + 10);
+			if (npath) {
+				CFStringGetCString(bundleString, npath, lenB + 1, kCFStringEncodingASCII);
+				CFRelease(bundleString);
 
-                Add(wxString(npath, wxConvLocal) + wxT("Contents/Resources/Help/"));
+                		// if last char is not a /, append one
+                		if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/')) {
+                        		strcat(npath,"/");
+                		}
 
-//		Add(wxString((const char *)npath, wxConvLocal) + wxT("Contents/Resources/Help/"));
-		Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
+				CFStringGetCString(resString, npath + strlen(npath), lenR + 1, kCFStringEncodingUTF8);
+
+                		if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/')) {
+                        		strcat(npath,"/");
+                		}
+                		Add(wxString(npath, wxConvLocal) + wxT("Help/"));
+				Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
+				free (npath);
+			}
+		}
 #else
 		Add(wxT(CONFDIR) wxT("help/") + subdir);
 		Add(subdir);
