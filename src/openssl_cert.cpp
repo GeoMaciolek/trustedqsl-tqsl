@@ -2980,7 +2980,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		if (i < n) {	/* Have a match -- cert is already in the file */
 			if (cb != NULL) {
 				int rval;
-				string msg = "Duplicate " + stype + " certificate: " + subjid;
+				string msg = "Duplicate " + stype + " certificate:\n\t" + subjid;
 
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {
