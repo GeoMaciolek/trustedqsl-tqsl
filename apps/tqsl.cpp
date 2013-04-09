@@ -1188,11 +1188,13 @@ abortSigning:
 					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				} else {
-					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), processed, duplicates);
+					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), duplicates, processed);
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				}
 			} else if (action == TQSL_ACTION_ALL) {
