@@ -1358,6 +1358,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
+
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
 	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
@@ -1381,6 +1382,20 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		bool uplVerifyCA=config->Read(wxT("VerifyCA"), DEFAULT_UPL_VERIFYCA);
 		config->SetPath(wxT("/"));
 
+		// Copy the strings so they remain around
+		char *urlstr = strdup(uploadURL.mb_str());
+		char *cpUF = strdup(uploadField.mb_str());
+
+		//compress the upload
+		string compressed;
+		long compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
+		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
+		if (compressedSize<0) { 
+			wxLogMessage(wxT("Error compressing before upload")); 
+			return TQSL_EXIT_TQSL_ERROR;
+		}
+
+retry_upload:
 
 		CURL* req=curl_easy_init();
 
@@ -1395,9 +1410,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 
 		//set up options
-		curl_easy_setopt(req, CURLOPT_URL, (const char*)uploadURL.mb_str());
-
-
+		curl_easy_setopt(req, CURLOPT_URL, urlstr);
 
 		if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
 
@@ -1430,20 +1443,6 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 			now.Format(wxT("%Y%m%d")).c_str(),
 			now.Format(wxT("%H%M")).c_str(),
 			name.c_str()).mb_str(), 1023);
-
-		char cpUF[1024];
-		strncpy(cpUF, uploadField.mb_str(), 1023);
-
-
-		//compress the upload
-		string compressed;
-		long compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
-		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
-		if (compressedSize<0) { 
-			wxLogMessage(wxT("Error compressing before upload")); 
-			curl_easy_cleanup(req);
-			return TQSL_EXIT_TQSL_ERROR;
-		}
 
 		struct curl_httppost* post=NULL, *lastitem=NULL;
 
@@ -1528,12 +1527,20 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		} else { //error
 			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
 			// was turned into garbage otherwise
-			wxLogMessage(wxT("Couldn't upload the file: CURL returned %hs"), errorbuf);
+			wxLogMessage(wxT("Couldn't upload the file: CURL returned \"%hs\" (%hs)"), curl_easy_strerror((CURLcode)retval), errorbuf);
 			retval=TQSL_EXIT_TQSL_ERROR;
 		}
 		if (this) upload->Destroy();
+
 		curl_formfree(post);
 		curl_easy_cleanup(req);
+
+		// If there's a GUI and we didn't successfully upload and weren't cancelled,
+		// ask the user if we should retry the upload.
+		if (this && retval != TQSL_EXIT_CANCEL && retval != TQSL_EXIT_SUCCESS) {
+			if (wxMessageBox(wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO, this) == wxYES)
+				goto retry_upload;
+		}
 
 		if (retval==0)
 			tqsl_converterCommit(conv);
@@ -1542,6 +1549,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 		tqsl_endConverter(&conv);
 
+		if (urlstr) free(urlstr);
+		if (cpUF) free (cpUF);
 		return retval;
 	}
 
