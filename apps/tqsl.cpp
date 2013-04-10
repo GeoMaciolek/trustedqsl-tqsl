@@ -111,7 +111,9 @@ enum {
 	TQSL_EXIT_ERR_OPEN_OUTPUT = 7,
 	TQSL_EXIT_NO_QSOS = 8,
 	TQSL_EXIT_QSOS_SUPPRESSED = 9,
-	TQSL_EXIT_COMMAND_ERROR = 10
+	TQSL_EXIT_COMMAND_ERROR = 10,
+	TQSL_EXIT_CONNECTION_FAILED = 11,
+	TQSL_EXIT_UNKNOWN = 12
 };
 
 #define TQSL_CD_MSG TQSL_ID_LOW
@@ -131,10 +133,11 @@ static void exitNow(int status, bool quiet) {
 				 "No QSOs written",
 				 "Some QSOs suppressed",
 				 "Commmand Syntax Error",
+				 "LoTW Connection Failed",
 				 "Unknown"
 				};
 	int stat = status;
-	if (stat > TQSL_EXIT_COMMAND_ERROR || stat < 0) stat = TQSL_EXIT_COMMAND_ERROR + 1;
+	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN + 1;
 	if (quiet)
 		wxLogMessage(wxT("Final Status: %hs (%d)"), errors[stat], status);
 	else
@@ -1463,7 +1466,7 @@ retry_upload:
 
 		UploadDialog* upload;
 
-		wxLogMessage(wxT("Attempting to upload %d QSOs"), numrecs);
+		wxLogMessage(wxT("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
 
 		if(this) {
 			upload=new UploadDialog(this);
@@ -1523,6 +1526,9 @@ retry_upload:
 				retval=TQSL_EXIT_UNEXP_RESP;
 			}
 
+		} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			wxLogMessage(wxT("Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading these QSOs later."));
+			retval=TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
 			wxLogMessage(wxT("Upload cancelled"));
 			retval=TQSL_EXIT_CANCEL;
