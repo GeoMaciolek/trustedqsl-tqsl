@@ -137,7 +137,7 @@ static void exitNow(int status, bool quiet) {
 				 "Unknown"
 				};
 	int stat = status;
-	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN + 1;
+	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN;
 	if (quiet)
 		wxLogMessage(wxT("Final Status: %hs (%d)"), errors[stat], status);
 	else
