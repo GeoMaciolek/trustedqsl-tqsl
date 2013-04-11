@@ -1005,12 +1005,14 @@ static bool inMap(int cqvalue, int ituvalue, bool cqz, bool ituz, const char *ma
  */
 	int cq, itu;
 	bool result = false;
-	char *mapcopy = strdup(map);
-	char *mapPart = strtok(mapcopy, ",");
 
 	// No map or empty string -> all match
-	if (!map || map[0] == '\0')
+	if (!map || map[0] == '\0') {
 		return true;
+	}
+
+	char *mapcopy = strdup(map);
+	char *mapPart = strtok(mapcopy, ",");
 	while (mapPart) {
 		sscanf(mapPart, "%d:%d", &itu, &cq);
 		if (cqz && ituz) {

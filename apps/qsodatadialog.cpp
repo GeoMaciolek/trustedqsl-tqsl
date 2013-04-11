@@ -420,7 +420,7 @@ QSODataDialog::OnHelp(wxCommandEvent&) {
 
 void
 QSODataDialog::SetRecno(int new_recno) {
-	if (_reclist == 0 || new_recno < 1)
+	if (_reclist == NULL || new_recno < 1)
 		return;
    	if (TransferDataFromWindow()) {
 //   		(*_reclist)[_recno-1] = rec;

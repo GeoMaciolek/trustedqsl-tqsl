@@ -355,7 +355,7 @@ tqsl_new_cabrillo_contest(const char *contest_name, int call_field, int contest_
 
 static void
 tqsl_free_cab(struct TQSL_CABRILLO *cab) {
-	if (cab->sentinel != 0x2449)
+	if (!cab || cab->sentinel != 0x2449)
 		return;
 	cab->sentinel = 0;
 	if (cab->filename)

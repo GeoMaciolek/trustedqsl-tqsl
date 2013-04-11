@@ -2980,7 +2980,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		if (i < n) {	/* Have a match -- cert is already in the file */
 			if (cb != NULL) {
 				int rval;
-				string msg = "Duplicate " + stype + " certificate:\n\t" + subjid;
+				string msg = "Duplicate " + stype + " certificate: " + subjid;
 
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {
@@ -3016,7 +3016,10 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		return 1;
 	}
 	msg = "Loaded: " + subjid;
-	rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
+	if (cb)
+		rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
+	else
+		rval = 0;
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
 		return 1;
@@ -3481,7 +3484,7 @@ tqsl_sign_base64_data(tQSL_Cert cert, char *b64data) {
 	static unsigned char sig[256];
 	int siglen = sizeof sig;
 
-	if (!strncmp(b64data, "-----", 5)) {
+	if (b64data && !strncmp(b64data, "-----", 5)) {
 		b64data = strchr(b64data, '\n');
 		if (b64data == NULL)
 			return NULL;

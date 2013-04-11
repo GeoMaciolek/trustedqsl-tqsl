@@ -1397,6 +1397,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
 		if (compressedSize<0) { 
 			wxLogMessage(wxT("Error compressing before upload")); 
+			free(urlstr);
+			free(cpUF);
 			return TQSL_EXIT_TQSL_ERROR;
 		}
 
@@ -1406,6 +1408,8 @@ retry_upload:
 
 		if (!req) {
 			wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
+			free(urlstr);
+			free(cpUF);
 			return TQSL_EXIT_TQSL_ERROR; 
 		}
 
@@ -1479,6 +1483,8 @@ retry_upload:
 			if (thread.Run() != wxTHREAD_NO_ERROR) {
 				wxLogError(wxT("Could not spawn upload thread!"));
 			        upload->Destroy();
+				free(urlstr);
+				free(cpUF);
 				return TQSL_EXIT_TQSL_ERROR;
 			}
 
