@@ -1850,10 +1850,12 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 								tQSL_Error = TQSL_OPERATOR_ABORT;
 								goto imp_end;
 							}
+							password = pw;
+						} else {
+							password = NULL;
 						}
-						password = pw;
 					}
-					if (password != 0 && *password != '\0') {
+					if (password && *password != '\0') {
 						cipher = EVP_des_ede3_cbc();
 						len = strlen(password);
 					} else {
@@ -2978,7 +2980,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		if (i < n) {	/* Have a match -- cert is already in the file */
 			if (cb != NULL) {
 				int rval;
-				string msg = "Duplicate " + stype + " certificate: " + subjid;
+				string msg = "Duplicate " + stype + " certificate:\n\t" + subjid;
 
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {

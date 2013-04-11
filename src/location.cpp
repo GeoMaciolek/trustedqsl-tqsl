@@ -10,7 +10,7 @@
 
 
 #ifdef __APPLE__
-#include "Carbon.h"
+#include <CoreFoundation/CFBundle.h>
 #endif
 
 #define DXCC_TEST
@@ -281,19 +281,23 @@ tqsl_load_xml_config() {
 			default_path = string(wpath) + "/config.xml";
 	}
 #elif defined(__APPLE__)
-	CFURLRef mainBundleURL;
-	FSRef bundleFSRef;
-	char npath[1024];
+	// Get path to config.xml resource from bundle
+	CFBundleRef tqslBundle = CFBundleGetMainBundle();
+	CFURLRef configXMLURL = CFBundleCopyResourceURL(tqslBundle, CFSTR("config"), CFSTR("xml"), NULL);
+	if (configXMLURL) {
+		CFStringRef pathString = CFURLCopyFileSystemPath(configXMLURL, kCFURLPOSIXPathStyle);
+		CFRelease(configXMLURL);
 
-	mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFURLGetFSRef(mainBundleURL, &bundleFSRef);
-	FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath) - 1);
-	// if last char is not a /, append one
-	if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
-		strcat(npath,"/");
-	CFRelease(mainBundleURL);
-
-	default_path = string(npath) + "Contents/Resources/config.xml";
+		// Convert CFString path to config.xml to string object
+		CFIndex maxStringLengthInBytes = CFStringGetMaximumSizeForEncoding(CFStringGetLength(pathString), kCFStringEncodingUTF8);
+		char *pathCString = (char *)malloc(maxStringLengthInBytes);
+		if (pathCString) {
+			CFStringGetCString(pathString, pathCString, maxStringLengthInBytes, kCFStringEncodingASCII);
+			CFRelease(pathString);
+			default_path = string(pathCString);
+			free(pathCString);
+		}
+	}
 #else
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
@@ -2179,7 +2183,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while (ok) {
 		string eln=specfield.getElementName();
 		const char *elname = eln.c_str();
 		const char *value = 0;
@@ -2231,7 +2235,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	return tqsl_signDataBlock(cert, (const unsigned char *)rec_sign_data.c_str(), rec_sign_data.size(), sig, siglen);
 }
 
@@ -2340,7 +2344,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while(ok) {
 		string en=specfield.getElementName();
 		const char *elname = en.c_str();
 		const char *value = 0;
@@ -2392,7 +2396,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	unsigned char sig[129];
 	int siglen = sizeof sig;
 	rec_sign_data = string_toupper(rec_sign_data);
@@ -2466,7 +2470,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 }
 
 DLLEXPORT const char* CALLCONVENTION
-tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid, string *qsosigndata) {
+tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid) {
 	return tqsl_getGABBItCONTACTData(cert, locp, qso, stationuid, NULL, 0);
 }
 

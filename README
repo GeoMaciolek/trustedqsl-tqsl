@@ -136,6 +136,7 @@ provides information on success or failure using the following values:
 	8 - All QSOs were duplicates or out of date range (no QSOs written)
 	9 - Some QSOs were duplicate or out of date range (some QSOs written)
 	10- Command syntax error
+	11- LoTW network connnection failed (no network or LoTW is unreachable)
 
 This exit status is also written to stderr in a format that can be parsed
 by the calling application. The last output from tqsl will be of the format

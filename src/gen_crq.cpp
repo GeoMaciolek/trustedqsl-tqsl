@@ -24,6 +24,7 @@
 #ifdef HAVE_GETOPT_H
 	#include <getopt.h>
 #endif
+#include <string.h>
 #include "tqsllib.h"
 #include "tqslexc.h"
 
@@ -97,7 +98,7 @@ main(int argc, char *argv[]) {
 			cout << "Signing certificate issuer: " << buf << endl;
 			cout << "Signing certificate serial: " << serial << endl;
 			cout << "  Signing certificate DXCC: " << cdxcc << endl;
-			if (tqsl_beginSigning(sign_cert, "", 0, 0))
+			if (tqsl_beginSigning(sign_cert, (char *)"", 0, 0))
 				throw tqslexc();
 		}
 		TQSL_CERT_REQ crq;
