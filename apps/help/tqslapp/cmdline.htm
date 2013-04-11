@@ -63,7 +63,9 @@ and the specified or selected Station Location includes a password-protected Cal
 otherwise, a dialog will be provided that enables a new Station Location to be defined.</TD></TR>
 
 <TR><TD><code>-u</code></TD>
-<TD>Instead of saving the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A>, upload it to LoTW over the Internet.<p>
+<TD>Instead of saving the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A>, upload it to LoTW over the Internet. After processing, the uploaded file will be shown in LoTW's 
+<b>Your Activity</b> list with the specified filename preceded by <code>&lt;TQSLUpl YYYYMMDD-HHMM&gt;</code>, where <code>YYYY</code> is the current year, <code>MM</code> is the current month,
+<code>DD</code> is the current day, <code>HH</code> is the current hour, and <code>MM</code> is the current minute.<p>
 </TD></TR>
 
 <TR><TD><code>-v</code></TD>
@@ -120,11 +122,12 @@ where
 <TR><TD><code>3</code></TD><TD>unexpected response from TQSL server</td></tr>
 <TR><TD><code>4</code></TD><TD>TQSL error</td></tr>
 <TR><TD><code>5</code></TD><TD>TQSLlib error</td></tr>
-<TR><TD><code>6</code></TD><TD>Unable to open input file</td></tr>
-<TR><TD><code>7</code></TD><TD>Unable to open output file</td></tr>
-<TR><TD><code>8</code></TD><TD>All QSOs were duplicates or out of date range</td></tr>
-<TR><TD><code>9</code></TD><TD>Some QSOs were duplicates or out of date range</td></tr>
-<TR><TD><code>10</code></TD><TD>Command Syntax Error</td></tr>
+<TR><TD><code>6</code></TD><TD>unable to open input file</td></tr>
+<TR><TD><code>7</code></TD><TD>unable to open output file</td></tr>
+<TR><TD><code>8</code></TD><TD>all QSOs were duplicates or out of date range</td></tr>
+<TR><TD><code>9</code></TD><TD>some QSOs were duplicates or out of date range</td></tr>
+<TR><TD><code>10</code></TD><TD>command syntax error</td></tr>
+<TR><TD><code>11</code></TD><TD>internet connection is down, or LoTW is unreachable</td></tr>
 </table>
 
 <H5>Status Examples:</H5>
