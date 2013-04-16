@@ -180,6 +180,15 @@ ways that introduce incompatibilities, but there are additional API calls
 which are necessary for applications to allow duplicate QSO processing to
 work properly.
 
+Normally, an application will call tqsl_beginCabrilloConverter() or
+tqsl_beginADIFConverter to begin signing a log file. After the converter
+is created by those calls, the application should then call
+tqsl_setConverterAllowDuplicates(conv, false)
+which tells tqsllib that duplicate processing should be enabled. If you do
+not call tqsl_setConverterAllowDuplicates, the library will assume that
+duplicates should be permitted (for compatibility reasons), which may cause
+unnecessary QSOs to be uploaded.
+
 After successful processing of a log, an application should call either
 tqsl_convertCommit(conv) or tqsl_convertRollBack(conv) prior to calling
 tqsl_endConverter() to signal that a log conversion has completed.
@@ -195,9 +204,6 @@ change
 to
 	tqsl_converterCommit(conv);
 	tqsl_endConverter(&conv);
-
-Tqsllib 1.14 also adds a new call to allow an application to specify how
-duplicate QSOs should be handled (tqsl_setConverterAllowDuplicates).
 
 Using tqsllib
 -------------
