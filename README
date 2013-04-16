@@ -183,11 +183,17 @@ work properly.
 Normally, an application will call tqsl_beginCabrilloConverter() or
 tqsl_beginADIFConverter to begin signing a log file. After the converter
 is created by those calls, the application should then call
-tqsl_setConverterAllowDuplicates(conv, false)
+	tqsl_setConverterAllowDuplicates(conv, false)
 which tells tqsllib that duplicate processing should be enabled. If you do
 not call tqsl_setConverterAllowDuplicates, the library will assume that
 duplicates should be permitted (for compatibility reasons), which may cause
 unnecessary QSOs to be uploaded.
+
+If duplicate suppression is enabled, there is a new error return from 
+tqsl_getConverterGABBI that indicates duplicate QSOs. In this case, 
+tQSL_Error is set to TQSL_DUPLICATE_QSO. Software may need to be modified
+to handle this new result and act appropriately (ignore it, or abort the
+signing operation.)
 
 After successful processing of a log, an application should call either
 tqsl_convertCommit(conv) or tqsl_convertRollBack(conv) prior to calling
@@ -217,6 +223,7 @@ Of course, error checking should be performed for each call.
 	tqsl_selectCertificates(&certlist, &ncerts, callsign, dxcc);
 
 	tqsl_beginADIFConverter(&conv, input_file, certlist, ncerts, loc);
+	tqsl_setConverterAllowDuplicates(conv, false);
 
 	write the GABBI header to the output file.
 	    This is an ADIF-format record of the form

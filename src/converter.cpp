@@ -82,6 +82,7 @@ main(int argc, char *argv[]) {
 			if (tqsl_beginADIFConverter(&conv, argv[optind], certs, ncerts, loc))
 				throw tqslexc();
 		}
+		tqsl_setConverterAllowDuplicates(conv, false);
 		optind++;
 		const char *ofile = (optind < argc) ? argv[optind] : "converted.tq7";
 		ofstream out;
@@ -104,6 +105,8 @@ main(int argc, char *argv[]) {
 					throw tqslexc();
    				continue;
    			}
+			if (tQSL_Error == TQSL_DUPLICATE_QSO)
+				continue;
    			break;
 		} while (1);
 		out.close();
@@ -117,7 +120,9 @@ main(int argc, char *argv[]) {
 		if (conv && !tqsl_getConverterLine(conv, &lineno)) // && lineno > 0)
 			sprintf(buf, " on line %d", lineno);
 		cerr << "Aborted: " << x.what() << buf << endl;
+		tqsl_converterRollBack(conv);
 		return EXIT_FAILURE;
 	}
+	tqsl_converterCommit(conv);
 	return EXIT_SUCCESS;
 }
