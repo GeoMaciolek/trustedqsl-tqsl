@@ -1,5 +1,5 @@
 /***************************************************************************
-                          converter.cpp  -  description
+              converter.cpp  -  c++ example program for signing a log
                              -------------------
     begin                : Sun Dec 15 2002
     copyright            : (C) 2002 by ARRL
