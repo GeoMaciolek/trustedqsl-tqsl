@@ -154,7 +154,7 @@ Most of these happen from the "Developer Command Prompt for VS2012". Open it and
 	'nmake -f ms\nt.mak test' (can be skipped but might avoid a headache). Look for "passed all tests"
 	'nmake -f ms\nt.mak install'
 	
- Open C:\openssl\lib. Make a new directory called "VC" and move "libeay32" and "ssleay32" into it. This is a CMake problem that will hopefully go away pretty soon, but it hasn't happened yet.
+ If you're not using VC 2008, open C:\openssl\lib. Make a new directory called "VC" and move "libeay32" and "ssleay32" into it. This is a CMake problem that will hopefully go away pretty soon, but it hasn't happened yet.
  
  - wxWidgets 
  
@@ -172,7 +172,8 @@ Most of these happen from the "Developer Command Prompt for VS2012". Open it and
 	'cd build\msw'
 	'nmake -f makefile.vc BUILD=release SHARED=0' (these should be the defaults, but specify them anyway)
 	'nmake -f makefile.vc BUILD=debug SHARED=0' (you need this or else debug builds won't link)
-		!! You need to do work here if you want to use a static runtime as this build with a dynamic one by default. Like I said above, I'm not worrying about that now
+		!! You need to do work here if you want to use a static runtime as this build with a dynamic one by default.
+		!! See the wxWidgets wiki at wiki.wxWidgets.org/Compiling_WxWidgets_with_MSVC_(2) for info on how to do this.
 
  - curl
  
@@ -182,7 +183,7 @@ Most of these happen from the "Developer Command Prompt for VS2012". Open it and
  The below comes from winbuild\BUILD.WINDOWS
  
 	In your developer command prompt, 'cd \curl-7.29.0\winbuild'
-	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes'
+	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes USE_IDN=no'
 	
 	Verify that a folder called 'builds\libcurl-vc-x86-release-static-ipv6-sspi-spnego-winssl' has been created. The 'winssl' part of that string is the most important because it means it will use the Windows APIs (and thus certificates) for SSL.
 	
@@ -206,11 +207,25 @@ Most of these happen from the "Developer Command Prompt for VS2012". Open it and
   - Type 'cmake .'
   - Type 'msbuild /p:Configuration=Debug ALL_BUILD.vcxproj'
   - Type 'msbuild /p:Configuration=Release ALL_BUILD.vcxproj'
- 
+
+    If you're using VC 2008,
+    'cmake -G"Visual Studio 9 2008" .'
+    msbuild /p:Configuration=Debug zlib.vcproj
+    msbuild /p:Configuration=Release zlib.vcproj
+    msbuild /p:Configuration=Debug zlibstatic.vcproj
+    msbuild /p:Configuration=Release zlibstatic.vcproj
 	
+ - Berkeley DB
+
+ Download from http://download.oracle.com/berkeley-db/db-5.3.21.NC.zip
+ and unzip to c:\db-5.3.21.NC. From Visual Studio, open the 
+ build_windows\Berkeley_DB.sln project and upgrade it when prompted.  You
+ can then build the Debug and Release libraries. Only the 'db' project
+ needs to be built.
+
 -- 4) Running cmake --
 
-Almost there! Open a command prompt and run 'cmake . -DCMAKE_LIBRARY_PATH="C:\expat\Bin" -DCMAKE_INCLUDE_PATH="C:\expat\Source\lib" -DwxWidgets_ROOT_DIR="C:\wxWidgets-2.8.12"
+Almost there! Open a command prompt and run 'cmake . -DCMAKE_LIBRARY_PATH="C:\expat\Bin" -DCMAKE_INCLUDE_PATH="C:\expat\Source\lib" -DwxWidgets_ROOT_DIR="C:\wxWidgets-2.8.12" -DBDB_INCLUDE_DIR="C:\db-5.3.21.NC\build_windows" -DBDB_LIBRARY="C:\db-5.3.21.NC\build_windows\Win32\Release\libdb53.lib"
 
 -- 5) Building --
 

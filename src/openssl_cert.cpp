@@ -633,7 +633,7 @@ end:
 }
 
 DLLEXPORT int CALLCONVENTION
-tqsl_getSelectedCertificate(tQSL_Cert *cert, tQSL_Cert **certlist,
+tqsl_getSelectedCertificate(tQSL_Cert *cert, const tQSL_Cert **certlist,
 	int idx) {
 	
 	if (tqsl_init())

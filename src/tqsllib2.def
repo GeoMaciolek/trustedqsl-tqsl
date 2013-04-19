@@ -1,8 +1,15 @@
 LIBRARY tqsllib2.dll
 EXPORTS
-?tqsl_getGABBItCONTACT@@YGPBDPAX0PAUTQSL_QSO_RECORD@@HPAV?$basic_string@DU?$char_traits@D@std@@V?$allocator@D@2@@std@@@Z
-?tqsl_getNumStationLocationCapturePages@@YGHPAXPAH@Z
-?tqsl_getSelectedCertificate@@YGHPAPAXPAPAPAXH@Z
+_tqsl_getSelectedCertificate@12
+tqsl_getSelectedCertificate@12=_tqsl_getSelectedCertificate@12
+tqsl_getSelectedCertificate=_tqsl_getSelectedCertificate@12
+_Z27tqsl_getSelectedCertificatePPvPS0_i=_tqsl_getSelectedCertificate@12
+_Z27tqsl_getSelectedCertificatePPvPS0_i@12=_tqsl_getSelectedCertificate@12
+_tqsl_getNumStationLocationCapturePages@8
+tqsl_getNumStationLocationCapturePages@8=_tqsl_getNumStationLocationCapturePages@8
+tqsl_getNumStationLocationCapturePages=_tqsl_getNumStationLocationCapturePages@8
+_Z38tqsl_getNumStationLocationCapturePagesPvPi=_tqsl_getNumStationLocationCapturePages@8
+_Z38tqsl_getNumStationLocationCapturePagesPvPi@8=_tqsl_getNumStationLocationCapturePages@8
 _tqsl_adifGetError@4
 tqsl_adifGetError@4=_tqsl_adifGetError@4
 tqsl_adifGetError=_tqsl_adifGetError@4
@@ -219,6 +226,9 @@ tqsl_getErrorString_v=_tqsl_getErrorString_v@4
 _tqsl_getGABBItCERT@8
 tqsl_getGABBItCERT@8=_tqsl_getGABBItCERT@8
 tqsl_getGABBItCERT=_tqsl_getGABBItCERT@8
+_tqsl_getGABBItCONTACT@16
+tqsl_getGABBItCONTACT@16=_tqsl_getGABBItCONTACT@16
+tqsl_getGABBItCONTACT=_tqsl_getGABBItCONTACT@16
 _tqsl_getGABBItCONTACTData@24
 tqsl_getGABBItCONTACTData@24=_tqsl_getGABBItCONTACTData@24
 tqsl_getGABBItCONTACTData=_tqsl_getGABBItCONTACTData@24
