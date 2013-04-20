@@ -74,11 +74,6 @@ be made with VS2008. I have it set up to use the 2008 compiler and runtimes as
 a "platform" in VS2012, but those directions are above the scope of this
 document.
 
-(k1mu comment: one issue is that if you install VS 2008 then VS 2012,
-you can't select VS 2008 as a platform. Installing the "Microsoft Windows SDK
-for Windows 7" allows that to be selected as a platform.
-http://www.microsoft.com/en-us/download/details.aspx?id=8279)
-
 Feel free to use a "paid" version of Visual Studio, but the instructions may be
 slightly different.
 
@@ -195,9 +190,6 @@ and run 'nmake' and 'cl'; for 'cl' make sure it says "for x86". 64-bit builds
 should work (they do on Linux) but I've never tested it on Windows so I don't
 recommend it for now. 
 
-If you're using the VS2008 compiler, open the "Developer Command Prompt for
-VS2008" instead.
-
 
  - openssl
  
@@ -243,9 +235,9 @@ Make sure you can run 'nasm' and 'perl' (Ctrl-C to exit Perl).
 	Look for "passed all tests"
 	'nmake -f ms\nt.mak install'
 	
- If you're not using VC 2008, open C:\openssl\lib. Make a new directory called
-"VC" and move "libeay32" and "ssleay32" into it. This is a CMake problem that
-will hopefully go away pretty soon, but it hasn't happened yet.
+ Make a new directory called "VC" and move "libeay32.lib" and "ssleay32.lib"
+into it. This is a CMake problem that will hopefully go away pretty soon, but
+it hasn't happened yet.
  
  - wxWidgets 
  
@@ -256,7 +248,8 @@ there are still some problems.
 	"wxMSW" (under "Current Stable Release: wxWidgets 2.8.12")
 	
  
- The below comes (mostly) from "BuildCVS.txt". Read it for more details if needed
+ The below comes (mostly) from "BuildCVS.txt". Read it for more details if
+needed.
  
 	In your developer command prompt, 'cd \wxWidgets-2.8.12\'
 	You need to edit a file to fix a bug; comment out line 110 in
@@ -282,7 +275,7 @@ there are still some problems.
  The below comes from winbuild\BUILD.WINDOWS
  
 	In your developer command prompt, 'cd \curl-7.29.0\winbuild'
-	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes USE_IDN=no'
+	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes'
 	
 	Verify that a folder called
 	'builds\libcurl-vc-x86-release-static-ipv6-sspi-spnego-winssl' has been
@@ -317,13 +310,6 @@ to link based on the build type.
   - Type 'msbuild /p:Configuration=Debug ALL_BUILD.vcxproj'
   - Type 'msbuild /p:Configuration=Release ALL_BUILD.vcxproj'
 
-    If you're using VC 2008,
-    'cmake -G"Visual Studio 9 2008" .'
-    msbuild /p:Configuration=Debug zlib.vcproj
-    msbuild /p:Configuration=Release zlib.vcproj
-    msbuild /p:Configuration=Debug zlibstatic.vcproj
-    msbuild /p:Configuration=Release zlibstatic.vcproj
-	
  - Berkeley DB
 
  Download from http://download.oracle.com/berkeley-db/db-5.3.21.NC.zip
@@ -336,8 +322,6 @@ to link based on the build type.
 -- 4) Running cmake --
 
  Almost there! Open a command prompt and run cmake . -DCMAKE_LIBRARY_PATH="C:\expat\Bin" -DCMAKE_INCLUDE_PATH="C:\expat\Source\lib" -DwxWidgets_ROOT_DIR="C:\wxWidgets-2.8.12" -DBDB_INCLUDE_DIR="C:\db-5.3.21.NC\build_windows" -DBDB_LIBRARY="C:\db-5.3.21.NC\build_windows\Win32\Release\db.lib"
-
- Add -G"Visual Studio 9 2008" if you're using the VS2008 build tools.
 
 
 -- 5) Building --
