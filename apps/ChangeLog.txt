@@ -15,17 +15,19 @@ Major feature additions:
    or upload succeeded or failed, and why
 
           0=success; log signed and uploaded and accepted without incident
-	  1=Cancelled by user
-	  2=The log was rejected by the LoTW server
+          1=Cancelled by user
+          2=The log was rejected by the LoTW server
           3=The response from the LoTW server was unexpected or unrecognized
           4=An error occurred in tqsl
           5=An error occurred in tqsllib (probably a bad filename)
-	  6=Unable to open input file
-	  7=Unable to open output file
-	  8=All QSOs were duplicate or out of date range (no QSOs written)
-	  9=Some QSOs were duplicate or out of date range (some QSOs written)
-	  10=Command syntax error
-	  11=LoTW network connection failed (no network or LoTW is unreachable)
+          6=Unable to open input file
+          7=Unable to open output file
+          8=No QSOs were processed because some QSOs were duplicate or out
+            of date range (no QSOs written)
+          9=Some QSOs were processed and some QSOs were ignored because they
+            were duplicates or out of date range (some QSOs written)
+         10=Command syntax error
+         11=LoTW network connection failed (no network or LoTW is unreachable)
 
    The exit status is also written to Standard Error (stderr) in an easily
    recognized format.

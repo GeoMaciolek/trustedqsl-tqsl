@@ -28,11 +28,11 @@ Command Line Options
 --------------------
 The following summarizes the command line options and what they do:
 Usage: tqsl [-a <str>] [-d] [-l <str>] [-s] [-o <str>] [-u] [-x]
-	    [-p <str>] [-q] [-v] [-h] [Input ADIF or Cabrillo log file to sign]
+            [-p <str>] [-q] [-v] [-h] [Input ADIF or Cabrillo log file to sign]
 
 
 The following command line options may be specified on the command line:
-  -a <str>  	Specify dialog action - abort, all, compliant or ask
+  -a <str>      Specify dialog action - abort, all, compliant or ask
 
 This option instructs TQSL on how to handle QSOs that do not appear to be
 valid. There are many potential causes for invalid QSOs. Examples include QSOs
@@ -58,7 +58,7 @@ station certificate will not be signed, as they would not be accepted by
 Logbook.
 
 
-  -d        	Suppress date range dialog
+  -d            Suppress date range dialog
 
 This option instructs tqsl to not ask the user to select a range of dates
 for processing QSOs. If this is used, all QSOs in the input file will be
@@ -66,29 +66,29 @@ selected for processing. Command line tools will usually include this
 option to suppress tqsl dialogs. However, this means that the logging
 program is responsible for filtering QSOs before delivering them to tqsl.
 
-  -l <str>	Select Station Location.
+  -l <str>      Select Station Location.
 
 This option selects a station location. This is used for signing logs or
 in conjunction with the "-s" option to define a location for editing.
 
-  -s	  	Edit (if used with -l) or create Station Location
+  -s            Edit (if used with -l) or create Station Location
 
 This option can be used to create a new Station Location (-s without -l) or
 to edit an existing Station Location (when both -s and -l are provided).
 
-  -o <str>  	Output file name (defaults to input name minus extension plus .tq8)
+  -o <str>      Output file name (defaults to input name minus extension plus .tq8)
 
 This option instructs tqsl where the signed output file will be stored. If it
 is not provided, the output file will be written to the same location as the
 input file with the extension changed to ".tq8"
 
-  -u        	Upload after signing instead of saving
+  -u            Upload after signing instead of saving
 
 This option instructs tqsl to upload the log file after it is successfully
 signed.
 
-  -q         	Operate in batch mode, not menu-driven mode.
-  -x         	Operate in batch mode, not menu-driven mode.
+  -q            Operate in batch mode, not menu-driven mode.
+  -x            Operate in batch mode, not menu-driven mode.
 
 If -x or -q are included on the command line, tqsl suppresses user dialogs
 and sends error messages to standard error. A logging application is expected
@@ -97,13 +97,13 @@ can see the results of the command action. If these options are not included,
 a calling application cannot distinguish between a successful signing and
 one where a user cancels the signing.
 
-  -p <str>	Password for the signing key
+  -p <str>      Password for the signing key
 
 This option allows an application to provide the password for the private key
 that will be used to sign the log file.
 
-  -v       	Display the version information and exit
-  -h          	Display command line help
+  -v            Display the version information and exit
+  -h            Display command line help
 
 These options allow the user to display the version number of tqsl or to
 obtain help on the command line usage.
@@ -125,18 +125,20 @@ that the calling program can use to determine if the signing operation
 succeeded. The first way is by capturing tqsl's exit status code. This
 provides information on success or failure using the following values:
 
-	0 - Success: all QSOs submitted were signed and saved or uploaded
-	1 - Cancelled by user
-	2 - The log was rejected by the LoTW server
-	3 - The response from the LoTW server was unexpected
-	4 - An error occurred in tqsl
-	5 - An error occurred in tqsllib (invalid filename, bad file format)
-	6 - Unable to open input file
-	7 - Unable to open output file
-	8 - All QSOs were duplicates or out of date range (no QSOs written)
-	9 - Some QSOs were duplicate or out of date range (some QSOs written)
-	10- Command syntax error
-	11- LoTW network connnection failed (no network or LoTW is unreachable)
+        0 - Success: all QSOs submitted were signed and saved or uploaded
+        1 - Cancelled by user
+        2 - The log was rejected by the LoTW server
+        3 - The response from the LoTW server was unexpected
+        4 - An error occurred in tqsl
+        5 - An error occurred in tqsllib (invalid filename, bad file format)
+        6 - Unable to open input file
+        7 - Unable to open output file
+        8 - No QSOs were processed because some QSOs were duplicates or
+            out of date range (no QSOs written)
+        9 - Some QSOs were processed, and some QSOs were ignored because
+            they were duplicates or out of date range (some QSOs written)
+       10 - Command syntax error
+       11 - LoTW network connnection failed (no network or LoTW is unreachable)
 
 This exit status is also written to stderr in a format that can be parsed
 by the calling application. The last output from tqsl will be of the format
@@ -183,7 +185,7 @@ work properly.
 Normally, an application will call tqsl_beginCabrilloConverter() or
 tqsl_beginADIFConverter to begin signing a log file. After the converter
 is created by those calls, the application should then call
-	tqsl_setConverterAllowDuplicates(conv, false)
+        tqsl_setConverterAllowDuplicates(conv, false)
 which tells tqsllib that duplicate processing should be enabled. If you do
 not call tqsl_setConverterAllowDuplicates, the library will assume that
 duplicates should be permitted (for compatibility reasons), which may cause
@@ -206,37 +208,37 @@ not be added to the duplicate database. Simply adding the necessary call
 before the converter is closed is enough to bring the application up to date.
 
 change
-	tqsl_endConverter(&conv)
+        tqsl_endConverter(&conv)
 to
-	tqsl_converterCommit(conv);
-	tqsl_endConverter(&conv);
+        tqsl_converterCommit(conv);
+        tqsl_endConverter(&conv);
 
 Using tqsllib
 -------------
 A minimal set of calls to permit an application to sign a log is the following.
 Of course, error checking should be performed for each call.
 
-	tqsl_getStationLocation(&loc, location_name);
+        tqsl_getStationLocation(&loc, location_name);
 
-	tqsl_getLocationCallSign(loc, callsign, sizeof callsign);
-	tqsl_getLocationDXCCEntity(loc, &dxcc);
-	tqsl_selectCertificates(&certlist, &ncerts, callsign, dxcc);
+        tqsl_getLocationCallSign(loc, callsign, sizeof callsign);
+        tqsl_getLocationDXCCEntity(loc, &dxcc);
+        tqsl_selectCertificates(&certlist, &ncerts, callsign, dxcc);
 
-	tqsl_beginADIFConverter(&conv, input_file, certlist, ncerts, loc);
-	tqsl_setConverterAllowDuplicates(conv, false);
+        tqsl_beginADIFConverter(&conv, input_file, certlist, ncerts, loc);
+        tqsl_setConverterAllowDuplicates(conv, false);
 
-	write the GABBI header to the output file.
-	    This is an ADIF-format record of the form
-	    <TQSL_IDENT:nn>YourApp V1.0 Lib: V1.1 Config: V1.1 AllowDupes: false
-	    Use tqsl_getVersion and tqsl_GetConfigVersion to determine the
-	    tqsllib version and configuration file version.
+        write the GABBI header to the output file.
+            This is an ADIF-format record of the form
+            <TQSL_IDENT:nn>YourApp V1.0 Lib: V1.1 Config: V1.1 AllowDupes: false
+            Use tqsl_getVersion and tqsl_GetConfigVersion to determine the
+            tqsllib version and configuration file version.
 
-	while (cp = tqsl_getConverterGABBI(conv) != 0)
-		write the string pointed to by "cp" to your file
+        while (cp = tqsl_getConverterGABBI(conv) != 0)
+            write the string pointed to by "cp" to your file
 
-	tqsl_converterCommit(conv);
-	tqsl_endConverter(&conv);
-	tqsl_endStationLocationCapture(&loc);
+        tqsl_converterCommit(conv);
+        tqsl_endConverter(&conv);
+        tqsl_endStationLocationCapture(&loc);
 
 The tq8 files created by tqsl are compressed using zlib functions. You can
 also submit uncompressed files using a .tq7 extension.
