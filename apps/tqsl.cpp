@@ -15,6 +15,7 @@
 
 
 #include <curl/curl.h> // has to be before something else in this list
+#include <stdlib.h>
 
 #include <wx/wxprec.h>
 #include <wx/object.h>
@@ -495,8 +496,8 @@ init_contests() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = atoi(value.mb_str());
-		int callsign_field = atoi(value.AfterFirst(';').mb_str());
+		int contest_type = strtol(value.mb_str(), NULL, 10);
+		int callsign_field = strtol(value.AfterFirst(';').mb_str(), NULL, 10);
 		tqsl_setCabrilloMapEntry(key.mb_str(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
@@ -916,20 +917,20 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 			else if (!strcasecmp(field.name, "QSO_DATE")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) == 8) {
-					rec._date.day = atoi(cp+6);
+					rec._date.day = strtol(cp+6, NULL, 10);
 					*(cp+6) = '\0';
-					rec._date.month = atoi(cp+4);
+					rec._date.month = strtol(cp+4, NULL, 10);
 					*(cp+4) = '\0';
-					rec._date.year = atoi(cp);
+					rec._date.year = strtol(cp, NULL, 10);
 				}
 			} else if (!strcasecmp(field.name, "TIME_ON")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) >= 4) {
-					rec._time.second = (strlen(cp) > 4) ? atoi(cp+4) : 0;
+					rec._time.second = (strlen(cp) > 4) ? strtol(cp+4, NULL, 10) : 0;
 					*(cp+4) = 0;
-					rec._time.minute = atoi(cp+2);
+					rec._time.minute = strtol(cp+2, NULL, 10);
 					*(cp+2) = '\0';
-					rec._time.hour = atoi(cp);
+					rec._time.hour = strtol(cp, NULL, 10);
 				}
 			}
 			else if (!strcasecmp(field.name, "EOR")) {

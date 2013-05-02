@@ -140,6 +140,7 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <map>
 #include <vector>
 #include <set>
@@ -725,7 +726,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				it = keylist.erase(it);
 			else if (callsign && (*it)["CALLSIGN"] != callsign)
 				it = keylist.erase(it);
-			else if (dxcc && atoi((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str()) != dxcc)
+			else if (dxcc && strtol((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str(), NULL, 10) != dxcc)
 				it = keylist.erase(it);
 			else if (issuer && (*it)["TQSL_CRQ_PROVIDER"] != issuer->organizationName)
 				it = keylist.erase(it);
@@ -780,7 +781,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				goto end;
 			if (!safe_strncpy(crq->country, (*it)["TQSL_CRQ_COUNTRY"].c_str(), sizeof crq->country))
 				goto end;
-			crq->dxccEntity = atoi((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str());
+			crq->dxccEntity = strtol((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str(), NULL, 10);
 			tqsl_initDate(&(crq->qsoNotBefore), (*it)["TQSL_CRQ_QSO_NOT_BEFORE"].c_str());
 			tqsl_initDate(&(crq->qsoNotAfter), (*it)["TQSL_CRQ_QSO_NOT_AFTER"].c_str());
 			tQSL_Error = 0;
@@ -1160,7 +1161,7 @@ tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc) {
 	if (tqsl_get_cert_ext(TQSL_API_TO_CERT(cert)->cert, "dxccEntity",
 		(unsigned char *)buf, &len, NULL))
 		return 1;
-	*dxcc = atoi(buf);
+	*dxcc = strtol(buf, NULL, 10);
 	return 0;
 }
 
@@ -2319,7 +2320,7 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 				ok = 0;
 			else {
 				buf[len] = 0;
-				if (dxcc != atoi(buf))
+				if (dxcc != strtol(buf, NULL, 10))
 					ok = 0;
 			}
 		}

@@ -9,6 +9,7 @@
  ***************************************************************************/
 
 #include <ctype.h>
+#include <stdlib.h>
 #include "crqwiz.h"
 #include "dxcc.h"
 #include "util.h"
@@ -560,12 +561,12 @@ CRQ_IntroPage::validate() {
 		ok = false;
 	}
 	if (ok) {
-		Parent()->qsonotbefore.year = atoi(tc_qsobeginy->GetStringSelection().mb_str());
-		Parent()->qsonotbefore.month = atoi(tc_qsobeginm->GetStringSelection().mb_str());
-		Parent()->qsonotbefore.day = atoi(tc_qsobegind->GetStringSelection().mb_str());
-		Parent()->qsonotafter.year = atoi(tc_qsoendy->GetStringSelection().mb_str());
-		Parent()->qsonotafter.month = atoi(tc_qsoendm->GetStringSelection().mb_str());
-		Parent()->qsonotafter.day = atoi(tc_qsoendd->GetStringSelection().mb_str());
+		Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().mb_str(), NULL, 10);
+		Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().mb_str(), NULL, 10);
+		Parent()->qsonotbefore.day = strtol(tc_qsobegind->GetStringSelection().mb_str(), NULL, 10);
+		Parent()->qsonotafter.year = strtol(tc_qsoendy->GetStringSelection().mb_str(), NULL, 10);
+		Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().mb_str(), NULL, 10);
+		Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().mb_str(), NULL, 10);
 		if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
 			msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
 			ok = false;

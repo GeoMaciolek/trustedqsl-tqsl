@@ -11,6 +11,7 @@
 #ifdef HAVE_CONFIG_H
 #include "sysconfig.h"
 #endif
+#include <stdlib.h>
 
 using namespace std;
 
@@ -133,8 +134,8 @@ init_contests() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = atoi(value.mb_str());
-		int callsign_field = atoi(value.AfterFirst(';').mb_str());
+		int contest_type = strtol(value.mb_str(), NULL, 10);
+		int callsign_field = strtol(value.AfterFirst(';').mb_str(), NULL, 10);
 		tqsl_setCabrilloMapEntry(key.mb_str(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
