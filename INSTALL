@@ -86,7 +86,7 @@ of Berkeley DB shipped with OS X (as of 10.8) is out of date.
 
 You also may not want to install the library into system directories:
 
-cmake -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib -DBDB_PREFIX=$HOME/bdb .
+cmake -DBDB_PREFIX=$HOME/bdb -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib .
 make
 sudo make install
 
