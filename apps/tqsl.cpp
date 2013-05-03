@@ -1848,7 +1848,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
    		// Get input file
 
 		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
-		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi")));
+		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
+		bool defFound = false;
 		// Construct filter string for file-open dialog
 		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
@@ -1856,14 +1857,18 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
 		exts.clear();
 		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
-		if (defext.IsEmpty())
+		if (defext.IsEmpty() || !defFound)
 			defext = wxString(wxT("adi"));
 		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
 			wxOPEN|wxFILE_MUST_EXIST, this);
@@ -1872,6 +1877,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		wxString inPath;
 		wxString inExt;
 		wxSplitPath(infile.c_str(), &inPath, NULL, &inExt);
+		inExt.Lower();
 		config->Write(wxT("ImportPath"), inPath);
 		config->Write(wxT("ImportExtension"), inExt);
 		// Get output file
@@ -1926,29 +1932,44 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 	try {
 		
+		wxConfig *config = (wxConfig *)wxConfig::Get();
    		// Get input file
-		wxString path = wxConfig::Get()->Read(wxT("ImportPath"), wxString(wxT("")));
+		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
+		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
+		bool defFound = false;
+
 		// Construct filter string for file-open dialog
 		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
-		wxString file_exts = wxConfig::Get()->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
+		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
 		exts.clear();
-		file_exts = wxConfig::Get()->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
+		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
-		infile = wxFileSelector(wxT("Select File to Sign and Upload"), path, wxT(""), wxT("adi"), filter,
+		if (defext.IsEmpty() || !defFound)
+			defext = wxString(wxT("adi"));
+		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
 			wxOPEN|wxFILE_MUST_EXIST, this);
    		if (infile == wxT(""))
    			return;
-		wxConfig::Get()->Write(wxT("ImportPath"), wxPathOnly(infile));
-		
+		wxString inPath;
+		wxString inExt;
+		wxSplitPath(infile.c_str(), &inPath, NULL, &inExt);
+		inExt.Lower();
+		config->Write(wxT("ImportPath"), inPath);
+		config->Write(wxT("ImportExtension"), inExt);
 
+		// Get output file
 		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
 			return;
