@@ -31,9 +31,6 @@
 #include "wx/checkbox.h"
 #include "tqslcertctrls.h"
 
-#define DEFAULT_CABRILLO_FILES "log cbr"
-#define DEFAULT_ADIF_FILES "adi"
-
 class KeyPrefs : public wxPanel {
 public:
 	KeyPrefs(wxWindow *parent);
