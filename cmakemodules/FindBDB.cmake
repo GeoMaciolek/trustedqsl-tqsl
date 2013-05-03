@@ -21,12 +21,15 @@ FIND_LIBRARY(BDB_LIBRARY NAMES
   #prefer small version
   libdb_small53s
   libdb53s
+  libdb5-5.3
+  libdb5-5.so
   PATHS
   "C:\\db-5.3.21\\build_windows\\Win32\\Static Release\\"
   "C:\\db-5.3.21\\build_windows\\Win32\\Static_Release\\" #vc08 adds underscore
   #OSX (and probably other unix) src build
   "/usr/local/BerkeleyDB.5.3/lib"
   "${BDB_PREFIX}/lib"
+  "${BDB_PREFIX}"
 )
 MARK_AS_ADVANCED(BDB_LIBRARY)
 
