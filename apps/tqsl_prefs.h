@@ -36,7 +36,7 @@
 #include <map>
 
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
-#define DEFAULT_ADIF_FILES wxT("adi adif")
+#define DEFAULT_ADIF_FILES wxT("adi")
 
 //online
 #define DEFAULT_UPL_URL wxT("https://p1k.arrl.org/lotw/upload")
