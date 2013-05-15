@@ -2290,6 +2290,9 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 		for (int i = 0; i < (int)p.fieldlist.size(); i++) {
 			TQSL_LOCATION_FIELD& f = p.fieldlist[i];
 			string s;
+			if (f.input_type == TQSL_LOCATION_FIELD_BADZONE)	// Don't output these to tSTATION
+				continue;
+
 			if (f.input_type == TQSL_LOCATION_FIELD_DDLIST || f.input_type == TQSL_LOCATION_FIELD_LIST) {
 				if (f.idx < 0 || f.idx >= (int)f.items.size())
 					s = "";
