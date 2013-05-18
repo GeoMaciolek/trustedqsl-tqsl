@@ -10,7 +10,7 @@
 
 
 #ifdef __APPLE__
-#include "Carbon.h"
+#include <CoreFoundation/CFBundle.h>
 #endif
 
 #define DXCC_TEST
@@ -34,6 +34,7 @@
 
 #include <vector>
 #include <iostream>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -281,19 +282,23 @@ tqsl_load_xml_config() {
 			default_path = string(wpath) + "/config.xml";
 	}
 #elif defined(__APPLE__)
-	CFURLRef mainBundleURL;
-	FSRef bundleFSRef;
-	char npath[1024];
+	// Get path to config.xml resource from bundle
+	CFBundleRef tqslBundle = CFBundleGetMainBundle();
+	CFURLRef configXMLURL = CFBundleCopyResourceURL(tqslBundle, CFSTR("config"), CFSTR("xml"), NULL);
+	if (configXMLURL) {
+		CFStringRef pathString = CFURLCopyFileSystemPath(configXMLURL, kCFURLPOSIXPathStyle);
+		CFRelease(configXMLURL);
 
-	mainBundleURL = CFBundleCopyBundleURL(CFBundleGetMainBundle());
-	CFURLGetFSRef(mainBundleURL, &bundleFSRef);
-	FSRefMakePath(&bundleFSRef, (unsigned char*)npath, sizeof(npath) - 1);
-	// if last char is not a /, append one
-	if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/'))
-		strcat(npath,"/");
-	CFRelease(mainBundleURL);
-
-	default_path = string(npath) + "Contents/Resources/config.xml";
+		// Convert CFString path to config.xml to string object
+		CFIndex maxStringLengthInBytes = CFStringGetMaximumSizeForEncoding(CFStringGetLength(pathString), kCFStringEncodingUTF8);
+		char *pathCString = (char *)malloc(maxStringLengthInBytes);
+		if (pathCString) {
+			CFStringGetCString(pathString, pathCString, maxStringLengthInBytes, kCFStringEncodingASCII);
+			CFRelease(pathString);
+			default_path = string(pathCString);
+			free(pathCString);
+		}
+	}
 #else
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
@@ -317,12 +322,12 @@ tqsl_load_xml_config() {
 
 	XMLElement top;
 	if (default_config.getFirstElement("tqslconfig", top)) {
-		default_major = atoi(top.getAttribute("majorversion").first.c_str());
-		default_minor = atoi(top.getAttribute("minorversion").first.c_str());
+		default_major = strtol(top.getAttribute("majorversion").first.c_str(), NULL, 10);
+		default_minor = strtol(top.getAttribute("minorversion").first.c_str(), NULL, 10);
 	}
 	if (user_config.getFirstElement("tqslconfig", top)) {
-		user_major = atoi(top.getAttribute("majorversion").first.c_str());
-		user_minor = atoi(top.getAttribute("minorversion").first.c_str());
+		user_major = strtol(top.getAttribute("majorversion").first.c_str(), NULL, 10);
+		user_minor = strtol(top.getAttribute("minorversion").first.c_str(), NULL, 10);
 	}
 
 	if (default_major > user_major
@@ -476,7 +481,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 		string value = field_data[specfield.getElementName()];
 		if (value == "") {
 			pair<string, bool> attr = specfield.getAttribute("required");
-			if (attr.second && atoi(attr.first.c_str())){
+			if (attr.second && strtol(attr.first.c_str(), NULL, 10)){
 				string err = specfield.getElementName() + " field required by ";
 				attr = sigspec.getAttribute("name");
 				if (attr.second)
@@ -518,7 +523,7 @@ init_dxcc() {
 		pair<string,bool> rval = dxcc_entity.getAttribute("arrlId");
 		pair<string,bool> zval = dxcc_entity.getAttribute("zonemap");
 		if (rval.second) {
-			int num = atoi(rval.first.c_str());
+			int num = strtol(rval.first.c_str(), NULL, 10);
 			DXCCMap[num] = dxcc_entity.getText();
 			if (zval.second) 
 				DXCCZoneMap[num] = zval.first;
@@ -544,8 +549,8 @@ init_band() {
 		Band b;
 		b.name = config_band.getText();
 		b.spectrum = config_band.getAttribute("spectrum").first;
-		b.low = atoi(config_band.getAttribute("low").first.c_str());
-		b.high = atoi(config_band.getAttribute("high").first.c_str());
+		b.low = strtol(config_band.getAttribute("low").first.c_str(), NULL, 10);
+		b.high = strtol(config_band.getAttribute("high").first.c_str(), NULL, 10);
 		BandList.push_back(b);
 		ok = bands.getNextElement(config_band);
 	}
@@ -846,9 +851,9 @@ init_cabrillo_map() {
 	XMLElement cabrillo_item;
 	bool ok = cabrillo_map.getFirstElement("cabrillocontest", cabrillo_item);
 	while (ok) {
-		if (cabrillo_item.getText() != "" && atoi(cabrillo_item.getAttribute("field").first.c_str()) > TQSL_MIN_CABRILLO_MAP_FIELD)
+		if (cabrillo_item.getText() != "" && strtol(cabrillo_item.getAttribute("field").first.c_str(), NULL, 10) > TQSL_MIN_CABRILLO_MAP_FIELD)
 			tqsl_cabrillo_map[cabrillo_item.getText()] =
-				make_pair(atoi(cabrillo_item.getAttribute("field").first.c_str())-1,
+				make_pair(strtol(cabrillo_item.getAttribute("field").first.c_str(), NULL, 10)-1,
 					(cabrillo_item.getAttribute("type").first == "VHF") ? TQSL_CABRILLO_VHF : TQSL_CABRILLO_HF);
 		ok = cabrillo_map.getNextElement(cabrillo_item);
 	}
@@ -968,7 +973,7 @@ init_loc_maps() {
 	bool ok;
 	for (ok = config_pages.getFirstElement("page", config_page); ok; ok = config_pages.getNextElement(config_page)) {
 		pair <string, bool> Id = config_page.getAttribute("Id");
-		int page_num = atoi(Id.first.c_str());
+		int page_num = strtol(Id.first.c_str(), NULL, 10);
 		if (!Id.second || page_num < 1) {	// Must have the Id!
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			strcpy(tQSL_CustomError, "TQSL Configuration file invalid - page missing ID");
@@ -1001,12 +1006,14 @@ static bool inMap(int cqvalue, int ituvalue, bool cqz, bool ituz, const char *ma
  */
 	int cq, itu;
 	bool result = false;
-	char *mapcopy = strdup(map);
-	char *mapPart = strtok(mapcopy, ",");
 
 	// No map or empty string -> all match
-	if (!map || map[0] == '\0')
+	if (!map || map[0] == '\0') {
 		return true;
+	}
+
+	char *mapcopy = strdup(map);
+	char *mapPart = strtok(mapcopy, ",");
 	while (mapPart) {
 		sscanf(mapPart, "%d:%d", &itu, &cq);
 		if (cqz && ituz) {
@@ -1094,7 +1101,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 				// rebuild list
 				field.changed = true;
 				init_dxcc();
-				int olddxcc = atoi(field.cdata.c_str());
+				int olddxcc = strtol(field.cdata.c_str(), NULL, 10);
 				field.items.clear();
 				field.idx = 0;
 #ifdef DXCC_TEST
@@ -1116,7 +1123,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 				for (ip = p.hash[call].begin(); ip != p.hash[call].end(); ip++) {
 					TQSL_LOCATION_ITEM item;
 					item.text = *ip;
-					item.ivalue = atoi(ip->c_str());
+					item.ivalue = strtol(ip->c_str(), NULL, 10);
 					IntMap::iterator dxcc_it = DXCCMap.find(item.ivalue);
 					if (dxcc_it != DXCCMap.end()) {
 						item.label = dxcc_it->second;
@@ -1183,7 +1190,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 			} else {
 				// No dependencies
 				TQSL_LOCATION_FIELD *ent = get_location_field(page, "DXCC", loc);
-				current_entity = atoi(ent->cdata.c_str());
+				current_entity = strtol(ent->cdata.c_str(), NULL, 10);
 				bool cqz = field.gabbi_name == "CQZ";
 				bool ituz = field.gabbi_name == "ITUZ";
 				if (field.items.size() == 0 || (cqz && current_entity != loaded_cqz) || (ituz && current_entity != loaded_ituz)) {
@@ -1208,11 +1215,11 @@ update_page(int page, TQSL_LOCATION *loc) {
 						}
 					} else {
 						// No enums supplied
-						int ftype = atoi(config_field.getAttribute("intype").first.c_str());
+						int ftype = strtol(config_field.getAttribute("intype").first.c_str(), NULL, 10);
 						if (ftype == TQSL_LOCATION_FIELD_LIST || ftype == TQSL_LOCATION_FIELD_DDLIST) {
 							// This a list field
-							int lower = atoi(config_field.getAttribute("lower").first.c_str());
-							int upper = atoi(config_field.getAttribute("upper").first.c_str());
+							int lower = strtol(config_field.getAttribute("lower").first.c_str(), NULL, 10);
+							int upper = strtol(config_field.getAttribute("upper").first.c_str(), NULL, 10);
 							const char *zoneMap;
 							/* Get the map */
 							if (tqsl_getDXCCZoneMap(current_entity, &zoneMap)) {
@@ -1314,7 +1321,7 @@ make_page(TQSL_LOCATION_PAGELIST& pagelist, int page_num) {
 
 	XMLElement& config_page = tqsl_page_map[page_num];
 
-	pagelist.back().prev = atoi(config_page.getAttribute("follows").first.c_str());
+	pagelist.back().prev = strtol(config_page.getAttribute("follows").first.c_str(), NULL, 10);
 	XMLElement config_pageField;
 	bool field_ok = config_page.getFirstElement("pageField", config_pageField);
 	while (field_ok) {
@@ -1329,9 +1336,9 @@ make_page(TQSL_LOCATION_PAGELIST& pagelist, int page_num) {
 			field_name,
 			config_field.getAttribute("label").first.c_str(),
 			(config_field.getAttribute("type").first == "C") ? TQSL_LOCATION_FIELD_CHAR : TQSL_LOCATION_FIELD_INT,
-			atoi(config_field.getAttribute("len").first.c_str()),
-			atoi(config_field.getAttribute("intype").first.c_str()),
-			atoi(config_field.getAttribute("flags").first.c_str())
+			strtol(config_field.getAttribute("len").first.c_str(), NULL, 10),
+			strtol(config_field.getAttribute("intype").first.c_str(), NULL, 10),
+			strtol(config_field.getAttribute("flags").first.c_str(), NULL, 10)
 		);
 		pagelist.back().fieldlist.push_back(loc_field);
 		field_ok = config_page.getNextElement(config_pageField);
@@ -1450,7 +1457,7 @@ find_next_page(TQSL_LOCATION *loc) {
 	map<int, XMLElement>::iterator pit;
 	p.next = 0;
 	for (pit = tqsl_page_map.begin(); pit != tqsl_page_map.end(); pit++) {
-		if (atoi(pit->second.getAttribute("follows").first.c_str()) == loc->page) {
+		if (strtol(pit->second.getAttribute("follows").first.c_str(), NULL, 10) == loc->page) {
 			string dependsOn = pit->second.getAttribute("dependsOn").first;
 			string dependency = pit->second.getAttribute("dependency").first;
 			if (dependsOn == "") {
@@ -1944,14 +1951,14 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 							}
 							if (!exists) {
 								if (field.gabbi_name == "CQZ")
-									bad_cqz = atoi(field.cdata.c_str());
+									bad_cqz = strtol(field.cdata.c_str(), NULL, 10);
 								else if (field.gabbi_name == "ITUZ")
-									bad_ituz = atoi(field.cdata.c_str());
+									bad_ituz = strtol(field.cdata.c_str(), NULL, 10);
 							}
 							break;
 						case TQSL_LOCATION_FIELD_TEXT:
 							if (field.data_type == TQSL_LOCATION_FIELD_INT)
-								field.idata = atoi(field.cdata.c_str());
+								field.idata = strtol(field.cdata.c_str(), NULL, 10);
 							break;
 					}
 				}
@@ -2179,7 +2186,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while (ok) {
 		string eln=specfield.getElementName();
 		const char *elname = eln.c_str();
 		const char *value = 0;
@@ -2214,7 +2221,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 		}
 		if (value == 0 || value[0] == 0) {
 			pair<string, bool> attr = specfield.getAttribute("required");
-			if (attr.second && atoi(attr.first.c_str())){
+			if (attr.second && strtol(attr.first.c_str(), NULL, 10)){
 				string err = specfield.getElementName() + " field required by signature specification not found";
 				tQSL_Error = TQSL_CUSTOM_ERROR;
 				strncpy(tQSL_CustomError, err.c_str(), sizeof tQSL_CustomError);
@@ -2231,7 +2238,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	return tqsl_signDataBlock(cert, (const unsigned char *)rec_sign_data.c_str(), rec_sign_data.size(), sig, siglen);
 }
 
@@ -2284,6 +2291,9 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 		for (int i = 0; i < (int)p.fieldlist.size(); i++) {
 			TQSL_LOCATION_FIELD& f = p.fieldlist[i];
 			string s;
+			if (f.input_type == TQSL_LOCATION_FIELD_BADZONE)	// Don't output these to tSTATION
+				continue;
+
 			if (f.input_type == TQSL_LOCATION_FIELD_DDLIST || f.input_type == TQSL_LOCATION_FIELD_LIST) {
 				if (f.idx < 0 || f.idx >= (int)f.items.size())
 					s = "";
@@ -2340,7 +2350,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
-	do {
+	while(ok) {
 		string en=specfield.getElementName();
 		const char *elname = en.c_str();
 		const char *value = 0;
@@ -2375,7 +2385,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 		}
 		if (value == 0 || value[0] == 0) {
 			pair<string, bool> attr = specfield.getAttribute("required");
-			if (attr.second && atoi(attr.first.c_str())){
+			if (attr.second && strtol(attr.first.c_str(), NULL, 10)){
 				string err = specfield.getElementName() + " field required by signature specification not found";
 				tQSL_Error = TQSL_CUSTOM_ERROR;
 				strncpy(tQSL_CustomError, err.c_str(), sizeof tQSL_CustomError);
@@ -2392,7 +2402,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 			rec_sign_data += v;
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
-	} while (ok);
+	}
 	unsigned char sig[129];
 	int siglen = sizeof sig;
 	rec_sign_data = string_toupper(rec_sign_data);
@@ -2466,7 +2476,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 }
 
 DLLEXPORT const char* CALLCONVENTION
-tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid, string *qsosigndata) {
+tqsl_getGABBItCONTACT(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid) {
 	return tqsl_getGABBItCONTACTData(cert, locp, qso, stationuid, NULL, 0);
 }
 
@@ -2595,8 +2605,8 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 	stat = tqsldata.getFirstElement("tqslconfig", section);
 	if (stat) {
 		// Check to make sure we aren't overwriting newer version
-		int major = atoi(section.getAttribute("majorversion").first.c_str());
-		int minor = atoi(section.getAttribute("minorversion").first.c_str());
+		int major = strtol(section.getAttribute("majorversion").first.c_str(), NULL, 10);
+		int minor = strtol(section.getAttribute("minorversion").first.c_str(), NULL, 10);
 		int curmajor, curminor;
 		if (tqsl_getConfigVersion(&curmajor, &curminor))
 			return 1;

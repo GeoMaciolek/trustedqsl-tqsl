@@ -29,8 +29,12 @@ public:
 	void ResetNotifyData();
 	notifyData *GetNotifyData() { return _nd; }
 	wxWindow *Parent() { return _parent; }
+	LCW_Page *Final() { return _final; }
+	LCW_Page *P12PW() { return _p12pw; }
 private:
 	LCW_Page *_first;
+	LCW_Page *_final;
+	LCW_Page *_p12pw;
 	class notifyData *_nd;
 	wxWindow *_parent;
 };

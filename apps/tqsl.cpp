@@ -15,6 +15,7 @@
 
 
 #include <curl/curl.h> // has to be before something else in this list
+#include <stdlib.h>
 
 #include <wx/wxprec.h>
 #include <wx/object.h>
@@ -111,7 +112,9 @@ enum {
 	TQSL_EXIT_ERR_OPEN_OUTPUT = 7,
 	TQSL_EXIT_NO_QSOS = 8,
 	TQSL_EXIT_QSOS_SUPPRESSED = 9,
-	TQSL_EXIT_COMMAND_ERROR = 10
+	TQSL_EXIT_COMMAND_ERROR = 10,
+	TQSL_EXIT_CONNECTION_FAILED = 11,
+	TQSL_EXIT_UNKNOWN = 12
 };
 
 #define TQSL_CD_MSG TQSL_ID_LOW
@@ -119,7 +122,7 @@ enum {
 
 static wxString ErrorTitle(wxT("TQSL Error"));
 
-static void exitNow(int status) {
+static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
 				 "User Cancelled",
 				 "Upload Rejected",
@@ -130,16 +133,16 @@ static void exitNow(int status) {
 				 "Error opening output file",
 				 "No QSOs written",
 				 "Some QSOs suppressed",
+				 "Commmand Syntax Error",
+				 "LoTW Connection Failed",
 				 "Unknown"
 				};
 	int stat = status;
-	if (stat > TQSL_EXIT_QSOS_SUPPRESSED || stat < 0) stat = TQSL_EXIT_QSOS_SUPPRESSED + 1;
-	// For command line errors, nothing is set up so output to cerr.
-	if (stat == TQSL_EXIT_COMMAND_ERROR) {
-		cerr << "Final Status: Command Syntax Error (" << TQSL_EXIT_COMMAND_ERROR << ")" << endl;
-	} else {
+	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN;
+	if (quiet)
 		wxLogMessage(wxT("Final Status: %hs (%d)"), errors[stat], status);
-	}
+	else
+		cerr << "Final Status: " << errors[stat] << "(" << status << ")" << endl;
 	exit(status);
 }
 
@@ -414,21 +417,23 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 	if (action==TQSL_ACTION_UNSPEC) {
 		if (qso_count==dupes) {
 			message+=
-				wxT("\n\nThe program (such as a logger) that has started TrustedQSL does not appear to be duplicate-handling aware.\n")
-				wxT("Please check for an updated version of this software.\n")
-				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
-				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
+				wxT("\n\nThe log file you are uploading using your QSO Logging system consists entirely of previously uploaded")
+				wxT(" QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your QSO")
+				wxT(" Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'")
+				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce")
 				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		} else {
 			message+=
-				wxT("\n\nThe program (such as a logger) that has started TrustedQSL does not appear to be duplicate-handling aware.\n")
-				wxT("Please check for an updated version of this software.\n")
-				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
-				wxT(" is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly\n")
-				wxT(" set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'\n")
-				wxT(" and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though\n")
+				wxT("\n\nThe log file you are uploading using your QSO Logging system includes some previously uploaded")
+				wxT(" QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your")
+				wxT(" QSO Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'")
+				wxT(" is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly")
+				wxT(" set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'")
+				wxT(" and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though")
 				wxT(" they would not be in this specific batch\n")
-				wxT("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
+				wxT("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce")
 				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		}
 	}
@@ -491,8 +496,8 @@ init_contests() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = atoi(value.mb_str());
-		int callsign_field = atoi(value.AfterFirst(';').mb_str());
+		int contest_type = strtol(value.mb_str(), NULL, 10);
+		int callsign_field = strtol(value.AfterFirst(';').mb_str(), NULL, 10);
 		tqsl_setCabrilloMapEntry(key.mb_str(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
@@ -912,20 +917,20 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 			else if (!strcasecmp(field.name, "QSO_DATE")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) == 8) {
-					rec._date.day = atoi(cp+6);
+					rec._date.day = strtol(cp+6, NULL, 10);
 					*(cp+6) = '\0';
-					rec._date.month = atoi(cp+4);
+					rec._date.month = strtol(cp+4, NULL, 10);
 					*(cp+4) = '\0';
-					rec._date.year = atoi(cp);
+					rec._date.year = strtol(cp, NULL, 10);
 				}
 			} else if (!strcasecmp(field.name, "TIME_ON")) {
 				char *cp = (char *)field.data;
 				if (strlen(cp) >= 4) {
-					rec._time.second = (strlen(cp) > 4) ? atoi(cp+4) : 0;
+					rec._time.second = (strlen(cp) > 4) ? strtol(cp+4, NULL, 10) : 0;
 					*(cp+4) = 0;
-					rec._time.minute = atoi(cp+2);
+					rec._time.minute = strtol(cp+2, NULL, 10);
 					*(cp+2) = '\0';
-					rec._time.hour = atoi(cp);
+					rec._time.hour = strtol(cp, NULL, 10);
 				}
 			}
 			else if (!strcasecmp(field.name, "EOR")) {
@@ -965,11 +970,14 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 	wxString name, ext;
 	bool allow_dupes = false;
 	bool restarting = false;
+	const char *dxccname = "Unknown";
 
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
+
+	tqsl_getDXCCEntityName(dxcc, &dxccname);
 
 	get_certlist(callsign, dxcc, false);
 	if (ncerts == 0) {
@@ -978,7 +986,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
-	wxLogMessage(wxT("Signing using CALL=%hs, DXCC=%d"), callsign, dxcc);
+	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs"), callsign, dxccname);
 
 	init_modes();
 	init_contests();
@@ -1184,11 +1192,13 @@ abortSigning:
 					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				} else {
-					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), processed, duplicates);
+					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), duplicates, processed);
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				}
 			} else if (action == TQSL_ACTION_ALL) {
@@ -1354,6 +1364,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
+
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
 	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
@@ -1377,11 +1388,29 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		bool uplVerifyCA=config->Read(wxT("VerifyCA"), DEFAULT_UPL_VERIFYCA);
 		config->SetPath(wxT("/"));
 
+		// Copy the strings so they remain around
+		char *urlstr = strdup(uploadURL.mb_str());
+		char *cpUF = strdup(uploadField.mb_str());
+
+		//compress the upload
+		string compressed;
+		long compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
+		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
+		if (compressedSize<0) { 
+			wxLogMessage(wxT("Error compressing before upload")); 
+			free(urlstr);
+			free(cpUF);
+			return TQSL_EXIT_TQSL_ERROR;
+		}
+
+retry_upload:
 
 		CURL* req=curl_easy_init();
 
 		if (!req) {
 			wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
+			free(urlstr);
+			free(cpUF);
 			return TQSL_EXIT_TQSL_ERROR; 
 		}
 
@@ -1391,9 +1420,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 
 		//set up options
-		curl_easy_setopt(req, CURLOPT_URL, (const char*)uploadURL.mb_str());
-
-
+		curl_easy_setopt(req, CURLOPT_URL, urlstr);
 
 		if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
 
@@ -1427,20 +1454,6 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 			now.Format(wxT("%H%M")).c_str(),
 			name.c_str()).mb_str(), 1023);
 
-		char cpUF[1024];
-		strncpy(cpUF, uploadField.mb_str(), 1023);
-
-
-		//compress the upload
-		string compressed;
-		long compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
-		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
-		if (compressedSize<0) { 
-			wxLogMessage(wxT("Error compressing before upload")); 
-			curl_easy_cleanup(req);
-			return TQSL_EXIT_TQSL_ERROR;
-		}
-
 		struct curl_httppost* post=NULL, *lastitem=NULL;
 
 		curl_formadd(&post, &lastitem,
@@ -1458,7 +1471,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 		UploadDialog* upload;
 
-		wxLogMessage(wxT("Attempting to upload %d QSOs"), numrecs);
+		wxLogMessage(wxT("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
 
 		if(this) {
 			upload=new UploadDialog(this);
@@ -1471,6 +1484,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 			if (thread.Run() != wxTHREAD_NO_ERROR) {
 				wxLogError(wxT("Could not spawn upload thread!"));
 			        upload->Destroy();
+				free(urlstr);
+				free(cpUF);
 				return TQSL_EXIT_TQSL_ERROR;
 			}
 
@@ -1493,11 +1508,11 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 				if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both)==uplStatusSuccess) //success
 				{
 					if (uplMessageRE.Matches(uplresult)) { //and a message
-						wxLogMessage(wxT("Log uploaded successfully with result \"%s\"!"), 
+						wxLogMessage(wxT("Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
 							uplMessageRE.GetMatch(uplresult, 1).c_str());
 
 					} else { // no message we could find
-						wxLogMessage(wxT("Log uploaded successfully!"));
+						wxLogMessage(wxT("Log uploaded successfully!\nAfter reading this message, you may close this program."));
 					}
 
 					retval=TQSL_EXIT_SUCCESS;
@@ -1518,18 +1533,29 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 				retval=TQSL_EXIT_UNEXP_RESP;
 			}
 
+		} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			wxLogMessage(wxT("Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading these QSOs later."));
+			retval=TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
 			wxLogMessage(wxT("Upload cancelled"));
 			retval=TQSL_EXIT_CANCEL;
 		} else { //error
 			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
 			// was turned into garbage otherwise
-			wxLogMessage(wxT("Couldn't upload the file: CURL returned %hs"), errorbuf);
+			wxLogMessage(wxT("Couldn't upload the file: CURL returned \"%hs\" (%hs)"), curl_easy_strerror((CURLcode)retval), errorbuf);
 			retval=TQSL_EXIT_TQSL_ERROR;
 		}
 		if (this) upload->Destroy();
+
 		curl_formfree(post);
 		curl_easy_cleanup(req);
+
+		// If there's a GUI and we didn't successfully upload and weren't cancelled,
+		// ask the user if we should retry the upload.
+		if (this && retval != TQSL_EXIT_CANCEL && retval != TQSL_EXIT_SUCCESS) {
+			if (wxMessageBox(wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO, this) == wxYES)
+				goto retry_upload;
+		}
 
 		if (retval==0)
 			tqsl_converterCommit(conv);
@@ -1538,6 +1564,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 		tqsl_endConverter(&conv);
 
+		if (urlstr) free(urlstr);
+		if (cpUF) free (cpUF);
 		return retval;
 	}
 
@@ -1816,27 +1844,42 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	try {
 		bool compressed = (event.GetId() == tm_f_import_compress);
 		
+		wxConfig *config = (wxConfig *)wxConfig::Get();
    		// Get input file
-		wxString path = wxConfig::Get()->Read(wxT("ImportPath"), wxString(wxT("")));
+
+		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
+		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
+		bool defFound = false;
 		// Construct filter string for file-open dialog
 		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
-		wxString file_exts = wxConfig::Get()->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
+		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
 		exts.clear();
-		file_exts = wxConfig::Get()->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
+		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
-		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), wxT("adi"), filter,
+		if (defext.IsEmpty() || !defFound)
+			defext = wxString(wxT("adi"));
+		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
 			wxOPEN|wxFILE_MUST_EXIST, this);
    		if (infile == wxT(""))
    			return;
-		wxConfig::Get()->Write(wxT("ImportPath"), wxPathOnly(infile));
+		wxString inPath;
+		wxString inExt;
+		wxSplitPath(infile.c_str(), &inPath, NULL, &inExt);
+		inExt.Lower();
+		config->Write(wxT("ImportPath"), inPath);
+		config->Write(wxT("ImportExtension"), inExt);
 		// Get output file
 		wxString basename;
 		wxSplitPath(infile.c_str(), 0, &basename, 0);
@@ -1850,8 +1893,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
    			wxSAVE|wxOVERWRITE_PROMPT, this);
    		if (outfile == wxT(""))
    			return;
-		wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(outfile));
-
+		config->Write(wxT("ExportPath"), wxPathOnly(outfile));
 
 		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
@@ -1890,29 +1932,44 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 	try {
 		
+		wxConfig *config = (wxConfig *)wxConfig::Get();
    		// Get input file
-		wxString path = wxConfig::Get()->Read(wxT("ImportPath"), wxString(wxT("")));
+		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
+		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
+		bool defFound = false;
+
 		// Construct filter string for file-open dialog
 		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
-		wxString file_exts = wxConfig::Get()->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
+		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
 		exts.clear();
-		file_exts = wxConfig::Get()->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
+		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < (int)exts.size(); i++) {
 			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			if (exts[i] == defext)
+				defFound = true;
 		}
-		infile = wxFileSelector(wxT("Select File to Sign and Upload"), path, wxT(""), wxT("adi"), filter,
+		if (defext.IsEmpty() || !defFound)
+			defext = wxString(wxT("adi"));
+		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
 			wxOPEN|wxFILE_MUST_EXIST, this);
    		if (infile == wxT(""))
    			return;
-		wxConfig::Get()->Write(wxT("ImportPath"), wxPathOnly(infile));
-		
+		wxString inPath;
+		wxString inExt;
+		wxSplitPath(infile.c_str(), &inPath, NULL, &inExt);
+		inExt.Lower();
+		config->Write(wxT("ImportPath"), inPath);
+		config->Write(wxT("ImportExtension"), inExt);
 
+		// Get output file
 		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
 			return;
@@ -2073,16 +2130,17 @@ QSLApp::GUIinit() {
 bool
 QSLApp::OnInit() {
 	MyFrame *frame = 0;
+	bool quiet = false;
 
 	int major, minor;
 	if (tqsl_getConfigVersion(&major, &minor)) {
 		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
-		exitNow (TQSL_EXIT_TQSL_ERROR);
+		exitNow (TQSL_EXIT_TQSL_ERROR, quiet);
 	}
 	//short circuit if no arguments
 
 	if (argc<=1) {
-		frame=GUIinit();
+		GUIinit();
 		return true;
 	}
 
@@ -2090,7 +2148,6 @@ QSLApp::OnInit() {
 	wxString locname;
 	bool suppressdate = false;
 	int action = TQSL_ACTION_UNSPEC;
-	bool quiet = false;
 	bool upload=false;
 	char *password = NULL;
 	wxString infile(wxT(""));
@@ -2114,12 +2171,25 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_NONE }
 	};
 
+	// Lowercase command options
+	for (int i = 1; i < argc; i++)
+		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')) 
+			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1])) 
+				argv[i][1] = wxTolower(argv[i][1]);
+		
 	parser.SetCmdLine(argc, argv);
 	parser.SetDesc(cmdLineDesc);
 	// only allow "-" for options, otherwise "/path/something.adif" 
 	// is parsed as "-path"
 	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
-	if (parser.Parse(true)!=0) exitNow(TQSL_EXIT_COMMAND_ERROR);
+	if (parser.Parse(true)!=0)  {
+		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+	}
+
+	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
+		quiet = true;
+		wxLog::SetActiveTarget(new wxLogStderr(NULL));
+	}
 
 	// print version and exit
 	if (parser.Found(wxT("v"))) { 
@@ -2130,19 +2200,16 @@ QSLApp::OnInit() {
 
 	// check for logical command switches
 	if (parser.Found(wxT("o")) && parser.Found(wxT("u"))) {
-		cerr << "Option -o cannot be used with -u" << endl;
-		exitNow(TQSL_EXIT_COMMAND_ERROR);
+		cerr << "Option -o cannot be combined with -u" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 	if ((parser.Found(wxT("o")) || parser.Found(wxT("u"))) && parser.Found(wxT("s"))) { 
-		cerr << "Option -s cannot be used with -u or -o" << endl;
-		exitNow(TQSL_EXIT_COMMAND_ERROR);
+		cerr << "Option -s cannot be combined with -u or -o" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 	if (parser.Found(wxT("s")) && parser.GetParamCount() > 0) {
-		cerr << "Option -s cannot be used with an input file" << endl;
-		exitNow(TQSL_EXIT_COMMAND_ERROR);
-	}
-	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
-		quiet = true;
+		cerr << "Option -s cannot be combined with an input file" << endl;
+		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 
 	if (quiet) {
@@ -2153,11 +2220,14 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
 		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
-			if (quiet)
+			if (quiet) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
-			else
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			}
+			else {
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), ErrorTitle, wxOK|wxCENTRE, frame);
-			return false;
+				return false;
+			}
 		}
 	}
 	wxString pwd;
@@ -2182,8 +2252,11 @@ QSLApp::OnInit() {
 			char tmp[100];
 			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
 			tmp[sizeof tmp -1] = '\0';
-			cerr << "The action parameter " << tmp << " is not recognized" << endl;
-			exitNow(TQSL_EXIT_COMMAND_ERROR);
+			if (quiet)
+				wxLogMessage(wxT("The -a parameter %hs is not recognized"), tmp);
+			else
+				cerr << "The action parameter " << tmp << " is not recognized" << endl;
+			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 		}
 	}
 	if (parser.Found(wxT("u"))) {
@@ -2200,21 +2273,37 @@ QSLApp::OnInit() {
 			AddEditStationLocation(loc, true);
 		} else
 			AddEditStationLocation(loc, false, wxT("Edit Station Location"));
+		return false;
 	}
 	if (parser.GetParamCount()>0) {
 		infile = parser.GetParam(0);
-		if (wxIsEmpty(infile)) {	// Nothing to sign
-			wxLogError(wxT("No logfile to sign!"));
-			return false;
-		}
+	}
+	// We need a logfile, else there's nothing to do.
+	if (wxIsEmpty(infile)) {	// Nothing to sign
+		wxLogError(wxT("No logfile to sign!"));
+		if (quiet)
+			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+		return false;
 	}
 	if (loc == 0) {
 		if (!frame)
 			frame = GUIinit();
 		loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
+		try {
+			loc = frame->SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+		}
+		catch (TQSLException& x) {
+			wxLogError(wxT("%hs"), x.what());
+			if (quiet)
+				exitNow(TQSL_EXIT_CANCEL, quiet);
+		}
 	}
-	if (loc == 0)
+	// If no location specified and not chosen, can't sign. Exit.
+	if (loc == 0) {
+		if (quiet)
+			exitNow(TQSL_EXIT_CANCEL, quiet);
 		return false;
+	}
 	wxString path, name, ext;
 	if (!wxIsEmpty(outfile)) {
 		path = outfile;
@@ -2228,7 +2317,7 @@ QSLApp::OnInit() {
 		try {
 			int val=frame->UploadLogFile(loc, infile, true, suppressdate, action, password);
 			if (quiet)
-				exitNow(val);
+				exitNow(val, quiet);
 			else
 				return true;	// Run the GUI
 		} catch (TQSLException& x) {
@@ -2238,7 +2327,7 @@ QSLApp::OnInit() {
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
 			if (quiet)
-				exitNow(TQSL_EXIT_LIB_ERROR);
+				exitNow(TQSL_EXIT_LIB_ERROR, quiet);
 			else
 				return true;
 		}
@@ -2246,7 +2335,7 @@ QSLApp::OnInit() {
 		try {
 			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
 			if (quiet)
-				exitNow(val);
+				exitNow(val, quiet);
 			else
 				return true;
 		} catch (TQSLException& x) {
@@ -2256,14 +2345,13 @@ QSLApp::OnInit() {
 			s += wxString(x.what(), wxConvLocal);
 			wxLogError(wxT("%s"), (const char*)s.c_str());
 			if (quiet)
-				exitNow(TQSL_EXIT_LIB_ERROR);
+				exitNow(TQSL_EXIT_LIB_ERROR, quiet);
 			else
 				return true;
 		}
 	}
 	if (quiet)
-		return false;
-	else
-		return true;
+		exitNow(TQSL_EXIT_SUCCESS, quiet);
+	return true;
 }
 

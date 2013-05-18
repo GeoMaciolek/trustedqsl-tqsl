@@ -16,6 +16,7 @@
 #include "wx/config.h"
 #include "tqsllib.h"
 
+#include <stdlib.h>
 #include <iostream>
 #include <utility>
 
@@ -489,8 +490,8 @@ void ContestMap::SetContestList() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = atoi(value.mb_str());
-		int fieldnum = atoi(value.AfterFirst(wxT(';')).mb_str());
+		int contest_type = strtol(value.mb_str(), NULL, 10);
+		int fieldnum = strtol(value.AfterFirst(wxT(';')).mb_str(), NULL, 10);
 		contestmap.insert(make_pair(key, make_pair(contest_type, fieldnum)));
 		stat = config->GetNextEntry(key, cookie);
 	}
@@ -551,8 +552,8 @@ void ContestMap::OnEdit(wxCommandEvent &) {
 			config->SetPath(wxT("/cabrilloMap"));
 			wxString val;
 			if (config->Read(contest, &val)) {
-				contest_type = atoi(val.mb_str());
-				callsign_field = atoi(val.AfterFirst(wxT(';')).mb_str());
+				contest_type = strtol(val.mb_str(), NULL, 10);
+				callsign_field = strtol(val.AfterFirst(wxT(';')).mb_str(), NULL, 10);
 			}
 			config->SetPath(wxT("/"));
 		}
@@ -638,7 +639,7 @@ bool EditContest::TransferDataFromWindow() {
 		return false;
 	}
 	contest_type = type->GetSelection();
-	callsign_field = atoi(fieldnum->GetValue().mb_str());
+	callsign_field = strtol(fieldnum->GetValue().mb_str(), NULL, 10);
 	if (callsign_field < TQSL_MIN_CABRILLO_MAP_FIELD) {
 		wxMessageBox(wxString::Format(wxT("Call-worked field must be %d or greater"), TQSL_MIN_CABRILLO_MAP_FIELD),
 			wxT("Error"), wxOK, this);

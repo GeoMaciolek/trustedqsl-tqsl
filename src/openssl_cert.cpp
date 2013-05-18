@@ -140,6 +140,7 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <map>
 #include <vector>
 #include <set>
@@ -633,7 +634,7 @@ end:
 }
 
 DLLEXPORT int CALLCONVENTION
-tqsl_getSelectedCertificate(tQSL_Cert *cert, tQSL_Cert **certlist,
+tqsl_getSelectedCertificate(tQSL_Cert *cert, const tQSL_Cert **certlist,
 	int idx) {
 	
 	if (tqsl_init())
@@ -725,7 +726,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				it = keylist.erase(it);
 			else if (callsign && (*it)["CALLSIGN"] != callsign)
 				it = keylist.erase(it);
-			else if (dxcc && atoi((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str()) != dxcc)
+			else if (dxcc && strtol((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str(), NULL, 10) != dxcc)
 				it = keylist.erase(it);
 			else if (issuer && (*it)["TQSL_CRQ_PROVIDER"] != issuer->organizationName)
 				it = keylist.erase(it);
@@ -780,7 +781,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				goto end;
 			if (!safe_strncpy(crq->country, (*it)["TQSL_CRQ_COUNTRY"].c_str(), sizeof crq->country))
 				goto end;
-			crq->dxccEntity = atoi((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str());
+			crq->dxccEntity = strtol((*it)["TQSL_CRQ_DXCC_ENTITY"].c_str(), NULL, 10);
 			tqsl_initDate(&(crq->qsoNotBefore), (*it)["TQSL_CRQ_QSO_NOT_BEFORE"].c_str());
 			tqsl_initDate(&(crq->qsoNotAfter), (*it)["TQSL_CRQ_QSO_NOT_AFTER"].c_str());
 			tQSL_Error = 0;
@@ -1160,7 +1161,7 @@ tqsl_getCertificateDXCCEntity(tQSL_Cert cert, int *dxcc) {
 	if (tqsl_get_cert_ext(TQSL_API_TO_CERT(cert)->cert, "dxccEntity",
 		(unsigned char *)buf, &len, NULL))
 		return 1;
-	*dxcc = atoi(buf);
+	*dxcc = strtol(buf, NULL, 10);
 	return 0;
 }
 
@@ -1850,10 +1851,12 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 								tQSL_Error = TQSL_OPERATOR_ABORT;
 								goto imp_end;
 							}
+							password = pw;
+						} else {
+							password = NULL;
 						}
-						password = pw;
 					}
-					if (password != 0 && *password != '\0') {
+					if (password && *password != '\0') {
 						cipher = EVP_des_ede3_cbc();
 						len = strlen(password);
 					} else {
@@ -2317,7 +2320,7 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 				ok = 0;
 			else {
 				buf[len] = 0;
-				if (dxcc != atoi(buf))
+				if (dxcc != strtol(buf, NULL, 10))
 					ok = 0;
 			}
 		}
@@ -3014,7 +3017,10 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 		return 1;
 	}
 	msg = "Loaded: " + subjid;
-	rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
+	if (cb)
+		rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
+	else
+		rval = 0;
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
 		return 1;
@@ -3479,7 +3485,7 @@ tqsl_sign_base64_data(tQSL_Cert cert, char *b64data) {
 	static unsigned char sig[256];
 	int siglen = sizeof sig;
 
-	if (!strncmp(b64data, "-----", 5)) {
+	if (b64data && !strncmp(b64data, "-----", 5)) {
 		b64data = strchr(b64data, '\n');
 		if (b64data == NULL)
 			return NULL;

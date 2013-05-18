@@ -31,8 +31,8 @@ notifyData::Message() const {
 		wxT("Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("User Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Private Keys:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Configuration Data:\t\tLoaded: %d  Duplicate: %d  Error: %d"),
+		wxT("Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d"),
 		msgs.c_str(),
 		root.loaded, root.duplicate, root.error,
 		ca.loaded, ca.duplicate, ca.error,
@@ -158,6 +158,8 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	wxWizardPageSimple::Chain(p12pw, final);
 	_first = intro;
 	_parent = parent;
+	_final = final;
+	_p12pw = p12pw;
 	AdjustSize();
 	CenterOnParent();
 }
@@ -258,8 +260,18 @@ LCW_IntroPage::TransferDataFromWindow() {
 				wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
 				export_new_cert(_parent, filename.mb_str());
 			}
-		} else
-			((LCW_P12PasswordPage*)GetNext())->SetFilename(filename);
+		} else {
+			// First try with no password
+			if (!tqsl_importPKCS12File(filename.mb_str(), "", 0, GetNewPassword, notifyImport, 
+				((LoadCertWiz *)_parent)->GetNotifyData())) {
+				SetNext(((LoadCertWiz *)_parent)->Final());
+				((LoadCertWiz *)_parent)->Final()->SetPrev(this);
+			} else {
+				SetNext(((LoadCertWiz *)_parent)->P12PW());
+				((LoadCertWiz *)_parent)->P12PW()->SetPrev(this);
+				((LCW_P12PasswordPage*)GetNext())->SetFilename(filename);
+			}
+		}
 	}
 	return true;
 }
@@ -269,8 +281,8 @@ LCW_FinalPage::LCW_FinalPage(LoadCertWiz *parent) : LCW_Page(parent) {
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Loading complete"));
 	sizer->Add(st, 0, wxALL, 10);
-//	tc_status = new wxStaticText(this, -1, wxT(""));
-	tc_status = new wxTextCtrl(this, -1, wxT(""),wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE|wxTE_READONLY);
+	wxSize tsize = getTextSize(this);
+	tc_status = new wxTextCtrl(this, -1, wxT(""),wxDefaultPosition, tsize.Scale(40, 16), wxTE_MULTILINE|wxTE_READONLY);
 	sizer->Add(tc_status, 1, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer);
 }

@@ -835,7 +835,9 @@ DLLEXPORT int CALLCONVENTION tqsl_endStationLocationCapture(tQSL_Location *locp)
 /** Update the pages based on the currently selected settings. */
 DLLEXPORT int CALLCONVENTION tqsl_updateStationLocationCapture(tQSL_Location loc);
 
-//int tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);
+/** Return the number of station location capture pages. */
+
+DLLEXPORT int CALLCONVENTION tqsl_getNumStationLocationCapturePages(tQSL_Location loc, int *npages);
 
 /** Get the current page number */
 DLLEXPORT int CALLCONVENTION tqsl_getStationLocationCapturePage(tQSL_Location loc, int *page);

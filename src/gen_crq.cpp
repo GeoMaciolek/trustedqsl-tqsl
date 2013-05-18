@@ -24,6 +24,8 @@
 #ifdef HAVE_GETOPT_H
 	#include <getopt.h>
 #endif
+#include <string.h>
+#include <stdlib.h>
 #include "tqsllib.h"
 #include "tqslexc.h"
 
@@ -51,10 +53,10 @@ main(int argc, char *argv[]) {
 					sign_call = optarg;
 					break;
 				case 'x':
-					sign_dxcc = atoi(optarg);
+					sign_dxcc = strtol(optarg, NULL, 10);
 					break;
 				case 'd':
-					dxcc = atoi(optarg);
+					dxcc = strtol(optarg, NULL, 10);
 					break;
 				case 'e':
 					email_addr = optarg;
@@ -97,7 +99,7 @@ main(int argc, char *argv[]) {
 			cout << "Signing certificate issuer: " << buf << endl;
 			cout << "Signing certificate serial: " << serial << endl;
 			cout << "  Signing certificate DXCC: " << cdxcc << endl;
-			if (tqsl_beginSigning(sign_cert, "", 0, 0))
+			if (tqsl_beginSigning(sign_cert, (char *)"", 0, 0))
 				throw tqslexc();
 		}
 		TQSL_CERT_REQ crq;

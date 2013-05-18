@@ -17,6 +17,7 @@
 #include <cstring>
 #include <ctype.h>
 #include <errno.h>
+#include <stdlib.h>
 
 #include "winstrdefs.h"
 
@@ -218,7 +219,7 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 		strcpy(fp->value, "SUBMM");
 		return 0;
 	}
-	int freq = atoi(fp->value);
+	int freq = strtol(fp->value, NULL, 10);
 	const char *band = 0;
 	if (cab->contest->type == TQSL_CABRILLO_HF) {
 		if (freq < 30) {
@@ -319,7 +320,7 @@ time_fixer(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 			break;
 	if (*cp)
 		return 1;
-	sprintf(fp->value, "%04d", atoi(fp->value));
+	sprintf(fp->value, "%04d", (int) strtol(fp->value, NULL, 10));
 	return 0;
 }
 
@@ -355,7 +356,7 @@ tqsl_new_cabrillo_contest(const char *contest_name, int call_field, int contest_
 
 static void
 tqsl_free_cab(struct TQSL_CABRILLO *cab) {
-	if (cab->sentinel != 0x2449)
+	if (!cab || cab->sentinel != 0x2449)
 		return;
 	cab->sentinel = 0;
 	if (cab->filename)

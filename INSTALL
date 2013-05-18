@@ -68,7 +68,10 @@ to the cmake command above.
 
 If you installed the tqsllib library or its dependent libraries
 in locations that configure can't find, you'll need to specify
-those locations to cmake.
+those locations to cmake. For example, you can define the location for
+the Berkeley Database headers using BDB_PREFIX. (That points to the top-level
+directory, with /include for headers and /lib for libraries assumed below
+it.)
 
 ===================================================================
 
@@ -83,7 +86,7 @@ of Berkeley DB shipped with OS X (as of 10.8) is out of date.
 
 You also may not want to install the library into system directories:
 
-cmake -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib .
+cmake -DBDB_PREFIX=$HOME/bdb -DCMAKE_INSTALL_PREFIX=$HOME/tqsllib .
 make
 sudo make install
 
@@ -116,6 +119,10 @@ cmake  \
     -DBDB_PREFIX=$bdb \
     -DCMAKE_OSX_SYSROOT=$sdk \
     -DCMAKE_CXX_FLAGS=" -I $HOME/bdb/include  -I /usr/include/c++/4.0.0 \
+        -I $sdk/System/Library/Frameworks/Carbon.framework/Headers \
+	-isysroot $sdk  -mmacosx-version-min=$ver_min \
+	-fno-stack-protector $arch_flags"  \
+    -DCMAKE_C_FLAGS=" -I $HOME/bdb/include  -I /usr/include/c++/4.0.0 \
         -I $sdk/System/Library/Frameworks/Carbon.framework/Headers \
 	-isysroot $sdk  -mmacosx-version-min=$ver_min \
 	-fno-stack-protector $arch_flags"  \

@@ -10,15 +10,27 @@ Major feature additions:
    no extra work.
 
  - Command line flag '-u' has been added to expose this functionality to
-   tools authors. The return value to determine whether the upload
-   succeeded or failed, and why
+   tools authors.
+ - The return value from tqsl can be used to determine whether the signing
+   or upload succeeded or failed, and why
 
           0=success; log signed and uploaded and accepted without incident
-          1=soft fail (empty or all dupe log?)
-          2=active reject (the server received the log and decided to reject it)
-          3=passive reject (the server is probably down; unexpected response)
-          4=hard fail (internal error)
-          5=tqsllib internal error (probably a bad filename)
+          1=Cancelled by user
+          2=The log was rejected by the LoTW server
+          3=The response from the LoTW server was unexpected or unrecognized
+          4=An error occurred in tqsl
+          5=An error occurred in tqsllib (probably a bad filename)
+          6=Unable to open input file
+          7=Unable to open output file
+          8=No QSOs were processed because some QSOs were duplicate or out
+            of date range (no QSOs written)
+          9=Some QSOs were processed and some QSOs were ignored because they
+            were duplicates or out of date range (some QSOs written)
+         10=Command syntax error
+         11=LoTW network connection failed (no network or LoTW is unreachable)
+
+   The exit status is also written to Standard Error (stderr) in an easily
+   recognized format.
 
  - Automatically check for updates. If a new version is available, you will be
    periodically prompted to download and install it. You can also check manually
@@ -66,6 +78,20 @@ Minor changes:
    asking for help
 
  - The final confirmation before signing includes the signing station location
+
+ - Output files on Unix systems are provided with a default .tq8 extension
+
+ - The "Edit station location" window title now contains the callsign and
+   station location name
+
+ - Station locations can no longer be defined using expired or superceded
+   certificates
+
+ - Users are no longer prompted for a password while importing a .p12 file
+   unless the file has a password set
+
+ - When importing a certificate, detailed information is provided on the
+   progress of the operation as well as the reason for any errors
 
  - Dozens of bug fixes and potential or real crashes fixed.
 

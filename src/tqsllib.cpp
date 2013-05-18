@@ -18,6 +18,7 @@
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
+#include <stdlib.h>
 #include <sys/stat.h>
 #ifdef _WIN32
 	#include <io.h>
@@ -514,24 +515,24 @@ tqsl_initDate(tQSL_Date *date, const char *str) {
 	}
 	if ((cp = strchr(str, '-')) != NULL) {
 		/* Parse YYYY-MM-DD */
-		date->year = atoi(str);
+		date->year = strtol(str, NULL, 10);
 		cp++;
-		date->month = atoi(cp);
+		date->month = strtol(cp, NULL, 10);
 		cp = strchr(cp, '-');
 		if (cp == NULL)
 			goto err;
 		cp++;
-		date->day = atoi(cp);
+		date->day = strtol(cp, NULL, 10);
 	} else if (strlen(str) == 8) {
 		/* Parse YYYYMMDD */
 		char frag[10];
 		strncpy(frag, str, 4);
 		frag[4] = 0;
-		date->year = atoi(frag);
+		date->year = strtol(frag, NULL, 10);
 		strncpy(frag, str+4, 2);
 		frag[2] = 0;
-		date->month = atoi(frag);
-		date->day = atoi(str+6);
+		date->month = strtol(frag, NULL, 10);
+		date->day = strtol(str+6, NULL, 10);
 	} else	/* Invalid ISO date string */
 		goto err;
 	if (date->year < 1 || date->year > 9999)
