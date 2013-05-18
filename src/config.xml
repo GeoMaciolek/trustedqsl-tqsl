@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="1" minorversion="20">
+<tqslconfig majorversion="2" minorversion="00">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -4223,6 +4223,6 @@
       </enums>
     </field>
     <field Id="WPX" type="C" len="10" label="WPX Prefix" intype="1" flags="1" />
-    <field Id="ZERR" type="C" len="30" intype="4" flags="0" />
+    <field Id="ZERR" type="C" len="80" intype="4" flags="0" />
   </locfields>
 </tqslconfig>
