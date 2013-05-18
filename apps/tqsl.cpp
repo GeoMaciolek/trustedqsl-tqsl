@@ -2288,9 +2288,8 @@ QSLApp::OnInit() {
 	if (loc == 0) {
 		if (!frame)
 			frame = GUIinit();
-		loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 		try {
-			loc = frame->SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+			loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 		}
 		catch (TQSLException& x) {
 			wxLogError(wxT("%hs"), x.what());
