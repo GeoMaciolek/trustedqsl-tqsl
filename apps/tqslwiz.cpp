@@ -203,6 +203,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
 			int len;
 			tqsl_getLocationFieldDataLength(loc, i, &len);
+			len /= 2;
 			int w, h;
 			((wxStaticText *)controls[i])->GetSize(&w, &h);
 			((wxStaticText *)controls[i])->SetSize((len+1)*text_size.GetWidth(), h);
@@ -293,6 +294,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				wxCoord w, h;
 				int tsize;
 				tqsl_getLocationFieldDataLength(loc, i, &tsize);
+				tsize /= 2;
 				sdc.GetTextExtent(wxString("X", wxConvLocal), &w, &h);
 				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
 					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE);

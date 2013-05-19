@@ -389,7 +389,7 @@ BEGIN_EVENT_TABLE(DupesDialog, wxDialog)
 END_EVENT_TABLE()
 
 DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action) :
-		wxDialog(parent, -1, wxString(wxT("Duplicate QSOs Detected")), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP) {
+		wxDialog(parent, -1, wxString(wxT("Duplicate QSOs Detected")), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxString message;
 
