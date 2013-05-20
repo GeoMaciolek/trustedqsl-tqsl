@@ -1424,6 +1424,10 @@ retry_upload:
 
 		if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
 
+		
+		//follow redirects
+		curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
+
 		//the following allow us to write our log and read the result
 
 		FileUploadHandler handler;
@@ -1743,6 +1747,11 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 	wxString updateURL=config->Read(wxT("UpdateURL"), wxT("https://p1k.arrl.org/lotw/tqslupdate"));
 
 	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
+
+
+
+	//follow redirects
+	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
 
 	//the following allow us to analyze our file
 
