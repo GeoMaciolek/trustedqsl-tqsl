@@ -39,12 +39,14 @@
 #define DEFAULT_ADIF_FILES wxT("adi")
 
 //online
-#define DEFAULT_UPL_URL wxT("https://p1k.arrl.org/lotw/upload")
+#define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
 #define DEFAULT_UPL_FIELD wxT("upfile")
 #define DEFAULT_UPL_STATUSRE wxT("<!-- .UPL. ([^-]+) -->")
 #define DEFAULT_UPL_STATUSOK wxT("accepted")
 #define DEFAULT_UPL_MESSAGERE wxT("<!-- .UPLMESSAGE. ([^-]+) -->")
 #define DEFAULT_UPL_VERIFYCA true
+
+#define DEFAULT_UPD_URL wxT("https://lotw.arrl.org/lotw/tqslupdate")
 
 enum {		// Window IDs
 	ID_OK_BUT,
