@@ -1744,7 +1744,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 	if (!check) return; //if we really weren't supposed to check, get out of here
 
-	wxString updateURL=config->Read(wxT("UpdateURL"), wxT("https://p1k.arrl.org/lotw/tqslupdate"));
+	wxString updateURL=config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
 	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
 
