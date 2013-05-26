@@ -1436,9 +1436,8 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 	return 0;
 }
 
-
-DLLEXPORT int CALLCONVENTION
-tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password) {
+static int
+tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *base64, int b64len, const char *p12password) {
 	STACK_OF(X509) *root_sk = 0, *ca_sk = 0, *chain = 0;
 	const char *cp;
 	char rootpath[256], capath[256];
@@ -1453,12 +1452,21 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 	int key_pbe = NID_pbe_WithSHA1And3_Key_TripleDES_CBC;
 	PKCS8_PRIV_KEY_INFO *p8 = 0;
 	PKCS12 *p12 = 0;
-	BIO *out = 0;
+	BIO *out = 0, *b64 = 0;
 	string callSign, issuerOrganization, issuerOrganizationalUnit;
 	tQSL_Date date;
 	string QSONotBeforeDate, QSONotAfterDate, dxccEntity;
 	int dxcc = 0;
 	int rval = 1;
+
+	if (cert == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), false)) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if ((returnB64 && base64 == NULL) || (!returnB64 && filename == NULL)) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
 
 	/* Get parameters for key bag attributes */
 	if (tqsl_getCertificateCallSign(cert, buf, sizeof buf))
@@ -1487,10 +1495,6 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 	sprintf(buf, "%d", dxcc);
 	dxccEntity = buf;
 
-	if (filename == NULL || cert == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), false)) {
-		tQSL_Error = TQSL_ARGUMENT_ERROR;
-		return 1;
-	}
 	if (TQSL_API_TO_CERT(cert)->key == NULL) {
 		tQSL_Error = TQSL_SIGNINIT_ERROR;
 		return 1;
@@ -1530,7 +1534,13 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 	tQSL_Error = TQSL_OPENSSL_ERROR;	// Assume error
 
 	/* Open the output file */
-	out = BIO_new_file(filename, "wb");
+	if (!returnB64) {
+		out = BIO_new_file(filename, "wb");
+	} else {
+		b64 = BIO_new(BIO_f_base64());
+		out = BIO_new(BIO_s_mem());
+		out = BIO_push(b64, out);
+	}
 	if (!out)
 		goto p12_end;
 
@@ -1619,13 +1629,26 @@ tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12passw
 	/* Write the PKCS12 data */
 
 	i2d_PKCS12_bio(out, p12);
+	if (BIO_flush(out) != 1) {
+		rval = 1;
+		goto p12_end;
+	}
+
+	if (returnB64) {
+		char *encoded;
+		int len;
+		len = BIO_get_mem_data(out, &encoded);
+		encoded[len - 1] = '\0';
+		strncpy(base64, encoded, b64len);
+
+	}
 
 	rval = 0;
 	tQSL_Error = TQSL_NO_ERROR;
 p12_end:
 	if (out) {
 		BIO_free(out);
-		if (rval)
+		if (rval && !returnB64)
 			unlink(filename);
 	}
 	if (chain)	
@@ -1641,6 +1664,16 @@ p12_end:
 	if (p8)
 		PKCS8_PRIV_KEY_INFO_free(p8);
 	return rval;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password) {
+	return tqsl_exportPKCS12(cert, false, filename, NULL, 0, p12password);
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_exportPKCS12Base64(tQSL_Cert cert, char *base64, int b64len, const char *p12password) {
+	return tqsl_exportPKCS12(cert, true, NULL, base64, b64len, p12password);
 }
 
 static string
@@ -1682,14 +1715,14 @@ tqsl_get_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, string& str) {
 	return 0;
 }
 
-DLLEXPORT int CALLCONVENTION
-tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
+static int
+tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, const char *p12password, const char *password,
 	int (*pwcb)(char *,int, void *), int(*cb)(int, const char *,void *), void *userdata) {
 	PKCS12 *p12 = 0;
 	PKCS12_SAFEBAG *bag;
 	PKCS8_PRIV_KEY_INFO *p8 = 0;
 	EVP_PKEY *pkey = 0;
-	BIO *in = 0, *bio = 0;
+	BIO *in = 0, *bio = 0 , *b64 = 0;
 	STACK_OF(PKCS7) *safes = 0;
 	STACK_OF(PKCS12_SAFEBAG) *bags = 0;
 	PKCS7 *p7;
@@ -1715,7 +1748,7 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 
 	if (tqsl_init())
 		return 1;
-	if (filename == NULL) {
+	if ((!importB64 && filename == NULL) || (importB64 && base64 == NULL)) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
@@ -1723,7 +1756,14 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 	tQSL_Error = TQSL_OPENSSL_ERROR;
 
 	/* Read in the PKCS#12 file */
-	if ((in = BIO_new_file(filename, "rb")) == 0)
+	if (importB64) {
+                b64 = BIO_new(BIO_f_base64());
+                in = BIO_new_mem_buf((char *)base64, strlen(base64));
+                in = BIO_push(b64, in);
+	} else {
+		in = BIO_new_file(filename, "rb");
+	}
+	if (in == 0)
 		goto imp_end;
 	if ((p12 = d2i_PKCS12_bio(in, 0)) == 0)
 		goto imp_end;
@@ -1735,7 +1775,6 @@ tqsl_importPKCS12File(const char *filename, const char *p12password, const char 
 		tQSL_Error = TQSL_PASSWORD_ERROR;
 		goto imp_end;
 	}
-
 	/* Loop through the authsafes */
 	if ((safes = M_PKCS12_unpack_authsafes(p12)) == 0)
 		goto imp_end;
@@ -1974,6 +2013,18 @@ imp_end:
 	if (pkey)
 		EVP_PKEY_free(pkey);
 	return rval;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
+	int (*pwcb)(char *,int, void *), int(*cb)(int, const char *,void *), void *userdata) {
+	return tqsl_importPKCS12(false, filename, NULL, p12password, password, pwcb, cb, userdata);
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_importPKCS12Base64(const char *base64, const char *p12password, const char *password,
+	int (*pwcb)(char *,int, void *), int(*cb)(int, const char *,void *), void *userdata) {
+	return tqsl_importPKCS12(true, NULL, base64, p12password, password, pwcb, cb, userdata);
 }
 
 DLLEXPORT int CALLCONVENTION
