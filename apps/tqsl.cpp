@@ -16,6 +16,8 @@
 
 #include <curl/curl.h> // has to be before something else in this list
 #include <stdlib.h>
+#include <errno.h>
+#include <expat.h>
 
 #include <wx/wxprec.h>
 #include <wx/object.h>
@@ -81,6 +83,8 @@ enum {
 	tm_f_compress,
 	tm_f_uncompress,
 	tm_f_preferences,
+	tm_f_loadconfig,
+	tm_f_saveconfig,
 	tm_f_new,
 	tm_f_edit,
 	tm_f_exit,
@@ -160,6 +164,8 @@ public:
 IMPLEMENT_APP(QSLApp)
 
 
+static wxString lastPW;
+
 static int
 getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	char call[TQSL_CALLSIGN_MAX+1] = "";
@@ -175,10 +181,10 @@ getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 
 	wxWindow* top = wxGetApp().GetTopWindow();
 	top->SetFocus();
-	wxString pw = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
-	if (pw.IsEmpty())
+	lastPW = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
+	if (lastPW.IsEmpty())
 		return 1;
-	strncpy(buf, pw.mb_str(), bufsiz);
+	strncpy(buf, lastPW.mb_str(), bufsiz);
 	return 0;
 }
 
@@ -551,6 +557,8 @@ public:
 	void OnFileCompress(wxCommandEvent& event);
 #endif
 	void OnPreferences(wxCommandEvent& event);
+	void OnSaveConfig(wxCommandEvent& event);
+	void OnLoadConfig(wxCommandEvent& event);
 	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
 	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
@@ -605,6 +613,8 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 #endif
 	EVT_MENU(tm_f_exit, MyFrame::DoExit)
 	EVT_MENU(tm_f_preferences, MyFrame::OnPreferences)
+	EVT_MENU(tm_f_loadconfig, MyFrame::OnLoadConfig)
+	EVT_MENU(tm_f_saveconfig, MyFrame::OnSaveConfig)
 	EVT_MENU(tm_h_contents, MyFrame::OnHelpContents)
 	EVT_MENU(tm_h_about, MyFrame::OnHelpAbout)
 
@@ -646,6 +656,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 #ifndef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->AppendSeparator();
 #endif
+	file_menu->Append(tm_f_saveconfig, wxT("&Backup TQSL Configuration..."));
+	file_menu->Append(tm_f_loadconfig, wxT("&Restore TQSL Configuration..."));
+	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
 #ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
@@ -2089,6 +2102,320 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	Preferences dial(this, &help);
 	dial.ShowModal();
+}
+
+class TQSLConfig {
+public:
+        TQSLConfig() {
+                callSign = "";
+		certpwd[0] = '\0';
+		elementBody = wxT("");
+		config = NULL;
+        }
+	void SaveSettings (ofstream &out, wxString appname);
+	void LoadConfig (ifstream& in);
+	wxConfig *config;
+	char certpwd[80];
+	string callSign;
+	wxString elementBody;
+
+private:
+	static void xml_start(void *data, const XML_Char *name, const XML_Char **atts);
+	static void xml_text(void *data, const XML_Char *text, int len);
+	static void xml_end(void *data, const XML_Char *name);
+};
+
+// Save the user's configuration settings - appname is the
+// application name (tqslapp/tqslcert)
+
+void TQSLConfig::SaveSettings (ofstream &out, wxString appname) {
+	config = new wxConfig(appname);
+	wxString name, gname;
+	long	context;
+	wxString svalue;
+	long	lvalue;
+	bool	bvalue;
+	double	dvalue;
+	wxArrayString groupNames;
+
+	groupNames.Add(wxT("/"));
+	bool more = config->GetFirstGroup(gname, context);
+	while (more) {
+		groupNames.Add(wxT("/") + gname);
+		more = config->GetNextGroup(gname, context);
+	}
+
+	for (unsigned i = 0; i < groupNames.GetCount(); i++) {
+		config->SetPath(groupNames[i]);
+		more = config->GetFirstEntry(name, context);
+		while (more) {
+			out << "<Setting name=\"" << name.mb_str() << "\" group=\"" << groupNames[i].mb_str() << "\" ";
+			wxConfigBase::EntryType etype = config->GetEntryType(name);
+			switch (etype) {
+				case wxConfigBase::Type_Unknown:
+				case wxConfigBase::Type_String:
+					config->Read(name, &svalue);
+					svalue.Replace(wxT("&"), wxT("&amp;"), true); 
+					svalue.Replace(wxT("<"), wxT("&lt;"), true); 
+					svalue.Replace(wxT(">"), wxT("&gt;"), true); 
+					out << "Type=\"String\" Value=\"" << svalue.mb_str() << "\"/>" << endl;
+					break;
+				case wxConfigBase::Type_Boolean:
+					config->Read(name, &bvalue);
+					out << "Type=\"Bool\" Value=\"";
+					if (bvalue) 
+						out << "true";
+					else
+						out << "false";
+			 		out << "\"/>" << endl;
+					break;
+				case wxConfigBase::Type_Integer:
+					config->Read(name, &lvalue);
+					out << "Type=\"Int\" Value=" << lvalue << "/>" << endl;
+					break;
+				case wxConfigBase::Type_Float:
+					config->Read(name, &dvalue);
+					out << "Type=\"Float\" Value=" << dvalue << "/>" << endl;
+					break;
+			}
+			more = config->GetNextEntry(name, context);
+		}
+	}
+	config->SetPath(wxT("/"));
+	
+	return;
+}
+
+void
+MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
+	wxString file_default = wxT("userconfig.tq9");
+	wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
+		file_default, wxT(".tq9"), wxT("Configuration files (*.tq9)|*.tq9|All files (*.*)|*.*"),
+		wxSAVE|wxOVERWRITE_PROMPT, this);
+	if (filename == wxT(""))
+		return;
+        ofstream out;
+	out.open(filename.mb_str(), ios::out|ios::trunc|ios::binary);
+	if (!out) {
+		wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
+		out.close();
+		return;
+	}
+	TQSLConfig* conf = new TQSLConfig();
+
+	out << "<TQSL_Configuration>" << endl;
+	out << "<Certificates>" << endl;
+
+	wxLogMessage(wxT("Saving certificates"));
+	int ncerts;
+	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
+	char *password = NULL;
+	char buf[8192];
+	for (int i = 0; i < ncerts; i++) {
+		char callsign[64];
+		int rval;
+		check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
+		do {
+   			if ((rval = tqsl_beginSigning(certlist[i], password, getPassword, certlist[i])) == 0)
+				break;
+			if (tQSL_Error == TQSL_PASSWORD_ERROR) {
+				wxLogMessage(wxT("Password error"));
+				if (password)
+					free((void *)password);
+				password = NULL;
+			}
+		} while (tQSL_Error == TQSL_PASSWORD_ERROR);
+		check_tqsl_error(rval);
+
+		char pwbuf[80];
+		if (wxIsEmpty(lastPW)) {
+			pwbuf[0] = '\0';
+		} else {
+			const char *pwd = strdup(lastPW.mb_str());
+			tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
+			int end = strlen(pwbuf);
+			
+			while (pwbuf[end - 1] == '\n') {
+				pwbuf[--end] = '\0'; // Strip the newline
+			}
+		}
+		wxLogMessage(wxT("\tSaving certificate for %hs"), callsign);
+		out << "<Cert CallSign=\"" << callsign << "\" password=\"" << pwbuf << "\">" << endl;
+		lastPW = wxT("");
+		check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
+		tqsl_endSigning(certlist[i]);
+		out << buf << endl;
+		out << "</Cert>" << endl;
+	}
+	out << "</Certificates>" << endl;
+	out << "<Locations>" << endl;
+	wxLogMessage(wxT("Saving Locations"));
+	char *sdbuf = NULL;
+	tqsl_getStationData(&sdbuf);
+	wxString station_data = wxString(sdbuf, wxConvLocal);
+
+	station_data.Replace(wxT("&"), wxT("&amp;"), true); 
+	station_data.Replace(wxT("<"), wxT("&lt;"), true); 
+	station_data.Replace(wxT(">"), wxT("&gt;"), true); 
+
+	out << station_data.mb_str() << endl;
+	free(sdbuf);
+	out << "</Locations>" << endl;
+
+	out << "<TQSLSettings>" << endl;
+	conf->SaveSettings(out, wxT("tqslapp"));
+	out << "</TQSLSettings>" << endl;
+
+	out << "<TQSLCertSettings>" << endl;
+	conf->SaveSettings(out, wxT("tqslcert"));
+	out << "</TQSLCertSettings>" << endl;
+	out << "</TQSL_Configuration>" << endl;
+
+	out.close();
+	wxLogMessage(wxT("Save operation complete."));
+}
+
+
+void
+TQSLConfig::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
+	TQSLConfig* loader = (TQSLConfig *) data;
+	loader->elementBody = wxT("");
+	if (strcmp(name, "Cert") == 0) {
+		for (int i = 0; atts[i]; i+=2) {
+			if (strcmp(atts[i], "CallSign") == 0) {
+				loader->callSign = atts[i + 1];
+			} else if (strcmp(atts[i], "password") == 0) {
+				if (strlen(atts[i+1]) == 0) {
+					loader->certpwd[0] = '\0';
+				} else {
+					int dlen = sizeof certpwd;
+					char pwdstring[128];		// Have to append a newline for decode to work
+					strncpy(pwdstring, atts[i+1], sizeof(pwdstring));
+					strncat(pwdstring, "\n", sizeof(pwdstring) - strlen(pwdstring));
+					tqsl_decodeBase64(pwdstring, (unsigned char *)&loader->certpwd, &dlen);
+					if (dlen > 0)
+						loader->certpwd[dlen] = '\0';
+				}
+			}
+		}
+	} else if (strcmp(name, "TQSLSettings") == 0) {
+		loader->config = new wxConfig(wxT("tqslapp"));
+	} else if (strcmp(name, "TQSLCertSettings") == 0) {
+		loader->config = new wxConfig(wxT("tqslcert"));
+	} else if (strcmp(name, "Setting") == 0) {
+		wxString sname;
+		wxString sgroup;
+		wxString stype;
+		wxString svalue;
+		for (int i = 0; atts[i]; i+=2) {
+			if (strcmp(atts[i], "name") == 0) {
+				sname = wxString(atts[i+1], wxConvLocal);
+			} else if (strcmp(atts[i], "group") == 0) {
+				sgroup = wxString(atts[i+1], wxConvLocal);
+			} else if (strcmp(atts[i], "Type") == 0) {
+				stype = wxString(atts[i+1], wxConvLocal);
+			} else if (strcmp(atts[i], "Value") == 0) {
+				svalue = wxString(atts[i+1], wxConvLocal);
+			}
+		}
+		loader->config->SetPath(sgroup);
+		if (stype == wxT("String")) {
+			svalue.Replace(wxT("&lt;"), wxT("<"), true);
+			svalue.Replace(wxT("&gt;"), wxT(">"), true);
+			svalue.Replace(wxT("&amp;"), wxT("&"), true);
+			loader->config->Write(sname, svalue);
+		} else if (stype == wxT("Bool")) {
+			loader->config->Write(sname, (svalue == wxT("true")));
+		} else if (stype == wxT("Int")) {
+			loader->config->Write(sname, strtol(svalue.mb_str(), NULL, 10));
+		} else if (stype == wxT("Float")) {
+			loader->config->Write(sname, strtod(svalue.mb_str(), NULL));
+		}
+	}
+}
+
+void
+TQSLConfig::xml_text(void *data, const XML_Char *text, int len) {
+	TQSLConfig* loader = (TQSLConfig *) data;
+	char buf[512];
+	memcpy(buf, text, len);
+	buf[len] = '\0';
+	loader->elementBody += wxString(buf, wxConvLocal);
+}
+
+void
+TQSLConfig::xml_end(void *data, const XML_Char *name) {
+	TQSLConfig* loader = (TQSLConfig *) data;
+	if (strcmp(name, "Cert") == 0) {
+		const char *pwd = NULL;
+		if (strlen((char *)loader->certpwd) > 0)
+			pwd = (char *)&loader->certpwd;
+		wxLogMessage(wxT("\tRestoring certificate for %hs"), loader->callSign.c_str());
+		if (tqsl_importPKCS12Base64(loader->elementBody.mb_str(), "", pwd, NULL, NULL, NULL) != 0) {
+			wxLogError(wxT("\tError importing certificate for %hs: %hs"), loader->callSign.c_str(), tqsl_getErrorString());
+		}
+	} else if (strcmp(name, "Locations") == 0) {
+		wxLogMessage(wxT("Restoring Station Locations"));
+		// Undo the encoding
+		loader->elementBody.Replace(wxT("&lt;"), wxT("<"), true);
+		loader->elementBody.Replace(wxT("&gt;"), wxT(">"), true);
+		loader->elementBody.Replace(wxT("&amp;"), wxT("&"), true);
+		if (tqsl_mergeStationLocations(loader->elementBody.mb_str()) != 0) {
+			wxLogError(wxT("\tError importing locations: %hs"), tqsl_getErrorString());
+		}
+	} else if (strcmp(name, "TQSLSettings") == 0 || 
+		   strcmp(name, "TQSLCertSettings") == 0) {
+		loader->config->Flush(false);
+	}
+	loader->elementBody = wxT("");
+}
+
+void
+TQSLConfig::LoadConfig (ifstream& in) {
+        XML_Parser xp = XML_ParserCreate(0);
+	XML_SetUserData(xp, (void *) this);
+        XML_SetStartElementHandler(xp, &TQSLConfig::xml_start);
+        XML_SetEndElementHandler(xp, &TQSLConfig::xml_end);
+        XML_SetCharacterDataHandler(xp, &TQSLConfig::xml_text);
+
+	char buf[4096];
+	wxLogMessage(wxT("Restoring Certificates"));
+	do {
+		in.read(buf, sizeof buf);
+		if (in.gcount() > 0) {
+			if (XML_Parse(xp, buf, in.gcount(), 0) == 0) {
+				XML_ParserFree(xp);
+				in.close();
+				wxLogError(wxT("Error parsing saved configuration file"));
+				return;
+			}
+		}
+	} while (in.gcount() == sizeof buf);
+	if (XML_Parse(xp, "", 0, 1) == 0) {
+		in.close();
+		wxLogError(wxT("Error parsing saved configuration file"));
+		return;
+	}
+	wxLogMessage(wxT("Restore Complete."));
+}
+
+void
+MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
+	wxString filename = wxFileSelector(wxT("Select saved configuration file"), wxT(""),
+					   wxT(""), wxT("p12"), wxT("Saved configuration files (*.tq9)|*.tq9"),
+					   wxOPEN|wxFILE_MUST_EXIST);
+	if (filename == wxT(""))
+		return;
+
+	ifstream in;
+	in.open(filename.mb_str(), ios::in|ios::binary);
+	if (!in) {
+		wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
+		return;
+	}
+
+	TQSLConfig* loader = new TQSLConfig();
+	loader->LoadConfig(in);
 }
 
 QSLApp::QSLApp() : wxApp() {
