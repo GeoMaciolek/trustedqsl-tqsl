@@ -635,9 +635,24 @@ DLLEXPORT int CALLCONVENTION tqsl_createCertRequest(const char *filename, TQSL_C
   */
 DLLEXPORT int CALLCONVENTION tqsl_exportPKCS12File(tQSL_Cert cert, const char *filename, const char *p12password);
 
+/** Save a key pair and certificates to a Base64 string in PKCS12 format.
+  *
+  * The tQSL_Cert must be initialized for signing (see tqsl_beginSigning())
+  * if the user certificate is being exported.
+  *
+  * The supplied \c p12password is used to encrypt the PKCS12 data.
+  */
+
+DLLEXPORT int CALLCONVENTION tqsl_exportPKCS12Base64(tQSL_Cert cert,  char *base64, int b64len, const char *p12password);
+
 /** Load certificates and a private key from a PKCS12 file.
   */
 DLLEXPORT int CALLCONVENTION tqsl_importPKCS12File(const char *filename, const char *p12password, const char *password,
+	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
+
+/** Load certificates and a private key from a Base64 encoded PKCS12 string.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_importPKCS12Base64(const char *base64, const char *p12password, const char *password,
 	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
 
 /** Delete a certificate and private key
@@ -901,6 +916,14 @@ DLLEXPORT int CALLCONVENTION tqsl_getStationLocation(tQSL_Location *loc, const c
   * properly formatted grid squares is likely.
   */
 DLLEXPORT int CALLCONVENTION tqsl_getStationLocationErrors(tQSL_Location loc, char *buf, int bufsiz);
+
+/** Return the contents of the station data file as a string.
+  * The caller is required to free() this string when done with it.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_getStationData(char **sdata);
+
+/** Merge saved location data with existing */
+DLLEXPORT int CALLCONVENTION tqsl_mergeStationLocations(const char *locdata);
 
 /** Remove the stored station location by name. */
 DLLEXPORT int CALLCONVENTION tqsl_deleteStationLocation(const char *name);
