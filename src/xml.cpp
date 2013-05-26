@@ -9,9 +9,9 @@
  ***************************************************************************/
 
 #include "xml.h"
-#include "expat.h"
 #include <stack>
 #include <fstream>
+#include <string.h>
 #include <zlib.h>
 
 using namespace std;
@@ -96,6 +96,24 @@ XMLElement::parseFile(const char *filename) {
 	return rval;
 }
 */
+
+int
+XMLElement::parseString(const char *xmlstring) {
+	XML_Parser xp = XML_ParserCreate(0);
+	XML_SetUserData(xp, (void *)this);
+	XML_SetStartElementHandler(xp, &XMLElement::xml_start);
+	XML_SetEndElementHandler(xp, &XMLElement::xml_end);
+	XML_SetCharacterDataHandler(xp, &XMLElement::xml_text);
+
+	_parsingStack.clear();
+	// Process the XML
+	if (XML_Parse(xp, xmlstring, strlen(xmlstring), 1) == 0) {
+		XML_ParserFree(xp);
+		return XML_PARSE_SYNTAX_ERROR;
+	}
+	XML_ParserFree(xp);
+	return XML_PARSE_NO_ERROR;
+}
 
 int
 XMLElement::parseFile(const char *filename) {

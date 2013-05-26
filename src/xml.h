@@ -63,6 +63,8 @@ public:
 #define XML_PARSE_NO_ERROR 0
 #define XML_PARSE_SYSTEM_ERROR 1
 #define XML_PARSE_SYNTAX_ERROR 2
+	/// Parse an XML string and add its element tree to this element
+	int parseString(const char *xmlstring);
 	/// Get the first attribute of the element
     /** Provides the attribute key and value. Returns \c false if the
       * element contains no attributes */
