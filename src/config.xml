@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="2" minorversion="00">
+<tqslconfig majorversion="2" minorversion="01">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -48,7 +48,7 @@
     <entity arrlId="12" zonemap="11:08">ANGUILLA</entity>
     <entity arrlId="13" zonemap="67:38,67:39,69:29,69:39,70:29,70:30,71:30,71:32,72:12,72:32,73:12,73:13,73:38,74:12,74:13,74:29,74:30,74:32,74:38,74:39">ANTARCTICA</entity>
     <entity arrlId="14" zonemap="29:21">ARMENIA</entity>
-    <entity arrlId="15" zonemap="20:17,23:19,24:19,25:19,30:16,30:17,31:18,32:18,33:19,34:19,35:19">ASIATIC RUSSIA</entity>
+    <entity arrlId="15" zonemap="20:17,21:17,21:18,22:18,22:19,23:19,24:19,25:19,26:19,30:16,30:17,31:18,32:18,32:19,32:23,33:18,33:19,34:19,35:19,75:18">ASIATIC RUSSIA</entity>
     <entity arrlId="16" zonemap="60:32">AUCKLAND &amp; CAMPBELL ISLAND</entity>
     <entity arrlId="17" zonemap="11:08">AVES ISLAND</entity>
     <entity arrlId="18" zonemap="29:21">AZERBAIJAN</entity>
@@ -87,7 +87,7 @@
     <entity arrlId="51" zonemap="48:37">ERITREA</entity>
     <entity arrlId="52" zonemap="29:15">ESTONIA</entity>
     <entity arrlId="53" zonemap="48:37">ETHIOPIA</entity>
-    <entity arrlId="54" zonemap="19:16,20:16,29:16,30:16">EUROPEAN RUSSIA</entity>
+    <entity arrlId="54" zonemap="19:16,20:16,29:16,30:16,30:17">EUROPEAN RUSSIA</entity>
     <entity arrlId="55" zonemap="53:39">FARQUHAR (DELETED)</entity>
     <entity arrlId="56" zonemap="13:11">FERNANDO DE NORONHA</entity>
     <entity arrlId="57" zonemap="47:36,52:36">FRENCH EQUATORIAL AFRICA (DELETED)</entity>
