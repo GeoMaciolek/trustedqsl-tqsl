@@ -2308,7 +2308,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				if (strlen(atts[i+1]) == 0) {
 					loader->certpwd[0] = '\0';
 				} else {
-					int dlen = sizeof certpwd;
+					int dlen = sizeof loader->certpwd;
 					char pwdstring[128];		// Have to append a newline for decode to work
 					strncpy(pwdstring, atts[i+1], sizeof(pwdstring));
 					strncat(pwdstring, "\n", sizeof(pwdstring) - strlen(pwdstring));
