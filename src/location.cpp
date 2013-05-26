@@ -1947,6 +1947,7 @@ tqsl_getStationData(char **sdata) {
 	while ((rcount = gzread(in, dbuf, sizeof buf)) > 0) {
 		dbuf += rcount;
 	}
+	*dbuf = '\0';
 	gzclose(in);
 	return 0;	
 }
