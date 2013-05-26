@@ -35,6 +35,7 @@
 #include <vector>
 #include <iostream>
 #include <stdlib.h>
+#include <zlib.h>
 
 using namespace std;
 
@@ -1859,62 +1860,9 @@ tqsl_dump_station_data(XMLElement &xel) {
 
 }
 
-DLLEXPORT int CALLCONVENTION
-tqsl_deleteStationLocation(const char *name) {
-	XMLElement top_el;
-	if (tqsl_load_station_data(top_el))
-		return 1;
-	XMLElement sfile;
-	if (!top_el.getFirstElement(sfile))
-		sfile.setElementName("StationDataFile");
-
-	XMLElementList& ellist = sfile.getElementList();
-	XMLElementList::iterator ep;
-	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
-		if (ep->first != "StationData")
-			break;
-		pair<string,bool> rval = ep->second.getAttribute("name");
-		if (rval.second && !strcasecmp(rval.first.c_str(), name)) {
-			ellist.erase(ep);
-			return tqsl_dump_station_data(sfile);
-		}
-	}
-	tQSL_Error = TQSL_LOCATION_NOT_FOUND;
-	return 1;
-}
-
-DLLEXPORT int CALLCONVENTION
-tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
-	if (tqsl_initStationLocationCapture(locp))
-		return 1;
-	TQSL_LOCATION *loc;
-	if (!(loc = check_loc(*locp)))
-		return 1;
-
-	loc->name = name;
-	XMLElement top_el;
-	if (tqsl_load_station_data(top_el))
-		return 1;
-	XMLElement sfile;
-	if (!top_el.getFirstElement(sfile))
-		sfile.setElementName("StationDataFile");
-
-	XMLElementList& ellist = sfile.getElementList();
-	bool exists = false;
-	XMLElementList::iterator ep;
-	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
-		if (ep->first != "StationData")
-			break;
-		pair<string,bool> rval = ep->second.getAttribute("name");
-		if (rval.second && !strcasecmp(rval.first.c_str(), loc->name.c_str())) {
-			exists = true;
-			break;
-		}
-	}
-	if (!exists) {
-		tQSL_Error = TQSL_LOCATION_NOT_FOUND;
-		return 1;
-	}
+static int
+tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep) {
+	bool exists;
 	loc->page = 1;
 	loc->data_errors[0] = '\0';
 	int bad_ituz = 0;
@@ -1927,13 +1875,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 				// A field that may exist
 				XMLElement el;
 				if (ep->second.getFirstElement(field.gabbi_name, el)) {
-					//cerr<<el.getText()<<endl;
-					//cerr<<el.getText().c_str()<<endl;
-					//cerr<<"---"<<endl;
-					//const char *value = el.getText().c_str();
-					//cerr<<"\""<<value<<"\""<<endl;
 					field.cdata = el.getText();
-					//cerr<<"\""<<field.cdata<<"\""<<endl;
 					switch (field.input_type) {
 						case TQSL_LOCATION_FIELD_DDLIST:
 						case TQSL_LOCATION_FIELD_LIST:
@@ -1980,6 +1922,151 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		snprintf(loc->data_errors, sizeof(loc->data_errors), "This station location is configured with invalid ITU zone %d.", bad_ituz);
 	}
 	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getStationData(char **sdata) {
+	char *dbuf = NULL;
+	size_t dlen = 0;
+	gzFile in = gzopen(tqsl_station_data_filename().c_str(), "rb");
+
+	if (!in)
+		return 1;
+
+	char buf[2048];
+	int rcount;
+	while ((rcount = gzread(in, buf, sizeof buf)) > 0) {
+		dlen += rcount;
+	}
+	dbuf = (char *)malloc(dlen + 2);
+	if (!dbuf)
+		return 1;
+	*sdata = dbuf;
+	
+	gzrewind(in);
+	while ((rcount = gzread(in, dbuf, sizeof buf)) > 0) {
+		dbuf += rcount;
+	}
+	gzclose(in);
+	return 0;	
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_mergeStationLocations(const char *locdata) {
+	XMLElement sfile;
+	XMLElement new_top_el;
+	XMLElement top_el;
+	std::vector<string> calls;
+
+	if (tqsl_load_station_data(top_el))
+		return 1;
+	new_top_el.parseString(locdata);
+
+	if (!new_top_el.getFirstElement(sfile))
+		sfile.setElementName("StationDataFile");
+
+	// Build a list of valid calls
+	tQSL_Cert *certlist;
+	int ncerts;
+	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
+	calls.clear();
+	for (int i = 0; i < ncerts; i++) {
+		char callsign[40];
+		tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign));
+		calls.push_back(callsign);
+		tqsl_freeCertificate(certlist[i]);
+	}
+
+	XMLElementList& ellist = sfile.getElementList();
+	XMLElementList::iterator ep;
+	XMLElement call;
+	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
+		if (ep->first != "StationData")
+			break;
+		pair<string,bool> rval = ep->second.getAttribute("name");
+		if (rval.second) {
+			TQSL_LOCATION *oldloc;
+			TQSL_LOCATION *newloc;
+			ep->second.getFirstElement("CALL", call);
+			for (size_t j = 0; j < calls.size(); j++) {
+				if (calls[j] == call.getText()) {
+					if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
+						if (tqsl_initStationLocationCapture((tQSL_Location *)&newloc) == 0) {
+							if (tqsl_load_loc(newloc, ep) == 0) {	// new loads OK
+								tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
+								tqsl_saveStationLocationCapture(newloc, 0);
+								tqsl_endStationLocationCapture((tQSL_Location *)&newloc);
+							}
+						}
+					} else {
+						tqsl_endStationLocationCapture((tQSL_Location *)&oldloc);
+					}
+				}
+			}
+		}
+	}
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_deleteStationLocation(const char *name) {
+	XMLElement top_el;
+	if (tqsl_load_station_data(top_el))
+		return 1;
+	XMLElement sfile;
+	if (!top_el.getFirstElement(sfile))
+		sfile.setElementName("StationDataFile");
+
+	XMLElementList& ellist = sfile.getElementList();
+	XMLElementList::iterator ep;
+	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
+		if (ep->first != "StationData")
+			break;
+		pair<string,bool> rval = ep->second.getAttribute("name");
+		if (rval.second && !strcasecmp(rval.first.c_str(), name)) {
+			ellist.erase(ep);
+			return tqsl_dump_station_data(sfile);
+		}
+	}
+	tQSL_Error = TQSL_LOCATION_NOT_FOUND;
+	return 1;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
+	if (tqsl_initStationLocationCapture(locp))
+		return 1;
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(*locp)))
+		return 1;
+
+	loc->name = name;
+	XMLElement top_el;
+	if (tqsl_load_station_data(top_el))
+		return 1;
+	XMLElement sfile;
+	if (!top_el.getFirstElement(sfile))
+		sfile.setElementName("StationDataFile");
+
+	XMLElementList& ellist = sfile.getElementList();
+
+	bool exists = false;
+	XMLElementList::iterator ep;
+	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
+		if (ep->first != "StationData")
+			break;
+		pair<string,bool> rval = ep->second.getAttribute("name");
+		if (rval.second && !strcasecmp(rval.first.c_str(), loc->name.c_str())) {
+			exists = true;
+			break;
+		}
+	}
+	if (!exists) {
+		tQSL_Error = TQSL_LOCATION_NOT_FOUND;
+		return 1;
+	}
+	return tqsl_load_loc(loc, ep);
+
 }
 
 DLLEXPORT int CALLCONVENTION
