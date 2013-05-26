@@ -20,6 +20,7 @@
 #include <errno.h>
 #include "tqsllib.h"
 #include "tqslerrno.h"
+#include "winstrdefs.h"
 
 typedef enum
 {

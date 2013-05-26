@@ -10,6 +10,7 @@ add_definitions(-DCURL_STATICLIB)
 endif()
 
 find_package(CURL REQUIRED)
+find_package(EXPAT REQUIRED)
 
 find_package(wxWidgets COMPONENTS core base adv html REQUIRED)
 
@@ -22,7 +23,7 @@ find_library(CARBON_LIBRARY Carbon)
 find_path(CARBON_INCLUDE_DIR Carbon.h)
 endif()
 
-include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${CARBON_INCLUDE_DIR})
+include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${CARBON_INCLUDE_DIR})
 
 #get version from file
 
@@ -97,7 +98,7 @@ add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQ
 
 target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
 target_link_libraries(tqsl ${TQSLLIB_NAME}
-  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY})
+  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
 
 if(NOT APPLE AND NOT WIN32)
 add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
