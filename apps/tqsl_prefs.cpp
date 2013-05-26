@@ -64,8 +64,10 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	notebook->AddPage(contestmap, wxT("Cabrillo Specs"));
 
 	//don't let the user play with these
-	//onlinePrefs=new OnlinePrefs(notebook);
-	//notebook->AddPage(onlinePrefs, wxT("Server Setup"));
+#ifdef ENABLE_ONLINE_PREFS
+	onlinePrefs=new OnlinePrefs(notebook);
+	notebook->AddPage(onlinePrefs, wxT("Server Setup"));
+#endif
 
 	SetSizer(topsizer);
 	topsizer->Fit(this);
@@ -75,7 +77,11 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 }
 
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	if (!fileprefs->TransferDataFromWindow() /* || !onlinePrefs->TransferDataFromWindow()*/)
+#ifdef ENABLE_ONLINE_PREFS
+	if (!fileprefs->TransferDataFromWindow() || !onlinePrefs->TransferDataFromWindow())
+#else
+	if (!fileprefs->TransferDataFromWindow())
+#endif
 		return;
 	Close(true);
 }
