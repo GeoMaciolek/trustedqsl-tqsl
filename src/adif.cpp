@@ -124,7 +124,7 @@ static
 void
 strCatChar( char *string, int character )
 {
-	while (*string++)
+	while (*string)
 		string++;
 	*string++ = character;
 	*string = '\0';
