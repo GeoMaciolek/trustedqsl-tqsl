@@ -2119,19 +2119,26 @@ public:
                 callSign = "";
 		certpwd[0] = '\0';
 		elementBody = wxT("");
+		locstring = wxT("");
 		config = NULL;
+		outstr = NULL;
         }
 	void SaveSettings (ofstream &out, wxString appname);
-	void LoadConfig (ifstream& in);
+	void RestoreConfig (ifstream& in);
+	void ParseLocations (const char *loc, ofstream* out);
 	wxConfig *config;
 	char certpwd[80];
 	string callSign;
 	wxString elementBody;
+	wxString locstring;
+	ofstream* outstr;
 
 private:
-	static void xml_start(void *data, const XML_Char *name, const XML_Char **atts);
+	static void xml_restore_start(void *data, const XML_Char *name, const XML_Char **atts);
+	static void xml_restore_end(void *data, const XML_Char *name);
 	static void xml_text(void *data, const XML_Char *text, int len);
-	static void xml_end(void *data, const XML_Char *name);
+	static void xml_location_start(void *data, const XML_Char *name, const XML_Char **atts);
+	static void xml_location_end(void *data, const XML_Char *name);
 };
 
 // Save the user's configuration settings - appname is the
@@ -2197,97 +2204,101 @@ void TQSLConfig::SaveSettings (ofstream &out, wxString appname) {
 
 void
 MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
-	wxString file_default = wxT("userconfig.tq9");
-	wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
-		file_default, wxT(".tq9"), wxT("Configuration files (*.tq9)|*.tq9|All files (*.*)|*.*"),
-		wxSAVE|wxOVERWRITE_PROMPT, this);
-	if (filename == wxT(""))
-		return;
-        ofstream out;
-	out.open(filename.mb_str(), ios::out|ios::trunc|ios::binary);
-	if (!out) {
-		wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
-		out.close();
-		return;
-	}
-	TQSLConfig* conf = new TQSLConfig();
 
-	out << "<TQSL_Configuration>" << endl;
-	out << "<Certificates>" << endl;
-
-	wxLogMessage(wxT("Saving certificates"));
-	int ncerts;
-	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
-	char *password = NULL;
-	char buf[8192];
-	for (int i = 0; i < ncerts; i++) {
-		char callsign[64];
-		int rval;
-		check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
-		do {
-   			if ((rval = tqsl_beginSigning(certlist[i], password, getPassword, certlist[i])) == 0)
-				break;
-			if (tQSL_Error == TQSL_PASSWORD_ERROR) {
-				wxLogMessage(wxT("Password error"));
-				if (password)
-					free((void *)password);
-				password = NULL;
-			}
-		} while (tQSL_Error == TQSL_PASSWORD_ERROR);
-		check_tqsl_error(rval);
-
-		char pwbuf[80];
-		if (wxIsEmpty(lastPW)) {
-			pwbuf[0] = '\0';
-		} else {
-			const char *pwd = strdup(lastPW.mb_str());
-			tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
-			int end = strlen(pwbuf);
-			
-			while (pwbuf[end - 1] == '\n') {
-				pwbuf[--end] = '\0'; // Strip the newline
-			}
+	try {
+		
+		wxString file_default = wxT("userconfig.tq9");
+		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
+			file_default, wxT(".tq9"), wxT("Configuration files (*.tq9)|*.tq9|All files (*.*)|*.*"),
+			wxSAVE|wxOVERWRITE_PROMPT, this);
+		if (filename == wxT(""))
+			return;
+        	ofstream out;
+		out.open(filename.mb_str(), ios::out|ios::trunc|ios::binary);
+		if (!out) {
+			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
+			out.close();
+			return;
 		}
-		wxLogMessage(wxT("\tSaving certificate for %hs"), callsign);
-		out << "<Cert CallSign=\"" << callsign << "\" password=\"" << pwbuf << "\">" << endl;
-		lastPW = wxT("");
-		check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
-		tqsl_endSigning(certlist[i]);
-		out << buf << endl;
-		out << "</Cert>" << endl;
+		TQSLConfig* conf = new TQSLConfig();
+
+		out << "<TQSL_Configuration>" << endl;
+		out << "<Certificates>" << endl;
+
+		wxLogMessage(wxT("Saving certificates"));
+		int ncerts;
+		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
+		char *password = NULL;
+		char buf[8192];
+		for (int i = 0; i < ncerts; i++) {
+			char callsign[64];
+			int rval;
+			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
+			do {
+   				if ((rval = tqsl_beginSigning(certlist[i], password, getPassword, certlist[i])) == 0)
+					break;
+				if (tQSL_Error == TQSL_PASSWORD_ERROR) {
+					wxLogMessage(wxT("Password error"));
+					if (password)
+						free((void *)password);
+					password = NULL;
+				}
+			} while (tQSL_Error == TQSL_PASSWORD_ERROR);
+			check_tqsl_error(rval);
+
+			char pwbuf[80];
+			if (wxIsEmpty(lastPW)) {
+				pwbuf[0] = '\0';
+			} else {
+				const char *pwd = strdup(lastPW.mb_str());
+				tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
+				int end = strlen(pwbuf);
+
+				while (pwbuf[end - 1] == '\n') {
+					pwbuf[--end] = '\0'; // Strip the newline
+				}
+			}
+			wxLogMessage(wxT("\tSaving certificate for %hs"), callsign);
+			out << "<Cert CallSign=\"" << callsign << "\" password=\"" << pwbuf << "\">" << endl;
+			lastPW = wxT("");
+			check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
+			tqsl_endSigning(certlist[i]);
+			out << buf << endl;
+			out << "</Cert>" << endl;
+		}
+		out << "</Certificates>" << endl;
+		out << "<Locations>" << endl;
+		wxLogMessage(wxT("Saving Locations"));
+		char *sdbuf = NULL;
+		check_tqsl_error(tqsl_getStationData(&sdbuf));
+		TQSLConfig* parser = new TQSLConfig();
+		parser->ParseLocations(sdbuf, &out);
+		free(sdbuf);
+		out << "</Locations>" << endl;
+
+		out << "<TQSLSettings>" << endl;
+		conf->SaveSettings(out, wxT("tqslapp"));
+		out << "</TQSLSettings>" << endl;
+
+		out << "<TQSLCertSettings>" << endl;
+		conf->SaveSettings(out, wxT("tqslcert"));
+		out << "</TQSLCertSettings>" << endl;
+		out << "</TQSL_Configuration>" << endl;
+
+		out.close();
+		wxLogMessage(wxT("Save operation complete."));
 	}
-	out << "</Certificates>" << endl;
-	out << "<Locations>" << endl;
-	wxLogMessage(wxT("Saving Locations"));
-	char *sdbuf = NULL;
-	tqsl_getStationData(&sdbuf);
-	wxString station_data = wxString(sdbuf, wxConvLocal);
-
-	station_data.Replace(wxT("&"), wxT("&amp;"), true); 
-	station_data.Replace(wxT("<"), wxT("&lt;"), true); 
-	station_data.Replace(wxT(">"), wxT("&gt;"), true); 
-
-	out << station_data.mb_str() << endl;
-	free(sdbuf);
-	out << "</Locations>" << endl;
-
-	out << "<TQSLSettings>" << endl;
-	conf->SaveSettings(out, wxT("tqslapp"));
-	out << "</TQSLSettings>" << endl;
-
-	out << "<TQSLCertSettings>" << endl;
-	conf->SaveSettings(out, wxT("tqslcert"));
-	out << "</TQSLCertSettings>" << endl;
-	out << "</TQSL_Configuration>" << endl;
-
-	out.close();
-	wxLogMessage(wxT("Save operation complete."));
+	catch (TQSLException& x) {
+		wxLogError(wxT("Backup operation failed: %hs"), x.what());
+	}
 }
 
 
 void
-TQSLConfig::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
+TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char **atts) {
 	TQSLConfig* loader = (TQSLConfig *) data;
+	int i;
+
 	loader->elementBody = wxT("");
 	if (strcmp(name, "Cert") == 0) {
 		for (int i = 0; atts[i]; i+=2) {
@@ -2308,6 +2319,7 @@ TQSLConfig::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
 			}
 		}
 	} else if (strcmp(name, "TQSLSettings") == 0) {
+		wxLogMessage(wxT("Restoring Preferences"));
 		loader->config = new wxConfig(wxT("tqslapp"));
 	} else if (strcmp(name, "TQSLCertSettings") == 0) {
 		loader->config = new wxConfig(wxT("tqslcert"));
@@ -2316,7 +2328,7 @@ TQSLConfig::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
 		wxString sgroup;
 		wxString stype;
 		wxString svalue;
-		for (int i = 0; atts[i]; i+=2) {
+		for (i = 0; atts[i]; i+=2) {
 			if (strcmp(atts[i], "name") == 0) {
 				sname = wxString(atts[i+1], wxConvLocal);
 			} else if (strcmp(atts[i], "group") == 0) {
@@ -2340,7 +2352,75 @@ TQSLConfig::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
 		} else if (stype == wxT("Float")) {
 			loader->config->Write(sname, strtod(svalue.mb_str(), NULL));
 		}
+	} else if (strcmp(name, "Locations") == 0) {
+		wxLogMessage(wxT("Restoring Station Locations"));
+		loader->locstring = wxT("<StationDataFile>\n");
+	} else if (strcmp(name, "Location") == 0) {
+		for (i = 0; atts[i]; i+=2) {
+			if (strcmp(atts[i], "name") == 0) {
+				loader->locstring += wxT("<StationData name=\"") + wxString(atts[i+1], wxConvLocal) + wxT("\">\n");
+				break;
+			}
+		}
+		for (i = 0; atts[i]; i+=2) {
+			if (strcmp(atts[i], "name") != 0) {
+				loader->locstring += wxT("<") + wxString(atts[i], wxConvLocal) + wxT(">") +
+					wxString(atts[i+1], wxConvLocal) + wxT("</") +
+					wxString(atts[i], wxConvLocal) + wxT(">\n");
+			}
+		}
 	}
+}
+
+void
+TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
+	TQSLConfig* loader = (TQSLConfig *) data;
+	if (strcmp(name, "Cert") == 0) {
+		const char *pwd = NULL;
+		if (strlen((char *)loader->certpwd) > 0)
+			pwd = (char *)&loader->certpwd;
+		wxLogMessage(wxT("\tRestoring certificate for %hs"), loader->callSign.c_str());
+		if (tqsl_importPKCS12Base64(loader->elementBody.mb_str(), "", pwd, NULL, NULL, NULL) != 0) {
+			wxLogError(wxT("\tError importing certificate for %hs: %hs"), loader->callSign.c_str(), tqsl_getErrorString());
+		}
+	} else if (strcmp(name, "Location") == 0) {
+		loader->locstring += wxT("</StationData>\n");
+	} else if (strcmp(name, "Locations") == 0) {
+		loader->locstring += wxT("</StationDataFile>\n");
+		if (tqsl_mergeStationLocations(loader->locstring.mb_str()) != 0) {
+			wxLogError(wxT("\tError importing locations: %hs"), tqsl_getErrorString());
+		}
+	} else if (strcmp(name, "TQSLSettings") == 0 || 
+		   strcmp(name, "TQSLCertSettings") == 0) {
+		loader->config->Flush(false);
+	}
+	loader->elementBody = wxT("");
+}
+
+void
+TQSLConfig::xml_location_start(void *data, const XML_Char *name, const XML_Char **atts) {
+	TQSLConfig* parser = (TQSLConfig *) data;
+
+	if (strcmp(name, "StationDataFile") == 0)
+		return;
+	if (strcmp(name, "StationData") == 0) {
+		*parser->outstr << "<Location name=\"" << atts[1] << "\"";
+	}
+}
+void
+TQSLConfig::xml_location_end(void *data, const XML_Char *name) {
+	TQSLConfig* parser = (TQSLConfig *) data;
+	if (strcmp(name, "StationDataFile") == 0) 
+		return;
+	if (strcmp(name, "StationData") == 0) {
+		*parser->outstr << " />" << endl;
+		return;
+	}
+	// Anything else is a station attribute. Add it to the definition.
+	parser->elementBody.Trim(false);
+	parser->elementBody.Trim(true);
+	*parser->outstr << " " << name << "=\"" << parser->elementBody.mb_str() << "\"";
+	parser->elementBody = wxT("");
 }
 
 void
@@ -2353,38 +2433,11 @@ TQSLConfig::xml_text(void *data, const XML_Char *text, int len) {
 }
 
 void
-TQSLConfig::xml_end(void *data, const XML_Char *name) {
-	TQSLConfig* loader = (TQSLConfig *) data;
-	if (strcmp(name, "Cert") == 0) {
-		const char *pwd = NULL;
-		if (strlen((char *)loader->certpwd) > 0)
-			pwd = (char *)&loader->certpwd;
-		wxLogMessage(wxT("\tRestoring certificate for %hs"), loader->callSign.c_str());
-		if (tqsl_importPKCS12Base64(loader->elementBody.mb_str(), "", pwd, NULL, NULL, NULL) != 0) {
-			wxLogError(wxT("\tError importing certificate for %hs: %hs"), loader->callSign.c_str(), tqsl_getErrorString());
-		}
-	} else if (strcmp(name, "Locations") == 0) {
-		wxLogMessage(wxT("Restoring Station Locations"));
-		// Undo the encoding
-		loader->elementBody.Replace(wxT("&lt;"), wxT("<"), true);
-		loader->elementBody.Replace(wxT("&gt;"), wxT(">"), true);
-		loader->elementBody.Replace(wxT("&amp;"), wxT("&"), true);
-		if (tqsl_mergeStationLocations(loader->elementBody.mb_str()) != 0) {
-			wxLogError(wxT("\tError importing locations: %hs"), tqsl_getErrorString());
-		}
-	} else if (strcmp(name, "TQSLSettings") == 0 || 
-		   strcmp(name, "TQSLCertSettings") == 0) {
-		loader->config->Flush(false);
-	}
-	loader->elementBody = wxT("");
-}
-
-void
-TQSLConfig::LoadConfig (ifstream& in) {
+TQSLConfig::RestoreConfig (ifstream& in) {
         XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *) this);
-        XML_SetStartElementHandler(xp, &TQSLConfig::xml_start);
-        XML_SetEndElementHandler(xp, &TQSLConfig::xml_end);
+        XML_SetStartElementHandler(xp, &TQSLConfig::xml_restore_start);
+        XML_SetEndElementHandler(xp, &TQSLConfig::xml_restore_end);
         XML_SetCharacterDataHandler(xp, &TQSLConfig::xml_text);
 
 	char buf[4096];
@@ -2393,19 +2446,37 @@ TQSLConfig::LoadConfig (ifstream& in) {
 		in.read(buf, sizeof buf);
 		if (in.gcount() > 0) {
 			if (XML_Parse(xp, buf, in.gcount(), 0) == 0) {
+				wxLogError(wxT("Error parsing saved configuration file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
 				XML_ParserFree(xp);
 				in.close();
-				wxLogError(wxT("Error parsing saved configuration file"));
 				return;
 			}
 		}
 	} while (in.gcount() == sizeof buf);
 	if (XML_Parse(xp, "", 0, 1) == 0) {
 		in.close();
-		wxLogError(wxT("Error parsing saved configuration file"));
+		wxLogError(wxT("Error parsing saved configuration file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
+		XML_ParserFree(xp);
 		return;
 	}
 	wxLogMessage(wxT("Restore Complete."));
+}
+
+void
+TQSLConfig::ParseLocations (const char *loc, ofstream* out) {
+
+        XML_Parser xp = XML_ParserCreate(0);
+	XML_SetUserData(xp, (void *) this);
+        XML_SetStartElementHandler(xp, &TQSLConfig::xml_location_start);
+        XML_SetEndElementHandler(xp, &TQSLConfig::xml_location_end);
+        XML_SetCharacterDataHandler(xp, &TQSLConfig::xml_text);
+	outstr = out;
+
+	if (XML_Parse(xp, loc, strlen(loc), 1) == 0) {
+		wxLogError(wxT("Error parsing station location file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
+		XML_ParserFree(xp);
+		return;
+	}
 }
 
 void
@@ -2416,15 +2487,20 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 	if (filename == wxT(""))
 		return;
 
-	ifstream in;
-	in.open(filename.mb_str(), ios::in|ios::binary);
-	if (!in) {
-		wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
-		return;
-	}
+	try {
+		ifstream in;
+		in.open(filename.mb_str(), ios::in|ios::binary);
+		if (!in) {
+			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
+			return;
+		}
 
-	TQSLConfig* loader = new TQSLConfig();
-	loader->LoadConfig(in);
+		TQSLConfig* loader = new TQSLConfig();
+		loader->RestoreConfig(in);
+	}
+	catch (TQSLException& x) {
+		wxLogError(wxT("Backup operation failed: %hs"), x.what());
+	}
 }
 
 QSLApp::QSLApp() : wxApp() {
