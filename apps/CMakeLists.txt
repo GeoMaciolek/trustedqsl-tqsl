@@ -7,6 +7,7 @@ string(REPLACE " " ";" CMAKE_OSX_ARCHITECTURES ${OSX_ARCH})
 if(WIN32)
 set(wxWidgets_USE_STATIC ON)
 add_definitions(-DCURL_STATICLIB)
+add_definitions(-DXML_STATIC)
 endif()
 
 find_package(CURL REQUIRED)
