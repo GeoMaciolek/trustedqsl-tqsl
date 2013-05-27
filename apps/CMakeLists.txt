@@ -27,8 +27,9 @@ include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${CURL_INCLUDE_DIR
 #get version from file
 
 file(READ "tqslversion.ver" TQSLVERSION)
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\1" TQSL_VERSION_MAJOR TQSLVERSION)
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\2" TQSL_VERSION_MINOR TQSLVERSION)
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\1" TQSL_VERSION_MAJOR ${TQSLVERSION})
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\2" TQSL_VERSION_MINOR ${TQSLVERSION})
+string(REGEX REPLACE "([0-9]+)\\.([0-9]+)\\.([0-9]+)" "\\3" TQSL_VERSION_POINT ${TQSLVERSION})
 
 
 #get build # with git
@@ -51,10 +52,6 @@ else() #hope this is a source distribution, which will always include a correct 
 		configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
 	endif()
 endif()
-
-set(TQSL_VERSION_MAJOR 1)
-set(TQSL_VERSION_MINOR 14)
-set(TQSLVERSION "${TQSL_VERSION_MAJOR}.${TQSL_VERSION_MINOR}")
 
 if(WIN32)
 set(TQSLLIB_NAME tqsllib2)
