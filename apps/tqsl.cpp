@@ -2223,6 +2223,8 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		TQSLConfig* conf = new TQSLConfig();
 
 		out << "<TQSL_Configuration>" << endl;
+		out << "<Warning>If you directly edit this file, you are responsible for its content." << endl;
+		out << "The ARRL's LoTW Help Desk will be unable to assist you.</Warning>" << endl;
 		out << "<Certificates>" << endl;
 
 		wxLogMessage(wxT("Saving certificates"));
