@@ -1,6 +1,11 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.14.1
+------
+Minor bug fixes to internet functions and the command line parser, hang fixed
+on OSX, removed unnecessary field from upload
+
 1.14
 ----
 Major feature additions:
