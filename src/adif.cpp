@@ -343,7 +343,7 @@ tqsl_adifGetField( tqsl_adifFieldResults *field, FILE *filehandle,
 	 						adifState = TQSL_ADIF_STATE_DONE;
 							for( iIndex = 0;
 								( TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH == status ) &&
-							 	( 0 == typesDefined[iIndex][0]);
+							 	( 0 != typesDefined[iIndex][0]);
 							 	iIndex++ ) {
 								/* case insensitive compare */
 								if( 0 == strcasecmp( field->type, typesDefined[iIndex] ) ) {
