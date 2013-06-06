@@ -123,6 +123,7 @@ tqsl_init() {
 	//freopen("CONIN$", "r", stdin); 
 //freopen("CONOUT$", "w", stdout);
 //freopen("CONOUT$", "w", stderr); 
+	static char shortPath[TQSL_MAX_PATH_LEN];
 	HKEY hkey;
 	DWORD dtype;
 	DWORD bsize = sizeof path;
@@ -169,6 +170,9 @@ tqsl_init() {
 			}
 			if (wval != ERROR_SUCCESS)
 				strcpy(path, "C:");
+			wval = GetShortPathName(path, shortPath, TQSL_MAX_PATH_LEN);
+			if (wval != 0)
+				strncpy(path, shortPath, TQSL_MAX_PATH_LEN);
 			strcat(path, "/TrustedQSL");
 #elif defined(LOTW_SERVER)
 			strcpy(path, "/var/lotw/tqsl");
