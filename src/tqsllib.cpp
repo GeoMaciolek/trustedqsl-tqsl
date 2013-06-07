@@ -226,6 +226,11 @@ tqsl_getErrorString_v(int err) {
 			return buf;
 		}
 	}
+	if (err == TQSL_DB_ERROR && tQSL_CustomError[0] != 0) {
+		sprintf(buf, "Database Error: %s", tQSL_CustomError);
+		return buf;
+	}
+	
 	if (err == TQSL_SYSTEM_ERROR) {
 		strcpy(buf, "System error: ");
 		if (strlen(tQSL_ErrorFile) > 0) {
@@ -282,6 +287,7 @@ tqsl_getErrorString() {
 	const char *cp;
 	cp = tqsl_getErrorString_v(tQSL_Error);
 	tQSL_Error = TQSL_NO_ERROR;
+	tQSL_Errno = 0;
 	tQSL_ErrorFile[0] = 0;
 	tQSL_CustomError[0] = 0;
 	return cp;
