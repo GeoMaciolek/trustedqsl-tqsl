@@ -1301,7 +1301,7 @@ tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, uns
 	}
 	EVP_VerifyInit(&ctx, EVP_sha1());
 	EVP_VerifyUpdate(&ctx, data, datalen);
-	if (!EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key) <= 0) {
+	if (EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key) <= 0) {
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
