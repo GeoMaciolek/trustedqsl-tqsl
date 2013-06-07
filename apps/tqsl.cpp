@@ -156,7 +156,7 @@ class QSLApp : public wxApp {
 public:
 	QSLApp();
 	virtual ~QSLApp();
-	class MyFrame *GUIinit();
+	class MyFrame *GUIinit(bool checkUpdates);
 	bool OnInit();
 //	virtual wxLog *CreateLogTarget();
 };
@@ -541,7 +541,7 @@ get_certlist(string callsign, int dxcc, bool expired) {
 
 class MyFrame : public wxFrame {
 public:
-	MyFrame(const wxString& title, int x, int y, int w, int h);
+	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates);
 
 	void AddStationLocation(wxCommandEvent& event);
 	void EditStationLocation(wxCommandEvent& event);
@@ -634,7 +634,7 @@ MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
-MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
+MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates)
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
 
 	DocPaths docpaths(wxT("tqslapp"));
@@ -706,9 +706,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 	//check for updates
 
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	if (config->Read(wxT("AutoUpdateCheck"), true)) {
-		DoCheckForUpdates(true); //TODO: in a thread?
+	if (checkUpdates) {
+		wxConfig *config = (wxConfig *)wxConfig::Get();
+		if (config->Read(wxT("AutoUpdateCheck"), true)) {
+			DoCheckForUpdates(true); //TODO: in a thread?
+		}
 	}
 }
 
@@ -1136,10 +1138,12 @@ restart:
 					}
 					wxLogError(wxT("%s"), msg.c_str());
 					if (!ignore_err) {
-						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO)
-							throw x;
+						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO) {
+							cancelled = true;
+							goto abortSigning;
+						}
+						ignore_err = true;
 					}
-					ignore_err = true;
 				}
 			}
 			tqsl_getErrorString();	// Clear error			
@@ -2122,6 +2126,7 @@ public:
 		locstring = wxT("");
 		config = NULL;
 		outstr = NULL;
+		conv = NULL;
         }
 	void SaveSettings (ofstream &out, wxString appname);
 	void RestoreConfig (ifstream& in);
@@ -2132,6 +2137,7 @@ public:
 	wxString elementBody;
 	wxString locstring;
 	ofstream* outstr;
+	tQSL_Converter conv;
 
 private:
 	static void xml_restore_start(void *data, const XML_Char *name, const XML_Char **atts);
@@ -2285,6 +2291,22 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		out << "<TQSLCertSettings>" << endl;
 		conf->SaveSettings(out, wxT("tqslcert"));
 		out << "</TQSLCertSettings>" << endl;
+		wxLogMessage(wxT("Saving QSOs"));
+	
+		tQSL_Converter conv = 0;
+		check_tqsl_error(tqsl_beginConverter(&conv));
+		out << "<DupeDb>" << endl;
+
+		while (true) {
+			char dupekey[256];
+			char dupedata[10];
+			int status = tqsl_getDuplicateRecords(conv, dupekey, dupedata, sizeof(dupekey));
+			if (status == -1) break;
+			check_tqsl_error(status);
+			out << "<Dupe key=\"" << dupekey << "\" />" << endl;
+		}
+		out << "</DupeDb>" << endl;
+
 		out << "</TQSL_Configuration>" << endl;
 
 		out.close();
@@ -2371,6 +2393,16 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 					wxString(atts[i], wxConvLocal) + wxT(">\n");
 			}
 		}
+	} else if (strcmp(name, "DupeDb") == 0) {
+		wxLogMessage(wxT("Restoring QSO records"));
+		check_tqsl_error(tqsl_beginConverter(&loader->conv));
+	} else if (strcmp(name, "Dupe") == 0) {
+		for (i = 0; atts[i]; i+=2) {
+			if (strcmp(atts[i], "key") == 0) {
+				int status = tqsl_putDuplicateRecord(loader->conv,  atts[i+1], "D", strlen(atts[i+1]));
+				if (status >= 0) check_tqsl_error(status);
+			}
+		}
 	}
 }
 
@@ -2395,6 +2427,9 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 	} else if (strcmp(name, "TQSLSettings") == 0 || 
 		   strcmp(name, "TQSLCertSettings") == 0) {
 		loader->config->Flush(false);
+	} else if (strcmp(name, "DupeDb") == 0) {
+		check_tqsl_error(tqsl_converterCommit(loader->conv));
+		check_tqsl_error(tqsl_endConverter(&loader->conv));
 	}
 	loader->elementBody = wxT("");
 }
@@ -2533,8 +2568,8 @@ cerr << "called" << endl;
 */
 
 MyFrame *
-QSLApp::GUIinit() {
-	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400);
+QSLApp::GUIinit(bool checkUpdates) {
+	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400, checkUpdates);
 	frame->Show(true);
 	SetTopWindow(frame);
 
@@ -2554,7 +2589,7 @@ QSLApp::OnInit() {
 	//short circuit if no arguments
 
 	if (argc<=1) {
-		GUIinit();
+		GUIinit(true);
 		return true;
 	}
 
@@ -2629,7 +2664,7 @@ QSLApp::OnInit() {
 	if (quiet) {
 		wxLog::SetActiveTarget(new wxLogStderr(NULL));
 	} else {
-		frame = GUIinit();
+		frame = GUIinit(true);
 	}
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
@@ -2679,7 +2714,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
 		if (!frame)
-			frame = GUIinit();
+			frame = GUIinit(!quiet);
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
@@ -2701,7 +2736,7 @@ QSLApp::OnInit() {
 	}
 	if (loc == 0) {
 		if (!frame)
-			frame = GUIinit();
+			frame = GUIinit(!quiet);
 		try {
 			loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 		}

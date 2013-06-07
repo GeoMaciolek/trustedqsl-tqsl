@@ -30,6 +30,14 @@ typedef void * tQSL_Converter;
 extern "C" {
 #endif
 
+/** Create a simple converter object
+ *
+ * Allocates resources for converting logs and processing duplicate records.
+ */
+
+DLLEXPORT int CALLCONVENTION
+tqsl_beginConverter(tQSL_Converter *convp);
+
 /** Initiates the conversion process for an ADIF file.
   *
   * \c certs and \c ncerts define a set of certificates that are available to the
@@ -91,6 +99,24 @@ DLLEXPORT int CALLCONVENTION tqsl_converterRollBack(tQSL_Converter convp);
   * the presumption is that we are "done" with these QSOs.
   */
 DLLEXPORT int CALLCONVENTION tqsl_converterCommit(tQSL_Converter convp);
+
+/** Bulk read the duplicate DB records
+  *
+  * This is called to retrieve the QSO records from the dupe database.
+  * It returns the key/value pair upon each call. 
+  * Return -1 for end of file, 0 for success, 1 for errors.
+  */
+DLLEXPORT int CALLCONVENTION
+tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen);
+
+/** Bulk write duplicate DB records
+  *
+  * This is called to store a QSO record into the dupe database.
+  * 
+  * Return -1 for duplicate insertion, 0 for success, 1 for errors.
+  */
+DLLEXPORT int CALLCONVENTION
+tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data, int keylen);
 
 /** Set QSO date filtering in the converter.
   *

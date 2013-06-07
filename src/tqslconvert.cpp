@@ -64,6 +64,7 @@ public:
 	DB *seendb;
 	DB_ENV* dbenv;
 	DB_TXN* txn;
+	DBC* cursor;
 	char serial[512];
 	bool allow_dupes;
 };
@@ -85,6 +86,7 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	seendb = NULL;
 	dbenv = NULL;
 	txn = NULL;
+	cursor = NULL;
 	memset(&serial, 0, sizeof serial);
 	// Init the band data
 	const char *val;
@@ -179,6 +181,19 @@ static tqsl_adifFieldDefinitions adif_qso_record_fields[] = {
 };
 
 DLLEXPORT int CALLCONVENTION
+tqsl_beginConverter(tQSL_Converter *convp) {
+	if (tqsl_init())
+		return 0;
+	if (!convp) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	TQSL_CONVERTER *conv = new TQSL_CONVERTER();
+	*convp = conv;
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
 tqsl_beginADIFConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *certs,
 	int ncerts, tQSL_Location loc) {
 	if (tqsl_init())
@@ -244,9 +259,8 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		// close files and clean up converters, if any
 		if (conv->adif) tqsl_endADIF(&conv->adif);
 		if (conv->cab) tqsl_endCabrillo(&conv->cab);
+		if (conv->cursor) conv->cursor->c_close(conv->cursor);
 	}
-
-
 	
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
 		delete CAST_TQSL_CONVERTER(*convp);
@@ -323,6 +337,68 @@ tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Dat
 	return 0;
 }
 
+// Open the duplicates database
+
+static bool open_db(TQSL_CONVERTER *conv) {
+	bool dbinit_cleanup=false;
+	int dbret;
+	string fixedpath=tQSL_BaseDir; //must be first because of gotos
+	size_t found=fixedpath.find('\\');
+
+	if ((dbret = db_env_create(&conv->dbenv, 0))) {
+		// can't make env handle
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+	//bdb complains about \\s in path on windows... 
+
+	while (found!=string::npos) {
+		fixedpath.replace(found, 1, "/");
+		found=fixedpath.find('\\');
+	}
+
+	if ((dbret = conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
+		// can't open environment
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
+		// can't create db
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+#ifndef DB_TXN_BULK
+#define DB_TXN_BULK 0
+#endif
+	if ((dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
+		// can't start a txn
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+	if (conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600)) {
+		// can't open the db
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+dbinit_end:
+	if (dbinit_cleanup) {
+		tQSL_Error = TQSL_DB_ERROR;
+		tQSL_Errno = errno;
+		strcpy(tQSL_CustomError, db_strerror(dbret));
+		if (conv->txn) conv->txn->abort(conv->txn);
+		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
+		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		if (conv->cursor) conv->cursor->c_close(conv->cursor);
+		return false;
+	}
+	return true;
+}
+
 DLLEXPORT const char* CALLCONVENTION
 tqsl_getConverterGABBI(tQSL_Converter convp) {
 	TQSL_CONVERTER *conv;
@@ -338,61 +414,11 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		return tStation;
 	}
 	if (!conv->allow_dupes && !conv->seendb) {
-		bool dbinit_cleanup=false;
-		string fixedpath=tQSL_BaseDir; //must be first because of gotos
-		size_t found=fixedpath.find('\\');
-
-		if (db_env_create(&conv->dbenv, 0)) {
-			// can't make env handle
-			dbinit_cleanup=true;
-			goto dbinit_end;
-		}
-
-		//bdb complains about \\s in path on windows... 
-
-		while (found!=string::npos) {
-			fixedpath.replace(found, 1, "/");
-			found=fixedpath.find('\\');
-		}
-
-		if (conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600)) {
-			// can't open environment
-			dbinit_cleanup=true;
-			goto dbinit_end;
-		}
-
-		if (db_create(&conv->seendb, conv->dbenv, 0)) {
-			// can't create db
-			dbinit_cleanup=true;
-			goto dbinit_end;
-		}
-
-#ifndef DB_TXN_BULK
-#define DB_TXN_BULK 0
-#endif
-		if (conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK)) {
-			// can't start a txn
-			dbinit_cleanup=true;
-			goto dbinit_end;
-		}
-
-		if (conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600)) {
-			// can't open the db
-			dbinit_cleanup=true;
-			goto dbinit_end;
-		}
-
-
-dbinit_end:
-		if (dbinit_cleanup) {
-			tQSL_Error = TQSL_DB_ERROR;
-			tQSL_Errno = errno;
-			if (conv->txn) conv->txn->abort(conv->txn);
-			if (conv->seendb) conv->seendb->close(conv->seendb, 0);
-			if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		if (!open_db(conv)) {	// If can't open dupes DB
 			return 0;
 		}
 	}
+
 	TQSL_ADIF_GET_FIELD_ERROR stat;
 
 	if (conv->rec_done) {
@@ -605,13 +631,17 @@ dbinit_end:
 				return 0;
 			} else if (dbget_err != DB_NOTFOUND) {
 				//non-zero return, but not "not found" - thus error
+				strcpy(tQSL_CustomError, db_strerror(dbget_err));
 				tQSL_Error = TQSL_DB_ERROR;
 				return 0;
 				// could be more specific but there's very little the user can do at this point anyway
 			}
 			temp[0] = 'D';
 			dbdata.size = 1;
-			if (0 != conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0)) {
+			int dbput_err;
+			dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+			if (0 != dbput_err) {
+				strcpy(tQSL_CustomError, db_strerror(dbput_err));
 				tQSL_Error = TQSL_DB_ERROR;
 				return 0;
 			}
@@ -702,6 +732,86 @@ tqsl_converterCommit(tQSL_Converter convp) {
 	if (conv->txn)
 		conv->txn->commit(conv->txn, 0);
 	conv->txn=NULL;
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen) {
+	TQSL_CONVERTER *conv;
+
+	if (!(conv = check_conv(convp)))
+		return 0;
+
+	if (!conv->seendb) {
+		if (!open_db(conv)) {	// If can't open dupes DB
+			return 0;
+		}
+	}
+#ifndef DB_CURSOR_BULK
+#define DB_CURSOR_BULK 0
+#endif
+	if (!conv->cursor) {
+		int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
+		if (err) {
+			strcpy(tQSL_CustomError, db_strerror(err));
+			tQSL_Error = TQSL_DB_ERROR;
+			tQSL_Errno = errno;
+			return 1;
+		}
+	}
+
+	DBT dbkey, dbdata;
+	memset(&dbkey, 0, sizeof dbkey);
+	memset(&dbdata, 0, sizeof dbdata);
+	int status = conv->cursor->c_get(conv->cursor, &dbkey, &dbdata, DB_NEXT);
+	if (DB_NOTFOUND == status) {
+		return -1;	// No more records
+	}
+	if (status != 0) {
+		strcpy(tQSL_CustomError, db_strerror(status));
+		tQSL_Error = TQSL_DB_ERROR;
+		tQSL_Errno = errno;
+		return 1;
+	}
+	memcpy(key, dbkey.data, dbkey.size);
+	key[dbkey.size] = '\0';
+	memcpy(data, dbdata.data, dbdata.size);
+	data[dbdata.size] = '\0';
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data, int keylen) {
+	TQSL_CONVERTER *conv;
+
+	if (!(conv = check_conv(convp)))
+		return 0;
+
+	if (!conv->seendb) {
+		if (!open_db(conv)) {	// If can't open dupes DB
+			return 0;
+		}
+	}
+	DBT dbkey, dbdata;
+	memset(&dbkey, 0, sizeof dbkey);
+	memset(&dbdata, 0, sizeof dbdata);
+	dbkey.size = keylen;
+	dbkey.data = (char *)key;
+	dbdata.size = 2;
+	dbdata.data = (char *)data;
+
+	int status = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+
+	if (DB_KEYEXIST == status) {
+		return -1;	// OK, but already there
+	}
+
+	if (status != 0) {
+		strcpy(tQSL_CustomError, db_strerror(status));
+		tQSL_Error = TQSL_DB_ERROR;
+		tQSL_Errno = errno;
+		return 1;
+	}
 	return 0;
 }
 
