@@ -1124,10 +1124,12 @@ restart:
 					}
 					wxLogError(wxT("%s"), msg.c_str());
 					if (!ignore_err) {
-						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO)
-							throw x;
+						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO) {
+							cancelled = true;
+							goto abortSigning;
+						}
+						ignore_err = true;
 					}
-					ignore_err = true;
 				}
 			}
 			tqsl_getErrorString();	// Clear error			
