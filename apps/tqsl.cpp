@@ -151,7 +151,7 @@ class QSLApp : public wxApp {
 public:
 	QSLApp();
 	virtual ~QSLApp();
-	class MyFrame *GUIinit();
+	class MyFrame *GUIinit(bool checkUpdates);
 	bool OnInit();
 //	virtual wxLog *CreateLogTarget();
 };
@@ -534,7 +534,7 @@ get_certlist(string callsign, int dxcc, bool expired) {
 
 class MyFrame : public wxFrame {
 public:
-	MyFrame(const wxString& title, int x, int y, int w, int h);
+	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates);
 
 	void AddStationLocation(wxCommandEvent& event);
 	void EditStationLocation(wxCommandEvent& event);
@@ -623,7 +623,7 @@ MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
-MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
+MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates)
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
 
 	DocPaths docpaths(wxT("tqslapp"));
@@ -692,9 +692,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h)
 
 	//check for updates
 
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	if (config->Read(wxT("AutoUpdateCheck"), true)) {
-		DoCheckForUpdates(true); //TODO: in a thread?
+	if (checkUpdates) {
+		wxConfig *config = (wxConfig *)wxConfig::Get();
+		if (config->Read(wxT("AutoUpdateCheck"), true)) {
+			DoCheckForUpdates(true); //TODO: in a thread?
+		}
 	}
 }
 
@@ -2106,8 +2108,8 @@ cerr << "called" << endl;
 */
 
 MyFrame *
-QSLApp::GUIinit() {
-	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400);
+QSLApp::GUIinit(bool checkUpdates) {
+	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400, checkUpdates);
 	frame->Show(true);
 	SetTopWindow(frame);
 
@@ -2127,7 +2129,7 @@ QSLApp::OnInit() {
 	//short circuit if no arguments
 
 	if (argc<=1) {
-		GUIinit();
+		GUIinit(true);
 		return true;
 	}
 
@@ -2202,7 +2204,7 @@ QSLApp::OnInit() {
 	if (quiet) {
 		wxLog::SetActiveTarget(new wxLogStderr(NULL));
 	} else {
-		frame = GUIinit();
+		frame = GUIinit(true);
 	}
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
@@ -2252,7 +2254,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
 		if (!frame)
-			frame = GUIinit();
+			frame = GUIinit(!quiet);
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
@@ -2274,7 +2276,7 @@ QSLApp::OnInit() {
 	}
 	if (loc == 0) {
 		if (!frame)
-			frame = GUIinit();
+			frame = GUIinit(!quiet);
 		try {
 			loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 		}
