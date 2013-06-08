@@ -1,6 +1,12 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.14.2
+------
+Fixed an error when the TrustedQSL directory had Unicode characters, don't prompt
+for updates when called silently, fail properly when the user chooses to not ignore
+signing errors
+
 1.14.1
 ------
 Minor bug fixes to internet functions and the command line parser, hang fixed
