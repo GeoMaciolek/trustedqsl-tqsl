@@ -2128,15 +2128,15 @@ public:
 		outstr = NULL;
 		conv = NULL;
         }
-	void SaveSettings (ofstream &out, wxString appname);
-	void RestoreConfig (ifstream& in);
-	void ParseLocations (const char *loc, ofstream* out);
+	void SaveSettings (gzFile &out, wxString appname);
+	void RestoreConfig (gzFile& in);
+	void ParseLocations (const char *loc, gzFile* out);
 	wxConfig *config;
 	char certpwd[80];
 	string callSign;
 	wxString elementBody;
 	wxString locstring;
-	ofstream* outstr;
+	gzFile* outstr;
 	tQSL_Converter conv;
 
 private:
@@ -2150,7 +2150,7 @@ private:
 // Save the user's configuration settings - appname is the
 // application name (tqslapp/tqslcert)
 
-void TQSLConfig::SaveSettings (ofstream &out, wxString appname) {
+void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 	config = new wxConfig(appname);
 	wxString name, gname;
 	long	context;
@@ -2171,7 +2171,7 @@ void TQSLConfig::SaveSettings (ofstream &out, wxString appname) {
 		config->SetPath(groupNames[i]);
 		more = config->GetFirstEntry(name, context);
 		while (more) {
-			out << "<Setting name=\"" << name.mb_str() << "\" group=\"" << groupNames[i].mb_str() << "\" ";
+			gzprintf(out, "<Setting name=\"%s\" group=\"%s\" ", (const char *)name.mb_str(), (const char *)groupNames[i].mb_str());
 			wxConfigBase::EntryType etype = config->GetEntryType(name);
 			switch (etype) {
 				case wxConfigBase::Type_Unknown:
@@ -2180,24 +2180,22 @@ void TQSLConfig::SaveSettings (ofstream &out, wxString appname) {
 					svalue.Replace(wxT("&"), wxT("&amp;"), true); 
 					svalue.Replace(wxT("<"), wxT("&lt;"), true); 
 					svalue.Replace(wxT(">"), wxT("&gt;"), true); 
-					out << "Type=\"String\" Value=\"" << svalue.mb_str() << "\"/>" << endl;
+					gzprintf(out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.mb_str());
 					break;
 				case wxConfigBase::Type_Boolean:
 					config->Read(name, &bvalue);
-					out << "Type=\"Bool\" Value=\"";
-					if (bvalue) 
-						out << "true";
+					if (bvalue)
+						gzprintf(out, "Type=\"Bool\" Value=\"true\"/>\n", (const char *)svalue.mb_str());
 					else
-						out << "false";
-			 		out << "\"/>" << endl;
+						gzprintf(out, "Type=\"Bool\" Value=\"false\"/>\n", (const char *)svalue.mb_str());
 					break;
 				case wxConfigBase::Type_Integer:
 					config->Read(name, &lvalue);
-					out << "Type=\"Int\" Value=" << lvalue << "/>" << endl;
+					gzprintf(out, "Type=\"Int\" Value=\"%d\"/>\n", lvalue);
 					break;
 				case wxConfigBase::Type_Float:
 					config->Read(name, &dvalue);
-					out << "Type=\"Float\" Value=" << dvalue << "/>" << endl;
+					gzprintf(out, "Type=\"Float\" Value=\"%f\"/>\n", dvalue);
 					break;
 			}
 			more = config->GetNextEntry(name, context);
@@ -2212,26 +2210,25 @@ void
 MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 
 	try {
-		
 		wxString file_default = wxT("userconfig.tq9");
 		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
 			file_default, wxT(".tq9"), wxT("Configuration files (*.tq9)|*.tq9|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
 		if (filename == wxT(""))
 			return;
-        	ofstream out;
-		out.open(filename.mb_str(), ios::out|ios::trunc|ios::binary);
+
+		gzFile out = 0;
+		out = gzopen(filename.mb_str(), "wb9");
 		if (!out) {
 			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
-			out.close();
 			return;
 		}
 		TQSLConfig* conf = new TQSLConfig();
 
-		out << "<TQSL_Configuration>" << endl;
-		out << "<Warning>If you directly edit this file, you are responsible for its content." << endl;
-		out << "The ARRL's LoTW Help Desk will be unable to assist you.</Warning>" << endl;
-		out << "<Certificates>" << endl;
+		gzprintf(out, "<TQSL_Configuration>\n");
+		gzprintf(out, "<Warning>If you directly edit this file, you are responsible for its content.\n");
+		gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you.</Warning>\n");
+		gzprintf(out, "<Certificates>\n");
 
 		wxLogMessage(wxT("Saving certificates"));
 		int ncerts;
@@ -2267,35 +2264,35 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 				}
 			}
 			wxLogMessage(wxT("\tSaving certificate for %hs"), callsign);
-			out << "<Cert CallSign=\"" << callsign << "\" password=\"" << pwbuf << "\">" << endl;
+			gzprintf(out, "<Cert CallSign=\"%s\" password=\"%s\">\n", callsign, pwbuf);
 			lastPW = wxT("");
 			check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
 			tqsl_endSigning(certlist[i]);
-			out << buf << endl;
-			out << "</Cert>" << endl;
+			gzwrite(out, buf, strlen(buf));
+			gzprintf(out, "\n</Cert>\n");
 		}
-		out << "</Certificates>" << endl;
-		out << "<Locations>" << endl;
+		gzprintf(out, "</Certificates>\n");
+		gzprintf(out, "<Locations>\n");
 		wxLogMessage(wxT("Saving Locations"));
 		char *sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationData(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
 		parser->ParseLocations(sdbuf, &out);
 		free(sdbuf);
-		out << "</Locations>" << endl;
+		gzprintf(out, "</Locations>\n");
 
-		out << "<TQSLSettings>" << endl;
+		gzprintf(out, "<TQSLSettings>\n");
 		conf->SaveSettings(out, wxT("tqslapp"));
-		out << "</TQSLSettings>" << endl;
+		gzprintf(out, "</TQSLSettings>\n");
 
-		out << "<TQSLCertSettings>" << endl;
+		gzprintf(out, "<TQSLCertSettings>\n");
 		conf->SaveSettings(out, wxT("tqslcert"));
-		out << "</TQSLCertSettings>" << endl;
+		gzprintf(out, "</TQSLCertSettings>\n");
 		wxLogMessage(wxT("Saving QSOs"));
 	
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
-		out << "<DupeDb>" << endl;
+		gzprintf(out, "<DupeDb>\n");
 
 		while (true) {
 			char dupekey[256];
@@ -2303,13 +2300,13 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 			int status = tqsl_getDuplicateRecords(conv, dupekey, dupedata, sizeof(dupekey));
 			if (status == -1) break;
 			check_tqsl_error(status);
-			out << "<Dupe key=\"" << dupekey << "\" />" << endl;
+			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
 		}
-		out << "</DupeDb>" << endl;
+		gzprintf(out, "</DupeDb>\n");
 
-		out << "</TQSL_Configuration>" << endl;
+		gzprintf(out, "</TQSL_Configuration>\n");
 
-		out.close();
+		gzclose(out);
 		wxLogMessage(wxT("Save operation complete."));
 	}
 	catch (TQSLException& x) {
@@ -2441,7 +2438,7 @@ TQSLConfig::xml_location_start(void *data, const XML_Char *name, const XML_Char 
 	if (strcmp(name, "StationDataFile") == 0)
 		return;
 	if (strcmp(name, "StationData") == 0) {
-		*parser->outstr << "<Location name=\"" << atts[1] << "\"";
+		gzprintf(*parser->outstr, "<Location name=\"%s\"", atts[1]);
 	}
 }
 void
@@ -2450,13 +2447,13 @@ TQSLConfig::xml_location_end(void *data, const XML_Char *name) {
 	if (strcmp(name, "StationDataFile") == 0) 
 		return;
 	if (strcmp(name, "StationData") == 0) {
-		*parser->outstr << " />" << endl;
+		gzprintf(*parser->outstr ," />\n");
 		return;
 	}
 	// Anything else is a station attribute. Add it to the definition.
 	parser->elementBody.Trim(false);
 	parser->elementBody.Trim(true);
-	*parser->outstr << " " << name << "=\"" << parser->elementBody.mb_str() << "\"";
+	gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.mb_str());
 	parser->elementBody = wxT("");
 }
 
@@ -2470,7 +2467,7 @@ TQSLConfig::xml_text(void *data, const XML_Char *text, int len) {
 }
 
 void
-TQSLConfig::RestoreConfig (ifstream& in) {
+TQSLConfig::RestoreConfig (gzFile& in) {
         XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *) this);
         XML_SetStartElementHandler(xp, &TQSLConfig::xml_restore_start);
@@ -2479,19 +2476,25 @@ TQSLConfig::RestoreConfig (ifstream& in) {
 
 	char buf[4096];
 	wxLogMessage(wxT("Restoring Certificates"));
+	int rcount = 0;
 	do {
-		in.read(buf, sizeof buf);
-		if (in.gcount() > 0) {
-			if (XML_Parse(xp, buf, in.gcount(), 0) == 0) {
+		rcount = gzread(in, buf, sizeof(buf));
+		if (rcount > 0) {
+			if (XML_Parse(xp, buf, rcount, 0) == 0) {
 				wxLogError(wxT("Error parsing saved configuration file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
 				XML_ParserFree(xp);
-				in.close();
+				gzclose(in);
 				return;
 			}
 		}
-	} while (in.gcount() == sizeof buf);
+	} while (rcount > 0);
+	if (!gzeof(in)) {
+		int gerr;
+		wxLogError(wxT("Error parsing saved configuration file: %hs"), gzerror(in, &gerr));
+		XML_ParserFree(xp);
+		return;
+	}
 	if (XML_Parse(xp, "", 0, 1) == 0) {
-		in.close();
 		wxLogError(wxT("Error parsing saved configuration file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
 		XML_ParserFree(xp);
 		return;
@@ -2500,7 +2503,7 @@ TQSLConfig::RestoreConfig (ifstream& in) {
 }
 
 void
-TQSLConfig::ParseLocations (const char *loc, ofstream* out) {
+TQSLConfig::ParseLocations (const char *loc, gzFile* out) {
 
         XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *) this);
@@ -2524,9 +2527,9 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 	if (filename == wxT(""))
 		return;
 
+	gzFile in = 0;
 	try {
-		ifstream in;
-		in.open(filename.mb_str(), ios::in|ios::binary);
+		in = gzopen(filename.mb_str(), "rb");
 		if (!in) {
 			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
 			return;
@@ -2534,9 +2537,11 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 
 		TQSLConfig* loader = new TQSLConfig();
 		loader->RestoreConfig(in);
+		gzclose(in);
 	}
 	catch (TQSLException& x) {
-		wxLogError(wxT("Backup operation failed: %hs"), x.what());
+		wxLogError(wxT("Restore operation failed: %hs"), x.what());
+		gzclose(in);
 	}
 }
 
