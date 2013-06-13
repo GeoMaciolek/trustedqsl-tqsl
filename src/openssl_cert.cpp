@@ -184,7 +184,7 @@
 /* Ugly workaround for Openssl 1.0 bug per:
  * http://rt.openssl.org/Ticket/Display.html?user=guest&pass=guest&id=2123
  */
-#if (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x10000000L
+#if (OPENSSL_VERSION_NUMBER == 0x10000003L)
 #define i2d_ASN1_SET i2d_ASN1_SET_buggy
 #define d2i_ASN1_SET d2i_ASN1_SET_buggy
 #define ASN1_seq_unpack ASN1_seq_unpack_buggy
