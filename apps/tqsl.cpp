@@ -92,6 +92,7 @@ enum {
 	tm_s_edit,
 	tm_h_contents,
 	tm_h_about,
+	tm_h_diag,
 	tm_h_update
 };
 
@@ -553,6 +554,7 @@ public:
 	void DoExit(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
+	void OnHelpDiagnose(wxCommandEvent& event);
 #ifdef ALLOW_UNCOMPRESSED
 	void OnFileCompress(wxCommandEvent& event);
 #endif
@@ -570,7 +572,7 @@ public:
 
 	wxTextCtrl *logwin;
 	wxHtmlHelpController help;
-
+	FILE *diagFile;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -617,6 +619,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_f_saveconfig, MyFrame::OnSaveConfig)
 	EVT_MENU(tm_h_contents, MyFrame::OnHelpContents)
 	EVT_MENU(tm_h_about, MyFrame::OnHelpAbout)
+	EVT_MENU(tm_h_diag, MyFrame::OnHelpDiagnose)
 
 	EVT_MENU(tm_h_update, MyFrame::CheckForUpdates)
 
@@ -685,6 +688,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	help_menu->Append(tm_h_update, wxT("Check for &Updates..."));
 
 	help_menu->Append(tm_h_about, wxT("&About"));
+	help_menu->AppendSeparator();
+	help_menu->Append(tm_h_diag, wxT("Dia&gnostic Mode"));
 
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
@@ -746,8 +751,9 @@ MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 	help.Display(wxT("main.htm"));
 }
 
-void
-MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
+// Return the "About" string
+//
+static wxString getAbout() {
 	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
@@ -763,7 +769,37 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
-	wxMessageBox(msg, wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
+	return msg;
+}
+
+void
+MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
+	wxMessageBox(getAbout(), wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
+}
+
+void
+MyFrame::OnHelpDiagnose(wxCommandEvent& WXUNUSED(event)) {
+	wxString s_fname;
+
+	if (diagFile) {
+		fclose(diagFile);
+		diagFile = NULL;
+		wxMessageBox(wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
+		return;
+	}
+	s_fname = wxFileSelector(wxT("Log File"), wxT(""), wxT("tqsldiag.log"), wxT("log"),
+			wxT("Log files (*.log)|*.log|All files (*.*)|*.*"),
+			wxSAVE|wxOVERWRITE_PROMPT, this);
+	if (s_fname == wxT(""))
+		return;
+	diagFile = fopen(s_fname.mb_str(), "wb");
+	if (!diagFile) {
+		wxString errmsg = wxString::Format(wxT("Error opening diagnostic log %s: %hs"), s_fname.c_str(), strerror(errno));
+		wxMessageBox(errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
+		return;
+	}
+	wxString about = getAbout();
+	fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
 }
 
 static void
@@ -1433,7 +1469,11 @@ retry_upload:
 
 
 		//debug
-		//curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+		if (diagFile) {
+			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+			curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
+			fprintf(diagFile, "Upload Log:\n");
+		}
 
 
 		//set up options
@@ -1529,41 +1569,41 @@ retry_upload:
 				if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both)==uplStatusSuccess) //success
 				{
 					if (uplMessageRE.Matches(uplresult)) { //and a message
-						wxLogMessage(wxT("Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
-							uplMessageRE.GetMatch(uplresult, 1).c_str());
+						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
+							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
 
 					} else { // no message we could find
-						wxLogMessage(wxT("Log uploaded successfully!\nAfter reading this message, you may close this program."));
+						wxLogMessage(wxT("%s: Log uploaded successfully!\nAfter reading this message, you may close this program."), infile.c_str());
 					}
 
 					retval=TQSL_EXIT_SUCCESS;
 				} else { // failure, but site is working
 
 					if (uplMessageRE.Matches(uplresult)) { //and a message
-						wxLogMessage(wxT("Log upload was rejected with result \"%s\""), 
-							uplMessageRE.GetMatch(uplresult, 1).c_str());
+						wxLogMessage(wxT("%s: Log upload was rejected with result \"%s\""), 
+							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
 
 					} else { // no message we could find
-						wxLogMessage(wxT("Log upload was rejected!"));
+						wxLogMessage(wxT("%s: Log upload was rejected!"), infile.c_str());
 					}
 
 					retval=TQSL_EXIT_REJECTED;
 				}
 			} else { //site isn't working
-				wxLogMessage(wxT("Got an unexpected response on log upload! Maybe the site is down?"));
+				wxLogMessage(wxT("%s: Got an unexpected response on log upload! Maybe the site is down?"), infile.c_str());
 				retval=TQSL_EXIT_UNEXP_RESP;
 			}
 
 		} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-			wxLogMessage(wxT("Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading these QSOs later."));
+			wxLogMessage(wxT("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading these QSOs later."), infile.c_str());
 			retval=TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
-			wxLogMessage(wxT("Upload cancelled"));
+			wxLogMessage(wxT("%s: Upload cancelled"), infile.c_str());
 			retval=TQSL_EXIT_CANCEL;
 		} else { //error
 			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
 			// was turned into garbage otherwise
-			wxLogMessage(wxT("Couldn't upload the file: CURL returned \"%hs\" (%hs)"), curl_easy_strerror((CURLcode)retval), errorbuf);
+			wxLogMessage(wxT("%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"), infile.c_str(), curl_easy_strerror((CURLcode)retval), errorbuf);
 			retval=TQSL_EXIT_TQSL_ERROR;
 		}
 		if (this) upload->Destroy();
@@ -1765,6 +1805,11 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
 
+	if (diagFile) {
+		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
+		fprintf(diagFile, "Upload Log:\n");
+	}
 
 
 	//follow redirects
