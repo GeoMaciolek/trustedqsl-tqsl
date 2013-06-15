@@ -535,6 +535,7 @@ CRQ_IntroPage::validate() {
 		return 0;
 	wxString val = tc_call->GetValue();
 	bool ok = true;
+	int sel;
 	wxString msg(wxT("You must enter a valid call sign."));
 	static wxCharBuffer msg_buf(1);
 
@@ -555,35 +556,43 @@ CRQ_IntroPage::validate() {
 		}
 		ok = (ok && havealpha && havenumeric);
 	}
-	Parent()->dxcc = (long)(tc_dxcc->GetClientData(tc_dxcc->GetSelection()));
-	if (Parent()->dxcc < 0) {
+	
+	if (!ok)
+		goto notok;
+
+	sel = tc_dxcc->GetSelection();
+	if (sel >= 0) 
+		Parent()->dxcc = (long)(tc_dxcc->GetClientData(sel));
+
+	if (sel < 0 || Parent()->dxcc < 0) {
 		msg = wxT("You must select a DXCC entity.");
 		ok = false;
+		goto notok;
 	}
-	if (ok) {
-		Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().mb_str(), NULL, 10);
-		Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().mb_str(), NULL, 10);
-		Parent()->qsonotbefore.day = strtol(tc_qsobegind->GetStringSelection().mb_str(), NULL, 10);
-		Parent()->qsonotafter.year = strtol(tc_qsoendy->GetStringSelection().mb_str(), NULL, 10);
-		Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().mb_str(), NULL, 10);
-		Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().mb_str(), NULL, 10);
-		if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
-			msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
-			ok = false;
-		} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
-			msg = wxT("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
-			ok = false;
-		} else if (tqsl_isDateValid(&Parent()->qsonotafter)
-			&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
-			msg = wxT("QSO end date cannot be before QSO begin date.");
-			ok = false;
-		}
+	Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotbefore.day = strtol(tc_qsobegind->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotafter.year = strtol(tc_qsoendy->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().mb_str(), NULL, 10);
+	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
+		msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
+		ok = false;
+	} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
+		msg = wxT("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
+		ok = false;
+	} else if (tqsl_isDateValid(&Parent()->qsonotafter)
+		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
+		msg = wxT("QSO end date cannot be before QSO begin date.");
+		ok = false;
 	}
+	if (!ok)
+		goto notok;
 
 	// Data looks okay, now let's make sure this isn't a duplicate request
 	// (unless it's a renewal).
 
-	if (ok && !Parent()->_crq) {
+	if (Parent()->_crq) {
 		val.MakeUpper();
 		tQSL_Cert *certlist = 0;
 		int ncert = 0;
@@ -619,7 +628,7 @@ CRQ_IntroPage::validate() {
 			}
 		}
 	}
-
+notok:
 	if (!ok) {
 		tc_status->SetLabel(msg);
 		msg_buf = msg.mb_str();
