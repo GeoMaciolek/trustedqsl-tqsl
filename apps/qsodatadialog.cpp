@@ -92,11 +92,14 @@ static void set_font(wxWindow *w, wxFont& font) {
 
 class choice {
 public:
-	choice(const wxString& _value, const wxString& _display = wxT("")) {
+	choice(const wxString& _value, const wxString& _display = wxT(""), int _low = 0, int _high = 0) {
 		value = _value;
 		display = (_display == wxT("")) ? value : _display;
+		low = _low;
+		high = _high;
 	}
 	wxString value, display;
+	int low, high;
 	bool operator ==(const choice& other) { return other.value == value; }
 };
 
@@ -147,23 +150,34 @@ init_valid_lists() {
 	if (tqsl_getNumBand(&count))
 		return 1;
 	for (int i = 0; i < count; i++) {
-		int low, high;
+		int low, high, scale;
 		if (tqsl_getBand(i, &cp, &cp1, &low, &high))
 			return 1;
 		wxString low_s = wxString::Format(wxT("%d"), low);
 		wxString high_s = wxString::Format(wxT("%d"), high);
-		const char *hz = !strcmp(cp1, "HF") ? "kHz" : "MHz";
+		const char *hz;
+		if (!strcmp(cp1, "HF")) {
+			hz = "kHz";
+			scale = 1;		// Config file freqs are in KHz
+		} else {
+			hz = "mHz";
+			scale = 1000;		// Freqs are in MHz for VHF/UHF.
+		}
 		if (low >= 1000) {
 			low_s = wxString::Format(wxT("%g"), low / 1000.0);
 			high_s = wxString::Format(wxT("%g"), high / 1000.0);
-			hz = !strcmp(cp1, "HF") ? "MHz" : "GHz";
+			if (!strcmp(cp1, "HF")) {
+				hz = "MHz";
+			} else {
+				hz = "GHz";
+			}
 			if (high == 0)
 				high_s = wxT("UP");
 		}
 		wxString display = wxString::Format(wxT("%s (%s-%s %s)"), wxString(cp, wxConvLocal).c_str(),
 			low_s.c_str(), high_s.c_str(), wxString(hz, wxConvLocal).c_str());
-		valid_bands.push_back(choice(wxString(cp, wxConvLocal), display));
-		valid_rxbands.push_back(choice(wxString(cp, wxConvLocal), display));
+		valid_bands.push_back(choice(wxString(cp, wxConvLocal), display, low*scale, high*scale));
+		valid_rxbands.push_back(choice(wxString(cp, wxConvLocal), display, low*scale, high*scale));
 	}
 	valid_propmodes.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumPropagationMode(&count))
@@ -260,14 +274,14 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	topsizer->Add(sizer, 0);
 	// Frequency
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, wxT("Frequency:"), wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("Frequency (MHz):"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxTextCtrl (this, QD_FREQ, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, wxTextValidator(wxFILTER_NONE, &rec._freq)), 0, wxALL, QD_MARGIN);
 	topsizer->Add(sizer, 0);
 	// RX Frequency
 	sizer = new wxBoxSizer(wxHORIZONTAL);
-	sizer->Add(new wxStaticText(this, -1, wxT("RX Frequency:"), wxDefaultPosition,
+	sizer->Add(new wxStaticText(this, -1, wxT("RX Frequency (MHz):"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH,TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
 	sizer->Add(new wxTextCtrl (this, QD_RXFREQ, wxT(""), wxDefaultPosition, wxSize(14*TEXT_WIDTH,TEXT_HEIGHT),
 		0, wxTextValidator(wxFILTER_NONE, &rec._rxfreq)), 0, wxALL, QD_MARGIN);
@@ -357,6 +371,36 @@ QSODataDialog::TransferDataFromWindow() {
 	rec._rxfreq.Trim(FALSE).Trim(TRUE);
 	rec._propmode = valid_propmodes[_propmode].value;
 	rec._satellite = valid_satellites[_satellite].value;
+
+	double freq;
+
+	if (!rec._freq.IsEmpty()) {
+		if (!rec._freq.ToDouble(&freq)) {
+			wxMessageBox(wxT("QSO Frequency is invalid"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION, this);
+			return false;
+		}
+		freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
+		if (freq < valid_bands[_band].low || (valid_bands[_band].high > 0 && freq > valid_bands[_band].high)) {
+			wxMessageBox(wxT("QSO Frequency is out of range for the selected band"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION, this);
+			return false;
+		}
+	}
+
+	if (!rec._rxfreq.IsEmpty()) {
+		if (!rec._rxfreq.ToDouble(&freq)) {
+			wxMessageBox(wxT("QSO RX Frequency is invalid"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION, this);
+			return false;
+		}
+		freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
+		if (freq < valid_rxbands[_rxband].low || (valid_rxbands[_rxband].high > 0 && freq > valid_rxbands[_rxband].high)) {
+			wxMessageBox(wxT("QSO RX Frequency is out of range for the selected band"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION, this);
+			return false;
+		}
+	}
 	if (!_isend && rec._call == wxT("")) {
 		wxMessageBox(wxT("Call Sign cannot be empty"), wxT("QSO Data Error"),
 			wxOK | wxICON_EXCLAMATION, this);

@@ -443,8 +443,6 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					strncpy(conv->rec.mode, (char *)(result.data), sizeof conv->rec.mode);
 				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
 					strncpy(conv->rec.freq, (char *)(result.data), sizeof conv->rec.freq);
-				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
-					strncpy(conv->rec.freq, (char *)(result.data), sizeof conv->rec.freq);
 				} else if (!strcasecmp(result.name, "FREQ_RX") && result.data) {
 					strncpy(conv->rec.rxfreq, (char *)(result.data), sizeof conv->rec.rxfreq);
 				} else if (!strcasecmp(result.name, "BAND_RX") && result.data) {
@@ -540,6 +538,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		}
 	}
 	tqsl_strtoupper(conv->rec.band);
+	tqsl_strtoupper(conv->rec.rxband);
 	tqsl_strtoupper(conv->rec.mode);
 	char val[256] = "";
 	tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
@@ -555,6 +554,24 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	if (conv->bands.find(conv->rec.band) == conv->bands.end()) {
 		conv->rec_done = true;
 		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid BAND (%s)", conv->rec.band);
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (conv->rec.rxband[0] && (conv->bands.find(conv->rec.rxband) == conv->bands.end())) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid RX BAND (%s)", conv->rec.rxband);
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (conv->rec.freq[0] && strcmp(conv->rec.band, tqsl_infer_band(conv->rec.freq))) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Frequency %s is out of range for band %s", conv->rec.freq, conv->rec.band);
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (conv->rec.rxfreq[0] && strcmp(conv->rec.rxband, tqsl_infer_band(conv->rec.rxfreq))) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "RX Frequency %s is out of range for band %s", conv->rec.freq, conv->rec.band);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 0;
 	}
