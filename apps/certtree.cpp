@@ -28,6 +28,16 @@ using namespace std;
 #include "nocert.xpm"
 #include "broken-cert.xpm"
 #include "folder.xpm"
+#include "expired.xpm"
+#include "replaced.xpm"
+enum {
+	CERT_ICON = 0,
+	NOCERT_ICON = 1,
+	BROKEN_ICON = 2,
+	EXPIRED_ICON = 3,
+	REPLACED_ICON = 4,
+	FOLDER_ICON = 5
+};
 
 ///////////// Certificate Tree Control ////////////////
 
@@ -45,10 +55,14 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 	wxBitmap no_certbm(nocert_xpm);
 	wxBitmap broken_certbm(broken_cert_xpm);
 	wxBitmap folderbm(folder_xpm);
-	wxImageList *il = new wxImageList(16, 16, false, 3);
+	wxBitmap expiredbm(expired_xpm);
+	wxBitmap replacedbm(replaced_xpm);
+	wxImageList *il = new wxImageList(16, 16, false, 5);
 	il->Add(certbm);
 	il->Add(no_certbm);
 	il->Add(broken_certbm);
+	il->Add(expiredbm);
+	il->Add(replacedbm);
 	il->Add(folderbm);
 	SetImageList(il);
 }
@@ -76,7 +90,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	issmap issuers;
 
 	DeleteAllItems();
-	wxTreeItemId rootId = AddRoot(wxT("tQSL Certificates"), 3);
+	wxTreeItemId rootId = AddRoot(wxT("tQSL Certificates"), FOLDER_ICON);
 	tqsl_init();
 	tQSL_Cert *certs;
 	if (tqsl_selectCertificates(&certs, &_ncerts, 0, 0, 0, provider, flags)) {
@@ -115,16 +129,29 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	// Sort each issuer's list and add items to tree
 	issmap::iterator iss_it;
 	for (iss_it = issuers.begin(); iss_it != issuers.end(); iss_it++) {
-		wxTreeItemId id = AppendItem(rootId, iss_it->first, 3);
+		wxTreeItemId id = AppendItem(rootId, iss_it->first, FOLDER_ICON);
 		certlist& list = iss_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
 		for (int i = 0; i < (int)list.size(); i++) {
 			CertTreeItemData *cert = new CertTreeItemData(certs[list[i].second]);
 			int keyonly = 1;
+			int exp = 0, sup = 0;
+			int icon_type;
 			int keytype = tqsl_getCertificatePrivateKeyType(certs[list[i].second]);
+			tqsl_isCertificateExpired(certs[list[i].second], &exp);
+			tqsl_isCertificateSuperceded(certs[list[i].second], &sup);
 			tqsl_getCertificateKeyOnly(certs[list[i].second], &keyonly);
-			AppendItem(id, list[i].first,
-				((keytype == TQSL_PK_TYPE_ERR) ? 2 : (keyonly ? 1 : 0)), -1, cert);
+			if (keytype == TQSL_PK_TYPE_ERR)
+				icon_type = BROKEN_ICON;
+			else if (keyonly)
+				icon_type = NOCERT_ICON;
+			else if (exp)
+				icon_type = EXPIRED_ICON;
+			else if (sup)
+				icon_type = REPLACED_ICON;
+			else
+				icon_type = CERT_ICON;
+			AppendItem(id, list[i].first, icon_type, -1, cert);
 		}
 		Expand(id);
 	}
