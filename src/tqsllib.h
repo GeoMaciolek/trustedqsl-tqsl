@@ -336,6 +336,14 @@ DLLEXPORT int CALLCONVENTION tqsl_selectCertificates(tQSL_Cert **certlist, int *
 DLLEXPORT int CALLCONVENTION tqsl_getSelectedCertificate(tQSL_Cert *cert, const tQSL_Cert **certlist,
 	int idx);
 
+/** Find out if the "certificate" is expired
+  */
+DLLEXPORT int CALLCONVENTION tqsl_isCertificateExpired(tQSL_Cert cert, int *status);
+
+/** Find out if the "certificate" is superceded
+  */
+DLLEXPORT int CALLCONVENTION tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status);
+
 /** Find out if the "certificate" is just a key pair.
   */
 DLLEXPORT int CALLCONVENTION tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly);

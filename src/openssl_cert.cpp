@@ -647,6 +647,115 @@ tqsl_getSelectedCertificate(tQSL_Cert *cert, const tQSL_Cert **certlist,
 	return 0;
 }
 
+DLLEXPORT int CALLCONVENTION
+tqsl_isCertificateExpired(tQSL_Cert cert, int *status) {
+	
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), true)) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+
+	*status = false;
+	/* Check for expired */
+	time_t t = time(0);
+	struct tm *tm = gmtime(&t);
+	tQSL_Date d;
+	d.year = tm->tm_year + 1900;
+	d.month = tm->tm_mon + 1;
+	d.day = tm->tm_mday;
+	ASN1_TIME *ctm;
+	if ((ctm = X509_get_notAfter(TQSL_API_TO_CERT(cert)->cert)) == NULL) {
+		*status = true;
+		return 0;
+	} else {
+		tQSL_Date cert_na;
+		tqsl_get_asn1_date(ctm, &cert_na);
+		if (tqsl_compareDates(&cert_na, &d) < 0) {
+			*status = true;
+			return 0;
+		}
+	}
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
+	TQSL_X509_STACK *xcerts = NULL;
+	char path[256];
+	int i;
+	X509 *x;
+	char *cp;
+	vector< map<string,string> > keylist;
+	vector< map<string,string> >::iterator it;
+	set<string> superceded_certs;
+	int len, ok;
+	char buf[256];
+	
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert),true)) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+
+	*status = false;
+	/* Get the certs from the cert store */
+	tqsl_make_cert_path("user", path, sizeof path);
+	xcerts = tqsl_ssl_load_certs_from_file(path);
+	if (xcerts == NULL) {
+		if (tQSL_Error == TQSL_OPENSSL_ERROR)
+			return 1;
+	}
+	/* Make a list of superceded certs */
+	for (i = 0; i < sk_X509_num(xcerts); i++) {
+		x = sk_X509_value(xcerts, i);
+		len = sizeof buf-1;
+		if (!tqsl_get_cert_ext(x, "supercededCertificate", (unsigned char *)buf, &len, NULL)) {
+			buf[len] = 0;
+			string sup = buf;
+			superceded_certs.insert(sup);
+			/* Fix - the extension as inserted by ARRL
+			 * reads ".../Email=lotw@arrl.org", not
+			 * the expected ".../emailAddress=".
+			 * save both forms in case this gets
+			 * changed at the LoTW site
+			 */
+			size_t pos = sup.find("/Email");
+			if (pos != string::npos) {
+				sup.replace(pos, 6, "/emailAddress");
+				superceded_certs.insert(sup);
+			}
+		}
+	}
+	// Done with the original cert list now
+	if (xcerts != NULL) {
+		sk_X509_free(xcerts);
+		xcerts = NULL;
+	}
+
+	// "supercededCertificate" extension is <issuer>;<serial>
+	cp = X509_NAME_oneline(X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert), buf, sizeof(buf));
+	if (cp == NULL)
+		ok = 0;
+	else {
+		string sup = buf;
+		sup += ";";
+		sprintf(buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
+		sup += buf;
+		set<string>::iterator it;
+		for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
+			if (*it == sup)
+				ok = 0;
+		}
+
+		if (superceded_certs.find(sup) != superceded_certs.end())
+			ok = 0;
+	}
+	*status = (ok != 0);
+	return 0;
+}
 
 DLLEXPORT int CALLCONVENTION
 tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
