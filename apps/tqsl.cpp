@@ -29,6 +29,8 @@
 #include <wx/hyperlink.h>
 #include <wx/cmdline.h>
 
+#include "tqslinet.h"
+
 #ifdef __BORLANDC__
 	#pragma hdrstop
 #endif
@@ -126,6 +128,7 @@ enum {
 #define TQSL_CD_CANBUT TQSL_ID_LOW+1
 
 static wxString ErrorTitle(wxT("TQSL Error"));
+FILE *diagFile = NULL;
 
 static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
@@ -571,8 +574,8 @@ public:
 	void DoCheckForUpdates(bool quiet);
 
 	wxTextCtrl *logwin;
-	wxHtmlHelpController help;
-	FILE *diagFile;
+	wxHtmlHelpController *help;
+	wxMenu* help_menu;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -587,7 +590,12 @@ private:
 
 void LogList::DoLogString(const wxChar *szString, time_t) {
 	wxTextCtrl *_logwin = 0;
+
+	if (diagFile) 
+		fprintf(diagFile, "%ls\n", szString);
 	if (wxString(szString).StartsWith(wxT("Debug:")))
+		return;
+	if (wxString(szString).StartsWith(wxT("Error: Unable to open requested HTML document:")))
 		return;
 	if (_frame != 0)
 		_logwin = _frame->logwin;
@@ -674,11 +682,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	stn_menu->Append(tm_s_edit, wxT("&Edit locations"));
 
 	// Help menu
-	wxMenu *help_menu = new wxMenu;
-	help.UseConfig(wxConfig::Get());
+	help = new wxHtmlHelpController(wxHF_DEFAULT_STYLE | wxHF_OPEN_FILES);
+	help_menu = new wxMenu;
+	help->UseConfig(wxConfig::Get());
 	wxString hhp = docpaths.FindAbsoluteValidPath(wxT("tqslapp.hhp"));
 	if (wxFileNameFromPath(hhp) != wxT("")) {
-		if (help.AddBook(hhp))
+		if (help->AddBook(hhp))
 		help_menu->Append(tm_h_contents, wxT("&Contents"));
 #ifndef __WXMAC__	// On Mac, About not on Help menu
 		help_menu->AppendSeparator();
@@ -689,8 +698,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	help_menu->Append(tm_h_about, wxT("&About"));
 	help_menu->AppendSeparator();
-	help_menu->Append(tm_h_diag, wxT("Dia&gnostic Mode"));
-
+	help_menu->AppendCheckItem(tm_h_diag, wxT("Dia&gnostic Mode"));
+	help_menu->Check(tm_h_diag, false);
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
@@ -701,6 +710,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	logwin = new wxTextCtrl(this, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
 		wxTE_MULTILINE|wxTE_READONLY);
+
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
@@ -748,7 +758,7 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 
 void
 MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
-	help.Display(wxT("main.htm"));
+	help->Display(wxT("main.htm"));
 }
 
 // Return the "About" string
@@ -782,6 +792,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& WXUNUSED(event)) {
 	wxString s_fname;
 
 	if (diagFile) {
+		help_menu->Check(tm_h_diag, false);
 		fclose(diagFile);
 		diagFile = NULL;
 		wxMessageBox(wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
@@ -798,6 +809,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& WXUNUSED(event)) {
 		wxMessageBox(errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
 		return;
 	}
+	help_menu->Check(tm_h_diag, true);
 	wxString about = getAbout();
 	fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
 }
@@ -806,7 +818,7 @@ static void
 AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location")) {
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
-		run_station_wizard(frame, loc, &(frame->help), expired, title);
+		run_station_wizard(frame, loc, frame->help, expired, title);
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
@@ -993,7 +1005,7 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	} while (stat == TQSL_ADIF_GET_FIELD_SUCCESS || stat == TQSL_ADIF_GET_FIELD_NO_NAME_MATCH);
 	tqsl_endADIF(&adif);
 	try {
-		QSODataDialog dial(this, &help, &recs);
+		QSODataDialog dial(this, help, &recs);
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs, file.mb_str());
 	} catch (TQSLException& x) {
@@ -1005,7 +1017,7 @@ void
 MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	QSORecordList recs;
 	try {
-		QSODataDialog dial(this, &help, &recs);
+		QSODataDialog dial(this, help, &recs);
 		if (dial.ShowModal() == wxID_OK)
 			WriteQSOFile(recs);
 	} catch (TQSLException& x) {
@@ -1049,6 +1061,7 @@ restart:
 	ConvertingDialog *conv_dial = new ConvertingDialog(this, infile.mb_str());
 	n=0;
 	bool cancelled = false;
+	bool aborted = false;
 	int lineno = 0;
 	int out_of_range = 0;
 	int duplicates = 0;
@@ -1157,10 +1170,11 @@ restart:
 					if (bad_text)
 						msg += wxString(wxT("\n")) + wxString(bad_text, wxConvLocal);
 
+					wxLogError(wxT("%s"), msg.c_str());
 					if (!this) { // No GUI
 						switch (action) {
 						 	case TQSL_ACTION_ABORT:
-								cancelled = true;
+								aborted = true;
 								ignore_err = true;
 								goto abortSigning;
 							case TQSL_ACTION_NEW:		// For ALL or NEW, let the signing proceed
@@ -1172,7 +1186,6 @@ restart:
 								break;			// The error will show as a popup
 						}
 					}
-					wxLogError(wxT("%s"), msg.c_str());
 					if (!ignore_err) {
 						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO) {
 							cancelled = true;
@@ -1195,6 +1208,8 @@ abortSigning:
 
    		if (cancelled) {
    			wxLogWarning(wxT("Signing cancelled"));
+   		} else if (aborted) {
+   			wxLogWarning(wxT("Signing aborted"));
    		} else if (tQSL_Error != TQSL_NO_ERROR) {
    			check_tqsl_error(1);
 		}
@@ -1273,7 +1288,7 @@ abortSigning:
 		tqsl_endConverter(&conv);
 	}
 	if (cancelled) return TQSL_EXIT_CANCEL;
-	if (duplicates > 0 || out_of_range > 0 || errors > 0) return TQSL_EXIT_QSOS_SUPPRESSED;
+	if (aborted || duplicates > 0 || out_of_range > 0 || errors > 0) return TQSL_EXIT_QSOS_SUPPRESSED;
 	return TQSL_EXIT_SUCCESS;
 }
 
@@ -1299,9 +1314,12 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	tQSL_Converter conv=0;
 	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, action, password);
 
-	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
+	if (numrecs == 0) {
 		wxLogMessage(wxT("No records output"));
-		if (numrecs == 0) status = TQSL_EXIT_NO_QSOS;
+		if (status == TQSL_EXIT_CANCEL || TQSL_EXIT_QSOS_SUPPRESSED)
+			return status;
+		else
+			return TQSL_EXIT_NO_QSOS;
 	} else {
 		if(compressed) { 
 			if (0>=gzwrite(gout, output.mb_str(), output.size()) || Z_OK!=gzclose(gout)) {
@@ -1309,7 +1327,6 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 				tqsl_endConverter(&conv);
 				return TQSL_EXIT_LIB_ERROR;
 			}
-
 		} else {
 			out<<output;
 			out.close();
@@ -1318,8 +1335,6 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 				tqsl_endConverter(&conv);
 				return TQSL_EXIT_LIB_ERROR;
 			}
-			
-			
 		}
 		
 		tqsl_converterCommit(conv);
@@ -1420,12 +1435,13 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
-	if (status == TQSL_EXIT_CANCEL || numrecs==0) {
+	if (numrecs == 0) {
 		wxLogMessage(wxT("No records to upload"));
-		if (numrecs == 0) status = TQSL_EXIT_NO_QSOS;
-		return status;
-	}
-	else {
+		if (status == TQSL_EXIT_CANCEL || TQSL_EXIT_QSOS_SUPPRESSED)
+			return status;
+		else
+			return TQSL_EXIT_NO_QSOS;
+	} else {
 		//upload the file
 
 		//get the url from the config, can be overridden by an installer
@@ -1659,7 +1675,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
    	wxString selname;
 	char errbuf[512];
    	do {
-   		TQSLGetStationNameDialog station_dial(this, &help, wxDefaultPosition, false, title, okLabel, editonly);
+   		TQSLGetStationNameDialog station_dial(this, help, wxDefaultPosition, false, title, okLabel, editonly);
    		if (selname != wxT(""))
    			station_dial.SelectName(selname);
    		rval = station_dial.ShowModal();
@@ -1668,7 +1684,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
    				return 0;
    			case wxID_APPLY:	// User hit New
    				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-   				selname = run_station_wizard(this, loc, &help, false);
+   				selname = run_station_wizard(this, loc, help, false);
    				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
    				break;
    			case wxID_MORE:		// User hit Edit
@@ -1680,7 +1696,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 					}
 					char loccall[512];
 					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-					selname = run_station_wizard(this, loc, &help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
+					selname = run_station_wizard(this, loc, help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
    					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				}
    				break;
@@ -2158,7 +2174,7 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 #endif // ALLOW_UNCOMPRESSED
 
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
-	Preferences dial(this, &help);
+	Preferences dial(this, help);
 	dial.ShowModal();
 }
 
@@ -2636,6 +2652,8 @@ QSLApp::OnInit() {
 		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"), wxOK);
 		exitNow (TQSL_EXIT_TQSL_ERROR, quiet);
 	}
+	wxFileSystem::AddHandler(new tqslInternetFSHandler());
+
 	//short circuit if no arguments
 
 	if (argc<=1) {

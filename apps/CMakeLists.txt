@@ -91,8 +91,8 @@ set(TQSLCERT_XPM cert.xpm nocert.xpm broken-cert.xpm folder.xpm key.xpm)
 
 add_executable(tqslcert WIN32 MACOSX_BUNDLE ${TQSLCERT_SRC} ${TQSLCERT_HDR} ${TQSLCERT_XPM} ${TQSLCERT_RCFILE})
 
-set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp)
-set(TQSL_HDR tqslcert.h tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h tqslvalidator.h tqslbuild.h)
+set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp)
+set(TQSL_HDR tqslcert.h tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h tqslvalidator.h tqslbuild.h tqslhelp.h)
 set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm)
 
 add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQSL_RCFILE})
