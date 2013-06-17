@@ -29,7 +29,7 @@
 #include <wx/hyperlink.h>
 #include <wx/cmdline.h>
 
-#include "tqslinet.h"
+#include "tqslhelp.h"
 
 #ifdef __BORLANDC__
 	#pragma hdrstop

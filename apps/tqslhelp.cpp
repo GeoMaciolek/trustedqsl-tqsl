@@ -21,7 +21,7 @@
 #include "wx/filesys.h"
 #include "wx/utils.h"
 #include "wx/mstream.h"
-#include "tqslinet.h"
+#include "tqslhelp.h"
 
 // ----------------------------------------------------------------------------
 // tqslInternetFSHandler
