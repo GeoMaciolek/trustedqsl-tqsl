@@ -549,7 +549,7 @@ void ContestMap::OnAdd(wxCommandEvent &) {
 
 void ContestMap::OnEdit(wxCommandEvent &) {
 	wxString contest;
-	int contest_type = 0, callsign_field = TQSL_MIN_CABRILLO_MAP_FIELD;
+	int contest_type = 0, callsign_field = TQSL_DEF_CABRILLO_MAP_FIELD;
 	int row = grid->GetCursorRow();
 	if (row >= 0) {
 		contest = grid->GetCellValue(row, 0);

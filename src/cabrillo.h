@@ -49,7 +49,10 @@ typedef enum {
 	TQSL_CABRILLO_VHF,
 } TQSL_CABRILLO_FREQ_TYPE;
 
+// Minimum field number for callsign and default field number
+// For VHF, default should be 7.
 #define TQSL_MIN_CABRILLO_MAP_FIELD 5
+#define TQSL_DEF_CABRILLO_MAP_FIELD 8
 
 /** Cabrillo field data:
   *
