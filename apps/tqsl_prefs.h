@@ -33,6 +33,8 @@
 #include "wx/grid.h"
 #include "wx/wxhtml.h"
 
+#include "tqslcertctrls.h"
+
 #include <map>
 
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
@@ -105,6 +107,23 @@ private:
 	bool defaults;
 };
 
+class KeyPrefs : public wxPanel {
+public:
+	KeyPrefs(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
+private:
+	wxCheckBox *root_cb, *ca_cb, *user_cb;
+};
+
+class CertPrefs : public wxPanel {
+public:
+	CertPrefs(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
+private:
+	wxCheckBox *showSuperceded_cb;
+	wxCheckBox *showExpired_cb;
+};
+
 typedef std::map <wxString, wxString> ModeSet;
 
 class ModeMap : public PrefsPanel {
@@ -153,6 +172,8 @@ private:
 	ModeMap *modemap;
 	ContestMap *contestmap;
 	OnlinePrefs *onlinePrefs;
+	KeyPrefs *keyprefs;
+	CertPrefs *certprefs;
 	wxHtmlHelpController *_help;
 };
 

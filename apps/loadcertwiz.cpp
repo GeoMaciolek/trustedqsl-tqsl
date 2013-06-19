@@ -17,7 +17,7 @@
 #include "tqslcertctrls.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
-#include "tqslcert.h"
+#include "tqslapp.h"
 
 wxString
 notifyData::Message() const {

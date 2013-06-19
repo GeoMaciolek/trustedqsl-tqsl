@@ -28,6 +28,7 @@
 #include <wx/hashmap.h>
 #include <wx/hyperlink.h>
 #include <wx/cmdline.h>
+#include <wx/notebook.h>
 
 #include "tqslhelp.h"
 
@@ -46,6 +47,14 @@
 #include <iostream>
 #include <fstream>
 #include <memory>
+
+#include "crqwiz.h"
+#include "getpassword.h"
+#include "loadcertwiz.h"
+#include "tqsllib.h"
+#include <map>
+#include "util.h"
+
 
 #ifdef _MSC_VER //could probably do a more generic check here...
 // stdint exists on vs2012 and (I think) 2010, but not 2008 or its platform
@@ -68,64 +77,27 @@
 #include "dxcc.h"
 #include "tqsl_prefs.h"
 #include "tqslbuild.h"
+#include "tqslapp.h"
 
 #include "winstrdefs.h"
 
 #include "key.xpm"
+#include "save.xpm"
+#include "upload.xpm"
 
 using namespace std;
 
 #undef ALLOW_UNCOMPRESSED
 
+/// GEOMETRY
 
-enum {
-	tm_f_import = 7000,
-	tm_f_import_compress,
-	tm_f_upload,
-	tm_f_compress,
-	tm_f_uncompress,
-	tm_f_preferences,
-	tm_f_loadconfig,
-	tm_f_saveconfig,
-	tm_f_new,
-	tm_f_edit,
-	tm_f_exit,
-	tm_s_add,
-	tm_s_edit,
-	tm_h_contents,
-	tm_h_about,
-	tm_h_diag,
-	tm_h_update
-};
+#define LABEL_HEIGHT 15
+#define LABEL_WIDTH 100
 
-// Action values
-enum {
-	TQSL_ACTION_ASK = 0,
-	TQSL_ACTION_ABORT = 1,
-	TQSL_ACTION_NEW = 2,
-	TQSL_ACTION_ALL = 3,
-	TQSL_ACTION_UNSPEC = 4
-};
+#define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS
 
-// Exit codes
-enum {
-	TQSL_EXIT_SUCCESS = 0,
-	TQSL_EXIT_CANCEL = 1,
-	TQSL_EXIT_REJECTED = 2,
-	TQSL_EXIT_UNEXP_RESP = 3,
-	TQSL_EXIT_TQSL_ERROR = 4,
-	TQSL_EXIT_LIB_ERROR = 5,
-	TQSL_EXIT_ERR_OPEN_INPUT = 6,
-	TQSL_EXIT_ERR_OPEN_OUTPUT = 7,
-	TQSL_EXIT_NO_QSOS = 8,
-	TQSL_EXIT_QSOS_SUPPRESSED = 9,
-	TQSL_EXIT_COMMAND_ERROR = 10,
-	TQSL_EXIT_CONNECTION_FAILED = 11,
-	TQSL_EXIT_UNKNOWN = 12
-};
-
-#define TQSL_CD_MSG TQSL_ID_LOW
-#define TQSL_CD_CANBUT TQSL_ID_LOW+1
+static wxString flattenCallSign(const wxString& call);
+static int showAllCerts(void);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
 FILE *diagFile = NULL;
@@ -165,13 +137,21 @@ public:
 //	virtual wxLog *CreateLogTarget();
 };
 
+QSLApp::~QSLApp() {
+	wxConfigBase *c = wxConfigBase::Set(0);
+	if (c)
+		delete c;
+	if (diagFile)
+		fclose(diagFile);
+}
+
 IMPLEMENT_APP(QSLApp)
 
 
 static wxString lastPW;
 
 static int
-getPassword(char *buf, int bufsiz, tQSL_Cert cert) {
+getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	char call[TQSL_CALLSIGN_MAX+1] = "";
 	int dxcc = 0;
 	const char *dxccname = "Unknown";
@@ -543,42 +523,6 @@ get_certlist(string callsign, int dxcc, bool expired) {
 			  TQSL_SELECT_CERT_WITHKEYS);
 }
 
-class MyFrame : public wxFrame {
-public:
-	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates);
-
-	void AddStationLocation(wxCommandEvent& event);
-	void EditStationLocation(wxCommandEvent& event);
-	void EnterQSOData(wxCommandEvent& event);
-	void EditQSOData(wxCommandEvent& event);
-	void ImportQSODataFile(wxCommandEvent& event);
-	void UploadQSODataFile(wxCommandEvent& event);
-	void OnExit(TQ_WXCLOSEEVENT& event);
-	void DoExit(wxCommandEvent& event);
-	void OnHelpAbout(wxCommandEvent& event);
-	void OnHelpContents(wxCommandEvent& event);
-	void OnHelpDiagnose(wxCommandEvent& event);
-#ifdef ALLOW_UNCOMPRESSED
-	void OnFileCompress(wxCommandEvent& event);
-#endif
-	void OnPreferences(wxCommandEvent& event);
-	void OnSaveConfig(wxCommandEvent& event);
-	void OnLoadConfig(wxCommandEvent& event);
-	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
-	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
-	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
-	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
-
-	void CheckForUpdates(wxCommandEvent&);
-	void DoCheckForUpdates(bool quiet);
-
-	wxTextCtrl *logwin;
-	wxHtmlHelpController *help;
-	wxMenu* help_menu;
-
-	DECLARE_EVENT_TABLE()
-};
 
 class LogList : public wxLog {
 public:
@@ -607,6 +551,22 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	_logwin->AppendText(wxT("\n"));
 }
 
+class LogStderr : public wxLog {
+public:
+	LogStderr(void) : wxLog() {}
+	virtual void DoLogString(const wxChar *szString, time_t t);
+};
+
+void LogStderr::DoLogString(const wxChar *szString, time_t) {
+
+	if (diagFile) 
+		fprintf(diagFile, "%ls\n", szString);
+	if (wxString(szString).StartsWith(wxT("Debug:")))
+		return;
+	fprintf(stderr, "%ls\n", szString);
+	return;
+}
+
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_s_add, MyFrame::AddStationLocation)
 	EVT_MENU(tm_s_edit, MyFrame::EditStationLocation)
@@ -616,7 +576,9 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_f_import, MyFrame::ImportQSODataFile)
 #endif
 	EVT_MENU(tm_f_import_compress, MyFrame::ImportQSODataFile)
+	EVT_BUTTON(tc_Save, MyFrame::ImportQSODataFile)
 	EVT_MENU(tm_f_upload, MyFrame::UploadQSODataFile)
+	EVT_BUTTON(tc_Upload, MyFrame::UploadQSODataFile)
 #ifdef ALLOW_UNCOMPRESSED
 	EVT_MENU(tm_f_compress, MyFrame::OnFileCompress)
 	EVT_MENU(tm_f_uncompress, MyFrame::OnFileCompress)
@@ -632,6 +594,22 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_h_update, MyFrame::CheckForUpdates)
 
 	EVT_CLOSE(MyFrame::OnExit)
+
+	EVT_MENU(tc_Quit, MyFrame::OnQuit)
+	EVT_MENU(tc_CRQWizard, MyFrame::CRQWizard)
+	EVT_MENU(tc_Load, MyFrame::OnLoadCertificateFile)
+	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
+	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
+	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
+	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
+//	EVT_MENU(tc_c_Import, MyFrame::OnCertImport)
+//	EVT_MENU(tc_c_Sign, MyFrame::OnSign)
+	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
+	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
+	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
+	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
+	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
+	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
 
 END_EVENT_TABLE()
 
@@ -649,6 +627,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
 
 	DocPaths docpaths(wxT("tqslapp"));
+	wxBitmap savebm(save_xpm);
+	wxBitmap uploadbm(upload_xpm);
+
 	// File menu
 	wxMenu *file_menu = new wxMenu;
 	file_menu->Append(tm_f_upload, wxT("Sign and &upload ADIF or Cabrillo File..."));
@@ -664,17 +645,22 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	file_menu->Append(tm_f_compress, wxT("Co&mpress..."));
 	file_menu->Append(tm_f_uncompress, wxT("&Uncompress..."));
 #endif
+	file_menu->AppendSeparator();
+	file_menu->Append(tc_CRQWizard, wxT("&New Certificate Request..."));
+	file_menu->AppendSeparator();
+	file_menu->Append(tc_Load, wxT("&Load Certificate File"));
 #ifndef __WXMAC__	// On Mac, Preferences not on File menu
+	file_menu->AppendSeparator();
+#endif
+	file_menu->Append(tc_Preferences, wxT("&Preferences..."));
+#ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
 #endif
 	file_menu->Append(tm_f_saveconfig, wxT("&Backup TQSL Configuration..."));
 	file_menu->Append(tm_f_loadconfig, wxT("&Restore TQSL Configuration..."));
-	file_menu->AppendSeparator();
-	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
-#ifndef __WXMAC__	// On Mac, Exit not on File menu
-	file_menu->AppendSeparator();
-#endif
-	file_menu->Append(tm_f_exit, wxT("E&xit"));
+	file_menu->Append(tc_Quit, wxT("E&xit\tAlt-X"));
+
+	cert_menu = makeCertificateMenu(false);
 
 	// Station menu
 	wxMenu *stn_menu = new wxMenu;
@@ -704,17 +690,68 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
 	menu_bar->Append(stn_menu, wxT("&Station"));
+	menu_bar->Append(cert_menu, wxT("&Certificate"));
 	menu_bar->Append(help_menu, wxT("&Help"));
 
 	SetMenuBar(menu_bar);
 
-	logwin = new wxTextCtrl(this, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
-		wxTE_MULTILINE|wxTE_READONLY);
+	wxPanel* topPanel = new wxPanel(this);
+	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
+	topPanel->SetSizer(topSizer);
 
+	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_FIXEDWIDTH, wxT("Log Operations"));
+
+	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
+
+	topSizer->Add(new wxStaticText(topPanel, -1, wxT("Status Log")), 0, wxEXPAND | wxALL, 1);
+
+	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
+		wxTE_MULTILINE|wxTE_READONLY);
+	topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
+
+	wxPanel* buttons = new wxPanel(notebook, -1);
+	buttons->SetBackgroundColour(wxColour(255, 255, 255));
+
+	wxBoxSizer* bsizer = new wxBoxSizer(wxVERTICAL);
+	buttons->SetSizer(bsizer);
+
+	wxPanel* b1Panel = new wxPanel(buttons);
+	b1Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* b1sizer = new wxBoxSizer(wxHORIZONTAL);
+	b1Panel->SetSizer(b1sizer);
+	
+	b1sizer->Add(new wxBitmapButton(b1Panel, tc_Upload, uploadbm, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, wxT("Sign and Upload")), 0, wxALL, 1);
+	b1sizer->Add(new wxStaticText(b1Panel, -1, wxT("\nSign a log and upload it automatically to LoTW")), 1, wxALL, 1);
+	bsizer->Add(b1Panel, 1, wxALL, 1);
+
+	wxPanel* b2Panel = new wxPanel(buttons);
+	wxBoxSizer* b2sizer = new wxBoxSizer(wxHORIZONTAL);
+	b2Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	b2Panel->SetSizer(b2sizer);
+	b2sizer->Add(new wxBitmapButton(b2Panel, tc_Save, savebm, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, wxT("Sign and Save")), 0, wxALL, 1);
+	b2sizer->Add(new wxStaticText(b2Panel, -1, wxT("\nSign a log and save it for uploading later")), 1, wxALL, 1);
+	bsizer->Add(b2Panel, 1, wxALL, 1);
+
+	notebook->AddPage(buttons, wxT("Log Operations"));
+//	notebook->InvalidateBestSize();
+//	logwin->FitInside();
+
+	cert_tree = new CertTree(notebook, tc_CertTree, wxDefaultPosition,
+		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+
+	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	notebook->AddPage(cert_tree, wxT("Certificates"));
+
+	loc_tree = new LocTree(notebook, tc_LocTree, wxDefaultPosition,
+		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+
+	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
+	loc_tree->Build();
+	notebook->AddPage(loc_tree, wxT("Station Locations"));
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
-
 	
 	LogList *log = new LogList(this);
 	wxLog::SetActiveTarget(log);
@@ -1134,7 +1171,7 @@ restart:
 				int rval;
    				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
 				do {
-	   				if ((rval = tqsl_beginSigning(cert, (char *)password, getPassword, cert)) == 0)
+	   				if ((rval = tqsl_beginSigning(cert, (char *)password, getCertPassword, cert)) == 0)
 						break;
 					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 						wxLogMessage(wxT("Password error"));
@@ -2176,6 +2213,7 @@ MyFrame::OnFileCompress(wxCommandEvent& event) {
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	Preferences dial(this, help);
 	dial.ShowModal();
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 }
 
 class TQSLConfig {
@@ -2209,7 +2247,7 @@ private:
 };
 
 // Save the user's configuration settings - appname is the
-// application name (tqslapp/tqslcert)
+// application name (tqslapp)
 
 void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 	config = new wxConfig(appname);
@@ -2301,7 +2339,7 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 			int rval;
 			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
 			do {
-   				if ((rval = tqsl_beginSigning(certlist[i], password, getPassword, certlist[i])) == 0)
+   				if ((rval = tqsl_beginSigning(certlist[i], password, getCertPassword, certlist[i])) == 0)
 					break;
 				if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 					wxLogMessage(wxT("Password error"));
@@ -2346,9 +2384,6 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		conf->SaveSettings(out, wxT("tqslapp"));
 		gzprintf(out, "</TQSLSettings>\n");
 
-		gzprintf(out, "<TQSLCertSettings>\n");
-		conf->SaveSettings(out, wxT("tqslcert"));
-		gzprintf(out, "</TQSLCertSettings>\n");
 		wxLogMessage(wxT("Saving QSOs"));
 	
 		tQSL_Converter conv = 0;
@@ -2403,8 +2438,6 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 	} else if (strcmp(name, "TQSLSettings") == 0) {
 		wxLogMessage(wxT("Restoring Preferences"));
 		loader->config = new wxConfig(wxT("tqslapp"));
-	} else if (strcmp(name, "TQSLCertSettings") == 0) {
-		loader->config = new wxConfig(wxT("tqslcert"));
 	} else if (strcmp(name, "Setting") == 0) {
 		wxString sname;
 		wxString sgroup;
@@ -2482,8 +2515,7 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 		if (tqsl_mergeStationLocations(loader->locstring.mb_str()) != 0) {
 			wxLogError(wxT("\tError importing locations: %hs"), tqsl_getErrorString());
 		}
-	} else if (strcmp(name, "TQSLSettings") == 0 || 
-		   strcmp(name, "TQSLCertSettings") == 0) {
+	} else if (strcmp(name, "TQSLSettings") == 0) {
 		loader->config->Flush(false);
 	} else if (strcmp(name, "DupeDb") == 0) {
 		check_tqsl_error(tqsl_converterCommit(loader->conv));
@@ -2598,6 +2630,8 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 
 		TQSLConfig* loader = new TQSLConfig();
 		loader->RestoreConfig(in);
+		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+		loc_tree->Build();
 		gzclose(in);
 	}
 	catch (TQSLException& x) {
@@ -2616,12 +2650,6 @@ QSLApp::QSLApp() : wxApp() {
 	wxConfigBase::Set(new wxConfig(wxT("tqslapp")));
 }
 
-QSLApp::~QSLApp() {
-	wxConfigBase *c = wxConfigBase::Set(0);
-	if (c)
-		delete c;
-}
-
 /*
 wxLog *
 QSLApp::CreateLogTarget() {
@@ -2635,7 +2663,9 @@ cerr << "called" << endl;
 
 MyFrame *
 QSLApp::GUIinit(bool checkUpdates) {
-	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 550, 400, checkUpdates);
+	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 640, 600, checkUpdates);
+	if (checkUpdates)
+		frame->FirstTime();
 	frame->Show(true);
 	SetTopWindow(frame);
 
@@ -2669,12 +2699,15 @@ QSLApp::OnInit() {
 	char *password = NULL;
 	wxString infile(wxT(""));
 	wxString outfile(wxT(""));
+	wxString importfile(wxT(""));
+	wxString diagfile(wxT(""));
 
 	wxCmdLineParser parser;
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
 		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
+		{ wxCMD_LINE_OPTION, wxT("i"), wxT("import"),	wxT("Import a certificate file (.p12 or .tq6)") },
 		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
 		{ wxCMD_LINE_OPTION, wxT("o"), wxT("output"),	wxT("Output file name (defaults to input name minus extension plus .tq8") },
@@ -2682,6 +2715,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_SWITCH, wxT("x"), wxT("batch"),	wxT("Exit after processing log (otherwise start normally)") },
 		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
+		{ wxCMD_LINE_OPTION, wxT("t"), wxT("diagnose"),	wxT("File name for diagnostic tracking log") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
 		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
@@ -2705,7 +2739,7 @@ QSLApp::OnInit() {
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
 		quiet = true;
-		wxLog::SetActiveTarget(new wxLogStderr(NULL));
+		wxLog::SetActiveTarget(new LogStderr());
 	}
 
 	// print version and exit
@@ -2713,6 +2747,16 @@ QSLApp::OnInit() {
 		wxMessageOutput::Set(new wxMessageOutputStderr);
 		wxMessageOutput::Get()->Printf(wxT("TQSL Version " VERSION " " BUILD "\n"));
 		return false;
+	}
+
+	if (parser.Found(wxT("t"), &diagfile)) {
+		diagFile = fopen(diagfile.mb_str(), "wb");
+		if (!diagFile) {
+			cerr << "Error opening diagnostic log " << diagfile.mb_str() << ": " << strerror(errno) << endl;
+		} else {
+			wxString about = getAbout();
+			fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
+		}
 	}
 
 	// check for logical command switches
@@ -2730,9 +2774,16 @@ QSLApp::OnInit() {
 	}
 
 	if (quiet) {
-		wxLog::SetActiveTarget(new wxLogStderr(NULL));
+		wxLog::SetActiveTarget(new LogStderr());
 	} else {
 		frame = GUIinit(true);
+	}
+	if (parser.Found(wxT("i"), &importfile)) {
+		notifyData nd;
+		if (tqsl_importTQSLFile(importfile.mb_str(), notifyImport, &nd))
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+		else
+			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
 	}
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
@@ -2869,5 +2920,626 @@ QSLApp::OnInit() {
 	if (quiet)
 		exitNow(TQSL_EXIT_SUCCESS, quiet);
 	return true;
+}
+
+
+void MyFrame::FirstTime(void) {
+	if (wxConfig::Get()->Read(wxT("HasRun")) == wxT("")) {
+		wxConfig::Get()->Write(wxT("HasRun"), wxT("yes"));
+		DisplayHelp();
+		wxMessageBox(wxT("Please review the introductory documentation before using this program."),
+			wxT("Notice"), wxOK, this);
+	}
+	int ncerts = cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	if (ncerts == 0 && wxMessageBox(wxT("You have no certificate with which to sign log submissions.\n")
+		wxT("Would you like to request a certificate now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
+		wxCommandEvent e;
+		CRQWizard(e);
+	}
+	wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
+	if (pend != wxT("")) {
+		bool found = false;
+		tQSL_Cert *certs;
+		int ncerts = 0;
+		if (!tqsl_selectCertificates(&certs, &ncerts, pend.mb_str(), 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS)) {
+			for (int i = 0; i < ncerts; i++) {
+				int keyonly;
+				if (!tqsl_getCertificateKeyOnly(certs[i], &keyonly)) {
+					if (!found && keyonly)
+						found = true;
+				}
+				tqsl_freeCertificate(certs[i]);
+			}
+		}
+
+		if (!found) {
+			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+		} else {
+			if (wxMessageBox(wxT("Are you ready to load your new certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
+				wxCommandEvent e;
+				OnLoadCertificateFile(e);
+			}
+		}
+	}
+
+	if (ncerts > 0) {
+		TQ_WXCOOKIE cookie;
+		wxTreeItemId it = cert_tree->GetFirstChild(cert_tree->GetRootItem(), cookie);
+		while (it.IsOk()) {
+			if (cert_tree->GetItemText(it) == wxT("Test Certificate Authority")) {
+				wxMessageBox(wxT("You must delete your beta-test certificates (the ones\n")
+					wxT("listed under \"Test Certificate Authority\") to ensure proprer\n")
+					wxT("operation of the TrustedQSL software."), wxT("Warning"), wxOK, this);
+				break;
+			}
+			it = cert_tree->GetNextChild(cert_tree->GetRootItem(), cookie);
+		}
+
+	}
+// Copy tqslcert preferences to tqsl unless already done.
+	if (wxConfig::Get()->Read(wxT("PrefsMigrated")) == wxT("")) {
+		wxConfig::Get()->Write(wxT("PrefsMigrated"), wxT("yes"));
+
+		wxConfig* certconfig = new wxConfig(wxT("tqslcert"));
+
+		wxString name, gname;
+		long	context;
+		wxString svalue;
+		long	lvalue;
+		bool	bvalue;
+		double	dvalue;
+		wxArrayString groupNames;
+
+		groupNames.Add(wxT("/"));
+		bool more = certconfig->GetFirstGroup(gname, context);
+		while (more) {
+			groupNames.Add(wxT("/") + gname);
+			more = certconfig->GetNextGroup(gname, context);
+		}
+
+		for (unsigned i = 0; i < groupNames.GetCount(); i++) {
+			certconfig->SetPath(groupNames[i]);
+			wxConfig::Get()->SetPath(groupNames[i]);
+			more = certconfig->GetFirstEntry(name, context);
+			while (more) {
+				wxConfigBase::EntryType etype = certconfig->GetEntryType(name);
+				switch (etype) {
+					case wxConfigBase::Type_Unknown:
+					case wxConfigBase::Type_String:
+						certconfig->Read(name, &svalue);
+						wxConfig::Get()->Write(name, svalue);
+						break;
+					case wxConfigBase::Type_Boolean:
+						certconfig->Read(name, &bvalue);
+						wxConfig::Get()->Write(name, bvalue);
+						break;
+					case wxConfigBase::Type_Integer:
+						certconfig->Read(name, &lvalue);
+						wxConfig::Get()->Write(name, lvalue);
+						break;
+					case wxConfigBase::Type_Float:
+						certconfig->Read(name, dvalue);
+						wxConfig::Get()->Write(name, dvalue);
+						break;
+				}
+				more = certconfig->GetNextEntry(name, context);
+			}
+		}
+		delete certconfig;
+		wxConfig::Get()->SetPath(wxT("/"));
+		wxConfig::Get()->Flush();
+	}	
+	return;
+}
+
+wxMenu *
+makeCertificateMenu(bool enable, bool keyonly) {
+	wxMenu *cert_menu = new wxMenu;
+	cert_menu->Append(tc_c_Properties, wxT("&Properties"));
+	cert_menu->Enable(tc_c_Properties, enable);
+	cert_menu->Append(tc_c_Export, wxT("&Save"));
+	cert_menu->Enable(tc_c_Export, enable);
+	cert_menu->Append(tc_c_Delete, wxT("&Delete"));
+	cert_menu->Enable(tc_c_Delete, enable);
+	if (!keyonly) {
+//		cert_menu->Append(tc_c_Sign, "S&ign File");
+//		cert_menu->Enable(tc_c_Sign, enable);
+		cert_menu->Append(tc_c_Renew, wxT("&Renew Certificate"));
+		cert_menu->Enable(tc_c_Renew, enable);
+	}
+	return cert_menu;
+}
+
+wxMenu *
+makeLocationMenu(bool enable) {
+	wxMenu *loc_menu = new wxMenu;
+	loc_menu->Append(tl_c_Properties, wxT("&Properties"));
+	loc_menu->Enable(tl_c_Properties, enable);
+	loc_menu->Append(tl_c_Edit, wxT("&Edit"));
+	loc_menu->Enable(tl_c_Edit, enable);
+	loc_menu->Append(tl_c_Delete, wxT("&Delete"));
+	loc_menu->Enable(tl_c_Delete, enable);
+	return loc_menu;
+}
+
+/////////// Frame /////////////
+
+void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
+	Close(TRUE);
+}
+
+void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
+	LoadCertWiz lcw(this, help, wxT("Load Certificate File"));
+	lcw.RunWizard();
+	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+}
+
+void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	req = 0;
+	tQSL_Cert cert;
+	wxString callSign, name, address1, address2, city, state, postalCode,
+		country, emailAddress;
+	if (data != NULL && (cert = data->getCert()) != 0) {	// Should be true
+		char buf[256];
+		req = new TQSL_CERT_REQ;
+		if (!tqsl_getCertificateIssuerOrganization(cert, buf, sizeof buf))
+			strncpy(req->providerName, buf, sizeof req->providerName);
+		if (!tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf))
+			strncpy(req->providerUnit, buf, sizeof req->providerUnit);
+		if (!tqsl_getCertificateCallSign(cert, buf, sizeof buf)) {
+			callSign = wxString(buf, wxConvLocal);
+			strncpy(req->callSign, callSign.mb_str(), sizeof (req->callSign));
+		}
+		if (!tqsl_getCertificateAROName(cert, buf, sizeof buf)) {
+			name = wxString(buf, wxConvLocal);
+			strncpy(req->name, name.mb_str(), sizeof (req->name));
+		}
+		tqsl_getCertificateDXCCEntity(cert, &(req->dxccEntity));
+		tqsl_getCertificateQSONotBeforeDate(cert, &(req->qsoNotBefore));
+		tqsl_getCertificateQSONotAfterDate(cert, &(req->qsoNotAfter));
+		if (!tqsl_getCertificateEmailAddress(cert, buf, sizeof buf)) {
+			emailAddress = wxString(buf, wxConvLocal);
+			strncpy(req->emailAddress, emailAddress.mb_str(), sizeof (req->emailAddress));
+		}
+		if (!tqsl_getCertificateRequestAddress1(cert, buf, sizeof buf)) {
+			address1 = wxString(buf, wxConvLocal);
+			strncpy(req->address1, address1.mb_str(), sizeof (req->address1));
+		}
+		if (!tqsl_getCertificateRequestAddress2(cert, buf, sizeof buf)) {
+			address2 = wxString(buf, wxConvLocal);
+			strncpy(req->address2, address2.mb_str(), sizeof (req->address2));
+		}
+		if (!tqsl_getCertificateRequestCity(cert, buf, sizeof buf)) {
+			city = wxString(buf, wxConvLocal);
+			strncpy(req->city, city.mb_str(), sizeof (req->city));
+		}
+		if (!tqsl_getCertificateRequestState(cert, buf, sizeof buf)) {
+			state = wxString(buf, wxConvLocal);
+			strncpy(req->state, state.mb_str(), sizeof (req->state));
+		}
+		if (!tqsl_getCertificateRequestPostalCode(cert, buf, sizeof buf)) {
+			postalCode = wxString(buf, wxConvLocal);
+			strncpy(req->postalCode, postalCode.mb_str(), sizeof (req->postalCode));
+		}
+		if (!tqsl_getCertificateRequestCountry(cert, buf, sizeof buf)) {
+			country = wxString(buf, wxConvLocal);
+			strncpy(req->country, country.mb_str(), sizeof (req->country));
+		}
+	}
+	CRQWizard(event);
+	if (req)
+		delete req;
+	req = 0;
+}
+
+void MyFrame::CRQWizard(wxCommandEvent& event) {
+	char renew = (req != 0) ? 1 : 0;
+	tQSL_Cert cert = (renew ? ((CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection()))->getCert() : 0);
+	CRQWiz wiz(req, cert, this, help);
+/*
+	CRQ_ProviderPage *prov = new CRQ_ProviderPage(wiz, req);
+	CRQ_IntroPage *intro = new CRQ_IntroPage(wiz, req);
+	CRQ_NamePage *name = new CRQ_NamePage(wiz, req);
+	CRQ_EmailPage *email = new CRQ_EmailPage(wiz, req);
+	wxSize size = prov->GetSize();
+	if (intro->GetSize().GetWidth() > size.GetWidth())
+		size = intro->GetSize();
+	if (name->GetSize().GetWidth() > size.GetWidth())
+		size = name->GetSize();
+	if (email->GetSize().GetWidth() > size.GetWidth())
+		size = email->GetSize();
+	CRQ_PasswordPage *pw = new CRQ_PasswordPage(wiz);
+	CRQ_SignPage *sign = new CRQ_SignPage(wiz, size, &(prov->provider));
+	wxWizardPageSimple::Chain(prov, intro);
+	wxWizardPageSimple::Chain(intro, name);
+	wxWizardPageSimple::Chain(name, email);
+	wxWizardPageSimple::Chain(email, pw);
+	if (renew)
+		sign->cert = ;
+	else
+		wxWizardPageSimple::Chain(pw, sign);
+
+	wiz.SetPageSize(size);
+
+*/
+
+	if (wiz.RunWizard()) {
+		// Where to put it?
+		wxString file = wxFileSelector(wxT("Save request"), wxT(""), flattenCallSign(wiz.callsign) + wxT(".") wxT(TQSL_CRQ_FILE_EXT),
+			wxT(TQSL_CRQ_FILE_EXT),
+			wxT("tQSL Cert Request files (*.") wxT(TQSL_CRQ_FILE_EXT) wxT(")|*.") wxT(TQSL_CRQ_FILE_EXT)
+				wxT("|All files (") wxT(ALLFILESWILD) wxT(")|") wxT(ALLFILESWILD),
+			wxSAVE | wxOVERWRITE_PROMPT);
+		if (file.IsEmpty())
+			wxLogMessage(wxT("Request cancelled"));
+		else {
+			TQSL_CERT_REQ req;
+			strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
+			strncpy(req.providerUnit, wiz.provider.organizationalUnitName, sizeof req.providerUnit);
+			strncpy(req.callSign, wiz.callsign.mb_str(), sizeof req.callSign);
+			strncpy(req.name, wiz.name.mb_str(), sizeof req.name);
+			strncpy(req.address1, wiz.addr1.mb_str(), sizeof req.address1);
+			strncpy(req.address2, wiz.addr2.mb_str(), sizeof req.address2);
+			strncpy(req.city, wiz.city.mb_str(), sizeof req.city);
+			strncpy(req.state, wiz.state.mb_str(), sizeof req.state);
+			strncpy(req.postalCode, wiz.zip.mb_str(), sizeof req.postalCode);
+			if (wiz.country.IsEmpty())
+				strncpy(req.country, "USA", sizeof req.country);
+			else
+				strncpy(req.country, wiz.country.mb_str(), sizeof req.country);
+			strncpy(req.emailAddress, wiz.email.mb_str(), sizeof req.emailAddress);
+			strncpy(req.password, wiz.password.mb_str(), sizeof req.password);
+			req.dxccEntity = wiz.dxcc;
+			req.qsoNotBefore = wiz.qsonotbefore;
+			req.qsoNotAfter = wiz.qsonotafter;
+			req.signer = wiz.cert;
+			if (req.signer) {
+				char buf[40];
+				void *call = 0;
+				if (!tqsl_getCertificateCallSign(req.signer, buf, sizeof(buf)))
+					call = &buf;
+				while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
+					if (tQSL_Error != TQSL_PASSWORD_ERROR) {
+						wxLogError(wxT("%hs"), tqsl_getErrorString());
+						return;
+					}
+				}
+			}
+			req.renew = renew ? 1 : 0;
+			if (tqsl_createCertRequest(file.mb_str(), &req, 0, 0))
+				wxLogError(wxT("%hs"), tqsl_getErrorString());
+			else {
+				wxString msg = wxT("You may now send your new certificate request (");
+				msg += file ;
+				msg += wxT(")");
+				if (wiz.provider.emailAddress[0] != 0)
+					msg += wxString(wxT("\nto:\n   ")) + wxString(wiz.provider.emailAddress, wxConvLocal);
+				if (wiz.provider.url[0] != 0) {
+					msg += wxT("\n");
+					if (wiz.provider.emailAddress[0] != 0)
+						msg += wxT("or ");
+					msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
+				}
+				wxMessageBox(msg, wxT("TQSL"));
+				wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
+			}
+			if (req.signer)
+				tqsl_endSigning(req.signer);
+			cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+		}
+	}
+}
+
+void MyFrame::OnTreeSel(wxTreeEvent& event) {
+	wxTreeItemId id = event.GetItem();
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(id);
+	cert_menu->Enable(tc_c_Properties, (data != NULL));
+	cert_menu->Enable(tc_c_Export, (data != NULL));
+	cert_menu->Enable(tc_c_Delete, (data != NULL));
+	int keyonly = 0;
+	if (data != NULL)
+		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
+//	cert_menu->Enable(tc_c_Sign, (data != NULL) && !keyonly);
+	cert_menu->Enable(tc_c_Renew, (data != NULL) && !keyonly);
+}
+
+void MyFrame::OnCertProperties(wxCommandEvent& WXUNUSED(event)) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	if (data != NULL)
+		displayCertProperties(data, this);
+}
+
+void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+	char call[40];
+	if (tqsl_getCertificateCallSign(data->getCert(), call, sizeof call)) {
+		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		return;
+	}
+	wxString file_default = flattenCallSign(wxString(call, wxConvLocal));
+	int ko = 0;
+	tqsl_getCertificateKeyOnly(data->getCert(), &ko);
+	if (ko)
+		file_default += wxT("-key-only");
+	file_default += wxT(".p12");
+	wxString path = wxConfig::Get()->Read(wxT("CertFilePath"), wxT(""));
+	wxString filename = wxFileSelector(wxT("Enter PKCS#12 file to save to"), path,
+		file_default, wxT(".p12"), wxT("PKCS#12 files (*.p12)|*.p12|All files (*.*)|*.*"),
+		wxSAVE|wxOVERWRITE_PROMPT, this);
+	if (filename == wxT(""))
+		return;
+	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
+	GetNewPasswordDialog dial(this, wxT("PKCS#12 Password"),
+wxT("Enter the password for the .p12 file.\n\n")
+wxT("If you are using a computer system that is shared\n")
+wxT("with others, you should specify a password to\n")
+wxT("protect this certificate. However, if you are using\n")
+wxT("a computer in a private residence, no password need be specified.\n\n")
+wxT("You will have to enter the password any time you\n")
+wxT("load the file into TrustedQSL (or any other PKCS#12\n")
+wxT("compliant software)\n\n")
+wxT("Leave the password blank and click 'Ok' unless you want to\n")
+wxT("use a password.\n\n"), true, help, wxT("save.htm"));
+	if (dial.ShowModal() != wxID_OK)
+		return;	// Cancelled
+	int terr;
+	do {
+		terr = tqsl_beginSigning(data->getCert(), 0, getPassword, (void *)&call);
+		if (terr) {
+			if (tQSL_Error == TQSL_PASSWORD_ERROR)
+				continue;
+			if (tQSL_Error == TQSL_OPERATOR_ABORT)
+				return;
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+		}
+	} while (terr);
+	if (tqsl_exportPKCS12File(data->getCert(), filename.mb_str(), dial.Password().mb_str()))
+		wxLogError(wxT("Export to %s failed: %hs"), filename.c_str(), tqsl_getErrorString());
+	else
+		wxLogMessage(wxT("Certificate saved in file %s"), filename.c_str());
+	tqsl_endSigning(data->getCert());
+}
+
+void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
+	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+	if (wxMessageBox(
+wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n")
+wxT("This will permanently remove the certificate from your system.\n")
+wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
+wxT("You WILL be able to recover it from a .P12 file only if you\n")
+wxT("have created one via the Certificate menu's Save command.\n\n")
+wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		if (tqsl_deleteCertificate(data->getCert()))
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	}
+}
+
+void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
+	LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(loc_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+	if (wxMessageBox(
+wxT("This will permanently remove this location from your system.\n")
+wxT("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		if (tqsl_deleteStationLocation(data->getLocname().mb_str()))
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+		loc_tree->Build();
+	}
+}
+
+void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
+	LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(loc_tree->GetSelection());
+	if (data == NULL)	// "Never happens"
+		return;
+
+   	tQSL_Location loc;
+   	wxString selname;
+	char errbuf[512];
+
+	check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().mb_str()));
+	if (verify_cert(loc)) {		// Check if there is a certificate before editing
+		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+		if (strlen(errbuf) > 0) {
+			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+		}
+		char loccall[512];
+		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+		selname = run_station_wizard(this, loc, help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()));
+		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+	}
+	loc_tree->Build();
+}
+
+class CertPropDial : public wxDialog {
+public:
+	CertPropDial(tQSL_Cert cert, wxWindow *parent = 0);
+	void closeMe(wxCommandEvent&) { wxWindow::Close(TRUE); }
+	DECLARE_EVENT_TABLE()
+};
+
+BEGIN_EVENT_TABLE(CertPropDial, wxDialog)
+	EVT_BUTTON(tc_CertPropDialButton, CertPropDial::closeMe)
+END_EVENT_TABLE()
+
+CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
+		wxDialog(parent, -1, wxT("Certificate Properties"), wxDefaultPosition, wxSize(400, 15 * LABEL_HEIGHT))
+{
+	const char *labels[] = {
+		"Begins: ", "Expires: ", "Organization: ", "", "Serial: ", "Operator: ",
+		"Call sign: ", "DXCC Entity: ", "QSO Start Date: ", "QSO End Date: ", "Key: "
+	};
+
+	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
+
+	int y = 10;
+	for (int i = 0; i < int(sizeof labels / sizeof labels[0]); i++) {
+		wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
+		wxStaticText *st = new wxStaticText(this, -1, wxString(labels[i], wxConvLocal),
+			wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
+		line_sizer->Add(st);
+		char buf[128] = "";
+		tQSL_Date date;
+		int dxcc, keyonly;
+		DXCC DXCC;
+		long serial;
+		switch (i) {
+			case 0:
+				tqsl_getCertificateKeyOnly(cert, &keyonly);
+				if (keyonly)
+					strcpy(buf, "N/A");
+				else if (!tqsl_getCertificateNotBeforeDate(cert, &date))
+					tqsl_convertDateToText(&date, buf, sizeof buf);
+				break;
+			case 1:
+				tqsl_getCertificateKeyOnly(cert, &keyonly);
+				if (keyonly)
+					strcpy(buf, "N/A");
+				else if (!tqsl_getCertificateNotAfterDate(cert, &date))
+					tqsl_convertDateToText(&date, buf, sizeof buf);
+				break;
+			case 2:
+				tqsl_getCertificateIssuerOrganization(cert, buf, sizeof buf);
+				break;
+			case 3:
+				tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf);
+				break;
+			case 4:
+				tqsl_getCertificateKeyOnly(cert, &keyonly);
+				if (keyonly)
+					strcpy(buf, "N/A");
+				else {
+					tqsl_getCertificateSerial(cert, &serial);
+					sprintf(buf, "%ld", serial);
+				}
+				break;
+			case 5:
+				tqsl_getCertificateKeyOnly(cert, &keyonly);
+				if (keyonly)
+					strcpy(buf, "N/A");
+				else
+					tqsl_getCertificateAROName(cert, buf, sizeof buf);
+				break;
+			case 6:
+				tqsl_getCertificateCallSign(cert, buf, sizeof buf);
+				break;
+			case 7:
+				tqsl_getCertificateDXCCEntity(cert, &dxcc);
+				DXCC.getByEntity(dxcc);
+				strncpy(buf, DXCC.name(), sizeof buf);
+				break;
+			case 8:
+				if (!tqsl_getCertificateQSONotBeforeDate(cert, &date))
+					tqsl_convertDateToText(&date, buf, sizeof buf);
+				break;
+			case 9:
+				if (!tqsl_getCertificateQSONotAfterDate(cert, &date))
+					tqsl_convertDateToText(&date, buf, sizeof buf);
+				break;
+			case 10:
+//				tqsl_getCertificateKeyOnly(cert, &keyonly);
+//				if (keyonly)
+//					strcpy(buf, "N/A");
+//				else {
+					switch (tqsl_getCertificatePrivateKeyType(cert)) {
+						case TQSL_PK_TYPE_ERR:
+							wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
+							strcpy(buf, "<ERROR>");
+							break;
+						case TQSL_PK_TYPE_NONE:
+							strcpy(buf, "None");
+							break;
+						case TQSL_PK_TYPE_UNENC:
+							strcpy(buf, "Unencrypted");
+							break;
+						case TQSL_PK_TYPE_ENC:
+							strcpy(buf, "Password protected");
+							break;
+					}
+//				}
+				break;
+		}
+		line_sizer->Add(
+			new wxStaticText(this, -1, wxString(buf, wxConvLocal))
+		);
+		prop_sizer->Add(line_sizer);
+		y += LABEL_HEIGHT;
+	}
+	topsizer->Add(prop_sizer, 0, wxALL, 10);
+	topsizer->Add(
+		new wxButton(this, tc_CertPropDialButton, wxT("Close")),
+		0, wxALIGN_CENTER | wxALL, 10
+	);
+	SetAutoLayout(TRUE);
+	SetSizer(topsizer);
+	topsizer->Fit(this);
+	topsizer->SetSizeHints(this);
+	CenterOnParent();
+}
+
+void
+displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
+
+	if (item != NULL) {
+		CertPropDial dial(item->getCert(), parent);
+		dial.ShowModal();
+	}
+}
+
+int
+getPassword(char *buf, int bufsiz, void *callsign) {
+	wxString prompt(wxT("Enter the password to unlock the private key"));
+	
+	if (callsign) 
+	    prompt = prompt + wxT(" for ") + wxString((const char *)callsign, wxConvLocal);
+
+	GetPasswordDialog dial(wxGetApp().GetTopWindow(), wxT("Enter password"), prompt);
+	if (dial.ShowModal() != wxID_OK)
+		return 1;
+	strncpy(buf, dial.Password().mb_str(), bufsiz);
+	buf[bufsiz-1] = 0;
+	return 0;
+}
+
+void
+displayTQSLError(const char *pre) {
+	wxString s(pre, wxConvLocal);
+	s += wxT(":\n");
+	s += wxString(tqsl_getErrorString(), wxConvLocal);
+	wxMessageBox(s, wxT("Error"));
+}
+
+
+static wxString
+flattenCallSign(const wxString& call) {
+	wxString flat = call;
+	size_t idx;
+	while ((idx = flat.find_first_not_of(wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_"))) != wxString::npos)
+		flat[idx] = '_';
+	return flat;
+}
+
+static int
+showAllCerts(void) {
+
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	int ret = 0;
+	bool b;
+	config->Read(wxT("ShowSuperceded"), &b, false);
+	if (b) 
+		ret |= TQSL_SELECT_CERT_SUPERCEDED;
+	config->Read(wxT("ShowExpired"), &b, false);
+	if (b) 
+		ret |= TQSL_SELECT_CERT_EXPIRED;
+	return ret;
 }
 

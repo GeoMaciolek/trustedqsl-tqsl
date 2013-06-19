@@ -62,8 +62,6 @@ if(WIN32)
 set(TQSLLIB_NAME tqsllib2)
 set(srcdir ${CMAKE_CURRENT_SOURCE_DIR})
 set(TQSL_RCFILE "tqsl.rc")
-set(TQSLCERT_RCFILE "tqslcert.rc")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${TQSLCERT_RCFILE}.in" "${CMAKE_CURRENT_SOURCE_DIR}/${TQSLCERT_RCFILE}")
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${TQSL_RCFILE}.in" "${CMAKE_CURRENT_SOURCE_DIR}/${TQSL_RCFILE}")
 else()
 set(TQSLLIB_NAME tqsllib)
@@ -74,7 +72,6 @@ set(OSX_ICONFILE "tqslicons.icns")
 set(MACOSX_BUNDLE_ICON_FILE ${OSX_ICONFILE})
 SET_SOURCE_FILES_PROPERTIES(${OSX_ICONFILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 set(TQSL_RCFILE ${OSX_ICONFILE})
-set(TQSLCERT_RCFILE ${OSX_ICONFILE})
 endif()
 
 if(NOT WIN32) #rpath setup
@@ -85,26 +82,26 @@ SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
 endif()
 
 
-set(TQSLCERT_SRC tqslcert.cpp crqwiz.cpp dxcc.cpp certtree.cpp tqslcert_prefs.cpp getpassword.cpp extwizard.cpp loadcertwiz.cpp wxutil.cpp)
-set(TQSLCERT_HDR certtree.h tqslcertctrls.h util.h dxcc.h crqwiz.h getpassword.h extwizard.h tqslcert_prefs.h getpassword.h loadcertwiz.h wxutil.h tqslbuild.h)
-set(TQSLCERT_XPM cert.xpm nocert.xpm broken-cert.xpm folder.xpm key.xpm)
-
-add_executable(tqslcert WIN32 MACOSX_BUNDLE ${TQSLCERT_SRC} ${TQSLCERT_HDR} ${TQSLCERT_XPM} ${TQSLCERT_RCFILE})
-
-set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp)
-set(TQSL_HDR tqslcert.h tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h tqslvalidator.h tqslbuild.h tqslhelp.h)
-set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm)
-
+set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp
+qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp
+crqwiz.cpp certtree.cpp getpassword.cpp extwizard.cpp loadcertwiz.cpp
+wxutil.cpp loctree.cpp)
+set(TQSL_HDR tqslcert.h tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h
+tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h
+tqslvalidator.h tqslbuild.h tqslhelp.h certtree.h tqslcertctrls.h util.h
+getpassword.h extwizard.h loadcertwiz.h wxutil.h loctree.h)
+set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm cert.xpm nocert.xpm
+broken-cert.xpm folder.xpm key.xpm replaced.xpm expired.xpm home.xpm) 
 add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQSL_RCFILE})
 
-target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
+#target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
 target_link_libraries(tqsl ${TQSLLIB_NAME}
   ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
 
 if(NOT APPLE AND NOT WIN32)
 add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
 install(TARGETS tqsl DESTINATION bin)
-install(TARGETS tqslcert DESTINATION bin)
+#install(TARGETS tqslcert DESTINATION bin)
 install(DIRECTORY help DESTINATION share/TrustedQSL)
 install(FILES trustedqsl.5 DESTINATION share/man/man5)
 endif()

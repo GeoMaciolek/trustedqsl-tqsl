@@ -16,10 +16,6 @@
 #endif
 
 enum {		// Menu items
-	tc_Quit,
-	tc_CRQWizard,
-	tc_Load,
-	tc_Preferences,
 	tc_c_Properties,
 	tc_c_Sign,
 	tc_c_Renew,
@@ -28,12 +24,23 @@ enum {		// Menu items
 	tc_c_Delete,
 	tc_h_Contents,
 	tc_h_About,
+	tl_c_Properties,
+	tl_c_Edit,
+	tl_c_Delete,
 };
 
 enum {		// Window IDs
 	tc_CertTree = (wxID_HIGHEST+1),
+	tc_Quit,
+	tc_CRQWizard,
+	tc_Load,
+	tc_Preferences,
 	tc_CertPropDial,
 	tc_CertPropDialButton,
+	tc_LocTree,
+	tc_LogGrid,
+	tc_Upload,
+	tc_Save,
 	ID_CRQ_PROVIDER,
 	ID_CRQ_PROVIDER_INFO,
 	ID_CRQ_COUNTRY,
@@ -62,9 +69,9 @@ enum {		// Window IDs
 	ID_PREF_CA_CB,
 	ID_PREF_USER_CB,
 	ID_PREF_ALLCERT_CB,
-	ID_OK_BUT,
-	ID_CAN_BUT,
-	ID_HELP_BUT
+	ID_CERT_OK_BUT,
+	ID_CERT_CAN_BUT,
+	ID_CERT_HELP_BUT
 };
 
 
