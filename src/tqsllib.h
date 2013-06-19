@@ -911,6 +911,9 @@ DLLEXPORT int CALLCONVENTION tqsl_getStationLocationName(tQSL_Location loc, int 
 /** Get the call sign from the station location */
 DLLEXPORT int CALLCONVENTION tqsl_getStationLocationCallSign(tQSL_Location loc, int idx, char *buf, int bufsiz);
 
+/** Get a named field from the station location */
+DLLEXPORT int CALLCONVENTION tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf, int bufsize);
+
 /** Retrieve a saved station location.
   * Once finished wih the station location, tqsl_endStationLocationCapture()
   * should be called to release resources.

@@ -2124,6 +2124,65 @@ tqsl_getStationLocationCallSign(tQSL_Location locp, int idx, char *buf, int bufs
 	return 0;
 }
 
+DLLEXPORT int CALLCONVENTION
+tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf, int bufsize) {
+	int old_page;
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp)))
+		return 1;
+	if (name == NULL || namebuf == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (tqsl_getStationLocationCapturePage(loc, &old_page))
+		return 1;
+	string find = name;
+
+	tqsl_setStationLocationCapturePage(loc, 1);
+	do {
+		int numf;
+		if (tqsl_getNumLocationField(loc, &numf))
+			return 1;
+		for (int i = 0; i < numf; i++) {
+			TQSL_LOCATION_FIELD& field = loc->pagelist[loc->page-1].fieldlist[i];
+			if (find == field.gabbi_name) {	// Found it
+				switch (field.input_type) {
+					case TQSL_LOCATION_FIELD_DDLIST:
+					case TQSL_LOCATION_FIELD_LIST:
+						if (field.data_type == TQSL_LOCATION_FIELD_INT) {
+							char numbuf[20];
+							if (field.idx == 0 && field.items[field.idx].label == "[None]") {
+								strncpy(namebuf, "", bufsize);
+							} else {
+								sprintf(numbuf, "%d", field.items[field.idx].ivalue);
+								strncpy(namebuf, numbuf, bufsize);
+							}
+						} else if (field.idx < 0 || field.idx >= (int)field.items.size())
+							strncpy(namebuf, "", bufsize);
+						else
+							strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
+						break;
+					case TQSL_LOCATION_FIELD_TEXT:
+						if (field.flags & TQSL_LOCATION_FIELD_UPPER)
+							field.cdata = string_toupper(field.cdata);
+						strncpy(namebuf, field.cdata.c_str(), bufsize);
+						break;
+				}
+				goto done;
+			}
+		}
+		int rval;
+		if (tqsl_hasNextStationLocationCapture(loc, &rval) || !rval)
+			break;
+		if (tqsl_nextStationLocationCapture(loc))
+			return 1;
+	} while (1);
+	strncpy(namebuf, "", bufsize);		// Did not find it
+done:
+	tqsl_setStationLocationCapturePage(loc, old_page);
+	return 0;
+}
+
 static int
 tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 	int old_page;
@@ -2166,6 +2225,7 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 		if (tqsl_nextStationLocationCapture(loc))
 			return 1;
 	} while (1);
+	tqsl_setStationLocationCapturePage(loc, old_page);
 	return 0;
 }
 
