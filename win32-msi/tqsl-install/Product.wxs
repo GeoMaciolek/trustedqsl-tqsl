@@ -16,18 +16,13 @@
             <RemoveFolder Id="RemoveApplicationFolder" On="uninstall"/> <!-- this isn't necessary unless we are an install following an uninstall of an inno version -->
             <File Id="tqslExe" Name="tqsl.exe" Source="tqsl.exe" KeyPath="yes">
               <Shortcut Id="startmenuTqsl" Directory="ProgramMenuDir" Name="TQSL" WorkingDirectory="APPLICATIONFOLDER" Icon="tqsl.exe" IconIndex="0" Advertise="yes"/>
-              </File>
+            </File>
+            <ProgId Id="tq6file" Description="TrustedQSL Certificate" Icon="tqslExe" Advertise="no">
+              <Extension Id="tq6">
+                <Verb Id="import" Command="Import" TargetFile="tqslExe" Argument='"-i %1"'/>
+              </Extension>
+            </ProgId>
           </Component>
-            <ProgId Id="tq6file" Description="TrustedQSL Certificate" Icon="tqslcertExe" Advertise="no">
-              <Extension Id="tq6">
-                <Verb Id="import" Command="Import" TargetFile="tqslcertExe" Argument='"%1"'/>
-              </Extension>
-            </ProgId>
-            <ProgId Id="tq6file" Description="TrustedQSL Certificate" Icon="tqslcertExe" Advertise="no">
-              <Extension Id="tq6">
-                <Verb Id="import" Command="Import" TargetFile="tqslcertExe" Argument='"-i %1"'/>
-              </Extension>
-            </ProgId>
 
           <Component Id="tqsllib2Comp" Guid="FD0C2985-070B-4AFD-ACD2-0FCE885CCFD5">
             <File Id="tqsllib2Dll" Name="tqsllib2.dll" Source="tqsllib2.dll" KeyPath="yes"/>
@@ -35,16 +30,14 @@
           <Component Id="configXMLComp" Guid="A3CCC8F2-1958-4376-8B4C-C7783F839551">
             <File Id="configXML" Name="config.xml" Source="config.xml" KeyPath="yes"/>
           </Component>
-
           <Component Id="MachineRegKeys" Guid="1A582184-DC79-470D-B322-1D18D1391603">
             <RegistryKey Root="HKLM" Key="Software\TrustedQSL">
               <RegistryValue Name="InstallPath" Value="[APPLICATIONFOLDER]" Type="string"/>
               <RegistryValue Name="HelpDir" Value="[APPLICATIONFOLDER]help" Type="string"/>
             </RegistryKey>
-            <RegistryValue Root="HKLM" Key="Software\TrustedQSL\TQSLCert" Name="InstallPath" Value="[APPLICATIONFOLDER]" Type="string"/>
           </Component>
 
-          <Component Id="QuickStartComp" Guid="B3A4DC55-D157-4700-9282-A62330091566">
+		  <Component Id="QuickStartComp" Guid="B3A4DC55-D157-4700-9282-A62330091566">
             <File Id="QuickStart" Name="quick.txt" Source="quick" KeyPath="yes">
               <Shortcut Id="startmenuQuickStart" Directory="ProgramMenuDir" Name="Quick Start" Advertise="yes"/>
             </File>
@@ -71,14 +64,12 @@
         <Component Id="DesktopShortcut" Guid="DD9D5C92-2DE7-4B23-9917-B6E36B2B2E12">
           <Condition>INSTALLDESKTOPSHORTCUT</Condition>
           <RegistryValue Root="HKCU" Key="Software\tqslapp" Name="sc" Type="integer" Value="1" KeyPath="yes"/> <!-- this goes away on uninstall -->
-          <Shortcut Id="desktopTqslcert" Target="[APPLICATIONFOLDER]tqslcert.exe" Directory="DesktopFolder" Name="TQSLCert" WorkingDirectory="APPLICATIONFOLDER" Icon="tqslcert.exe" IconIndex="0" Advertise="no"/>
           <Shortcut Id="desktopTqsl" Target="[APPLICATIONFOLDER]tqsl.exe" Directory="DesktopFolder" Name="TQSL" WorkingDirectory="APPLICATIONFOLDER" Icon="tqsl.exe" IconIndex="0" Advertise="no"/>
         </Component>
       </Directory>
     </Directory>
     <Feature Id="Complete" Level="1" Title="TrustedQSL" Display="expand" ConfigurableDirectory="APPLICATIONFOLDER" Absent="disallow">
       <ComponentRef Id="tqslComp"/>
-      <ComponentRef Id="tqslcertComp"/>
       <ComponentRef Id="tqsllib2Comp"/>
       <ComponentRef Id="ProgramMenuDir"/>
       <ComponentGroupRef Id="HelpDir"/>
@@ -91,7 +82,6 @@
     </Feature>
 
     <Icon Id="tqsl.exe" SourceFile="key.ico"/>
-    <Icon Id="tqslcert.exe" SourceFile="key.ico"/>
     
     
     <!-- uninstall old version -->
