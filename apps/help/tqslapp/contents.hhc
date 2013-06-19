@@ -111,6 +111,11 @@
 					<param name="Local" value="pref-cab.htm">
 					 </OBJECT>
 					 
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Enabling and Disabling Diagnostic Mode">
+					<param name="Local" value="diagmode.htm">
+					 </OBJECT>
+					 
 			</UL>
 					 
 		<LI> <OBJECT type="text/sitemap">
