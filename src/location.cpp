@@ -1959,6 +1959,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 	XMLElement sfile;
 	XMLElement new_top_el;
 	XMLElement top_el;
+	std::vector<string> calls;
 
 	if (tqsl_load_station_data(top_el))
 		return 1;
@@ -1966,6 +1967,18 @@ tqsl_mergeStationLocations(const char *locdata) {
 
 	if (!new_top_el.getFirstElement(sfile))
 		sfile.setElementName("StationDataFile");
+
+	// Build  alist of valid calls
+	tQSL_Cert *certlist;
+	int ncerts;
+	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
+	calls.clear();
+	for (int i = 0; i < ncerts; i++) {
+		char callsign[40];
+		tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign));
+		calls.push_back(callsign);
+		tqsl_freeCertificate(certlist[i]);
+	}
 
 	XMLElementList& ellist = sfile.getElementList();
 	XMLElementList::iterator ep;
@@ -1976,16 +1989,20 @@ tqsl_mergeStationLocations(const char *locdata) {
 		if (rval.second) {
 			TQSL_LOCATION *oldloc;
 			TQSL_LOCATION *newloc;
-			if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
-				if (tqsl_initStationLocationCapture((tQSL_Location *)&newloc) == 0) {
-					if (tqsl_load_loc(newloc, ep, true) == 0) {	// new loads OK
-						tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
-						tqsl_saveStationLocationCapture(newloc, 0);
-						tqsl_endStationLocationCapture((tQSL_Location *)&newloc);
+			for (size_t j = 0; j < calls.size(); j++) {
+				if (calls[j] == call.getText()) {
+					if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
+						if (tqsl_initStationLocationCapture((tQSL_Location *)&newloc) == 0) {
+							if (tqsl_load_loc(newloc, ep, true) == 0) {	// new loads OK
+								tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
+								tqsl_saveStationLocationCapture(newloc, 0);
+								tqsl_endStationLocationCapture((tQSL_Location *)&newloc);
+							}
+						}
+					} else {
+						tqsl_endStationLocationCapture((tQSL_Location *)&oldloc);
 					}
 				}
-			} else {
-				tqsl_endStationLocationCapture((tQSL_Location *)&oldloc);
 			}
 		}
 	}
@@ -2201,13 +2218,13 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 			switch (field.input_type) {
 				case TQSL_LOCATION_FIELD_DDLIST:
 				case TQSL_LOCATION_FIELD_LIST:
-					if (field.data_type == TQSL_LOCATION_FIELD_INT) {
+					if (field.idx < 0 || field.idx >= (int)field.items.size()) {
+						fd.setText("");
+					} else if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 						char numbuf[20];
 						sprintf(numbuf, "%d", field.items[field.idx].ivalue);
 						fd.setText(numbuf);
-					} else if (field.idx < 0 || field.idx >= (int)field.items.size())
-						fd.setText("");
-					else
+					} else
 						fd.setText(field.items[field.idx].text);
 					break;
 				case TQSL_LOCATION_FIELD_TEXT:
