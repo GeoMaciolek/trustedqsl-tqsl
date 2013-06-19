@@ -685,7 +685,7 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	TQSL_X509_STACK *xcerts = NULL;
 	char path[256];
 	int i;
-	X509 *x;
+	X509 *x = NULL;
 	char *cp;
 	vector< map<string,string> > keylist;
 	vector< map<string,string> >::iterator it;
