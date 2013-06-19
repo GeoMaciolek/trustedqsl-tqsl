@@ -1,6 +1,27 @@
 TQSLLIB changes
 ===============
 
+2.4
+---
+Fix atoi() calls throughout to use strtol() so that strings like 012 aren't
+treated as Octal due to the leading zeroes.
+
+Default Cabrillo field to 8, not 5.
+
+Fix OpenSSL workaround needed for 1.0.0c of OpenSSL so that it only applies
+to that release, not later releases with the fix already in place.
+
+Add new tqsllib APIs:
+    Retrieve a named field from a station location
+    Merge a station location definition into the database
+    Add the ability to export station locations
+    APIs to export and import certificates Base-64 encoded
+    APIs to export and import duplicates database records
+
+Verify that the BAND and FREQ fields are consistent. Disallow freqencies
+outside of valid ranges for ham bands. This catches "10110" used (KHz)
+versus the ADIF required 10.110 (MHz).
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement

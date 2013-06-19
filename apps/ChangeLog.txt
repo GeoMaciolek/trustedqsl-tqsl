@@ -1,6 +1,43 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.15 alpha
+----------
+Major feature Additions:
+
+Allow users to back up and restore their TQSL configuration in a portable
+file.
+
+Merge tqslcert into tqsl. Update the UI to be more user friendly.
+
+Add diagnostic logging capability; currently used to store a verbose log
+from cURL.
+
+Display unique icons in the certificate tree to allow expired and superseded
+certificates can be distinguished.
+
+Other changes:
+Replace atoi() calls with strtol() to correct parsing of strings like '012'
+so they are not treated as octal.
+
+Enforce frequency entry in the ADIF editor, ensuring that frequencies are 
+entered correctly (in MHz) and within an amateur band. Reject frequencies
+that are not consistent with the BAND setting.
+
+Correct the exit code for circumstances when -a abort is used and an bad QSO
+is detected. Display the error information on that QSO before exiting.
+
+1.14.2
+------
+Fixed an error when the TrustedQSL directory had Unicode characters, don't
+prompt for updates when called silently, fail properly when the user chooses
+to not ignore signing errors
+
+1.14.1
+------
+Minor bug fixes to internet functions and the command line parser, hang fixed
+on OSX, removed unnecessary field from upload
+
 1.14
 ----
 Major feature additions:
@@ -22,12 +59,10 @@ Major feature additions:
           5=An error occurred in tqsllib (probably a bad filename)
           6=Unable to open input file
           7=Unable to open output file
-          8=No QSOs were processed because some QSOs were duplicate or out
-            of date range (no QSOs written)
-          9=Some QSOs were processed and some QSOs were ignored because they
-            were duplicates or out of date range (some QSOs written)
-         10=Command syntax error
-         11=LoTW network connection failed (no network or LoTW is unreachable)
+          8=All QSOs were duplicate or out of date range (no QSOs written)
+          9=Some QSOs were duplicate or out of date range (some QSOs written)
+          10=Command syntax error
+          11=LoTW network connection failed (no network or LoTW is unreachable)
 
    The exit status is also written to Standard Error (stderr) in an easily
    recognized format.
