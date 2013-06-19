@@ -690,7 +690,8 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	vector< map<string,string> > keylist;
 	vector< map<string,string> >::iterator it;
 	set<string> superceded_certs;
-	int len, ok;
+	int len;
+	bool superceded = false;
 	char buf[256];
 	
 	if (tqsl_init())
@@ -738,7 +739,7 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	// "supercededCertificate" extension is <issuer>;<serial>
 	cp = X509_NAME_oneline(X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert), buf, sizeof(buf));
 	if (cp == NULL)
-		ok = 0;
+		superceded = false;
 	else {
 		string sup = buf;
 		sup += ";";
@@ -747,13 +748,13 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		set<string>::iterator it;
 		for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
 			if (*it == sup)
-				ok = 0;
+				superceded = true;
 		}
 
 		if (superceded_certs.find(sup) != superceded_certs.end())
-			ok = 0;
+			superceded = true;
 	}
-	*status = (ok != 0);
+	*status = superceded;
 	return 0;
 }
 
