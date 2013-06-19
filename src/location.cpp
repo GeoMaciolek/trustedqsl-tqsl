@@ -1861,7 +1861,7 @@ tqsl_dump_station_data(XMLElement &xel) {
 }
 
 static int
-tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep) {
+tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones) {
 	bool exists;
 	loc->page = 1;
 	loc->data_errors[0] = '\0';
@@ -1913,6 +1913,8 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep) {
 			break;
 		tqsl_nextStationLocationCapture(loc);
 	}
+	if (ignoreZones)
+		return 0;
 	if (bad_cqz && bad_ituz) {
 		snprintf(loc->data_errors, sizeof(loc->data_errors),
 			"This station location is configured with invalid CQ zone %d and invalid ITU zone %d.", bad_cqz, bad_ituz);
@@ -1957,7 +1959,6 @@ tqsl_mergeStationLocations(const char *locdata) {
 	XMLElement sfile;
 	XMLElement new_top_el;
 	XMLElement top_el;
-	std::vector<string> calls;
 
 	if (tqsl_load_station_data(top_el))
 		return 1;
@@ -1966,21 +1967,8 @@ tqsl_mergeStationLocations(const char *locdata) {
 	if (!new_top_el.getFirstElement(sfile))
 		sfile.setElementName("StationDataFile");
 
-	// Build a list of valid calls
-	tQSL_Cert *certlist;
-	int ncerts;
-	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
-	calls.clear();
-	for (int i = 0; i < ncerts; i++) {
-		char callsign[40];
-		tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign));
-		calls.push_back(callsign);
-		tqsl_freeCertificate(certlist[i]);
-	}
-
 	XMLElementList& ellist = sfile.getElementList();
 	XMLElementList::iterator ep;
-	XMLElement call;
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
@@ -1988,21 +1976,16 @@ tqsl_mergeStationLocations(const char *locdata) {
 		if (rval.second) {
 			TQSL_LOCATION *oldloc;
 			TQSL_LOCATION *newloc;
-			ep->second.getFirstElement("CALL", call);
-			for (size_t j = 0; j < calls.size(); j++) {
-				if (calls[j] == call.getText()) {
-					if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
-						if (tqsl_initStationLocationCapture((tQSL_Location *)&newloc) == 0) {
-							if (tqsl_load_loc(newloc, ep) == 0) {	// new loads OK
-								tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
-								tqsl_saveStationLocationCapture(newloc, 0);
-								tqsl_endStationLocationCapture((tQSL_Location *)&newloc);
-							}
-						}
-					} else {
-						tqsl_endStationLocationCapture((tQSL_Location *)&oldloc);
+			if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
+				if (tqsl_initStationLocationCapture((tQSL_Location *)&newloc) == 0) {
+					if (tqsl_load_loc(newloc, ep, true) == 0) {	// new loads OK
+						tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
+						tqsl_saveStationLocationCapture(newloc, 0);
+						tqsl_endStationLocationCapture((tQSL_Location *)&newloc);
 					}
 				}
+			} else {
+				tqsl_endStationLocationCapture((tQSL_Location *)&oldloc);
 			}
 		}
 	}
@@ -2066,7 +2049,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		tQSL_Error = TQSL_LOCATION_NOT_FOUND;
 		return 1;
 	}
-	return tqsl_load_loc(loc, ep);
+	return tqsl_load_loc(loc, ep, false);
 
 }
 
