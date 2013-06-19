@@ -84,6 +84,7 @@
 #include "key.xpm"
 #include "save.xpm"
 #include "upload.xpm"
+#include "file_edit.xpm"
 
 using namespace std;
 
@@ -571,14 +572,15 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_s_add, MyFrame::AddStationLocation)
 	EVT_MENU(tm_s_edit, MyFrame::EditStationLocation)
 	EVT_MENU(tm_f_new, MyFrame::EnterQSOData)
+	EVT_BUTTON(tl_Edit, MyFrame::EnterQSOData)
 	EVT_MENU(tm_f_edit, MyFrame::EditQSOData)
 #ifdef ALLOW_UNCOMPRESSED
 	EVT_MENU(tm_f_import, MyFrame::ImportQSODataFile)
 #endif
 	EVT_MENU(tm_f_import_compress, MyFrame::ImportQSODataFile)
-	EVT_BUTTON(tc_Save, MyFrame::ImportQSODataFile)
+	EVT_BUTTON(tl_Save, MyFrame::ImportQSODataFile)
 	EVT_MENU(tm_f_upload, MyFrame::UploadQSODataFile)
-	EVT_BUTTON(tc_Upload, MyFrame::UploadQSODataFile)
+	EVT_BUTTON(tl_Upload, MyFrame::UploadQSODataFile)
 #ifdef ALLOW_UNCOMPRESSED
 	EVT_MENU(tm_f_compress, MyFrame::OnFileCompress)
 	EVT_MENU(tm_f_uncompress, MyFrame::OnFileCompress)
@@ -607,6 +609,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
 	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
+	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
@@ -629,6 +632,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	DocPaths docpaths(wxT("tqslapp"));
 	wxBitmap savebm(save_xpm);
 	wxBitmap uploadbm(upload_xpm);
+	wxBitmap editbm(file_edit_xpm);
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -720,7 +724,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* b1sizer = new wxBoxSizer(wxHORIZONTAL);
 	b1Panel->SetSizer(b1sizer);
 	
-	b1sizer->Add(new wxBitmapButton(b1Panel, tc_Upload, uploadbm, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, wxT("Sign and Upload")), 0, wxALL, 1);
+	b1sizer->Add(new wxBitmapButton(b1Panel, tl_Upload, uploadbm), 0, wxALL, 1);
 	b1sizer->Add(new wxStaticText(b1Panel, -1, wxT("\nSign a log and upload it automatically to LoTW")), 1, wxALL, 1);
 	bsizer->Add(b1Panel, 1, wxALL, 1);
 
@@ -728,9 +732,17 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* b2sizer = new wxBoxSizer(wxHORIZONTAL);
 	b2Panel->SetBackgroundColour(wxColour(255, 255, 255));
 	b2Panel->SetSizer(b2sizer);
-	b2sizer->Add(new wxBitmapButton(b2Panel, tc_Save, savebm, wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW, wxDefaultValidator, wxT("Sign and Save")), 0, wxALL, 1);
+	b2sizer->Add(new wxBitmapButton(b2Panel, tl_Save, savebm), 0, wxALL, 1);
 	b2sizer->Add(new wxStaticText(b2Panel, -1, wxT("\nSign a log and save it for uploading later")), 1, wxALL, 1);
 	bsizer->Add(b2Panel, 1, wxALL, 1);
+
+	wxPanel* b3Panel = new wxPanel(buttons);
+	wxBoxSizer* b3sizer = new wxBoxSizer(wxHORIZONTAL);
+	b3Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	b3Panel->SetSizer(b3sizer);
+	b3sizer->Add(new wxBitmapButton(b3Panel, tl_Edit, editbm), 0, wxALL, 1);
+	b3sizer->Add(new wxStaticText(b3Panel, -1, wxT("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
+	bsizer->Add(b3Panel, 1, wxALL, 1);
 
 	notebook->AddPage(buttons, wxT("Log Operations"));
 //	notebook->InvalidateBestSize();
@@ -856,6 +868,7 @@ AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& 
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
 		run_station_wizard(frame, loc, frame->help, expired, title);
+		frame->loc_tree->Build();
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
@@ -872,12 +885,14 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	if (tqsl_endStationLocationCapture(&loc)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
+	loc_tree->Build();
 }
 
 void
 MyFrame::EditStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	try {
 		SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+		loc_tree->Build();
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
@@ -3322,6 +3337,12 @@ wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_N
 	}
 }
 
+void MyFrame::OnLocProperties(wxCommandEvent& WXUNUSED(event)) {
+	LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(loc_tree->GetSelection());
+	if (data != NULL)
+		displayLocProperties(data, this);
+}
+
 void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(loc_tree->GetSelection());
 	if (data == NULL)	// "Never happens"
@@ -3491,6 +3512,78 @@ displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
 
 	if (item != NULL) {
 		CertPropDial dial(item->getCert(), parent);
+		dial.ShowModal();
+	}
+}
+
+
+class LocPropDial : public wxDialog {
+public:
+	LocPropDial(wxString locname, wxWindow *parent = 0);
+	void closeMe(wxCommandEvent&) { wxWindow::Close(TRUE); }
+	DECLARE_EVENT_TABLE()
+};
+
+BEGIN_EVENT_TABLE(LocPropDial, wxDialog)
+	EVT_BUTTON(tl_LocPropDialButton, LocPropDial::closeMe)
+END_EVENT_TABLE()
+
+LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
+		wxDialog(parent, -1, wxT("Location Properties"), wxDefaultPosition, wxSize(400, 15 * LABEL_HEIGHT))
+{
+	const char *fields[] = { "CALL", "Call sign: ",
+				 "DXCC", "DXCC Entity: ",
+				 "GRIDSQUARE", "Grid Square: ",
+				 "ITUZ", "ITU Zone: ",
+				 "CQZ", "CQ Zone: ",
+				 "IOTA", "IOTA Locator: ",
+				 "US_STATE", "State: ",
+				 "US_COUNTY", "County: ",
+				 "CA_PROVINCE", "Province: "
+				 "RU_OBLAST", "Oblast: ",
+				 "CN_PROVINCE", "Province: ",
+				 "AU_STATE", "State: " };
+
+	tQSL_Location loc;
+	check_tqsl_error(tqsl_getStationLocation(&loc, locname.mb_str()));
+
+	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
+
+	int y = 10;
+	char fieldbuf[512];
+	for (int i = 0; i < int(sizeof fields / sizeof fields[0]); i+=2) {
+		if (tqsl_getStationLocationField(loc, fields[i], fieldbuf, sizeof fieldbuf) == 0) {
+			if (strlen(fieldbuf) > 0) {
+				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
+				wxStaticText *st = new wxStaticText(this, -1, wxString(fields[i+1], wxConvLocal),
+					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
+				line_sizer->Add(st);
+				line_sizer->Add(
+					new wxStaticText(this, -1, wxString(fieldbuf, wxConvLocal))
+				);
+				prop_sizer->Add(line_sizer);
+				y += LABEL_HEIGHT;
+			}
+		}
+	}
+	topsizer->Add(prop_sizer, 0, wxALL, 10);
+	topsizer->Add(
+		new wxButton(this, tl_LocPropDialButton, wxT("Close")),
+				0, wxALIGN_CENTER | wxALL, 10
+	);
+	SetAutoLayout(TRUE);
+	SetSizer(topsizer);
+	topsizer->Fit(this);
+	topsizer->SetSizeHints(this);
+	CenterOnParent();
+}
+
+void
+displayLocProperties(LocTreeItemData *item, wxWindow *parent) {
+
+	if (item != NULL) {
+		LocPropDial dial(item->getLocname(), parent);
 		dial.ShowModal();
 	}
 }

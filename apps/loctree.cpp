@@ -47,8 +47,8 @@ LocTree::LocTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 	wxBitmap homebm(home_xpm);
 	wxBitmap folderbm(folder_xpm);
 	wxImageList *il = new wxImageList(16, 16, false, 2);
-	il->Add(homebm);
 	il->Add(folderbm);
+	il->Add(homebm);
 	SetImageList(il);
 }
 
@@ -107,7 +107,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 void
 LocTree::OnItemActivated(wxTreeEvent& event) {
 	wxTreeItemId id = event.GetItem();
-//	displayCertProperties((LocTreeItemData *)GetItemData(id), this);
+	displayLocProperties((LocTreeItemData *)GetItemData(id), this);
 }
 
 void

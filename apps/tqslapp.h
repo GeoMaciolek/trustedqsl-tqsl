@@ -115,6 +115,7 @@ public:
 //	void OnCertImport(wxCommandEvent& event);
 	void OnSign(wxCommandEvent& event);
 	void OnLoadCertificateFile(wxCommandEvent& event);
+	void OnLocProperties(wxCommandEvent& event);
 	void OnLocDelete(wxCommandEvent& event);
 	void OnLocEdit(wxCommandEvent& event);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
