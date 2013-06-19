@@ -3018,7 +3018,7 @@ void MyFrame::FirstTime(void) {
 						wxConfig::Get()->Write(name, lvalue);
 						break;
 					case wxConfigBase::Type_Float:
-						certconfig->Read(name, dvalue);
+						certconfig->Read(name, &dvalue);
 						wxConfig::Get()->Write(name, dvalue);
 						break;
 				}
