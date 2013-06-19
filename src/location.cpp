@@ -1982,6 +1982,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 
 	XMLElementList& ellist = sfile.getElementList();
 	XMLElementList::iterator ep;
+	XMLElement call;
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
@@ -1989,6 +1990,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 		if (rval.second) {
 			TQSL_LOCATION *oldloc;
 			TQSL_LOCATION *newloc;
+			ep->second.getFirstElement("CALL", call);
 			for (size_t j = 0; j < calls.size(); j++) {
 				if (calls[j] == call.getText()) {
 					if (tqsl_getStationLocation((tQSL_Location *)&oldloc, rval.first.c_str())) { // Location doesn't exist
