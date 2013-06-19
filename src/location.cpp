@@ -276,7 +276,7 @@ tqsl_load_xml_config() {
 	DWORD bsize = sizeof wpath;
 	int wval;
 	if ((wval = RegOpenKeyEx(HKEY_LOCAL_MACHINE,
-		"Software\\TrustedQSL\\TQSLCert", 0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
+		"Software\\TrustedQSL\\TQSL", 0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
 		wval = RegQueryValueEx(hkey, "InstallPath", 0, &dtype, (LPBYTE)wpath, &bsize);
 		RegCloseKey(hkey);
 		if (wval == ERROR_SUCCESS)
