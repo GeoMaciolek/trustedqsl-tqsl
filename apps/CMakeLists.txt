@@ -28,7 +28,7 @@ include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DI
 
 #get version from file
 
-file(READ "tqslversion.ver" TQSLVERSION)
+file(STRINGS "tqslversion.ver" TQSLVERSION)
 string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\1" TQSL_VERSION_MAJOR TQSLVERSION)
 string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\2" TQSL_VERSION_MINOR TQSLVERSION)
 
