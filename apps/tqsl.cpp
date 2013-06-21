@@ -85,6 +85,10 @@
 #include "save.xpm"
 #include "upload.xpm"
 #include "file_edit.xpm"
+#include "loc_add.xpm"
+#include "delete.xpm"
+#include "edit.xpm"
+#include "download.xpm"
 
 using namespace std;
 
@@ -570,7 +574,9 @@ void LogStderr::DoLogString(const wxChar *szString, time_t) {
 
 BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_s_add, MyFrame::AddStationLocation)
+	EVT_BUTTON(tl_AddLoc, MyFrame::AddStationLocation)
 	EVT_MENU(tm_s_edit, MyFrame::EditStationLocation)
+	EVT_BUTTON(tl_EditLoc, MyFrame::EditStationLocation)
 	EVT_MENU(tm_f_new, MyFrame::EnterQSOData)
 	EVT_BUTTON(tl_Edit, MyFrame::EnterQSOData)
 	EVT_MENU(tm_f_edit, MyFrame::EditQSOData)
@@ -603,16 +609,20 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
+	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
+	EVT_BUTTON(tc_CertDelete, MyFrame::OnCertDelete)
 //	EVT_MENU(tc_c_Import, MyFrame::OnCertImport)
 //	EVT_MENU(tc_c_Sign, MyFrame::OnSign)
 	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
+	EVT_BUTTON(tc_CertRenew, MyFrame::CRQWizardRenew)
 	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
 	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
+	EVT_TREE_SEL_CHANGED(tc_LocTree, MyFrame::OnLocTreeSel)
 
 END_EVENT_TABLE()
 
@@ -632,7 +642,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	DocPaths docpaths(wxT("tqslapp"));
 	wxBitmap savebm(save_xpm);
 	wxBitmap uploadbm(upload_xpm);
-	wxBitmap editbm(file_edit_xpm);
+	wxBitmap file_editbm(file_edit_xpm);
+	wxBitmap locaddbm(loc_add_xpm);
+	wxBitmap editbm(edit_xpm);
+	wxBitmap deletebm(delete_xpm);
+	wxBitmap downloadbm(download_xpm);
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -703,6 +717,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
 	topPanel->SetSizer(topSizer);
 
+	// Log operations
+
 	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_FIXEDWIDTH, wxT("Log Operations"));
 
 	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
@@ -740,7 +756,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* b3sizer = new wxBoxSizer(wxHORIZONTAL);
 	b3Panel->SetBackgroundColour(wxColour(255, 255, 255));
 	b3Panel->SetSizer(b3sizer);
-	b3sizer->Add(new wxBitmapButton(b3Panel, tl_Edit, editbm), 0, wxALL, 1);
+	b3sizer->Add(new wxBitmapButton(b3Panel, tl_Edit, file_editbm), 0, wxALL, 1);
 	b3sizer->Add(new wxStaticText(b3Panel, -1, wxT("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
 	bsizer->Add(b3Panel, 1, wxALL, 1);
 
@@ -748,19 +764,128 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 //	notebook->InvalidateBestSize();
 //	logwin->FitInside();
 
-	cert_tree = new CertTree(notebook, tc_CertTree, wxDefaultPosition,
+	// Location tab 
+
+	wxPanel* loctab = new wxPanel(notebook, -1);
+
+	wxBoxSizer* locsizer = new wxBoxSizer(wxHORIZONTAL);
+	loctab->SetSizer(locsizer);
+
+	loc_tree = new LocTree(loctab, tc_LocTree, wxDefaultPosition,
+		wxDefaultSize, wxTR_DEFAULT_STYLE);
+
+	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
+	loc_tree->Build();
+	locsizer->Add(loc_tree, 1, wxEXPAND);
+	locsizer->AddSpacer(4);
+	wxPanel* lbuttons = new wxPanel(loctab, -1);
+	lbuttons->SetBackgroundColour(wxColour(255, 255, 255));
+	locsizer->Add(lbuttons, 1);
+
+	wxBoxSizer* lbsizer = new wxBoxSizer(wxVERTICAL);
+	lbuttons->SetSizer(lbsizer);
+
+	wxPanel* lb1Panel = new wxPanel(lbuttons);
+	lb1Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* lb1sizer = new wxBoxSizer(wxHORIZONTAL);
+	lb1Panel->SetSizer(lb1sizer);
+	
+	loc_add_button = new wxBitmapButton(lb1Panel, tl_AddLoc, locaddbm);
+	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
+	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station Location"));
+	lb1sizer->Add(loc_add_label, 1, wxALL, 1);
+	lbsizer->Add(lb1Panel, 1, wxALL, 1);
+	int tw, th;
+	loc_add_label->GetSize(&tw, &th);
+
+	wxPanel* lb2Panel = new wxPanel(lbuttons);
+	lb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* lb2sizer = new wxBoxSizer(wxHORIZONTAL);
+	lb2Panel->SetSizer(lb2sizer);
+	
+	loc_edit_button = new wxBitmapButton(lb2Panel, tl_EditLoc, editbm);
+	loc_edit_button->Enable(false);
+	lb2sizer->Add(loc_edit_button, 0, wxALL, 1);
+	loc_edit_label = new wxStaticText(lb2Panel, -1, wxT("\nEdit a Station Location"), wxDefaultPosition, wxSize(tw, th));
+	lb2sizer->Add(loc_edit_label, 1, wxALL, 1);
+	lbsizer->Add(lb2Panel, 1, wxALL, 1);
+
+	wxPanel* lb3Panel = new wxPanel(lbuttons);
+	lb3Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* lb3sizer = new wxBoxSizer(wxHORIZONTAL);
+	lb3Panel->SetSizer(lb3sizer);
+	
+	loc_delete_button = new wxBitmapButton(lb3Panel, tl_DeleteLoc, deletebm);
+	loc_delete_button->Enable(false);
+	lb3sizer->Add(loc_delete_button, 0, wxALL, 1);
+	loc_delete_label = new wxStaticText(lb3Panel, -1, wxT("\nDelete a Station Location"), wxDefaultPosition, wxSize(tw, th));
+	lb3sizer->Add(loc_delete_label, 1, wxALL, 1);
+	lbsizer->Add(lb3Panel, 1, wxALL, 1);
+	loc_select_label = new wxStaticText(lbuttons, -1, wxT("\nSelect a Station Location to process"));
+	lbsizer->Add(loc_select_label, 1, wxALL, 1);
+	notebook->AddPage(loctab, wxT("Station Locations"));
+
+	// Certificates tab
+
+	wxPanel* certtab = new wxPanel(notebook, -1);
+
+	wxBoxSizer* certsizer = new wxBoxSizer(wxHORIZONTAL);
+	certtab->SetSizer(certsizer);
+
+	cert_tree = new CertTree(certtab, tc_CertTree, wxDefaultPosition,
 		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
-	notebook->AddPage(cert_tree, wxT("Certificates"));
+	certsizer->Add(cert_tree, 1);
+	certsizer->AddSpacer(4);
 
-	loc_tree = new LocTree(notebook, tc_LocTree, wxDefaultPosition,
-		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+	wxPanel* cbuttons = new wxPanel(certtab, -1);
+	cbuttons->SetBackgroundColour(wxColour(255, 255, 255));
+	certsizer->Add(cbuttons, 1, wxRight, 4);
 
-	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	loc_tree->Build();
-	notebook->AddPage(loc_tree, wxT("Station Locations"));
+	wxBoxSizer* cbsizer = new wxBoxSizer(wxVERTICAL);
+	cbuttons->SetSizer(cbsizer);
+
+	wxPanel* cb1Panel = new wxPanel(cbuttons);
+	cb1Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* cb1sizer = new wxBoxSizer(wxHORIZONTAL);
+	cb1Panel->SetSizer(cb1sizer);
+	
+	cert_save_button = new wxBitmapButton(cb1Panel, tc_CertSave, downloadbm);
+	cert_save_button->Enable(false);
+	cb1sizer->Add(cert_save_button, 0, wxALL, 1);
+	cert_save_label = new wxStaticText(cb1Panel, -1, wxT("\nSave a Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb1sizer->Add(cert_save_label, 1, wxALL, 1);
+	cbsizer->Add(cb1Panel, 1, wxALL, 1);
+
+	wxPanel* cb2Panel = new wxPanel(cbuttons);
+	cb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* cb2sizer = new wxBoxSizer(wxHORIZONTAL);
+	cb2Panel->SetSizer(cb2sizer);
+	
+	cert_renew_button = new wxBitmapButton(cb2Panel, tc_CertRenew, uploadbm);
+	cert_renew_button->Enable(false);
+	cb2sizer->Add(cert_renew_button, 0, wxALL, 1);
+	cert_renew_label = new wxStaticText(cb2Panel, -1, wxT("\nRenew a Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb2sizer->Add(cert_renew_label, 1, wxALL, 1);
+	cbsizer->Add(cb2Panel, 1, wxALL, 1);
+
+	wxPanel* cb3Panel = new wxPanel(cbuttons);
+	cb3Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* cb3sizer = new wxBoxSizer(wxHORIZONTAL);
+	cb3Panel->SetSizer(cb3sizer);
+	
+	cert_delete_button = new wxBitmapButton(cb3Panel, tc_CertDelete, deletebm);
+	cert_delete_button->Enable(false);
+	cb3sizer->Add(cert_delete_button, 0, wxALL, 1);
+	cert_delete_label = new wxStaticText(cb3Panel, -1, wxT("\nDelete a Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb3sizer->Add(cert_delete_label, 1, wxALL, 1);
+	cbsizer->Add(cb3Panel, 1, wxALL, 1);
+	cert_select_label = new wxStaticText(cbuttons, -1, wxT("\nSelect a Certificate to process"));
+	cbsizer->Add(cert_select_label, 1, wxALL, 1);
+
+	notebook->AddPage(certtab, wxT("Certificates"));
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
@@ -889,7 +1014,27 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void
-MyFrame::EditStationLocation(wxCommandEvent& WXUNUSED(event)) {
+MyFrame::EditStationLocation(wxCommandEvent& event) {
+	if (event.GetId() == tl_EditLoc) {
+		LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(loc_tree->GetSelection());
+		tQSL_Location loc;
+		wxString selname;
+		char errbuf[512];
+
+		if (data == NULL) return;
+
+		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().mb_str()));
+		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+		if (strlen(errbuf) > 0) {
+			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+		}
+		char loccall[512];
+		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+		selname = run_station_wizard(this, loc, help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()), data->getLocname());
+		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+		loc_tree->Build();
+		return;
+	}
 	try {
 		SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
 		loc_tree->Build();
@@ -1981,7 +2126,7 @@ void
 MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 	try {
-		bool compressed = (event.GetId() == tm_f_import_compress);
+		bool compressed = (event.GetId() == tm_f_import_compress || event.GetId() == tl_Save);
 		
 		wxConfig *config = (wxConfig *)wxConfig::Get();
    		// Get input file
@@ -2678,7 +2823,7 @@ cerr << "called" << endl;
 
 MyFrame *
 QSLApp::GUIinit(bool checkUpdates) {
-	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 640, 600, checkUpdates);
+	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 800, 600, checkUpdates);
 	if (checkUpdates)
 		frame->FirstTime();
 	frame->Show(true);
@@ -3249,14 +3394,46 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 void MyFrame::OnTreeSel(wxTreeEvent& event) {
 	wxTreeItemId id = event.GetItem();
 	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(id);
-	cert_menu->Enable(tc_c_Properties, (data != NULL));
-	cert_menu->Enable(tc_c_Export, (data != NULL));
-	cert_menu->Enable(tc_c_Delete, (data != NULL));
-	int keyonly = 0;
-	if (data != NULL)
+	if (data != NULL) {
+		int keyonly = 0;
+		int expired = 0;
+		int superseded = 0;
+		char call[40];
+		tqsl_getCertificateCallSign(data->getCert(), call, sizeof call);
+		wxString callSign(call, wxConvLocal);
 		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
-//	cert_menu->Enable(tc_c_Sign, (data != NULL) && !keyonly);
-	cert_menu->Enable(tc_c_Renew, (data != NULL) && !keyonly);
+		tqsl_isCertificateExpired(data->getCert(), &expired);
+		tqsl_isCertificateSuperceded(data->getCert(), &superseded);
+
+		cert_select_label->SetLabel(wxT(""));
+		cert_menu->Enable(tc_c_Properties, true);
+		cert_menu->Enable(tc_c_Export, true);
+		cert_menu->Enable(tc_c_Delete, true);
+		cert_save_button->Enable(true);
+		cert_delete_button->Enable(true);
+
+		int w, h;
+		loc_add_label->GetSize(&w, &h);
+		cert_save_label->SetLabel(wxT("Save the certificate for ") + callSign);
+		cert_save_label->Wrap(w - 10);
+		cert_delete_label->SetLabel(wxT("Delete the certificate for ") + callSign);
+		cert_delete_label->Wrap(w - 10);
+		if (!(keyonly || expired || superseded)) {
+			cert_renew_label->SetLabel(wxT("Renew the certificate for ") + callSign);
+			cert_renew_label->Wrap(w - 10);
+		} else {
+			cert_renew_label->SetLabel(wxT("\nRenew  a Certificate"));
+		}
+		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
+		cert_renew_button->Enable(!(keyonly || expired || superseded));
+	} else {
+		cert_save_label->SetLabel(wxT("\nSave a Certificate"));
+		cert_renew_label->SetLabel(wxT("\nRenew  a Certificate"));
+		cert_delete_label->SetLabel(wxT("\nDelete a Certificate"));
+		cert_menu->Enable(tc_c_Renew, false);
+		cert_renew_button->Enable(false);
+		cert_select_label->SetLabel(wxT("\nSelect a Certificate to process"));
+	}
 }
 
 void MyFrame::OnCertProperties(wxCommandEvent& WXUNUSED(event)) {
@@ -3334,6 +3511,32 @@ wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_N
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	}
+}
+
+void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
+	wxTreeItemId id = event.GetItem();
+	LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(id);
+	if (data) {
+		int w, h;
+		wxString lname = data->getLocname();
+		wxString call = data->getCallSign();
+
+		loc_add_label->GetSize(&w, &h);
+
+		loc_edit_button->Enable();
+		loc_delete_button->Enable();
+		loc_edit_label->SetLabel(wxT("Edit Location ") + call + wxT(": ") + lname);
+		loc_edit_label->Wrap(w - 10);
+		loc_delete_label->SetLabel(wxT("Delete Location ") + call + wxT(": ") + lname);
+		loc_delete_label->Wrap(w - 10);
+		loc_select_label->SetLabel(wxT(""));
+	} else {
+		loc_edit_button->Disable();
+		loc_delete_button->Disable();
+		loc_edit_label->SetLabel(wxT("Edit a Station Location"));
+		loc_delete_label->SetLabel(wxT("Delete a Station Location"));
+		loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
 	}
 }
 

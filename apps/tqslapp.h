@@ -118,6 +118,7 @@ public:
 	void OnLocProperties(wxCommandEvent& event);
 	void OnLocDelete(wxCommandEvent& event);
 	void OnLocEdit(wxCommandEvent& event);
+	void OnLocTreeSel(wxTreeEvent& event);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
 	void FirstTime(void);
 
@@ -130,6 +131,20 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	wxMenu *cert_menu;
+	wxBitmapButton* loc_add_button;
+	wxStaticText* loc_add_label;
+	wxBitmapButton* loc_edit_button;
+	wxStaticText* loc_edit_label;
+	wxBitmapButton* loc_delete_button;
+	wxStaticText* loc_delete_label;
+	wxBitmapButton* cert_save_button;
+	wxStaticText* cert_save_label;
+	wxBitmapButton* cert_renew_button;
+	wxStaticText* cert_renew_label;
+	wxBitmapButton* cert_delete_button;
+	wxStaticText* cert_delete_label;
+	wxStaticText* loc_select_label;
+	wxStaticText* cert_select_label;
 	int renew;
 	TQSL_CERT_REQ *req;
 
