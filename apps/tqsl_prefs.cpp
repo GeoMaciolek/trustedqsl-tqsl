@@ -341,8 +341,8 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	wxString uplStatusRE = config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
 	wxString uplStatOK = config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK);
 	wxString uplMsgRE = config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
-	bool vca = DEFAULT_UPL_VERIFYCA;	// work around MS compiler defect.
-	bool uplVerifyCA=config->Read(wxT("VerifyCA"), vca);
+	bool uplVerifyCA;
+	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
 
 	defaults=(
 		(uplURL==DEFAULT_UPL_URL) &&
