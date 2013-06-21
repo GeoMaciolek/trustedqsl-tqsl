@@ -1651,7 +1651,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		wxString uplStatus=config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
 		wxString uplStatusSuccess=config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK).Lower();
 		wxString uplMessage=config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
-		bool uplVerifyCA=config->Read(wxT("VerifyCA"), DEFAULT_UPL_VERIFYCA);
+		bool vca = DEFAULT_UPL_VERIFYCA;	// work around MS compiler defect.
+		bool uplVerifyCA=config->Read(wxT("VerifyCA"), vca);
 		config->SetPath(wxT("/"));
 
 		// Copy the strings so they remain around
