@@ -2434,6 +2434,10 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 		config->SetPath(groupNames[i]);
 		more = config->GetFirstEntry(name, context);
 		while (more) {
+			if (name.IsEmpty()) {
+				more = config->GetNextEntry(name, context);
+				continue;
+			}
 			gzprintf(out, "<Setting name=\"%s\" group=\"%s\" ", (const char *)name.mb_str(), (const char *)groupNames[i].mb_str());
 			wxConfigBase::EntryType etype = config->GetEntryType(name);
 			switch (etype) {
@@ -2448,9 +2452,9 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 				case wxConfigBase::Type_Boolean:
 					config->Read(name, &bvalue);
 					if (bvalue)
-						gzprintf(out, "Type=\"Bool\" Value=\"true\"/>\n", (const char *)svalue.mb_str());
+						gzprintf(out, "Type=\"Bool\" Value=\"true\"/>\n");
 					else
-						gzprintf(out, "Type=\"Bool\" Value=\"false\"/>\n", (const char *)svalue.mb_str());
+						gzprintf(out, "Type=\"Bool\" Value=\"false\"/>\n");
 					break;
 				case wxConfigBase::Type_Integer:
 					config->Read(name, &lvalue);
@@ -2558,7 +2562,8 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 			char dupekey[256];
 			char dupedata[10];
 			int status = tqsl_getDuplicateRecords(conv, dupekey, dupedata, sizeof(dupekey));
-			if (status == -1) break;
+			if (status == -1)		// End of file
+				break;
 			check_tqsl_error(status);
 			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
 		}
@@ -2625,11 +2630,14 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 			svalue.Replace(wxT("&amp;"), wxT("&"), true);
 			loader->config->Write(sname, svalue);
 		} else if (stype == wxT("Bool")) {
-			loader->config->Write(sname, (svalue == wxT("true")));
+			bool bsw = (svalue == wxT("true"));
+			loader->config->Write(sname, bsw);
 		} else if (stype == wxT("Int")) {
-			loader->config->Write(sname, strtol(svalue.mb_str(), NULL, 10));
+			long lval = strtol(svalue.mb_str(), NULL, 10);
+			loader->config->Write(sname, lval);
 		} else if (stype == wxT("Float")) {
-			loader->config->Write(sname, strtod(svalue.mb_str(), NULL));
+			double dval = strtod(svalue.mb_str(), NULL);
+			loader->config->Write(sname, dval);
 		}
 	} else if (strcmp(name, "Locations") == 0) {
 		wxLogMessage(wxT("Restoring Station Locations"));
