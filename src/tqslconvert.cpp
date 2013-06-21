@@ -358,7 +358,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		found=fixedpath.find('\\');
 	}
 
-	if ((dbret = conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
+	if ((dbret = conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER|DB_RECOVER_FATAL|DB_PRIVATE, 0600))) {
 		// can't open environment
 		dbinit_cleanup=true;
 		goto dbinit_end;
