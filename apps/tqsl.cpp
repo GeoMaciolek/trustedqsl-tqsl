@@ -29,6 +29,7 @@
 #include <wx/hyperlink.h>
 #include <wx/cmdline.h>
 #include <wx/notebook.h>
+#include <wx/app.h>
 
 #include "tqslhelp.h"
 
@@ -139,6 +140,7 @@ public:
 	virtual ~QSLApp();
 	class MyFrame *GUIinit(bool checkUpdates);
 	bool OnInit();
+	virtual int OnRun();
 //	virtual wxLog *CreateLogTarget();
 };
 
@@ -620,6 +622,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
 	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
+	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
 	EVT_TREE_SEL_CHANGED(tc_LocTree, MyFrame::OnLocTreeSel)
@@ -780,7 +783,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	locsizer->AddSpacer(4);
 	wxPanel* lbuttons = new wxPanel(loctab, -1);
 	lbuttons->SetBackgroundColour(wxColour(255, 255, 255));
-	locsizer->Add(lbuttons, 1);
+	locsizer->Add(lbuttons, 1, wxEXPAND);
 
 	wxBoxSizer* lbsizer = new wxBoxSizer(wxVERTICAL);
 	lbuttons->SetSizer(lbsizer);
@@ -837,12 +840,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
-	certsizer->Add(cert_tree, 1);
+	certsizer->Add(cert_tree, 1, wxEXPAND);
 	certsizer->AddSpacer(4);
 
 	wxPanel* cbuttons = new wxPanel(certtab, -1);
 	cbuttons->SetBackgroundColour(wxColour(255, 255, 255));
-	certsizer->Add(cbuttons, 1, wxRight, 4);
+	certsizer->Add(cbuttons, 1, wxEXPAND);
 
 	wxBoxSizer* cbsizer = new wxBoxSizer(wxVERTICAL);
 	cbuttons->SetSizer(cbsizer);
@@ -2831,6 +2834,25 @@ QSLApp::GUIinit(bool checkUpdates) {
 	SetTopWindow(frame);
 
 	return frame;
+}
+
+// Override OnRun so we can have a last-chance exception handler
+// in case something doesn't handle an error.
+int
+QSLApp::OnRun() {
+
+	try {
+		if (m_exitOnFrameDelete == Later)
+			m_exitOnFrameDelete = Yes;
+		return MainLoop();
+	}
+	catch (TQSLException& x) {
+		string msg = x.what();
+		cerr << "An exception has occurred! " << msg << endl;
+		wxLogError(wxT("%hs"), x.what());
+		exitNow(TQSL_EXIT_TQSL_ERROR, false);
+	}
+	return 0;
 }
 
 bool
