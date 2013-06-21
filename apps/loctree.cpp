@@ -95,7 +95,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		loclist& list = loc_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
 		for (int i = 0; i < (int)list.size(); i++) {
-			LocTreeItemData *loc = new LocTreeItemData(list[i].first);
+			LocTreeItemData *loc = new LocTreeItemData(list[i].first, loc_it->first);
 			AppendItem(id, list[i].first, HOME_ICON, -1, loc);
 		}
 		Expand(id);

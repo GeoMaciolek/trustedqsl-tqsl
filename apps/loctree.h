@@ -31,11 +31,13 @@
 
 class LocTreeItemData : public wxTreeItemData {
 public:
-	LocTreeItemData(wxString locname) : _locname(locname) {}
+	LocTreeItemData(wxString locname, wxString callsign) : _locname(locname), _callsign(callsign)  {}
 	wxString getLocname() { return _locname; }
+	wxString getCallSign() { return _callsign; }
 
 private:
 	wxString _locname;
+	wxString _callsign;
 };
 
 class LocTree : public wxTreeCtrl {
