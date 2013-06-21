@@ -74,6 +74,10 @@ Functions</h2></td></tr>
 <tr class="separator:ga67d72f8515930830e2327feb2305fe4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga34b05b6a79229726d65ef1fdb9571c29"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga34b05b6a79229726d65ef1fdb9571c29">tqsl_getSelectedCertificate</a> (tQSL_Cert *cert, const tQSL_Cert **certlist, int idx)</td></tr>
 <tr class="separator:ga34b05b6a79229726d65ef1fdb9571c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga86dcde38feed95d994a058f1a46ef048"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga86dcde38feed95d994a058f1a46ef048">tqsl_isCertificateExpired</a> (tQSL_Cert cert, int *status)</td></tr>
+<tr class="separator:ga86dcde38feed95d994a058f1a46ef048"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga44481afa1340baa6b82b4bd42eb5fb0d"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga44481afa1340baa6b82b4bd42eb5fb0d">tqsl_isCertificateSuperceded</a> (tQSL_Cert cert, int *status)</td></tr>
+<tr class="separator:ga44481afa1340baa6b82b4bd42eb5fb0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab7ac26f999a14c965238a127be1ee731"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gab7ac26f999a14c965238a127be1ee731">tqsl_getCertificateKeyOnly</a> (tQSL_Cert cert, int *keyonly)</td></tr>
 <tr class="separator:gab7ac26f999a14c965238a127be1ee731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac861869dcc803c4148ea6e7340d282ff"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gac861869dcc803c4148ea6e7340d282ff">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
@@ -134,8 +138,12 @@ Functions</h2></td></tr>
 <tr class="separator:ga58f0184800a2fdbd0132c3190156ef96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2a74d75c84eee4544dcf4828f96d4d0d"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga2a74d75c84eee4544dcf4828f96d4d0d">tqsl_exportPKCS12File</a> (tQSL_Cert cert, const char *filename, const char *p12password)</td></tr>
 <tr class="separator:ga2a74d75c84eee4544dcf4828f96d4d0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gab81908b9238c0a54ef3be1270f1598c6"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gab81908b9238c0a54ef3be1270f1598c6">tqsl_exportPKCS12Base64</a> (tQSL_Cert cert, char *base64, int b64len, const char *p12password)</td></tr>
+<tr class="separator:gab81908b9238c0a54ef3be1270f1598c6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga0957d97f7b6b480a965075b15a9f9c6b"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga0957d97f7b6b480a965075b15a9f9c6b">tqsl_importPKCS12File</a> (const char *filename, const char *p12password, const char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
 <tr class="separator:ga0957d97f7b6b480a965075b15a9f9c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga6cc258a1c714d7018e526a678683f985"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga6cc258a1c714d7018e526a678683f985">tqsl_importPKCS12Base64</a> (const char *base64, const char *p12password, const char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
+<tr class="separator:ga6cc258a1c714d7018e526a678683f985"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2a228c9d2762830e4b4a9ffc7bf3d2b2"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga2a228c9d2762830e4b4a9ffc7bf3d2b2">tqsl_deleteCertificate</a> (tQSL_Cert cert)</td></tr>
 <tr class="separator:ga2a228c9d2762830e4b4a9ffc7bf3d2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -211,6 +219,47 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Delete a certificate and private key </p>
+
+</div>
+</div>
+<a class="anchor" id="gab81908b9238c0a54ef3be1270f1598c6"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_exportPKCS12Base64 </td>
+          <td>(</td>
+          <td class="paramtype">tQSL_Cert&#160;</td>
+          <td class="paramname"><em>cert</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>base64</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>b64len</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>p12password</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Save a key pair and certificates to a Base64 string in PKCS12 format.</p>
+<p>The tQSL_Cert must be initialized for signing (see <a class="el" href="group__Sign.html#ga8b45c2b6aec68b17582e4f741e37976d">tqsl_beginSigning()</a>) if the user certificate is being exported.</p>
+<p>The supplied <code>p12password</code> is used to encrypt the PKCS12 data. </p>
 
 </div>
 </div>
@@ -1171,6 +1220,57 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ga6cc258a1c714d7018e526a678683f985"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_importPKCS12Base64 </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>base64</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>p12password</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>password</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int(*)(char *buf, int bufsiz, void *userdata)&#160;</td>
+          <td class="paramname"><em>pwcb</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int(*)(int type, const char *message, void *userdata)&#160;</td>
+          <td class="paramname"><em>cb</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">void *&#160;</td>
+          <td class="paramname"><em>user</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Load certificates and a private key from a Base64 encoded PKCS12 string. </p>
+
+</div>
+</div>
 <a class="anchor" id="ga0957d97f7b6b480a965075b15a9f9c6b"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1259,6 +1359,60 @@ Functions</h2></td></tr>
 <p><code>TQSL_CERT_CB_CERT_TYPE(type)</code> := <code>TQSL_CERT_CB_ROOT</code> | <code>TQSL_CERT_CB_CA</code> | <code>TQSL_CERT_CB_USER</code> </p>
 <p><code>TQSL_CERT_CB_RESULT_TYPE(type)</code> := <code>TQSL_CERT_CB_PROMPT</code> | <code>TQSL_CERT_CB_WARNING</code> | <code>TQSL_CERT_CB_ERROR</code> </p>
 <p><code>TQSL_CERT_CB_RESULT_TYPE()</code> is meaningful only if <code>TQSL_CERT_CB_CALL_TYPE()</code> == <code>TQSL_CERT_CB_RESULT</code> </p>
+
+</div>
+</div>
+<a class="anchor" id="ga86dcde38feed95d994a058f1a46ef048"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_isCertificateExpired </td>
+          <td>(</td>
+          <td class="paramtype">tQSL_Cert&#160;</td>
+          <td class="paramname"><em>cert</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>status</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Find out if the "certificate" is expired </p>
+
+</div>
+</div>
+<a class="anchor" id="ga44481afa1340baa6b82b4bd42eb5fb0d"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_isCertificateSuperceded </td>
+          <td>(</td>
+          <td class="paramtype">tQSL_Cert&#160;</td>
+          <td class="paramname"><em>cert</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>status</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Find out if the "certificate" is superceded </p>
 
 </div>
 </div>

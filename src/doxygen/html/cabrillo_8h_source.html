@@ -86,40 +86,43 @@
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        TQSL_CABRILLO_VHF,</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;} TQSL_CABRILLO_FREQ_TYPE;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#define TQSL_MIN_CABRILLO_MAP_FIELD 5</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00059"></a><span class="lineno"><a class="code" href="structtqsl__cabrilloField.html">   59</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        <span class="keywordtype">char</span> name[TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX +1];</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordtype">char</span> value[TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX +1];</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;} <a class="code" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Cabrillo;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Cabrillo.html#gac4e219bef0ae92af30b7ca59858eef7a">tqsl_cabrilloGetError</a>(<a class="code" href="group__Cabrillo.html#ga3f8c9360822dd3c04a8efbd5b91ac888" title="Cabrillo status values.">TQSL_CABRILLO_ERROR_TYPE</a> err);</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga5ef8d993c66af3f433ab54f7016c964e">tqsl_beginCabrillo</a>(tQSL_Cabrillo *cabp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="comment">// Minimum field number for callsign and default field number</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment">// For VHF, default should be 7.</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="preprocessor">#define TQSL_MIN_CABRILLO_MAP_FIELD 5</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TQSL_DEF_CABRILLO_MAP_FIELD 8</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="code" href="structtqsl__cabrilloField.html">   62</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct </span>{</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordtype">char</span> name[TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX +1];</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">char</span> value[TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX +1];</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <a class="code" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a>;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_Cabrillo;</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Cabrillo.html#gac4e219bef0ae92af30b7ca59858eef7a">tqsl_cabrilloGetError</a>(<a class="code" href="group__Cabrillo.html#ga3f8c9360822dd3c04a8efbd5b91ac888" title="Cabrillo status values.">TQSL_CABRILLO_ERROR_TYPE</a> err);</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#gaa09e6bb7109798c5637c8e3a0a304c17">tqsl_getCabrilloContest</a>(tQSL_Cabrillo cab, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga5ef8d993c66af3f433ab54f7016c964e">tqsl_beginCabrillo</a>(tQSL_Cabrillo *cabp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga81a456c1873510044ee869266e7e0444">tqsl_getCabrilloFreqType</a>(tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type);</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#gaa09e6bb7109798c5637c8e3a0a304c17">tqsl_getCabrilloContest</a>(tQSL_Cabrillo cab, <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> bufsiz);</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga0146432c7aef64330579bf1265f41d46">tqsl_getCabrilloLine</a>(tQSL_Cabrillo cab, <span class="keywordtype">int</span> *lineno);</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga81a456c1873510044ee869266e7e0444">tqsl_getCabrilloFreqType</a>(tQSL_Cabrillo cab, TQSL_CABRILLO_FREQ_TYPE *type);</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga1269e63f6a875cc1f3aeec0cefa715b7">tqsl_getCabrilloRecordText</a>(tQSL_Cabrillo cab);</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga0146432c7aef64330579bf1265f41d46">tqsl_getCabrilloLine</a>(tQSL_Cabrillo cab, <span class="keywordtype">int</span> *lineno);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#gae6b4d0e267d95dc7cb6af70571e6bdc2">tqsl_getCabrilloField</a>(tQSL_Cabrillo cab, <a class="code" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a> *field, <a class="code" href="group__Cabrillo.html#ga3f8c9360822dd3c04a8efbd5b91ac888" title="Cabrillo status values.">TQSL_CABRILLO_ERROR_TYPE</a> *err);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga72c455d6ee59a1a3267020e5d9f78f9f">tqsl_endCabrillo</a>(tQSL_Cabrillo *cabp);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga1269e63f6a875cc1f3aeec0cefa715b7">tqsl_getCabrilloRecordText</a>(tQSL_Cabrillo cab);</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#gae6b4d0e267d95dc7cb6af70571e6bdc2">tqsl_getCabrilloField</a>(tQSL_Cabrillo cab, <a class="code" href="structtqsl__cabrilloField.html">tqsl_cabrilloField</a> *field, <a class="code" href="group__Cabrillo.html#ga3f8c9360822dd3c04a8efbd5b91ac888" title="Cabrillo status values.">TQSL_CABRILLO_ERROR_TYPE</a> *err);</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor">#endif // __CABRILLO_H</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Cabrillo.html#ga72c455d6ee59a1a3267020e5d9f78f9f">tqsl_endCabrillo</a>(tQSL_Cabrillo *cabp);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="preprocessor">#endif // __CABRILLO_H</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

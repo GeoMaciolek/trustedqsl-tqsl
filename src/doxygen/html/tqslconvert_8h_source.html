@@ -67,39 +67,48 @@
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga8d5b6cc95fb9218af2e0d32a82fa36be">tqsl_beginADIFConverter</a>(tQSL_Converter *conv, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename,</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        tQSL_Cert *certs, <span class="keywordtype">int</span> ncerts, tQSL_Location loc);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gaafe65049d8da2ef00d8a22517ede8e23">tqsl_beginCabrilloConverter</a>(tQSL_Converter *conv, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        tQSL_Cert *certs, <span class="keywordtype">int</span> ncerts, tQSL_Location loc);</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga4ff919df8164947b0736f0251d544059">tqsl_endConverter</a>(tQSL_Converter *conv);</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga56e76546adf63ba2ae95e85d42b3e83e">tqsl_setConverterAllowBadCall</a>(tQSL_Converter conv, <span class="keywordtype">int</span> allow);</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gab82288466b88d77848d894c8b35b40f7">tqsl_setConverterAllowDuplicates</a>(tQSL_Converter convp, <span class="keywordtype">int</span> allow);</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga411397522781e7e9babc460239b070d3">tqsl_converterRollBack</a>(tQSL_Converter convp);</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<a class="code" href="group__Convert.html#ga9ca3a24492b9a7ff4a7385743898520d">tqsl_beginConverter</a>(tQSL_Converter *convp);</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga8d5b6cc95fb9218af2e0d32a82fa36be">tqsl_beginADIFConverter</a>(tQSL_Converter *conv, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        tQSL_Cert *certs, <span class="keywordtype">int</span> ncerts, tQSL_Location loc);</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gaafe65049d8da2ef00d8a22517ede8e23">tqsl_beginCabrilloConverter</a>(tQSL_Converter *conv, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        tQSL_Cert *certs, <span class="keywordtype">int</span> ncerts, tQSL_Location loc);</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga4ff919df8164947b0736f0251d544059">tqsl_endConverter</a>(tQSL_Converter *conv);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga56e76546adf63ba2ae95e85d42b3e83e">tqsl_setConverterAllowBadCall</a>(tQSL_Converter conv, <span class="keywordtype">int</span> allow);</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gab82288466b88d77848d894c8b35b40f7">tqsl_setConverterAllowDuplicates</a>(tQSL_Converter convp, <span class="keywordtype">int</span> allow);</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga088885084c39a262ae6b75e9d27ba932">tqsl_converterCommit</a>(tQSL_Converter convp);</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gab6d25b29f9326af5f20c8e5aed163001">tqsl_setADIFConverterDateFilter</a>(tQSL_Converter conv, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Convert.html#ga6661b3c13dd5edce5f8277b0f38287cf">tqsl_getConverterGABBI</a>(tQSL_Converter conv);</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gae0ce1a009f6ff4cd3d0e1e84e3daef09">tqsl_getConverterCert</a>(tQSL_Converter conv, tQSL_Cert *certp);</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga411397522781e7e9babc460239b070d3">tqsl_converterRollBack</a>(tQSL_Converter convp);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#ga088885084c39a262ae6b75e9d27ba932">tqsl_converterCommit</a>(tQSL_Converter convp);</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<a class="code" href="group__Convert.html#ga71c8b7cb300d1a3635018ca3978dc5a0">tqsl_getDuplicateRecords</a>(tQSL_Converter convp, <span class="keywordtype">char</span> *key, <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> keylen);</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;<a class="code" href="group__Convert.html#ga51c86d1246de425a5eef5ffa2007e578">tqsl_putDuplicateRecord</a>(tQSL_Converter convp, <span class="keyword">const</span> <span class="keywordtype">char</span> *key, <span class="keyword">const</span> <span class="keywordtype">char</span> *data, <span class="keywordtype">int</span> keylen);</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gab6d25b29f9326af5f20c8e5aed163001">tqsl_setADIFConverterDateFilter</a>(tQSL_Converter conv, <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *start,</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <a class="code" href="structtQSL__Date.html">tQSL_Date</a> *end);</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gaf15ba182885a5e2e19fd421aff6d0900">tqsl_getConverterLine</a>(tQSL_Converter conv, <span class="keywordtype">int</span> *lineno);</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Convert.html#ga1ab568bcb86abf3f2c441fa7094c22b4">tqsl_getConverterRecordText</a>(tQSL_Converter conv);</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* __tqslconvert_h */</span><span class="preprocessor"></span></div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Convert.html#ga6661b3c13dd5edce5f8277b0f38287cf">tqsl_getConverterGABBI</a>(tQSL_Converter conv);</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gae0ce1a009f6ff4cd3d0e1e84e3daef09">tqsl_getConverterCert</a>(tQSL_Converter conv, tQSL_Cert *certp);</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;DLLEXPORT <span class="keywordtype">int</span> CALLCONVENTION <a class="code" href="group__Convert.html#gaf15ba182885a5e2e19fd421aff6d0900">tqsl_getConverterLine</a>(tQSL_Converter conv, <span class="keywordtype">int</span> *lineno);</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__Convert.html#ga1ab568bcb86abf3f2c441fa7094c22b4">tqsl_getConverterRecordText</a>(tQSL_Converter conv);</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;<span class="preprocessor">#endif  </span><span class="comment">/* __tqslconvert_h */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
