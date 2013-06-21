@@ -66,6 +66,7 @@ public:
 	DB_ENV* dbenv;
 	DB_TXN* txn;
 	DBC* cursor;
+	FILE* errfile;
 	char serial[512];
 	bool allow_dupes;
 };
@@ -89,6 +90,7 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	dbenv = NULL;
 	txn = NULL;
 	cursor = NULL;
+	errfile = NULL;
 	memset(&serial, 0, sizeof serial);
 	// Init the band data
 	const char *val;
@@ -262,6 +264,8 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		if (conv->adif) tqsl_endADIF(&conv->adif);
 		if (conv->cab) tqsl_endCabrillo(&conv->cab);
 		if (conv->cursor) conv->cursor->c_close(conv->cursor);
+		if (conv->dbpath) free(conv->dbpath);
+		if (conv->errfile) fclose(conv->errfile);
 	}
 	
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
@@ -348,12 +352,6 @@ static bool open_db(TQSL_CONVERTER *conv) {
 	string fixedpath=tQSL_BaseDir; //must be first because of gotos
 	size_t found=fixedpath.find('\\');
 
-	if ((dbret = db_env_create(&conv->dbenv, 0))) {
-		// can't make env handle
-		dbinit_cleanup=true;
-		goto dbinit_end;
-	}
-
 	//bdb complains about \\s in path on windows... 
 
 	while (found!=string::npos) {
@@ -362,9 +360,21 @@ static bool open_db(TQSL_CONVERTER *conv) {
 	}
 
 	conv->dbpath = strdup(fixedpath.c_str());
+		
+	// Create the database environment handle
+	if ((dbret = db_env_create(&conv->dbenv, 0))) {
+		// can't make env handle
+		dbinit_cleanup=true;
+		goto dbinit_end;
+	}
+
+	fixedpath += "/dberr.log";
+	conv->errfile = fopen(fixedpath.c_str(), "wb");
+	if (conv->errfile)
+		conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 
 	while (true) {
-		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER|DB_PRIVATE, 0600))) {
+		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
@@ -394,7 +404,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		goto dbinit_end;
 	}
 
-	if (conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600)) {
+	if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600))) {
 		// can't open the db
 		dbinit_cleanup=true;
 		goto dbinit_end;
@@ -408,13 +418,20 @@ dbinit_end:
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) {
-			conv->dbenv->close(conv->dbenv, 0);
 			if (conv->dbpath) {
 				conv->dbenv->remove(conv->dbenv,  conv->dbpath, DB_FORCE);
 				free(conv->dbpath);
+				conv->dbpath = NULL;
 			}
+			conv->dbenv->close(conv->dbenv, 0);
 		}
 		if (conv->cursor) conv->cursor->c_close(conv->cursor);
+		if (conv->errfile) fclose(conv->errfile);
+		conv->txn = NULL;
+		conv->dbenv = NULL;
+		conv->cursor = NULL;
+		conv->seendb = NULL;
+		conv->errfile = NULL;
 		return false;
 	}
 	return true;
