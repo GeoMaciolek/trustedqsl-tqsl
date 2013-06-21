@@ -62,6 +62,7 @@ public:
 	string rec_text;
 	tQSL_Date start, end;
 	DB *seendb;
+	char *dbpath;
 	DB_ENV* dbenv;
 	DB_TXN* txn;
 	DBC* cursor;
@@ -84,6 +85,7 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	memset(&start, 0, sizeof start);
 	memset(&end, 0, sizeof end);
 	seendb = NULL;
+	dbpath = NULL;
 	dbenv = NULL;
 	txn = NULL;
 	cursor = NULL;
@@ -342,6 +344,7 @@ tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Dat
 static bool open_db(TQSL_CONVERTER *conv) {
 	bool dbinit_cleanup=false;
 	int dbret;
+	bool triedRemove=false;
 	string fixedpath=tQSL_BaseDir; //must be first because of gotos
 	size_t found=fixedpath.find('\\');
 
@@ -358,10 +361,22 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		found=fixedpath.find('\\');
 	}
 
-	if ((dbret = conv->dbenv->open(conv->dbenv, fixedpath.c_str(), DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER|DB_RECOVER_FATAL|DB_PRIVATE, 0600))) {
-		// can't open environment
-		dbinit_cleanup=true;
-		goto dbinit_end;
+	conv->dbpath = strdup(fixedpath.c_str());
+
+	while (true) {
+		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER|DB_PRIVATE, 0600))) {
+			// can't open environment - try to delete it and try again.
+			if (!triedRemove) {
+				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+				triedRemove = true;
+				continue;
+			}
+
+			// can't open environment and cleanup efforts failed.
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+		break;
 	}
 
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
@@ -392,7 +407,13 @@ dbinit_end:
 		strcpy(tQSL_CustomError, db_strerror(dbret));
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
-		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		if (conv->dbenv) {
+			conv->dbenv->close(conv->dbenv, 0);
+			if (conv->dbpath) {
+				conv->dbenv->remove(conv->dbenv,  conv->dbpath, DB_FORCE);
+				free(conv->dbpath);
+			}
+		}
 		if (conv->cursor) conv->cursor->c_close(conv->cursor);
 		return false;
 	}
@@ -757,11 +778,11 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 	TQSL_CONVERTER *conv;
 
 	if (!(conv = check_conv(convp)))
-		return 0;
+		return 1;
 
 	if (!conv->seendb) {
 		if (!open_db(conv)) {	// If can't open dupes DB
-			return 0;
+			return 1;
 		}
 	}
 #ifndef DB_CURSOR_BULK
