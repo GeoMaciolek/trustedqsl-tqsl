@@ -1,5 +1,5 @@
-TQSL/TQSLCERT changes
-=====================
+TQSL changes
+============
 
 1.15 alpha
 ----------

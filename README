@@ -4,7 +4,7 @@ signing Amateur Radio QSO records.
 src: Source code and documentation for tqsllib, the TrustedQSL
      library.
 
-apps: Source code for "tqsl" and "tqslcert" applications.
+apps: Source code for "tqsl" and some sample applications.
 
 html: Various legacy documents
 
@@ -28,6 +28,7 @@ Command Line Options
 --------------------
 The following summarizes the command line options and what they do:
 Usage: tqsl [-a <str>] [-d] [-l <str>] [-s] [-o <str>] [-u] [-x]
+            [-t diaglog ] [-i <certificate file to import ]
             [-p <str>] [-q] [-v] [-h] [Input ADIF or Cabrillo log file to sign]
 
 
@@ -107,6 +108,17 @@ that will be used to sign the log file.
 
 These options allow the user to display the version number of tqsl or to
 obtain help on the command line usage.
+
+  -t filename   Open a diagnostic log file
+
+This option causes TQSL to open the file specified for logging of TQSL
+operations. This file can be used to assist with tracing the cause of problems
+encountered when using TQSL.
+
+  -i filename   Install a certificate file
+
+This option causes TQSL to open the given file, which is assumed to be a .tq6
+or .p12 certificate file, and install it into TQSL.
 
 Command Line Usage
 ------------------
