@@ -128,8 +128,11 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	}
 	// Sort each issuer's list and add items to tree
 	issmap::iterator iss_it;
+	wxTreeItemId id;
 	for (iss_it = issuers.begin(); iss_it != issuers.end(); iss_it++) {
-		wxTreeItemId id = AppendItem(rootId, iss_it->first, FOLDER_ICON);
+		if (issuers.size() > 1) {
+			id = AppendItem(rootId, iss_it->first, FOLDER_ICON);
+		}
 		certlist& list = iss_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
 		for (int i = 0; i < (int)list.size(); i++) {
@@ -151,9 +154,10 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 				icon_type = REPLACED_ICON;
 			else
 				icon_type = CERT_ICON;
-			AppendItem(id, list[i].first, icon_type, -1, cert);
+			AppendItem(issuers.size() > 1 ? id : rootId, list[i].first, icon_type, -1, cert);
 		}
-		Expand(id);
+		if (id)
+			Expand(id);
 	}
 	Expand(rootId);
 	return _ncerts;
