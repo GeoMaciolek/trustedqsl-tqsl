@@ -107,14 +107,6 @@ private:
 	bool defaults;
 };
 
-class KeyPrefs : public wxPanel {
-public:
-	KeyPrefs(wxWindow *parent);
-	virtual bool TransferDataFromWindow();
-private:
-	wxCheckBox *root_cb, *ca_cb, *user_cb;
-};
-
 class CertPrefs : public wxPanel {
 public:
 	CertPrefs(wxWindow *parent);
@@ -122,6 +114,7 @@ public:
 private:
 	wxCheckBox *showSuperceded_cb;
 	wxCheckBox *showExpired_cb;
+	wxCheckBox *root_cb, *ca_cb, *user_cb;
 };
 
 typedef std::map <wxString, wxString> ModeSet;
@@ -172,7 +165,6 @@ private:
 	ModeMap *modemap;
 	ContestMap *contestmap;
 	OnlinePrefs *onlinePrefs;
-	KeyPrefs *keyprefs;
 	CertPrefs *certprefs;
 	wxHtmlHelpController *_help;
 };

@@ -41,7 +41,6 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	notebook = new wxNotebook(this, -1);
 	topsizer->Add(notebook, 1, wxGROW);
 	fileprefs = new FilePrefs(notebook);
-	keyprefs = new KeyPrefs(notebook);
 	certprefs = new CertPrefs(notebook);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -65,7 +64,6 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	contestmap = new ContestMap(notebook);
 	notebook->AddPage(contestmap, wxT("Cabrillo Specs"));
 
-	notebook->AddPage(keyprefs, wxT("Import"));
 	notebook->AddPage(certprefs, wxT("Certificates"));
 
 	//don't let the user play with these
@@ -82,8 +80,6 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 }
 
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	if (!keyprefs->TransferDataFromWindow())
-		return;
 	if (!certprefs->TransferDataFromWindow())
 		return;
 #ifdef ENABLE_ONLINE_PREFS
@@ -664,62 +660,49 @@ bool EditContest::TransferDataFromWindow() {
 	return true;
 }
 
-KeyPrefs::KeyPrefs(wxWindow *parent) : wxPanel(parent, -1) {
+CertPrefs::CertPrefs(wxWindow *parent) : wxPanel(parent, -1) {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	bool b;
 	SetAutoLayout(TRUE);
 	wxBoxSizer *sizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, -1, wxT("Import Notification")),
+		new wxStaticBox(this, -1, wxT("Certificate Preferences")),
 		wxVERTICAL);
-	root_cb = new wxCheckBox(this, ID_PREF_ROOT_CB, wxT("Trusted root certificates"));
+	showSuperceded_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Display Renewed certificates"));
+	sizer->Add(showSuperceded_cb);
+	config->Read(wxT("ShowSuperceded"), &b, false);
+	showSuperceded_cb->SetValue(b);
+	showExpired_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Display Expired certificates"));
+	sizer->Add(showExpired_cb);
+	config->Read(wxT("ShowExpired"), &b, false);
+	showExpired_cb->SetValue(b);
+
+	wxStaticText *st = new wxStaticText(this, -1, wxT("Certificate Import"));
+	sizer->Add(st);
+	root_cb = new wxCheckBox(this, ID_PREF_ROOT_CB, wxT("Report Imports of Trusted root certificates"));
 	sizer->Add(root_cb);
 	config->Read(wxT("NotifyRoot"), &b, true);
 	root_cb->SetValue(b);
-	ca_cb = new wxCheckBox(this, ID_PREF_CA_CB, wxT("Certificate Authority certificates"));
+	ca_cb = new wxCheckBox(this, ID_PREF_CA_CB, wxT("Report Imports of Certificate Authority certificates"));
 	sizer->Add(ca_cb);
 	config->Read(wxT("NotifyCA"), &b, false);
 	ca_cb->SetValue(b);
-	user_cb = new wxCheckBox(this, ID_PREF_USER_CB, wxT("User certificates"));
+	user_cb = new wxCheckBox(this, ID_PREF_USER_CB, wxT("Report Imports of User certificates"));
 	sizer->Add(user_cb);
 	config->Read(wxT("NotifyUser"), &b, false);
 	user_cb->SetValue(b);
 	SetSizer(sizer);
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
-}
 
-bool KeyPrefs::TransferDataFromWindow() {
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write(wxT("NotifyRoot"), root_cb->GetValue());
-	config->Write(wxT("NotifyCA"), ca_cb->GetValue());
-	config->Write(wxT("NotifyUser"), user_cb->GetValue());
-	return TRUE;
-}
-
-CertPrefs::CertPrefs(wxWindow *parent) : wxPanel(parent, -1) {
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	bool b;
-	SetAutoLayout(TRUE);
-	wxBoxSizer *sizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, -1, wxT("Certificates to display")),
-		wxVERTICAL);
-	showSuperceded_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Renewed certificates"));
-	sizer->Add(showSuperceded_cb);
-	config->Read(wxT("ShowSuperceded"), &b, false);
-	showSuperceded_cb->SetValue(b);
-	showExpired_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Expired certificates"));
-	sizer->Add(showExpired_cb);
-	config->Read(wxT("ShowExpired"), &b, false);
-	showExpired_cb->SetValue(b);
-	SetSizer(sizer);
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
 }
 
 bool CertPrefs::TransferDataFromWindow() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	config->Write(wxT("ShowSuperceded"), showSuperceded_cb->GetValue());
 	config->Write(wxT("ShowExpired"), showExpired_cb->GetValue());
+	config->Write(wxT("NotifyRoot"), root_cb->GetValue());
+	config->Write(wxT("NotifyCA"), ca_cb->GetValue());
+	config->Write(wxT("NotifyUser"), user_cb->GetValue());
 	return TRUE;
 }
 
