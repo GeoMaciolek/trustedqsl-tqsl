@@ -1,5 +1,5 @@
 TQSL/tqsllib
-============
+==================
 
 TQSL is the TrustedQSL application suite and tqsllib is the 
 TrustedQSL library. These are the two major components of the
@@ -133,11 +133,11 @@ cmake  \
         $* .
 make
 
-The build will result in the directories apps/tqsl.app 
-which comprises a complete Mac OS X application. You
-can simply move that folder to your system's Applications folder
-or the location of your choice, then launch the application from
-Finder. If you want to distribute the built application:
+The build will result in the directories apps/tqsl.app and
+apps/tqslcert.app, which comprise complete Mac OS X applications. You
+can simply move those folders to your system's Applications folder
+or the location of your choice, then launch the applications from
+Finder. If you want to distribute the built applications:
 
 ./osx_createdmg.sh
 

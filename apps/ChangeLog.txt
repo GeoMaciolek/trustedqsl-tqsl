@@ -1,9 +1,11 @@
-TQSL changes
-============
+TQSL/TQSLCERT changes
+=====================
 
 1.15 alpha
 ----------
 Major feature Additions:
+
+Don't display the certificate provider list if there's only one provider.
 
 Allow users to back up and restore their TQSL configuration in a portable
 file.
