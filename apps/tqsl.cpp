@@ -542,8 +542,15 @@ private:
 void LogList::DoLogString(const wxChar *szString, time_t) {
 	wxTextCtrl *_logwin = 0;
 
-	if (diagFile) 
+	if (diagFile)  {
+#ifdef __WINDOWS__
+		fprintf(diagFile, "%hs\n", szString);
+#else
+//		const char *cstr = wxString(szString).mb_str();
+//		fprintf(diagFile, "%s\n", cstr);
 		fprintf(diagFile, "%ls\n", szString);
+#endif
+	}
 	if (wxString(szString).StartsWith(wxT("Debug:")))
 		return;
 	if (wxString(szString).StartsWith(wxT("Error: Unable to open requested HTML document:")))
@@ -551,7 +558,11 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	if (_frame != 0)
 		_logwin = _frame->logwin;
 	if (_logwin == 0) {
+#ifdef __WINDOWS__
 		cerr << szString << endl;
+#else
+		fprintf(stderr, "%ls\n", szString);
+#endif
 		return;
 	}
 	_logwin->AppendText(szString);
@@ -566,11 +577,22 @@ public:
 
 void LogStderr::DoLogString(const wxChar *szString, time_t) {
 
-	if (diagFile) 
+	if (diagFile) {
+#ifdef __WINDOWS__
+		fprintf(diagFile, "%hs\n", szString);
+#else
 		fprintf(diagFile, "%ls\n", szString);
+//		const char *cstr = wxString(szString).mb_str();
+//		fprintf(diagFile, "%s\n", cstr);
+#endif
+	}
 	if (wxString(szString).StartsWith(wxT("Debug:")))
 		return;
+#ifdef __WINDOWS__
+	cerr << szString << endl;
+#else
 	fprintf(stderr, "%ls\n", szString);
+#endif
 	return;
 }
 
