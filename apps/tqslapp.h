@@ -145,6 +145,10 @@ private:
 	wxStaticText* cert_delete_label;
 	wxStaticText* loc_select_label;
 	wxStaticText* cert_select_label;
+	wxBitmapButton* cert_prop_button;
+	wxStaticText* cert_prop_label;
+	wxBitmapButton* loc_prop_button;
+	wxStaticText* loc_prop_label;
 	int renew;
 	TQSL_CERT_REQ *req;
 

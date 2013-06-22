@@ -90,6 +90,7 @@
 #include "delete.xpm"
 #include "edit.xpm"
 #include "download.xpm"
+#include "properties.xpm"
 
 using namespace std;
 
@@ -632,6 +633,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_Load, MyFrame::OnLoadCertificateFile)
 	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
+	EVT_BUTTON(tc_CertProp, MyFrame::OnCertProperties)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
 	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
@@ -643,6 +645,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
 	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
+	EVT_BUTTON(tl_PropLoc, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
@@ -672,6 +675,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmap editbm(edit_xpm);
 	wxBitmap deletebm(delete_xpm);
 	wxBitmap downloadbm(download_xpm);
+	wxBitmap propertiesbm(properties_xpm);
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -746,13 +750,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_FIXEDWIDTH, wxT("Log Operations"));
 
-	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
+	topSizer->Add(notebook, 1, wxEXPAND | wxALL, 1);
 
 	topSizer->Add(new wxStaticText(topPanel, -1, wxT("Status Log")), 0, wxEXPAND | wxALL, 1);
 
 	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
 		wxTE_MULTILINE|wxTE_READONLY);
-	topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
+	topSizer->Add(logwin, 0, wxEXPAND | wxALL, 1);
 
 	wxPanel* buttons = new wxPanel(notebook, -1);
 	buttons->SetBackgroundColour(wxColour(255, 255, 255));
@@ -767,7 +771,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	
 	b1sizer->Add(new wxBitmapButton(b1Panel, tl_Upload, uploadbm), 0, wxALL, 1);
 	b1sizer->Add(new wxStaticText(b1Panel, -1, wxT("\nSign a log and upload it automatically to LoTW")), 1, wxALL, 1);
-	bsizer->Add(b1Panel, 1, wxALL, 1);
+	bsizer->Add(b1Panel, 0, wxALL, 1);
 
 	wxPanel* b2Panel = new wxPanel(buttons);
 	wxBoxSizer* b2sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -775,7 +779,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b2Panel->SetSizer(b2sizer);
 	b2sizer->Add(new wxBitmapButton(b2Panel, tl_Save, savebm), 0, wxALL, 1);
 	b2sizer->Add(new wxStaticText(b2Panel, -1, wxT("\nSign a log and save it for uploading later")), 1, wxALL, 1);
-	bsizer->Add(b2Panel, 1, wxALL, 1);
+	bsizer->Add(b2Panel, 0, wxALL, 1);
 
 	wxPanel* b3Panel = new wxPanel(buttons);
 	wxBoxSizer* b3sizer = new wxBoxSizer(wxHORIZONTAL);
@@ -783,9 +787,10 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b3Panel->SetSizer(b3sizer);
 	b3sizer->Add(new wxBitmapButton(b3Panel, tl_Edit, file_editbm), 0, wxALL, 1);
 	b3sizer->Add(new wxStaticText(b3Panel, -1, wxT("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
-	bsizer->Add(b3Panel, 1, wxALL, 1);
+	bsizer->Add(b3Panel, 0, wxALL, 1);
 
 	notebook->AddPage(buttons, wxT("Log Operations"));
+
 //	notebook->InvalidateBestSize();
 //	logwin->FitInside();
 
@@ -796,16 +801,28 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* locsizer = new wxBoxSizer(wxHORIZONTAL);
 	loctab->SetSizer(locsizer);
 
-	loc_tree = new LocTree(loctab, tc_LocTree, wxDefaultPosition,
+	wxPanel* locgrid = new wxPanel(loctab, -1);
+	locgrid->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* lgsizer = new wxBoxSizer(wxVERTICAL);
+	locgrid->SetSizer(lgsizer);
+
+	loc_tree = new LocTree(locgrid, tc_LocTree, wxDefaultPosition,
 		wxDefaultSize, wxTR_DEFAULT_STYLE);
 
 	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	loc_tree->Build();
-	locsizer->Add(loc_tree, 1, wxEXPAND);
+	lgsizer->Add(loc_tree, 1, wxEXPAND);
+
+	loc_select_label = new wxStaticText(locgrid, -1, wxT("\nSelect a Station Location to process"));
+	lgsizer->Add(loc_select_label, 0, wxALL, 1);
+
+	locsizer->Add(locgrid, 50, wxEXPAND);
+
 	locsizer->AddSpacer(4);
+
 	wxPanel* lbuttons = new wxPanel(loctab, -1);
 	lbuttons->SetBackgroundColour(wxColour(255, 255, 255));
-	locsizer->Add(lbuttons, 1, wxEXPAND);
+	locsizer->Add(lbuttons, 50, wxEXPAND);
 
 	wxBoxSizer* lbsizer = new wxBoxSizer(wxVERTICAL);
 	lbuttons->SetSizer(lbsizer);
@@ -846,8 +863,19 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_delete_label = new wxStaticText(lb3Panel, -1, wxT("\nDelete a Station Location"), wxDefaultPosition, wxSize(tw, th));
 	lb3sizer->Add(loc_delete_label, 1, wxALL, 1);
 	lbsizer->Add(lb3Panel, 1, wxALL, 1);
-	loc_select_label = new wxStaticText(lbuttons, -1, wxT("\nSelect a Station Location to process"));
-	lbsizer->Add(loc_select_label, 1, wxALL, 1);
+
+	wxPanel* lb4Panel = new wxPanel(lbuttons);
+	lb4Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* lb4sizer = new wxBoxSizer(wxHORIZONTAL);
+	lb4Panel->SetSizer(lb4sizer);
+	
+	loc_prop_button = new wxBitmapButton(lb4Panel, tl_PropLoc, propertiesbm);
+	loc_prop_button->Enable(false);
+	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
+	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay a Station Location"), wxDefaultPosition, wxSize(tw, th));
+	lb4sizer->Add(loc_prop_label, 1, wxALL, 1);
+	lbsizer->Add(lb4Panel, 1, wxALL, 1);
+
 	notebook->AddPage(loctab, wxT("Station Locations"));
 
 	// Certificates tab
@@ -857,17 +885,28 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* certsizer = new wxBoxSizer(wxHORIZONTAL);
 	certtab->SetSizer(certsizer);
 
-	cert_tree = new CertTree(certtab, tc_CertTree, wxDefaultPosition,
+	wxPanel* certgrid = new wxPanel(certtab, -1);
+	certgrid->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* cgsizer = new wxBoxSizer(wxVERTICAL);
+	certgrid->SetSizer(cgsizer);
+
+	cert_tree = new CertTree(certgrid, tc_CertTree, wxDefaultPosition,
 		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
-	certsizer->Add(cert_tree, 1, wxEXPAND);
+	cgsizer->Add(cert_tree, 1, wxEXPAND);
+
+	cert_select_label = new wxStaticText(certgrid, -1, wxT("\nSelect a Certificate to process"));
+	cgsizer->Add(cert_select_label, 0, wxALL, 1);
+
+	certsizer->Add(certgrid, 50, wxEXPAND);
+
 	certsizer->AddSpacer(4);
 
 	wxPanel* cbuttons = new wxPanel(certtab, -1);
 	cbuttons->SetBackgroundColour(wxColour(255, 255, 255));
-	certsizer->Add(cbuttons, 1, wxEXPAND);
+	certsizer->Add(cbuttons, 50, wxEXPAND);
 
 	wxBoxSizer* cbsizer = new wxBoxSizer(wxVERTICAL);
 	cbuttons->SetSizer(cbsizer);
@@ -907,8 +946,18 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_delete_label = new wxStaticText(cb3Panel, -1, wxT("\nDelete a Certificate"), wxDefaultPosition, wxSize(tw, th));
 	cb3sizer->Add(cert_delete_label, 1, wxALL, 1);
 	cbsizer->Add(cb3Panel, 1, wxALL, 1);
-	cert_select_label = new wxStaticText(cbuttons, -1, wxT("\nSelect a Certificate to process"));
-	cbsizer->Add(cert_select_label, 1, wxALL, 1);
+
+	wxPanel* cb4Panel = new wxPanel(cbuttons);
+	cb4Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	wxBoxSizer* cb4sizer = new wxBoxSizer(wxHORIZONTAL);
+	cb4Panel->SetSizer(cb4sizer);
+	
+	cert_prop_button = new wxBitmapButton(cb4Panel, tc_CertProp, propertiesbm);
+	cert_prop_button->Enable(false);
+	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
+	cert_prop_label = new wxStaticText(cb4Panel, -1, wxT("\nDisplay a Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb4sizer->Add(cert_prop_label, 1, wxALL, 1);
+	cbsizer->Add(cb4Panel, 1, wxALL, 1);
 
 	notebook->AddPage(certtab, wxT("Certificates"));
 
@@ -3464,6 +3513,7 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		cert_menu->Enable(tc_c_Delete, true);
 		cert_save_button->Enable(true);
 		cert_delete_button->Enable(true);
+		cert_prop_button->Enable(true);
 
 		int w, h;
 		loc_add_label->GetSize(&w, &h);
@@ -3471,6 +3521,8 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		cert_save_label->Wrap(w - 10);
 		cert_delete_label->SetLabel(wxT("Delete the certificate for ") + callSign);
 		cert_delete_label->Wrap(w - 10);
+		cert_prop_label->SetLabel(wxT("Display the certificate for ") + callSign);
+		cert_prop_label->Wrap(w - 10);
 		if (!(keyonly || expired || superseded)) {
 			cert_renew_label->SetLabel(wxT("Renew the certificate for ") + callSign);
 			cert_renew_label->Wrap(w - 10);
@@ -3483,9 +3535,13 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		cert_save_label->SetLabel(wxT("\nSave a Certificate"));
 		cert_renew_label->SetLabel(wxT("\nRenew  a Certificate"));
 		cert_delete_label->SetLabel(wxT("\nDelete a Certificate"));
+		cert_prop_label->SetLabel(wxT("\nDisplay a Certificate"));
 		cert_menu->Enable(tc_c_Renew, false);
 		cert_renew_button->Enable(false);
 		cert_select_label->SetLabel(wxT("\nSelect a Certificate to process"));
+		cert_save_button->Enable(false);
+		cert_delete_button->Enable(false);
+		cert_prop_button->Enable(false);
 	}
 }
 
@@ -3579,16 +3635,21 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 
 		loc_edit_button->Enable();
 		loc_delete_button->Enable();
+		loc_prop_button->Enable();
 		loc_edit_label->SetLabel(wxT("Edit Location ") + call + wxT(": ") + lname);
 		loc_edit_label->Wrap(w - 10);
 		loc_delete_label->SetLabel(wxT("Delete Location ") + call + wxT(": ") + lname);
 		loc_delete_label->Wrap(w - 10);
+		loc_prop_label->SetLabel(wxT("Display Location ") + call + wxT(": ") + lname);
+		loc_prop_label->Wrap(w - 10);
 		loc_select_label->SetLabel(wxT(""));
 	} else {
 		loc_edit_button->Disable();
 		loc_delete_button->Disable();
-		loc_edit_label->SetLabel(wxT("Edit a Station Location"));
-		loc_delete_label->SetLabel(wxT("Delete a Station Location"));
+		loc_prop_button->Disable();
+		loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
+		loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
+		loc_prop_label->SetLabel(wxT("\nDisplay a Station Location"));
 		loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
 	}
 }
