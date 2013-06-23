@@ -85,12 +85,19 @@
 #include "key.xpm"
 #include "save.xpm"
 #include "upload.xpm"
+#include "upload_dis.xpm"
 #include "file_edit.xpm"
+#include "file_edit_dis.xpm"
 #include "loc_add.xpm"
+#include "loc_add_dis.xpm"
 #include "delete.xpm"
+#include "delete_dis.xpm"
 #include "edit.xpm"
+#include "edit_dis.xpm"
 #include "download.xpm"
+#include "download_dis.xpm"
 #include "properties.xpm"
+#include "properties_dis.xpm"
 
 using namespace std;
 
@@ -670,12 +677,19 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	DocPaths docpaths(wxT("tqslapp"));
 	wxBitmap savebm(save_xpm);
 	wxBitmap uploadbm(upload_xpm);
+	wxBitmap upload_disbm(upload_dis_xpm);
 	wxBitmap file_editbm(file_edit_xpm);
+	wxBitmap file_edit_disbm(file_edit_dis_xpm);
 	wxBitmap locaddbm(loc_add_xpm);
+	wxBitmap locadd_disbm(loc_add_dis_xpm);
 	wxBitmap editbm(edit_xpm);
+	wxBitmap edit_disbm(edit_dis_xpm);
 	wxBitmap deletebm(delete_xpm);
+	wxBitmap delete_disbm(delete_dis_xpm);
 	wxBitmap downloadbm(download_xpm);
+	wxBitmap download_disbm(download_dis_xpm);
 	wxBitmap propertiesbm(properties_xpm);
+	wxBitmap properties_disbm(properties_dis_xpm);
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -769,7 +783,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* b1sizer = new wxBoxSizer(wxHORIZONTAL);
 	b1Panel->SetSizer(b1sizer);
 	
-	b1sizer->Add(new wxBitmapButton(b1Panel, tl_Upload, uploadbm), 0, wxALL, 1);
+	wxBitmapButton *up = new wxBitmapButton(b1Panel, tl_Upload, uploadbm);
+	up->SetBitmapDisabled(upload_disbm);
+	b1sizer->Add(up, 0, wxALL, 1);
 	b1sizer->Add(new wxStaticText(b1Panel, -1, wxT("\nSign a log and upload it automatically to LoTW")), 1, wxALL, 1);
 	bsizer->Add(b1Panel, 0, wxALL, 1);
 
@@ -785,7 +801,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* b3sizer = new wxBoxSizer(wxHORIZONTAL);
 	b3Panel->SetBackgroundColour(wxColour(255, 255, 255));
 	b3Panel->SetSizer(b3sizer);
-	b3sizer->Add(new wxBitmapButton(b3Panel, tl_Edit, file_editbm), 0, wxALL, 1);
+	wxBitmapButton *fed = new wxBitmapButton(b3Panel, tl_Edit, file_editbm);
+	fed->SetBitmapDisabled(file_edit_disbm);
+	b3sizer->Add(fed, 0, wxALL, 1);
 	b3sizer->Add(new wxStaticText(b3Panel, -1, wxT("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
 	bsizer->Add(b3Panel, 0, wxALL, 1);
 
@@ -833,6 +851,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb1Panel->SetSizer(lb1sizer);
 	
 	loc_add_button = new wxBitmapButton(lb1Panel, tl_AddLoc, locaddbm);
+	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
 	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station Location"));
 	lb1sizer->Add(loc_add_label, 1, wxALL, 1);
@@ -846,6 +865,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb2Panel->SetSizer(lb2sizer);
 	
 	loc_edit_button = new wxBitmapButton(lb2Panel, tl_EditLoc, editbm);
+	loc_edit_button->SetBitmapDisabled(edit_disbm);
 	loc_edit_button->Enable(false);
 	lb2sizer->Add(loc_edit_button, 0, wxALL, 1);
 	loc_edit_label = new wxStaticText(lb2Panel, -1, wxT("\nEdit a Station Location"), wxDefaultPosition, wxSize(tw, th));
@@ -858,6 +878,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb3Panel->SetSizer(lb3sizer);
 	
 	loc_delete_button = new wxBitmapButton(lb3Panel, tl_DeleteLoc, deletebm);
+	loc_delete_button->SetBitmapDisabled(delete_disbm);
 	loc_delete_button->Enable(false);
 	lb3sizer->Add(loc_delete_button, 0, wxALL, 1);
 	loc_delete_label = new wxStaticText(lb3Panel, -1, wxT("\nDelete a Station Location"), wxDefaultPosition, wxSize(tw, th));
@@ -870,6 +891,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb4Panel->SetSizer(lb4sizer);
 	
 	loc_prop_button = new wxBitmapButton(lb4Panel, tl_PropLoc, propertiesbm);
+	loc_prop_button->SetBitmapDisabled(properties_disbm);
 	loc_prop_button->Enable(false);
 	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
 	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay a Station Location"), wxDefaultPosition, wxSize(tw, th));
@@ -917,6 +939,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb1Panel->SetSizer(cb1sizer);
 	
 	cert_save_button = new wxBitmapButton(cb1Panel, tc_CertSave, downloadbm);
+	cert_save_button->SetBitmapDisabled(download_disbm);
 	cert_save_button->Enable(false);
 	cb1sizer->Add(cert_save_button, 0, wxALL, 1);
 	cert_save_label = new wxStaticText(cb1Panel, -1, wxT("\nSave a Certificate"), wxDefaultPosition, wxSize(tw, th));
@@ -929,6 +952,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb2Panel->SetSizer(cb2sizer);
 	
 	cert_renew_button = new wxBitmapButton(cb2Panel, tc_CertRenew, uploadbm);
+	cert_renew_button->SetBitmapDisabled(upload_disbm);
 	cert_renew_button->Enable(false);
 	cb2sizer->Add(cert_renew_button, 0, wxALL, 1);
 	cert_renew_label = new wxStaticText(cb2Panel, -1, wxT("\nRenew a Certificate"), wxDefaultPosition, wxSize(tw, th));
@@ -941,6 +965,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb3Panel->SetSizer(cb3sizer);
 	
 	cert_delete_button = new wxBitmapButton(cb3Panel, tc_CertDelete, deletebm);
+	cert_delete_button->SetBitmapDisabled(delete_disbm);
 	cert_delete_button->Enable(false);
 	cb3sizer->Add(cert_delete_button, 0, wxALL, 1);
 	cert_delete_label = new wxStaticText(cb3Panel, -1, wxT("\nDelete a Certificate"), wxDefaultPosition, wxSize(tw, th));
@@ -953,6 +978,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb4Panel->SetSizer(cb4sizer);
 	
 	cert_prop_button = new wxBitmapButton(cb4Panel, tc_CertProp, propertiesbm);
+	cert_prop_button->SetBitmapDisabled(properties_disbm);
 	cert_prop_button->Enable(false);
 	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
 	cert_prop_label = new wxStaticText(cb4Panel, -1, wxT("\nDisplay a Certificate"), wxDefaultPosition, wxSize(tw, th));
