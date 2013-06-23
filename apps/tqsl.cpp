@@ -2574,9 +2574,9 @@ void
 MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 
 	try {
-		wxString file_default = wxT("userconfig.tq9");
+		wxString file_default = wxT("userconfig.tbk");
 		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
-			file_default, wxT(".tq9"), wxT("Configuration files (*.tq9)|*.tq9|All files (*.*)|*.*"),
+			file_default, wxT(".tbk"), wxT("Configuration files (*.tbk)|*.tbk|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
 		if (filename == wxT(""))
 			return;
@@ -2884,7 +2884,7 @@ TQSLConfig::ParseLocations (const char *loc, gzFile* out) {
 void
 MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 	wxString filename = wxFileSelector(wxT("Select saved configuration file"), wxT(""),
-					   wxT(""), wxT("p12"), wxT("Saved configuration files (*.tq9)|*.tq9"),
+					   wxT(""), wxT("p12"), wxT("Saved configuration files (*.tbk)|*.tbk"),
 					   wxOPEN|wxFILE_MUST_EXIST);
 	if (filename == wxT(""))
 		return;
