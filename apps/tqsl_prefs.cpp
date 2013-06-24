@@ -691,7 +691,7 @@ CertPrefs::CertPrefs(wxWindow *parent) : wxPanel(parent, -1) {
 	bool b;
 	SetAutoLayout(TRUE);
 	wxBoxSizer *sizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, -1, wxT("Certificate Preferences")),
+		new wxStaticBox(this, -1, wxT("Callsign Certificates to Display")),
 		wxVERTICAL);
 	showSuperceded_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Display Renewed certificates"));
 	sizer->Add(showSuperceded_cb);
@@ -702,20 +702,6 @@ CertPrefs::CertPrefs(wxWindow *parent) : wxPanel(parent, -1) {
 	config->Read(wxT("ShowExpired"), &b, false);
 	showExpired_cb->SetValue(b);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("Certificate Import"));
-	sizer->Add(st);
-	root_cb = new wxCheckBox(this, ID_PREF_ROOT_CB, wxT("Report Imports of Trusted root certificates"));
-	sizer->Add(root_cb);
-	config->Read(wxT("NotifyRoot"), &b, true);
-	root_cb->SetValue(b);
-	ca_cb = new wxCheckBox(this, ID_PREF_CA_CB, wxT("Report Imports of Certificate Authority certificates"));
-	sizer->Add(ca_cb);
-	config->Read(wxT("NotifyCA"), &b, false);
-	ca_cb->SetValue(b);
-	user_cb = new wxCheckBox(this, ID_PREF_USER_CB, wxT("Report Imports of User certificates"));
-	sizer->Add(user_cb);
-	config->Read(wxT("NotifyUser"), &b, false);
-	user_cb->SetValue(b);
 	SetSizer(sizer);
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
@@ -727,9 +713,6 @@ bool CertPrefs::TransferDataFromWindow() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	config->Write(wxT("ShowSuperceded"), showSuperceded_cb->GetValue());
 	config->Write(wxT("ShowExpired"), showExpired_cb->GetValue());
-	config->Write(wxT("NotifyRoot"), root_cb->GetValue());
-	config->Write(wxT("NotifyCA"), ca_cb->GetValue());
-	config->Write(wxT("NotifyUser"), user_cb->GetValue());
 	return TRUE;
 }
 

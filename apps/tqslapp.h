@@ -137,12 +137,12 @@ private:
 	wxStaticText* loc_edit_label;
 	wxBitmapButton* loc_delete_button;
 	wxStaticText* loc_delete_label;
+	wxBitmapButton* cert_load_button;
+	wxStaticText* cert_load_label;
 	wxBitmapButton* cert_save_button;
 	wxStaticText* cert_save_label;
 	wxBitmapButton* cert_renew_button;
 	wxStaticText* cert_renew_label;
-	wxBitmapButton* cert_delete_button;
-	wxStaticText* cert_delete_label;
 	wxStaticText* loc_select_label;
 	wxStaticText* cert_select_label;
 	wxBitmapButton* cert_prop_button;

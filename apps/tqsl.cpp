@@ -99,6 +99,7 @@
 #include "download_dis.xpm"
 #include "properties.xpm"
 #include "properties_dis.xpm"
+#include "import.xpm"
 
 using namespace std;
 
@@ -657,14 +658,14 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 
 	EVT_MENU(tc_Quit, MyFrame::OnQuit)
 	EVT_MENU(tc_CRQWizard, MyFrame::CRQWizard)
-	EVT_MENU(tc_Load, MyFrame::OnLoadCertificateFile)
+	EVT_MENU(tc_c_Load, MyFrame::OnLoadCertificateFile)
+	EVT_BUTTON(tc_Load, MyFrame::OnLoadCertificateFile)
 	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
 	EVT_BUTTON(tc_CertProp, MyFrame::OnCertProperties)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
 	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
-	EVT_BUTTON(tc_CertDelete, MyFrame::OnCertDelete)
 //	EVT_MENU(tc_c_Import, MyFrame::OnCertImport)
 //	EVT_MENU(tc_c_Sign, MyFrame::OnSign)
 	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
@@ -710,6 +711,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmap download_disbm(download_dis_xpm);
 	wxBitmap propertiesbm(properties_xpm);
 	wxBitmap properties_disbm(properties_dis_xpm);
+	wxBitmap importbm(import_xpm);
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -729,7 +731,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	file_menu->AppendSeparator();
 	file_menu->Append(tc_CRQWizard, wxT("&New Callsign Certificate Request..."));
 	file_menu->AppendSeparator();
-	file_menu->Append(tc_Load, wxT("&Load Callsign Certificate File"));
+	file_menu->Append(tc_c_Load, wxT("&Load Callsign Certificate File"));
 #ifndef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->AppendSeparator();
 #endif
@@ -958,12 +960,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* cb1sizer = new wxBoxSizer(wxHORIZONTAL);
 	cb1Panel->SetSizer(cb1sizer);
 	
-	cert_save_button = new wxBitmapButton(cb1Panel, tc_CertSave, downloadbm);
-	cert_save_button->SetBitmapDisabled(download_disbm);
-	cert_save_button->Enable(false);
-	cb1sizer->Add(cert_save_button, 0, wxALL, 1);
-	cert_save_label = new wxStaticText(cb1Panel, -1, wxT("\nSave a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb1sizer->Add(cert_save_label, 1, wxALL, 1);
+	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
+	cert_load_button->SetBitmapDisabled(delete_disbm);
+	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
+	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a new Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb1sizer->Add(cert_load_label, 1, wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
 	wxPanel* cb2Panel = new wxPanel(cbuttons);
@@ -971,12 +972,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* cb2sizer = new wxBoxSizer(wxHORIZONTAL);
 	cb2Panel->SetSizer(cb2sizer);
 	
-	cert_renew_button = new wxBitmapButton(cb2Panel, tc_CertRenew, uploadbm);
-	cert_renew_button->SetBitmapDisabled(upload_disbm);
-	cert_renew_button->Enable(false);
-	cb2sizer->Add(cert_renew_button, 0, wxALL, 1);
-	cert_renew_label = new wxStaticText(cb2Panel, -1, wxT("\nRenew a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb2sizer->Add(cert_renew_label, 1, wxALL, 1);
+	cert_save_button = new wxBitmapButton(cb2Panel, tc_CertSave, downloadbm);
+	cert_save_button->SetBitmapDisabled(download_disbm);
+	cert_save_button->Enable(false);
+	cb2sizer->Add(cert_save_button, 0, wxALL, 1);
+	cert_save_label = new wxStaticText(cb2Panel, -1, wxT("\nSave a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb2sizer->Add(cert_save_label, 1, wxALL, 1);
 	cbsizer->Add(cb2Panel, 1, wxALL, 1);
 
 	wxPanel* cb3Panel = new wxPanel(cbuttons);
@@ -984,12 +985,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* cb3sizer = new wxBoxSizer(wxHORIZONTAL);
 	cb3Panel->SetSizer(cb3sizer);
 	
-	cert_delete_button = new wxBitmapButton(cb3Panel, tc_CertDelete, deletebm);
-	cert_delete_button->SetBitmapDisabled(delete_disbm);
-	cert_delete_button->Enable(false);
-	cb3sizer->Add(cert_delete_button, 0, wxALL, 1);
-	cert_delete_label = new wxStaticText(cb3Panel, -1, wxT("\nDelete a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb3sizer->Add(cert_delete_label, 1, wxALL, 1);
+	cert_renew_button = new wxBitmapButton(cb3Panel, tc_CertRenew, uploadbm);
+	cert_renew_button->SetBitmapDisabled(upload_disbm);
+	cert_renew_button->Enable(false);
+	cb3sizer->Add(cert_renew_button, 0, wxALL, 1);
+	cert_renew_label = new wxStaticText(cb3Panel, -1, wxT("\nRenew a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cb3sizer->Add(cert_renew_label, 1, wxALL, 1);
 	cbsizer->Add(cb3Panel, 1, wxALL, 1);
 
 	wxPanel* cb4Panel = new wxPanel(cbuttons);
@@ -3593,15 +3594,13 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		cert_menu->Enable(tc_c_Export, true);
 		cert_menu->Enable(tc_c_Delete, true);
 		cert_save_button->Enable(true);
-		cert_delete_button->Enable(true);
+		cert_load_button->Enable(true);
 		cert_prop_button->Enable(true);
 
 		int w, h;
 		loc_add_label->GetSize(&w, &h);
 		cert_save_label->SetLabel(wxT("Save the callsign certificate for ") + callSign);
 		cert_save_label->Wrap(w - 10);
-		cert_delete_label->SetLabel(wxT("Delete the callsign certificate for ") + callSign);
-		cert_delete_label->Wrap(w - 10);
 		cert_prop_label->SetLabel(wxT("Display the callsign certificate for ") + callSign);
 		cert_prop_label->Wrap(w - 10);
 		if (!(keyonly || expired || superseded)) {
@@ -3615,13 +3614,11 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 	} else {
 		cert_save_label->SetLabel(wxT("\nSave a Callsign Certificate"));
 		cert_renew_label->SetLabel(wxT("\nRenew a Callsign Certificate"));
-		cert_delete_label->SetLabel(wxT("\nDelete a Callsign Certificate"));
 		cert_prop_label->SetLabel(wxT("\nDisplay a Callsign Certificate"));
 		cert_menu->Enable(tc_c_Renew, false);
 		cert_renew_button->Enable(false);
 		cert_select_label->SetLabel(wxT("\nSelect a Callsign Certificate to process"));
 		cert_save_button->Enable(false);
-		cert_delete_button->Enable(false);
 		cert_prop_button->Enable(false);
 	}
 }

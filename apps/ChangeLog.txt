@@ -5,20 +5,25 @@ TQSL/TQSLCERT changes
 ----------
 Major feature Additions:
 
+Merge tqslcert into tqsl. Update the UI to be more user friendly.
+
 Don't display the certificate provider list if there's only one provider.
 
 Allow users to back up and restore their TQSL configuration in a portable
 file.
 
-Merge tqslcert into tqsl. Update the UI to be more user friendly.
-
-Add diagnostic logging capability; currently used to store a verbose log
-from cURL.
+Add diagnostic logging capability. This is used to store a verbose log
+from cURL and to write a trace log that can be used by the developers to 
+help determine the source of defects.
 
 Display unique icons in the certificate tree to allow expired and superseded
 certificates can be distinguished.
 
 Other changes:
+
+Use consistent terminology throughout - "Callsign Certificate" and "Station
+Location".
+
 Replace atoi() calls with strtol() to correct parsing of strings like '012'
 so they are not treated as octal.
 

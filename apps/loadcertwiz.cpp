@@ -53,14 +53,14 @@ notifyImport(int type, const char *message, void *data) {
 			case TQSL_CERT_CB_ROOT:
 				nametype = "Trusted root";
 				configkey = "NotifyRoot";
-				default_prompt = true;
+				//default_prompt = true;
 				break;
 			case TQSL_CERT_CB_CA:
 				nametype = "Certificate Authority";
 				configkey = "NotifyCA";
 				break;
 			case TQSL_CERT_CB_USER:
-				nametype = "User";
+				nametype = "Callsign";
 				configkey = "NotifyUser";
 				break;
 		}
