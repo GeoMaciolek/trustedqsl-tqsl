@@ -15,6 +15,7 @@
 
 #include "tqslwiz.h"
 #include "wxutil.h"
+#include "tqsltrace.h"
 
 
 using namespace std;
@@ -35,6 +36,7 @@ END_EVENT_TABLE()
 
 void
 TQSLWizard::OnPageChanged(wxWizardEvent& ev) {
+	tqslTrace("TQSLWizard::OnPageChanged");
 	((TQSLWizPage *)GetCurrentPage())->SetFocus();
 	ExtWizard::OnPageChanged(ev);
 }
@@ -42,6 +44,7 @@ TQSLWizard::OnPageChanged(wxWizardEvent& ev) {
 TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help,
 	const wxString& title, bool expired) :
 	ExtWizard(parent, help, title), loc(locp), _curpage(-1) {
+	tqslTrace("TQSLWizard::TQSLWizard", "locp=0x%lx, parent=0x%lx, title=%s, expired=%d", (void *)locp, (void *)parent, _S(title), expired);
 
 	char buf[256];
 	if (!tqsl_getStationLocationCaptureName(locp, buf, sizeof buf)) {
@@ -54,6 +57,7 @@ TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpControlle
 
 TQSLWizPage *
 TQSLWizard::GetPage(bool final) {
+	tqslTrace("TQSLWizard::GetPage", "final=%d", final);
 	int page_num;
 	page_changing = false;
 	if (final)
@@ -83,6 +87,7 @@ void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
 
 TQSLWizPage *
 TQSLWizCertPage::GetPrev() const {
+	tqslTrace("TQSLWizCertPage::GetPrev");
 	int rval;
 	if (tqsl_hasPrevStationLocationCapture(loc, &rval) || !rval) {
 		GetParent()->page_changing = false;
@@ -97,6 +102,7 @@ TQSLWizCertPage::GetPrev() const {
 
 TQSLWizPage *
 TQSLWizCertPage::GetNext() const {
+	tqslTrace("TQSLWizCertPage::GetNext");
 	TQSLWizPage *newp;
 	bool final = false;
 	if (GetParent()->page_changing) {
@@ -112,6 +118,7 @@ TQSLWizCertPage::GetNext() const {
 
 void
 TQSLWizCertPage::UpdateFields(int noupdate_field) {
+	tqslTrace("TQSLWizCertPage::UpdateFields", "noupdate_field=%d", noupdate_field);
 	wxSize text_size = getTextSize(this);
 
 	if (noupdate_field >= 0)
@@ -221,6 +228,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 
 void
 TQSLWizCertPage::OnComboBoxEvent(wxCommandEvent& event) {
+	tqslTrace("TQSLWizCertPage::OnComboBoxEvent");
 	int control_idx = event.GetId() - TQSL_ID_LOW;
 	if (control_idx < 0 || control_idx >= (int)controls.size())
 		return;
@@ -242,6 +250,7 @@ TQSLWizCertPage::OnCheckBoxEvent(wxCommandEvent& event) {
 
 TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	: TQSLWizPage(parent, locp) {
+	tqslTrace("TQSLWizCertPage::TQSLWizCertPage", "parent=0x%lx, locp=0x%lx", (void *)parent, (void *)locp);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	int control_width = getTextSize(this).GetWidth() * 20;
 	
@@ -325,6 +334,7 @@ TQSLWizCertPage::~TQSLWizCertPage() {
 
 bool
 TQSLWizCertPage::TransferDataFromWindow() {
+	tqslTrace("TQSLWizCertPage::TransferDataFromWindow");
 	GetParent()->page_changing = true;
 	tqsl_setStationLocationCapturePage(loc, loc_page);
 	for (int i = 0; i < (int)controls.size(); i++) {
@@ -350,6 +360,7 @@ END_EVENT_TABLE()
 
 void
 TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
+	tqslTrace("TQSLWizFinalPage::OnListbox");
 	if (namelist->GetSelection() >= 0) {
 		const char *cp = (const char *)(namelist->GetClientData(namelist->GetSelection()));
 		if (cp)
@@ -359,6 +370,7 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 
 TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev) :
 	TQSLWizPage(parent, locp), prev(i_prev) {
+	tqslTrace("TQSLWizFinalPage::TQSLWizFinalPage", "parent=0x%lx, locp=0x%lx, i_prev=0x%lx", (void *) parent, (void *)locp, (void *) i_prev);
 	wxSize text_size = getTextSize(this);
 	int control_width = text_size.GetWidth()*30;
 	
@@ -402,6 +414,7 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 
 bool
 TQSLWizFinalPage::TransferDataFromWindow() {
+	tqslTrace("TQSLWizFinalPage::TransferDataFromWindow");
 	if (validate())	// Must be a "back"
 		return true;
 	wxString s = newname->GetValue();
@@ -411,6 +424,7 @@ TQSLWizFinalPage::TransferDataFromWindow() {
 
 const char *
 TQSLWizFinalPage::validate() {
+	tqslTrace("TQSLWizFinalPage::validate");
 	wxString val = newname->GetValue();
 	const char *errmsg = 0;
 	val.Trim();

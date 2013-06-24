@@ -22,6 +22,7 @@
 #include "wx/statline.h"
 #include "tqsllib.h"
 #include "tqslexcept.h"
+#include "tqsltrace.h"
 
 using namespace std;
 
@@ -133,6 +134,7 @@ static valid_list valid_satellites;
 
 static int
 init_valid_lists() {
+	tqslTrace("init_valid_lists");
 	if (valid_bands.size() > 0)
 		return 0;
 	if (tqsl_init())
@@ -214,6 +216,7 @@ END_EVENT_TABLE()
 
 QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist, wxWindowID id, const wxString& title)
 	: wxDialog(parent, id, title), _reclist(reclist), _isend(false), _help(help) {
+	tqslTrace("QSODataDialog::QSODataDialog", "parent=0x%lx, reclist=0x%lx, id=0x%lx, %s", (void *)parent, (void *)reclist, (void *) id, _S(title));
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxFont font = GetFont();
 //	font.SetPointSize(TEXT_POINTS);
@@ -357,6 +360,7 @@ QSODataDialog::~QSODataDialog(){
 
 bool
 QSODataDialog::TransferDataFromWindow() {
+	tqslTrace("QSODataDialog::TransferDataFromWindow");
 	rec._call.Trim(FALSE).Trim(TRUE);
 	if (!wxDialog::TransferDataFromWindow())
 		return false;
@@ -423,6 +427,7 @@ QSODataDialog::TransferDataFromWindow() {
 
 bool
 QSODataDialog::TransferDataToWindow() {
+	tqslTrace("QSODataDialog::TransferDataToWindow");
 	valid_list::iterator it;
 	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
@@ -441,6 +446,7 @@ QSODataDialog::TransferDataToWindow() {
 
 void
 QSODataDialog::OnOk(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnOk");
 	_isend = true;
 	TransferDataFromWindow();
 	_isend = false;
@@ -453,17 +459,20 @@ QSODataDialog::OnOk(wxCommandEvent&) {
 
 void
 QSODataDialog::OnCancel(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnCancel");
 	EndModal(wxID_CANCEL);
 }
 
 void
 QSODataDialog::OnHelp(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnHelp");
 	if (_help)
 		_help->Display(wxT("qsodata.htm"));
 }
 
 void
 QSODataDialog::SetRecno(int new_recno) {
+	tqslTrace("QSODataDialog::SetRecno", "new_recno=%d", new_recno);
 	if (_reclist == NULL || new_recno < 1)
 		return;
    	if (TransferDataFromWindow()) {
@@ -488,21 +497,25 @@ QSODataDialog::SetRecno(int new_recno) {
 
 void
 QSODataDialog::OnRecDown(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecDown");
 	SetRecno(_recno - 1);
 }
 
 void
 QSODataDialog::OnRecUp(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecUp");
 	SetRecno(_recno + 1);
 }
 
 void
 QSODataDialog::OnRecBottom(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecBottom");
 	SetRecno(1);
 }
 
 void
 QSODataDialog::OnRecTop(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecTop");
 	if (_reclist == 0)
 		return;
 	SetRecno(_reclist->size());
@@ -510,6 +523,7 @@ QSODataDialog::OnRecTop(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecNew(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecNew");
 	if (_reclist == 0)
 		return;
 	SetRecno(_reclist->size()+1);
@@ -517,6 +531,7 @@ QSODataDialog::OnRecNew(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecDelete(wxCommandEvent&) {
+	tqslTrace("QSODataDialog::OnRecDelete");
 	if (_reclist == 0)
 		return;
 	_reclist->erase(_reclist->begin() + _recno - 1);
@@ -531,6 +546,7 @@ QSODataDialog::OnRecDelete(wxCommandEvent&) {
 
 void
 QSODataDialog::UpdateControls() {
+	tqslTrace("QSODataDialog::UpdateControls");
 	if (_reclist == 0)
 		return;
 	_recdown_ctrl->Enable(_recno > 1);

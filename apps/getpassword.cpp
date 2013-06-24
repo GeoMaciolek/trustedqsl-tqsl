@@ -13,6 +13,7 @@
 #endif
 
 #include "getpassword.h"
+#include "tqsltrace.h"
 
 #define GPW_ID_LOW 6400
 
@@ -31,6 +32,7 @@ END_EVENT_TABLE()
 GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 	const wxString& message, wxHtmlHelpController *help, wxString helpfile)
 	: wxDialog(parent, -1, title), _help(help), _helpfile(helpfile) {
+	tqslTrace("GetPassword::GetPasswordDialog","parent=%lx, title=%s, message=%s", (void *)parent, _S(title), _S(helpfile));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
@@ -57,23 +59,27 @@ GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 
 bool
 GetPasswordDialog::TransferDataFromWindow() {
+	tqslTrace("GetPasswordDialog::TransferDataFromWindow");
 	_password = _pw->GetValue();
 	return true;
 }
 
 void
 GetPasswordDialog::OnOk(wxCommandEvent&) {
+	tqslTrace("GetPasswordDialog::OnOk");
 	if (TransferDataFromWindow())
 		EndModal(wxID_OK);
 }
 
 void
 GetPasswordDialog::OnCancel(wxCommandEvent&) {
+	tqslTrace("GetPasswordDialog::OnCancel");
 	EndModal(wxID_CANCEL);
 }
 
 void
 GetPasswordDialog::OnHelp(wxCommandEvent&) {
+	tqslTrace("GetPasswordDialog::OnHelp");
 	if (_help && _helpfile != wxT(""))
 		_help->Display(_helpfile);
 }
@@ -89,6 +95,7 @@ END_EVENT_TABLE()
 GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& title,
 	const wxString& message, bool blankok, wxHtmlHelpController *help, wxString helpfile)
 	: wxDialog(parent, -1, title), _blankok(blankok), _help(help), _helpfile(helpfile) {
+	tqslTrace("GetNewPasswordDialog::GetNewPasswordDialog", "parent=%lx, title=%s, message=%s, blankok=%d", (void *)parent, _S(title),_S(message));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
@@ -121,6 +128,7 @@ GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& tit
 
 void
 GetNewPasswordDialog::PWChange(wxCommandEvent&) {
+	tqslTrace("GetNewPasswordDialog::PWChange");
 	_password = wxT("");
 	wxString pw1 = _pw1->GetValue();
 	wxString pw2 = _pw2->GetValue();
@@ -144,16 +152,19 @@ GetNewPasswordDialog::PWChange(wxCommandEvent&) {
 
 void
 GetNewPasswordDialog::OnOk(wxCommandEvent&) {
+	tqslTrace("GetNewPasswordDialog::OnOk");
 	EndModal(wxID_OK);
 }
 
 void
 GetNewPasswordDialog::OnCancel(wxCommandEvent&) {
+	tqslTrace("GetNewPasswordDialog::OnCancel");
 	EndModal(wxID_CANCEL);
 }
 
 void
 GetNewPasswordDialog::OnHelp(wxCommandEvent&) {
+	tqslTrace("GetNewPasswordDialog::OnHelp");
 	if (_help && _helpfile != wxT(""))
 		_help->Display(_helpfile);
 }

@@ -13,6 +13,7 @@
 #endif
 
 #include "tqslvalidator.h"
+#include "tqsltrace.h"
 
 TQSLValidator::TQSLValidator(void *objp) {
 	_objp = objp;
@@ -20,6 +21,7 @@ TQSLValidator::TQSLValidator(void *objp) {
 
 bool
 TQSLValidator::Copy(const TQSLValidator& val) {
+	tqslTrace("TQSLValidator::Copy");
 	wxValidator::Copy(val);
 	_objp = val._objp;
 	_type = val._type;
@@ -28,6 +30,7 @@ TQSLValidator::Copy(const TQSLValidator& val) {
 
 bool
 TQSLValidator::TransferFromWindow() {
+	tqslTrace("TQSLValidator::TransferFromWindow");
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))
@@ -42,6 +45,7 @@ TQSLValidator::TransferFromWindow() {
 
 bool
 TQSLValidator::TransferToWindow() {
+	tqslTrace("TQSLValidator::TransferToWindow");
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))
@@ -56,6 +60,7 @@ TQSLValidator::TransferToWindow() {
 
 bool
 TQSLValidator::Validate(wxWindow* parent) {
+	tqslTrace("TQSLValidator::Validate", "parent=%lx", (void *)parent);
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))
@@ -94,12 +99,14 @@ TQSLDateValidator::ToString() {
 
 bool
 TQSLDateValidator::IsValid(const wxString& str) {
+	tqslTrace("TQSLDateValidator::IsValid", "str=%s", _S(str));
 	tQSL_Date d;
 	return (!tqsl_initDate(&d, str.mb_str()) && tqsl_isDateValid(&d));
 }
 
 void
 TQSLTimeValidator::FromString(const wxString& str) {
+	tqslTrace("TQSLTimeValidator::FromString", "str=%s", _S( str));
 	if (_objp != 0)
 		tqsl_initTime((tQSL_Time *)_objp, str.mb_str());
 }
@@ -118,6 +125,7 @@ TQSLTimeValidator::ToString() {
 
 bool
 TQSLTimeValidator::IsValid(const wxString& str) {
+	tqslTrace("TQSLTimeValidator::IsValid", "str=%s", _S(str));
 	tQSL_Time t;
 	return (!tqsl_initTime(&t, str.mb_str()) && tqsl_isTimeValid(&t));
 }

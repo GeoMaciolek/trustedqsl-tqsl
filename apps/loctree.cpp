@@ -16,6 +16,7 @@
 #include "tqslcertctrls.h"
 #include "dxcc.h"
 #include "tqslerrno.h"
+#include "tqsltrace.h"
 #include <errno.h>
 #include <wx/imaglist.h>
 
@@ -43,6 +44,7 @@ END_EVENT_TABLE()
 LocTree::LocTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style) :
 		wxTreeCtrl(parent, id, pos, size, style), _nloc(0) {
+	tqslTrace("LocTree::LocTree", "parent=0x%lx, id=0x%lx, style=%d", (void *)parent, (void *)id, style);
 	useContextMenu = true;
 	wxBitmap homebm(home_xpm);
 	wxBitmap folderbm(folder_xpm);
@@ -72,6 +74,7 @@ check_tqsl_error(int rval) {
 
 int
 LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
+	tqslTrace("LocTree::Build", "provider=0x%lx", (void *)provider);
 	typedef map<wxString,loclist> locmap;
 	locmap callsigns;
 
@@ -106,12 +109,14 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 void
 LocTree::OnItemActivated(wxTreeEvent& event) {
+	tqslTrace("LocTree::OnItemActivated");
 	wxTreeItemId id = event.GetItem();
 	displayLocProperties((LocTreeItemData *)GetItemData(id), this);
 }
 
 void
 LocTree::OnRightDown(wxMouseEvent& event) {
+	tqslTrace("LocTree::OnRightDown");
 	if (!useContextMenu)
 		return;
 	wxTreeItemId id = HitTest(event.GetPosition());

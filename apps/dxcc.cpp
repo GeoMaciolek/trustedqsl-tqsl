@@ -13,6 +13,7 @@
 
 #include "dxcc.h"
 #include "tqsllib.h"
+#include "tqsltrace.h"
 
 #include "winstrdefs.h"
 
@@ -33,6 +34,7 @@ _ent_cmp(const void *a, const void *b) {
 
 bool
 DXCC::init() {
+	tqslTrace("DXCC::init");
 //	if (!_init) {
 		if (tqsl_getNumDXCCEntity(&num_entities))
 			return false;
@@ -49,6 +51,7 @@ DXCC::init() {
 
 bool
 DXCC::getFirst() {
+	tqslTrace("DXCC::getFirst");
 	if (!init())
 		return false;
 	_index = -1;
@@ -57,6 +60,7 @@ DXCC::getFirst() {
 
 bool
 DXCC::getNext() {
+	tqslTrace("DXCC::getNext");
 	int newidx = _index+1;
 	if (newidx < 0 || newidx >= num_entities)
 		return false;
@@ -69,6 +73,7 @@ DXCC::getNext() {
 
 bool
 DXCC::getByEntity(int e) {
+	tqslTrace("DXCC::getByEntity", "e=%d", e);
 	_number = 0;
 	_name = "<NONE>";
 	_zonemap = "";

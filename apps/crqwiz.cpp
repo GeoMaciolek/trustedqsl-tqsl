@@ -14,6 +14,7 @@
 #include "dxcc.h"
 #include "util.h"
 #include "tqslcertctrls.h"
+#include "tqsltrace.h"
 
 #include "wx/validate.h"
 #include "wx/datetime.h"
@@ -30,6 +31,7 @@ using namespace std;
 CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelpController *help,
 	const wxString& title) :
 	ExtWizard(parent, help, title), cert(xcert), _crq(crq)  {
+	tqslTrace("CRQWiz::CRQWiz", "crq=%lx, xcert=%lx, title=%s", (void *)cert, (void *)xcert, _S(title));
 
 	CRQ_ProviderPage *provider = new CRQ_ProviderPage(this, _crq);
 	CRQ_IntroPage *intro = new CRQ_IntroPage(this, _crq);
@@ -61,6 +63,7 @@ prov_cmp(const TQSL_PROVIDER& p1, const TQSL_PROVIDER& p2) {
 }
 
 CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	tqslTrace("CRQ_ProviderPage::CRQ_ProviderPage", "parent=%lx, crq=%lx", (void *)parent, (void *)crq);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
@@ -107,6 +110,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 
 void
 CRQ_ProviderPage::DoUpdateInfo() {
+	tqslTrace("CRQ_ProviderPage::DoUpdateInfo");
 	int sel = tc_provider->GetSelection();
 	if (sel >= 0) {
 		long idx = (long)(tc_provider->GetClientData(sel));
@@ -127,6 +131,7 @@ CRQ_ProviderPage::DoUpdateInfo() {
 
 void
 CRQ_ProviderPage::UpdateInfo(wxCommandEvent&) {
+	tqslTrace("CRQ_ProviderPage::UpdateInfo");
 	DoUpdateInfo();
 }
 
@@ -149,6 +154,7 @@ BEGIN_EVENT_TABLE(CRQ_IntroPage, CRQ_Page)
 END_EVENT_TABLE()
 
 CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	tqslTrace("CRQ_IntroPage::CRQ_IntroPage", "parent=%lx, crq=%lx", (void *)parent, (void *)crq);
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -294,6 +300,7 @@ BEGIN_EVENT_TABLE(CRQ_NamePage, CRQ_Page)
 END_EVENT_TABLE()
 
 CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	tqslTrace("CRQ_NamePage::CRQ_NamePage", "parent=%lx, crq=%lx", (void *)parent, (void *)crq);
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -407,6 +414,7 @@ BEGIN_EVENT_TABLE(CRQ_EmailPage, CRQ_Page)
 END_EVENT_TABLE()
 
 CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(parent) {
+	tqslTrace("CRQ_EmailPage::CRQ_EmailPage", "parent=%lx, crq=%lx", (void *)parent, (void *)crq);
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -440,6 +448,7 @@ BEGIN_EVENT_TABLE(CRQ_PasswordPage, CRQ_Page)
 END_EVENT_TABLE()
 
 CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
+	tqslTrace("CRQ_PasswordPage::CRQ_PasswordPage", "parent=%lx", (void *)parent);
 	initialized = false;
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
@@ -482,6 +491,7 @@ END_EVENT_TABLE()
 
 
 void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
+	tqslTrace("CRQ_SignPage::CertSelChanged");
 	if (cert_tree->GetItemData(event.GetItem()))
 		choice->SetSelection(1);
 	wxCommandEvent dummy;
@@ -490,6 +500,7 @@ void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
 
 CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	:  CRQ_Page(parent) {
+	tqslTrace("CRQ_SignPage::CRQ_SignPage", "parent=%lx", (void *)parent);
 
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
@@ -515,6 +526,7 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 
 void
 CRQ_SignPage::refresh() {
+	tqslTrace("CRQ_SignPage::refresh");
 	if (cert_tree->Build(0, &(Parent()->provider)) > 0)
 		choice->SetSelection(1);
 	else
@@ -531,6 +543,7 @@ CRQ_ProviderPage::TransferDataFromWindow() {
 
 const char *
 CRQ_IntroPage::validate() {
+	tqslTrace("CRQ_IntroPage::validate");
 	if (!initialized)
 		return 0;
 	wxString val = tc_call->GetValue();
@@ -640,6 +653,7 @@ notok:
 
 bool
 CRQ_IntroPage::TransferDataFromWindow() {
+	tqslTrace("CRQ_IntroPage::TransferDataFromWindow");
 	if (validate())		// Should only happen when going Back
 		return true;
 	if (Parent()->dxcc == 0)
@@ -673,6 +687,7 @@ cleanString(wxString &str) {
 
 const char *
 CRQ_NamePage::validate() {
+	tqslTrace("CRQ_NamePage::validate()");
 	if (!initialized)
 		return 0;
 	Parent()->name = tc_name->GetValue();
@@ -693,6 +708,7 @@ CRQ_NamePage::validate() {
 
 bool
 CRQ_NamePage::TransferDataFromWindow() {
+	tqslTrace("CRQ_NamePage::TransferDataFromWindow");
 	Parent()->name = tc_name->GetValue();
 	Parent()->addr1 = tc_addr1->GetValue();
 	Parent()->addr2 = tc_addr2->GetValue();
@@ -731,6 +747,7 @@ CRQ_NamePage::TransferDataFromWindow() {
 
 const char *
 CRQ_EmailPage::validate() {
+	tqslTrace("CRQ_EmailPage::validate()");
 	const char *errmsg = 0;
 	if (!initialized)
 		return 0;
@@ -746,6 +763,7 @@ CRQ_EmailPage::validate() {
 
 bool
 CRQ_EmailPage::TransferDataFromWindow() {
+	tqslTrace("CRQ_EmailPage::TransferDataFromWindow");
 	if (validate())
 		return true;
 	Parent()->email = tc_email->GetValue();
@@ -757,6 +775,7 @@ CRQ_EmailPage::TransferDataFromWindow() {
 
 const char *
 CRQ_PasswordPage::validate() {
+	tqslTrace("CRQ_PasswordPage::validate");
 	const char *errmsg = 0;
 	if (!initialized)
 		return 0;
@@ -771,6 +790,7 @@ CRQ_PasswordPage::validate() {
 
 bool
 CRQ_PasswordPage::TransferDataFromWindow() {
+	tqslTrace("CRQ_PasswordPage::TransferDataFromWindow");
 	if (validate())
 		return true;
 	Parent()->password = tc_pw1->GetValue();
@@ -779,6 +799,7 @@ CRQ_PasswordPage::TransferDataFromWindow() {
 
 const char *
 CRQ_SignPage::validate() {
+	tqslTrace("CRQ_SignPage::validate");
 	const char *errmsg = 0;
 
 	if (!initialized)
@@ -795,6 +816,7 @@ CRQ_SignPage::validate() {
 
 bool
 CRQ_SignPage::TransferDataFromWindow() {
+	tqslTrace("CRQ_SignPage::TransferDataFromWindow");
 	if (validate())
 		return true;
 	Parent()->cert = 0;

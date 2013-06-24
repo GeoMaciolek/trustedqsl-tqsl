@@ -17,6 +17,7 @@
 #include "util.h"
 #include "dxcc.h"
 #include "tqslerrno.h"
+#include "tqsltrace.h"
 #include <errno.h>
 #include <wx/imaglist.h>
 
@@ -50,6 +51,7 @@ END_EVENT_TABLE()
 CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style) :
 		wxTreeCtrl(parent, id, pos, size, style), _ncerts(0) {
+	tqslTrace("CertTree::CertTree");
 	useContextMenu = true;
 	wxBitmap certbm(cert_xpm);
 	wxBitmap no_certbm(nocert_xpm);
@@ -69,9 +71,11 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 
 
 CertTree::~CertTree() {
+	tqslTrace("CertTree::~CertTree");
 }
 
 CertTreeItemData::~CertTreeItemData() {
+	tqslTrace("CertTreeItemData::~CertTreeItemData");
 	if (_cert)
 		tqsl_freeCertificate(_cert);
 }
@@ -86,6 +90,7 @@ cl_cmp(const certitem& i1, const certitem& i2) {
 
 int
 CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
+	tqslTrace("CertTree::Build", "flags=%d, provider=%lx", flags, (void *)provider);
 	typedef map<wxString,certlist> issmap;
 	issmap issuers;
 
@@ -165,12 +170,14 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 void
 CertTree::OnItemActivated(wxTreeEvent& event) {
+	tqslTrace("CertTree::OnItemActivated");
 	wxTreeItemId id = event.GetItem();
 	displayCertProperties((CertTreeItemData *)GetItemData(id), this);
 }
 
 void
 CertTree::OnRightDown(wxMouseEvent& event) {
+	tqslTrace("CertTree::OnRightDown");
 	if (!useContextMenu)
 		return;
 	wxTreeItemId id = HitTest(event.GetPosition());

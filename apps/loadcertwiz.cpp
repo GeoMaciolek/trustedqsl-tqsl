@@ -18,6 +18,7 @@
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "tqslapp.h"
+#include "tqsltrace.h"
 
 wxString
 notifyData::Message() const {
@@ -43,6 +44,7 @@ notifyData::Message() const {
 
 int
 notifyImport(int type, const char *message, void *data) {
+	tqslTrace("notifyImport", "type=%d, message=%s, data=0x%lx", type, message, (void *)data);
 	if (TQSL_CERT_CB_RESULT_TYPE(type) == TQSL_CERT_CB_PROMPT) {
 		const char *nametype = 0;
 		const char *configkey = 0;
@@ -127,6 +129,7 @@ static wxString pw_helpfile;
 
 static int
 GetNewPassword(char *buf, int bufsiz, void *) {
+	tqslTrace("GetNewPassword");
 	GetNewPasswordDialog dial(0, wxT("New Password"),
 wxT("Enter a password for this private key.\n\n")
 wxT("If you are using a computer system that is\n")
@@ -150,6 +153,7 @@ wxT("use a password.\n\n"), true, pw_help, pw_helpfile);
 
 LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxString& title) :
 	ExtWizard(parent, help, title), _nd(0) {
+	tqslTrace("LoadCertWiz::LoadCertWiz", "parent=0x%lx, title=%s", (void *)parent, _S(title));
 
 	LCW_FinalPage *final = new LCW_FinalPage(this);
 	LCW_IntroPage *intro = new LCW_IntroPage(this, final);
@@ -166,6 +170,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 
 LCW_IntroPage::LCW_IntroPage(LoadCertWiz *parent, LCW_Page *tq6next)
 	: LCW_Page(parent), _tq6next(tq6next) {
+	tqslTrace("LCW_IntroPage::LCW_IntroPage", "parent=0x%lx, tq6next=0x%lx", (void *)parent, (void *)tq6next);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Select the type of certificate file to load:"));
@@ -197,6 +202,7 @@ wxT("issuer that contains the issued certificate and/or configuration data.")),
 
 static void
 export_new_cert(ExtWizard *_parent, const char *filename) {
+	tqslTrace("export_new_cert", "_parent=0x%lx, filename=%s", _parent, filename);
 	long newserial;
 	if (!tqsl_getSerialFromTQSLFile(filename, &newserial)) {
 
@@ -233,6 +239,7 @@ wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
 
 bool
 LCW_IntroPage::TransferDataFromWindow() {
+	tqslTrace("LCW_IntroPage::TransferDataFromWindow");
 	wxString ext(wxT("p12"));
 	wxString wild(wxT("PKCS#12 certificate files (*.p12)|*.p12"));
 	if (!_p12but->GetValue()) {
@@ -277,6 +284,7 @@ LCW_IntroPage::TransferDataFromWindow() {
 }
 
 LCW_FinalPage::LCW_FinalPage(LoadCertWiz *parent) : LCW_Page(parent) {
+	tqslTrace("LCW_FinalPage::LCW_FinalPage", "parent=0x%lx", (void *)parent);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Loading complete"));
@@ -289,6 +297,7 @@ LCW_FinalPage::LCW_FinalPage(LoadCertWiz *parent) : LCW_Page(parent) {
 
 void
 LCW_FinalPage::refresh() {
+	tqslTrace("LCW_FinalPage::refresh");
 	const notifyData *nd = ((LoadCertWiz *)_parent)->GetNotifyData();
 	if (nd)
 		tc_status->SetValue(nd->Message());
@@ -297,6 +306,7 @@ LCW_FinalPage::refresh() {
 }
 
 LCW_P12PasswordPage::LCW_P12PasswordPage(LoadCertWiz *parent) : LCW_Page(parent) {
+	tqslTrace("LCW_P12PasswordPage::LCW_P12PasswordPage", "parent=0x%lx", (void *)parent);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("Enter the password to unlock the .p12 file:"));
@@ -312,6 +322,7 @@ LCW_P12PasswordPage::LCW_P12PasswordPage(LoadCertWiz *parent) : LCW_Page(parent)
 
 bool
 LCW_P12PasswordPage::TransferDataFromWindow() {
+	tqslTrace("LCW_P12PasswordPage::TransferDataFromWindow");
 	wxString _pw = _pwin->GetValue();
 	pw_help = Parent()->GetHelp();
 	pw_helpfile = wxT("lcf2.htm");

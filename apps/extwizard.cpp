@@ -13,6 +13,7 @@
 #endif
 
 #include "extwizard.h"
+#include "tqsltrace.h"
 
 #define EW_HELP_BUT wxID_HIGHEST+300
 
@@ -22,6 +23,7 @@ END_EVENT_TABLE()
 
 void
 ExtWizard::OnPageChanged(wxWizardEvent&) {
+	tqslTrace("ExtWizard::OnPageChanged");
 	GetCurrentPage()->refresh();
 	GetCurrentPage()->SetFocus();
 	wxWindow *but = FindWindow(wxID_FORWARD);
@@ -32,6 +34,7 @@ ExtWizard::OnPageChanged(wxWizardEvent&) {
 
 void
 ExtWizard::ReportSize(const wxSize& size) {
+	tqslTrace("ExtWizard::ReportSize", "size=%d %d", size.GetWidth(), size.GetHeight());
 	if (size.GetWidth() > _minsize.GetWidth())
 		_minsize.SetWidth(size.GetWidth());
 	if (size.GetHeight() > _minsize.GetHeight())
@@ -40,6 +43,7 @@ ExtWizard::ReportSize(const wxSize& size) {
 
 ExtWizard::ExtWizard(wxWindow *parent, wxHtmlHelpController *help, const wxString& title) :
 	wxWizard(parent, -1, title), _help(help) {
+	tqslTrace("ExtWizard::ExtWizard", "parent=%lx, title=%s", (void *)parent, _S(title));
 
 	CenterOnParent();
 }
@@ -50,6 +54,7 @@ END_EVENT_TABLE()
 
 void
 ExtWizard_Page::check_valid(TQ_WXTEXTEVENT&) {
+	tqslTrace("ExtWizard_Page::check_valid");
 	wxWindow *but = GetParent()->FindWindow(wxID_FORWARD);
 	if (but != NULL)
 		but->Enable(validate() == NULL);
@@ -57,6 +62,7 @@ ExtWizard_Page::check_valid(TQ_WXTEXTEVENT&) {
 
 void
 ExtWizard_Page::AdjustPage(wxBoxSizer *sizer, const wxString& helpfile) {
+	tqslTrace("ExtWizard_Page::AdjustPage");
 	_helpfile = helpfile;
 
 	if (_helpfile != wxT("") && _parent->HaveHelp()) {

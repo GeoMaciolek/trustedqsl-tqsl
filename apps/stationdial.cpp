@@ -17,6 +17,7 @@
 #include "stationdial.h"
 #include "tqslwiz.h"
 #include "tqslexcept.h"
+#include "tqsltrace.h"
 #include <wx/listctrl.h>
 
 #include <algorithm>
@@ -67,6 +68,7 @@ public:
 
 PropList::PropList(wxWindow *parent) : wxDialog(parent, -1, wxT("Properties"), wxDefaultPosition,
 	wxSize(400, 300)) {
+	tqslTrace("PropList::PropList", "parent=0x%lx", (void *)parent);
 	list = new wxListCtrl(this, -1, wxDefaultPosition, wxDefaultSize, wxLC_REPORT|wxLC_SINGLE_SEL);
 	list->InsertColumn(0, wxT("Name"), wxLIST_FORMAT_LEFT, 100);
 	list->InsertColumn(1, wxT("Value"), wxLIST_FORMAT_LEFT, 300);
@@ -122,6 +124,7 @@ TQSLGetStationNameDialog::OnSetFocus(wxFocusEvent& event) {
 
 void
 TQSLGetStationNameDialog::OnOk(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnOk");
 	wxString s = name_entry->GetValue().Trim();
 	if (editonly)
 		EndModal(wxID_CANCEL);
@@ -134,12 +137,14 @@ TQSLGetStationNameDialog::OnOk(wxCommandEvent&) {
 
 void
 TQSLGetStationNameDialog::OnCancel(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnCancel");
 	EndModal(wxID_CANCEL);
 }
 
 // Reset the list of Station Locations in the listbox
 void
 TQSLGetStationNameDialog::RefreshList() {
+	tqslTrace("TQSLGetStationNameDialog::RefreshList");
 	namelist->Clear();
 	item_data.clear();
 	int n;
@@ -166,6 +171,7 @@ TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpC
 	bool i_issave, const wxString& title, const wxString& okLabel, bool i_editonly)
 	: wxDialog(parent, -1, wxT("Select Station Data"), pos), issave(i_issave), editonly(i_editonly),
 	newbut(0), modbut(0), updating(false), firstFocused(false), _help(help) {
+	tqslTrace("TQSLGetStationNameDialog::TQSLGetStationNameDialog", "parent=0x%lx, i_issave=%d, title=%s, okLabel=%s, i_editonly=%d", parent, i_issave, _S(title), _S(okLabel), i_editonly);
 	wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxSize text_size = getTextSize(this);
@@ -222,6 +228,7 @@ TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpC
 
 void
 TQSLGetStationNameDialog::UpdateButtons() {
+	tqslTrace("TQSLGetStationNameDialog::UpdateButtons");
 	wxArrayInt newsels;
 	namelist->GetSelections(newsels);
 	delbut->Enable(newsels.GetCount() > 0);
@@ -235,6 +242,7 @@ TQSLGetStationNameDialog::UpdateButtons() {
 
 void
 TQSLGetStationNameDialog::UpdateControls() {
+	tqslTrace("TQSLGetStationNameDialog::UpdateControls");
 	if (updating)	// Sentinel to prevent recursion
 		return;
 	updating = true;
@@ -266,6 +274,7 @@ TQSLGetStationNameDialog::UpdateControls() {
 
 void
 TQSLGetStationNameDialog::OnDelete(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnDelete");
 	wxArrayInt newsels;
 	namelist->GetSelections(newsels);
 	int idx = (newsels.GetCount() > 0) ? newsels[0] : -1;
@@ -285,6 +294,7 @@ TQSLGetStationNameDialog::OnDelete(wxCommandEvent&) {
 
 void
 TQSLGetStationNameDialog::OnNamelist(wxCommandEvent& event) {
+	tqslTrace("TQSLGetStationNameDialog::OnNamelist");
 /*	if (hack) {		// We seem to get an extraneous start-up event (GTK only?)
 cout << "OnNamelist hack" << endl;
 		hack = false;
@@ -300,6 +310,7 @@ cout << "OnNamelist hack" << endl;
 
 void
 TQSLGetStationNameDialog::OnDblClick(wxCommandEvent& event) {
+	tqslTrace("TQSLGetStationNameDialog::OnDblClick");
 	if(editonly) { OnNamelist(event); EndModal(wxID_MORE); }
 	else { UpdateControls(); OnOk(event); } //updatecontrols sets up the text field that ok checks
 	
@@ -307,27 +318,32 @@ TQSLGetStationNameDialog::OnDblClick(wxCommandEvent& event) {
 
 void
 TQSLGetStationNameDialog::OnNew(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnNew");
 	EndModal(wxID_APPLY);
 }
 
 void
 TQSLGetStationNameDialog::OnModify(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnModify");
 	EndModal(wxID_MORE);
 }
 
 void
 TQSLGetStationNameDialog::OnHelp(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnHelp");
 	if (_help)
 		_help->Display(wxT("stnloc.htm"));
 }
 
 void
 TQSLGetStationNameDialog::OnNameChange(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::OnNameChange");
 	UpdateButtons();
 }
 
 void
 TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
+	tqslTrace("TQSLGetStationNameDialog::DisplayProperties");
 	wxArrayInt newsels;
 	namelist->GetSelections(newsels);
 	int idx = (newsels.GetCount() > 0) ? newsels[0] : -1;
@@ -380,6 +396,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 
 void
 TQSLGetStationNameDialog::SelectName(const wxString& name) {
+	tqslTrace("TQSLGetStationNameDialog::SelectName", "name=%s", _S(name));
 	wxArrayInt sels;
 	namelist->GetSelections(sels);
 	for (int i = 0; i < (int)sels.GetCount(); i++)
@@ -396,6 +413,7 @@ TQSLGetStationNameDialog::SelectName(const wxString& name) {
 
 int
 TQSLGetStationNameDialog::ShowModal() {
+	tqslTrace("TQSLGetStationNameDialog::ShowModal");
 	if (namelist->GetCount() == 0 && !issave)
 		wxMessageBox(wxT("You have no Station Locations defined.\n\n")
 			wxT("You must define at least one Station Location to use for signing.\n")

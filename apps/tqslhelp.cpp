@@ -22,6 +22,7 @@
 #include "wx/utils.h"
 #include "wx/mstream.h"
 #include "tqslhelp.h"
+#include "tqsltrace.h"
 
 // ----------------------------------------------------------------------------
 // tqslInternetFSHandler
@@ -29,6 +30,7 @@
 
 static wxString StripProtocolAnchor(const wxString& location)
 {
+	tqslTrace("StripProtocolAnchor", "location=%s", _S(location));
 	wxString myloc(location.BeforeLast(wxT('#')));
 	if (myloc.empty()) myloc = location.AfterFirst(wxT(':'));
 	else myloc = myloc.AfterFirst(wxT(':'));
@@ -51,6 +53,7 @@ static wxString StripProtocolAnchor(const wxString& location)
 // think it's actually been handled.
 //
 bool tqslInternetFSHandler::CanOpen(const wxString& location) {
+	tqslTrace("tqslInternetFSHandler::CanOpen", "location=%s", _S(location));
 	static wxString lastLocation;
 #if wxUSE_URL
 	wxString p = GetProtocol(location);
