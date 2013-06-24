@@ -3147,7 +3147,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {
 					tQSL_Error = TQSL_CUSTOM_ERROR;
-					strcpy(tQSL_CustomError, "Duplicate certificate");
+					strcpy(tQSL_CustomError, "Duplicate callsign certificate");
 					return 1;
 				}
 			}

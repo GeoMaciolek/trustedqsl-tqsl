@@ -30,7 +30,7 @@ notifyData::Message() const {
 		wxT("%s")
 		wxT("Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("User Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
+		wxT("Callsign Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
 		wxT("Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d"),
 		msgs.c_str(),
@@ -187,7 +187,7 @@ wxT("protected and you'll need to provide a password in order to open it.")),
 	butsizer->Add(new wxRadioButton(this, ID_LCW_TQ6, wxT(""), wxDefaultPosition, wxDefaultSize, 0),
 		0, wxALIGN_TOP, 0);
 	butsizer->Add(new wxStaticText(this, -1,
-wxT("TQSL (.tq6) certificate file - A file you received from a certificate\n")
+wxT("TQSL (.tq6) callsign certificate file - A file you received from a certificate\n")
 wxT("issuer that contains the issued certificate and/or configuration data.")),
 		0, wxLEFT, 5);
 
@@ -215,9 +215,9 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 						wxCommandEvent e;
 	    					if (wxMessageBox(
 wxT("You will not be able to use this tq6 file to recover your\n")
-wxT("certificate if it gets lost. For security purposes, you should\n")
+wxT("callsign certificate if it gets lost. For security purposes, you should\n")
 wxT("back up your certificate on removable media for safe-keeping.\n\n")
-wxT("Would you like to back up your certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);

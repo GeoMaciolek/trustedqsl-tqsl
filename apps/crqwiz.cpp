@@ -66,7 +66,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
 	int em_h = st->GetSize().GetHeight();
 	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(wxT("This will create a new certificate request file.\n\n")
+	st->SetLabel(wxT("This will create a new callsign certificate request file.\n\n")
 		wxT("Once you supply the requested information and the\n")
 		wxT("request file has been created, you must send the\n")
 		wxT("request file to the certificate issuer."));
@@ -448,10 +448,10 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	int em_w = st->GetSize().GetWidth();
 	int em_h = st->GetSize().GetHeight();
 	st->SetLabel(
-wxT("You may protect your private key for this certificate\n")
+wxT("You may protect your private key for this callsign certificate\n")
 wxT("using a password. If you are using a computer system that\n")
 wxT("is shared with others, you should specify a password to\n")
-wxT("protect this certificate. However, if you are using a\n")
+wxT("protect this callsign certificate. However, if you are using a\n")
 wxT("computer in a private residence, no password need be specified.\n\n")
 wxT("Leave the password blank and click 'Next' unless you want to\n")
 wxT("use a password.\n\n")
@@ -801,12 +801,12 @@ CRQ_SignPage::TransferDataFromWindow() {
 	if (choice->GetSelection() == 0) {
 		if (cert_tree->GetNumCerts() > 0) {
 			int rval = wxMessageBox(
-wxT("You have one or more certificates that could be used\n")
+wxT("You have one or more callsign certificates that could be used\n")
 wxT("to sign this certificate request.\n\n")
 wxT("It is strongly recommended that you sign the request\n")
-wxT("unless the certificates shown are not actually yours.\n")
-wxT("Certificate issuers may choose not to permit unsigned\n")
-wxT("certificate requests from existing certificate holders.\n\n")
+wxT("unless the callsign certificates shown are not actually yours.\n")
+/*wxT("Certificate issuers may choose not to permit unsigned\n")
+wxT("certificate requests from existing certificate holders.\n\n") */
 wxT("Do you want to sign the certificate request?\n")
 wxT("Select \"Yes\" to sign the request, \"No\" to continue without signing."),
 				wxT("Warning"), wxYES_NO, this);

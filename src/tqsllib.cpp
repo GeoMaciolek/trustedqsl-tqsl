@@ -66,7 +66,7 @@ static const char *error_strings[] = {
 	"Unable to initialize random number generator",		/* TQSL_RANDOM_ERROR */
 	"Invalid argument",					/* TQSL_ARGUMENT_ERROR */
 	"Operator aborted operation",				/* TQSL_OPERATOR_ABORT */
-	"No private key matches the selected certificate",	/* TQSL_NOKEY_ERROR */
+	"No private key matches the selected callsign certificate",/* TQSL_NOKEY_ERROR */
 	"Buffer too small",					/* TQSL_BUFFER_ERROR */
 	"Invalid date format",					/* TQSL_INVALID_DATE */
 	"Certificate not initialized for signing",		/* TQSL_SIGNINIT_ERROR */
@@ -77,15 +77,15 @@ static const char *error_strings[] = {
 	"Invalid time format",					/* TQSL_INVALID_TIME */
 	"QSO date is not within the date range specified on your Callsign Certificate",	/* TQSL_CERT_DATE_MISMATCH */
 	"Certificate provider not found",			/* TQSL_PROVIDER_NOT_FOUND */
-	"No certificate for key",				/* TQSL_CERT_KEY_ONLY */
+	"No callsign certificate for key",			/* TQSL_CERT_KEY_ONLY */
 	"Configuration file cannot be opened",			/* TQSL_CONFIG_ERROR */
-	"Certificate or private key not found",			/* TQSL_CERT_NOT_FOUND */
+	"Callsign Certificate or private key not found",	/* TQSL_CERT_NOT_FOUND */
 	"PKCS#12 file not TQSL compatible",			/* TQSL_PKCS12_ERROR */
-	"Certificate not TQSL compatible",			/* TQSL_CERT_TYPE_ERROR */
+	"Callsign Certificate not TQSL compatible",		/* TQSL_CERT_TYPE_ERROR */
 	"Date out of range",					/* TQSL_DATE_OUT_OF_RANGE */
 	"Duplicate QSO suppressed",				/* TQSL_DUPLICATE_QSO */
 	"Database error",					/* TQSL_DB_ERROR */
-	"The selected location could not be found",		/* TQSL_LOCATION_NOT_FOUND */
+	"The selected station location could not be found",	/* TQSL_LOCATION_NOT_FOUND */
 	"The selected callsign could not be found",		/* TQSL_CALL_NOT_FOUND */
 	"The TQSL configuration file cannot be parsed",		/* TQSL_CONFIG_SYNTAX_ERROR */
 	"This file can not be processed due to a system error",	/* TQSL_FILE_SYSTEM_ERROR */

@@ -44,7 +44,7 @@ class CRQ_Page;
 class CRQWiz : public ExtWizard {
 public:
 	CRQWiz(TQSL_CERT_REQ *crq, 	tQSL_Cert cert, wxWindow* parent, wxHtmlHelpController *help = 0,
-		const wxString& title = wxT("Generate Certificate Request"));
+		const wxString& title = wxT("Generate Callsign Certificate Request"));
 	CRQ_Page *GetCurrentPage() { return (CRQ_Page *)wxWizard::GetCurrentPage(); }
 	bool RunWizard();
 	// ProviderPage data

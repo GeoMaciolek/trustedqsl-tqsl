@@ -55,7 +55,7 @@ main(int argc, char *argv[]) {
 				break;
 		}
 		if (i == nfield)
-			throw myexc(string("Can't init location for call = ") + call);
+			throw myexc(string("Can't init station location for call = ") + call);
 		if (tqsl_setLocationFieldIndex(loc, 0, i))
 			throw tqslexc();
 		if (tqsl_updateStationLocationCapture(loc))
