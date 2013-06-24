@@ -1,5 +1,5 @@
 /***************************************************************************
-                          tqslcertctrls.h  -  description
+                          tqslctrls.h  -  description
                              -------------------
     begin                : Sun Jun 23 2002
     copyright            : (C) 2002 by ARRL
@@ -8,8 +8,8 @@
     revision             : $Id$
  ***************************************************************************/
 
-#ifndef __tqslcertctrls_h
-#define __tqslcertctrls_h
+#ifndef __tqslctrls_h
+#define __tqslctrls_h
 
 #ifdef HAVE_CONFIG_H
 #include "sysconfig.h"
@@ -20,6 +20,7 @@ enum {		// Menu items
 	tc_c_Sign,
 	tc_c_Renew,
 	tc_c_Import,
+	tc_c_Load,
 	tc_c_Export,
 	tc_c_Delete,
 	tc_h_Contents,
@@ -86,4 +87,4 @@ enum {		// Window IDs
 };
 
 
-#endif	// __tqslcertctrls_h
+#endif	// __tqslctrls_h

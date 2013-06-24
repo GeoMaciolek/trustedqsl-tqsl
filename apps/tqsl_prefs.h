@@ -33,7 +33,7 @@
 #include "wx/grid.h"
 #include "wx/wxhtml.h"
 
-#include "tqslcertctrls.h"
+#include "tqslctrls.h"
 
 #include <map>
 
@@ -114,7 +114,6 @@ public:
 private:
 	wxCheckBox *showSuperceded_cb;
 	wxCheckBox *showExpired_cb;
-	wxCheckBox *root_cb, *ca_cb, *user_cb;
 };
 
 typedef std::map <wxString, wxString> ModeSet;

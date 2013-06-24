@@ -13,7 +13,7 @@
 #include "crqwiz.h"
 #include "dxcc.h"
 #include "util.h"
-#include "tqslcertctrls.h"
+#include "tqslctrls.h"
 #include "tqsltrace.h"
 
 #include "wx/validate.h"

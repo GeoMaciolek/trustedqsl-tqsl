@@ -14,7 +14,7 @@
 
 #include "loadcertwiz.h"
 #include "getpassword.h"
-#include "tqslcertctrls.h"
+#include "tqslctrls.h"
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "tqslapp.h"

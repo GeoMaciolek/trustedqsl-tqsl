@@ -13,7 +13,7 @@
 #include <vector>
 #include <algorithm>
 
-#include "tqslcertctrls.h"
+#include "tqslctrls.h"
 #include "dxcc.h"
 #include "tqslerrno.h"
 #include "tqsltrace.h"
