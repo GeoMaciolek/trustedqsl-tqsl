@@ -1778,6 +1778,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
+	FILE *logFile = NULL; 
 
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
 
@@ -1832,13 +1833,21 @@ retry_upload:
 
 
 		//debug
+		char filename[1024];
 		if (diagFile) {
 			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
 			curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
 			fprintf(diagFile, "Upload Log:\n");
+		} else {
+			snprintf(filename, sizeof filename, "%s/curl.log", tQSL_BaseDir);
+			filename[sizeof filename - 1] = '\0';
+			logFile = fopen(filename, "wb");
+			if (logFile) {
+				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+				curl_easy_setopt(req, CURLOPT_STDERR, logFile);
+				fprintf(logFile, "Upload Log:\n");
+			}
 		}
-
-
 		//set up options
 		curl_easy_setopt(req, CURLOPT_URL, urlstr);
 
@@ -1872,11 +1881,11 @@ retry_upload:
 		// and the curl form expects it to still be there during perform() so 
 		// we have to do all this copying around to please the unicode gods
 
-		char filename[1024];
 		strncpy(filename, wxString::Format(wxT("<TQSLUpl %s-%s> %s"),
 			now.Format(wxT("%Y%m%d")).c_str(),
 			now.Format(wxT("%H%M")).c_str(),
-			name.c_str()).mb_str(), 1023);
+			name.c_str()).mb_str(), sizeof filename);
+		filename[sizeof filename - 1] = '\0';
 
 		struct curl_httppost* post=NULL, *lastitem=NULL;
 
@@ -1910,6 +1919,7 @@ retry_upload:
 			        upload->Destroy();
 				free(urlstr);
 				free(cpUF);
+				if (logFile) fclose(logFile);
 				return TQSL_EXIT_TQSL_ERROR;
 			}
 
@@ -1990,6 +2000,7 @@ retry_upload:
 
 		if (urlstr) free(urlstr);
 		if (cpUF) free (cpUF);
+		if (logFile) fclose(logFile);
 		return retval;
 	}
 
