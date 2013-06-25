@@ -433,24 +433,24 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 	if (action==TQSL_ACTION_UNSPEC) {
 		if (qso_count==dupes) {
 			message+=
-				wxT("\n\nThe log file you are uploading using your QSO Logging system consists entirely of previously uploaded")
-				wxT(" QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your QSO")
-				wxT(" Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
-				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'")
-				wxT(" is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce")
-				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
+				wxT("\n\nThe log file you are uploading using your QSO Logging system consists entirely of previously uploaded\n")
+				wxT("QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your QSO\n")
+				wxT("Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
+				wxT("is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
+				wxT("strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		} else {
 			message+=
-				wxT("\n\nThe log file you are uploading using your QSO Logging system includes some previously uploaded")
-				wxT(" QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your")
-				wxT(" QSO Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
-				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'")
-				wxT(" is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly")
-				wxT(" set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'")
-				wxT(" and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though")
-				wxT(" they would not be in this specific batch\n")
-				wxT("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce")
-				wxT(" strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
+				wxT("\n\nThe log file you are uploading using your QSO Logging system includes some previously uploaded\n")
+				wxT("QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your\n")
+				wxT("QSO Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n")
+				wxT("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n")
+				wxT("is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly\n")
+				wxT("set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'\n")
+				wxT("and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though\n")
+				wxT("they would not be in this specific batch\n")
+				wxT("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n")
+				wxT("strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		}
 	}
 	sizer->Add(new wxStaticText(this, -1, message), 0, wxALL|wxALIGN_CENTER, 10);
