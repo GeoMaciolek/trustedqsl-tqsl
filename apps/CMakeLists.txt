@@ -87,7 +87,7 @@ qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp
 crqwiz.cpp certtree.cpp getpassword.cpp loadcertwiz.cpp wxutil.cpp loctree.cpp)
 set(TQSL_HDR tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h
 tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h
-tqslvalidator.h tqslbuild.h tqslhelp.h certtree.h tqslcertctrls.h util.h
+tqslvalidator.h tqslbuild.h tqslhelp.h certtree.h tqslctrls.h util.h
 getpassword.h extwizard.h loadcertwiz.h wxutil.h loctree.h tqsltrace.h)
 set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm cert.xpm nocert.xpm
 broken-cert.xpm folder.xpm replaced.xpm expired.xpm home.xpm delete.xpm edit.xpm
