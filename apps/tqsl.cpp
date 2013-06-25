@@ -684,6 +684,15 @@ END_EVENT_TABLE()
 
 void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
+	int x, y, w, h;
+	GetPosition(&x, &y);
+	GetSize(&w, &h);
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	config->Write(wxT("MainWindowX"), x);
+	config->Write(wxT("MainWindowY"), y);
+	config->Write(wxT("MainWindowWidth"), w);
+	config->Write(wxT("MainWindowHeight"), h);
+	config->Flush(false);
 	Destroy();
 }
 
@@ -2989,7 +2998,14 @@ cerr << "called" << endl;
 MyFrame *
 QSLApp::GUIinit(bool checkUpdates) {
 	tqslTrace("QSLApp::GUIinit", "checkUpdates=%d", checkUpdates);
-	MyFrame *frame = new MyFrame(wxT("TQSL"), 50, 50, 800, 600, checkUpdates);
+	int x, y, w, h;
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	config->Read(wxT("MainWindowX"), &x, 50);
+	config->Read(wxT("MainWindowY"), &y, 50);
+	config->Read(wxT("MainWindowWidth"), &w, 800);
+	config->Read(wxT("MainWindowHeight"), &h, 600);
+
+	MyFrame *frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
 	if (checkUpdates)
 		frame->FirstTime();
 	frame->Show(true);
