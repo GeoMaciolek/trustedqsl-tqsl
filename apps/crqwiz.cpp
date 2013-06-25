@@ -605,7 +605,7 @@ CRQ_IntroPage::validate() {
 	// Data looks okay, now let's make sure this isn't a duplicate request
 	// (unless it's a renewal).
 
-	if (Parent()->_crq) {
+	if (!Parent()->_crq) {
 		val.MakeUpper();
 		tQSL_Cert *certlist = 0;
 		int ncert = 0;
@@ -636,7 +636,7 @@ CRQ_IntroPage::validate() {
 				tqsl_freeCertificate(certlist[i]);
 			}
 			if (ok == false) {
-				msg = wxString::Format(wxT("You have an overlapping certificate for %s\n(DXCC=%d)\nhaving QSO dates: "), val.c_str(), Parent()->dxcc);
+				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%d) having QSO dates: "), val.c_str(), Parent()->dxcc);
 				msg += wxString(cert_before_buf, wxConvLocal) + wxT(" to ") + wxString(cert_after_buf, wxConvLocal);
 			}
 		}

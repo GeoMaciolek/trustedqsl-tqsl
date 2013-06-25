@@ -108,7 +108,8 @@ public:
 	void OnQuit(wxCommandEvent& event);
 	void CRQWizard(wxCommandEvent& event);
 	void CRQWizardRenew(wxCommandEvent& event);
-	void OnTreeSel(wxTreeEvent& event);
+	void OnCertTreeSel(wxTreeEvent& event);
+	void CertTreeReset(void);
 	void OnCertProperties(wxCommandEvent& event);
 	void OnCertExport(wxCommandEvent& event);
 	void OnCertDelete(wxCommandEvent& event);
@@ -119,6 +120,7 @@ public:
 	void OnLocDelete(wxCommandEvent& event);
 	void OnLocEdit(wxCommandEvent& event);
 	void OnLocTreeSel(wxTreeEvent& event);
+	void LocTreeReset(void);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
 	void FirstTime(void);
 

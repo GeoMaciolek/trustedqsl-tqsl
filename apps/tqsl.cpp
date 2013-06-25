@@ -677,7 +677,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
-	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnTreeSel)
+	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnCertTreeSel)
 	EVT_TREE_SEL_CHANGED(tc_LocTree, MyFrame::OnLocTreeSel)
 
 END_EVENT_TABLE()
@@ -712,6 +712,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmap propertiesbm(properties_xpm);
 	wxBitmap properties_disbm(properties_dis_xpm);
 	wxBitmap importbm(import_xpm);
+	loc_edit_button = NULL;
+	cert_save_label = NULL;
 
 	// File menu
 	wxMenu *file_menu = new wxMenu;
@@ -851,6 +853,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	loc_tree->Build();
+	LocTreeReset();
 	lgsizer->Add(loc_tree, 1, wxEXPAND);
 
 	loc_select_label = new wxStaticText(locgrid, -1, wxT("\nSelect a Station Location to process"));
@@ -939,6 +942,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	CertTreeReset();
 	cgsizer->Add(cert_tree, 1, wxEXPAND);
 
 	cert_select_label = new wxStaticText(certgrid, -1, wxT("\nSelect a Callsign Certificate to process"));
@@ -963,7 +967,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
-	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a new Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a new Callsign Certificate"));
+	cert_load_label->GetSize(&tw, &th);
 	cb1sizer->Add(cert_load_label, 1, wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
@@ -1135,6 +1140,7 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
 	loc_tree->Build();
+	LocTreeReset();
 }
 
 void
@@ -1158,11 +1164,13 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		selname = run_station_wizard(this, loc, help, true, wxString::Format(wxT("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()), data->getLocname());
 		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 		loc_tree->Build();
+		LocTreeReset();
 		return;
 	}
 	try {
 		SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
 		loc_tree->Build();
+		LocTreeReset();
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
@@ -2517,6 +2525,7 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	Preferences dial(this, help);
 	dial.ShowModal();
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	CertTreeReset();
 }
 
 class TQSLConfig {
@@ -2946,6 +2955,8 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 		loader->RestoreConfig(in);
 		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
 		loc_tree->Build();
+		LocTreeReset();
+		CertTreeReset();
 		gzclose(in);
 	}
 	catch (TQSLException& x) {
@@ -3267,6 +3278,7 @@ void MyFrame::FirstTime(void) {
 			wxT("Notice"), wxOK, this);
 	}
 	int ncerts = cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	CertTreeReset();
 	if (ncerts == 0 && wxMessageBox(wxT("You have no callsign certificate with which to sign log submissions.\n")
 		wxT("Would you like to request a callsign certificate now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
 		wxCommandEvent e;
@@ -3412,6 +3424,7 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	LoadCertWiz lcw(this, help, wxT("Load Certificate File"));
 	lcw.RunWizard();
 	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	CertTreeReset();
 }
 
 void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
@@ -3569,15 +3582,29 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			if (req.signer)
 				tqsl_endSigning(req.signer);
 			cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+			CertTreeReset();
 		}
 	}
 }
 
-void MyFrame::OnTreeSel(wxTreeEvent& event) {
-	tqslTrace("MyFrame::OnTreeSel");
+void
+MyFrame::CertTreeReset() {
+	if (!cert_save_label) return;
+	cert_save_label->SetLabel(wxT("\nSave a Callsign Certificate"));
+	cert_renew_label->SetLabel(wxT("\nRenew a Callsign Certificate"));
+	cert_prop_label->SetLabel(wxT("\nDisplay a Callsign Certificate"));
+	cert_menu->Enable(tc_c_Renew, false);
+	cert_renew_button->Enable(false);
+	cert_select_label->SetLabel(wxT("\nSelect a Callsign Certificate to process"));
+	cert_save_button->Enable(false);
+	cert_prop_button->Enable(false);
+}
+
+void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
+	tqslTrace("MyFrame::OnCertTreeSel");
 	wxTreeItemId id = event.GetItem();
 	CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(id);
-	if (data != NULL) {
+	if (data) {
 		int keyonly = 0;
 		int expired = 0;
 		int superseded = 0;
@@ -3587,7 +3614,7 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
 		tqsl_isCertificateExpired(data->getCert(), &expired);
 		tqsl_isCertificateSuperceded(data->getCert(), &superseded);
-		tqslTrace("MyFrame::OnTreeSel", "call=%s", call);
+		tqslTrace("MyFrame::OnCertTreeSel", "call=%s", call);
 
 		cert_select_label->SetLabel(wxT(""));
 		cert_menu->Enable(tc_c_Properties, true);
@@ -3612,14 +3639,7 @@ void MyFrame::OnTreeSel(wxTreeEvent& event) {
 		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
 		cert_renew_button->Enable(!(keyonly || expired || superseded));
 	} else {
-		cert_save_label->SetLabel(wxT("\nSave a Callsign Certificate"));
-		cert_renew_label->SetLabel(wxT("\nRenew a Callsign Certificate"));
-		cert_prop_label->SetLabel(wxT("\nDisplay a Callsign Certificate"));
-		cert_menu->Enable(tc_c_Renew, false);
-		cert_renew_button->Enable(false);
-		cert_select_label->SetLabel(wxT("\nSelect a Callsign Certificate to process"));
-		cert_save_button->Enable(false);
-		cert_prop_button->Enable(false);
+		CertTreeReset();
 	}
 }
 
@@ -3702,7 +3722,20 @@ wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_N
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+		CertTreeReset();
 	}
+}
+
+void
+MyFrame::LocTreeReset() {
+	if (!loc_edit_button) return;
+	loc_edit_button->Disable();
+	loc_delete_button->Disable();
+	loc_prop_button->Disable();
+	loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
+	loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
+	loc_prop_label->SetLabel(wxT("\nDisplay a Station Location"));
+	loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
 }
 
 void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
@@ -3728,13 +3761,7 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		loc_prop_label->Wrap(w - 10);
 		loc_select_label->SetLabel(wxT(""));
 	} else {
-		loc_edit_button->Disable();
-		loc_delete_button->Disable();
-		loc_prop_button->Disable();
-		loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
-		loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
-		loc_prop_label->SetLabel(wxT("\nDisplay a Station Location"));
-		loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
+		LocTreeReset();
 	}
 }
 
@@ -3757,6 +3784,7 @@ wxT("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), wxT("Warning"), wxYES_NO|
 		if (tqsl_deleteStationLocation(data->getLocname().mb_str()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		loc_tree->Build();
+		LocTreeReset();
 	}
 }
 
@@ -3782,6 +3810,7 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	}
 	loc_tree->Build();
+	LocTreeReset();
 }
 
 class CertPropDial : public wxDialog {
