@@ -85,6 +85,14 @@ DLLEXPORT int CALLCONVENTION tqsl_setConverterAllowBadCall(tQSL_Converter conv, 
   */
 DLLEXPORT int CALLCONVENTION tqsl_setConverterAllowDuplicates(tQSL_Converter convp, int allow);
 
+/** Specify the name of the application using the conversion library.
+  * This is output in a header record in the exported log file.
+  * Call this before calling tqsl_getConverterGABBI.
+  *
+  * \c app is a c string containing the application name.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_setConverterAppName(tQSL_Converter convp, const char *app);
+
 /** Roll back insertions into the duplicates database.
   *
   * This is called when cancelling creating a log, and causes any records

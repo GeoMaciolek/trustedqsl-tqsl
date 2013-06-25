@@ -1432,6 +1432,8 @@ restart:
 		config->Read(wxT("BadCalls"), &allow);
 		tqsl_setConverterAllowBadCall(conv, allow);
 		tqsl_setConverterAllowDuplicates(conv, allow_dupes);
+		tqsl_setConverterAppName(conv, iam);
+
 		wxSplitPath(infile, 0, &name, &ext);
 		if (ext != wxT(""))
 			name += wxT(".") + ext;
@@ -1441,16 +1443,8 @@ restart:
 			this->Enable(FALSE);
 		}
 		bool ignore_err = false;
-		int major = 0, minor = 0, config_major = 0, config_minor = 0;
-		tqsl_getVersion(&major, &minor);
-		tqsl_getConfigVersion(&config_major, &config_minor);
-		wxString ident = wxString::Format(wxT("%hs Lib: V%d.%d Config: V%d.%d AllowDupes: %hs"), iam,
-			major, minor, config_major, config_minor,
-			allow_dupes ? "true" : "false");
-		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), (int)ident.length(), ident.c_str());
-		gabbi_ident += wxT("\n");
 
-		output = gabbi_ident;
+		output = wxT("");
 
    		do {
    	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {

@@ -69,6 +69,8 @@ public:
 	FILE* errfile;
 	char serial[512];
 	bool allow_dupes;
+	bool need_ident_rec;
+	char *appName;
 };
 
 inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
@@ -92,6 +94,8 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	cursor = NULL;
 	errfile = NULL;
 	memset(&serial, 0, sizeof serial);
+	appName = NULL;
+	need_ident_rec = true;
 	// Init the band data
 	const char *val;
 	int n = 0;
@@ -268,6 +272,7 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		if (conv->errfile) fclose(conv->errfile);
 	}
 	
+	if (conv->appName) free(conv->appName);
 	if (CAST_TQSL_CONVERTER(*convp)->sentinel == 0x4445)
 		delete CAST_TQSL_CONVERTER(*convp);
 	*convp = 0;
@@ -444,6 +449,23 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 
 	if (!(conv = check_conv(convp)))
 		return 0;
+	if (conv->need_ident_rec) {
+		int major = 0, minor = 0, config_major = 0, config_minor = 0;
+		tqsl_getVersion(&major, &minor);
+		tqsl_getConfigVersion(&config_major, &config_minor);
+		char temp[512];
+		static char ident[512];
+		snprintf(temp, sizeof temp, "%s Lib: V%d.%d Config: V%d.%d AllowDupes: %s",
+			conv->appName ? conv->appName : "Unknown",
+                        major, minor, config_major, config_minor,
+                        conv->allow_dupes ? "true" : "false");
+		temp[sizeof temp - 1] = '\0';
+		snprintf(ident, sizeof ident, "<TQSL_IDENT:%d>%s\n", (int)strlen(temp), temp);
+		ident[sizeof ident - 1] = '\0';
+		conv->need_ident_rec = false;
+		return ident;
+	}
+
 	if (conv->need_station_rec) {
 		int uid = conv->cert_idx + conv->base_idx;
 		conv->need_station_rec = false;
@@ -759,6 +781,19 @@ tqsl_setConverterAllowDuplicates(tQSL_Converter convp, int allow) {
 	if (!(conv = check_conv(convp)))
 		return 1;
 	conv->allow_dupes = (allow != 0);
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_setConverterAppName(tQSL_Converter convp, const char *app) {
+	TQSL_CONVERTER *conv;
+	if (!(conv = check_conv(convp)))
+		return 1;
+	if (!app) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	conv->appName = strdup(app);
 	return 0;
 }
 

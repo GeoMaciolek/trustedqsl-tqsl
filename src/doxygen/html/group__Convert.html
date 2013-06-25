@@ -64,6 +64,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga56e76546adf63ba2ae95e85d42b3e83e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab82288466b88d77848d894c8b35b40f7"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#gab82288466b88d77848d894c8b35b40f7">tqsl_setConverterAllowDuplicates</a> (tQSL_Converter convp, int allow)</td></tr>
 <tr class="separator:gab82288466b88d77848d894c8b35b40f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga51a0f78debce9844a2b6107688ab6d67"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga51a0f78debce9844a2b6107688ab6d67">tqsl_setConverterAppName</a> (tQSL_Converter convp, const char *app)</td></tr>
+<tr class="separator:ga51a0f78debce9844a2b6107688ab6d67"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga411397522781e7e9babc460239b070d3"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga411397522781e7e9babc460239b070d3">tqsl_converterRollBack</a> (tQSL_Converter convp)</td></tr>
 <tr class="separator:ga411397522781e7e9babc460239b070d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga088885084c39a262ae6b75e9d27ba932"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga088885084c39a262ae6b75e9d27ba932">tqsl_converterCommit</a> (tQSL_Converter convp)</td></tr>
@@ -515,6 +517,34 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Configure the converter to allow (allow != 0) or disallow (allow == 0) duplicate QSOs in a signed log. Duplicate detection is done using QSO details, location details, and certificate serial number.</p>
 <p><code>allow</code> defaults to 1 for backwards compatibility when tqsl_beginADIFConverter or tqsl_beginCabrilloConverter is called. </p>
+
+</div>
+</div>
+<a class="anchor" id="ga51a0f78debce9844a2b6107688ab6d67"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_setConverterAppName </td>
+          <td>(</td>
+          <td class="paramtype">tQSL_Converter&#160;</td>
+          <td class="paramname"><em>convp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>app</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Specify the name of the application using the conversion library. This is output in a header record in the exported log file. Call this before calling tqsl_getConverterGABBI.</p>
+<p><code>app</code> is a c string containing the application name. </p>
 
 </div>
 </div>
