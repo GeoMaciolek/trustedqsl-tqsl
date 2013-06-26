@@ -1641,8 +1641,12 @@ abortSigning:
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
 	}
-	if (cancelled) return TQSL_EXIT_CANCEL;
-	if (aborted || duplicates > 0 || out_of_range > 0 || errors > 0) return TQSL_EXIT_QSOS_SUPPRESSED;
+	if (cancelled)
+		return TQSL_EXIT_CANCEL;
+	if (processed == 0)
+		return TQSL_EXIT_NO_QSOS;
+	if (aborted || duplicates > 0 || out_of_range > 0 || errors > 0)
+		return TQSL_EXIT_QSOS_SUPPRESSED;
 	return TQSL_EXIT_SUCCESS;
 }
 
