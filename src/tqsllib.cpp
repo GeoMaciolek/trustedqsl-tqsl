@@ -38,7 +38,7 @@
 DLLEXPORTDATA int tQSL_Error = 0;
 DLLEXPORTDATA int tQSL_Errno = 0;
 DLLEXPORTDATA TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
-const char *tQSL_BaseDir = 0;
+DLLEXPORTDATA const char *tQSL_BaseDir = 0;
 DLLEXPORTDATA char tQSL_ErrorFile[256];
 DLLEXPORTDATA char tQSL_CustomError[256];
 

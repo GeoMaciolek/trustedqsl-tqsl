@@ -128,7 +128,7 @@ typedef struct {
 } TQSL_QSO_RECORD;
 
 /// Base directory for tQSL library working files.
-extern const char *tQSL_BaseDir;
+DLLEXPORTDATA extern const char *tQSL_BaseDir;
 
 #ifdef __cplusplus
 extern "C" {
