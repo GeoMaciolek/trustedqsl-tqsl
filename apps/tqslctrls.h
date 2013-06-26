@@ -32,10 +32,8 @@ enum {		// Menu items
 
 enum {		// Window IDs
 	tc_CertTree = (wxID_HIGHEST+1),
-	tc_Quit,
 	tc_CRQWizard,
 	tc_Load,
-	tc_Preferences,
 	tc_CertPropDial,
 	tc_CertPropDialButton,
 	tl_LocPropDial,
