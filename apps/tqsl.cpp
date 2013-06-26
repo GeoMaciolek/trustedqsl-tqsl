@@ -698,6 +698,7 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 
 void
 MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
+	Close();
 	Destroy();
 }
 
