@@ -1,6 +1,12 @@
 TQSL/TQSLCERT changes
 =====================
 
+1.14.3
+------
+On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed
+by http://support.microsoft.com/kb/975858. On all platforms: show some additional 
+libraries' versions in the about screen
+
 1.14.2
 ------
 Fixed an error when the TrustedQSL directory had Unicode characters, don't prompt
