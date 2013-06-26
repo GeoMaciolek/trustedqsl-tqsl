@@ -1,5 +1,6 @@
 #!/bin/sh
 
+TQSLVER=`cat apps/tqslversion.ver`
 TQSLLIBPATH=`pwd`/src/libtqsllib.dylib
 WORKDIR=`mktemp -d /tmp/tqsl.XXXXX` || exit 1
 
@@ -33,7 +34,7 @@ cp -r apps/help/tqslapp $WORKDIR/TrustedQSL/tqsl.app/Contents/Resources/Help
 /bin/echo "Creating the disk image..."
 
 #hdiutil uses dots to show progress
-hdiutil create -ov -srcfolder $WORKDIR -volname "TrustedQSL v1.15" tqsl-115.dmg
+hdiutil create -ov -srcfolder $WORKDIR -volname "TrustedQSL v$TQSLVER" "tqsl-$TQSLVER.dmg"
 
 /bin/echo -n "Cleaning up temporary files.. "
 rm -r $WORKDIR
