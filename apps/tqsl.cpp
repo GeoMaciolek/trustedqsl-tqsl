@@ -750,9 +750,9 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
-	msg+=wxString::Format(wxT("\nlibcurl V%s\n"), LIBCURL_VERSION);
-	msg+=wxString::Format(wxT("%s\n"), OPENSSL_VERSION_TEXT);
-	msg+=wxString::Format(wxT("zlib V%s"), ZLIB_VERSION);
+	msg+=wxString::Format(wxT("\nlibcurl V%hs\n"), LIBCURL_VERSION);
+	msg+=wxString::Format(wxT("%hs\n"), OPENSSL_VERSION_TEXT);
+	msg+=wxString::Format(wxT("zlib V%hs"), ZLIB_VERSION);
 	wxMessageBox(msg, wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
