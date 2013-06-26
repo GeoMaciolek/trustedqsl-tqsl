@@ -53,6 +53,7 @@
 	#include <io.h>
 #endif
 #include <zlib.h>
+#include <openssl/opensslv.h> // only for version info!
 #include "tqslwiz.h"
 #include "qsodatadialog.h"
 #include "tqslerrno.h"
@@ -749,6 +750,9 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
+	msg+=wxString::Format(wxT("\nlibcurl V%s\n"), LIBCURL_VERSION);
+	msg+=wxString::Format(wxT("%s\n"), OPENSSL_VERSION_TEXT);
+	msg+=wxString::Format(wxT("zlib V%s"), ZLIB_VERSION);
 	wxMessageBox(msg, wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
 }
 
