@@ -41,7 +41,8 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
 	notebook = new wxNotebook(this, -1);
-	topsizer->Add(notebook, 1, wxGROW);
+//	topsizer->Add(notebook, 1, wxGROW);
+	topsizer->Add(notebook, 1, wxEXPAND | wxLEFT | wxRIGHT, 20);
 	fileprefs = new FilePrefs(notebook);
 	certprefs = new CertPrefs(notebook);
 
@@ -472,7 +473,7 @@ ContestMap::ContestMap(wxWindow *parent) : PrefsPanel(parent, wxT("pref-cab.htm"
 	grid->SetLabelSize(wxVERTICAL, 0);
 	grid->SetColumnWidth(0, char_width*15);
 	grid->SetColumnWidth(1, char_width*4);
-	grid->SetColumnWidth(2, char_width*3);
+	grid->SetColumnWidth(2, char_width*5);
 	grid->SetLabelValue(wxHORIZONTAL, wxT("CONTEST"), 0);
 	grid->SetLabelValue(wxHORIZONTAL, wxT("Type"), 1);
 	grid->SetLabelValue(wxHORIZONTAL, wxT("Field"), 2);
@@ -564,7 +565,7 @@ void ContestMap::OnDelete(wxCommandEvent &) {
 
 void ContestMap::OnAdd(wxCommandEvent &) {
 	tqslTrace("ContestMap::OnAdd");
-	EditContest dial(this, wxT("Add"));
+	EditContest dial(this, wxT("Add"), wxT(""), 0, TQSL_DEF_CABRILLO_MAP_FIELD);
 	if (dial.ShowModal() == ID_OK_BUT) {
 		wxConfig *config = (wxConfig *)wxConfig::Get();
 		config->SetPath(wxT("/cabrilloMap"));
