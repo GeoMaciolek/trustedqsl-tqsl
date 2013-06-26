@@ -270,6 +270,10 @@ void AddMode::OnOK(wxCommandEvent& WXUNUSED(event)) {
 
 #define FILE_TEXT_WIDTH 30
 
+BEGIN_EVENT_TABLE(FilePrefs, PrefsPanel)
+	EVT_CHECKBOX(ID_PREF_FILE_AUTO_BACKUP, FilePrefs::OnShowHide)
+END_EVENT_TABLE()
+
 FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm")) {
 	tqslTrace("FilePrefs::FilePrefs", "parent=0x%lx", (void *)parent);
 	wxConfig *config = (wxConfig *)wxConfig::Get();
@@ -290,10 +294,17 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	adif = new wxTextCtrl(this, ID_PREF_FILE_ADIF, adi, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(adif, 0, wxLEFT|wxRIGHT, 10);
+	bool ab;
+	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
+	autobackup = new wxCheckBox(this, ID_PREF_FILE_AUTO_BACKUP, wxT("Allow automatic configuration backup"));
+	autobackup->SetValue(ab);
+	sizer->Add(autobackup, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+
 	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
 	wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
 	dirPick = new wxDirPickerCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxT("Select a Folder"), wxDefaultPosition,
 		wxSize(char_width, HEIGHT_ADJ(char_height)), wxDIRP_USE_TEXTCTRL);
+	dirPick->Enable(ab);
 	sizer->Add(dirPick, 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
 
 	badcalls = new wxCheckBox(this, ID_PREF_FILE_BADCALLS, wxT("Allow nonamateur call signs"));
@@ -309,6 +320,11 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	SetSizer(sizer);
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
+}
+
+void
+FilePrefs::ShowHide () {
+	dirPick->Enable(autobackup->GetValue());
 }
 
 static wxString
@@ -336,6 +352,7 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("ADIFFiles"), fix_ext_str(adif->GetValue()));
 	config->Write(wxT("BadCalls"), badcalls->GetValue());
 	config->Write(wxT("DateRange"), daterange->GetValue());
+	config->Write(wxT("AutoBackup"), autobackup->GetValue());
 	config->Write(wxT("BackupFolder"), dirPick->GetPath());
 	return true;
 }

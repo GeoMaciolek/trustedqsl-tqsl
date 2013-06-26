@@ -40,6 +40,7 @@
 
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
 #define DEFAULT_ADIF_FILES wxT("adi")
+#define DEFAULT_AUTO_BACKUP true
 
 //online
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
@@ -57,6 +58,7 @@ enum {		// Window IDs
 	ID_HELP_BUT,
 	ID_PREF_FILE_CABRILLO = (wxID_HIGHEST+1),
 	ID_PREF_FILE_ADIF,
+	ID_PREF_FILE_AUTO_BACKUP,
 	ID_PREF_FILE_BACKUP,
 	ID_PREF_FILE_BADCALLS,
 	ID_PREF_FILE_DATERANGE,
@@ -91,10 +93,13 @@ class FilePrefs : public PrefsPanel {
 public:
 	FilePrefs(wxWindow *parent);
 	virtual bool TransferDataFromWindow();
+	void OnShowHide(wxCommandEvent&) { ShowHide(); }
+	void ShowHide();
 private:
 	wxTextCtrl *cabrillo, *adif;
-	wxCheckBox *badcalls, *daterange;
+	wxCheckBox *autobackup, *badcalls, *daterange;
 	wxDirPickerCtrl *dirPick;
+	DECLARE_EVENT_TABLE()
 };
 
 class OnlinePrefs : public PrefsPanel {
