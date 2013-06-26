@@ -69,6 +69,8 @@
 	#include <io.h>
 #endif
 #include <zlib.h>
+#include <openssl/opensslv.h> // only for version info!
+#include <db.h> //only for version info!
 #include "tqslwiz.h"
 #include "qsodatadialog.h"
 #include "tqslerrno.h"
@@ -1087,6 +1089,10 @@ static wxString getAbout() {
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
+        msg+=wxString::Format(wxT("\nlibcurl V%hs\n"), LIBCURL_VERSION);
+        msg+=wxString::Format(wxT("%hs\n"), OPENSSL_VERSION_TEXT);
+        msg+=wxString::Format(wxT("zlib V%hs\n"), ZLIB_VERSION);
+	msg+=wxString::Format(wxT("%hs"), DB_VERSION_STRING);
 	return msg;
 }
 

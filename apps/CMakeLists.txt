@@ -24,7 +24,7 @@ find_library(CARBON_LIBRARY Carbon)
 find_path(CARBON_INCLUDE_DIR Carbon.h)
 endif()
 
-include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${CARBON_INCLUDE_DIR})
+include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${CARBON_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR} ${BDB_INCLUDE_DIR})
 
 #get version from file
 
