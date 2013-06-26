@@ -656,11 +656,9 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 
 	EVT_CLOSE(MyFrame::OnExit)
 
-	EVT_MENU(tc_Quit, MyFrame::OnQuit)
 	EVT_MENU(tc_CRQWizard, MyFrame::CRQWizard)
 	EVT_MENU(tc_c_Load, MyFrame::OnLoadCertificateFile)
 	EVT_BUTTON(tc_Load, MyFrame::OnLoadCertificateFile)
-	EVT_MENU(tc_Preferences, MyFrame::OnPreferences)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
 	EVT_BUTTON(tc_CertProp, MyFrame::OnCertProperties)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
@@ -746,13 +744,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 #ifndef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->AppendSeparator();
 #endif
-	file_menu->Append(tc_Preferences, wxT("&Preferences..."));
+	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
 #ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
 #endif
 	file_menu->Append(tm_f_saveconfig, wxT("&Backup TQSL Configuration..."));
 	file_menu->Append(tm_f_loadconfig, wxT("&Restore TQSL Configuration..."));
-	file_menu->Append(tc_Quit, wxT("E&xit\tAlt-X"));
+	file_menu->Append(tm_f_exit, wxT("E&xit\tAlt-X"));
 
 	cert_menu = makeCertificateMenu(false);
 
@@ -3434,11 +3432,6 @@ makeLocationMenu(bool enable) {
 }
 
 /////////// Frame /////////////
-
-void MyFrame::OnQuit(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("MyFrame::OnQuit");
-	Close(TRUE);
-}
 
 void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnLoadCertificateFile");
