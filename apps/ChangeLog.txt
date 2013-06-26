@@ -10,7 +10,8 @@ Merge tqslcert into tqsl. Update the UI to be more user friendly.
 Don't display the certificate provider list if there's only one provider.
 
 Allow users to back up and restore their TQSL configuration in a portable
-file.
+file. Automatically back up the configuration to a user-specified directory
+(or to a default one) unless this is disabled.
 
 Add diagnostic logging capability. This is used to store a verbose log
 from cURL and to write a trace log that can be used by the developers to 
