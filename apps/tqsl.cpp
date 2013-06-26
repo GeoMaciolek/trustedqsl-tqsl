@@ -702,10 +702,14 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Write(wxT("MainWindowWidth"), w);
 	config->Write(wxT("MainWindowHeight"), h);
 	config->Flush(false);
-	wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
-	bdir += wxT("/tqslconfig.tbk");
-	BackupConfig(bdir, true);
-	Destroy();
+	Destroy();		// close the window
+	bool ab;
+	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
+	if (ab) {
+		wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
+		bdir += wxT("/tqslconfig.tbk");
+		BackupConfig(bdir, true);
+	}
 }
 
 void
