@@ -123,6 +123,7 @@ public:
 	void LocTreeReset(void);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
 	void FirstTime(void);
+	void BackupConfig(wxString& event, bool quiet);
 
 	CertTree *cert_tree;
 	LocTree *loc_tree;

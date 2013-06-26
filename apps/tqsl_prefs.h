@@ -32,6 +32,7 @@
 #include "wx/checkbox.h"
 #include "wx/grid.h"
 #include "wx/wxhtml.h"
+#include "wx/filepicker.h"
 
 #include "tqslctrls.h"
 
@@ -56,6 +57,7 @@ enum {		// Window IDs
 	ID_HELP_BUT,
 	ID_PREF_FILE_CABRILLO = (wxID_HIGHEST+1),
 	ID_PREF_FILE_ADIF,
+	ID_PREF_FILE_BACKUP,
 	ID_PREF_FILE_BADCALLS,
 	ID_PREF_FILE_DATERANGE,
 	ID_PREF_MODE_MAP,
@@ -92,6 +94,7 @@ public:
 private:
 	wxTextCtrl *cabrillo, *adif;
 	wxCheckBox *badcalls, *daterange;
+	wxDirPickerCtrl *dirPick;
 };
 
 class OnlinePrefs : public PrefsPanel {

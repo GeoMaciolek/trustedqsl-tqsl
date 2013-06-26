@@ -192,6 +192,15 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	return 0;
 }
 
+// Dummy password - used to bypass prompting for passwords during
+// automatic config backups
+int
+getDummyPassword(char *buf, int bufsiz, tQSL_Cert cert) {
+	tqslTrace("getDummyPassword", "buf = %lx, bufsiz=%d, cert=%lx", buf, bufsiz, cert);
+	strncpy(buf, "password", bufsiz);
+	return 0;
+}
+
 class ConvertingDialog : public wxDialog {
 public:
 	ConvertingDialog(wxWindow *parent, const char *filename = "");
@@ -693,6 +702,9 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Write(wxT("MainWindowWidth"), w);
 	config->Write(wxT("MainWindowHeight"), h);
 	config->Flush(false);
+	wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
+	bdir += wxT("/tqslconfig.tbk");
+	BackupConfig(bdir, true);
 	Destroy();
 }
 
@@ -2350,7 +2362,6 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		if (loc == 0)
 			return;
 		
-		
 		char callsign[40];
 		char loc_name[256];
 		int dxccnum;
@@ -2642,16 +2653,9 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 }
 
 void
-MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("MyFrame::OnSaveConfig");
+MyFrame::BackupConfig(wxString& filename, bool quiet) {
+	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", _S(filename), quiet);
 	try {
-		wxString file_default = wxT("userconfig.tbk");
-		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
-			file_default, wxT(".tbk"), wxT("Configuration files (*.tbk)|*.tbk|All files (*.*)|*.*"),
-			wxSAVE|wxOVERWRITE_PROMPT, this);
-		if (filename == wxT(""))
-			return;
-
 		gzFile out = 0;
 		out = gzopen(filename.mb_str(), "wb9");
 		if (!out) {
@@ -2665,7 +2669,8 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you.</Warning>\n");
 		gzprintf(out, "<Certificates>\n");
 
-		wxLogMessage(wxT("Saving callsign certificates"));
+		if (!quiet)
+			wxLogMessage(wxT("Saving callsign certificates"));
 		int ncerts;
 		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
 		char *password = NULL;
@@ -2675,7 +2680,9 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 			int rval;
 			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
 			do {
-   				if ((rval = tqsl_beginSigning(certlist[i], password, getCertPassword, certlist[i])) == 0)
+   				if ((rval = tqsl_beginSigning(certlist[i], password, (quiet ? getDummyPassword : getCertPassword), certlist[i])) == 0)
+					break;
+				if (tQSL_Error == TQSL_PASSWORD_ERROR && quiet)
 					break;
 				if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 					wxLogMessage(wxT("Password error"));
@@ -2684,31 +2691,34 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 					password = NULL;
 				}
 			} while (tQSL_Error == TQSL_PASSWORD_ERROR);
-			check_tqsl_error(rval);
+			if (!quiet || (quiet && rval == 0)) {
+				check_tqsl_error(rval);
+				char pwbuf[80];
+				if (wxIsEmpty(lastPW)) {
+					pwbuf[0] = '\0';
+				} else {
+					const char *pwd = strdup(lastPW.mb_str());
+					tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
+					int end = strlen(pwbuf);
 
-			char pwbuf[80];
-			if (wxIsEmpty(lastPW)) {
-				pwbuf[0] = '\0';
-			} else {
-				const char *pwd = strdup(lastPW.mb_str());
-				tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
-				int end = strlen(pwbuf);
-
-				while (pwbuf[end - 1] == '\n') {
-					pwbuf[--end] = '\0'; // Strip the newline
+					while (pwbuf[end - 1] == '\n') {
+						pwbuf[--end] = '\0'; // Strip the newline
+					}
 				}
+				if (!quiet)
+					wxLogMessage(wxT("\tSaving callsign certificate for %hs"), callsign);
+				gzprintf(out, "<Cert CallSign=\"%s\" password=\"%s\">\n", callsign, pwbuf);
+				lastPW = wxT("");
+				check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
+				tqsl_endSigning(certlist[i]);
+				gzwrite(out, buf, strlen(buf));
+				gzprintf(out, "\n</Cert>\n");
 			}
-			wxLogMessage(wxT("\tSaving callsign certificate for %hs"), callsign);
-			gzprintf(out, "<Cert CallSign=\"%s\" password=\"%s\">\n", callsign, pwbuf);
-			lastPW = wxT("");
-			check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
-			tqsl_endSigning(certlist[i]);
-			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "\n</Cert>\n");
 		}
 		gzprintf(out, "</Certificates>\n");
 		gzprintf(out, "<Locations>\n");
-		wxLogMessage(wxT("Saving Station Locations"));
+		if (!quiet)
+			wxLogMessage(wxT("Saving Station Locations"));
 		char *sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationData(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
@@ -2716,11 +2726,14 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		free(sdbuf);
 		gzprintf(out, "</Locations>\n");
 
+		if (!quiet)
+			wxLogMessage(wxT("Saving TQSL Preferences"));
 		gzprintf(out, "<TQSLSettings>\n");
 		conf->SaveSettings(out, wxT("tqslapp"));
 		gzprintf(out, "</TQSLSettings>\n");
 
-		wxLogMessage(wxT("Saving QSOs"));
+		if (!quiet)
+			wxLogMessage(wxT("Saving QSOs"));
 	
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
@@ -2740,7 +2753,26 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 		gzprintf(out, "</TQSL_Configuration>\n");
 
 		gzclose(out);
-		wxLogMessage(wxT("Save operation complete."));
+		if (!quiet)
+			wxLogMessage(wxT("Save operation complete."));
+	}
+	catch (TQSLException& x) {
+		wxLogError(wxT("Backup operation failed: %hs"), x.what());
+	}
+}
+
+void
+MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnSaveConfig");
+	try {
+		wxString file_default = wxT("userconfig.tbk");
+		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
+			file_default, wxT(".tbk"), wxT("Configuration files (*.tbk)|*.tbk|All files (*.*)|*.*"),
+			wxSAVE|wxOVERWRITE_PROMPT, this);
+		if (filename == wxT(""))
+			return;
+
+		BackupConfig(filename, false);
 	}
 	catch (TQSLException& x) {
 		wxLogError(wxT("Backup operation failed: %hs"), x.what());
