@@ -181,6 +181,81 @@
       <Component Id="cmp158D55D61DE51B4E6F6E3C32AE5D87CA" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filF3A5A15B187993B36D0C7890FA809C40" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\update.htm" />
       </Component>
+      <Component Id="cmp39C70811CE53422EA5E3D20E20ABC0D5" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil{03DFD25097C34936-98DFE64A23D663DD" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq.bmp" />
+      </Component>
+      <Component Id="cmp48029593F2474E59820B3A024C074E8E" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil8DE7407305CE4A2CA18B1DDC52098CC6" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq.htm" />
+      </Component>
+      <Component Id="cmp63C8DB082A224C7A895D61BA1EE957EE" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil7204EED689644C268D8145C7D0183A14" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq0.bmp" />
+      </Component>
+      <Component Id="cmp1D06CDC759DB4287A98FE62BF3C4F8E0" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil904AE0A668024C2F82790F8553512838" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq0.htm" />
+      </Component>
+      <Component Id="cmp609239ED53BA4407AD08E2EB0958C182" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filADB1B60A20044D47AA111E6BFD0DDD61" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq1.bmp" />
+      </Component>
+      <Component Id="cmpF83109B8A8DA4AEC92297134C08B0D0B" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filC63B77A4A0374971A07291B8FD702A26" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq1.htm" />
+      </Component>
+      <Component Id="cmp10805C5842F54A2C95D27672B2055685" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil254FE1F2451D49C3B597DD9214785958" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq2.bmp" />
+      </Component>
+      <Component Id="cmpC0C94C872FF941D28039625EF9705D71" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filEA3AC588792A46F5858342A63EDF9EB6" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq2.htm" />
+      </Component>
+      <Component Id="cmpEDF1387791EE462B818EA79A28036581" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil3BC95F8DFC704DE7936A322AA42A9C56" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq3.bmp" />
+      </Component>
+      <Component Id="cmp393E4849D22E4A4A8926FD002360EF1D" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filF44C1F033F2246CDAFDAFBF01AEF9F01" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq3.htm" />
+      </Component>
+      <Component Id="cmpD9B6B1125F0A4C998C6125F6F58C6A6E" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filD98291425858486CBEA5C588C6326FF5" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq4.bmp" />
+      </Component>
+      <Component Id="cmp621E63EA48BF4EC2B043B361AF38CA9C" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filBB8DB9D9D94644C9B547600148133586" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq4.htm" />
+      </Component>
+      <Component Id="cmpE655F7D51A2A4CCDBAD797C7B08F7139" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil43C0EF082552440D9F5063BF9CF61219" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crqsend.htm" />
+      </Component>
+      <Component Id="cmpEE5BCC061401464EA234A91924EB43B3" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil3A73B39D19CE4DD2A751BE93028E8C7D" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf.bmp" />
+      </Component>
+      <Component Id="cmpFEA173BBADE14E3FB4514D4E02AF1D49" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil8CA637DD1EE9417F80A91A65E97B0EC4" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf0.bmp" />
+      </Component>
+      <Component Id="cmp97AEBB403F2345FBA79BF13EE0902D1D" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil5B4C9F2215A24C0B831A72FF116521DF" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf0.htm" />
+      </Component>
+      <Component Id="cmp236891AF2AF049B490CC4879CB5CC5E7" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil302ACC75DE40429B8E2C72BC42605AF5" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf1.bmp" />
+      </Component>
+      <Component Id="cmp102EDBA5E4214352AF4E18A54AA2F0CA" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil8A6EC37D4249432E9C58B62EF2F24179" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf1.htm" />
+      </Component>
+      <Component Id="cmpBE1FF505E87437D62668013C2B2C2B8C" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil6FE5074474584901973870B8ED0DE750" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\lcf2.htm" />
+      </Component>
+      <Component Id="cmp76B3668F43F94B08A85448DFF33410E1" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil1E2AF4F23FC2467FB0D594DA6165561C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\loadcert.htm" />
+      </Component>
+      <Component Id="cmpED60FA7CF8634914B8F02BB7E4955FD6" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil7590731E4BBC46C28320D17C1CDC6BB6" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\newp12pw.bmp" />
+      </Component>
+      <Component Id="cmpE79906943D8048C9BFB5899E5A602F95" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil06A2FB054FDE4F1F8B08C09E2AF8FD23" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\newpw.bmp" />
+      </Component>
+      <Component Id="cmp5D7C01DFCD024E048EA955355C8312E5" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil28889575425B4FE7BA465D5480590307" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\save.htm" />
+      </Component>
+      <Component Id="cmpE96B76AB6F8D4EE785642264DB7C9532" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="fil2EF6E942204C43C29AC554C3695075DC" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\unlock.bmp" />
+      </Component>
+      <Component Id="cmp75C5E1D16DF4424596A72CFEC49F6B44" Directory="dir6F17F3A9FB839342385010C1698DDB65">
+        <File Id="filFBAE00C517CC43F18717B4387A406135" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\unlock.htm" />
+      </Component>
     </ComponentGroup>
   </Fragment>
   <Fragment>

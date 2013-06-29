@@ -1,0 +1,31 @@
+<HTML><HEAD><TITLE>Save Certificate</TITLE></HEAD>
+<BODY>
+<H3>Save Certificate</H3>
+<P>
+When you select a certificate and choose the <B>Certificate</b> menu <b>Save</b> command,
+you save the selected certificate and its private key to a PKCS#12 file. That file can
+be loaded into <i>tQSLCert</i> later using the <b>File</b> menu <b>Load Certificate File</b> command.
+(PKCS#12 is a standard format for containing digital certificates, so the saved file can also
+be loaded into other PKCS#12 compliant systems, such as Microsoft <i>Windows</i>.)
+<P>
+You will first be presented with a file selection dialog, allowing you to specify
+the name of the file to save to.
+<P>
+Once you have chosen the file, you specify the password that will be used to protect
+the PKCS#12 file.
+<P>
+<img src="newp12pw.bmp" width=310 height=281 border=0>
+<P>
+It's wise to protect the file with a password. If you do not, anyone
+who gains posession of the file will be able to use the included certificate and private
+key to create digital signatures using your identity. You can choose not to use a
+password, but <I>you are responsible for keeping your private information private!</i>
+<P>
+<I>Note:</I> If the private key for the certificate you are saving is password protected,
+you will have to supply the password to <a href="unlock.htm">unlock the key</a> so it can be saved in the PKCS#12
+file. If needed, you will be prompted to supply the password.
+<P>
+<I>Note:</I> The saved PKCS#12 file contains only a single certificate. If you have
+more than one certificate, you should save each one to a separate PKCS#12 file.
+<P>
+</BODY></HEAD>
