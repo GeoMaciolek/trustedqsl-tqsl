@@ -881,7 +881,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	LocTreeReset();
 	lgsizer->Add(loc_tree, 1, wxEXPAND);
 
-	loc_select_label = new wxStaticText(locgrid, -1, wxT("\nSelect a Station Location to process"));
+	loc_select_label = new wxStaticText(locgrid, -1, wxT("\nSelect a Station Location to process      "));
 	lgsizer->Add(loc_select_label, 0, wxALL, 1);
 
 	locsizer->Add(locgrid, 50, wxEXPAND);
@@ -904,10 +904,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
 	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station Location"));
-	lb1sizer->Add(loc_add_label, 1, wxALL, 1);
+	lb1sizer->Add(loc_add_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb1Panel, 1, wxALL, 1);
 	int tw, th;
 	loc_add_label->GetSize(&tw, &th);
+	tw += 100;	// allow room for longer labels
 
 	wxPanel* lb2Panel = new wxPanel(lbuttons);
 	lb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -919,7 +920,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_edit_button->Enable(false);
 	lb2sizer->Add(loc_edit_button, 0, wxALL, 1);
 	loc_edit_label = new wxStaticText(lb2Panel, -1, wxT("\nEdit a Station Location"), wxDefaultPosition, wxSize(tw, th));
-	lb2sizer->Add(loc_edit_label, 1, wxALL, 1);
+	lb2sizer->Add(loc_edit_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb2Panel, 1, wxALL, 1);
 
 	wxPanel* lb3Panel = new wxPanel(lbuttons);
@@ -932,7 +933,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_delete_button->Enable(false);
 	lb3sizer->Add(loc_delete_button, 0, wxALL, 1);
 	loc_delete_label = new wxStaticText(lb3Panel, -1, wxT("\nDelete a Station Location"), wxDefaultPosition, wxSize(tw, th));
-	lb3sizer->Add(loc_delete_label, 1, wxALL, 1);
+	lb3sizer->Add(loc_delete_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb3Panel, 1, wxALL, 1);
 
 	wxPanel* lb4Panel = new wxPanel(lbuttons);
@@ -944,8 +945,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_prop_button->SetBitmapDisabled(properties_disbm);
 	loc_prop_button->Enable(false);
 	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
-	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay a Station Location"), wxDefaultPosition, wxSize(tw, th));
-	lb4sizer->Add(loc_prop_label, 1, wxALL, 1);
+	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay Station Location Details"), wxDefaultPosition, wxSize(tw, th));
+	lb4sizer->Add(loc_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb4Panel, 1, wxALL, 1);
 
 	notebook->AddPage(loctab, wxT("Station Locations"));
@@ -994,7 +995,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
 	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a new Callsign Certificate"));
 	cert_load_label->GetSize(&tw, &th);
-	cb1sizer->Add(cert_load_label, 1, wxALL, 1);
+	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
 	wxPanel* cb2Panel = new wxPanel(cbuttons);
@@ -1007,7 +1008,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_save_button->Enable(false);
 	cb2sizer->Add(cert_save_button, 0, wxALL, 1);
 	cert_save_label = new wxStaticText(cb2Panel, -1, wxT("\nSave a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb2sizer->Add(cert_save_label, 1, wxALL, 1);
+	cb2sizer->Add(cert_save_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb2Panel, 1, wxALL, 1);
 
 	wxPanel* cb3Panel = new wxPanel(cbuttons);
@@ -1020,7 +1021,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_renew_button->Enable(false);
 	cb3sizer->Add(cert_renew_button, 0, wxALL, 1);
 	cert_renew_label = new wxStaticText(cb3Panel, -1, wxT("\nRenew a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb3sizer->Add(cert_renew_label, 1, wxALL, 1);
+	cb3sizer->Add(cert_renew_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb3Panel, 1, wxALL, 1);
 
 	wxPanel* cb4Panel = new wxPanel(cbuttons);
@@ -1033,7 +1034,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_prop_button->Enable(false);
 	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
 	cert_prop_label = new wxStaticText(cb4Panel, -1, wxT("\nDisplay a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
-	cb4sizer->Add(cert_prop_label, 1, wxALL, 1);
+	cb4sizer->Add(cert_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb4Panel, 1, wxALL, 1);
 
 	notebook->AddPage(certtab, wxT("Certificates"));
@@ -3794,7 +3795,7 @@ MyFrame::LocTreeReset() {
 	loc_prop_button->Disable();
 	loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
 	loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
-	loc_prop_label->SetLabel(wxT("\nDisplay a Station Location"));
+	loc_prop_label->SetLabel(wxT("\nDisplay Station Location Details"));
 	loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
 }
 
@@ -3817,7 +3818,7 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		loc_edit_label->Wrap(w - 10);
 		loc_delete_label->SetLabel(wxT("Delete Station Location ") + call + wxT(": ") + lname);
 		loc_delete_label->Wrap(w - 10);
-		loc_prop_label->SetLabel(wxT("Display Station Location ") + call + wxT(": ") + lname);
+		loc_prop_label->SetLabel(wxT("Display Station Location Details for ") + call + wxT(": ") + lname);
 		loc_prop_label->Wrap(w - 10);
 		loc_select_label->SetLabel(wxT(""));
 	} else {
