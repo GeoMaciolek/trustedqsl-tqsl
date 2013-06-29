@@ -31,6 +31,9 @@
       <Component Id="cmpECC79BD9AB3BAC4C8FA34B94D0061EF3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil6A0BBEF8C843772E433A8A132E8C8F6C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\adifdial.bmp" />
       </Component>
+      <Component Id="cmpCC1B5BF5487E4397BAD3FBACC54B18D3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="filCD75F71A7F274EC481B7D8F95FFAA728" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\backuprestore.htm" />
+      </Component>
       <Component Id="cmpD1763364716E9CFA679350F00E5C4FBA" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil2307A3E3D7D5E65E6055C2A12AA9EEB1" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\cabrillo.htm" />
       </Component>
@@ -178,114 +181,7 @@
       <Component Id="cmp158D55D61DE51B4E6F6E3C32AE5D87CA" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filF3A5A15B187993B36D0C7890FA809C40" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\update.htm" />
       </Component>
-      <Component Id="cmpEDFD98388F847044CD2D5274BA9617A1" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filE03B7F6C8785B851BB7145E74C3AEF38" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\broken-cert.bmp" />
-      </Component>
-      <Component Id="cmpEDE0B786A1B5C99DF659DA0AA2A14D21" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filCCECBFDB73D873DAFCE5867934747413" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\contents.hhc" />
-      </Component>
-      <Component Id="cmp81E6513362DC9FB2FD3D308EEC4088AA" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filF732773D00B4744FF1237D1AC3A9213B" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq.bmp" />
-      </Component>
-      <Component Id="cmp8FE082C68CBFD36ED031E9E82EC8CE9E" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil81D9623F87885296ED7037B4BD906BE0" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq.htm" />
-      </Component>
-      <Component Id="cmpBBE0AAD7D6735C6E84BCB15E3F6FC941" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filBB60B2E5D77B9DBB54CA0EFD52CA0F7B" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq0.bmp" />
-      </Component>
-      <Component Id="cmp1C00BFC36C4C1EE170D97AEC9126611D" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filB7A899AA157AB1F2EE4405AEB1428239" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq0.htm" />
-      </Component>
-      <Component Id="cmpBB88BC9FB5CB627DE1CA2F84B87E5D1A" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil80653B38D39FAC8CCC1D518DC8777459" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq1.bmp" />
-      </Component>
-      <Component Id="cmp475A99017B404536DD286CFE63E6240C" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil2D6C9F5B2B0B4CF6C5C60D71946A6DF8" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq1.htm" />
-      </Component>
-      <Component Id="cmp14D448E20DBF67CCA8CF39AD22CB3B81" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filFA93F3A15A78A18C4743AB43E92FC099" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq2.bmp" />
-      </Component>
-      <Component Id="cmpD9D1B6FC7154A01D95A0B92F8B8F83F6" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil75314EEB80B6CD79E43C786F84167398" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq2.htm" />
-      </Component>
-      <Component Id="cmpB072E840B5D594684E71DCF32EE38883" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filFAA236035AE9200E1564F99929709ED8" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq3.bmp" />
-      </Component>
-      <Component Id="cmpFAC4872BE9D9A399F92D7768F05D4D34" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filD5A2C17DDA90ED49FC8530FEBB7AD9FE" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq3.htm" />
-      </Component>
-      <Component Id="cmp95ED7D0988637908A70A25374741394F" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filA1BB19CBC623D24F5DF108EDDF178C35" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq4.bmp" />
-      </Component>
-      <Component Id="cmp55B4237F36A984F102BADE1341B3B005" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filC0CDEC6A40970576925AEA6D29E69DD0" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crq4.htm" />
-      </Component>
-      <Component Id="cmpA5E6517958ACAFE87D26E62C874AC925" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil30A99DA47BC8268D172356FF3DC50548" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\crqsend.htm" />
-      </Component>
-      <Component Id="cmp4608C60FFDB720F5C3B4ECB8DBA72AB2" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filE8E416C7A8D7A61253FD6AC1C9A43E12" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\glossary.htm" />
-      </Component>
-      <Component Id="cmpBAD7729A22C2544DFDED6139B8AEC1DC" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filFF83B746A795935E02178E106F88FE35" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf.bmp" />
-      </Component>
-      <Component Id="cmp88B6996E8FD468265F9DF4FD752D793D" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil157F2B8032A8442549A32230A07992D7" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf0.bmp" />
-      </Component>
-      <Component Id="cmp05EFC48E0326758BD983A97C440CA3A7" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filBA56A930061BB70A371B37641CBDCB1A" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf0.htm" />
-      </Component>
-      <Component Id="cmp9AB2EFB1C1841CEE7BBBEDA44E9A1890" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filCD5D72BDAE621593C6C91AB5D555D358" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf1.bmp" />
-      </Component>
-      <Component Id="cmp780430EF4BE0E3F832B53390D244F4E4" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filB554A77B7F4B9E7A163468BAC25E1012" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf1.htm" />
-      </Component>
-      <Component Id="cmpBE1FF505E87437D62668013C2B2C2B8C" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filB4EDA3EE7C914769DB8745A31A0AF639" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\lcf2.htm" />
-      </Component>
-      <Component Id="cmpAA46EDBD6257B533F392F00E270731BF" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil8CFC64DA7C0665E7878B094343467948" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\loadcert.htm" />
-      </Component>
-      <Component Id="cmp653B12BD5E5618E19EC7018AB6B8E1F3" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filA8E662F79944B3B4648A048ADEC6C4FB" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\main.htm" />
-      </Component>
-      <Component Id="cmpA7BBC872EB8D41A1C9BC30604084BFDF" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil03D4677E34CB8BCF8CC20FF2EB5C7E0C" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\newp12pw.bmp" />
-      </Component>
-      <Component Id="cmp75803A45FA0A83371EC130776BBB2BFD" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil60BAB7176C64833F3055E1721F16B5B8" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\newpw.bmp" />
-      </Component>
-      <Component Id="cmp98464BA0A8117E32893120978A3BB1D6" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filAF3A825248D9B8808A4FD14B241D1D9F" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\nocert.bmp" />
-      </Component>
-      <Component Id="cmp1C3CFE7DB1D4DF95F1044785A4A90B19" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filB858715A37EC66EAC93E399362C5B93D" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\props.bmp" />
-      </Component>
-      <Component Id="cmp215C4C777FCC4921A838E7112F5A69C3" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="filDFF7A81CA22A94416D0E7C0CC04370FC" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\save.htm" />
-      </Component>
-      <Component Id="cmpC586E64033141448A860B72ACD0485AF" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil404904C0D9B970B10E1F670C91C07890" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\tqsl.htm" />
-      </Component>
-      <Component Id="cmpC86D45D988CB3B3EE0EA54DBA2E139F2" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil715D4FE0EF2DA66752D887A5E23F9A5B" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\tqslcert.bmp" />
-      </Component>
-      <Component Id="cmpE4D3349DA5FB7C0C9C64E43AF1FCE897" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil571FBC5D055C49A91202E06164633FFF" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\tqslcert.hhp" />
-      </Component>
-      <Component Id="cmp53BF1428C827E092F4838490A70C0D85" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil9A0FA441A59E080B313BF8E75E8D2CAF" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\unlock.bmp" />
-      </Component>
-      <Component Id="cmp8119F8ABC23C00FA130C0E62038096D2" Directory="dir418B256088A25DF7723F07F6E7E6E607" Guid="*">
-        <File Id="fil4CF3F48F2F287ED625FAFCD0E38219E6" KeyPath="yes" Source="$(var.helpSrc)\tqslcert\unlock.htm" />
-      </Component>
     </ComponentGroup>
-  </Fragment>
-  <Fragment>
-    <DirectoryRef Id="dir6B9A5A60955CCCDCFA7A9B5AF9457813">
-      <Directory Id="dir418B256088A25DF7723F07F6E7E6E607" Name="tqslcert" />
-    </DirectoryRef>
   </Fragment>
   <Fragment>
     <DirectoryRef Id="dir6B9A5A60955CCCDCFA7A9B5AF9457813">
