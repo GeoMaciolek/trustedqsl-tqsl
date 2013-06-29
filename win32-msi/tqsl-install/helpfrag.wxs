@@ -58,6 +58,9 @@
       <Component Id="cmp04B9E0F1BE7366E913A98D0B490BAC37" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil908ECFA1D809855C4B7CBFBA84454F54" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\daterng.htm" />
       </Component>
+      <Component Id="cmpa6A9666e06044dc6a958af36e488fa60" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+	<File Id="fil6564E278232143F1826F3B13A38BBA25" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\diagmode.htm" />
+      </Component>
       <Component Id="cmpF04E504F3E318C52E1B0D346EF022C11" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filCB4051CCE14CBA5EA916FA95FBDCAB31" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\duplicate.bmp" />
       </Component>
