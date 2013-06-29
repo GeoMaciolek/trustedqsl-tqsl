@@ -112,10 +112,9 @@ using namespace std;
 #define LABEL_HEIGHT 15
 #define LABEL_WIDTH 100
 
-#define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS
+#define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
 
 static wxString flattenCallSign(const wxString& call);
-static int showAllCerts(void);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
 FILE *diagFile = NULL;
@@ -967,7 +966,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
 	cgsizer->Add(cert_tree, 1, wxEXPAND);
 
@@ -2562,7 +2561,7 @@ void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnPreferences");
 	Preferences dial(this, help);
 	dial.ShowModal();
-	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
 }
 
@@ -3012,7 +3011,7 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 
 		TQSLConfig* loader = new TQSLConfig();
 		loader->RestoreConfig(in);
-		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+		cert_tree->Build(CERTLIST_FLAGS);
 		loc_tree->Build();
 		LocTreeReset();
 		CertTreeReset();
@@ -3343,7 +3342,7 @@ void MyFrame::FirstTime(void) {
 		wxMessageBox(wxT("Please review the introductory documentation before using this program."),
 			wxT("Notice"), wxOK, this);
 	}
-	int ncerts = cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	int ncerts = cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
 	if (ncerts == 0 && wxMessageBox(wxT("You have no callsign certificate with which to sign log submissions.\n")
 		wxT("Would you like to request a callsign certificate now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
@@ -3484,7 +3483,7 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnLoadCertificateFile");
 	LoadCertWiz lcw(this, help, wxT("Load Certificate File"));
 	lcw.RunWizard();
-	cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+	cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
 }
 
@@ -3642,7 +3641,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			}
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+			cert_tree->Build(CERTLIST_FLAGS);
 			CertTreeReset();
 		}
 	}
@@ -3782,7 +3781,7 @@ wxT("have created one via the Certificate menu's Save command.\n\n")
 wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
-		cert_tree->Build(CERTLIST_FLAGS | showAllCerts());
+		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
 	}
 }
@@ -4120,22 +4119,6 @@ flattenCallSign(const wxString& call) {
 		flat[idx] = '_';
 	return flat;
 }
-
-static int
-showAllCerts(void) {
-	tqslTrace("showAllCerts");
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	int ret = 0;
-	bool b;
-	config->Read(wxT("ShowSuperceded"), &b, false);
-	if (b) 
-		ret |= TQSL_SELECT_CERT_SUPERCEDED;
-	config->Read(wxT("ShowExpired"), &b, false);
-	if (b) 
-		ret |= TQSL_SELECT_CERT_EXPIRED;
-	return ret;
-}
-
 
 void tqslTrace(const char *name, const char *format, ...) {
 	va_list ap;
