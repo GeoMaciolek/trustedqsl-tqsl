@@ -182,7 +182,7 @@
         <File Id="filF3A5A15B187993B36D0C7890FA809C40" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\update.htm" />
       </Component>
       <Component Id="cmp39C70811CE53422EA5E3D20E20ABC0D5" Directory="dir6F17F3A9FB839342385010C1698DDB65">
-        <File Id="fil{03DFD25097C34936-98DFE64A23D663DD" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq.bmp" />
+        <File Id="fil03DFD25097C3493698DFE64A23D663DD" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq.bmp" />
       </Component>
       <Component Id="cmp48029593F2474E59820B3A024C074E8E" Directory="dir6F17F3A9FB839342385010C1698DDB65">
         <File Id="fil8DE7407305CE4A2CA18B1DDC52098CC6" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\crq.htm" />
