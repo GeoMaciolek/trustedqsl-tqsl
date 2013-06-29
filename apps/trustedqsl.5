@@ -2,7 +2,7 @@
 .\" First parameter, NAME, should be all caps
 .\" Second parameter, SECTION, should be 1-8, maybe w/ subsection
 .\" other parameters are allowed: see man(7), man(1)
-.TH TRUSTEDQSL 5 "March 12, 2013"
+.TH TRUSTEDQSL 5 "June  29, 2013"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .\" Some roff macros, for reference:
@@ -18,36 +18,23 @@
 .SH NAME
 TrustedQSL \- digitally sign amateur radio contact logs
 .SH SYNOPSIS
-.B tqslcert
-.RI [ certificate-file ] "" ...
+.B tqsl
+.RI \-i\ [ certificate-file ] "" ...
 .PP
 .B tqsl
 .RI [ OPTIONS ]
 .RI [ log-file ] "" ...
 .SH DESCRIPTION
 .B TrustedQSL
-is a file format and set of procedures that is used to send digitally signed
-QSL information (logs of contacts between amateur radio operators).
-One notable service that makes use of TrustedQSL is ARRL's
+is a file format and set of procedures that is used to send digitally signed QSL information (logs of contacts between amateur radio operators).  One notable service that makes use of TrustedQSL is ARRL's
 .I Logbook of the World.
 .PP
-The \fBtqslcert\fP program is used to generate requests for digital
-certificates and to store the resulting received digital certificates.
+The \fBtqsl\fP program is used to digitally sign contact log files using a digital certificate. It is also used to generate requests for digital certificates and to store the resulting received digital certificates. (This used to be handled by a separate program, \fBtqslcert\fP.
 .PP
-The \fBtqsl\fP program is used to digitally sign contact log files using
-a digital certificate.
-.PP
-This manual page briefly documents the \fBtqslcert\fP and \fBtqsl\fP programs.
-Complete documentation is also available:
-.sp
-  \fBtqslcert\fP: file:///usr/share/TrustedQSL/help/tqslcert/main.htm
+This manual page briefly documents the \fBtqsl\fP program.  Complete documentation is also available:
 .sp
   \fBtqsl\fP: file:///usr/share/TrustedQSL/help/tqslapp/main.htm
 .SH OPTIONS
-
-.PP
-\fBtqslcert\fP accepts TQSL certificate files which may
-optionally be specified on the command line.
 
 .PP
 \fBtqsl\fP accepts these command line options:
@@ -90,6 +77,10 @@ processing.
 .B \-v
 Display the version number of \fBtqsl\fP and exit.
 
+.TP
+.B \-i filename
+Import a certificate - either a signed response (.tq6) or a certificate
+stored with a private key in PKCS#12 format (.p12).
 .TP
 .B log-files
 Any command-line parameter that is not an option or an option's argument will
