@@ -130,6 +130,11 @@
 					<param name="Local" value="qsodata.htm">
 					 </OBJECT>
 					 
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Backing up and Restoring TQSL information">
+					<param name="Local" value="backuprestore.htm">
+					 </OBJECT>
+					 
 			</UL>
 			
 		<LI> <OBJECT type="text/sitemap">
