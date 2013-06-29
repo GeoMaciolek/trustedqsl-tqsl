@@ -43,6 +43,7 @@
 #define DEFAULT_AUTO_BACKUP true
 
 //online
+//#define ENABLE_ONLINE_PREFS
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
 #define DEFAULT_UPL_FIELD wxT("upfile")
 #define DEFAULT_UPL_STATUSRE wxT("<!-- .UPL. ([^-]+) -->")
@@ -102,6 +103,7 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+#if defined(ENABLE_ONLINE_PREFS)
 class OnlinePrefs : public PrefsPanel {
 public:
 	OnlinePrefs(wxWindow *parent);
@@ -114,15 +116,7 @@ private:
 	wxCheckBox *verifyCA, *useDefaults;
 	bool defaults;
 };
-
-class CertPrefs : public wxPanel {
-public:
-	CertPrefs(wxWindow *parent);
-	virtual bool TransferDataFromWindow();
-private:
-	wxCheckBox *showSuperceded_cb;
-	wxCheckBox *showExpired_cb;
-};
+#endif
 
 typedef std::map <wxString, wxString> ModeSet;
 
@@ -171,8 +165,9 @@ private:
 	FilePrefs *fileprefs;
 	ModeMap *modemap;
 	ContestMap *contestmap;
+#if defined(ENABLE_ONLINE_PREFS)
 	OnlinePrefs *onlinePrefs;
-	CertPrefs *certprefs;
+#endif
 	wxHtmlHelpController *_help;
 };
 

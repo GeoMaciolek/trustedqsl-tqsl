@@ -44,7 +44,6 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 //	topsizer->Add(notebook, 1, wxGROW);
 	topsizer->Add(notebook, 1, wxEXPAND | wxLEFT | wxRIGHT, 20);
 	fileprefs = new FilePrefs(notebook);
-	certprefs = new CertPrefs(notebook);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
 
@@ -67,10 +66,8 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	contestmap = new ContestMap(notebook);
 	notebook->AddPage(contestmap, wxT("Cabrillo Specs"));
 
-	notebook->AddPage(certprefs, wxT("Certificates"));
-
 	//don't let the user play with these
-#ifdef ENABLE_ONLINE_PREFS
+#if defined(ENABLE_ONLINE_PREFS)
 	onlinePrefs=new OnlinePrefs(notebook);
 	notebook->AddPage(onlinePrefs, wxT("Server Setup"));
 #endif
@@ -84,13 +81,11 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("Preferences::OnOK");
-	if (!certprefs->TransferDataFromWindow())
-		return;
-#ifdef ENABLE_ONLINE_PREFS
-	if (!fileprefs->TransferDataFromWindow() || !onlinePrefs->TransferDataFromWindow())
-#else
+#if defined(ENABLE_ONLINE_PREFS)
 	if (!fileprefs->TransferDataFromWindow())
+		return;
 #endif
+	if (!fileprefs->TransferDataFromWindow())
 		return;
 	Close(true);
 }
@@ -357,6 +352,7 @@ bool FilePrefs::TransferDataFromWindow() {
 	return true;
 }
 
+#if defined(ENABLE_ONLINE_PREFS)
 BEGIN_EVENT_TABLE(OnlinePrefs, PrefsPanel)
 	EVT_CHECKBOX(ID_PREF_ONLINE_DEFAULT, OnlinePrefs::OnShowHide)
 END_EVENT_TABLE()
@@ -469,6 +465,7 @@ bool OnlinePrefs::TransferDataFromWindow() {
 
 	return true;
 }
+#endif // ENABLE_ONLINE_PREFS
 
 BEGIN_EVENT_TABLE(ContestMap, PrefsPanel)
 	EVT_BUTTON(ID_PREF_CAB_DELETE, ContestMap::OnDelete)
@@ -709,35 +706,3 @@ bool EditContest::TransferDataFromWindow() {
 	}
 	return true;
 }
-
-CertPrefs::CertPrefs(wxWindow *parent) : wxPanel(parent, -1) {
-	tqslTrace("CertPrefs::CertPrefs", "parent=0x%lx", (void *)parent);
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	bool b;
-	SetAutoLayout(TRUE);
-	wxBoxSizer *sizer = new wxStaticBoxSizer(
-		new wxStaticBox(this, -1, wxT("Callsign Certificates to Display")),
-		wxVERTICAL);
-	showSuperceded_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Display Renewed certificates"));
-	sizer->Add(showSuperceded_cb);
-	config->Read(wxT("ShowSuperceded"), &b, false);
-	showSuperceded_cb->SetValue(b);
-	showExpired_cb = new wxCheckBox(this, ID_PREF_ALLCERT_CB, wxT("Display Expired certificates"));
-	sizer->Add(showExpired_cb);
-	config->Read(wxT("ShowExpired"), &b, false);
-	showExpired_cb->SetValue(b);
-
-	SetSizer(sizer);
-	sizer->Fit(this);
-	sizer->SetSizeHints(this);
-
-}
-
-bool CertPrefs::TransferDataFromWindow() {
-	tqslTrace("CertPrefs::TransferDataFromWindow");
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write(wxT("ShowSuperceded"), showSuperceded_cb->GetValue());
-	config->Write(wxT("ShowExpired"), showExpired_cb->GetValue());
-	return TRUE;
-}
-
