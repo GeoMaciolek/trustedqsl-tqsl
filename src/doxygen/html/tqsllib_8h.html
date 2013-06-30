@@ -265,6 +265,8 @@ Functions</h2></td></tr>
 <tr class="separator:gaa25fb330d3e261c894cf53dc9f8b4c3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga67d72f8515930830e2327feb2305fe4c"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga67d72f8515930830e2327feb2305fe4c">tqsl_selectCertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *callsign, int dxcc, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, const <a class="el" href="tqsllib_8h.html#a9d7bf02a1d518a13c277ae7f66aa3983">TQSL_PROVIDER</a> *issuer, int flag)</td></tr>
 <tr class="separator:ga67d72f8515930830e2327feb2305fe4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga48a7422f216bfb17374d6e6fc4ce4d62"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga48a7422f216bfb17374d6e6fc4ce4d62">tqsl_selectCACertificates</a> (tQSL_Cert **certlist, int *ncerts, const char *type)</td></tr>
+<tr class="separator:ga48a7422f216bfb17374d6e6fc4ce4d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga34b05b6a79229726d65ef1fdb9571c29"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga34b05b6a79229726d65ef1fdb9571c29">tqsl_getSelectedCertificate</a> (tQSL_Cert *cert, const tQSL_Cert **certlist, int idx)</td></tr>
 <tr class="separator:ga34b05b6a79229726d65ef1fdb9571c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga86dcde38feed95d994a058f1a46ef048"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga86dcde38feed95d994a058f1a46ef048">tqsl_isCertificateExpired</a> (tQSL_Cert cert, int *status)</td></tr>
@@ -275,6 +277,10 @@ Functions</h2></td></tr>
 <tr class="separator:gab7ac26f999a14c965238a127be1ee731"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gac861869dcc803c4148ea6e7340d282ff"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gac861869dcc803c4148ea6e7340d282ff">tqsl_getCertificateEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
 <tr class="separator:gac861869dcc803c4148ea6e7340d282ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaade7cde06b439facb4c1068d73eb9e1a"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gaade7cde06b439facb4c1068d73eb9e1a">tqsl_getKeyEncoded</a> (tQSL_Cert cert, char *buf, int bufsiz)</td></tr>
+<tr class="separator:gaade7cde06b439facb4c1068d73eb9e1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga644492b1f35fcc4072c871b8a4b46501"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga644492b1f35fcc4072c871b8a4b46501">tqsl_importKeyPairEncoded</a> (const char *callsign, const char *type, const char *keybuf, const char *certbuf)</td></tr>
+<tr class="separator:ga644492b1f35fcc4072c871b8a4b46501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6ef23cda4a1f4dc5e05fe7ee88d86ef6"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga6ef23cda4a1f4dc5e05fe7ee88d86ef6">tqsl_getCertificateSerial</a> (tQSL_Cert cert, long *serial)</td></tr>
 <tr class="separator:ga6ef23cda4a1f4dc5e05fe7ee88d86ef6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaf5d1555c5cfeb9021a1290eeb38d93ed"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gaf5d1555c5cfeb9021a1290eeb38d93ed">tqsl_getCertificateSerialExt</a> (tQSL_Cert cert, char *serial, int serialsiz)</td></tr>
@@ -491,10 +497,10 @@ DLLEXPORT const char <br class="typebreak"/>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ac05ca94844cf8a1f0a594601b474f563"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac05ca94844cf8a1f0a594601b474f563"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tqsllib_8h.html#ac05ca94844cf8a1f0a594601b474f563">tQSL_BaseDir</a></td></tr>
-<tr class="memdesc:ac05ca94844cf8a1f0a594601b474f563"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base directory for tQSL library working files. <br/></td></tr>
-<tr class="separator:ac05ca94844cf8a1f0a594601b474f563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f0de11cfb6d09fa9932671f73380e14"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7f0de11cfb6d09fa9932671f73380e14"></a>
+DLLEXPORTDATA const char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tqsllib_8h.html#a7f0de11cfb6d09fa9932671f73380e14">tQSL_BaseDir</a></td></tr>
+<tr class="memdesc:a7f0de11cfb6d09fa9932671f73380e14"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base directory for tQSL library working files. <br/></td></tr>
+<tr class="separator:a7f0de11cfb6d09fa9932671f73380e14"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gace60046d471ad2f67f95e7866028a4ff"><td class="memItemLeft" align="right" valign="top">DLLEXPORTDATA int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Util.html#gace60046d471ad2f67f95e7866028a4ff">tQSL_Error</a></td></tr>
 <tr class="memdesc:gace60046d471ad2f67f95e7866028a4ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Error code from most recent tQSL library call.  <a href="group__Util.html#gace60046d471ad2f67f95e7866028a4ff">More...</a><br/></td></tr>
 <tr class="separator:gace60046d471ad2f67f95e7866028a4ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
