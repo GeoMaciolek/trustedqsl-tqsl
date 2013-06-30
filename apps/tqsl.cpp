@@ -105,8 +105,6 @@
 
 using namespace std;
 
-#undef ALLOW_UNCOMPRESSED
-
 /// GEOMETRY
 
 #define LABEL_HEIGHT 15
@@ -633,17 +631,10 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_f_new, MyFrame::EnterQSOData)
 	EVT_BUTTON(tl_Edit, MyFrame::EnterQSOData)
 	EVT_MENU(tm_f_edit, MyFrame::EditQSOData)
-#ifdef ALLOW_UNCOMPRESSED
-	EVT_MENU(tm_f_import, MyFrame::ImportQSODataFile)
-#endif
 	EVT_MENU(tm_f_import_compress, MyFrame::ImportQSODataFile)
 	EVT_BUTTON(tl_Save, MyFrame::ImportQSODataFile)
 	EVT_MENU(tm_f_upload, MyFrame::UploadQSODataFile)
 	EVT_BUTTON(tl_Upload, MyFrame::UploadQSODataFile)
-#ifdef ALLOW_UNCOMPRESSED
-	EVT_MENU(tm_f_compress, MyFrame::OnFileCompress)
-	EVT_MENU(tm_f_uncompress, MyFrame::OnFileCompress)
-#endif
 	EVT_MENU(tm_f_exit, MyFrame::DoExit)
 	EVT_MENU(tm_f_preferences, MyFrame::OnPreferences)
 	EVT_MENU(tm_f_loadconfig, MyFrame::OnLoadConfig)
@@ -734,17 +725,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxMenu *file_menu = new wxMenu;
 	file_menu->Append(tm_f_upload, wxT("Sign and &upload ADIF or Cabrillo File..."));
 	file_menu->Append(tm_f_import_compress, wxT("&Sign and save ADIF or Cabrillo file..."));
-#ifdef ALLOW_UNCOMPRESSED
-	file_menu->Append(tm_f_import, wxT("Sign &Uncompressed..."));
-#endif
 	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_new, wxT("Create &New ADIF file..."));
 	file_menu->Append(tm_f_edit, wxT("&Edit existing ADIF file..."));
-#ifdef ALLOW_UNCOMPRESSED
-	file_menu->AppendSeparator();
-	file_menu->Append(tm_f_compress, wxT("Co&mpress..."));
-	file_menu->Append(tm_f_uncompress, wxT("&Uncompress..."));
-#endif
 	file_menu->AppendSeparator();
 	file_menu->Append(tc_CRQWizard, wxT("&New Callsign Certificate Request..."));
 	file_menu->AppendSeparator();
@@ -2461,92 +2444,6 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	}
 	free_certlist();
 }
-
-#ifdef ALLOW_UNCOMPRESSED
-
-void
-MyFrame::OnFileCompress(wxCommandEvent& event) {
-	tqslTrace("MyFrame::OnFileCompress");
-	bool uncompress = (event.m_id == tm_f_uncompress);
-	wxString defin = uncompress ? wxT("tq8") : wxT("tq7");
-	wxString defout = uncompress ? wxT("tq7") : wxT("tq8");
-	wxString filt_uncompressed = wxT("TQSL data files (*.tq7)|*.tq7|All files (*.*)|*.*");
-	wxString filt_compressed = wxT("TQSL compressed data files (*.tq8)|*.tq8|All files (*.*)|*.*");
-	wxString filtin = uncompress ? filt_compressed : filt_uncompressed;
-	wxString filtout = uncompress ? filt_uncompressed : filt_compressed;
-
-	wxString infile;
-   	// Get input file
-	wxString path = wxConfig::Get()->Read(wxT("ExportPath"), wxT(""));
-	infile = wxFileSelector(wxString(wxT("Select file to ")) + (uncompress ? wxT("Uncompress") : wxT("Compress")),
-   		path, wxT(""), defin, filtin,
-   		wxOPEN|wxFILE_MUST_EXIST, this);
-   	if (infile.IsEmpty())
-   		return;
-	ifstream in;
-	gzFile gin = 0;
-	if (uncompress)
-		gin = gzopen(infile.mb_str(), "rb");
-	else
-		in.open(infile.mb_str(), ios::in | ios::binary);
-	if ((uncompress && !gin) || (!uncompress && !in)) {
-		wxMessageBox(wxString(wxT("Unable to open ")) + infile, ErrorTitle, wxOK|wxCENTRE, this);
-		return;
-	}
-	wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(infile));
-	// Get output file
-	wxString basename;
-	wxSplitPath(infile.c_str(), 0, &basename, 0);
-	path = wxConfig::Get()->Read(wxT("ExportPath"), wxT(""));
-	wxString deftype = uncompress ? wxT("tq8") : wxT("tq7");
-	wxString filter = uncompress ? wxT("TQSL compressed data files (*.tq8)|*.tq8")
-		: wxT("TQSL data files (*.tq7)|*.tq7");
-   	wxString outfile = wxFileSelector(wxT("Select file to write to"),
-   		path, basename, defout, filtout,
-   		wxSAVE|wxOVERWRITE_PROMPT, this);
-   	if (outfile.IsEmpty())
-   		return;
-	wxConfig::Get()->Write(wxT("ExportPath"), wxPathOnly(outfile));
-
-	gzFile gout = 0;
-	ofstream out;
-
-	if (uncompress)
-		out.open(outfile.mb_str(), ios::out | ios::trunc | ios::binary);
-	else
-		gout = gzopen(outfile.mb_str(), "wb9");
-	if ((uncompress && !out) || (!uncompress && !gout)) {
-		wxMessageBox(wxString(wxT("Unable to open ")) + outfile, ErrorTitle, wxOK|wxCENTRE, this);
-		if (uncompress)
-			gzclose(gin);
-		return;
-	}
-	char buf[512];
-	int n;
-
-	// Need to add error checks
-
-	if (uncompress) {
-		do {
-			n = gzread(gin, buf, sizeof buf);
-			if (n > 0)
-				out.write(buf, n);
-		} while (n == sizeof buf);
-		gzclose(gin);
-	} else {
-		do {
-			in.read(buf, sizeof buf);
-			if (in.gcount() > 0)
-				gzwrite(gout, buf, in.gcount());
-		} while (in.gcount() == sizeof buf);
-		gzclose(gout);
-	}
-	wxLogMessage(wxString::Format(wxT("%s written to %hs file %s"), infile.c_str(),
-		uncompress ? "uncompressed" : "compressed",
-		outfile.c_str()));
-}
-
-#endif // ALLOW_UNCOMPRESSED
 
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnPreferences");
