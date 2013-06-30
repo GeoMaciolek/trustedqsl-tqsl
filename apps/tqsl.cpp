@@ -166,8 +166,6 @@ QSLApp::~QSLApp() {
 IMPLEMENT_APP(QSLApp)
 
 
-static wxString lastPW;
-
 static int
 getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqslTrace("getCertPassword", "buf = %lx, bufsiz=%d, cert=%lx", buf, bufsiz, cert);
@@ -184,19 +182,10 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 
 	wxWindow* top = wxGetApp().GetTopWindow();
 	top->SetFocus();
-	lastPW = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
-	if (lastPW.IsEmpty())
+	wxString pwd = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
+	if (pwd.IsEmpty())
 		return 1;
-	strncpy(buf, lastPW.mb_str(), bufsiz);
-	return 0;
-}
-
-// Dummy password - used to bypass prompting for passwords during
-// automatic config backups
-int
-getDummyPassword(char *buf, int bufsiz, tQSL_Cert cert) {
-	tqslTrace("getDummyPassword", "buf = %lx, bufsiz=%d, cert=%lx", buf, bufsiz, cert);
-	strncpy(buf, "password", bufsiz);
+	strncpy(buf, pwd.mb_str(), bufsiz);
 	return 0;
 }
 
@@ -560,13 +549,14 @@ free_certlist() {
 }
 
 static void
-get_certlist(string callsign, int dxcc, bool expired) {
-	tqslTrace("get_certlist", "callsign=%s, dxcc=%d, expired=%d",callsign.c_str(), dxcc, expired);
+get_certlist(string callsign, int dxcc, bool expired, bool superceded) {
+	tqslTrace("get_certlist", "callsign=%s, dxcc=%d, expired=%d, superceded=%d",callsign.c_str(), dxcc, expired, superceded);
 	free_certlist();
+	int select = TQSL_SELECT_CERT_WITHKEYS;
+	if (expired) select |= TQSL_SELECT_CERT_EXPIRED;
+	if (superceded) select |= TQSL_SELECT_CERT_SUPERCEDED;
 	tqsl_selectCertificates(&certlist, &ncerts,
-		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, 
-		expired ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED :
-			  TQSL_SELECT_CERT_WITHKEYS);
+		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, select);
 }
 
 
@@ -1060,7 +1050,7 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
 	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s", loc, expired, _S(title), _S(dataname));
 	wxString rval(wxT(""));
-	get_certlist("", 0, expired);
+	get_certlist("", 0, expired, false);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title, expired);
@@ -1406,7 +1396,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 
 	tqsl_getDXCCEntityName(dxcc, &dxccname);
 
-	get_certlist(callsign, dxcc, false);
+	get_certlist(callsign, dxcc, false, false);
 	if (ncerts == 0) {
 		wxString msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs.\nSigning aborted.\n"), callsign);
 		throw TQSLException(msg.mb_str());
@@ -2570,7 +2560,8 @@ class TQSLConfig {
 public:
         TQSLConfig() {
                 callSign = "";
-		certpwd[0] = '\0';
+		serial = 0;
+		dxcc = 0;
 		elementBody = wxT("");
 		locstring = wxT("");
 		config = NULL;
@@ -2578,11 +2569,15 @@ public:
 		conv = NULL;
         }
 	void SaveSettings (gzFile &out, wxString appname);
+	void RestoreCert (void);
 	void RestoreConfig (gzFile& in);
 	void ParseLocations (const char *loc, gzFile* out);
 	wxConfig *config;
-	char certpwd[80];
+	long serial;
+	int dxcc;
 	string callSign;
+	wxString signedCert;
+	wxString privateKey;
 	wxString elementBody;
 	wxString locstring;
 	gzFile* outstr;
@@ -2663,6 +2658,7 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 void
 MyFrame::BackupConfig(wxString& filename, bool quiet) {
 	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", _S(filename), quiet);
+	int i;
 	try {
 		gzFile out = 0;
 		out = gzopen(filename.mb_str(), "wb9");
@@ -2677,56 +2673,53 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you.</Warning>\n");
 		gzprintf(out, "<Certificates>\n");
 
-		if (!quiet)
+		if (!quiet) {
 			wxLogMessage(wxT("Saving callsign certificates"));
+		}
 		int ncerts;
-		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
-		char *password = NULL;
 		char buf[8192];
-		for (int i = 0; i < ncerts; i++) {
+		// Save root certificates
+		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "root"));
+		for (i = 0; i < ncerts; i++) {
+			gzprintf(out, "<RootCert>\n");
+			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
+			gzwrite(out, buf, strlen(buf));
+			gzprintf(out, "</RootCert>\n");
+		}
+		// Save CA certificates
+		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "authorities"));
+		for (i = 0; i < ncerts; i++) {
+			gzprintf(out, "<CACert>\n");
+			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
+			gzwrite(out, buf, strlen(buf));
+			gzprintf(out, "</CACert>\n");
+		}
+		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
+		for (i = 0; i < ncerts; i++) {
 			char callsign[64];
-			int rval;
-			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign)));
-			do {
-   				if ((rval = tqsl_beginSigning(certlist[i], password, (quiet ? getDummyPassword : getCertPassword), certlist[i])) == 0)
-					break;
-				if (tQSL_Error == TQSL_PASSWORD_ERROR && quiet)
-					break;
-				if (tQSL_Error == TQSL_PASSWORD_ERROR) {
-					wxLogMessage(wxT("Password error"));
-					if (password)
-						free((void *)password);
-					password = NULL;
-				}
-			} while (tQSL_Error == TQSL_PASSWORD_ERROR);
-			if (!quiet || (quiet && rval == 0)) {
-				check_tqsl_error(rval);
-				char pwbuf[80];
-				if (wxIsEmpty(lastPW)) {
-					pwbuf[0] = '\0';
-				} else {
-					const char *pwd = strdup(lastPW.mb_str());
-					tqsl_encodeBase64((unsigned char *)pwd, strlen(pwd), pwbuf, sizeof pwbuf);
-					int end = strlen(pwbuf);
-
-					while (pwbuf[end - 1] == '\n') {
-						pwbuf[--end] = '\0'; // Strip the newline
-					}
-				}
-				if (!quiet)
-					wxLogMessage(wxT("\tSaving callsign certificate for %hs"), callsign);
-				gzprintf(out, "<Cert CallSign=\"%s\" password=\"%s\">\n", callsign, pwbuf);
-				lastPW = wxT("");
-				check_tqsl_error(tqsl_exportPKCS12Base64(certlist[i], buf, sizeof(buf), ""));
-				tqsl_endSigning(certlist[i]);
-				gzwrite(out, buf, strlen(buf));
-				gzprintf(out, "\n</Cert>\n");
+			long serial;
+			int dxcc;
+			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
+			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
+			if (!quiet) {
+				wxLogMessage(wxT("\tSaving callsign certificate for %hs"), callsign);
 			}
+			gzprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%d\">\n", callsign, dxcc, serial);
+			gzprintf(out, "<SignedCert>\n");
+			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
+			gzwrite(out, buf, strlen(buf));
+			gzprintf(out, "</SignedCert>\n<PrivateKey>\n");
+			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
+			gzwrite(out, buf, strlen(buf));
+			gzprintf(out, "\n</PrivateKey>\n</UserCert>\n");
+			tqsl_freeCertificate(certlist[i]);
 		}
 		gzprintf(out, "</Certificates>\n");
 		gzprintf(out, "<Locations>\n");
-		if (!quiet)
+		if (!quiet) {
 			wxLogMessage(wxT("Saving Station Locations"));
+		}
 		char *sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationData(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
@@ -2734,14 +2727,16 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		free(sdbuf);
 		gzprintf(out, "</Locations>\n");
 
-		if (!quiet)
+		if (!quiet) {
 			wxLogMessage(wxT("Saving TQSL Preferences"));
+		}
 		gzprintf(out, "<TQSLSettings>\n");
 		conf->SaveSettings(out, wxT("tqslapp"));
 		gzprintf(out, "</TQSLSettings>\n");
 
-		if (!quiet)
+		if (!quiet) {
 			wxLogMessage(wxT("Saving QSOs"));
+		}
 	
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
@@ -2773,7 +2768,7 @@ void
 MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnSaveConfig");
 	try {
-		wxString file_default = wxT("userconfig.tbk");
+		wxString file_default = wxT("tqslconfig.tbk");
 		wxString filename = wxFileSelector(wxT("Enter file to save to"), wxT(""),
 			file_default, wxT(".tbk"), wxT("Configuration files (*.tbk)|*.tbk|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
@@ -2789,26 +2784,52 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 
 
 void
+restore_user_cert(TQSLConfig* loader) {
+	get_certlist(loader->callSign.c_str(), loader->dxcc, true, true);
+	for (int i = 0; i < ncerts; i++) {
+		long serial;
+		int dxcc;
+		check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+		check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
+		if (serial == loader->serial && dxcc == loader->dxcc)
+			return;			// This certificate is already installed.
+	}
+	// There is no certificate matching this callsign/entity/serial.
+	wxLogMessage(wxT("\tRestoring callsign certificate for %hs"), loader->callSign.c_str());
+	check_tqsl_error(tqsl_importKeyPairEncoded(loader->callSign.c_str(), "user", loader->privateKey.mb_str(), loader->signedCert.mb_str()));
+}
+
+void
+restore_root_cert(TQSLConfig* loader) {
+	check_tqsl_error(tqsl_importKeyPairEncoded(NULL, "root", NULL, loader->signedCert.mb_str()));
+}
+
+void
+restore_ca_cert(TQSLConfig* loader) {
+	check_tqsl_error(tqsl_importKeyPairEncoded(NULL, "authorities", NULL, loader->signedCert.mb_str()));
+}
+
+void
 TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char **atts) {
 	TQSLConfig* loader = (TQSLConfig *) data;
 	int i;
 
 	loader->elementBody = wxT("");
-	if (strcmp(name, "Cert") == 0) {
+	if (strcmp(name, "UserCert") == 0) {
 		for (int i = 0; atts[i]; i+=2) {
 			if (strcmp(atts[i], "CallSign") == 0) {
 				loader->callSign = atts[i + 1];
-			} else if (strcmp(atts[i], "password") == 0) {
+			} else if (strcmp(atts[i], "serial") == 0) {
 				if (strlen(atts[i+1]) == 0) {
-					loader->certpwd[0] = '\0';
+					loader->serial = 0;
 				} else {
-					int dlen = sizeof loader->certpwd;
-					char pwdstring[128];		// Have to append a newline for decode to work
-					strncpy(pwdstring, atts[i+1], sizeof(pwdstring));
-					strncat(pwdstring, "\n", sizeof(pwdstring) - strlen(pwdstring));
-					tqsl_decodeBase64(pwdstring, (unsigned char *)&loader->certpwd, &dlen);
-					if (dlen > 0)
-						loader->certpwd[dlen] = '\0';
+					loader->serial =  strtol(atts[i+1], NULL, 10);
+				}
+			} else if (strcmp(atts[i], "dxcc") == 0) {
+				if (strlen(atts[i+1]) == 0) {
+					loader->dxcc = 0;
+				} else {
+					loader->dxcc =  strtol(atts[i+1], NULL, 10);
 				}
 			}
 		}
@@ -2880,14 +2901,18 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 void
 TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 	TQSLConfig* loader = (TQSLConfig *) data;
-	if (strcmp(name, "Cert") == 0) {
-		const char *pwd = NULL;
-		if (strlen((char *)loader->certpwd) > 0)
-			pwd = (char *)&loader->certpwd;
-		wxLogMessage(wxT("\tRestoring callsign certificate for %hs"), loader->callSign.c_str());
-		if (tqsl_importPKCS12Base64(loader->elementBody.mb_str(), "", pwd, NULL, NULL, NULL) != 0) {
-			wxLogError(wxT("\tError importing callsign certificate for %hs: %hs"), loader->callSign.c_str(), tqsl_getErrorString());
-		}
+	if (strcmp(name, "SignedCert") == 0) {
+		loader->signedCert = loader->elementBody.Trim(false);
+	} else if (strcmp(name, "PrivateKey") == 0) {
+		loader->privateKey = loader->elementBody.Trim(false);
+	} else if (strcmp(name, "RootCert") == 0) {
+		loader->signedCert = loader->elementBody.Trim(false);
+		restore_root_cert(loader);
+	} else if (strcmp(name, "CACert") == 0) {
+		loader->signedCert = loader->elementBody.Trim(false);
+		restore_ca_cert(loader);
+	} else if (strcmp(name, "UserCert") == 0) {
+		restore_user_cert(loader);
 	} else if (strcmp(name, "Location") == 0) {
 		loader->locstring += wxT("</StationData>\n");
 	} else if (strcmp(name, "Locations") == 0) {
