@@ -335,8 +335,8 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *,voi
 		return 1;
 	}
 	/* It's a certificate. Let's try to add it. Any errors will be
-     * reported via the callback (if any) but will not be fatal unless
-     * the callback says so.
+	 * reported via the callback (if any) but will not be fatal unless
+	 * the callback says so.
 	 */
 	stat = (*(handler->func))(data, cert, cb, userdata);
 	X509_free(cert);
@@ -928,6 +928,51 @@ end:
 		RSA_free(rsa);
 	return rval;
 }
+
+DLLEXPORT int CALLCONVENTION
+tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type) {
+	TQSL_X509_STACK *xcerts = NULL;
+	int rval = 1;
+	char path[256];
+	int i;
+	X509 *x;
+	tqsl_cert *cp;
+	vector< map<string,string> > keylist;
+	vector< map<string,string> >::iterator it;
+	
+	if (tqsl_init())
+		return 1;
+	if (certlist == NULL || ncerts == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+
+	/* Get the certs from the cert store */
+	tqsl_make_cert_path(type, path, sizeof path);
+	xcerts = tqsl_ssl_load_certs_from_file(path);
+	if (xcerts == NULL) 
+		if (tQSL_Error == TQSL_OPENSSL_ERROR)
+			return 1;
+
+	*ncerts = (xcerts ? sk_X509_num(xcerts) : 0) + keylist.size();
+	*certlist = (tQSL_Cert *)tqsl_calloc(*ncerts, sizeof (tQSL_Cert));
+	if (xcerts != NULL) {
+		for (i = 0; i < sk_X509_num(xcerts); i++) {
+			x = sk_X509_value(xcerts, i);
+			if ((cp = tqsl_cert_new()) == NULL)
+				goto end;
+			cp->cert = X509_dup(x);
+			(*certlist)[i] = TQSL_OBJ_TO_API(cp);
+		}
+	}
+	rval = 0;
+end:
+	if (xcerts != NULL)
+		sk_X509_free(xcerts);
+	return rval;
+
+}
+
 DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *keyonly) {
 	if (tqsl_init())
@@ -973,6 +1018,163 @@ end:
 	if (bio != NULL)
 		BIO_free(bio);
 	return rval;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
+	BIO *b64 = NULL;
+	BIO *bio = NULL;
+	BIO *out = NULL;
+	char callsign[40];
+	long  len;
+	char *cp;
+	vector< map<string,string> > keylist;
+	vector< map<string,string> >::iterator it;
+	EVP_PKEY *pubkey = NULL;
+	RSA *rsa = NULL;
+
+	if (tqsl_init())
+		return 1;
+	if (cert == NULL || buf == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert))) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	tQSL_Error = TQSL_OPENSSL_ERROR;
+	if (tqsl_getCertificateCallSign(cert, callsign, sizeof callsign))
+		return 1;
+	if (tqsl_make_key_list(keylist))
+		return 1;
+	
+	if ((pubkey = X509_get_pubkey(TQSL_API_TO_CERT(cert)->cert)) == 0)
+		return 1;
+	// Find the matching private key
+	for (it = keylist.begin(); it != keylist.end(); it++) {
+		string& keystr = (*it)["PUBLIC_KEY"];
+		if ((bio = BIO_new_mem_buf((void *)(keystr.c_str()), keystr.length())) == NULL)
+			return 1;
+		if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
+			BIO_free(bio);
+			return 1;
+		}
+		BIO_free (bio);
+		bio = NULL;
+		if (BN_cmp(rsa->n, pubkey->pkey.rsa->n) == 0) {
+			if (BN_cmp(rsa->e, pubkey->pkey.rsa->e) == 0) {
+			// This is the matching private key. Let's feed it back.
+				RSA_free(rsa);
+				EVP_PKEY_free(pubkey);
+				b64 = BIO_new(BIO_f_base64());
+				out = BIO_new(BIO_s_mem());
+				out = BIO_push(b64, out);
+				map<string,string>::iterator mit;
+				for (mit = it->begin(); mit != it->end(); mit++)
+					if (tqsl_bio_write_adif_field(out, mit->first.c_str(), 0, (const unsigned char *)mit->second.c_str(), -1))
+						return 1;
+				
+				tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
+				if (BIO_flush(out) != 1) {
+					tQSL_Error = TQSL_SYSTEM_ERROR;
+					strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
+					BIO_free_all(out);
+					return 1;
+				}
+	
+				len = BIO_get_mem_data(out, &cp);
+				if (len > bufsiz) {
+					tQSL_Error = TQSL_SYSTEM_ERROR;
+					snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Private key buffer size %d is too small - %ld needed", bufsiz, len);
+					BIO_free_all(out);
+					return 1;
+				}
+				memcpy(buf, cp, len);
+				buf[len] = '\0';
+				BIO_free_all(out);
+				return 0;
+			} else {
+				RSA_free(rsa);
+				EVP_PKEY_free(pubkey);
+			}
+		}
+	}
+	return 1;	// Private key not found
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *keybuf, const char *certbuf) {
+	BIO *in = NULL;
+	BIO *b64 = NULL;
+	BIO *out = NULL;
+	X509 *cert;
+	char path[256];
+	char biobuf[4096];
+	int len;
+	int cb = 0;
+
+	if (tqsl_init())
+		return 1;
+	if (certbuf == NULL || type == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (strcmp(type, "user") == 0 && keybuf == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (strcmp(type, "user") == 0) {
+		if (keybuf == NULL) {
+			tQSL_Error = TQSL_ARGUMENT_ERROR;
+			return 1;
+		}
+		cb = TQSL_CERT_CB_USER;
+	} else if (strcmp(type, "root") == 0) {
+		cb = TQSL_CERT_CB_ROOT;
+	} else if (strcmp(type, "authorities") == 0) {
+		cb = TQSL_CERT_CB_CA;
+	} else {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (keybuf) {
+		if (!tqsl_make_key_path(callsign, path, sizeof path))
+			return 1;
+
+		in = BIO_new_mem_buf((void *)keybuf, strlen(keybuf));
+		if (in == NULL) {
+			tQSL_Error = TQSL_OPENSSL_ERROR;
+			return 1;
+		}
+
+		b64 = BIO_new(BIO_f_base64());
+		in = BIO_push(b64, in);
+
+		out = BIO_new_file(path, "a");
+		if (!out) {
+			tQSL_Error = TQSL_SYSTEM_ERROR;
+			tQSL_Errno = errno;
+			snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Unable to open private key %s: %s",
+				path, strerror(errno));
+			return 1;
+		}
+		while ((len = BIO_read(in, biobuf, sizeof biobuf)) > 0)
+			BIO_write(out, biobuf, len);
+		BIO_free_all(in);
+		BIO_free_all(out);
+
+	} // Import of private key
+
+	// Now process the certificate
+	in = BIO_new_mem_buf((void *)certbuf, strlen(certbuf));
+	if (in == NULL) {
+		tQSL_Error = TQSL_OPENSSL_ERROR;
+		return 1;
+	}
+	cert = PEM_read_bio_X509(in, NULL, NULL, NULL);
+	BIO_free(in);	
+	if (cert == NULL) {
+		tQSL_Error = TQSL_OPENSSL_ERROR;
+		return 1;
+	}
+	return tqsl_store_cert(certbuf, cert, type, cb, true, NULL, NULL);
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -2863,6 +3065,40 @@ tqsl_write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned
 	return 0;
 }
 
+/* Output an ADIF field to a BIO
+ */
+CLIENT_STATIC int
+tqsl_bio_write_adif_field(BIO *bio, const char *fieldname, char type, const unsigned char *value, int len) {
+	if (fieldname == NULL)	/* Silly caller */
+		return 0;
+	if (BIO_write(bio, "<", 1) <= 0)
+		return 1;
+	if (BIO_puts(bio, fieldname) <= 0)
+		return 1;
+	if (type && type != ' ' && type != '\0') {
+		if (BIO_write(bio, ":", 1) <= 0)
+			return 1;
+		if (BIO_write(bio, &type, 1) <= 0)
+			return 1;
+	}
+	if (value != NULL && len != 0) {
+		if (len < 0)
+			len = strlen((const char *)value);
+		if (BIO_write(bio, ":", 1) <= 0)
+			return 1;
+		char numbuf[20];
+		sprintf(numbuf, "%d>", len);
+		if (BIO_puts(bio, numbuf) <= 0)
+			return 1;
+		if (BIO_write(bio, value, len) != len)
+			return 1;
+	} else if (BIO_write(bio, ">", 1) <= 0)
+			return 1;
+	if (BIO_puts(bio, "\n\n") <= 0)
+		return 1;
+	return 0;
+}
+
 static int
 tqsl_self_signed_is_ok(int ok, X509_STORE_CTX *ctx) {
 	if (ctx->error == X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT)
@@ -2940,7 +3176,7 @@ tqsl_handle_root_cert(const char *pem, X509 *x, int (*cb)(int, const char *, voi
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 1;
 	}
-	return tqsl_store_cert(pem, x, "root", TQSL_CERT_CB_ROOT, cb, userdata);
+	return tqsl_store_cert(pem, x, "root", TQSL_CERT_CB_ROOT, false, cb, userdata);
 }
 
 static int
@@ -2972,7 +3208,7 @@ tqsl_handle_ca_cert(const char *pem, X509 *x, int (*cb)(int, const char *, void 
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 1;
 	}
-	return tqsl_store_cert(pem, x, "authorities", TQSL_CERT_CB_CA, cb, userdata);
+	return tqsl_store_cert(pem, x, "authorities", TQSL_CERT_CB_CA, false, cb, userdata);
 }
 
 static int
@@ -2984,7 +3220,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 
 	strncpy(pem, cpem, sizeof pem);
 	/* Match the public key in the supplied certificate with a
-     * private key in the key store.
+	 * private key in the key store.
 	 */
 	if (!tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
 		if (tQSL_Error != TQSL_PASSWORD_ERROR)
@@ -3013,11 +3249,11 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 1;
 	}
-	return tqsl_store_cert(pem, x, "user", TQSL_CERT_CB_USER, cb, userdata);
+	return tqsl_store_cert(pem, x, "user", TQSL_CERT_CB_USER, false, cb, userdata);
 }
 
 CLIENT_STATIC int
-tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
+tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, bool force, 
 	int (*cb)(int, const char *, void *), void *userdata) {
 	STACK_OF(X509) *sk;
 	char path[256];
@@ -3107,7 +3343,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type,
 					break;	/* We have a match */
 			}
 
-			if (type == TQSL_CERT_CB_USER) {
+			if (!force && type == TQSL_CERT_CB_USER) { // Don't check for newer certs on restore
 				item.name_buf = name;
 				item.name_buf_size = sizeof name;
 				item.value_buf = value;

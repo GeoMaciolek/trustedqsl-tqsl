@@ -147,9 +147,10 @@ CLIENT_STATIC TQSL_X509_STACK *tqsl_filter_cert_list(TQSL_X509_STACK *sk, const 
 CLIENT_STATIC EVP_PKEY *tqsl_new_rsa_key(int nbits);
 
 CLIENT_STATIC int tqsl_store_cert(const char *pem, X509 *cert, const char *certfile,
-	int type, int (*cb)(int, const char *, void *), void *);
+	int type, bool force, int (*cb)(int, const char *, void *), void *);
 
 CLIENT_STATIC int tqsl_write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned char *value, int len);
+CLIENT_STATIC int tqsl_bio_write_adif_field(BIO *bio, const char *fieldname, char type, const unsigned char *value, int len);
 
 #ifdef __cplusplus
 }

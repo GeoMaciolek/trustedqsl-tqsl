@@ -325,6 +325,17 @@ DLLEXPORT int CALLCONVENTION tqsl_getConfigVersion(int *major, int *minor);
 DLLEXPORT int CALLCONVENTION tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flag);
 
+/** Get a list of authority certificates
+  *
+  * Selects a set of certificates from the root or authorities certificate stores
+  * The function produces a list of tQSL_Cert objects.
+  *
+  * Each of the tQSL_Cert objects in the list should be freed
+  * by calling tqsl_freeCertificate().
+  *
+  */
+DLLEXPORT int CALLCONVENTION tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type);
+
 /** Get a particulat certificate from the list returnded by
   * tqsl_selectCertificates. This function exists principally
   * to make it easier for VB programs to access the list of
@@ -351,6 +362,14 @@ DLLEXPORT int CALLCONVENTION tqsl_getCertificateKeyOnly(tQSL_Cert cert, int *key
 /** Get the encoded certificate for inclusion in a GABBI file.
   */
 DLLEXPORT int CALLCONVENTION tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz);
+
+/** Get the encoded private key for inclusion in a backup file.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz);
+
+/** Import a base64 encoded certificate and private key from a backup file.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *keybuf, const char *certbuf);
 
 /** Get the issuer's serial number of the certificate.
   */
