@@ -652,12 +652,11 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_CLOSE(MyFrame::OnExit)
 
 	EVT_MENU(tc_CRQWizard, MyFrame::CRQWizard)
+	EVT_MENU(tc_c_New, MyFrame::CRQWizard)
 	EVT_MENU(tc_c_Load, MyFrame::OnLoadCertificateFile)
-	EVT_MENU(tc_f_Load, MyFrame::OnLoadCertificateFile)
 	EVT_BUTTON(tc_Load, MyFrame::OnLoadCertificateFile)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
 	EVT_BUTTON(tc_CertProp, MyFrame::OnCertProperties)
-	EVT_MENU(tc_f_Export, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
 	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
@@ -733,11 +732,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	file_menu->Append(tm_f_upload, wxT("Sign and &upload ADIF or Cabrillo File..."));
 	file_menu->Append(tm_f_import_compress, wxT("&Sign and save ADIF or Cabrillo file..."));
 	file_menu->AppendSeparator();
-	file_menu->Append(tc_CRQWizard, wxT("Request &New Callsign Certificate..."));
-	file_menu->Append(tc_f_Load, wxT("&Load Callsign Certificate from File"));
-	file_menu->Append(tc_f_Export, wxT("&Save Callsign Certificate to File..."));
-	file_menu->Enable(tc_f_Export, false);
-	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_saveconfig, wxT("&Backup Station Locations, Certificates, and Preferences..."));
 	file_menu->Append(tm_f_loadconfig, wxT("&Restore Station Locations, Certificates, and Preferences..."));
 	file_menu->AppendSeparator();
@@ -747,7 +741,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 #ifdef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
 #else
-	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_preferences, wxT("Display or Modify &Preferences..."));
 #endif
 #ifndef __WXMAC__	// On Mac, Exit not on File menu
@@ -981,7 +974,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
-	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a new Callsign Certificate"));
+	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a Callsign Certificate"));
 	cert_load_label->GetSize(&tw, &th);
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
@@ -1025,7 +1018,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb4sizer->Add(cert_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb4Panel, 1, wxALL, 1);
 
-	notebook->AddPage(certtab, wxT("Certificates"));
+	notebook->AddPage(certtab, wxT("Callsign Certificates"));
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
@@ -3390,14 +3383,15 @@ makeCertificateMenu(bool enable, bool keyonly) {
 	c_menu->Append(tc_c_Properties, wxT("Display Callsign Certificate &Properties"));
 	c_menu->Enable(tc_c_Properties, enable);
 	c_menu->AppendSeparator();
-	c_menu->Append(tc_f_Load, wxT("&Load Callsign Certificate from File"));
+	c_menu->Append(tc_c_Load, wxT("&Load Callsign Certificate from File"));
 	c_menu->Append(tc_c_Export, wxT("&Save Callsign Certificate to File..."));
 	c_menu->Enable(tc_c_Export, enable);
 	if (!keyonly) {
 		c_menu->AppendSeparator();
+		c_menu->Append(tc_c_New, wxT("Request &New Callsign Certificate..."));
 		c_menu->Append(tc_c_Renew, wxT("&Renew Callsign Certificate"));
 		c_menu->Enable(tc_c_Renew, enable);
-	}
+	} else 
 	c_menu->AppendSeparator();
 	c_menu->Append(tc_c_Delete, wxT("&Delete Callsign Certificate"));
 	c_menu->Enable(tc_c_Delete, enable);
@@ -3619,7 +3613,6 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 
 		cert_select_label->SetLabel(wxT(""));
 		cert_menu->Enable(tc_c_Properties, true);
-		file_menu->Enable(tc_f_Export, true);
 		cert_menu->Enable(tc_c_Export, true);
 		file_menu->Enable(tc_f_Delete, true);
 		cert_menu->Enable(tc_c_Delete, true);
@@ -3736,6 +3729,7 @@ MyFrame::LocTreeReset() {
 	loc_edit_button->Disable();
 	loc_delete_button->Disable();
 	loc_prop_button->Disable();
+	stn_menu->Enable(tm_s_Properties, false);
 	loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
 	loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
 	loc_prop_label->SetLabel(wxT("\nDisplay Station Location Details"));
@@ -3757,6 +3751,7 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		loc_edit_button->Enable();
 		loc_delete_button->Enable();
 		loc_prop_button->Enable();
+		stn_menu->Enable(tm_s_Properties, true);
 		loc_edit_label->SetLabel(wxT("Edit Station Location ") + call + wxT(": ") + lname);
 		loc_edit_label->Wrap(w - 10);
 		loc_delete_label->SetLabel(wxT("Delete Station Location ") + call + wxT(": ") + lname);
