@@ -33,19 +33,25 @@ CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelp
 	ExtWizard(parent, help, title), cert(xcert), _crq(crq)  {
 	tqslTrace("CRQWiz::CRQWiz", "crq=%lx, xcert=%lx, title=%s", (void *)cert, (void *)xcert, _S(title));
 
+	int nprov = 1;
+	tqsl_getNumProviders(&nprov);
 	CRQ_ProviderPage *provider = new CRQ_ProviderPage(this, _crq);
 	CRQ_IntroPage *intro = new CRQ_IntroPage(this, _crq);
 	CRQ_NamePage *name = new CRQ_NamePage(this, _crq);
 	CRQ_EmailPage *email = new CRQ_EmailPage(this, _crq);
 	CRQ_PasswordPage *pw = new CRQ_PasswordPage(this);
 	CRQ_SignPage *sign = new CRQ_SignPage(this);
-	wxWizardPageSimple::Chain(provider, intro);
+	if (nprov != 1)
+		wxWizardPageSimple::Chain(provider, intro);
 	wxWizardPageSimple::Chain(intro, name);
 	wxWizardPageSimple::Chain(name, email);
 	wxWizardPageSimple::Chain(email, pw);
 	if (!cert)
 		wxWizardPageSimple::Chain(pw, sign);
-	_first = provider;
+	if (nprov == 1)
+		_first = intro;
+	else	
+		_first = provider;
 	AdjustSize();
 	CenterOnParent();
 }
