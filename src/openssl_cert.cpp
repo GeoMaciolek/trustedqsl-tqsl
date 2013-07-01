@@ -1035,11 +1035,64 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 
 	if (tqsl_init())
 		return 1;
-	if (cert == NULL || buf == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert))) {
+	if (cert == NULL || buf == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert),false)) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
 	tQSL_Error = TQSL_OPENSSL_ERROR;
+	// If it's 'keyonly', then there's no public key - use the one in the cert.
+	if (TQSL_API_TO_CERT(cert)->keyonly) {
+		if (TQSL_API_TO_CERT(cert)->privkey == 0) {
+			tQSL_Error = TQSL_ARGUMENT_ERROR;
+			return 1;
+		}
+		strncpy(callsign, TQSL_API_TO_CERT(cert)->crq->callSign, sizeof callsign);
+		b64 = BIO_new(BIO_f_base64());
+		out = BIO_new(BIO_s_mem());
+		out = BIO_push(b64, out);
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		if (tqsl_bio_write_adif_field(out, "CALLSIGN", 0, (const unsigned char *)callsign, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "PRIVATE_KEY", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->privkey, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "PUBLIC_KEY", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->pubkey, -1))
+			return 1;
+		char numbuf[10];
+		snprintf(numbuf, sizeof numbuf, "%d", TQSL_API_TO_CERT(cert)->crq->dxccEntity);
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_DXCC_ENTITY", 0, (const unsigned char *)numbuf, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->providerName, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->providerUnit, -1))
+			return 1;
+		char datebuf[20];
+		tqsl_convertDateToText(&(TQSL_API_TO_CERT(cert)->crq->qsoNotAfter), datebuf, sizeof datebuf);
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_QSO_NOT_AFTER", 0, (const unsigned char *)datebuf, -1))
+			return 1;
+		tqsl_convertDateToText(&(TQSL_API_TO_CERT(cert)->crq->qsoNotBefore), datebuf, sizeof datebuf);
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_QSO_NOT_BEFORE", 0, (const unsigned char *)datebuf, -1))
+			return 1;
+		tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
+		if (BIO_flush(out) != 1) {
+			tQSL_Error = TQSL_SYSTEM_ERROR;
+			strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
+			BIO_free_all(out);
+			return 1;
+		}
+	
+		len = BIO_get_mem_data(out, &cp);
+		if (len > bufsiz) {
+			tQSL_Error = TQSL_SYSTEM_ERROR;
+			snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Private key buffer size %d is too small - %ld needed", bufsiz, len);
+			BIO_free_all(out);
+			return 1;
+		}
+		memcpy(buf, cp, len);
+		buf[len] = '\0';
+		BIO_free_all(out);
+		return 0;
+	}
+
 	if (tqsl_getCertificateCallSign(cert, callsign, sizeof callsign))
 		return 1;
 	if (tqsl_make_key_list(keylist))
@@ -1067,10 +1120,12 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 				out = BIO_new(BIO_s_mem());
 				out = BIO_push(b64, out);
 				map<string,string>::iterator mit;
-				for (mit = it->begin(); mit != it->end(); mit++)
-					if (tqsl_bio_write_adif_field(out, mit->first.c_str(), 0, (const unsigned char *)mit->second.c_str(), -1))
+				for (mit = it->begin(); mit != it->end(); mit++) {
+					if (tqsl_bio_write_adif_field(out, mit->first.c_str(), 0, (const unsigned char *)mit->second.c_str(), -1)) {
+						tQSL_Error = TQSL_SYSTEM_ERROR;
 						return 1;
-				
+					}
+				}
 				tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
 				if (BIO_flush(out) != 1) {
 					tQSL_Error = TQSL_SYSTEM_ERROR;
@@ -3069,32 +3124,33 @@ tqsl_write_adif_field(FILE *fp, const char *fieldname, char type, const unsigned
  */
 CLIENT_STATIC int
 tqsl_bio_write_adif_field(BIO *bio, const char *fieldname, char type, const unsigned char *value, int len) {
+	int bret;
 	if (fieldname == NULL)	/* Silly caller */
 		return 0;
-	if (BIO_write(bio, "<", 1) <= 0)
+	if ((bret = BIO_write(bio, "<", 1)) <= 0)
 		return 1;
-	if (BIO_puts(bio, fieldname) <= 0)
+	if ((bret = BIO_write(bio, fieldname, strlen(fieldname))) <= 0)
 		return 1;
 	if (type && type != ' ' && type != '\0') {
-		if (BIO_write(bio, ":", 1) <= 0)
+		if ((bret = BIO_write(bio, ":", 1)) <= 0)
 			return 1;
-		if (BIO_write(bio, &type, 1) <= 0)
+		if ((bret = BIO_write(bio, &type, 1)) <= 0)
 			return 1;
 	}
 	if (value != NULL && len != 0) {
 		if (len < 0)
 			len = strlen((const char *)value);
-		if (BIO_write(bio, ":", 1) <= 0)
+		if ((bret = BIO_write(bio, ":", 1)) <= 0)
 			return 1;
 		char numbuf[20];
 		sprintf(numbuf, "%d>", len);
-		if (BIO_puts(bio, numbuf) <= 0)
+		if ((bret = BIO_write(bio, numbuf, strlen(numbuf))) <= 0)
 			return 1;
-		if (BIO_write(bio, value, len) != len)
+		if ((bret = BIO_write(bio, value, len)) != len)
 			return 1;
-	} else if (BIO_write(bio, ">", 1) <= 0)
+	} else if ((bret = BIO_write(bio, ">", 1)) <= 0)
 			return 1;
-	if (BIO_puts(bio, "\n\n") <= 0)
+	if ((bret = BIO_write(bio, "\n\n", 2)) <= 0)
 		return 1;
 	return 0;
 }

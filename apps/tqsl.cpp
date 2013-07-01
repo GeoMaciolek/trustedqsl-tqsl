@@ -726,6 +726,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmap importbm(import_xpm);
 	loc_edit_button = NULL;
 	cert_save_label = NULL;
+	req = NULL;
 
 	// File menu
 	file_menu = new wxMenu;
@@ -974,8 +975,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
-	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a Callsign Certificate"));
+	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a Callsign Certificate        "));
 	cert_load_label->GetSize(&tw, &th);
+	tw += 100;	// allow room for longer labels
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
@@ -2590,6 +2592,7 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "</RootCert>\n");
+			tqsl_freeCertificate(certlist[i]);
 		}
 		// Save CA certificates
 		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "authorities"));
@@ -2598,23 +2601,31 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "</CACert>\n");
+			tqsl_freeCertificate(certlist[i]);
 		}
 		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
 		for (i = 0; i < ncerts; i++) {
 			char callsign[64];
-			long serial;
-			int dxcc;
+			long serial = 0;
+			int dxcc = 0;
+			int keyonly;
+			check_tqsl_error(tqsl_getCertificateKeyOnly(certlist[i], &keyonly));
 			check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
-			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			if (!keyonly) {
+				check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			} 
 			check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
 			if (!quiet) {
 				wxLogMessage(wxT("\tSaving callsign certificate for %hs"), callsign);
 			}
 			gzprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%d\">\n", callsign, dxcc, serial);
-			gzprintf(out, "<SignedCert>\n");
-			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
-			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "</SignedCert>\n<PrivateKey>\n");
+			if (!keyonly) {
+				gzprintf(out, "<SignedCert>\n");
+				check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
+				gzwrite(out, buf, strlen(buf));
+				gzprintf(out, "</SignedCert>\n");
+			}
+			gzprintf(out, "<PrivateKey>\n");
 			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "\n</PrivateKey>\n</UserCert>\n");
