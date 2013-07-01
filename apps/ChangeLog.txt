@@ -7,7 +7,8 @@ Major feature Additions:
 
 Merge tqslcert into tqsl. Update the UI to be more user friendly.
 
-Don't display the certificate provider list if there's only one provider.
+For the Callsign Certificaates tree display, don't display the
+certificate provider list if there's only one provider.
 
 Allow users to back up and restore their TQSL configuration in a portable
 file. Automatically back up the configuration to a user-specified directory
@@ -20,7 +21,16 @@ help determine the source of defects.
 Display unique icons in the certificate tree to allow expired and superseded
 certificates can be distinguished.
 
+Detect and report invalid frequencies in ADIF files (outside of ham bands,
+entered in KHz versus MHz.)
+
 Other changes:
+
+Remove the initial "Certificate Providers" page from the certificate
+request wizard as it serves no current purpose.
+
+Always display all callsign certificates, including expired and superseded
+certficates.
 
 Use consistent terminology throughout - "Callsign Certificate" and "Station
 Location".
