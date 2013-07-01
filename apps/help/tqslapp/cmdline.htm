@@ -25,7 +25,7 @@ switch is present, in which case it will terminate.
 <TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
 
 <TR><TD><code>-a</code></TD>
-<TD>The action to be taken if a duplicate or out-of-date-range QSO is encountered while signing a log file's QSOs:<BR>
+<TD>The action to be taken if a duplicate, out-of-date-range, or invalid QSO is encountered while signing a log file's QSOs:<BR>
 &nbsp;&nbsp;<code>-a ask&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>a dialog will be provided that prompts the user to specify how to proceed<BR>
 &nbsp;&nbsp;<code>-a abort&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code>no QSOs will be signed<BR>
 &nbsp;&nbsp;<code>-a compliant&nbsp;&nbsp;</code>neither duplicate QSO nor out-of-date-range QSOs will be signed; all other QSOs will be signed<BR>
@@ -39,6 +39,9 @@ be displayed before signing a log.</TD></TR>
 
 <TR><TD><code>-h</code></TD>
 <TD>Display command line help.</TD></TR>
+
+<TR><TD><code>-i&nbsp;Filename</code></TD>
+<TD>Load a specified <A HREF="files-icons.htm">Callsign Certificate File (.tq6)</A>, a <A HREF="files-icons.htm">Certificate Containiner File (.p12)</A>, or a <A HREF="configxml.htm">Configuration Data File (Config.tq6)</A> .</TD></TR>
 
 <TR><TD><code>-l&nbsp;Station_Location</code></TD>
 <TD>Select a defined <A HREF="glossary.htm#station_location">Station Location</A> to be used when signing log files. If the specified Station Location contains embedded spaces, it must be 
@@ -61,6 +64,9 @@ and the specified or selected Station Location includes a password-protected Cal
 <TR><TD><code>-s</code></TD>
 <TD>If the <code>-l</code> switch is also present, a dialog will be provided that enables the specified <A HREF="glossary.htm#station_location">Station Location</A> to be edited;
 otherwise, a dialog will be provided that enables a new Station Location to be defined.</TD></TR>
+
+<TR><TD><code>-t&nbsp;Filename</code></TD>
+<TD>Enable <A HREF="diagmode.htm">Diagnostic Mode</A> and specify the name of the log file into which diagnostic information is written.</TD></TR>
 
 <TR><TD><code>-u</code></TD>
 <TD>Instead of saving the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A>, upload it to LoTW over the Internet. After processing, the uploaded file will be shown in LoTW's 
