@@ -112,6 +112,10 @@ using namespace std;
 
 #define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
 
+static wxMenu *file_menu;
+static wxMenu *stn_menu;
+static wxMenu *cert_menu;
+
 static wxString flattenCallSign(const wxString& call);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
@@ -649,9 +653,11 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 
 	EVT_MENU(tc_CRQWizard, MyFrame::CRQWizard)
 	EVT_MENU(tc_c_Load, MyFrame::OnLoadCertificateFile)
+	EVT_MENU(tc_f_Load, MyFrame::OnLoadCertificateFile)
 	EVT_BUTTON(tc_Load, MyFrame::OnLoadCertificateFile)
 	EVT_MENU(tc_c_Properties, MyFrame::OnCertProperties)
 	EVT_BUTTON(tc_CertProp, MyFrame::OnCertProperties)
+	EVT_MENU(tc_f_Export, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
 	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
@@ -662,6 +668,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_h_Contents, MyFrame::OnHelpContents)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
 	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
+	EVT_MENU(tm_s_Properties, MyFrame::OnLocProperties)
 	EVT_BUTTON(tl_PropLoc, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
@@ -722,33 +729,39 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_save_label = NULL;
 
 	// File menu
-	wxMenu *file_menu = new wxMenu;
+	file_menu = new wxMenu;
 	file_menu->Append(tm_f_upload, wxT("Sign and &upload ADIF or Cabrillo File..."));
 	file_menu->Append(tm_f_import_compress, wxT("&Sign and save ADIF or Cabrillo file..."));
+	file_menu->AppendSeparator();
+	file_menu->Append(tc_CRQWizard, wxT("Request &New Callsign Certificate..."));
+	file_menu->Append(tc_f_Load, wxT("&Load Callsign Certificate from File"));
+	file_menu->Append(tc_f_Export, wxT("&Save Callsign Certificate to File..."));
+	file_menu->Enable(tc_f_Export, false);
+	file_menu->AppendSeparator();
+	file_menu->Append(tm_f_saveconfig, wxT("&Backup Station Locations, Certificates, and Preferences..."));
+	file_menu->Append(tm_f_loadconfig, wxT("&Restore Station Locations, Certificates, and Preferences..."));
 	file_menu->AppendSeparator();
 	file_menu->Append(tm_f_new, wxT("Create &New ADIF file..."));
 	file_menu->Append(tm_f_edit, wxT("&Edit existing ADIF file..."));
 	file_menu->AppendSeparator();
-	file_menu->Append(tc_CRQWizard, wxT("&New Callsign Certificate Request..."));
-	file_menu->AppendSeparator();
-	file_menu->Append(tc_c_Load, wxT("&Load Callsign Certificate File"));
-#ifndef __WXMAC__	// On Mac, Preferences not on File menu
-	file_menu->AppendSeparator();
-#endif
+#ifdef __WXMAC__	// On Mac, Preferences not on File menu
 	file_menu->Append(tm_f_preferences, wxT("&Preferences..."));
+#else
+	file_menu->AppendSeparator();
+	file_menu->Append(tm_f_preferences, wxT("Display or Modify &Preferences..."));
+#endif
 #ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
 #endif
-	file_menu->Append(tm_f_saveconfig, wxT("&Backup TQSL Configuration..."));
-	file_menu->Append(tm_f_loadconfig, wxT("&Restore TQSL Configuration..."));
-	file_menu->Append(tm_f_exit, wxT("E&xit\tAlt-X"));
+	file_menu->Append(tm_f_exit, wxT("E&xit TQSL\tAlt-X"));
 
 	cert_menu = makeCertificateMenu(false);
-
 	// Station menu
-	wxMenu *stn_menu = new wxMenu;
-	stn_menu->Append(tm_s_add, wxT("&Add station location"));
+	stn_menu = new wxMenu;
+	stn_menu->Append(tm_s_Properties, wxT("&Display Station Location Properties"));
+	stn_menu->Enable(tm_s_Properties, false);
 	stn_menu->Append(tm_s_edit, wxT("&Edit station locations"));
+	stn_menu->Append(tm_s_add, wxT("&Add station location"));
 
 	// Help menu
 	help = new wxHtmlHelpController(wxHF_DEFAULT_STYLE | wxHF_OPEN_FILES);
@@ -757,8 +770,10 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxString hhp = docpaths.FindAbsoluteValidPath(wxT("tqslapp.hhp"));
 	if (wxFileNameFromPath(hhp) != wxT("")) {
 		if (help->AddBook(hhp))
+#ifdef __WXMAC__
 		help_menu->Append(tm_h_contents, wxT("&Contents"));
-#ifndef __WXMAC__	// On Mac, About not on Help menu
+#else
+		help_menu->Append(tm_h_contents, wxT("Display Table of &Contents"));
 		help_menu->AppendSeparator();
 #endif
 	}
@@ -772,8 +787,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
-	menu_bar->Append(stn_menu, wxT("&Station"));
-	menu_bar->Append(cert_menu, wxT("&Certificate"));
+	menu_bar->Append(stn_menu, wxT("&Station Locations"));
+	menu_bar->Append(cert_menu, wxT("Callsign &Certificates"));
 	menu_bar->Append(help_menu, wxT("&Help"));
 
 	SetMenuBar(menu_bar);
@@ -3371,20 +3386,22 @@ void MyFrame::FirstTime(void) {
 wxMenu *
 makeCertificateMenu(bool enable, bool keyonly) {
 	tqslTrace("makeCertificateMenu", "enable=%d, keyonly=%d", enable, keyonly);
-	wxMenu *cert_menu = new wxMenu;
-	cert_menu->Append(tc_c_Properties, wxT("&Properties"));
-	cert_menu->Enable(tc_c_Properties, enable);
-	cert_menu->Append(tc_c_Export, wxT("&Save"));
-	cert_menu->Enable(tc_c_Export, enable);
-	cert_menu->Append(tc_c_Delete, wxT("&Delete"));
-	cert_menu->Enable(tc_c_Delete, enable);
+	wxMenu *c_menu = new wxMenu;
+	c_menu->Append(tc_c_Properties, wxT("Display Callsign Certificate &Properties"));
+	c_menu->Enable(tc_c_Properties, enable);
+	c_menu->AppendSeparator();
+	c_menu->Append(tc_f_Load, wxT("&Load Callsign Certificate from File"));
+	c_menu->Append(tc_c_Export, wxT("&Save Callsign Certificate to File..."));
+	c_menu->Enable(tc_c_Export, enable);
 	if (!keyonly) {
-//		cert_menu->Append(tc_c_Sign, "S&ign File");
-//		cert_menu->Enable(tc_c_Sign, enable);
-		cert_menu->Append(tc_c_Renew, wxT("&Renew Certificate"));
-		cert_menu->Enable(tc_c_Renew, enable);
+		c_menu->AppendSeparator();
+		c_menu->Append(tc_c_Renew, wxT("&Renew Callsign Certificate"));
+		c_menu->Enable(tc_c_Renew, enable);
 	}
-	return cert_menu;
+	c_menu->AppendSeparator();
+	c_menu->Append(tc_c_Delete, wxT("&Delete Callsign Certificate"));
+	c_menu->Enable(tc_c_Delete, enable);
+	return c_menu;
 }
 
 wxMenu *
@@ -3393,6 +3410,7 @@ makeLocationMenu(bool enable) {
 	wxMenu *loc_menu = new wxMenu;
 	loc_menu->Append(tl_c_Properties, wxT("&Properties"));
 	loc_menu->Enable(tl_c_Properties, enable);
+	stn_menu->Enable(tm_s_Properties, enable);
 	loc_menu->Append(tl_c_Edit, wxT("&Edit"));
 	loc_menu->Enable(tl_c_Edit, enable);
 	loc_menu->Append(tl_c_Delete, wxT("&Delete"));
@@ -3601,8 +3619,11 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 
 		cert_select_label->SetLabel(wxT(""));
 		cert_menu->Enable(tc_c_Properties, true);
+		file_menu->Enable(tc_f_Export, true);
 		cert_menu->Enable(tc_c_Export, true);
+		file_menu->Enable(tc_f_Delete, true);
 		cert_menu->Enable(tc_c_Delete, true);
+		cert_menu->Enable(tc_c_Renew, true);
 		cert_save_button->Enable(true);
 		cert_load_button->Enable(true);
 		cert_prop_button->Enable(true);

@@ -133,7 +133,6 @@ public:
 
 	DECLARE_EVENT_TABLE()
 private:
-	wxMenu *cert_menu;
 	wxBitmapButton* loc_add_button;
 	wxStaticText* loc_add_label;
 	wxBitmapButton* loc_edit_button;
