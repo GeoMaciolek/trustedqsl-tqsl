@@ -2705,11 +2705,20 @@ restore_user_cert(TQSLConfig* loader) {
 	for (int i = 0; i < ncerts; i++) {
 		long serial;
 		int dxcc;
-		check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+		int keyonly;
+		check_tqsl_error(tqsl_getCertificateKeyOnly(certlist[i], &keyonly));
 		check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
+		if (!keyonly) {
+			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+		} else {
+			// There can be only one pending request for
+			// a given callsign/entity
+			serial = loader->serial;
+		}
 		if (serial == loader->serial && dxcc == loader->dxcc)
 			return;			// This certificate is already installed.
 	}
+	
 	// There is no certificate matching this callsign/entity/serial.
 	wxLogMessage(wxT("\tRestoring callsign certificate for %hs"), loader->callSign.c_str());
 	check_tqsl_error(tqsl_importKeyPairEncoded(loader->callSign.c_str(), "user", loader->privateKey.mb_str(), loader->signedCert.mb_str()));
@@ -2749,6 +2758,8 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				}
 			}
 		}
+		loader->privateKey = wxT("");
+		loader->signedCert = wxT("");
 	} else if (strcmp(name, "TQSLSettings") == 0) {
 		wxLogMessage(wxT("Restoring Preferences"));
 		loader->config = new wxConfig(wxT("tqslapp"));

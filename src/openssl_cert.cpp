@@ -1217,6 +1217,9 @@ tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *ke
 
 	} // Import of private key
 
+	if (strlen(certbuf) == 0) 		// Keyonly 'certificates'
+		return 0;
+
 	// Now process the certificate
 	in = BIO_new_mem_buf((void *)certbuf, strlen(certbuf));
 	if (in == NULL) {
