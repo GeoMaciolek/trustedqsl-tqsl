@@ -526,6 +526,12 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	tc_status->SetLabel(wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
+	// Default to 'signed' unless there's no valid certificates to use for signing.
+	if (cert_tree->GetNumCerts() == 0) {
+		choice->SetSelection(0);
+	} else {
+		choice->SetSelection(1);
+	}
 	AdjustPage(sizer, wxT("crq4.htm"));
 	initialized = true;
 }
@@ -813,10 +819,14 @@ CRQ_SignPage::validate() {
 	if (choice->GetSelection() == 1) {
 		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
 		if (!data)
-			errmsg = "You must select a signing certificate from the list";
+			errmsg = "If this certificate is for your personal callsign, then you should\n"
+				 "select 'Signed' and choose a callsign certificate from the list\n "
+				 "to be used to sign this request.\n\n"
+				 "If this certificate request is being submitted for a club station\n"
+				 "or by a QSL manager on behalf of a managed station select 'Unsigned'.";
 	} else if (Parent()->dxcc == 0)
-		errmsg = "Request must be signed (DXCC Entity == NONE)";
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT(""));
+		errmsg = "This request MUST be signed since DXCC Entity is set to NONE";
+	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT("Click 'Finish' to complete this callsign certificate request."));
 	return errmsg;
 }
 
