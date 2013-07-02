@@ -754,8 +754,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	stn_menu = new wxMenu;
 	stn_menu->Append(tm_s_Properties, wxT("&Display Station Location Properties"));
 	stn_menu->Enable(tm_s_Properties, false);
-	stn_menu->Append(tm_s_edit, wxT("&Edit station locations"));
-	stn_menu->Append(tm_s_add, wxT("&Add station location"));
+	stn_menu->Append(tm_s_edit, wxT("&Edit Station Location"));
+	stn_menu->Append(tm_s_add, wxT("&Add Station Location"));
 
 	// Help menu
 	help = new wxHtmlHelpController(wxHF_DEFAULT_STYLE | wxHF_OPEN_FILES);
@@ -781,8 +781,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
-	menu_bar->Append(stn_menu, wxT("&Station Locations"));
-	menu_bar->Append(cert_menu, wxT("Callsign &Certificates"));
+	menu_bar->Append(stn_menu, wxT("&Station Location"));
+	menu_bar->Append(cert_menu, wxT("Callsign &Certificate"));
 	menu_bar->Append(help_menu, wxT("&Help"));
 
 	SetMenuBar(menu_bar);
@@ -1183,7 +1183,7 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		return;
 	}
 	try {
-		SelectStationLocation(wxT("Edit Station Locations"), wxT("Close"), true);
+		SelectStationLocation(wxT("Edit Station Location"), wxT("Close"), true);
 		loc_tree->Build();
 		LocTreeReset();
 	}
