@@ -3636,7 +3636,6 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		cert_select_label->SetLabel(wxT(""));
 		cert_menu->Enable(tc_c_Properties, true);
 		cert_menu->Enable(tc_c_Export, true);
-		file_menu->Enable(tc_f_Delete, true);
 		cert_menu->Enable(tc_c_Delete, true);
 		cert_menu->Enable(tc_c_Renew, true);
 		cert_save_button->Enable(true);
