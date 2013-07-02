@@ -1102,7 +1102,7 @@ MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void
-MyFrame::OnHelpDiagnose(wxCommandEvent& WXUNUSED(event)) {
+MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString s_fname;
 
 	if (diagFile) {
@@ -1115,8 +1115,10 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& WXUNUSED(event)) {
 	s_fname = wxFileSelector(wxT("Log File"), wxT(""), wxT("tqsldiag.log"), wxT("log"),
 			wxT("Log files (*.log)|*.log|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
-	if (s_fname == wxT(""))
+	if (s_fname == wxT("")) {
+		help_menu->Check(tm_h_diag, false); //would be better to not check at all, but no, apparently that's a crazy thing to want
 		return;
+	}
 	diagFile = fopen(s_fname.mb_str(), "wb");
 	if (!diagFile) {
 		wxString errmsg = wxString::Format(wxT("Error opening diagnostic log %s: %hs"), s_fname.c_str(), strerror(errno));
