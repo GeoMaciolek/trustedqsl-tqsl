@@ -29,6 +29,7 @@
 #include <wx/hyperlink.h>
 #include <wx/cmdline.h>
 #include <wx/notebook.h>
+#include <wx/statline.h>
 #include <wx/app.h>
 
 #include "tqslhelp.h"
@@ -793,7 +794,10 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	// Log operations
 
-	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP | wxNB_FIXEDWIDTH, wxT("Log Operations"));
+	//topSizer->Add(new wxStaticText(topPanel, -1, wxT("")), 0, wxEXPAND | wxALL, 1);
+	topSizer->AddSpacer(10);
+
+	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP /* | wxNB_FIXEDWIDTH*/, wxT("Log Operations"));
 
 	topSizer->Add(notebook, 1, wxEXPAND | wxALL, 1);
 
@@ -856,7 +860,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	locgrid->SetSizer(lgsizer);
 
 	loc_tree = new LocTree(locgrid, tc_LocTree, wxDefaultPosition,
-		wxDefaultSize, wxTR_DEFAULT_STYLE);
+		wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_NONE);
 
 	loc_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	loc_tree->Build();
@@ -868,12 +872,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	locsizer->Add(locgrid, 50, wxEXPAND);
 
-	locsizer->AddSpacer(4);
+	wxStaticLine *locsep =new wxStaticLine(loctab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
+	locsizer->Add(locsep, 0, wxEXPAND);
 
 	wxPanel* lbuttons = new wxPanel(loctab, -1);
 	lbuttons->SetBackgroundColour(wxColour(255, 255, 255));
 	locsizer->Add(lbuttons, 50, wxEXPAND);
-
 	wxBoxSizer* lbsizer = new wxBoxSizer(wxVERTICAL);
 	lbuttons->SetSizer(lbsizer);
 
@@ -946,7 +950,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	certgrid->SetSizer(cgsizer);
 
 	cert_tree = new CertTree(certgrid, tc_CertTree, wxDefaultPosition,
-		wxDefaultSize, wxTR_DEFAULT_STYLE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
+		wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_NONE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cert_tree->Build(CERTLIST_FLAGS);
@@ -958,11 +962,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	certsizer->Add(certgrid, 50, wxEXPAND);
 
-	certsizer->AddSpacer(4);
+	wxStaticLine *certsep =new wxStaticLine(certtab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
+	certsizer->Add(certsep, 0, wxEXPAND);
 
 	wxPanel* cbuttons = new wxPanel(certtab, -1);
 	cbuttons->SetBackgroundColour(wxColour(255, 255, 255));
-	certsizer->Add(cbuttons, 50, wxEXPAND);
+	certsizer->Add(cbuttons, 50, wxEXPAND, 0);
 
 	wxBoxSizer* cbsizer = new wxBoxSizer(wxVERTICAL);
 	cbuttons->SetSizer(cbsizer);
