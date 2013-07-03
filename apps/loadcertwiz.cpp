@@ -156,10 +156,18 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 	long newserial;
 	if (!tqsl_getSerialFromTQSLFile(filename, &newserial)) {
 
-                MyFrame *frame = (MyFrame *)(((LoadCertWiz *)_parent)->Parent());
+		MyFrame *frame = (MyFrame *)(((LoadCertWiz *)_parent)->Parent());
 		TQ_WXCOOKIE cookie;
+		int nproviders = frame->cert_tree->GetNumIssuers();		// Number of certificate issuers - currently 1
 		wxTreeItemId root = frame->cert_tree->GetRootItem();
-		wxTreeItemId item = frame->cert_tree->GetFirstChild(root, cookie); // First child is the certs
+		wxTreeItemId item, prov;
+		if (nproviders > 1) {
+			prov = frame->cert_tree->GetFirstChild(root, cookie); // First child is the providers
+			item = frame->cert_tree->GetFirstChild(prov, cookie);// Then it's certs
+		} else {
+			item = frame->cert_tree->GetFirstChild(root, cookie); // First child is the certs
+		}
+
 		while (item.IsOk()) {
 			tQSL_Cert cert;
 			CertTreeItemData *id = frame->cert_tree->GetItemData(item);
@@ -181,7 +189,11 @@ wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
 					}
 				}
 			}
-			item = frame->cert_tree->GetNextChild(root, cookie);
+			if (nproviders > 1) {
+				item = frame->cert_tree->GetNextChild(prov, cookie);
+			} else {
+				item = frame->cert_tree->GetNextChild(root, cookie);
+			}
 		}
 	}
 }

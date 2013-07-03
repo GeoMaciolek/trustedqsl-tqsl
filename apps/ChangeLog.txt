@@ -26,6 +26,22 @@ entered in KHz versus MHz.)
 
 Other changes:
 
+Correct the defect that could cause invalid QSOs (bad call signs, for
+example) to result in a cancellation message from an attempt to sign the
+log but not provide detail on what QSO failed.
+
+Automatically back up the user's configuration whenever TQSL closes.
+
+Display the versions of the major software packages built into TQSL as part
+of the "Help/About" text.
+
+Don't ask the user to choose the file type for certificate load operations,
+just provide a file open dialog and allow them to choose.
+
+When issuing a callsign certificate request, default to "signed" unless there
+are no usable certificates to be used to sign the request. Add text to the
+dialog box explaining when unsigned requests should be used.
+
 Remove the initial "Certificate Providers" page from the certificate
 request wizard as it serves no current purpose.
 
