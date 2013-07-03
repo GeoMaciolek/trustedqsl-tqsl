@@ -179,7 +179,7 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqsl_getCertificateDXCCEntity(cert, &dxcc);
 	tqsl_getDXCCEntityName(dxcc, &dxccname);
 	
-	wxString message = wxString::Format(wxT("Enter the password to unlock the private key for\n"
+	wxString message = wxString::Format(wxT("Enter the password to unlock the callsign certificate for\n"
 		wxT("%hs -- %hs\n(This is the password you made up when you\nrequested the callsign certificate.)")),
 		call, dxccname);
 
@@ -2956,7 +2956,7 @@ void
 MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnLoadConfig");
 	wxString filename = wxFileSelector(wxT("Select saved configuration file"), wxT(""),
-					   wxT(""), wxT("p12"), wxT("Saved configuration files (*.tbk)|*.tbk"),
+					   wxT("tqslconfig.tbk"), wxT("tbk"), wxT("Saved configuration files (*.tbk)|*.tbk"),
 					   wxOPEN|wxFILE_MUST_EXIST);
 	if (filename == wxT(""))
 		return;
@@ -3694,21 +3694,20 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 		file_default += wxT("-key-only");
 	file_default += wxT(".p12");
 	wxString path = wxConfig::Get()->Read(wxT("CertFilePath"), wxT(""));
-	wxString filename = wxFileSelector(wxT("Enter PKCS#12 file to save to"), path,
-		file_default, wxT(".p12"), wxT("PKCS#12 files (*.p12)|*.p12|All files (*.*)|*.*"),
+	wxString filename = wxFileSelector(wxT("Enter the name for the new Certificate Container file"), path,
+		file_default, wxT(".p12"), wxT("Certificate Container files (*.p12)|*.p12|All files (*.*)|*.*"),
 		wxSAVE|wxOVERWRITE_PROMPT, this);
 	if (filename == wxT(""))
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
-	GetNewPasswordDialog dial(this, wxT("PKCS#12 Password"),
+	GetNewPasswordDialog dial(this, wxT("Certificate Container Password"),
 wxT("Enter the password for the .p12 file.\n\n")
 wxT("If you are using a computer system that is shared\n")
 wxT("with others, you should specify a password to\n")
 wxT("protect this certificate. However, if you are using\n")
 wxT("a computer in a private residence, no password need be specified.\n\n")
 wxT("You will have to enter the password any time you\n")
-wxT("load the file into TrustedQSL (or any other PKCS#12\n")
-wxT("compliant software)\n\n")
+wxT("load the file into TrustedQSL\n\n")
 wxT("Leave the password blank and click 'Ok' unless you want to\n")
 wxT("use a password.\n\n"), true, help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
@@ -4054,7 +4053,7 @@ displayLocProperties(LocTreeItemData *item, wxWindow *parent) {
 int
 getPassword(char *buf, int bufsiz, void *callsign) {
 	tqslTrace("getPassword", "buf=%lx, bufsiz=%d, callsign=%s", buf, bufsiz, callsign ? callsign : "NULL");
-	wxString prompt(wxT("Enter the password to unlock the private key"));
+	wxString prompt(wxT("Enter the password to unlock the callsign certificate"));
 	
 	if (callsign) 
 	    prompt = prompt + wxT(" for ") + wxString((const char *)callsign, wxConvLocal);

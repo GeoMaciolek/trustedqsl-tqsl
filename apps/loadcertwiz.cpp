@@ -131,17 +131,17 @@ static int
 GetNewPassword(char *buf, int bufsiz, void *) {
 	tqslTrace("GetNewPassword");
 	GetNewPasswordDialog dial(0, wxT("New Password"),
-wxT("Enter a password for this private key.\n\n")
-wxT("If you are using a computer system that is\n")
-wxT("shared with others, you should specify a\n")
-wxT("password to protect this key. However, if\n")
-wxT("you are using a computer in a private residence\n")
-wxT("no password need be specified.\n\n")
-wxT("This password will have to be entered each time\n")
-wxT("you use the key/certificate for signing or when\n")
-wxT("saving the key.\n\n")
-wxT("Leave the password blank and click 'Ok' unless you want to\n")
-wxT("use a password.\n\n"), true, pw_help, pw_helpfile);
+		wxT("Enter a password for this callsign certificate.\n\n")
+		wxT("If you are using a computer system that is\n")
+		wxT("shared with others, you should specify a\n")
+		wxT("password to protect this certificate. However, if\n")
+		wxT("you are using a computer in a private residence\n")
+		wxT("no password need be specified.\n\n")
+		wxT("This password will have to be entered each time\n")
+		wxT("you use this callsign certificate for signing or\n")
+		wxT("when saving the key.\n\n")
+		wxT("Leave the password blank and click 'Ok' unless you want\n")
+		wxT("to use a password.\n\n"), true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().mb_str(), bufsiz);
 		buf[bufsiz-1] = 0;
@@ -211,7 +211,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_p12pw = p12pw;
 
 	wxString ext(wxT("p12"));
-	wxString wild(wxT("Saved Callsign certificate files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
+	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
 	wild += wxT("|All files (*.*)|*.*");
 
 	wxString path = wxConfig::Get()->Read(wxT("CertFilePath"), wxT(""));
