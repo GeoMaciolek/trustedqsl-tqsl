@@ -6,6 +6,8 @@
   #define vsnprintf _vsnprintf
   #define strcasecmp _stricmp
   #define strncasecmp _strnicmp
+  #define unlink _unlink
+  #define strdup _strdup
 #endif
 
 #endif//WINSTRDEFS_H
