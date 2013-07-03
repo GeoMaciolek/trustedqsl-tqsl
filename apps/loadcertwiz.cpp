@@ -209,8 +209,7 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 		MyFrame *frame = (MyFrame *)(((LoadCertWiz *)_parent)->Parent());
 		TQ_WXCOOKIE cookie;
 		wxTreeItemId root = frame->cert_tree->GetRootItem();
-		wxTreeItemId prov = frame->cert_tree->GetFirstChild(root, cookie); // First child is the providers
-		wxTreeItemId item = frame->cert_tree->GetFirstChild(prov, cookie);// Then it's certs
+		wxTreeItemId item = frame->cert_tree->GetFirstChild(root, cookie); // First child is the certs
 		while (item.IsOk()) {
 			tQSL_Cert cert;
 			CertTreeItemData *id = frame->cert_tree->GetItemData(item);
@@ -232,7 +231,7 @@ wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
 					}
 				}
 			}
-			item = frame->cert_tree->GetNextChild(prov, cookie);
+			item = frame->cert_tree->GetNextChild(root, cookie);
 		}
 	}
 }
