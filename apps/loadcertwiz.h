@@ -45,16 +45,6 @@ public:
 	LoadCertWiz *Parent() { return (LoadCertWiz *)_parent; }
 };
 
-class LCW_IntroPage : public LCW_Page {
-public:
-	LCW_IntroPage(LoadCertWiz *parent, LCW_Page *tq6next);
-	virtual bool TransferDataFromWindow();
-	void SetNextPages(LCW_Page *p12, LCW_Page *tq6);
-private:
-	wxRadioButton *_p12but;
-	LCW_Page *_tq6next;
-};
-
 class LCW_P12PasswordPage : public LCW_Page {
 public:
 	LCW_P12PasswordPage(LoadCertWiz *parent);
