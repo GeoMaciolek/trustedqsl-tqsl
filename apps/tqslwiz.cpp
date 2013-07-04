@@ -210,7 +210,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
 			int len;
 			tqsl_getLocationFieldDataLength(loc, i, &len);
-			len /= 2;
 			int w, h;
 			((wxStaticText *)controls[i])->GetSize(&w, &h);
 			((wxStaticText *)controls[i])->SetSize((len+1)*text_size.GetWidth(), h);
@@ -219,6 +218,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			((wxStaticText *)controls[i])->SetLabel(wxString(buf, wxConvLocal));
 			if (strlen(buf) == 0) {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(true);
+				if (valMsg)
+					((wxStaticText *)controls[i])->SetLabel(wxString(valMsg, wxConvLocal));
 			} else {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(false);
 			}
@@ -254,6 +255,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	int control_width = getTextSize(this).GetWidth() * 20;
 	
+	valMsg = NULL;
 	tqsl_getStationLocationCapturePage(loc, &loc_page);
 	wxScreenDC sdc;
 	int label_w = 0;
@@ -273,14 +275,15 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	bool addCheckbox = false;
 	wxString cbLabel;
 	for (int i = 0; i < numf; i++) {
-		wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 		char label[256];
 		int in_type, flags;
+		wxBoxSizer *hsizer;
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
 		tqsl_getLocationFieldInputType(loc, i, &in_type);
 		if (in_type != TQSL_LOCATION_FIELD_BADZONE) {
+			hsizer = new wxBoxSizer(wxHORIZONTAL);
 			hsizer->Add(new wxStaticText(this, -1, wxString(label, wxConvLocal), wxDefaultPosition,
-				wxSize(label_w, -1), wxALIGN_RIGHT|wxST_NO_AUTORESIZE), 0, wxTOP, 5);
+				wxSize(label_w, -1), wxALIGN_RIGHT/*|wxST_NO_AUTORESIZE*/), 0, wxTOP, 5);
 		}
 		wxWindow *control_p = 0;
 		char gabbi_name[256];
@@ -310,8 +313,12 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				break;
 		}
 		controls.push_back(control_p);
-		hsizer->Add(control_p, 0, wxLEFT|wxTOP, 5);
-		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
+		if (in_type != TQSL_LOCATION_FIELD_BADZONE) {
+			hsizer->Add(control_p, 0, wxLEFT|wxTOP, 5);
+			sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
+		} else {
+			sizer->Add(control_p, 0, wxEXPAND | wxLEFT| wxRIGHT, 10);
+		}
 	}
 
 	if (addCheckbox) {
@@ -332,10 +339,80 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 TQSLWizCertPage::~TQSLWizCertPage() {
 }
 
+const char *
+TQSLWizCertPage::validate() {
+	tqslTrace("TQSLWizCertPage::validate");
+	const char *errmsg = 0;
+	tqsl_setStationLocationCapturePage(loc, loc_page);
+	for (int i = 0; i < (int)controls.size(); i++) {
+		char gabbi_name[40];
+		tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
+		if (strcmp(gabbi_name, "GRIDSQUARE") == 0) {
+			wxString gridVal = ((wxTextCtrl *)controls[i])->GetValue();
+			if (gridVal.size() == 0) {
+				return 0;
+			}
+			if (gridVal[0] <= 'z' && gridVal[1] >= 'a')
+				gridVal[0] = gridVal[0] - 'a' + 'A';	// Upper case first two
+			if (gridVal.size() > 1 && (gridVal[1] <= 'z' && gridVal[1] >= 'a'))
+				gridVal[1] = gridVal[1] - 'a' + 'A';
+			((wxTextCtrl *)controls[i])->SetValue(gridVal);
+			tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
+			if (gridVal[0] < 'A' || gridVal[0] > 'R') {
+				errmsg = "Please enter a valid Grid Square Field";
+				return errmsg;
+			}
+			if (gridVal.size() > 1 && (gridVal[1] < 'A' || gridVal[1] > 'R')) {
+				errmsg = "Please enter a valid Grid Square Field";
+				return errmsg;
+			}
+			if (gridVal.size() > 2 && (gridVal[2] < '0' || gridVal[2] > '9')) {
+				errmsg = "Please enter a valid Grid Square";
+				return errmsg;
+			}
+			if (gridVal.size() < 4) {
+				errmsg = "Please enter a valid Grid Square";
+				return errmsg;
+			}
+			if (gridVal[3] < '0' || gridVal[3] > '9') {
+				errmsg = "Please enter a valid Grid Square";
+				return errmsg;
+			}
+			if (gridVal.size() == 4)
+				return 0;		// Good enough now
+			if (gridVal.size() > 4 && (gridVal[4] <= 'Z' && gridVal[4] >= 'A'))
+				gridVal[4] = gridVal[4] - 'A' + 'a';	// Lower case subsquare
+			if (gridVal.size() > 5 && (gridVal[5] <= 'Z' && gridVal[5] >= 'A'))
+				gridVal[5] = gridVal[5] - 'A' + 'a';
+			((wxTextCtrl *)controls[i])->SetValue(gridVal);
+			tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
+			if (gridVal.size() > 4 && (gridVal[4] <= 'a' || gridVal[4] >= 'z')) {
+				errmsg = "Please enter a valid Subsquare";
+				return errmsg;
+			}
+			if (gridVal.size() > 5 && (gridVal[5] <= 'a' || gridVal[5] >= 'z')) {
+				errmsg = "Please enter a valid Subsquare";
+				return errmsg;
+			}
+			if (gridVal.size() == 6)
+				return 0;			// It's OK
+			// Not long enough yet or too long.
+			errmsg = "Please enter a valid Subsquare";
+			return errmsg;
+		}
+	}
+
+	return errmsg;
+}
+
 bool
 TQSLWizCertPage::TransferDataFromWindow() {
 	tqslTrace("TQSLWizCertPage::TransferDataFromWindow");
-	GetParent()->page_changing = true;
+	valMsg = validate();
+	if (!valMsg) 
+		GetParent()->page_changing = true;
+	else
+		GetParent()->page_changing = false;
 	tqsl_setStationLocationCapturePage(loc, loc_page);
 	for (int i = 0; i < (int)controls.size(); i++) {
 		int in_type;
@@ -347,6 +424,12 @@ TQSLWizCertPage::TransferDataFromWindow() {
 			case TQSL_LOCATION_FIELD_TEXT:
 				tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
 				break;
+#if 0
+			case TQSL_LOCATION_FIELD_BADZONE:
+				if (vmsg) 
+					tqsl_setLocationFieldCharData(loc, i, vmsg);
+				break;
+#endif
 		}
 	}
 	return true;

@@ -85,9 +85,11 @@ public:
 	void OnCheckBoxEvent(wxCommandEvent&);
 	int loc_page;
 	void UpdateFields(int noupdate_field = -1);
+	virtual const char *validate();
 	virtual TQSLWizPage *GetPrev() const;
 	virtual TQSLWizPage *GetNext() const;
 	void OnSize(wxSizeEvent&);
+	const char *valMsg;
 private:
 	std::vector<void *> controls;
 	wxCheckBox *okEmptyCB;
