@@ -889,12 +889,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_add_button = new wxBitmapButton(lb1Panel, tl_AddLoc, locaddbm);
 	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
-	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station Location"));
+	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station LocationCreate a new Station\n"));
 	lb1sizer->Add(loc_add_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb1Panel, 1, wxALL, 1);
 	int tw, th;
 	loc_add_label->GetSize(&tw, &th);
-	tw += 100;	// allow room for longer labels
+	loc_add_label->SetLabel(wxT("\nCreate a new Station Location"));
 
 	wxPanel* lb2Panel = new wxPanel(lbuttons);
 	lb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -980,9 +980,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
-	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a Callsign Certificate        "));
-	cert_load_label->GetSize(&tw, &th);
-	tw += 100;	// allow room for longer labels
+	cert_load_label = new wxStaticText(cb1Panel, -1, wxT("\nLoad a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
@@ -3651,12 +3649,12 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 
 		int w, h;
 		loc_add_label->GetSize(&w, &h);
-		cert_save_label->SetLabel(wxT("Save the callsign certificate for ") + callSign);
+		cert_save_label->SetLabel(wxT("\nSave the callsign certificate for ") + callSign);
 		cert_save_label->Wrap(w - 10);
-		cert_prop_label->SetLabel(wxT("Display the callsign certificate for ") + callSign);
+		cert_prop_label->SetLabel(wxT("\nDisplay the callsign certificate for ") + callSign);
 		cert_prop_label->Wrap(w - 10);
 		if (!(keyonly || expired || superseded)) {
-			cert_renew_label->SetLabel(wxT("Renew the callsign certificate for ") + callSign);
+			cert_renew_label->SetLabel(wxT("\nRenew the callsign certificate for ") + callSign);
 			cert_renew_label->Wrap(w - 10);
 		} else {
 			cert_renew_label->SetLabel(wxT("\nRenew a Callsign Certificate"));
