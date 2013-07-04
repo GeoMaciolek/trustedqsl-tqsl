@@ -1019,7 +1019,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_prop_button->SetBitmapDisabled(properties_disbm);
 	cert_prop_button->Enable(false);
 	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
-	cert_prop_label = new wxStaticText(cb4Panel, -1, wxT("\nDisplay a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	cert_prop_label = new wxStaticText(cb4Panel, -1, wxT("\nDisplay a Callsign Certificate's Properties"), wxDefaultPosition, wxSize(tw, th));
 	cb4sizer->Add(cert_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb4Panel, 1, wxALL, 1);
 
@@ -3757,7 +3757,7 @@ MyFrame::LocTreeReset() {
 	stn_menu->Enable(tm_s_Properties, false);
 	loc_edit_label->SetLabel(wxT("\nEdit a Station Location"));
 	loc_delete_label->SetLabel(wxT("\nDelete a Station Location"));
-	loc_prop_label->SetLabel(wxT("\nDisplay Station Location Details"));
+	loc_prop_label->SetLabel(wxT("\nDisplay Station Location Properties"));
 	loc_select_label->SetLabel(wxT("\nSelect a Station Location to process"));
 }
 
@@ -3987,7 +3987,7 @@ BEGIN_EVENT_TABLE(LocPropDial, wxDialog)
 END_EVENT_TABLE()
 
 LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
-		wxDialog(parent, -1, wxT("Station Location Properties"), wxDefaultPosition, wxSize(400, 15 * LABEL_HEIGHT))
+		wxDialog(parent, -1, wxT("Station Location Properties"), wxDefaultPosition, wxSize(600, 15 * LABEL_HEIGHT))
 {
 	tqslTrace("LocPropDial", "locname=%s", _S(locname));
 
@@ -4018,9 +4018,10 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
 				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
 				wxStaticText *st = new wxStaticText(this, -1, wxString(fields[i+1], wxConvLocal),
 					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
-				line_sizer->Add(st);
+				line_sizer->Add(st, 50);
 				line_sizer->Add(
-					new wxStaticText(this, -1, wxString(fieldbuf, wxConvLocal))
+					new wxStaticText(this, -1, wxString(fieldbuf, wxConvLocal),
+					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT)), 50
 				);
 				prop_sizer->Add(line_sizer);
 				y += LABEL_HEIGHT;
