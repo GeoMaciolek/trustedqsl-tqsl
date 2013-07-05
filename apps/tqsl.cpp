@@ -931,7 +931,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_prop_button->SetBitmapDisabled(properties_disbm);
 	loc_prop_button->Enable(false);
 	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
-	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay Station Location Details"), wxDefaultPosition, wxSize(tw, th));
+	loc_prop_label = new wxStaticText(lb4Panel, -1, wxT("\nDisplay Station Location Properties"), wxDefaultPosition, wxSize(tw, th));
 	lb4sizer->Add(loc_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb4Panel, 1, wxALL, 1);
 
@@ -3651,7 +3651,7 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		loc_add_label->GetSize(&w, &h);
 		cert_save_label->SetLabel(wxT("\nSave the callsign certificate for ") + callSign);
 		cert_save_label->Wrap(w - 10);
-		cert_prop_label->SetLabel(wxT("\nDisplay the callsign certificate for ") + callSign);
+		cert_prop_label->SetLabel(wxT("\nDisplay the callsign certificate properties for ") + callSign);
 		cert_prop_label->Wrap(w - 10);
 		if (!(keyonly || expired || superseded)) {
 			cert_renew_label->SetLabel(wxT("\nRenew the callsign certificate for ") + callSign);
@@ -3781,7 +3781,7 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		loc_edit_label->Wrap(w - 10);
 		loc_delete_label->SetLabel(wxT("Delete Station Location ") + call + wxT(": ") + lname);
 		loc_delete_label->Wrap(w - 10);
-		loc_prop_label->SetLabel(wxT("Display Station Location Details for ") + call + wxT(": ") + lname);
+		loc_prop_label->SetLabel(wxT("Display Station Location Properties for ") + call + wxT(": ") + lname);
 		loc_prop_label->Wrap(w - 10);
 		loc_select_label->SetLabel(wxT(""));
 	} else {
