@@ -24,6 +24,10 @@ certificates can be distinguished.
 Detect and report invalid frequencies in ADIF files (outside of ham bands,
 entered in KHz versus MHz.)
 
+Validate the format of Grid Squares when they're entered for a station
+location. This also fixes the case to be normal, upper case for the Field,
+lower case for the subsquare (FM18ju, for example).
+
 Other changes:
 
 Correct the defect that could cause invalid QSOs (bad call signs, for
