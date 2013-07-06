@@ -65,6 +65,10 @@ that are not consistent with the BAND setting.
 Correct the exit code for circumstances when -a abort is used and an bad QSO
 is detected. Display the error information on that QSO before exiting.
 
+Detect new verions of the TQSL configuration file when performing the
+"check for updates" operation (manual or automatic) and allow the user to
+update the configuration file if there is a newer one available.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed
