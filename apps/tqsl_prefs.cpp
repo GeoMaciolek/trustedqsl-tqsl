@@ -372,6 +372,9 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	wxString uplStatusRE = config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
 	wxString uplStatOK = config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK);
 	wxString uplMsgRE = config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
+	wxString cfgUpdURL = config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
+	wxString cfgFileUpdURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
+
 	bool uplVerifyCA;
 	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
 
@@ -381,7 +384,9 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 		(uplStatusRE==DEFAULT_UPL_STATUSRE) &&
 		(uplStatOK==DEFAULT_UPL_STATUSOK) &&
 		(uplMsgRE==DEFAULT_UPL_MESSAGERE) &&
-		(uplVerifyCA==DEFAULT_UPL_VERIFYCA));
+		(uplVerifyCA==DEFAULT_UPL_VERIFYCA) &&
+		(cfgUpdURL=DEFAULT_UPD_CONFIG_URL) &&
+		(cfgFileUpdURL=DEFAULT_CONFIG_FILE_URL));
 
 
 
@@ -419,12 +424,21 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(messageRegex, 0, wxLEFT|wxRIGHT, 10);
 
+	sizer->Add(new wxStaticText(this, -1, wxT("Config File Version URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	updConfigURL = new wxTextCtrl(this, ID_PREF_ONLINE_UPD_CONFIGURL, cfgUpdURL, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(updConfigURL, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("New Config File URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	configFileURL = new wxTextCtrl(this, ID_PREF_ONLINE_UPD_CONFIGFILE, cfgFileUpdURL, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(configFileURL, 0, wxLEFT|wxRIGHT, 10);
+
 	verifyCA = new wxCheckBox(this, ID_PREF_ONLINE_VERIFYCA, wxT("Verify server certificate"));
 	verifyCA->SetValue(uplVerifyCA);
 	sizer->Add(verifyCA, 0, wxLEFT|wxRIGHT|wxTOP|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 
 	config->SetPath(wxT("/"));
-	
 	
 
 	SetSizer(sizer);
@@ -437,12 +451,12 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 void OnlinePrefs::ShowHide() {
 	tqslTrace("OnlinePrefs::ShowHide");
 	defaults=useDefaults->GetValue();
-	for (int i=1; i<12; i++) GetSizer()->Show(i, !defaults); //12 items in sizer; hide all but checkbox
+	for (int i=1; i<16; i++) GetSizer()->Show(i, !defaults); //16 items in sizer; hide all but checkbox
 
 	Layout();
   //wxNotebook caches best size
 	GetParent()->InvalidateBestSize();
-  GetParent()->Fit();
+	GetParent()->Fit();
 	GetGrandParent()->Fit();
 }
 
@@ -460,6 +474,8 @@ bool OnlinePrefs::TransferDataFromWindow() {
 		config->Write(wxT("StatusSuccess"), statusSuccess->GetValue());
 		config->Write(wxT("MessageRegex"), messageRegex->GetValue());
 		config->Write(wxT("VerifyCA"), verifyCA->GetValue());
+		config->Write(wxT("ConfigFileVerURL"), updConfigURL->GetValue());
+		config->Write(wxT("NewCOnfigURL"), updConfigURL->GetValue());
 		config->SetPath(wxT("/"));
 	}
 

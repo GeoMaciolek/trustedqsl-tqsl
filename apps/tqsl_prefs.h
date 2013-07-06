@@ -52,6 +52,8 @@
 #define DEFAULT_UPL_VERIFYCA true
 
 #define DEFAULT_UPD_URL wxT("https://lotw.arrl.org/lotw/tqslupdate")
+#define DEFAULT_UPD_CONFIG_URL wxT("https://lotw.arrl.org/lotw/config_xml_version")
+#define DEFAULT_CONFIG_FILE_URL wxT("https://lotw.arrl.org/lotw/config.tq6")
 
 enum {		// Window IDs
 	ID_OK_BUT,
@@ -78,7 +80,9 @@ enum {		// Window IDs
 	ID_PREF_ONLINE_STATUSRE,
 	ID_PREF_ONLINE_STATUSOK,
 	ID_PREF_ONLINE_MESSAGERE,
-	ID_PREF_ONLINE_VERIFYCA
+	ID_PREF_ONLINE_VERIFYCA,
+	ID_PREF_ONLINE_UPD_CONFIGURL, 
+        ID_PREF_ONLINE_UPD_CONFIGFILE
 };
 
 class PrefsPanel : public wxPanel {
@@ -113,6 +117,7 @@ public:
 	DECLARE_EVENT_TABLE()
 private:
 	wxTextCtrl *uploadURL, *postField, *statusRegex, *statusSuccess, *messageRegex;
+	wxTextCtrl *updConfigURL, *configFileURL;
 	wxCheckBox *verifyCA, *useDefaults;
 	bool defaults;
 };

@@ -1715,6 +1715,37 @@ public:
 	}
 };
 
+class ConfigFileDownloadHandler {
+public:
+	void *s;
+	size_t allocated;
+	size_t used;
+	ConfigFileDownloadHandler(size_t _size): s() {
+		allocated = _size;
+		s = malloc(_size);
+		used = 0;
+	}
+	~ConfigFileDownloadHandler(void);
+	size_t internal_recv( char *ptr, size_t size, size_t nmemb) {
+		size_t newlen = used + (size * nmemb);
+		if (newlen > allocated) {
+			s = realloc(s, newlen + 2000);
+			allocated += newlen + 2000;
+		}
+		memcpy((char *)s+used, ptr, size * nmemb);
+		used += size*nmemb;
+		return size*nmemb;
+	}
+
+	static size_t recv( char *ptr, size_t size, size_t nmemb, void *userdata) { 
+		return ((ConfigFileDownloadHandler*)userdata)->internal_recv(ptr, size, nmemb);
+	}
+};
+
+ConfigFileDownloadHandler::~ConfigFileDownloadHandler(void) {
+	if (s) free(s);
+}
+
 long compressToBuf(string& buf, const char* input) {
 	tqslTrace("compressToBuf");
 	const size_t TBUFSIZ=128*1024;
@@ -1840,15 +1871,14 @@ retry_upload:
 
 
 		//debug
-		char filename[1024];
 		if (diagFile) {
 			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
 			curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
 			fprintf(diagFile, "Upload Log:\n");
 		} else {
-			snprintf(filename, sizeof filename, "%s/curl.log", tQSL_BaseDir);
-			filename[sizeof filename - 1] = '\0';
-			logFile = fopen(filename, "wb");
+			wxString filename;
+			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+			logFile = fopen(filename.mb_str(), "wb");
 			if (logFile) {
 				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
 				curl_easy_setopt(req, CURLOPT_STDERR, logFile);
@@ -1888,6 +1918,7 @@ retry_upload:
 		// and the curl form expects it to still be there during perform() so 
 		// we have to do all this copying around to please the unicode gods
 
+		char filename[1024];
 		strncpy(filename, wxString::Format(wxT("<TQSLUpl %s-%s> %s"),
 			now.Format(wxT("%Y%m%d")).c_str(),
 			now.Format(wxT("%H%M")).c_str(),
@@ -2124,35 +2155,103 @@ wxString GetUpdatePlatformString() {
 	return ret;
 }
 
+// Class for encapsulating version information
+class revLevel
+{
+public:
+	revLevel(long _major = 0, long _minor = 0, long _patch = 0) {
+		major = _major;
+		minor = _minor;
+		patch = _patch;
+	}
+        revLevel(const wxString& _value) {
+		wxString str = _value;
+		str.Trim(true);
+		str.Trim(false);
+		wxStringTokenizer vers(str, wxT("."));
+		wxString majorVer = vers.GetNextToken();
+		wxString minorVer = vers.GetNextToken();	
+		wxString patchVer = vers.GetNextToken();	
+		if (majorVer.IsNumber()) {
+			majorVer.ToLong(&major);
+		} else {
+			major = -1;
+		}
+		if (minorVer.IsNumber()) {
+			minorVer.ToLong(&minor);
+		} else {
+			minor = -1;
+		}
+		if (patchVer.IsNumber()) {
+			patchVer.ToLong(&patch);
+		} else {
+			patch = 0;
+		}
+        }
+	wxString Value(void) {
+		if (patch > 0) 
+			return wxString::Format(wxT("%d.%d.%d"), major, minor, patch);
+		else
+			return wxString::Format(wxT("%d.%d"), major, minor);
+	}
+        long major;
+	long minor;
+	long patch;
+        bool operator >(const revLevel& other) {
+		if (major > other.major) return true;
+		if (major == other.major) 
+			if (minor > other.minor) return true;
+			if (minor == other.minor)
+				if (patch > other.patch) return true;
+		return false;
+	}
+};
+
 class UpdateDialogMsgBox: public wxDialog
  {
 public:
-	UpdateDialogMsgBox(wxWindow* parent, wxString newVersion, wxString platformURL, wxString homepage) :
+	UpdateDialogMsgBox(wxWindow* parent, bool newProg, bool newConfig, revLevel* currentProgRev, revLevel* newProgRev,
+			revLevel* currentConfigRev, revLevel* newConfigRev, wxString platformURL, wxString homepage) :
 			wxDialog(parent, (wxWindowID)wxID_ANY, wxT("Update Available"), wxDefaultPosition, wxDefaultSize)
 	{
-		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newVersion=%s, platformURL=%s, homepage=%s", (void*)parent, _S(newVersion), _S(platformURL), _S(homepage));
+		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newProg=%d, newConfig=%d, currentProgRev %s, newProgRev %s, newConfigRev %s, currentConfigRev=%s, platformURL=%s, homepage=%s", (void*)parent, newProg, newConfig, _S(currentProgRev->Value()), _S(newProgRev->Value()), _S(currentConfigRev->Value()), _S(newConfigRev->Value()), _S(platformURL), _S(homepage));
 		wxSizer* overall=new wxBoxSizer(wxVERTICAL);
-		wxSizer* buttons=CreateButtonSizer(wxOK);
-		overall->Add(new wxStaticText(this, wxID_ANY, wxString::Format(wxT("A new release (%s) is available!"), newVersion.c_str())), 0, wxALIGN_CENTER_HORIZONTAL);
+		long flags = wxOK;
+		if (newConfig)
+			flags |= wxCANCEL;
+
+		wxSizer* buttons=CreateButtonSizer(flags);
+		wxString notice;
+		if (newProg)
+			notice = wxString::Format(wxT("A new TrustedQSL release (%s) is available!"), newProgRev->Value().c_str());
+		else if (newConfig)
+			notice = wxString::Format(wxT("A new TrustedQSL configuration file (%s) is available!"), newConfigRev->Value().c_str());
+
+		overall->Add(new wxStaticText(this, wxID_ANY, notice), 0, wxALIGN_CENTER_HORIZONTAL);
 		
-		if (!platformURL.IsEmpty()) {
-			wxSizer* thisline=new wxBoxSizer(wxHORIZONTAL);
-			thisline->Add(new wxStaticText(this, wxID_ANY, wxT("Download from:")));
-			thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, platformURL, platformURL));
+		if (newProg) {
+			if (!platformURL.IsEmpty()) {
+				wxSizer* thisline=new wxBoxSizer(wxHORIZONTAL);
+				thisline->Add(new wxStaticText(this, wxID_ANY, wxT("Download from:")));
+				thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, platformURL, platformURL));
 
-			overall->AddSpacer(10);
-			overall->Add(thisline);
+				overall->AddSpacer(10);
+				overall->Add(thisline);
+			}
+
+			if (!homepage.IsEmpty()) {
+				wxSizer* thisline=new wxBoxSizer(wxHORIZONTAL);
+				thisline->Add(new wxStaticText(this, wxID_ANY, wxT("More details at:")));
+				thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, homepage, homepage));
+	
+				overall->AddSpacer(10);
+				overall->Add(thisline);
+			}
 		}
-
-		if (!homepage.IsEmpty()) {
-			wxSizer* thisline=new wxBoxSizer(wxHORIZONTAL);
-			thisline->Add(new wxStaticText(this, wxID_ANY, wxT("More details at:")));
-			thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, homepage, homepage));
-
+		if (newConfig) {
 			overall->AddSpacer(10);
-			overall->Add(thisline);
+			overall->Add(new wxStaticText(this, wxID_ANY, wxT("Click 'OK' to install the new configuration file, or Cancel to ignore it.")));
 		}
-
 		if (buttons) { //should always be here but documentation says to check
 			overall->AddSpacer(10);
 			overall->Add(buttons, 0, wxALIGN_CENTER_HORIZONTAL);
@@ -2166,6 +2265,72 @@ public:
 private:
 
 };
+
+void MyFrame::UpdateConfigFile() {
+	tqslTrace("MyFrame::UpdateConfigFile()");
+	wxConfig* config=(wxConfig*)wxConfig::Get();
+	CURL* req=curl_easy_init();
+	wxString newConfigURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
+
+	curl_easy_setopt(req, CURLOPT_URL, (const char*)newConfigURL.mb_str());
+
+	if (diagFile) {
+		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
+		fprintf(diagFile, "Config File Download Log:\n");
+	}
+
+	//follow redirects
+	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
+
+	ConfigFileDownloadHandler handler(40000);
+
+	curl_easy_setopt(req, CURLOPT_WRITEFUNCTION, &ConfigFileDownloadHandler::recv);
+	curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
+
+	curl_easy_setopt(req, CURLOPT_CONNECTTIMEOUT, 3);
+	curl_easy_setopt(req, CURLOPT_TIMEOUT, 3); 
+
+	curl_easy_setopt(req, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
+
+	char errorbuf[CURL_ERROR_SIZE];
+	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
+	if (curl_easy_perform(req) == CURLE_OK) {
+		char *newconfig = (char *)handler.s;
+		wxString filename;
+		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
+		FILE *configFile = fopen(filename.mb_str(), "wb");
+		if (!configFile) {
+			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			curl_easy_cleanup(req);
+			return;
+		}
+		size_t left = handler.used;
+		while (left > 0) {
+			size_t written = fwrite(newconfig, 1, left, configFile);
+			if (written == 0) {
+				wxMessageBox(wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+				curl_easy_cleanup(req);
+				return;
+			}
+			left -= written;
+		}
+		if (fclose(configFile)) {
+			wxMessageBox(wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			curl_easy_cleanup(req);
+			return;
+		}
+		notifyData nd;
+		if (tqsl_importTQSLFile(filename.mb_str(), notifyImport, &nd)) {
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+		} else {
+			wxMessageBox(wxT("Configuration file successfully updated"), wxT("Update Completed"), wxOK|wxICON_INFORMATION, this);
+		}
+	} else
+		wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+	curl_easy_cleanup(req);
+	
+}
 
 
 void MyFrame::DoCheckForUpdates(bool silent) {
@@ -2188,6 +2353,12 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 	if (!check) return; //if we really weren't supposed to check, get out of here
 
+	revLevel* programRev = new revLevel(wxT(VERSION));
+
+	int currentConfigMajor, currentConfigMinor;
+	tqsl_getConfigVersion(&currentConfigMajor, &currentConfigMinor);
+	revLevel* configRev = new revLevel(currentConfigMajor, currentConfigMinor, 0);		// config files don't have patch levels
+
 	wxString updateURL=config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
 	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
@@ -2195,7 +2366,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 	if (diagFile) {
 		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
 		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
-		fprintf(diagFile, "Upload Log:\n");
+		fprintf(diagFile, "Version Check Log:\n");
 	}
 
 
@@ -2220,33 +2391,49 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
 
 	if (curl_easy_perform(req) == CURLE_OK) {
-		wxString result=wxString::FromAscii(handler.s.c_str());
-		wxString url;
+		// Add the config.xml text to the result
+		wxString configURL=config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
+		curl_easy_setopt(req, CURLOPT_URL, (const char*)configURL.mb_str());
+
+		if (curl_easy_perform(req) == CURLE_OK) {
+			wxString result=wxString::FromAscii(handler.s.c_str());
+			wxString url;
+			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
+			URLHashMap map;
+			revLevel *newProgramRev;
+			revLevel *newConfigRev;
 		
-		wxStringTokenizer urls(result, wxT("\n"));
-		wxString header=urls.GetNextToken();
-		wxString onlinever;
-		if (header.StartsWith(wxT("TQSLVERSION;"), &onlinever)) {
-			if (onlinever.Cmp(wxT(VERSION))>0) {
-				//online string is lexicographically before ours... this will suffice for a few versions
-				// eventually we will have to compare major, then minor... but this will work for a while
-				WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
-				URLHashMap map;
+			wxStringTokenizer urls(result, wxT("\n"));
+			wxString onlinever;
+			while(urls.HasMoreTokens()) {
+				wxString header=urls.GetNextToken().Trim();
+				if (header.StartsWith(wxT("TQSLVERSION;"), &onlinever)) {
+					newProgramRev = new revLevel(onlinever);
+
+				} else if (header.IsEmpty()) continue; //blank line
+				else if (header[0]=='#') continue; //comments
+
+				else if (header.StartsWith(wxT("config.xml"), &onlinever)) {
+					onlinever.Replace(wxT(":"), wxT(""));
+					onlinever.Replace(wxT("Version"), wxT(""));
+					onlinever.Trim(true);
+					onlinever.Trim(false);
+					newConfigRev = new revLevel(onlinever);
+				} else {
+					int sep=header.Find(';'); //; is invalid in URLs
+					if (sep==wxNOT_FOUND) continue; //malformed string
+					wxString plat=header.Left(sep);
+					wxString url=header.Right(header.size()-sep-1);
+					map[plat]=url;
+				}
+			}
+			bool newProgram = (*newProgramRev > *programRev);
+			bool newConfig = (*newConfigRev > *configRev);
+
+			if (newProgram) {
 
 				wxString ourPlatURL; //empty by default (we check against this later)
 
-				while (urls.HasMoreTokens()) {
-					wxString tok=urls.GetNextToken().Trim();
-					if (tok.IsEmpty()) continue; //blank line
-					if (tok[0]=='#') continue; //comments
-
-					int sep=tok.Find(';'); //; is invalid in URLs
-					if (sep==wxNOT_FOUND) continue; //malformed string
-					wxString plat=tok.Left(sep);
-					wxString url=tok.Right(tok.size()-sep-1);
-					map[plat]=url;
-				}
-			
 				wxStringTokenizer plats(GetUpdatePlatformString(), wxT(" "));
 				while(plats.HasMoreTokens()) {
 					wxString tok=plats.GetNextToken();
@@ -2255,22 +2442,33 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 				}
 				//will create ("homepage"->"") if none there, which is what we'd be checking for anyway
-				UpdateDialogMsgBox msg(this, onlinever, ourPlatURL, map[wxT("homepage")]);
+				UpdateDialogMsgBox msg(this, true, false, programRev, newProgramRev,
+							configRev, newConfigRev, ourPlatURL, map[wxT("homepage")]);
 
 				msg.ShowModal();
-
-			} else {
-				if (!silent)
-					wxMessageBox(wxString::Format(wxT("Version %hs is the newest available"), VERSION), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 			}
+			if (newConfig) {
+
+				UpdateDialogMsgBox msg(this, false, true, programRev, newProgramRev,
+							configRev, newConfigRev, wxT(""), wxT(""));
+
+				if (msg.ShowModal() == wxID_OK) {
+					UpdateConfigFile();
+				}
+			} 
+
+			if (!newProgram && !newConfig) 
+				if (!silent) 
+					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 		} else {
-			if(!silent)
-			wxMessageBox(wxT("Malformed update file - not your fault"), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			// Couldn't read config file version
+				if(!silent)
+					wxMessageBox(wxString::Format(wxT("Error checking for configuration updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
-		
 	} else {
-		if(!silent)
-			wxMessageBox(wxString::Format(wxT("Error checking for updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		// Couldn't read program version
+			if(!silent)
+				wxMessageBox(wxString::Format(wxT("Error checking for program updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 	}
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval

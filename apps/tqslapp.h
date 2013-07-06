@@ -104,6 +104,7 @@ public:
 
 	void CheckForUpdates(wxCommandEvent&);
 	void DoCheckForUpdates(bool quiet);
+	void UpdateConfigFile(void);
 
 	void OnQuit(wxCommandEvent& event);
 	void CRQWizard(wxCommandEvent& event);
