@@ -2833,7 +2833,7 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 			gzprintf(out, "<PrivateKey>\n");
 			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "\n</PrivateKey>\n</UserCert>\n");
+			gzprintf(out, "</PrivateKey>\n</UserCert>\n");
 			tqsl_freeCertificate(certlist[i]);
 		}
 		gzprintf(out, "</Certificates>\n");
