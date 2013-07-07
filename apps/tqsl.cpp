@@ -799,13 +799,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP /* | wxNB_FIXEDWIDTH*/, wxT("Log Operations"));
 
-	topSizer->Add(notebook, 1, wxEXPAND | wxALL, 1);
+	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
 
 	topSizer->Add(new wxStaticText(topPanel, -1, wxT("Status Log")), 0, wxEXPAND | wxALL, 1);
 
 	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
 		wxTE_MULTILINE|wxTE_READONLY);
-	topSizer->Add(logwin, 0, wxEXPAND | wxALL, 1);
+	topSizer->Add(logwin, 50, wxEXPAND | wxALL, 1);
 
 	wxPanel* buttons = new wxPanel(notebook, -1);
 	buttons->SetBackgroundColour(wxColour(255, 255, 255));
