@@ -511,6 +511,12 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
+	sizer->Add(new wxStaticText(this, NULL, "If this certificate is for your personal callsign, then you\n"
+											"should select 'Signed' and choose a callsign certificate from\n"
+											"the list to be used to sign this request.\n\n"
+											"If this certificate request is being submitted for a club station\n"
+											"or by a QSL manager on behalf of another licensee, select 'Unsigned'."));
+
 	tc_status = new wxStaticText(this, -1, wxT("M"));
 	int em_h = tc_status->GetSize().GetHeight();
 	int em_w = tc_status->GetSize().GetWidth();
@@ -816,18 +822,28 @@ CRQ_SignPage::validate() {
 
 	if (!initialized)
 		return 0;
-	if (choice->GetSelection() == 1) {
-		CertTreeItemData *data = (CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection());
-		if (!data)
-			errmsg = "If this certificate is for your personal callsign,\n"
-				 "then you should select 'Signed' and choose a callsign\n"
-				 "certificate from the list to be used to sign this request.\n\n"
-				 "If this certificate request is being submitted for a\n"
-				 "club station or by a QSL manager on behalf of a\n"
-				 "another licencee, select 'Unsigned'.";
-	} else if (Parent()->dxcc == 0)
+	
+	wxString nextprompt=wxT("Click 'Finish' to complete this callsign certificate request.");
+
+	cert_tree->Enable(choice->GetSelection()==0?false:true);
+
+	if (choice->GetSelection()==0 && Parent()->dxcc == 0)
 		errmsg = "This request MUST be signed since DXCC Entity is set to NONE";
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT("Click 'Finish' to complete this callsign certificate request."));
+
+	if (choice->GetSelection()==1) {
+		if (!cert_tree->GetSelection().IsOk() || cert_tree->GetItemData(cert_tree->GetSelection())==NULL) {
+			errmsg = "Please select a callsign certificate to sign your request";
+		} else {
+			char* callsign=(char*)malloc(512);
+			tQSL_Cert cert = cert_tree->GetItemData(cert_tree->GetSelection())->getCert();
+			assert(0==tqsl_getCertificateCallSign(cert, callsign, 512));
+			nextprompt+=wxT("\nYou are saying that this requested certificate belongs to the\nsame person that owns ")+wxString(callsign, wxConvLocal);
+			nextprompt+=wxT(" and are using it to prove identity");
+			free(callsign);
+		}
+	}
+	
+	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : nextprompt);
 	return errmsg;
 }
 
