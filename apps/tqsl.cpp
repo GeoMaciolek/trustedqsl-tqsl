@@ -2780,7 +2780,7 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		}
 		TQSLConfig* conf = new TQSLConfig();
 
-		gzprintf(out, "<TQSL_Configuration>\n");
+		gzprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TQSL_Configuration>\n");
 		gzprintf(out, "<!-- Warning! If you directly edit this file, you are responsible for its content.\n");
 		gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you. -->\n");
 		gzprintf(out, "<Certificates>\n");
