@@ -2199,10 +2199,12 @@ public:
 	long patch;
         bool operator >(const revLevel& other) {
 		if (major > other.major) return true;
-		if (major == other.major) 
+		if (major == other.major) {
 			if (minor > other.minor) return true;
-			if (minor == other.minor)
+			if (minor == other.minor) {
 				if (patch > other.patch) return true;
+			}
+		}
 		return false;
 	}
 };
