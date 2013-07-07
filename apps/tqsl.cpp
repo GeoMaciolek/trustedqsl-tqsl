@@ -2683,7 +2683,7 @@ public:
 	void SaveSettings (gzFile &out, wxString appname);
 	void RestoreCert (void);
 	void RestoreConfig (gzFile& in);
-	void ParseLocations (const char *loc, gzFile* out);
+	void ParseLocations (const tQSL_StationDataEnc loc, gzFile* out);
 	wxConfig *config;
 	long serial;
 	int dxcc;
@@ -2841,11 +2841,11 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		if (!quiet) {
 			wxLogMessage(wxT("Saving Station Locations"));
 		}
-		char *sdbuf = NULL;
-		check_tqsl_error(tqsl_getStationData(&sdbuf));
+		tQSL_StationDataEnc sdbuf = NULL;
+		check_tqsl_error(tqsl_getStationDataEnc(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
 		parser->ParseLocations(sdbuf, &out);
-		free(sdbuf);
+		check_tqsl_error(tqsl_freeStationDataEnc(sdbuf));
 		gzprintf(out, "</Locations>\n");
 
 		if (!quiet) {
@@ -3134,7 +3134,7 @@ TQSLConfig::RestoreConfig (gzFile& in) {
 }
 
 void
-TQSLConfig::ParseLocations (const char *loc, gzFile* out) {
+	TQSLConfig::ParseLocations (const tQSL_StationDataEnc loc, gzFile* out) {
 	tqslTrace("TQSL::ParseLocations", "loc=%s", loc);
         XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *) this);

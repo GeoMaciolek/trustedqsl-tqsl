@@ -69,6 +69,7 @@
 
 typedef void * tQSL_Cert;
 typedef void * tQSL_Location;
+typedef char * tQSL_StationDataEnc;
 
 /** Struct that holds y-m-d */
 typedef struct {
@@ -947,10 +948,14 @@ DLLEXPORT int CALLCONVENTION tqsl_getStationLocation(tQSL_Location *loc, const c
   */
 DLLEXPORT int CALLCONVENTION tqsl_getStationLocationErrors(tQSL_Location loc, char *buf, int bufsiz);
 
-/** Return the contents of the station data file as a string.
-  * The caller is required to free() this string when done with it.
+/** Return the contents of the station data file as a byte stream.
+  * The caller is required to tqsl_freeStationDataEnc() this pointer when done with it.
   */
-DLLEXPORT int CALLCONVENTION tqsl_getStationData(char **sdata);
+DLLEXPORT int CALLCONVENTION tqsl_getStationDataEnc(tQSL_StationDataEnc *sdata);
+
+/** Free the pointer returned by tqsl_getStationDataEnc(tQSL_StationDataEnc*)
+  */
+DLLEXPORT int CALLCONVENTION tqsl_freeStationDataEnc(tQSL_StationDataEnc sdata);
 
 /** Merge saved location data with existing */
 DLLEXPORT int CALLCONVENTION tqsl_mergeStationLocations(const char *locdata);

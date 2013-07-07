@@ -1927,7 +1927,7 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 }
 
 DLLEXPORT int CALLCONVENTION
-tqsl_getStationData(char **sdata) {
+	tqsl_getStationDataEnc(tQSL_StationDataEnc *sdata) {
 	char *dbuf = NULL;
 	size_t dlen = 0;
 	gzFile in = gzopen(tqsl_station_data_filename().c_str(), "rb");
@@ -1952,6 +1952,12 @@ tqsl_getStationData(char **sdata) {
 	*dbuf = '\0';
 	gzclose(in);
 	return 0;	
+}
+
+DLLEXPORT int CALLCONVENTION
+	tqsl_freeStationDataEnc(tQSL_StationDataEnc sdata) {
+	free(sdata);
+	return 0; //can never fail
 }
 
 DLLEXPORT int CALLCONVENTION
