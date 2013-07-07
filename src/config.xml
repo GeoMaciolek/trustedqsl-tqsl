@@ -1,135 +1,36 @@
-<?xml version="1.0" encoding="UTF-8" ?>
 <tqslconfig majorversion="2" minorversion="4">
-     <adifmap>
-       <adifmode mode="AMTOR">AMTORFEC</adifmode>
-       <adifmode mode="RTTY">ASCI</adifmode>
-       <adifmode mode="CHIP">CHIP128</adifmode>
-       <adifmode mode="CHIP">CHIP64</adifmode>
-       <adifmode mode="CLOVER">CLO</adifmode>
-       <adifmode mode="DOMINO">DOMINOF</adifmode>
-       <adifmode mode="HELL">FMHELL</adifmode>
-       <adifmode mode="HELL">HELL80</adifmode>
-       <adifmode mode="RTTY">HFSK</adifmode>
-       <adifmode mode="ISCAT">ISCAT-A</adifmode>
-       <adifmode mode="ISCAT">ISCAT-B</adifmode>
-       <adifmode mode="JT4">JT4A</adifmode>
-       <adifmode mode="JT4">JT4B</adifmode>
-       <adifmode mode="JT4">JT4C</adifmode>
-       <adifmode mode="JT4">JT4D</adifmode>
-       <adifmode mode="JT4">JT4E</adifmode>
-       <adifmode mode="JT4">JT4F</adifmode>
-       <adifmode mode="JT4">JT4G</adifmode>
-       <adifmode mode="JT65">JT65A</adifmode>
-       <adifmode mode="JT65">JT65B</adifmode>
-       <adifmode mode="JT65">JT65B2</adifmode>
-       <adifmode mode="JT65">JT65C</adifmode>
-       <adifmode mode="JT65">JT65C2</adifmode>
-       <adifmode mode="JT9">JT9-1</adifmode>
-       <adifmode mode="JT9">JT9-10</adifmode>
-       <adifmode mode="JT9">JT9-2</adifmode>
-       <adifmode mode="JT9">JT9-30</adifmode>
-       <adifmode mode="JT9">JT9-5</adifmode>
-       <adifmode mode="SSB">LSB</adifmode>
-       <adifmode mode="MINIRTTY">MTTY</adifmode>
-       <adifmode mode="OPERA">OP05</adifmode>
-       <adifmode mode="OPERA">OP1</adifmode>
-       <adifmode mode="OPERA">OP15</adifmode>
-       <adifmode mode="OPERA">OP2</adifmode>
-       <adifmode mode="OPERA">OP32</adifmode>
-       <adifmode mode="OPERA">OP4</adifmode>
-       <adifmode mode="OPERA">OP4H</adifmode>
-       <adifmode mode="OPERA">OP8</adifmode>
-       <adifmode mode="PACTOR">PAC</adifmode>
-       <adifmode mode="PACTOR">PAC2</adifmode>
-       <adifmode mode="PACTOR">PAC3</adifmode>
-       <adifmode mode="PAX">PAX2</adifmode>
-       <adifmode mode="CW">PCW</adifmode>
-       <adifmode mode="PACKET">PKT</adifmode>
-       <adifmode mode="PSKAM">PSKAM10</adifmode>
-       <adifmode mode="PSKAM">PSKAM31</adifmode>
-       <adifmode mode="PSKAM">PSKAM50</adifmode>
-       <adifmode mode="HELL">PSKHELL</adifmode>
-       <adifmode mode="PSK125">QPSK125</adifmode>
-       <adifmode mode="PSK31">QPSK31</adifmode>
-       <adifmode mode="PSK63">QPSK63</adifmode>
-       <adifmode mode="THROB">THRB</adifmode>
-       <adifmode mode="THROB">THRBX</adifmode>
-       <adifmode mode="AMTOR">TOR</adifmode>
-       <adifmode mode="SSB">USB</adifmode>
-     </adifmap>
-     <bands>
-       <band high="24250" low="24000" spectrum="UHF">1.25CM</band>
-       <band high="225" low="220" spectrum="VHF">1.25M</band>
-       <band high="29700" low="28000" spectrum="HF">10M</band>
-       <band high="24990" low="24890" spectrum="HF">12M</band>
-       <band high="2450" low="2300" spectrum="UHF">13CM</band>
-       <band high="21450" low="21000" spectrum="HF">15M</band>
-       <band high="2000" low="1800" spectrum="HF">160M</band>
-       <band high="18168" low="18068" spectrum="HF">17M</band>
-       <band high="250000" low="241000" spectrum="UHF">1MM</band>
-       <band high="120020" low="119980" spectrum="UHF">2.5MM</band>
-       <band high="14350" low="14000" spectrum="HF">20M</band>
-       <band high="137" low="136" spectrum="HF">2190M</band>
-       <band high="1300" low="1240" spectrum="UHF">23CM</band>
-       <band high="148" low="144" spectrum="VHF">2M</band>
-       <band high="149000" low="142000" spectrum="UHF">2MM</band>
-       <band high="10150" low="10100" spectrum="HF">30M</band>
-       <band high="928" low="902" spectrum="UHF">33CM</band>
-       <band high="10500" low="10000" spectrum="UHF">3CM</band>
-       <band high="7300" low="7000" spectrum="HF">40M</band>
-       <band high="71" low="70" spectrum="VHF">4M</band>
-       <band high="81000" low="75500" spectrum="UHF">4MM</band>
-       <band high="5405" low="5250" spectrum="HF">60M</band>
-       <band high="5925" low="5650" spectrum="UHF">6CM</band>
-       <band high="54" low="50" spectrum="VHF">6M</band>
-       <band high="47200" low="47000" spectrum="UHF">6MM</band>
-       <band high="450" low="420" spectrum="UHF">70CM</band>
-       <band high="4000" low="3500" spectrum="HF">80M</band>
-       <band high="3500" low="3300" spectrum="UHF">9CM</band>
-       <band high="0" low="300000" spectrum="UHF">SUBMM</band>
-     </bands>
-     <cabrillomap>
-       <cabrillocontest field="8" type="HF">AP-SPRINT</cabrillocontest>
-       <cabrillocontest field="8" type="HF">ARRL-10</cabrillocontest>
-       <cabrillocontest field="8" type="HF">ARRL-160</cabrillocontest>
-       <cabrillocontest field="8" type="HF">ARRL-DX-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">ARRL-DX-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">ARRL-RTTY</cabrillocontest>
-       <cabrillocontest field="10" type="HF">ARRL-SS-CW</cabrillocontest>
-       <cabrillocontest field="10" type="HF">ARRL-SS-SSB</cabrillocontest>
-       <cabrillocontest field="7" type="VHF">ARRL-UHF-AUG</cabrillocontest>
-       <cabrillocontest field="7" type="VHF">ARRL-VHF-JAN</cabrillocontest>
-       <cabrillocontest field="7" type="VHF">ARRL-VHF-JUN</cabrillocontest>
-       <cabrillocontest field="7" type="VHF">ARRL-VHF-SEP</cabrillocontest>
-       <cabrillocontest field="9" type="HF">BARTG-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-160-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-160-SSB</cabrillocontest>
-       <cabrillocontest field="7" type="VHF">CQ-VHF</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WPX-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WPX-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WPX-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WW-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WW-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">CQ-WW-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">DARC-WAEDC-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">DARC-WAEDC-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">DARC-WAEDC-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">IARU-HF</cabrillocontest>
-       <cabrillocontest field="9" type="HF">NA-SPRINT-CW</cabrillocontest>
-       <cabrillocontest field="9" type="HF">NA-SPRINT-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">NAQP-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">NAQP-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">NAQP-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">NEQP</cabrillocontest>
-       <cabrillocontest field="8" type="HF">OCEANIA-DX-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">OCEANIA-DX-SSB</cabrillocontest>
-       <cabrillocontest field="9" type="HF">RSGB-IOTA</cabrillocontest>
-       <cabrillocontest field="8" type="HF">SAC-CW</cabrillocontest>
-       <cabrillocontest field="8" type="HF">SAC-SSB</cabrillocontest>
-       <cabrillocontest field="8" type="HF">STEW-PERRY</cabrillocontest>
-       <cabrillocontest field="9" type="HF">TARA-RTTY</cabrillocontest>
-       <cabrillocontest field="8" type="HF">WAEDC</cabrillocontest>
-     </cabrillomap>
+     <providers>
+       <provider organizationName="American Radio Relay League">
+         <organizationalUnitName>Logbook of the World</organizationalUnitName>
+         <emailAddress>lotw-logs@arrl.org</emailAddress>
+         <url>https://www.arrl.org/lotw/</url>
+       </provider>
+     </providers>
+     <sigspecs>
+       <sigspec name="LOTW" version="1.0">
+         <tSTATION>
+           <CA_PROVINCE />
+           <CQZ method="int"/>
+           <GRIDSQUARE />
+           <IOTA />
+           <ITUZ method="int"/>
+           <US_STATE />
+           <US_COUNTY />
+         </tSTATION>
+         <tCONTACT>
+           <BAND required="1" />
+   	<BAND_RX />
+           <CALL required="1" />
+           <FREQ />
+   	<FREQ_RX />
+           <MODE required="1" />
+   	<PROP_MODE />
+           <QSO_DATE required="1" />
+           <QSO_TIME required="1" />
+   	<SAT_NAME />
+         </tCONTACT>
+       </sigspec>
+     </sigspecs>
      <dxcc>
        <entity arrlId="0">-NONE-</entity>
        <entity arrlId="1" zonemap="02:01,02:02,02:03,02:04,03:01,03:02,03:04,04:01,04:02,04:04,04:05,09:01,09:02,09:05,75:01">CANADA</entity>
@@ -368,7 +269,7 @@
        <entity arrlId="240" zonemap="73:13">SOUTH SANDWICH ISLANDS</entity>
        <entity arrlId="241" zonemap="73:13">SOUTH SHETLAND ISLANDS</entity>
        <entity arrlId="242" zonemap="17:40">ICELAND</entity>
-       <entity arrlId="243" zonemap="39:21">PEOPLE&apos;S DEM REP OF YEMEN (DELETED)</entity>
+       <entity arrlId="243" zonemap="39:21">PEOPLE'S DEM REP OF YEMEN (DELETED)</entity>
        <entity arrlId="244" zonemap="47:34,48:34">SOUTHERN SUDAN (DELETED)</entity>
        <entity arrlId="245" zonemap="27:14">IRELAND</entity>
        <entity arrlId="246" zonemap="28:15">SOV MILITARY ORDER OF MALTA</entity>
@@ -478,7 +379,7 @@
        <entity arrlId="420" zonemap="52:36">GABON</entity>
        <entity arrlId="422" zonemap="46:35">THE GAMBIA</entity>
        <entity arrlId="424" zonemap="46:35">GHANA</entity>
-       <entity arrlId="428" zonemap="46:35">COTE D&apos;IVOIRE</entity>
+       <entity arrlId="428" zonemap="46:35">COTE D'IVOIRE</entity>
        <entity arrlId="430" zonemap="48:37">KENYA</entity>
        <entity arrlId="432" zonemap="57:38">LESOTHO</entity>
        <entity arrlId="434" zonemap="46:35">LIBERIA</entity>
@@ -534,8 +435,306 @@
        <entity arrlId="520" zonemap="11:09">BONAIRE</entity>
        <entity arrlId="521" zonemap="48:34">REPUBLIC OF SOUTH SUDAN</entity>
      </dxcc>
+     <bands>
+       <band spectrum="UHF" low="24000" high="24250">1.25CM</band>
+       <band spectrum="VHF" low="220" high="225">1.25M</band>
+       <band spectrum="HF" low="28000" high="29700">10M</band>
+       <band spectrum="HF" low="24890" high="24990">12M</band>
+       <band spectrum="UHF" low="2300" high="2450">13CM</band>
+       <band spectrum="HF" low="21000" high="21450">15M</band>
+       <band spectrum="HF" low="1800" high="2000">160M</band>
+       <band spectrum="HF" low="18068" high="18168">17M</band>
+       <band spectrum="UHF" low="241000" high="250000">1MM</band>
+       <band spectrum="UHF" low="119980" high="120020">2.5MM</band>
+       <band spectrum="HF" low="14000" high="14350">20M</band>
+       <band spectrum="HF" low="136" high="137">2190M</band>
+       <band spectrum="UHF" low="1240" high="1300">23CM</band>
+       <band spectrum="VHF" low="144" high="148">2M</band>
+       <band spectrum="UHF" low="142000" high="149000">2MM</band>
+       <band spectrum="HF" low="10100" high="10150">30M</band>
+       <band spectrum="UHF" low="902" high="928">33CM</band>
+       <band spectrum="UHF" low="10000" high="10500">3CM</band>
+       <band spectrum="HF" low="7000" high="7300">40M</band>
+       <band spectrum="VHF" low="70" high="71">4M</band>
+       <band spectrum="UHF" low="75500" high="81000">4MM</band>
+       <band spectrum="HF" low="5250" high="5405">60M</band>
+       <band spectrum="UHF" low="5650" high="5925">6CM</band>
+       <band spectrum="VHF" low="50" high="54">6M</band>
+       <band spectrum="UHF" low="47000" high="47200">6MM</band>
+       <band spectrum="UHF" low="420" high="450">70CM</band>
+       <band spectrum="HF" low="3500" high="4000">80M</band>
+       <band spectrum="UHF" low="3300" high="3500">9CM</band>
+       <band spectrum="UHF" low="300000" high="0">SUBMM</band>
+     </bands>
+     <modes>
+       <mode group="PHONE">AM</mode>
+       <mode group="DATA">AMTOR</mode>
+       <mode group="IMAGE">ATV</mode>
+       <mode group="DATA">CHIP</mode>
+       <mode group="DATA">CLOVER</mode>
+       <mode group="DATA">CONTESTI</mode>
+       <mode group="CW">CW</mode>
+       <mode group="DATA">DATA</mode>
+       <mode group="DATA">DOMINO</mode>
+       <mode group="IMAGE">FAX</mode>
+       <mode group="PHONE">FM</mode>
+       <mode group="DATA">FSK31</mode>
+       <mode group="DATA">FSK441</mode>
+       <mode group="DATA">GTOR</mode>
+       <mode group="DATA">HELL</mode>
+       <mode group="DATA">HFSK</mode>
+       <mode group="IMAGE">IMAGE</mode>
+       <mode group="DATA">ISCAT</mode>
+       <mode group="DATA">JT4</mode>
+       <mode group="DATA">JT65</mode>
+       <mode group="DATA">JT6M</mode>
+       <mode group="DATA">JT9</mode>
+       <mode group="DATA">MFSK16</mode>
+       <mode group="DATA">MFSK8</mode>
+       <mode group="DATA">MINIRTTY</mode>
+       <mode group="DATA">MT63</mode>
+       <mode group="DATA">OLIVIA</mode>
+       <mode group="DATA">OPERA</mode>
+       <mode group="DATA">PACKET</mode>
+       <mode group="DATA">PACTOR</mode>
+       <mode group="DATA">PAX</mode>
+       <mode group="PHONE">PHONE</mode>
+       <mode group="DATA">PSK10</mode>
+       <mode group="DATA">PSK125</mode>
+       <mode group="DATA">PSK2K</mode>
+       <mode group="DATA">PSK31</mode>
+       <mode group="DATA">PSK63</mode>
+       <mode group="DATA">PSK63F</mode>
+       <mode group="DATA">PSKAM</mode>
+       <mode group="DATA">PSKFEC31</mode>
+       <mode group="DATA">Q15</mode>
+       <mode group="DATA">ROS</mode>
+       <mode group="DATA">RTTY</mode>
+       <mode group="DATA">RTTYM</mode>
+       <mode group="PHONE">SSB</mode>
+       <mode group="IMAGE">SSTV</mode>
+       <mode group="DATA">THOR</mode>
+       <mode group="DATA">THROB</mode>
+       <mode group="DATA">VOI</mode>
+       <mode group="DATA">WINMOR</mode>
+       <mode group="DATA">WSPR</mode>
+     </modes>
+     <adifmap>
+       <adifmode mode="AMTOR">AMTORFEC</adifmode>
+       <adifmode mode="RTTY">ASCI</adifmode>
+       <adifmode mode="CHIP">CHIP128</adifmode>
+       <adifmode mode="CHIP">CHIP64</adifmode>
+       <adifmode mode="CLOVER">CLO</adifmode>
+       <adifmode mode="DOMINO">DOMINOF</adifmode>
+       <adifmode mode="HELL">FMHELL</adifmode>
+       <adifmode mode="HELL">HELL80</adifmode>
+       <adifmode mode="RTTY">HFSK</adifmode>
+       <adifmode mode="ISCAT">ISCAT-A</adifmode>
+       <adifmode mode="ISCAT">ISCAT-B</adifmode>
+       <adifmode mode="JT4">JT4A</adifmode>
+       <adifmode mode="JT4">JT4B</adifmode>
+       <adifmode mode="JT4">JT4C</adifmode>
+       <adifmode mode="JT4">JT4D</adifmode>
+       <adifmode mode="JT4">JT4E</adifmode>
+       <adifmode mode="JT4">JT4F</adifmode>
+       <adifmode mode="JT4">JT4G</adifmode>
+       <adifmode mode="JT65">JT65A</adifmode>
+       <adifmode mode="JT65">JT65B</adifmode>
+       <adifmode mode="JT65">JT65B2</adifmode>
+       <adifmode mode="JT65">JT65C</adifmode>
+       <adifmode mode="JT65">JT65C2</adifmode>
+       <adifmode mode="JT9">JT9-1</adifmode>
+       <adifmode mode="JT9">JT9-10</adifmode>
+       <adifmode mode="JT9">JT9-2</adifmode>
+       <adifmode mode="JT9">JT9-30</adifmode>
+       <adifmode mode="JT9">JT9-5</adifmode>
+       <adifmode mode="SSB">LSB</adifmode>
+       <adifmode mode="MINIRTTY">MTTY</adifmode>
+       <adifmode mode="OPERA">OP05</adifmode>
+       <adifmode mode="OPERA">OP1</adifmode>
+       <adifmode mode="OPERA">OP15</adifmode>
+       <adifmode mode="OPERA">OP2</adifmode>
+       <adifmode mode="OPERA">OP32</adifmode>
+       <adifmode mode="OPERA">OP4</adifmode>
+       <adifmode mode="OPERA">OP4H</adifmode>
+       <adifmode mode="OPERA">OP8</adifmode>
+       <adifmode mode="PACTOR">PAC</adifmode>
+       <adifmode mode="PACTOR">PAC2</adifmode>
+       <adifmode mode="PACTOR">PAC3</adifmode>
+       <adifmode mode="PAX">PAX2</adifmode>
+       <adifmode mode="CW">PCW</adifmode>
+       <adifmode mode="PACKET">PKT</adifmode>
+       <adifmode mode="PSKAM">PSKAM10</adifmode>
+       <adifmode mode="PSKAM">PSKAM31</adifmode>
+       <adifmode mode="PSKAM">PSKAM50</adifmode>
+       <adifmode mode="HELL">PSKHELL</adifmode>
+       <adifmode mode="PSK125">QPSK125</adifmode>
+       <adifmode mode="PSK31">QPSK31</adifmode>
+       <adifmode mode="PSK63">QPSK63</adifmode>
+       <adifmode mode="THROB">THRB</adifmode>
+       <adifmode mode="THROB">THRBX</adifmode>
+       <adifmode mode="AMTOR">TOR</adifmode>
+       <adifmode mode="SSB">USB</adifmode>
+     </adifmap>
+     <cabrillomap>
+       <cabrillocontest field="8" type="HF">AP-SPRINT</cabrillocontest>
+       <cabrillocontest field="8" type="HF">ARRL-10</cabrillocontest>
+       <cabrillocontest field="8" type="HF">ARRL-160</cabrillocontest>
+       <cabrillocontest field="8" type="HF">ARRL-DX-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">ARRL-DX-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">ARRL-RTTY</cabrillocontest>
+       <cabrillocontest field="10" type="HF">ARRL-SS-CW</cabrillocontest>
+       <cabrillocontest field="10" type="HF">ARRL-SS-SSB</cabrillocontest>
+       <cabrillocontest field="7" type="VHF">ARRL-UHF-AUG</cabrillocontest>
+       <cabrillocontest field="7" type="VHF">ARRL-VHF-JAN</cabrillocontest>
+       <cabrillocontest field="7" type="VHF">ARRL-VHF-JUN</cabrillocontest>
+       <cabrillocontest field="7" type="VHF">ARRL-VHF-SEP</cabrillocontest>
+       <cabrillocontest field="9" type="HF">BARTG-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-160-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-160-SSB</cabrillocontest>
+       <cabrillocontest field="7" type="VHF">CQ-VHF</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WPX-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WPX-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WPX-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WW-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WW-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CQ-WW-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">DARC-WAEDC-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">DARC-WAEDC-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">DARC-WAEDC-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">IARU-HF</cabrillocontest>
+       <cabrillocontest field="9" type="HF">NA-SPRINT-CW</cabrillocontest>
+       <cabrillocontest field="9" type="HF">NA-SPRINT-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">NAQP-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">NAQP-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">NAQP-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">NEQP</cabrillocontest>
+       <cabrillocontest field="8" type="HF">OCEANIA-DX-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">OCEANIA-DX-SSB</cabrillocontest>
+       <cabrillocontest field="9" type="HF">RSGB-IOTA</cabrillocontest>
+       <cabrillocontest field="8" type="HF">SAC-CW</cabrillocontest>
+       <cabrillocontest field="8" type="HF">SAC-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">STEW-PERRY</cabrillocontest>
+       <cabrillocontest field="9" type="HF">TARA-RTTY</cabrillocontest>
+       <cabrillocontest field="8" type="HF">WAEDC</cabrillocontest>
+     </cabrillomap>
+     <propmodes>
+       <propmode name="AUE">Aurora-E</propmode>
+       <propmode name="AUR">Aurora</propmode>
+       <propmode name="BS">Back scatter</propmode>
+       <propmode name="ECH">EchoLink</propmode>
+       <propmode name="EME">Earth-Moon-Earth</propmode>
+       <propmode name="ES">Sporadic E</propmode>
+       <propmode name="F2">F2 Reflection</propmode>
+       <propmode name="FAI">Field Aligned Irregularities</propmode>
+       <propmode name="ION">Ionoscatter</propmode>
+       <propmode name="IRL">IRLP</propmode>
+       <propmode name="MS">Meteor scatter</propmode>
+       <propmode name="RS">Rain scatter</propmode>
+       <propmode name="SAT">Satellite</propmode>
+       <propmode name="TEP">Trans-equatorial</propmode>
+       <propmode name="TR">Tropospheric ducting</propmode>
+     </propmodes>
+     <satellites>
+       <satellite name="AO-10" startDate="1983-06-06">AMSAT-OSCAR 10</satellite>
+       <satellite name="AO-13" startDate="1988-06-15" endDate="1996-12-07">AMSAT-OSCAR 13</satellite>
+       <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
+       <satellite name="AO-21" startDate="1991-01-29" endDate="1994-09-16">OSCAR 21/RS-14</satellite>
+       <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
+       <satellite name="AO-3" startDate="1965-03-18" endDate="1965-03-27">AMSAT-OSCAR 3</satellite>
+       <satellite name="AO-4" startDate="1965-12-21" endDate="1966-03-16">AMSAT-OSCAR 4</satellite>
+       <satellite name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
+       <satellite name="AO-51" startDate="2004-06-29">AMSAT-OSCAR 51</satellite>
+       <satellite name="AO-6" startDate="1972-10-15" endDate="1977-06-21">AMSAT-OSCAR 6</satellite>
+       <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
+       <satellite name="AO-8" startDate="1978-03-15" endDate="1983-06-24">AMSAT-OSCAR 8</satellite>
+       <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
+       <satellite name="Arsene" startDate="1993-05-13" endDate="1993-09-10">OSCAR 24</satellite>
+       <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
+       <satellite name="FO-12" startDate="1986-08-12" endDate="1989-11-05">Fuji-OSCAR 12</satellite>
+       <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
+       <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
+       <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
+       <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
+       <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
+       <satellite name="RS-1" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 1</satellite>
+       <satellite name="RS-10" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 10</satellite>
+       <satellite name="RS-11" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 11</satellite>
+       <satellite name="RS-12" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 12</satellite>
+       <satellite name="RS-13" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 13</satellite>
+       <satellite name="RS-15" startDate="1994-12-16">Radio Sputnik 15</satellite>
+       <satellite name="RS-2" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 2</satellite>
+       <satellite name="RS-5" startDate="1981-12-17" endDate="1987-05-10">Radio Sputnik 5</satellite>
+       <satellite name="RS-6" startDate="1981-12-17" endDate="1984-12-09">Radio Sputnik 6</satellite>
+       <satellite name="RS-7" startDate="1981-12-18" endDate="1987-06-01">Radio Sputnik 7</satellite>
+       <satellite name="RS-8" startDate="1981-12-17" endDate="1985-12-16">Radio Sputnik 8</satellite>
+       <satellite name="SO-35" startDate="1999-02-23" endDate="2001-06-10">Sunsat-OSCAR 35</satellite>
+       <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
+       <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
+       <satellite name="SO-67" startDate="2009-09-17">Sumbandila Oscar 67</satellite>
+       <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
+       <satellite name="VO-52" startDate="2005-05-05">VUsat-OSCAR 52</satellite>
+     </satellites>
+     <locpages>
+       <page Id="1" follows="0">
+         <pageField>CALL</pageField>
+         <pageField>DXCC</pageField>
+         <pageField>GRIDSQUARE</pageField>
+         <pageField>ITUZ</pageField>
+         <pageField>CQZ</pageField>
+         <pageField>IOTA</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="2" follows="1" dependsOn="DXCC" dependency="291">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="3" follows="1" dependsOn="DXCC" dependency="6">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="4" follows="1" dependsOn="DXCC" dependency="1">
+         <pageField>CA_PROVINCE</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="5" follows="1" dependsOn="DXCC" dependency="15">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="6" follows="1" dependsOn="DXCC" dependency="54">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="7" follows="1" dependsOn="DXCC" dependency="110">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="8" follows="1" dependsOn="DXCC" dependency="61">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="9" follows="1" dependsOn="DXCC" dependency="125">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="10" follows="1" dependsOn="DXCC" dependency="151">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="11" follows="1" dependsOn="DXCC" dependency="318">
+         <pageField>CN_PROVINCE</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="12" follows="1" dependsOn="DXCC" dependency="150">
+         <pageField>AU_STATE</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+     </locpages>
      <locfields>
-       <field Id="AU_STATE" flags="0" intype="2" label="State" len="3" type="C">
+       <field Id="AU_STATE" type="C" len="3" label="State" intype="2" flags="0">
          <enums>
            <enum value="ACT" zonemap="59:30">Australian Capital Territory</enum>
            <enum value="NSW" zonemap="59:30">New South Wales</enum>
@@ -547,8 +746,8 @@
            <enum value="NT" zonemap="55:29">Northern Territory</enum>
          </enums>
        </field>
-       <field Id="CALL" flags="0" intype="2" label="Call Sign" len="13" type="C" />
-       <field Id="CA_PROVINCE" flags="4" intype="2" label="Province" len="2" type="C">
+       <field Id="CALL" type="C" len="13" label="Call Sign" intype="2" flags="0" />
+       <field Id="CA_PROVINCE" type="C" len="2" label="Province" intype="2" flags="4">
          <enums>
            <enum value="AB" zonemap="02:04">Alberta</enum>
            <enum value="BC" zonemap="02:03">British Columbia</enum>
@@ -565,7 +764,7 @@
            <enum value="YT" zonemap="02:01">Yukon Territory</enum>
          </enums>
        </field>
-       <field Id="CN_PROVINCE" flags="0" intype="2" label="Province" len="2" type="C">
+       <field Id="CN_PROVINCE" type="C" len="2" label="Province" intype="2" flags="0">
          <enums>
            <enum value="AH" zonemap="43:24">Anhui</enum>
            <enum value="BJ" zonemap="44:24">Beijing</enum>
@@ -600,7 +799,7 @@
            <enum value="ZJ" zonemap="44:24">Zhejiang</enum>
          </enums>
        </field>
-       <field Id="CONT" flags="0" intype="2" label="Continent" len="2" type="C">
+       <field Id="CONT" type="C" len="2" label="Continent" intype="2" flags="0">
          <enums>
            <enum value="AF">Africa</enum>
            <enum value="AS">Asia</enum>
@@ -611,12 +810,12 @@
            <enum value="SA">South America</enum>
          </enums>
        </field>
-       <field Id="CQZ" flags="0" intype="2" label="CQ Zone" len="10" lower="1" type="I" upper="40" />
-       <field Id="DXCC" flags="0" intype="2" label="DXCC Entity" len="10" type="I" />
-       <field Id="GRIDSQUARE" flags="0" intype="1" label="Grid Square" len="27" type="C" />
-       <field Id="IOTA" flags="1" intype="1" label="IOTA ID" len="10" type="C" />
-       <field Id="ITUZ" flags="0" intype="2" label="ITU Zone" len="10" lower="1" type="I" upper="75" />
-       <field Id="RU_OBLAST" dependsOn="DXCC" flags="0" intype="2" label="Oblast" len="2" type="C">
+       <field Id="CQZ" type="I" len="10" lower="1" upper="40" label="CQ Zone" intype="2" flags="0" />
+       <field Id="DXCC" type="I" len="10" label="DXCC Entity" intype="2" flags="0" />
+       <field Id="GRIDSQUARE" type="C" len="27" label="Grid Square" intype="1" flags="0" />
+       <field Id="IOTA" type="C" len="10" label="IOTA ID" intype="1" flags="1" />
+       <field Id="ITUZ" type="I" len="10" lower="1" upper="75" label="ITU Zone" intype="2" flags="0" />
+       <field Id="RU_OBLAST" type="C" len="2" label="Oblast" intype="2" flags="0" dependsOn="DXCC">
          <enums dependency="125">
            <enum value="KA" zonemap="29:15">KA Kaliningrad</enum>
          </enums>
@@ -709,7 +908,7 @@
            <enum value="TL" zonemap="29:16">TL Tula</enum>
            <enum value="TV" zonemap="29:16">TV Tver</enum>
            <enum value="UD" zonemap="30:16">UD Republic of Udmurtia</enum>
-           <enum value="UL" zonemap="29:16,30:16">UL Ul&apos;anovsk</enum>
+           <enum value="UL" zonemap="29:16,30:16">UL Ul'anovsk</enum>
            <enum value="VG" zonemap="29:16">VG Volgograd</enum>
            <enum value="VL" zonemap="29:16">VL Vladimir</enum>
            <enum value="VO" zonemap="19:16,29:16">VO Vologda</enum>
@@ -719,7 +918,7 @@
            <enum value="AR" zonemap="19:16">AR Arkhangelsk</enum>
          </enums>
        </field>
-       <field Id="US_COUNTY" dependsOn="US_STATE" flags="0" intype="2" label="County" len="30" type="C">
+       <field Id="US_COUNTY" type="C" len="30" label="County" intype="2" flags="0" dependsOn="US_STATE">
          <enums dependency="AK">
            <enum value="Aleutians East" />
            <enum value="Aleutians West" />
@@ -3963,7 +4162,7 @@
            <enum value="Weston" />
          </enums>
        </field>
-       <field Id="US_STATE" dependsOn="DXCC" flags="4" intype="2" label="State" len="2" type="C">
+       <field Id="US_STATE" type="C" len="2" label="State" intype="2" flags="4" dependsOn="DXCC">
          <enums dependency="110">
            <enum value="HI" zonemap="61:31">Hawaii</enum>
          </enums>
@@ -4022,207 +4221,7 @@
            <enum value="AK" zonemap="01:01,02:01">Alaska</enum>
          </enums>
        </field>
-       <field Id="WPX" flags="1" intype="1" label="WPX Prefix" len="10" type="C" />
-       <field Id="ZERR" flags="0" intype="4" len="80" type="C" />
+       <field Id="WPX" type="C" len="10" label="WPX Prefix" intype="1" flags="1" />
+       <field Id="ZERR" type="C" len="80" intype="4" flags="0" />
      </locfields>
-     <locpages>
-       <page Id="1" follows="0">
-         <pageField>CALL</pageField>
-         <pageField>DXCC</pageField>
-         <pageField>GRIDSQUARE</pageField>
-         <pageField>ITUZ</pageField>
-         <pageField>CQZ</pageField>
-         <pageField>IOTA</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="2" dependency="291" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="3" dependency="6" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="4" dependency="1" dependsOn="DXCC" follows="1">
-         <pageField>CA_PROVINCE</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="5" dependency="15" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="6" dependency="54" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="7" dependency="110" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="8" dependency="61" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="9" dependency="125" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="10" dependency="151" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="11" dependency="318" dependsOn="DXCC" follows="1">
-         <pageField>CN_PROVINCE</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="12" dependency="150" dependsOn="DXCC" follows="1">
-         <pageField>AU_STATE</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-     </locpages>
-     <modes>
-       <mode group="PHONE">AM</mode>
-       <mode group="DATA">AMTOR</mode>
-       <mode group="IMAGE">ATV</mode>
-       <mode group="DATA">CHIP</mode>
-       <mode group="DATA">CLOVER</mode>
-       <mode group="DATA">CONTESTI</mode>
-       <mode group="CW">CW</mode>
-       <mode group="DATA">DATA</mode>
-       <mode group="DATA">DOMINO</mode>
-       <mode group="IMAGE">FAX</mode>
-       <mode group="PHONE">FM</mode>
-       <mode group="DATA">FSK31</mode>
-       <mode group="DATA">FSK441</mode>
-       <mode group="DATA">GTOR</mode>
-       <mode group="DATA">HELL</mode>
-       <mode group="DATA">HFSK</mode>
-       <mode group="IMAGE">IMAGE</mode>
-       <mode group="DATA">ISCAT</mode>
-       <mode group="DATA">JT4</mode>
-       <mode group="DATA">JT65</mode>
-       <mode group="DATA">JT6M</mode>
-       <mode group="DATA">JT9</mode>
-       <mode group="DATA">MFSK16</mode>
-       <mode group="DATA">MFSK8</mode>
-       <mode group="DATA">MINIRTTY</mode>
-       <mode group="DATA">MT63</mode>
-       <mode group="DATA">OLIVIA</mode>
-       <mode group="DATA">OPERA</mode>
-       <mode group="DATA">PACKET</mode>
-       <mode group="DATA">PACTOR</mode>
-       <mode group="DATA">PAX</mode>
-       <mode group="PHONE">PHONE</mode>
-       <mode group="DATA">PSK10</mode>
-       <mode group="DATA">PSK125</mode>
-       <mode group="DATA">PSK2K</mode>
-       <mode group="DATA">PSK31</mode>
-       <mode group="DATA">PSK63</mode>
-       <mode group="DATA">PSK63F</mode>
-       <mode group="DATA">PSKAM</mode>
-       <mode group="DATA">PSKFEC31</mode>
-       <mode group="DATA">Q15</mode>
-       <mode group="DATA">ROS</mode>
-       <mode group="DATA">RTTY</mode>
-       <mode group="DATA">RTTYM</mode>
-       <mode group="PHONE">SSB</mode>
-       <mode group="IMAGE">SSTV</mode>
-       <mode group="DATA">THOR</mode>
-       <mode group="DATA">THROB</mode>
-       <mode group="DATA">VOI</mode>
-       <mode group="DATA">WINMOR</mode>
-       <mode group="DATA">WSPR</mode>
-     </modes>
-     <propmodes>
-       <propmode name="AUE">Aurora-E</propmode>
-       <propmode name="AUR">Aurora</propmode>
-       <propmode name="BS">Back scatter</propmode>
-       <propmode name="ECH">EchoLink</propmode>
-       <propmode name="EME">Earth-Moon-Earth</propmode>
-       <propmode name="ES">Sporadic E</propmode>
-       <propmode name="F2">F2 Reflection</propmode>
-       <propmode name="FAI">Field Aligned Irregularities</propmode>
-       <propmode name="ION">Ionoscatter</propmode>
-       <propmode name="IRL">IRLP</propmode>
-       <propmode name="MS">Meteor scatter</propmode>
-       <propmode name="RS">Rain scatter</propmode>
-       <propmode name="SAT">Satellite</propmode>
-       <propmode name="TEP">Trans-equatorial</propmode>
-       <propmode name="TR">Tropospheric ducting</propmode>
-     </propmodes>
-     <providers>
-       <provider organizationName="American Radio Relay League">
-         <emailAddress>lotw-logs@arrl.org</emailAddress>
-         <organizationalUnitName>Logbook of the World</organizationalUnitName>
-         <url>https://www.arrl.org/lotw/</url>
-       </provider>
-     </providers>
-     <satellites>
-       <satellite name="AO-10" startDate="1983-06-06">AMSAT-OSCAR 10</satellite>
-       <satellite endDate="1996-12-07" name="AO-13" startDate="1988-06-15">AMSAT-OSCAR 13</satellite>
-       <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
-       <satellite endDate="1994-09-16" name="AO-21" startDate="1991-01-29">OSCAR 21/RS-14</satellite>
-       <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
-       <satellite endDate="1965-03-27" name="AO-3" startDate="1965-03-18">AMSAT-OSCAR 3</satellite>
-       <satellite endDate="1966-03-16" name="AO-4" startDate="1965-12-21">AMSAT-OSCAR 4</satellite>
-       <satellite name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
-       <satellite name="AO-51" startDate="2004-06-29">AMSAT-OSCAR 51</satellite>
-       <satellite endDate="1977-06-21" name="AO-6" startDate="1972-10-15">AMSAT-OSCAR 6</satellite>
-       <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
-       <satellite endDate="1983-06-24" name="AO-8" startDate="1978-03-15">AMSAT-OSCAR 8</satellite>
-       <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
-       <satellite endDate="1993-09-10" name="Arsene" startDate="1993-05-13">OSCAR 24</satellite>
-       <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
-       <satellite endDate="1989-11-05" name="FO-12" startDate="1986-08-12">Fuji-OSCAR 12</satellite>
-       <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
-       <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
-       <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
-       <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
-       <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
-       <satellite endDate="1979-02-01" name="RS-1" startDate="1978-10-26">Radio Sputnik 1</satellite>
-       <satellite endDate="2000-11-01" name="RS-10" startDate="1987-06-23">Radio Sputnik 10</satellite>
-       <satellite endDate="2000-11-01" name="RS-11" startDate="1987-06-23">Radio Sputnik 11</satellite>
-       <satellite endDate="2002-02-15" name="RS-12" startDate="1991-02-05">Radio Sputnik 12</satellite>
-       <satellite endDate="2002-02-15" name="RS-13" startDate="1991-02-05">Radio Sputnik 13</satellite>
-       <satellite name="RS-15" startDate="1994-12-16">Radio Sputnik 15</satellite>
-       <satellite endDate="1979-02-01" name="RS-2" startDate="1978-10-26">Radio Sputnik 2</satellite>
-       <satellite endDate="1987-05-10" name="RS-5" startDate="1981-12-17">Radio Sputnik 5</satellite>
-       <satellite endDate="1984-12-09" name="RS-6" startDate="1981-12-17">Radio Sputnik 6</satellite>
-       <satellite endDate="1987-06-01" name="RS-7" startDate="1981-12-18">Radio Sputnik 7</satellite>
-       <satellite endDate="1985-12-16" name="RS-8" startDate="1981-12-17">Radio Sputnik 8</satellite>
-       <satellite endDate="2001-06-10" name="SO-35" startDate="1999-02-23">Sunsat-OSCAR 35</satellite>
-       <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
-       <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
-       <satellite name="SO-67" startDate="2009-09-17">Sumbandila Oscar 67</satellite>
-       <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
-       <satellite name="VO-52" startDate="2005-05-05">VUsat-OSCAR 52</satellite>
-     </satellites>
-     <sigspecs>
-       <sigspec name="LOTW" version="1.0">
-         <tCONTACT>
-           <BAND required="1" />
-   	<BAND_RX />
-           <CALL required="1" />
-           <FREQ />
-   	<FREQ_RX />
-           <MODE required="1" />
-   	<PROP_MODE />
-           <QSO_DATE required="1" />
-           <QSO_TIME required="1" />
-   	<SAT_NAME />
-         </tCONTACT>
-         <tSTATION>
-           <CA_PROVINCE />
-           <CQZ method="int" />
-           <GRIDSQUARE />
-           <IOTA />
-           <ITUZ method="int" />
-           <US_COUNTY />
-           <US_STATE />
-         </tSTATION>
-       </sigspec>
-     </sigspecs>
-   </tqslconfig>
+</tqslconfig>
