@@ -511,11 +511,11 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	sizer->Add(new wxStaticText(this, NULL, "If this certificate is for your personal callsign, then you\n"
-											"should select 'Signed' and choose a callsign certificate from\n"
-											"the list to be used to sign this request.\n\n"
-											"If this certificate request is being submitted for a club station\n"
-											"or by a QSL manager on behalf of another licensee, select 'Unsigned'."));
+	sizer->Add(new wxStaticText(this, -1, wxT("If this certificate is for your personal callsign, then you\n"
+						"should select 'Signed' and choose a callsign certificate from\n"
+						"the list to be used to sign this request.\n\n"
+						"If this certificate request is being submitted for a club station\n"
+						"or by a QSL manager on behalf of another licensee, select 'Unsigned'.")));
 
 	tc_status = new wxStaticText(this, -1, wxT("M"));
 	int em_h = tc_status->GetSize().GetHeight();
