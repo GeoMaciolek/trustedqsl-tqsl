@@ -121,6 +121,7 @@ static wxString flattenCallSign(const wxString& call);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
 FILE *diagFile = NULL;
+static wxString origCommandLine = wxT("");
 
 static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
@@ -356,6 +357,7 @@ bool
 DateRangeDialog::TransferDataFromWindow() {
 	tqslTrace("DateRangeDialog::TransferDataFromWindow");
 	wxString text = start_tc->GetValue();
+	tqslTrace("DateRangeDialog::TransferDataFromWindow: start=%s",_S(text));
 	if (text.Trim() == wxT(""))
 		start.year = start.month = start.day = 0;
 	else if (tqsl_initDate(&start, text.mb_str()) || !tqsl_isDateValid(&start)) {
@@ -363,6 +365,7 @@ DateRangeDialog::TransferDataFromWindow() {
 		return false;
 	}
 	text = end_tc->GetValue();
+	tqslTrace("DateRangeDialog::TransferDataFromWindow: end=%s",_S(text));
 	if (text.Trim() == wxT(""))
 		end.year = end.month = end.day = 0;
 	else if (tqsl_initDate(&end, text.mb_str()) || !tqsl_isDateValid(&end)) {
@@ -1131,6 +1134,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	help_menu->Check(tm_h_diag, true);
 	wxString about = getAbout();
 	fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
+	fprintf(diagFile, "Command Line: %s\n", (const char *)origCommandLine.mb_str());
 }
 
 static void
@@ -3292,10 +3296,13 @@ QSLApp::OnInit() {
 	};
 
 	// Lowercase command options
-	for (int i = 1; i < argc; i++)
+	for (int i = 1; i < argc; i++) {
+		if (!origCommandLine.IsEmpty()) origCommandLine += wxT("");
+		origCommandLine += argv[i];
 		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')) 
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1])) 
 				argv[i][1] = wxTolower(argv[i][1]);
+	}
 		
 	parser.SetCmdLine(argc, argv);
 	parser.SetDesc(cmdLineDesc);
@@ -3325,6 +3332,7 @@ QSLApp::OnInit() {
 		} else {
 			wxString about = getAbout();
 			fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
+			fprintf(diagFile, "Command Line: %s\n", (const char *)origCommandLine.mb_str());
 		}
 	}
 
