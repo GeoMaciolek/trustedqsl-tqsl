@@ -16,6 +16,7 @@
 #include "tqslwiz.h"
 #include "wxutil.h"
 #include "tqsltrace.h"
+#include <wx/tokenzr.h>
 
 
 using namespace std;
@@ -342,7 +343,9 @@ TQSLWizCertPage::~TQSLWizCertPage() {
 const char *
 TQSLWizCertPage::validate() {
 	tqslTrace("TQSLWizCertPage::validate");
-	const char *errmsg = 0;
+	static char errtxt[128];
+	wxString error;
+	error = wxT("");
 	tqsl_setStationLocationCapturePage(loc, loc_page);
 	for (int i = 0; i < (int)controls.size(); i++) {
 		char gabbi_name[40];
@@ -352,57 +355,67 @@ TQSLWizCertPage::validate() {
 			if (gridVal.size() == 0) {
 				return 0;
 			}
-			if (gridVal[0] <= 'z' && gridVal[1] >= 'a')
-				gridVal[0] = gridVal[0] - 'a' + 'A';	// Upper case first two
-			if (gridVal.size() > 1 && (gridVal[1] <= 'z' && gridVal[1] >= 'a'))
-				gridVal[1] = gridVal[1] - 'a' + 'A';
-			((wxTextCtrl *)controls[i])->SetValue(gridVal);
-			tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
-			if (gridVal[0] < 'A' || gridVal[0] > 'R') {
-				errmsg = "Please enter a valid Grid Square Field";
-				return errmsg;
+			wxString editedGrids = wxT("");
+			wxStringTokenizer grids(gridVal, wxT(","));	// Comma-separated list of squares
+			while (grids.HasMoreTokens()) {
+				wxString grid = grids.GetNextToken().Trim().Trim(false);
+				// Truncate to six character field
+				grid = grid.Left(6);
+				if (grid[0] <= 'z' && grid[1] >= 'a')
+					grid[0] = grid[0] - 'a' + 'A';	// Upper case first two
+				if (grid.size() > 1 && (grid[1] <= 'z' && grid[1] >= 'a'))
+					grid[1] = grid[1] - 'a' + 'A';
+				if (grid[0] < 'A' || grid[0] > 'R') {
+					if (error.IsEmpty())
+						error = wxString::Format(wxT("%s: Invalid Grid Square Field"), grid.c_str());
+				}
+				if (grid.size() > 1 && (grid[1] < 'A' || grid[1] > 'R')) {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Grid Square Field"), grid.c_str());
+				}
+				if (grid.size() > 2 && (grid[2] < '0' || grid[2] > '9')) {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+				}
+				if (grid.size() < 4) {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+				}
+				if (grid[3] < '0' || grid[3] > '9') {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+				}
+
+				if (grid.size() > 4 && (grid[4] <= 'Z' && grid[4] >= 'A'))
+					grid[4] = grid[4] - 'A' + 'a';	// Lower case subsquare
+				if (grid.size() > 5 && (grid[5] <= 'Z' && grid[5] >= 'A'))
+					grid[5] = grid[5] - 'A' + 'a';
+
+				if (grid.size() > 4 && (grid[4] <= 'a' || grid[4] >= 'z')) {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
+				}
+				if (grid.size() > 5 && (grid[5] <= 'a' || grid[5] >= 'z')) {
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
+				}
+				if (grid.size() != 6 && grid.size() != 4) {
+					// Not long enough yet or too long.
+					if (error.IsEmpty()) 
+						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+				}
+				if (!editedGrids.IsEmpty()) 
+					editedGrids += wxT(",");
+				editedGrids += grid;
+				((wxTextCtrl *)controls[i])->SetValue(editedGrids);
+				tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
 			}
-			if (gridVal.size() > 1 && (gridVal[1] < 'A' || gridVal[1] > 'R')) {
-				errmsg = "Please enter a valid Grid Square Field";
-				return errmsg;
-			}
-			if (gridVal.size() > 2 && (gridVal[2] < '0' || gridVal[2] > '9')) {
-				errmsg = "Please enter a valid Grid Square";
-				return errmsg;
-			}
-			if (gridVal.size() < 4) {
-				errmsg = "Please enter a valid Grid Square";
-				return errmsg;
-			}
-			if (gridVal[3] < '0' || gridVal[3] > '9') {
-				errmsg = "Please enter a valid Grid Square";
-				return errmsg;
-			}
-			if (gridVal.size() == 4)
-				return 0;		// Good enough now
-			if (gridVal.size() > 4 && (gridVal[4] <= 'Z' && gridVal[4] >= 'A'))
-				gridVal[4] = gridVal[4] - 'A' + 'a';	// Lower case subsquare
-			if (gridVal.size() > 5 && (gridVal[5] <= 'Z' && gridVal[5] >= 'A'))
-				gridVal[5] = gridVal[5] - 'A' + 'a';
-			((wxTextCtrl *)controls[i])->SetValue(gridVal);
-			tqsl_setLocationFieldCharData(loc, i, ((wxTextCtrl *)controls[i])->GetValue().mb_str());
-			if (gridVal.size() > 4 && (gridVal[4] <= 'a' || gridVal[4] >= 'z')) {
-				errmsg = "Please enter a valid Subsquare";
-				return errmsg;
-			}
-			if (gridVal.size() > 5 && (gridVal[5] <= 'a' || gridVal[5] >= 'z')) {
-				errmsg = "Please enter a valid Subsquare";
-				return errmsg;
-			}
-			if (gridVal.size() == 6)
-				return 0;			// It's OK
-			// Not long enough yet or too long.
-			errmsg = "Please enter a valid Subsquare";
-			return errmsg;
+			if (error.IsEmpty()) return 0;
+			strncpy(errtxt, error.mb_str(), sizeof errtxt);
+			return errtxt;
 		}
 	}
-
-	return errmsg;
+	return 0;
 }
 
 bool
