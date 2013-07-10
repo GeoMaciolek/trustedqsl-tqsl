@@ -222,6 +222,9 @@ typedef void *&#160;</td><td class="memItemRight" valign="bottom"><b>tQSL_Cert</
 <tr class="memitem:a0cb5b4b503b0c0f51cafe2b68be7e34f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0cb5b4b503b0c0f51cafe2b68be7e34f"></a>
 typedef void *&#160;</td><td class="memItemRight" valign="bottom"><b>tQSL_Location</b></td></tr>
 <tr class="separator:a0cb5b4b503b0c0f51cafe2b68be7e34f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa704fac4a14310aaba724cb60e6239ac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa704fac4a14310aaba724cb60e6239ac"></a>
+typedef char *&#160;</td><td class="memItemRight" valign="bottom"><b>tQSL_StationDataEnc</b></td></tr>
+<tr class="separator:aa704fac4a14310aaba724cb60e6239ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d7bf02a1d518a13c277ae7f66aa3983"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structtqsl__provider__st.html">tqsl_provider_st</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tqsllib_8h.html#a9d7bf02a1d518a13c277ae7f66aa3983">TQSL_PROVIDER</a></td></tr>
 <tr class="separator:a9d7bf02a1d518a13c277ae7f66aa3983"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68e3169befbc28fd1e6fc12d3049563f"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="structtqsl__cert__req__st.html">tqsl_cert_req_st</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="tqsllib_8h.html#a68e3169befbc28fd1e6fc12d3049563f">TQSL_CERT_REQ</a></td></tr>
@@ -399,8 +402,10 @@ Functions</h2></td></tr>
 <tr class="separator:ga11013ba41c17e5ee9bf686843d75a293"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga45b9fd9238a7c3ed40e92370e9902aa2"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga45b9fd9238a7c3ed40e92370e9902aa2">tqsl_getStationLocationErrors</a> (tQSL_Location loc, char *buf, int bufsiz)</td></tr>
 <tr class="separator:ga45b9fd9238a7c3ed40e92370e9902aa2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:gacfe58aa656a851e10ca49b3fdbfd6bdd"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#gacfe58aa656a851e10ca49b3fdbfd6bdd">tqsl_getStationData</a> (char **sdata)</td></tr>
-<tr class="separator:gacfe58aa656a851e10ca49b3fdbfd6bdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga2057cd4d5207f064a4e7c617cc18a922"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga2057cd4d5207f064a4e7c617cc18a922">tqsl_getStationDataEnc</a> (tQSL_StationDataEnc *sdata)</td></tr>
+<tr class="separator:ga2057cd4d5207f064a4e7c617cc18a922"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga3072afdbd5a6b827e4212e50122be66c"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#ga3072afdbd5a6b827e4212e50122be66c">tqsl_freeStationDataEnc</a> (tQSL_StationDataEnc sdata)</td></tr>
+<tr class="separator:ga3072afdbd5a6b827e4212e50122be66c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gad3ddf5a00745e05d70a63d38b662dddb"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#gad3ddf5a00745e05d70a63d38b662dddb">tqsl_mergeStationLocations</a> (const char *locdata)</td></tr>
 <tr class="separator:gad3ddf5a00745e05d70a63d38b662dddb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gaa604a3152385ba6acd0dfac999c89061"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Data.html#gaa604a3152385ba6acd0dfac999c89061">tqsl_deleteStationLocation</a> (const char *name)</td></tr>
