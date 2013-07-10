@@ -2416,8 +2416,8 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 			wxString url;
 			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
 			URLHashMap map;
-			revLevel *newProgramRev;
-			revLevel *newConfigRev;
+			revLevel *newProgramRev = NULL;
+			revLevel *newConfigRev = NULL;
 		
 			wxStringTokenizer urls(result, wxT("\n"));
 			wxString onlinever;
@@ -2443,8 +2443,8 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 					map[plat]=url;
 				}
 			}
-			bool newProgram = (*newProgramRev > *programRev);
-			bool newConfig = (*newConfigRev > *configRev);
+			bool newProgram = newProgramRev ? (*newProgramRev > *programRev) : false;
+			bool newConfig = newConfigRev ? (*newConfigRev > *configRev) : false;
 
 			if (newProgram) {
 
@@ -3312,7 +3312,7 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')) 
+		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1])) 
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
@@ -3459,7 +3459,13 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
 		if (!frame)
+#ifdef __clang__
+			GUIinit(!quiet);// It's nice to have 'frame' for
+					// debugging, but clang complains
+					// (correctly) that it's never read
+#else
 			frame = GUIinit(!quiet);
+#endif
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());

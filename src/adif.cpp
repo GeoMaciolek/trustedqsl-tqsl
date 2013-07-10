@@ -415,7 +415,7 @@ tqsl_adifGetField( tqsl_adifFieldResults *field, FILE *filehandle,
 					( 0 != adifFields[( field->adifNameIndex )].enumStrings[iIndex][0] );
 					iIndex++ ) {
 						/* case insensitive compare */
-		 				if( 0 == strcasecmp( (const char *)field->data, adifFields[( field->adifNameIndex )].enumStrings[iIndex] ) ) {
+		 				if( field->data && (0 == strcasecmp( (const char *)field->data, adifFields[( field->adifNameIndex )].enumStrings[iIndex] ) ) ) {
 							status = TQSL_ADIF_GET_FIELD_SUCCESS;
 	 				}
 

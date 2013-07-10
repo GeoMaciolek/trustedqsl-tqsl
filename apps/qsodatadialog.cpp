@@ -477,7 +477,7 @@ QSODataDialog::SetRecno(int new_recno) {
 		return;
    	if (TransferDataFromWindow()) {
 //   		(*_reclist)[_recno-1] = rec;
-		if (new_recno > (int)_reclist->size()) {
+		if (_reclist && new_recno > (int)_reclist->size()) {
 			new_recno = _reclist->size() + 1;
 			QSORecord newrec;
 			// Copy QSO fields from current record
@@ -488,7 +488,7 @@ QSODataDialog::SetRecno(int new_recno) {
 			_reclist->push_back(newrec);
 		}
    		_recno = new_recno;
-   		rec = (*_reclist)[_recno-1];
+   		if (_reclist) rec = (*_reclist)[_recno-1];
    		TransferDataToWindow();
    		UpdateControls();
 		_call_ctrl->SetFocus();
