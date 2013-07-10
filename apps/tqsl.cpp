@@ -533,9 +533,9 @@ init_contests() {
 
 static void
 check_tqsl_error(int rval) {
-	tqslTrace("check_tqsl_error", "rval=%d", rval);
 	if (rval == 0)
 		return;
+	tqslTrace("check_tqsl_error", "rval=%d", rval);
 	const char *msg = tqsl_getErrorString();
 	tqslTrace("check_tqsl_error", "msg=%s", msg);
 	throw TQSLException(msg);
@@ -1380,8 +1380,8 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
-int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, int action, const char* password) {
-	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, action=%d",(void*)loc, _S(infile), _S(output), (void *)conv, suppressdate, action);
+int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password) {
+	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d",(void*)loc, _S(infile), _S(output), (void *)conv, suppressdate, (void *)startdate, (void *)enddate, action);
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -1441,6 +1441,16 @@ restart:
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
 		}
+		if (startdate || enddate) {
+			tqslTrace("MyFrame::ConvertLogToString", "startdate %d/%d/%d, enddate %d/%d/%d",
+					startdate ? startdate->year : 0,
+					startdate ? startdate->month : 0,
+					startdate ? startdate->day : 0,
+					enddate ? enddate->year : 0,
+					enddate ? enddate->month : 0,
+					enddate ? enddate->day : 0);
+			tqsl_setADIFConverterDateFilter(conv, startdate, enddate);
+		}	
 		bool allow = false;
 		config->Read(wxT("BadCalls"), &allow);
 		tqsl_setConverterAllowBadCall(conv, allow);
@@ -1648,8 +1658,8 @@ abortSigning:
 
 int
 MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
-	bool compressed, bool suppressdate, int action, const char *password) {
-	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, action=%d", (void *)loc, _S(infile), _S(outfile), compressed, suppressdate, action);	
+	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password) {
+	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx enddate=0x%lx action=%d", (void *)loc, _S(infile), _S(outfile), compressed, suppressdate, (void *)startdate, (void*) enddate, action);	
 
 	gzFile gout = 0;
 	ofstream out;
@@ -1667,7 +1677,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	wxString output;
 	int numrecs=0;
 	tQSL_Converter conv=0;
-	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, action, password);
+	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, startdate, enddate, action, password);
 
 	if (numrecs == 0) {
 		wxLogMessage(wxT("No records output"));
@@ -1815,14 +1825,14 @@ protected:
 	}
 };
 
-int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, int action, const char* password) {
-	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, action=%d", (void *)loc, _S(infile), compressed, suppressdate, action);
+int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password) {
+	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx, enddate=0x%lx action=%d", (void *)loc, _S(infile), compressed, suppressdate, (void *)startdate, (void *)enddate, action);
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
 	FILE *logFile = NULL; 
 
-	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, action, password);
+	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, startdate, enddate, action, password);
 
 	if (numrecs == 0) {
 		wxLogMessage(wxT("No records to upload"));
@@ -3279,7 +3289,9 @@ QSLApp::OnInit() {
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
 		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
+		{ wxCMD_LINE_OPTION, wxT("b"), wxT("begindate"),wxT("Specify start date for QSOs to sign") },
 		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
+		{ wxCMD_LINE_OPTION, wxT("e"), wxT("enddate"),	wxT("Specify end date for QSOs to sign") },
 		{ wxCMD_LINE_OPTION, wxT("i"), wxT("import"),	wxT("Import a certificate file (.p12 or .tq6)") },
 		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
@@ -3296,8 +3308,9 @@ QSLApp::OnInit() {
 	};
 
 	// Lowercase command options
+	origCommandLine = argv[0];
 	for (int i = 1; i < argc; i++) {
-		if (!origCommandLine.IsEmpty()) origCommandLine += wxT("");
+		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
 		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')) 
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1])) 
@@ -3383,6 +3396,42 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("d"))) {
 		suppressdate = true;
 	}
+	wxString start = wxT("");
+	wxString end = wxT("");
+	tQSL_Date* startdate = NULL;
+	tQSL_Date* enddate = NULL;
+	tQSL_Date s, e;
+	if (parser.Found(wxT("b"), &start)) {
+		if (start.Trim() == wxT(""))
+			startdate = NULL;
+		else if (tqsl_initDate(&s, start.mb_str()) || !tqsl_isDateValid(&s)) {
+			if (quiet) {
+				wxLogError(wxT("Start date of %s is invalid"), start.c_str());
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			}
+			else {
+				wxMessageBox(wxString::Format(wxT("Start date of %s is invalid"), start.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
+				return false;
+			}
+		}
+		startdate = &s;
+	}
+	if (parser.Found(wxT("e"), &end)) {
+		if (end.Trim() == wxT(""))
+			enddate = NULL;
+		else if (tqsl_initDate(&e, end.mb_str()) || !tqsl_isDateValid(&e)) {
+			if (quiet) {
+				wxLogError(wxT("End date of %s is invalid"), end.c_str());
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			}
+			else {
+				wxMessageBox(wxString::Format(wxT("End date of %s is invalid"), end.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
+				return false;
+			}
+		}
+		enddate = &e;
+	}
+
 	wxString act;
 	if (parser.Found(wxT("a"), &act)) {
 		if (!act.CmpNoCase(wxT("abort")))
@@ -3459,7 +3508,7 @@ QSLApp::OnInit() {
 	}
 	if (upload) {
 		try {
-			int val=frame->UploadLogFile(loc, infile, true, suppressdate, action, password);
+			int val=frame->UploadLogFile(loc, infile, true, suppressdate, startdate, enddate, action, password);
 			if (quiet)
 				exitNow(val, quiet);
 			else
@@ -3477,7 +3526,7 @@ QSLApp::OnInit() {
 		}
 	} else {
 		try {
-			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, action, password);
+			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, startdate, enddate, action, password);
 			if (quiet)
 				exitNow(val, quiet);
 			else

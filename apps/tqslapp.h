@@ -96,10 +96,10 @@ public:
 	void OnPreferences(wxCommandEvent& event);
 	void OnSaveConfig(wxCommandEvent& event);
 	void OnLoadConfig(wxCommandEvent& event);
-	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_ASK, const char *password = NULL);
+	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
-	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, int action = TQSL_ACTION_ASK, const char* password=NULL);
+	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password=NULL);
+	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password=NULL);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
