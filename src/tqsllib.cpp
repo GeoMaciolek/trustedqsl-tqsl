@@ -509,6 +509,72 @@ tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b) {
 	return 0;
 }
 
+// Return the number of days for a given year/month (January=1)
+static int
+days_per_month(int year, int month) {
+	switch (month) {
+		case 2:
+			if ((((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0))
+				return 29;
+			else
+				return 28;
+		case 4:
+		case 6:
+		case 9:
+		case 11:
+			return 30;
+		default:
+			return 31;
+	}
+	return 0;
+}
+
+// Return the julian day number for a given date.
+// One-based year/month/day
+static int
+julian_day(int year, int month, int day) {
+	int jday = 0;
+	for (int mon = 1; mon < month; mon ++) {
+		jday += days_per_month(year, mon);
+	}
+	jday += day;
+	return jday;
+}
+
+/* Calculate the difference between two tQSL_Date values
+ */
+DLLEXPORT int CALLCONVENTION
+tqsl_subtractDates(const tQSL_Date *a, const tQSL_Date *b, int *diff) {
+	if (a == NULL || b == NULL || diff == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	tQSL_Date first = *a;
+	tQSL_Date last = *b;
+	int mult = 1;
+	// Ensure that the first is earliest
+	if (tqsl_compareDates(&last, &first) < 0) {
+		first = *b;
+		last = *a;
+		mult = -1;
+	}
+	int delta = 0;
+	for (; first.year < last.year; first.year++) {
+		int fday = julian_day(first.year, first.month, first.day);
+		int fend = julian_day(first.year, 12, 31);
+		delta += (fend - fday + 1);	// days until next 1 Jan
+		first.month = 1;
+		first.day = 1;
+	}
+	// Now the years are the same - calculate delta
+	int fjulian = julian_day(first.year, first.month, first.day);
+	int ljulian = julian_day(last.year, last.month, last.day);
+
+	delta += (ljulian - fjulian);
+	*diff = (delta * mult);			// Swap sign if necessary
+	return 0;
+}
+
 /* Fill a tQSL_Date struct with the date from a text string
  */
 DLLEXPORT int CALLCONVENTION

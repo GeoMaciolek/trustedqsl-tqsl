@@ -228,6 +228,13 @@ DLLEXPORT int CALLCONVENTION tqsl_initTime(tQSL_Time *time, const char *str);
   */
 DLLEXPORT int CALLCONVENTION tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b);
 
+/** Calculate the number of days between two tQSL_Date objects.
+  * 
+  * Returns a positive result if the first date is earlier, otherwise
+  * negative.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_subtractDates(const tQSL_Date *a, const tQSL_Date *b, int *diff);
+
 /** Converts a tQSL_Date object to a YYYY-MM-DD string.
   *
   * Returns a pointer to \c buf or NULL on error
