@@ -170,6 +170,43 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 }
 
 void
+CertTree::SelectCert(tQSL_Cert cert) {
+
+	long serial;
+	if (tqsl_getCertificateSerial(cert, &serial))
+		return;
+	// Iterate the tree, looking for a matching certificate
+	wxTreeItemId root = GetRootItem();
+	wxTreeItemIdValue issCookie;
+	wxTreeItemIdValue certCookie;
+	wxTreeItemId top;
+	if (_nissuers > 1) {
+		top = GetFirstChild(root, issCookie);
+	} else {
+		top = root;
+	}
+	while (top.IsOk()) {
+		wxTreeItemId item = GetFirstChild(top, certCookie);
+		while (item.IsOk()) {
+			tQSL_Cert cert = GetItemData(item)->getCert();
+			long s;
+			tqsl_getCertificateSerial(cert, &s);
+			if (s == serial) {	// found it
+				SelectItem(item);
+				return;
+			}
+			item = GetNextChild(top, certCookie);
+		}
+		if (_nissuers > 1) {
+			top = GetNextChild(root, issCookie);
+		} else {
+			break;
+		}
+	}
+	return;		// Not found
+}
+
+void
 CertTree::OnItemActivated(wxTreeEvent& event) {
 	tqslTrace("CertTree::OnItemActivated");
 	wxTreeItemId id = event.GetItem();
