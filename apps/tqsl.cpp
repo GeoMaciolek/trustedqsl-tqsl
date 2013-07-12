@@ -1040,6 +1040,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		wxConfig *config = (wxConfig *)wxConfig::Get();
 		if (config->Read(wxT("AutoUpdateCheck"), true)) {
 			DoCheckForUpdates(true); //TODO: in a thread?
+			DoCheckExpiringCerts();
 		}
 	}
 }
@@ -2348,6 +2349,43 @@ void MyFrame::UpdateConfigFile() {
 	
 }
 
+// Check for certificates expiring in the next nn (default 60) days
+void
+MyFrame::DoCheckExpiringCerts(void) {
+	get_certlist("", 0, false, false);
+	if (ncerts == 0) return;
+
+	long expireDays = DEFAULT_CERT_WARNING;
+	wxConfig::Get()->Read(wxT("CertWarnDays"), &expireDays);
+	// Get today's date
+	time_t t = time(0);
+	struct tm *tm = gmtime(&t);
+	tQSL_Date d;
+	d.year = tm->tm_year + 1900;
+	d.month = tm->tm_mon + 1;
+	d.day = tm->tm_mday;
+	tQSL_Date exp;
+	for (int i = 0; i < ncerts; i ++) {
+		if (0 == tqsl_getCertificateNotAfterDate(certlist[i], &exp)) {
+			int days_left;
+			tqsl_subtractDates(&d, &exp, &days_left);
+			if (days_left < expireDays) {
+				char callsign[64];
+				check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
+				if (wxMessageBox(
+					wxString::Format(wxT("The certificate for %hs expires in %d days\n")
+						wxT("Do you want to renew it now?"), callsign, days_left), wxT("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+							// Select the certificate in the tree
+							cert_tree->SelectCert(certlist[i]);
+							// Then start the renewal
+							wxCommandEvent dummy;
+							CRQWizardRenew(dummy);
+				}
+			}
+		}
+	}
+	free_certlist();
+}
 
 void MyFrame::DoCheckForUpdates(bool silent) {
 	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d", silent);

@@ -104,6 +104,7 @@ public:
 
 	void CheckForUpdates(wxCommandEvent&);
 	void DoCheckForUpdates(bool quiet);
+	void DoCheckExpiringCerts(void);
 	void UpdateConfigFile(void);
 
 	void OnQuit(wxCommandEvent& event);

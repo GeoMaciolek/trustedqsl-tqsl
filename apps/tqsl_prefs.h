@@ -41,7 +41,7 @@
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
 #define DEFAULT_ADIF_FILES wxT("adi")
 #define DEFAULT_AUTO_BACKUP true
-
+#define DEFAULT_CERT_WARNING 60
 //online
 //#define ENABLE_ONLINE_PREFS
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
