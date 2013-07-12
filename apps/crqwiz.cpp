@@ -609,32 +609,15 @@ CRQ_IntroPage::validate() {
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
 		msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
 		ok = false;
-	} else if (!tqsl_isDateNull(&Parent()->qsonotafter)) {
-		if  (!tqsl_isDateValid(&Parent()->qsonotafter)) {
-			msg = wxT("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
-			ok = false;
-		} else {
-			if (wxMessageBox(
-				wxT("You have chosen a QSO end date for this Callsign Certificate. ")
-				wxT("The 'QSO end date' should ONLY be set if that date is the date when that callsign's license ")
-				wxT("expired or the license was replaced by a new callsign.\n\n")
-				wxT("If you set an end date, you will not be able to sign ")
-				wxT("QSOs past that date, even if the callsign certificate ")
-				wxT("itself is still valid.\n\n")
-				wxT("If you still hold this callsign (or if you plan to renew the license for the ")
-				wxT("callsign), you should not set a 'QSO end date'.\n")
-				wxT("Do you really want to keep this 'QSO end date'?"), wxT("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
-				tc_qsoendy->SetSelection(0);
-				tc_qsoendm->SetSelection(0);
-				tc_qsoendd->SetSelection(0);
-				goto notok;
-			}
-		}
-		if (tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
-			msg = wxT("QSO end date cannot be before QSO begin date.");
-			ok = false;
-		}
+	} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
+		msg = wxT("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
+		ok = false;
+	} else if (tqsl_isDateValid(&Parent()->qsonotafter)
+		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
+		msg = wxT("QSO end date cannot be before QSO begin date.");
+		ok = false;
 	}
+
 	if (!ok)
 		goto notok;
 
@@ -704,6 +687,24 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			wxT("should use the \"Back\" button to return to the DXCC\n")
 			wxT("page after clicking \"OK\""),
 			wxT("TQSLCert Warning"));
+
+	if (!tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
+		if (wxMessageBox(
+			wxT("You have chosen a QSO end date for this Callsign Certificate. ")
+			wxT("The 'QSO end date' should ONLY be set if that date is the date when that callsign's license ")
+			wxT("expired or the license was replaced by a new callsign.\n\n")
+			wxT("If you set an end date, you will not be able to sign ")
+			wxT("QSOs past that date, even if the callsign certificate ")
+			wxT("itself is still valid.\n\n")
+			wxT("If you still hold this callsign (or if you plan to renew the license for the ")
+			wxT("callsign), you should not set a 'QSO end date'.\n")
+			wxT("Do you really want to keep this 'QSO end date'?"), wxT("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
+				tc_qsoendy->SetSelection(0);
+				tc_qsoendm->SetSelection(0);
+				tc_qsoendd->SetSelection(0);
+				return false;
+		}
+	}
 	Parent()->callsign = tc_call->GetValue();
 	Parent()->callsign.MakeUpper();
 	tc_call->SetValue(Parent()->callsign);
