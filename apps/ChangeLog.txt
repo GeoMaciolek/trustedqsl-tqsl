@@ -72,6 +72,9 @@ update the configuration file if there is a newer one available.
 Add new command line options "-b" to select the start date for QSOs to be
 signed (begin) and -e to select the end date for QSOs to be signed.
 
+Warn users on startup when they have a certificate that's going to expire
+soon (in less than 60 days).
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed
