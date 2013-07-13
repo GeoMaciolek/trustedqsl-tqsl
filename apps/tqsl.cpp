@@ -1040,7 +1040,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		wxConfig *config = (wxConfig *)wxConfig::Get();
 		if (config->Read(wxT("AutoUpdateCheck"), true)) {
 			DoCheckForUpdates(true); //TODO: in a thread?
-			DoCheckExpiringCerts();
 		}
 	}
 }
@@ -2530,6 +2529,9 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 	config->Write(wxT("UpdateCheckTime"), wxDateTime::Today().FormatISODate());
 
 	curl_easy_cleanup(req);
+	
+	// After update check, validate user certificates
+	DoCheckExpiringCerts();
 }
 
 static void
