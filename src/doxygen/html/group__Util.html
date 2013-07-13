@@ -66,6 +66,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga9c28b2609c18cae2822003914c8f0a44"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga4edcf6bc4d369db632e1f0f0063c4219"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Util.html#ga4edcf6bc4d369db632e1f0f0063c4219">tqsl_compareDates</a> (const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *a, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *b)</td></tr>
 <tr class="separator:ga4edcf6bc4d369db632e1f0f0063c4219"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga7c8ca0dba0d4e1fa0461a395735052a9"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Util.html#ga7c8ca0dba0d4e1fa0461a395735052a9">tqsl_subtractDates</a> (const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *a, const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *b, int *diff)</td></tr>
+<tr class="separator:ga7c8ca0dba0d4e1fa0461a395735052a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga9fca307690b97886480380bcdb06ab57"><td class="memItemLeft" align="right" valign="top">DLLEXPORT char *CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Util.html#ga9fca307690b97886480380bcdb06ab57">tqsl_convertDateToText</a> (const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *date, char *buf, int bufsiz)</td></tr>
 <tr class="separator:ga9fca307690b97886480380bcdb06ab57"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga7197bceb8e4eb9363424c01b58226f2a"><td class="memItemLeft" align="right" valign="top">DLLEXPORT int CALLCONVENTION&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Util.html#ga7197bceb8e4eb9363424c01b58226f2a">tqsl_isDateValid</a> (const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *d)</td></tr>
@@ -531,6 +533,40 @@ DLLEXPORTDATA int&#160;</td><td class="memItemRight" valign="bottom"><a class="e
 </div><div class="memdoc">
 <p>Set the directory where the TQSL files are kept. May be called either before of after <a class="el" href="group__Util.html#ga64172f2e7f06fb06086cbc03733c2959">tqsl_init()</a>, but should be called before calling any other functions in the library.</p>
 <p>Note that this is purely optional. The library will figure out an approriate directory if tqsl_setDirectory isn't called. Unless there is some particular need to set the directory explicitly, programs should refrain from doing so. </p>
+
+</div>
+</div>
+<a class="anchor" id="ga7c8ca0dba0d4e1fa0461a395735052a9"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DLLEXPORT int CALLCONVENTION tqsl_subtractDates </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *&#160;</td>
+          <td class="paramname"><em>a</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *&#160;</td>
+          <td class="paramname"><em>b</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>diff</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Calculate the number of days between two <a class="el" href="structtQSL__Date.html">tQSL_Date</a> objects.</p>
+<p>Returns a positive result if the first date is earlier, otherwise negative. </p>
 
 </div>
 </div>
