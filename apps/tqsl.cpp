@@ -488,9 +488,12 @@ void
 DupesDialog::OnAllow(wxCommandEvent&) {
 	tqslTrace("DupesDialog::OnAllow");
 
-	if (wxMessageBox(wxT("The only reason to re-sign duplicate QSOs is if a previous upload")
+	wxMessageDialog d(this,
+		wxT("The only reason to re-sign duplicate QSOs is if a previous upload")
 		wxT(" went unprocessed by LoTW, either because it was never uploaded, or there was a server failure\n\n")
-		wxT("Are you sure you want to proceed? Click 'No' to review the choices"), wxT("Are you sure?"), wxYES_NO|wxICON_EXCLAMATION, this)==wxYES) {
+		wxT("Are you sure you want to proceed? Click 'No' to review the choices"), wxT("Are you sure?"), wxYES_NO|wxICON_EXCLAMATION);
+	d.CenterOnParent();
+	if (d.ShowModal() == wxID_YES) {
 		EndModal(TQSL_DP_ALLOW);
 	}
 }
@@ -1104,7 +1107,9 @@ static wxString getAbout() {
 
 void
 MyFrame::OnHelpAbout(wxCommandEvent& WXUNUSED(event)) {
-	wxMessageBox(getAbout(), wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
+	wxMessageDialog d(this, getAbout(), wxT("About"), wxOK|wxCENTRE|wxICON_INFORMATION);
+	d.CenterOnParent();
+	d.ShowModal();
 }
 
 void
@@ -1115,7 +1120,9 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 		help_menu->Check(tm_h_diag, false);
 		fclose(diagFile);
 		diagFile = NULL;
-		wxMessageBox(wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
+		wxMessageDialog d(this, wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION);
+		d.CenterOnParent();
+		d.ShowModal();
 		return;
 	}
 	s_fname = wxFileSelector(wxT("Log File"), wxT(""), wxT("tqsldiag.log"), wxT("log"),
@@ -1128,7 +1135,9 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	diagFile = fopen(s_fname.mb_str(), "wb");
 	if (!diagFile) {
 		wxString errmsg = wxString::Format(wxT("Error opening diagnostic log %s: %hs"), s_fname.c_str(), strerror(errno));
-		wxMessageBox(errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
+		wxMessageDialog d(this, errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		d.ShowModal();
 		return;
 	}
 	help_menu->Check(tm_h_diag, true);
@@ -1179,7 +1188,10 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().mb_str()));
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
-			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this, wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION);
+
+			d.CenterOnParent();
+			d.ShowModal();
 		}
 		char loccall[512];
 		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
@@ -1547,7 +1559,9 @@ restart:
 						}
 					}
 					if (!ignore_err) {
-						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO) {
+						wxMessageDialog d(this, wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO);
+						d.CenterOnParent();
+						if (d.ShowModal() == wxID_NO) {
 							cancelled = true;
 							goto abortSigning;
 						}
@@ -2039,7 +2053,9 @@ retry_upload:
 		// If there's a GUI and we didn't successfully upload and weren't cancelled,
 		// ask the user if we should retry the upload.
 		if (this && retval != TQSL_EXIT_CANCEL && retval != TQSL_EXIT_SUCCESS) {
-			if (wxMessageBox(wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO, this) == wxYES)
+			wxMessageDialog d(this, wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO);
+			d.CenterOnParent();
+			if (d.ShowModal() == wxID_YES)
 				goto retry_upload;
 		}
 
@@ -2104,7 +2120,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				if (verify_cert(loc)) {		// Check if there is a certificate before editing
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
-						wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+						wxMessageDialog d(this, wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION);
+						d.CenterOnParent();
+						d.ShowModal();
 					}
 					char loccall[512];
 					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
@@ -2116,7 +2134,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
    		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
 				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 				if (strlen(errbuf) > 0) {
-					wxMessageBox(wxString::Format(wxT("%hs\nThis should be corrected before signing a log file."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+					wxMessageDialog d(this, wxString::Format(wxT("%hs\nThis should be corrected before signing a log file."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION);
+					d.CenterOnParent();
+					d.ShowModal();
 				}
    				break;
    		}
@@ -2317,7 +2337,9 @@ void MyFrame::UpdateConfigFile() {
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
 		FILE *configFile = fopen(filename.mb_str(), "wb");
 		if (!configFile) {
-			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			wxMessageDialog d(this, wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			d.CenterOnParent();
+			d.ShowModal();
 			curl_easy_cleanup(req);
 			return;
 		}
@@ -2325,14 +2347,18 @@ void MyFrame::UpdateConfigFile() {
 		while (left > 0) {
 			size_t written = fwrite(newconfig, 1, left, configFile);
 			if (written == 0) {
-				wxMessageBox(wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+				wxMessageDialog d(this, wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+				d.CenterOnParent();
+				d.ShowModal();
 				curl_easy_cleanup(req);
 				return;
 			}
 			left -= written;
 		}
 		if (fclose(configFile)) {
-			wxMessageBox(wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			wxMessageDialog d(this, wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
+			d.CenterOnParent();
+			d.ShowModal();
 			curl_easy_cleanup(req);
 			return;
 		}
@@ -2340,10 +2366,15 @@ void MyFrame::UpdateConfigFile() {
 		if (tqsl_importTQSLFile(filename.mb_str(), notifyImport, &nd)) {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		} else {
-			wxMessageBox(wxT("Configuration file successfully updated"), wxT("Update Completed"), wxOK|wxICON_INFORMATION, this);
+			wxMessageDialog d(this, wxT("Configuration file successfully updated"), wxT("Update Completed"), wxOK|wxICON_INFORMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 		}
-	} else
-		wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+	} else {
+		wxMessageDialog d(this, wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		d.ShowModal();
+	}
 	curl_easy_cleanup(req);
 	
 }
@@ -2371,14 +2402,16 @@ MyFrame::DoCheckExpiringCerts(void) {
 			if (days_left < expireDays) {
 				char callsign[64];
 				check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
-				if (wxMessageBox(
+				wxMessageDialog d(this, 
 					wxString::Format(wxT("The certificate for %hs expires in %d days\n")
-						wxT("Do you want to renew it now?"), callsign, days_left), wxT("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
-							// Select the certificate in the tree
-							cert_tree->SelectCert(certlist[i]);
-							// Then start the renewal
-							wxCommandEvent dummy;
-							CRQWizardRenew(dummy);
+					wxT("Do you want to renew it now?"), callsign, days_left), wxT("Certificate Expiring"), wxYES_NO|wxICON_QUESTION);
+				d.CenterOnParent();
+				if (d.ShowModal() == wxID_YES) {
+					// Select the certificate in the tree
+					cert_tree->SelectCert(certlist[i]);
+					// Then start the renewal
+					wxCommandEvent dummy;
+					CRQWizardRenew(dummy);
 				}
 			}
 		}
@@ -2510,18 +2543,28 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 				}
 			} 
 
-			if (!newProgram && !newConfig) 
-				if (!silent) 
-					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
+			if (!newProgram && !newConfig) {
+				if (!silent) {
+					wxMessageDialog d(this, wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION);
+					d.CenterOnParent();
+					d.ShowModal();
+				}
+			}
 		} else {
 			// Couldn't read config file version
-				if(!silent)
-					wxMessageBox(wxString::Format(wxT("Error checking for configuration updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+				if(!silent) {
+					wxMessageDialog d(this, wxString::Format(wxT("Error checking for configuration updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION);
+					d.CenterOnParent();
+					d.ShowModal();
+				}
 		}
 	} else {
 		// Couldn't read program version
-			if(!silent)
-				wxMessageBox(wxString::Format(wxT("Error checking for program updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			if(!silent) {
+				wxMessageDialog d(this, wxString::Format(wxT("Error checking for program updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION);
+				d.CenterOnParent();
+				d.ShowModal();
+			}
 	}
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval
@@ -2620,10 +2663,12 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
-                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
+		wxMessageDialog d(this, wxString::Format(wxT("The file (%s) will be signed using:\n"
+                        wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
-			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+			wxT("TQSL - Confirm signing"), wxYES_NO);
+		d.CenterOnParent();
+		if (d.ShowModal() == wxID_YES)
 			ConvertLogFile(loc, infile, outfile, compressed);
 		else
 			wxLogMessage(wxT("Signing abandoned"));
@@ -2696,10 +2741,12 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
-                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
+		wxMessageDialog d(this, wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
+			wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
-			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+			wxT("TQSL - Confirm signing"), wxYES_NO);
+		d.CenterOnParent();
+		if (d.ShowModal() == wxID_YES)
 			UploadLogFile(loc, infile);
 		else
 			wxLogMessage(wxT("Signing abandoned"));
@@ -3601,15 +3648,21 @@ void MyFrame::FirstTime(void) {
 	if (wxConfig::Get()->Read(wxT("HasRun")) == wxT("")) {
 		wxConfig::Get()->Write(wxT("HasRun"), wxT("yes"));
 		DisplayHelp();
-		wxMessageBox(wxT("Please review the introductory documentation before using this program."),
-			wxT("Notice"), wxOK, this);
+		wxMessageDialog d(this, wxT("Please review the introductory documentation before using this program."),
+			wxT("Notice"), wxOK);
+		d.CenterOnParent();
+		d.ShowModal();
 	}
 	int ncerts = cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
-	if (ncerts == 0 && wxMessageBox(wxT("You have no callsign certificate with which to sign log submissions.\n")
-		wxT("Would you like to request a callsign certificate now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
-		wxCommandEvent e;
-		CRQWizard(e);
+	if (ncerts == 0) {
+		wxMessageDialog d(this, wxT("You have no callsign certificate with which to sign log submissions.\n")
+				wxT("Would you like to request a callsign certificate now?"), wxT("Alert"), wxYES_NO);
+		d.CenterOnParent();
+		if (d.ShowModal() == wxID_YES) {
+			wxCommandEvent e;
+			CRQWizard(e);
+		}
 	}
 	wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
 	if (pend != wxT("")) {
@@ -3630,7 +3683,9 @@ void MyFrame::FirstTime(void) {
 		if (!found) {
 			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
 		} else {
-			if (wxMessageBox(wxT("Are you ready to load your new callsign certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
+			wxMessageDialog d(this, wxT("Are you ready to load your new callsign certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO);
+			d.CenterOnParent();
+			if (d.ShowModal() == wxID_YES) {
 				wxCommandEvent e;
 				OnLoadCertificateFile(e);
 			}
@@ -3902,7 +3957,9 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 						msg += wxT("or ");
 					msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
 				}
-				wxMessageBox(msg, wxT("TQSL"));
+				wxMessageDialog d(this, msg, wxT("TQSL"));
+				d.CenterOnParent();
+				d.ShowModal();
 				wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
 			}
 			if (req.signer)
@@ -4038,13 +4095,15 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	if (wxMessageBox(
-wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n")
-wxT("This will permanently remove the certificate from your system.\n")
-wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
-wxT("You WILL be able to recover it from a .P12 file only if you\n")
-wxT("have created one via the Certificate menu's Save command.\n\n")
-wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+	wxMessageDialog d(this,
+		wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n")
+		wxT("This will permanently remove the certificate from your system.\n")
+		wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
+		wxT("You WILL be able to recover it from a .P12 file only if you\n")
+		wxT("have created one via the Certificate menu's Save command.\n\n")
+		wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION);
+	d.CenterOnParent();
+	if (d.ShowModal() == wxID_YES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		cert_tree->Build(CERTLIST_FLAGS);
@@ -4106,9 +4165,11 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	if (wxMessageBox(
-wxT("This will permanently remove this station location from your system.\n")
-wxT("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+	wxMessageDialog d(this, 
+		wxT("This will permanently remove this station location from your system.\n")
+		wxT("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION);
+	d.CenterOnParent();
+	if (d.ShowModal() == wxID_YES) {
 		if (tqsl_deleteStationLocation(data->getLocname().mb_str()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		loc_tree->Build();
@@ -4130,7 +4191,9 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	if (verify_cert(loc)) {		// Check if there is a certificate before editing
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
-			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this, wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 		}
 		char loccall[512];
 		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));

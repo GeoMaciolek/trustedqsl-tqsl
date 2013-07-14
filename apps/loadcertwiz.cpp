@@ -176,11 +176,14 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 				if (!tqsl_getCertificateSerial(cert, &serial)) {
 					if (serial == newserial) {
 						wxCommandEvent e;
-	    					if (wxMessageBox(
-wxT("You will not be able to use this tq6 file to recover your\n")
-wxT("callsign certificate if it gets lost. For security purposes, you should\n")
-wxT("back up your certificate on removable media for safe-keeping.\n\n")
-wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+						wxMessageDialog d(_parent, 
+							wxT("You will not be able to use this tq6 file to recover your\n")
+							wxT("callsign certificate if it gets lost. For security purposes, you should\n")
+							wxT("back up your certificate on removable media for safe-keeping.\n\n")
+							wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
+							wxYES_NO|wxICON_QUESTION);
+						d.CenterOnParent();
+						if (d.ShowModal() == wxID_NO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);
@@ -299,8 +302,11 @@ LCW_P12PasswordPage::TransferDataFromWindow() {
 		if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 			tc_status->SetLabel(wxT("Password error"));
 			return false;
-		} else
-			wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
+		} else {
+			wxMessageDialog d(this, wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
+			d.CenterOnParent();
+			d.ShowModal();
+		}
 	}
 	tc_status->SetLabel(wxT(""));
 	return true;

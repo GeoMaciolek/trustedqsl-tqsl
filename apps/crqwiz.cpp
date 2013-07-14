@@ -675,8 +675,8 @@ CRQ_IntroPage::TransferDataFromWindow() {
 	tqslTrace("CRQ_IntroPage::TransferDataFromWindow");
 	if (validate())		// Should only happen when going Back
 		return true;
-	if (Parent()->dxcc == 0)
-		wxMessageBox(
+	if (Parent()->dxcc == 0) {
+		wxMessageDialog d(this, 
 			wxT("You have selected DXCC Entity NONE\n\n")
 			wxT("QSO records signed using the certificate will not\n")
 			wxT("be valid for DXCC award credit (but will be valid \n")
@@ -686,10 +686,13 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			wxT("the correct selection. Otherwise, you probably\n")
 			wxT("should use the \"Back\" button to return to the DXCC\n")
 			wxT("page after clicking \"OK\""),
-			wxT("TQSLCert Warning"));
+			wxT("TQSLCert Warning"), wxOK);
+		d.CenterOnParent();
+		d.ShowModal();
+	}
 
 	if (!tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
-		if (wxMessageBox(
+		wxMessageDialog d(this, 
 			wxT("You have chosen a QSO end date for this Callsign Certificate. ")
 			wxT("The 'QSO end date' should ONLY be set if that date is the date when that callsign's license ")
 			wxT("expired or the license was replaced by a new callsign.\n\n")
@@ -698,11 +701,13 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			wxT("itself is still valid.\n\n")
 			wxT("If you still hold this callsign (or if you plan to renew the license for the ")
 			wxT("callsign), you should not set a 'QSO end date'.\n")
-			wxT("Do you really want to keep this 'QSO end date'?"), wxT("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
-				tc_qsoendy->SetSelection(0);
-				tc_qsoendm->SetSelection(0);
-				tc_qsoendd->SetSelection(0);
-				return false;
+			wxT("Do you really want to keep this 'QSO end date'?"), wxT("Warning"), wxYES_NO|wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		if (d.ShowModal() == wxID_NO) {
+			tc_qsoendy->SetSelection(0);
+			tc_qsoendm->SetSelection(0);
+			tc_qsoendd->SetSelection(0);
+			return false;
 		}
 	}
 	Parent()->callsign = tc_call->GetValue();
@@ -874,7 +879,7 @@ CRQ_SignPage::TransferDataFromWindow() {
 	Parent()->cert = 0;
 	if (choice->GetSelection() == 0) {
 		if (cert_tree->GetNumCerts() > 0) {
-			int rval = wxMessageBox(
+			wxMessageDialog d(this,
 wxT("You have one or more callsign certificates that could be used\n")
 wxT("to sign this certificate request.\n\n")
 wxT("It is strongly recommended that you sign the request\n")
@@ -883,7 +888,9 @@ wxT("unless the callsign certificates shown are not actually yours.\n")
 wxT("certificate requests from existing certificate holders.\n\n") */
 wxT("Do you want to sign the certificate request?\n")
 wxT("Select \"Yes\" to sign the request, \"No\" to continue without signing."),
-				wxT("Warning"), wxYES_NO, this);
+				wxT("Warning"), wxYES_NO);
+			d.CenterOnParent();
+			int rval = d.ShowModal();
 			if (rval == wxYES)
 				return false;
 		}

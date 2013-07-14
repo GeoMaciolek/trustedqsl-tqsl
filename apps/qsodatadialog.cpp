@@ -380,44 +380,65 @@ QSODataDialog::TransferDataFromWindow() {
 
 	if (!rec._freq.IsEmpty()) {
 		if (!rec._freq.ToDouble(&freq)) {
-			wxMessageBox(wxT("QSO Frequency is invalid"), wxT("QSO Data Error"),
-				wxOK | wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this,
+				wxT("QSO Frequency is invalid"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 			return false;
 		}
 		freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
 		if (freq < valid_bands[_band].low || (valid_bands[_band].high > 0 && freq > valid_bands[_band].high)) {
-			wxMessageBox(wxT("QSO Frequency is out of range for the selected band"), wxT("QSO Data Error"),
-				wxOK | wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this,
+				wxT("QSO Frequency is out of range for the selected band"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 			return false;
 		}
 	}
 
 	if (!rec._rxfreq.IsEmpty()) {
 		if (!rec._rxfreq.ToDouble(&freq)) {
-			wxMessageBox(wxT("QSO RX Frequency is invalid"), wxT("QSO Data Error"),
-				wxOK | wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this,
+				wxT("QSO RX Frequency is invalid"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 			return false;
 		}
 		freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
 		if (freq < valid_rxbands[_rxband].low || (valid_rxbands[_rxband].high > 0 && freq > valid_rxbands[_rxband].high)) {
-			wxMessageBox(wxT("QSO RX Frequency is out of range for the selected band"), wxT("QSO Data Error"),
-				wxOK | wxICON_EXCLAMATION, this);
+			wxMessageDialog d(this,
+				wxT("QSO RX Frequency is out of range for the selected band"), wxT("QSO Data Error"),
+				wxOK | wxICON_EXCLAMATION);
+			d.CenterOnParent();
+			d.ShowModal();
 			return false;
 		}
 	}
 	if (!_isend && rec._call == wxT("")) {
-		wxMessageBox(wxT("Call Sign cannot be empty"), wxT("QSO Data Error"),
-			wxOK | wxICON_EXCLAMATION, this);
+		wxMessageDialog d(this,
+			wxT("Call Sign cannot be empty"), wxT("QSO Data Error"),
+			wxOK | wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		d.ShowModal();
 		return false;
 	}
 	if (rec._propmode == wxT("SAT") && rec._satellite == wxT("")) {
-		wxMessageBox(wxT("'Satellite' propagation mode selected, so\na a Satellite must be chosen"), wxT("QSO Data Error"),
-			wxOK | wxICON_EXCLAMATION, this);
+		wxMessageDialog d(this,
+			wxT("'Satellite' propagation mode selected, so\na a Satellite must be chosen"), wxT("QSO Data Error"),
+			wxOK | wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		d.ShowModal();
 		return false;
 	}
 	if (rec._propmode != wxT("SAT") && rec._satellite != wxT("")) {
-		wxMessageBox(wxT("Satellite choice requires that\nPropagation Mode be 'Satellite'"), wxT("QSO Data Error"),
-			wxOK | wxICON_EXCLAMATION, this);
+		wxMessageDialog d(this,
+			wxT("Satellite choice requires that\nPropagation Mode be 'Satellite'"), wxT("QSO Data Error"),
+			wxOK | wxICON_EXCLAMATION);
+		d.CenterOnParent();
+		d.ShowModal();
 		return false;
 	}
 	if (_reclist != 0)

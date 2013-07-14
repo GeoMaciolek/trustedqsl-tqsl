@@ -283,7 +283,9 @@ TQSLGetStationNameDialog::OnDelete(wxCommandEvent&) {
 	wxString name = *(wxString *)namelist->GetClientData(idx);
 	if (name == wxT(""))
 		return;
-	if (wxMessageBox(wxString(wxT("Delete \"")) + name + wxT("\"?"), wxT("TQSL Confirm"), wxYES_NO|wxCENTRE, this) == wxYES) {
+	wxMessageDialog d(this, wxString(wxT("Delete \"")) + name + wxT("\"?"), wxT("TQSL Confirm"), wxYES_NO|wxCENTRE);
+	d.CenterOnParent();
+	if (d.ShowModal() == wxID_YES) {
 		check_tqsl_error(tqsl_deleteStationLocation(name.mb_str()));
 		if (!issave)
 			name_entry->Clear();
@@ -414,10 +416,14 @@ TQSLGetStationNameDialog::SelectName(const wxString& name) {
 int
 TQSLGetStationNameDialog::ShowModal() {
 	tqslTrace("TQSLGetStationNameDialog::ShowModal");
-	if (namelist->GetCount() == 0 && !issave)
-		wxMessageBox(wxT("You have no Station Locations defined.\n\n")
+	if (namelist->GetCount() == 0 && !issave) {
+		wxMessageDialog d(this,
+			wxT("You have no Station Locations defined.\n\n")
 			wxT("You must define at least one Station Location to use for signing.\n")
 			wxT("Use the \"New\" Button of the dialog you're about to see to\ndefine a Station Location."),
-			wxT("TQSL Warning"), wxOK, this);
+			wxT("TQSL Warning"), wxOK);
+		d.CenterOnParent();
+		d.ShowModal();
+	}		
 	return wxDialog::ShowModal();
 }

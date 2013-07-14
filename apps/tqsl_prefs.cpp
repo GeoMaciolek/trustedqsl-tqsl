@@ -710,14 +710,18 @@ bool EditContest::TransferDataFromWindow() {
 	contest.Trim(true);
 	contest.MakeUpper();
 	if (contest == wxT("")) {
-		wxMessageBox(wxT("Contest name cannot be blank"), wxT("Error"), wxOK, this);
+		wxMessageDialog d(this, wxT("Contest name cannot be blank"), wxT("Error"), wxOK);
+		d.CenterOnParent();
+		d.ShowModal();
 		return false;
 	}
 	contest_type = type->GetSelection();
 	callsign_field = strtol(fieldnum->GetValue().mb_str(), NULL, 10);
 	if (callsign_field < TQSL_MIN_CABRILLO_MAP_FIELD) {
-		wxMessageBox(wxString::Format(wxT("Call-worked field must be %d or greater"), TQSL_MIN_CABRILLO_MAP_FIELD),
-			wxT("Error"), wxOK, this);
+		wxMessageDialog d(this, wxString::Format(wxT("Call-worked field must be %d or greater"), TQSL_MIN_CABRILLO_MAP_FIELD),
+			wxT("Error"), wxOK);
+		d.CenterOnParent();
+		d.ShowModal();
 		return false;
 	}
 	return true;
