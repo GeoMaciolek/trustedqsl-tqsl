@@ -3267,6 +3267,7 @@ QSLApp::GUIinit(bool checkUpdates) {
 	config->Read(wxT("MainWindowHeight"), &h, 600);
 
 	MyFrame *frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
+	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
 	if (checkUpdates)
 		frame->FirstTime();
 	frame->Show(true);

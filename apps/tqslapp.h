@@ -20,6 +20,9 @@
 	#define ALLFILESWILD "*"
 #endif
 
+#define MAIN_WINDOW_MIN_HEIGHT 400
+#define MAIN_WINDOW_MIN_WIDTH  575
+
 #include "tqslconvert.h"
 #include "qsodatadialog.h"
 #include "certtree.h"
