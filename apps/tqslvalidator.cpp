@@ -73,9 +73,7 @@ TQSLValidator::Validate(wxWindow* parent) {
 		m_validatorWindow->SetFocus();
 		wxString buf;
 		buf.Printf(wxT("Invalid %s: \"%s\""), (const char *)_type.mb_str(), (const char *)str.mb_str());
-		wxMessageDialog d(parent, buf, wxT("QSO Data Error"), wxOK | wxICON_EXCLAMATION);
-		d.CenterOnParent();
-		d.ShowModal();
+		wxMessageBox(buf, wxT("QSO Data Error"), wxOK | wxICON_EXCLAMATION, parent);
 		return FALSE;
 	}
 	return TRUE;
