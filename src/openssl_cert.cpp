@@ -476,6 +476,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	tqsl_write_adif_field(out, type, 0, NULL, 0);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (unsigned char *)req->providerUnit, -1);
+	tqsl_write_adif_field(out, "TQSL_CRQ_EMAIL", 0, (unsigned char *)req->emailAddress, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_ADDRESS1", 0, (unsigned char *)req->address1, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_ADDRESS2", 0, (unsigned char *)req->address2, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_CITY", 0, (unsigned char *)req->city, -1);
@@ -560,6 +561,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	}
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (unsigned char *)req->providerUnit, -1);
+	tqsl_write_adif_field(out, "TQSL_CRQ_EMAIL", 0, (unsigned char *)req->emailAddress, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_ADDRESS1", 0, (unsigned char *)req->address1, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_ADDRESS2", 0, (unsigned char *)req->address2, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_CITY", 0, (unsigned char *)req->city, -1);
@@ -879,6 +881,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				goto end;
 			if (!safe_strncpy(crq->callSign, (*it)["CALLSIGN"].c_str(), sizeof crq->callSign))
 				goto end;
+			if (!safe_strncpy(crq->emailAddress, (*it)["TQSL_CRQ_EMAIL"].c_str(), sizeof crq->emailAddress))
+				goto end;
 			if (!safe_strncpy(crq->address1, (*it)["TQSL_CRQ_ADDRESS1"].c_str(), sizeof crq->address1))
 				goto end;
 			if (!safe_strncpy(crq->address2, (*it)["TQSL_CRQ_ADDRESS2"].c_str(), sizeof crq->address2))
@@ -1065,6 +1069,8 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 			return 1;
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->providerUnit, -1))
 			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_EMAIL", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->emailAddress, -1))
+			return 1;
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_ADDRESS1", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->address1, -1))
 			return 1;
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_ADDRESS2", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->address2, -1))
@@ -1180,10 +1186,6 @@ tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *ke
 	if (tqsl_init())
 		return 1;
 	if (certbuf == NULL || type == NULL) {
-		tQSL_Error = TQSL_ARGUMENT_ERROR;
-		return 1;
-	}
-	if (strcmp(type, "user") == 0 && keybuf == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
