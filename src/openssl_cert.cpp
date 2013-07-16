@@ -1065,6 +1065,18 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 			return 1;
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->providerUnit, -1))
 			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_ADDRESS1", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->address1, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_ADDRESS2", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->address2, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_CITY", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->city, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_STATE", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->state, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_POSTAL", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->postalCode, -1))
+			return 1;
+		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_COUNTRY", 0, (const unsigned char *)TQSL_API_TO_CERT(cert)->crq->country, -1))
+			return 1;
 		char datebuf[20];
 		tqsl_convertDateToText(&(TQSL_API_TO_CERT(cert)->crq->qsoNotAfter), datebuf, sizeof datebuf);
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_QSO_NOT_AFTER", 0, (const unsigned char *)datebuf, -1))
