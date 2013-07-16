@@ -1830,7 +1830,6 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	int numrecs=0;
 	wxString signedOutput;
 	tQSL_Converter conv=0;
-	FILE *logFile = NULL; 
 
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, startdate, enddate, action, password);
 
@@ -1841,92 +1840,20 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 		else
 			return TQSL_EXIT_NO_QSOS;
 	} else {
-		//upload the file
-
-		//get the url from the config, can be overridden by an installer
-		//defaults are valid for LoTW as of 1/31/2013
-
-		wxConfig *config = (wxConfig *)wxConfig::Get();
-		config->SetPath(wxT("/LogUpload"));
-		wxString uploadURL=config->Read(wxT("UploadURL"), DEFAULT_UPL_URL);
-		wxString uploadField=config->Read(wxT("PostField"), DEFAULT_UPL_FIELD);
-		wxString uplStatus=config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
-		wxString uplStatusSuccess=config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK).Lower();
-		wxString uplMessage=config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
-		bool uplVerifyCA;
-		config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
-		config->SetPath(wxT("/"));
-
-		// Copy the strings so they remain around
-		char *urlstr = strdup(uploadURL.mb_str());
-		char *cpUF = strdup(uploadField.mb_str());
-
 		//compress the upload
 		string compressed;
-		long compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
+		size_t compressedSize=compressToBuf(compressed, (const char*)signedOutput.mb_str());
 		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
 		if (compressedSize<0) { 
 			wxLogMessage(wxT("Error compressing before upload")); 
-			free(urlstr);
-			free(cpUF);
 			return TQSL_EXIT_TQSL_ERROR;
 		}
-
-retry_upload:
-
-		CURL* req=curl_easy_init();
-
-		if (!req) {
-			wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
-			free(urlstr);
-			free(cpUF);
-			return TQSL_EXIT_TQSL_ERROR; 
-		}
-
-
-		//debug
-		if (diagFile) {
-			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-			curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
-			fprintf(diagFile, "Upload Log:\n");
-		} else {
-			wxString filename;
-			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
-			logFile = fopen(filename.mb_str(), "wb");
-			if (logFile) {
-				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-				curl_easy_setopt(req, CURLOPT_STDERR, logFile);
-				fprintf(logFile, "Upload Log:\n");
-			}
-		}
-		//set up options
-		curl_easy_setopt(req, CURLOPT_URL, urlstr);
-
-		if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
-
-		
-		//follow redirects
-		curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
-
-		//the following allow us to write our log and read the result
-
-		FileUploadHandler handler;
-
-		curl_easy_setopt(req, CURLOPT_WRITEFUNCTION, &FileUploadHandler::recv);
-		curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
-
-		char errorbuf[CURL_ERROR_SIZE];
-		curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
-
-		//set up the file
 
 		wxDateTime now=wxDateTime::Now().ToUTC();
 
 		wxString name, ext;
 		wxFileName::SplitPath(infile, 0, &name, &ext);
 		if (!ext.IsEmpty()) name+=wxT(".")+ext;
-
-
 
 		//unicode mess. can't just use mb_str directly because it's a temp ptr
 		// and the curl form expects it to still be there during perform() so 
@@ -1939,109 +1866,8 @@ retry_upload:
 			name.c_str()).mb_str(), sizeof filename);
 		filename[sizeof filename - 1] = '\0';
 
-		struct curl_httppost* post=NULL, *lastitem=NULL;
-
-		curl_formadd(&post, &lastitem,
-			CURLFORM_PTRNAME, cpUF,
-			CURLFORM_BUFFER, filename,
-			CURLFORM_BUFFERPTR, compressed.c_str(),
-			CURLFORM_BUFFERLENGTH, compressedSize,
-			CURLFORM_END);
-
-
-		curl_easy_setopt(req, CURLOPT_HTTPPOST, post);
-
-		
-		intptr_t retval;
-
-		UploadDialog* upload;
-
-		wxLogMessage(wxT("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
-
-		if(this) {
-			upload=new UploadDialog(this);
-
-			curl_easy_setopt(req, CURLOPT_PROGRESSFUNCTION, &UploadDialog::UpdateProgress);
-			curl_easy_setopt(req, CURLOPT_PROGRESSDATA, upload);
-			curl_easy_setopt(req, CURLOPT_NOPROGRESS, 0);
-
-			UploadThread thread(req, upload);
-			if (thread.Run() != wxTHREAD_NO_ERROR) {
-				wxLogError(wxT("Could not spawn upload thread!"));
-			        upload->Destroy();
-				free(urlstr);
-				free(cpUF);
-				if (logFile) fclose(logFile);
-				return TQSL_EXIT_TQSL_ERROR;
-			}
-
-			upload->ShowModal();
-			retval=((intptr_t)thread.Wait());
-		} else { retval=curl_easy_perform(req); }
-
-		if (retval==0) { //success
-
-			//check the result
-
-			wxString uplresult=wxString::FromAscii(handler.s.c_str());
-
-			wxRegEx uplStatusRE(uplStatus);
-			wxRegEx uplMessageRE(uplMessage);
-
-			if (uplStatusRE.Matches(uplresult)) //we can make sense of the error
-			{
-				//sometimes has leading/trailing spaces
-				if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both)==uplStatusSuccess) //success
-				{
-					if (uplMessageRE.Matches(uplresult)) { //and a message
-						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
-							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
-
-					} else { // no message we could find
-						wxLogMessage(wxT("%s: Log uploaded successfully!\nAfter reading this message, you may close this program."), infile.c_str());
-					}
-
-					retval=TQSL_EXIT_SUCCESS;
-				} else { // failure, but site is working
-
-					if (uplMessageRE.Matches(uplresult)) { //and a message
-						wxLogMessage(wxT("%s: Log upload was rejected with result \"%s\""), 
-							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
-
-					} else { // no message we could find
-						wxLogMessage(wxT("%s: Log upload was rejected!"), infile.c_str());
-					}
-
-					retval=TQSL_EXIT_REJECTED;
-				}
-			} else { //site isn't working
-				wxLogMessage(wxT("%s: Got an unexpected response on log upload! Maybe the site is down?"), infile.c_str());
-				retval=TQSL_EXIT_UNEXP_RESP;
-			}
-
-		} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-			wxLogMessage(wxT("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading these QSOs later."), infile.c_str());
-			retval=TQSL_EXIT_CONNECTION_FAILED;
-		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
-			wxLogMessage(wxT("%s: Upload cancelled"), infile.c_str());
-			retval=TQSL_EXIT_CANCEL;
-		} else { //error
-			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
-			// was turned into garbage otherwise
-			wxLogMessage(wxT("%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"), infile.c_str(), curl_easy_strerror((CURLcode)retval), errorbuf);
-			retval=TQSL_EXIT_TQSL_ERROR;
-		}
-		if (this) upload->Destroy();
-
-		curl_formfree(post);
-		curl_easy_cleanup(req);
-
-		// If there's a GUI and we didn't successfully upload and weren't cancelled,
-		// ask the user if we should retry the upload.
-		if (this && retval != TQSL_EXIT_CANCEL && retval != TQSL_EXIT_SUCCESS) {
-			if (wxMessageBox(wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO, this) == wxYES)
-				goto retry_upload;
-		}
+		wxString fileType(wxT("Log"));
+		int retval = UploadFile(infile, filename, numrecs, (void *)compressed.c_str(), compressedSize, fileType);
 
 		if (retval==0)
 			tqsl_converterCommit(conv);
@@ -2050,13 +1876,198 @@ retry_upload:
 
 		tqsl_endConverter(&conv);
 
-		if (urlstr) free(urlstr);
-		if (cpUF) free (cpUF);
-		if (logFile) fclose(logFile);
 		return retval;
 	}
+}
 
+int MyFrame::UploadFile(wxString& infile, const char* filename, int numrecs, void *content, size_t clen, wxString& fileType) {
+	tqslTrace("MyFrame::UploadFile", "infile=%s, filename=%s, numrecs=%d, content=0x%lx, clen=%d fileType=%s",  _S(infile), filename, numrecs, (void *)content, clen, _S(fileType));
 
+	FILE *logFile = NULL; 
+	
+	//upload the file
+
+	//get the url from the config, can be overridden by an installer
+	//defaults are valid for LoTW as of 1/31/2013
+
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	config->SetPath(wxT("/LogUpload"));
+	wxString uploadURL=config->Read(wxT("UploadURL"), DEFAULT_UPL_URL);
+	wxString uploadField=config->Read(wxT("PostField"), DEFAULT_UPL_FIELD);
+	wxString uplStatus=config->Read(wxT("StatusRegex"), DEFAULT_UPL_STATUSRE);
+	wxString uplStatusSuccess=config->Read(wxT("StatusSuccess"), DEFAULT_UPL_STATUSOK).Lower();
+	wxString uplMessage=config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
+	bool uplVerifyCA;
+	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
+	config->SetPath(wxT("/"));
+
+	// Copy the strings so they remain around
+	char *urlstr = strdup(uploadURL.mb_str());
+	char *cpUF = strdup(uploadField.mb_str());
+
+retry_upload:
+
+	CURL* req=curl_easy_init();
+
+	if (!req) {
+		wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
+		free(urlstr);
+		free(cpUF);
+		return TQSL_EXIT_TQSL_ERROR; 
+	}
+
+	//debug
+	if (diagFile) {
+		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
+		fprintf(diagFile, "Upload Log:\n");
+	} else {
+		wxString filename;
+		filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+		logFile = fopen(filename.mb_str(), "wb");
+		if (logFile) {
+			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+			curl_easy_setopt(req, CURLOPT_STDERR, logFile);
+			fprintf(logFile, "Upload Log:\n");
+		}
+	}
+	//set up options
+	curl_easy_setopt(req, CURLOPT_URL, urlstr);
+
+	if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
+
+		
+	//follow redirects
+	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
+
+	//the following allow us to write our log and read the result
+
+	FileUploadHandler handler;
+
+	curl_easy_setopt(req, CURLOPT_WRITEFUNCTION, &FileUploadHandler::recv);
+	curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
+
+	char errorbuf[CURL_ERROR_SIZE];
+	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
+
+	struct curl_httppost* post=NULL, *lastitem=NULL;
+
+	curl_formadd(&post, &lastitem,
+		CURLFORM_PTRNAME, cpUF,
+		CURLFORM_BUFFER, filename,
+		CURLFORM_BUFFERPTR, content,
+		CURLFORM_BUFFERLENGTH, clen,
+		CURLFORM_END);
+
+	curl_easy_setopt(req, CURLOPT_HTTPPOST, post);
+
+	intptr_t retval;
+
+	UploadDialog* upload;
+
+	if (numrecs > 0)
+		wxLogMessage(wxT("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
+	else
+		wxLogMessage(wxT("Attempting to upload %s"), fileType.c_str());
+
+	if(this) {
+		upload=new UploadDialog(this);
+
+		curl_easy_setopt(req, CURLOPT_PROGRESSFUNCTION, &UploadDialog::UpdateProgress);
+		curl_easy_setopt(req, CURLOPT_PROGRESSDATA, upload);
+		curl_easy_setopt(req, CURLOPT_NOPROGRESS, 0);
+
+		UploadThread thread(req, upload);
+		if (thread.Run() != wxTHREAD_NO_ERROR) {
+			wxLogError(wxT("Could not spawn upload thread!"));
+		        upload->Destroy();
+			free(urlstr);
+			free(cpUF);
+			if (logFile) fclose(logFile);
+			return TQSL_EXIT_TQSL_ERROR;
+		}
+
+		upload->ShowModal();
+		retval=((intptr_t)thread.Wait());
+	} else { retval=curl_easy_perform(req); }
+
+	if (retval==0) { //success
+
+		//check the result
+
+		wxString uplresult=wxString::FromAscii(handler.s.c_str());
+
+		wxRegEx uplStatusRE(uplStatus);
+		wxRegEx uplMessageRE(uplMessage);
+
+		if (uplStatusRE.Matches(uplresult)) //we can make sense of the error
+		{
+			//sometimes has leading/trailing spaces
+			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both)==uplStatusSuccess) //success
+			{
+				if (uplMessageRE.Matches(uplresult)) { //and a message
+					if (fileType == wxT("Log")) {
+						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
+							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
+
+					} else {
+						wxLogMessage(wxT("%s uploaded successfully with result \"%s\"!"), 
+							fileType.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
+					}
+				} else { // no message we could find
+					if (fileType == wxT("Log")) {
+						wxLogMessage(wxT("%s: Log uploaded successfully!\nAfter reading this message, you may close this program."), infile.c_str());
+					} else {
+						wxLogMessage(wxT("%s uploaded successfully!"), fileType.c_str());
+					}
+				}
+
+				retval=TQSL_EXIT_SUCCESS;
+			} else { // failure, but site is working
+
+				if (uplMessageRE.Matches(uplresult)) { //and a message
+					wxLogMessage(wxT("%s: %s upload was rejected with result \"%s\""), 
+						infile.c_str(), fileType.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
+
+				} else { // no message we could find
+					wxLogMessage(wxT("%s: %s upload was rejected!"), infile.c_str(), fileType.c_str());
+				}
+
+				retval=TQSL_EXIT_REJECTED;
+			}
+		} else { //site isn't working
+			wxLogMessage(wxT("%s: Got an unexpected response on %s upload! Maybe the site is down?"), infile.c_str(), fileType.c_str());
+			retval=TQSL_EXIT_UNEXP_RESP;
+		}
+
+	} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+		wxLogMessage(wxT("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+		retval=TQSL_EXIT_CONNECTION_FAILED;
+	} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
+		wxLogMessage(wxT("%s: Upload cancelled"), infile.c_str());
+		retval=TQSL_EXIT_CANCEL;
+	} else { //error
+		//don't know why the conversion from char* -> wxString -> char* is necessary but it 
+		// was turned into garbage otherwise
+		wxLogMessage(wxT("%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"), infile.c_str(), curl_easy_strerror((CURLcode)retval), errorbuf);
+		retval=TQSL_EXIT_TQSL_ERROR;
+	}
+	if (this) upload->Destroy();
+
+	curl_formfree(post);
+	curl_easy_cleanup(req);
+
+	// If there's a GUI and we didn't successfully upload and weren't cancelled,
+	// ask the user if we should retry the upload.
+	if (this && retval != TQSL_EXIT_CANCEL && retval != TQSL_EXIT_SUCCESS) {
+		if (wxMessageBox(wxT("Your upload appears to have failed. Should TQSL try again?"), wxT("Retry?"), wxYES_NO, this) == wxYES)
+			goto retry_upload;
+	}
+
+	if (urlstr) free(urlstr);
+	if (cpUF) free (cpUF);
+	if (logFile) fclose(logFile);
+	return retval;
 }
 
 // Verify that a certificate exists for this station location
@@ -3846,70 +3857,97 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 */
 
 	if (wiz.RunWizard()) {
-		// Where to put it?
-		wxString file = wxFileSelector(wxT("Save request"), wxT(""), flattenCallSign(wiz.callsign) + wxT(".") wxT(TQSL_CRQ_FILE_EXT),
-			wxT(TQSL_CRQ_FILE_EXT),
-			wxT("tQSL Cert Request files (*.") wxT(TQSL_CRQ_FILE_EXT) wxT(")|*.") wxT(TQSL_CRQ_FILE_EXT)
-				wxT("|All files (") wxT(ALLFILESWILD) wxT(")|") wxT(ALLFILESWILD),
-			wxSAVE | wxOVERWRITE_PROMPT);
-		if (file.IsEmpty())
-			wxLogMessage(wxT("Request cancelled"));
-		else {
-			TQSL_CERT_REQ req;
-			strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
-			strncpy(req.providerUnit, wiz.provider.organizationalUnitName, sizeof req.providerUnit);
-			strncpy(req.callSign, wiz.callsign.mb_str(), sizeof req.callSign);
-			strncpy(req.name, wiz.name.mb_str(), sizeof req.name);
-			strncpy(req.address1, wiz.addr1.mb_str(), sizeof req.address1);
-			strncpy(req.address2, wiz.addr2.mb_str(), sizeof req.address2);
-			strncpy(req.city, wiz.city.mb_str(), sizeof req.city);
-			strncpy(req.state, wiz.state.mb_str(), sizeof req.state);
-			strncpy(req.postalCode, wiz.zip.mb_str(), sizeof req.postalCode);
-			if (wiz.country.IsEmpty())
-				strncpy(req.country, "USA", sizeof req.country);
-			else
-				strncpy(req.country, wiz.country.mb_str(), sizeof req.country);
-			strncpy(req.emailAddress, wiz.email.mb_str(), sizeof req.emailAddress);
-			strncpy(req.password, wiz.password.mb_str(), sizeof req.password);
-			req.dxccEntity = wiz.dxcc;
-			req.qsoNotBefore = wiz.qsonotbefore;
-			req.qsoNotAfter = wiz.qsonotafter;
-			req.signer = wiz.cert;
-			if (req.signer) {
-				char buf[40];
-				void *call = 0;
-				if (!tqsl_getCertificateCallSign(req.signer, buf, sizeof(buf)))
-					call = &buf;
-				while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
-					if (tQSL_Error != TQSL_PASSWORD_ERROR) {
-						wxLogError(wxT("%hs"), tqsl_getErrorString());
-						return;
-					}
+		// Save or upload?
+		wxString filename = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
+		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + filename;
+		bool upload = false;
+		if (wxMessageBox(wxT("Do you want to upload this certificate request to LoTW now?"), wxT("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+			upload = true;
+		} else {
+			// Where to put it?
+			file = wxFileSelector(wxT("Save request"), wxT(""), file, wxT(TQSL_CRQ_FILE_EXT),
+				wxT("tQSL Cert Request files (*.") wxT(TQSL_CRQ_FILE_EXT) wxT(")|*.") wxT(TQSL_CRQ_FILE_EXT)
+					wxT("|All files (") wxT(ALLFILESWILD) wxT(")|") wxT(ALLFILESWILD),
+				wxSAVE | wxOVERWRITE_PROMPT);
+			if (file.IsEmpty())
+				wxLogMessage(wxT("Request cancelled"));
+				return;
+		}
+		TQSL_CERT_REQ req;
+		strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
+		strncpy(req.providerUnit, wiz.provider.organizationalUnitName, sizeof req.providerUnit);
+		strncpy(req.callSign, wiz.callsign.mb_str(), sizeof req.callSign);
+		strncpy(req.name, wiz.name.mb_str(), sizeof req.name);
+		strncpy(req.address1, wiz.addr1.mb_str(), sizeof req.address1);
+		strncpy(req.address2, wiz.addr2.mb_str(), sizeof req.address2);
+		strncpy(req.city, wiz.city.mb_str(), sizeof req.city);
+		strncpy(req.state, wiz.state.mb_str(), sizeof req.state);
+		strncpy(req.postalCode, wiz.zip.mb_str(), sizeof req.postalCode);
+		if (wiz.country.IsEmpty())
+			strncpy(req.country, "USA", sizeof req.country);
+		else
+			strncpy(req.country, wiz.country.mb_str(), sizeof req.country);
+		strncpy(req.emailAddress, wiz.email.mb_str(), sizeof req.emailAddress);
+		strncpy(req.password, wiz.password.mb_str(), sizeof req.password);
+		req.dxccEntity = wiz.dxcc;
+		req.qsoNotBefore = wiz.qsonotbefore;
+		req.qsoNotAfter = wiz.qsonotafter;
+		req.signer = wiz.cert;
+		if (req.signer) {
+			char buf[40];
+			void *call = 0;
+			if (!tqsl_getCertificateCallSign(req.signer, buf, sizeof(buf)))
+				call = &buf;
+			while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
+				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
+					wxLogError(wxT("%hs"), tqsl_getErrorString());
+					return;
 				}
 			}
-			req.renew = renew ? 1 : 0;
-			if (tqsl_createCertRequest(file.mb_str(), &req, 0, 0))
-				wxLogError(wxT("%hs"), tqsl_getErrorString());
-			else {
-				wxString msg = wxT("You may now send your new certificate request (");
-				msg += file ;
-				msg += wxT(")");
-				if (wiz.provider.emailAddress[0] != 0)
-					msg += wxString(wxT("\nto:\n   ")) + wxString(wiz.provider.emailAddress, wxConvLocal);
-				if (wiz.provider.url[0] != 0) {
-					msg += wxT("\n");
-					if (wiz.provider.emailAddress[0] != 0)
-						msg += wxT("or ");
-					msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
-				}
-				wxMessageBox(msg, wxT("TQSL"));
-				wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
-			}
+		}
+		req.renew = renew ? 1 : 0;
+		if (tqsl_createCertRequest(file.mb_str(), &req, 0, 0)) {
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			cert_tree->Build(CERTLIST_FLAGS);
-			CertTreeReset();
+			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			return;
 		}
+		if (upload) {
+			ifstream in(file.mb_str(), ios::in | ios::binary);
+			if (!in) {
+				wxLogError(wxT("Error opening certificate request file %s: %hs"), file.c_str(), strerror(errno));
+			} else {
+				string contents;
+				in.seekg(0, ios::end);
+				contents.resize(in.tellg());
+				in.seekg(0, ios::beg);
+				in.read(&contents[0], contents.size());
+				in.close();
+
+				wxString fileType(wxT("Certificate Request"));
+				int retval = UploadFile(filename, filename.mb_str(), 0, (void *)contents.c_str(), contents.size(), fileType);
+				if (retval != 0)
+					wxLogError(wxT("Your certificate request did not upload properly\nPlease try again."));
+			}
+		} else {
+			wxString msg = wxT("You may now send your new certificate request (");
+			msg += file ;
+			msg += wxT(")");
+			if (wiz.provider.emailAddress[0] != 0)
+				msg += wxString(wxT("\nto:\n   ")) + wxString(wiz.provider.emailAddress, wxConvLocal);
+			if (wiz.provider.url[0] != 0) {
+				msg += wxT("\n");
+				if (wiz.provider.emailAddress[0] != 0)
+					msg += wxT("or ");
+				msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
+			}
+			wxMessageBox(msg, wxT("TQSL"));
+			wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
+		}
+		if (req.signer)
+			tqsl_endSigning(req.signer);
+		cert_tree->Build(CERTLIST_FLAGS);
+		CertTreeReset();
 	}
 }
 

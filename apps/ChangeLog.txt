@@ -1,7 +1,7 @@
 TQSL/TQSLCERT changes
 =====================
 
-1.15 alpha
+2.0 alpha
 ----------
 Major feature Additions:
 
@@ -79,6 +79,8 @@ Back up certificate details (address, entity) when backing up as .p12 file.
 
 Change title of certificate request window to reflect new or renewed
 certificate.
+
+Add the ability to automatically upload a certificate request.
 
 1.14.3
 ------
