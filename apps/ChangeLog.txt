@@ -75,6 +75,11 @@ signed (begin) and -e to select the end date for QSOs to be signed.
 Warn users on startup when they have a certificate that's going to expire
 soon (in less than 60 days).
 
+Back up certificate details (address, entity) when backing up as .p12 file.
+
+Change title of certificate request window to reflect new or renewed
+certificate.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed

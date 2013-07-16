@@ -3817,7 +3817,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 	tqslTrace("MyFrame::CRQWizard");
 	char renew = (req != 0) ? 1 : 0;
 	tQSL_Cert cert = (renew ? ((CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection()))->getCert() : 0);
-	CRQWiz wiz(req, cert, this, help);
+	CRQWiz wiz(req, cert, this, help, renew ? wxT("Renew a Callsign Certificate") : wxT("Request a new Callsign Certificate"));
 /*
 	CRQ_ProviderPage *prov = new CRQ_ProviderPage(wiz, req);
 	CRQ_IntroPage *intro = new CRQ_IntroPage(wiz, req);
