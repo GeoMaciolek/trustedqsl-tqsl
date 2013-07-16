@@ -1837,7 +1837,8 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	BIO *out = 0, *b64 = 0;
 	string callSign, issuerOrganization, issuerOrganizationalUnit;
 	tQSL_Date date;
-	string QSONotBeforeDate, QSONotAfterDate, dxccEntity;
+	string QSONotBeforeDate, QSONotAfterDate, dxccEntity, Email,
+	       Address1, Address2, City, State, Postal, Country;
 	int dxcc = 0;
 	int rval = 1;
 
@@ -1860,6 +1861,27 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	if (tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf))
 		return 1;
 	issuerOrganizationalUnit = buf;
+	if (tqsl_getCertificateEmailAddress(cert, buf, sizeof buf))
+		return 1;
+	Email = buf;
+	if (tqsl_getCertificateRequestAddress1(cert, buf, sizeof buf))
+		return 1;
+	Address1 = buf;
+	if (tqsl_getCertificateRequestAddress2(cert, buf, sizeof buf))
+		return 1;
+	Address2 = buf;
+	if (tqsl_getCertificateRequestCity(cert, buf, sizeof buf))
+		return 1;
+	City = buf;
+	if (tqsl_getCertificateRequestState(cert, buf, sizeof buf))
+		return 1;
+	State = buf;
+	if (tqsl_getCertificateRequestPostalCode(cert, buf, sizeof buf))
+		return 1;
+	Postal = buf;
+	if (tqsl_getCertificateRequestCountry(cert, buf, sizeof buf))
+		return 1;
+	Country = buf;
 	if (tqsl_getCertificateQSONotBeforeDate(cert, &date))
 		return 1;
 	if (!tqsl_convertDateToText(&date, buf, sizeof buf))
@@ -1980,6 +2002,13 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	tqsl_add_bag_attribute(bag, "tqslCRQIssuerOrganization", issuerOrganization);
 	tqsl_add_bag_attribute(bag, "tqslCRQIssuerOrganizationalUnit", issuerOrganizationalUnit);
 	tqsl_add_bag_attribute(bag, "dxccEntity", dxccEntity);
+	tqsl_add_bag_attribute(bag, "tqslCRQEmail", Email);
+	tqsl_add_bag_attribute(bag, "tqslCRQAddress1", Address1);
+	tqsl_add_bag_attribute(bag, "tqslCRQAddress2", Address2);
+	tqsl_add_bag_attribute(bag, "tqslCRQCity", City);
+	tqsl_add_bag_attribute(bag, "tqslCRQState", State);
+	tqsl_add_bag_attribute(bag, "tqslCRQPostal", Postal);
+	tqsl_add_bag_attribute(bag, "tqslCRQCountry", Country);
 
 	bags = sk_PKCS12_SAFEBAG_new_null();
 	if (!bags)
@@ -2260,6 +2289,34 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 						goto imp_end;
 					if (str != "")
 						key_attr["TQSL_CRQ_PROVIDER_UNIT"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQEmail", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_EMAIL"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQAddress1", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_ADDRESS1"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQAddress2", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_ADDRESS2"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQCity", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_CITY"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQState", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_STATE"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQPostal", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_POSTAL"] = str;
+					if (tqsl_get_bag_attribute(bag, "tqslCRQCountry", str))
+						goto imp_end;
+					if (str != "")
+						key_attr["TQSL_CRQ_COUNTRY"] = str;
 					if ((p8 = M_PKCS12_decrypt_skey(bag, p12password, strlen(p12password))) == 0)
 						goto imp_end;
 					if ((pkey = EVP_PKCS82PKEY(p8)) == 0)
