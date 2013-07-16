@@ -50,6 +50,11 @@ DLLEXPORTDATA char tQSL_CustomError[256];
 #define TQSL_OID_SUPERCEDED_CERT TQSL_OID_BASE "5"
 #define TQSL_OID_CRQ_ISSUER_ORGANIZATION TQSL_OID_BASE "6"
 #define TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT TQSL_OID_BASE "7"
+#define TQSL_OID_CRQ_ADDRESS1 TQSL_OID_BASE "8"
+#define TQSL_OID_CRQ_ADDRESS2 TQSL_OID_BASE "9"
+#define TQSL_OID_CRQ_CITY TQSL_OID_BASE "10"
+#define TQSL_OID_CRQ_STATE TQSL_OID_BASE "11"
+#define TQSL_OID_CRQ_POSTAL TQSL_OID_BASE "12"
 
 static const char *custom_objects[][3] = {
 	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
@@ -379,11 +384,14 @@ tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz) {
 
 	if (date == NULL || buf == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		buf[0] = '\0';
 		return NULL;
 	}
 	if (date->year < 1 || date->year > 9999 || date->month < 1
-		|| date->month > 12 || date->day < 1 || date->day > 31)
+		|| date->month > 12 || date->day < 1 || date->day > 31) {
+		buf[0] = '\0';
 		return NULL;
+	}
 	len = sprintf(lbuf, "%04d-", date->year);
 	strncpy(cp, lbuf, bufleft);
 	cp += len;
