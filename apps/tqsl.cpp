@@ -4003,7 +4003,7 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
 	GetNewPasswordDialog dial(this, wxT("Certificate Container Password"),
-wxT("Enter the password for the .p12 file.\n\n")
+wxT("Enter the password for the certificate container file.\n\n")
 wxT("If you are using a computer system that is shared\n")
 wxT("with others, you should specify a password to\n")
 wxT("protect this certificate. However, if you are using\n")
@@ -4042,8 +4042,8 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 wxT("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n")
 wxT("This will permanently remove the certificate from your system.\n")
 wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
-wxT("You WILL be able to recover it from a .P12 file only if you\n")
-wxT("have created one via the Certificate menu's Save command.\n\n")
+wxT("You WILL be able to recover it from a container (.p12) file only if you have\n")
+wxT("created one via the Callsign Certificate menu's 'Save Callsign Certificate' command.\n\n")
 wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
