@@ -3342,8 +3342,8 @@ QSLApp::OnInit() {
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
 		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
 		{ wxCMD_LINE_OPTION, wxT("b"), wxT("begindate"),wxT("Specify start date for QSOs to sign") },
-		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
 		{ wxCMD_LINE_OPTION, wxT("e"), wxT("enddate"),	wxT("Specify end date for QSOs to sign") },
+		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
 		{ wxCMD_LINE_OPTION, wxT("i"), wxT("import"),	wxT("Import a certificate file (.p12 or .tq6)") },
 		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
 		{ wxCMD_LINE_SWITCH, wxT("s"), wxT("editlocation"), wxT("Edit (if used with -l) or create Station Location") },
@@ -3374,7 +3374,11 @@ QSLApp::OnInit() {
 	// only allow "-" for options, otherwise "/path/something.adif" 
 	// is parsed as "-path"
 	//parser.SetSwitchChars(wxT("-")); //by default, this is '-' on Unix, or '-' or '/' on Windows. We should respect the Win32 conventions, but allow the cross-platform Unix one for cross-plat loggers
-	if (parser.Parse(true)!=0)  {
+	int parseStatus = parser.Parse(true);
+	if (parseStatus == -1) {	// said "-h"
+		return false;
+	}
+	if (parseStatus != 0)  {
 		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 
