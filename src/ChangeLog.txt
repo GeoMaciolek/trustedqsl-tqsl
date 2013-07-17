@@ -17,6 +17,7 @@ Add new tqsllib APIs:
     Add the ability to export station locations
     APIs to export and import certificates Base-64 encoded
     APIs to export and import duplicates database records
+    Added an API to calculate the difference between dates
 
 Verify that the BAND and FREQ fields are consistent. Disallow freqencies
 outside of valid ranges for ham bands. This catches "10110" used (KHz)
