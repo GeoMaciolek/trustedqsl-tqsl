@@ -517,9 +517,10 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 						"If this certificate request is being submitted for a club station\n"
 						"or by a QSL manager on behalf of another licensee, select 'Unsigned'.")));
 
-	tc_status = new wxStaticText(this, -1, wxT("M"));
-	int em_h = tc_status->GetSize().GetHeight();
-	int em_w = tc_status->GetSize().GetWidth();
+	wxStaticText* text_sizer = new wxStaticText(this, -1, wxT("M"));
+	int em_h = text_sizer->GetSize().GetHeight();
+	int em_w = text_sizer->GetSize().GetWidth();
+	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(0, em_h*4));
 
 	wxString choices[] = { wxT("Unsigned"), wxT("Signed") };
 
@@ -530,7 +531,6 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 		wxSize(em_w*30, em_h*10), wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 	sizer->Add(cert_tree, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxEXPAND);
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	tc_status->SetLabel(wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	// Default to 'signed' unless there's no valid certificates to use for signing.
 	if (cert_tree->GetNumCerts() == 0) {
@@ -853,12 +853,14 @@ CRQ_SignPage::validate() {
 		if (!cert_tree->GetSelection().IsOk() || cert_tree->GetItemData(cert_tree->GetSelection())==NULL) {
 			errmsg = "Please select a callsign certificate to sign your request";
 		} else {
-			char* callsign=(char*)malloc(512);
+			char callsign[512];
 			tQSL_Cert cert = cert_tree->GetItemData(cert_tree->GetSelection())->getCert();
-			assert(0==tqsl_getCertificateCallSign(cert, callsign, 512));
-			nextprompt+=wxT("\nYou are saying that this requested certificate belongs to the\nsame person that owns ")+wxString(callsign, wxConvLocal);
-			nextprompt+=wxT(" and are using it to prove identity");
-			free(callsign);
+			if (0==tqsl_getCertificateCallSign(cert, callsign, sizeof callsign)) {
+				nextprompt+=wxString::Format(wxT("\n\nYou are saying that the requested certificate for %s\n")
+							     wxT("belongs to the same person as %hs and are using\n")
+							     wxT("the selected certificate to prove %hs's identity."),
+					Parent()->callsign.c_str(), callsign, callsign);
+			}
 		}
 	}
 	
