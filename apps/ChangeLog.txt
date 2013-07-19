@@ -82,6 +82,9 @@ certificate.
 
 Add the ability to automatically upload a certificate request.
 
+Make the preferences window a top-level window so it doesn't block
+activity in the help screen, etc.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed
