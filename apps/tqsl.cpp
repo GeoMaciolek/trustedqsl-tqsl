@@ -504,7 +504,22 @@ init_modes() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		tqsl_setADIFMode(key.mb_str(), value.mb_str());
+		bool newMode = true;
+		int numModes; 
+		if (tqsl_getNumMode(&numModes) == 0) {
+			for (int i = 0; i < numModes; i++) {
+				const char *modestr;
+				if (tqsl_getMode(i, &modestr, NULL) == 0) {
+					if (strcasecmp(key.mb_str(), modestr) == 0) {
+						wxLogWarning(wxT("Your custom mode map %s conflicts with the standard mode definition for %hs and was ignored."), key.c_str(), modestr);
+						newMode = false;
+						break;
+					}
+				}
+			}
+		}
+		if (newMode)
+			tqsl_setADIFMode(key.mb_str(), value.mb_str());
 		stat = config->GetNextEntry(key, cookie);
 	}
 	config->SetPath(wxT("/"));
