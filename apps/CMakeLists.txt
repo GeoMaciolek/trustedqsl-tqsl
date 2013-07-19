@@ -1,109 +1,28 @@
-project(tqsl)
+cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
-set(OSX_ARCH i386 CACHE STRING "Architectures to build for OSX")
-
-string(REPLACE " " ";" CMAKE_OSX_ARCHITECTURES ${OSX_ARCH})
+project(TrustedQSL)
 
 if(WIN32)
-set(wxWidgets_USE_STATIC ON)
-add_definitions(-DCURL_STATICLIB)
-add_definitions(-DXML_STATIC)
+  set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
+  # just windows for now... unix knows how to find libraries better
+  set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+  set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 endif()
 
-find_package(CURL REQUIRED)
-find_package(EXPAT REQUIRED)
+set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmakemodules/")
 
-find_package(wxWidgets COMPONENTS core base adv html REQUIRED)
+option(USE_STATIC_MSVCRT "Use a static Visual C++ Runtime when building with MSVC")
 
-find_package(ZLIB REQUIRED)
-
-include(${wxWidgets_USE_FILE})
-
-if(APPLE)
-find_library(CARBON_LIBRARY Carbon)
-find_path(CARBON_INCLUDE_DIR Carbon.h)
+if(MSVC AND USE_STATIC_MSVCRT)
+foreach(flag_var
+        CMAKE_CXX_FLAGS CMAKE_CXX_FLAGS_DEBUG CMAKE_CXX_FLAGS_RELEASE
+        CMAKE_CXX_FLAGS_MINSIZEREL CMAKE_CXX_FLAGS_RELWITHDEBINFO)
+   if(${flag_var} MATCHES "/MD")
+      string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
+   endif(${flag_var} MATCHES "/MD")
+endforeach(flag_var)
 endif()
 
-include_directories(${tqsllib_SOURCE_DIR} ${ZLIB_INCLUDE_DIR} ${EXPAT_INCLUDE_DIR} ${CURL_INCLUDE_DIR} ${CARBON_INCLUDE_DIR} ${OPENSSL_INCLUDE_DIR} ${BDB_INCLUDE_DIR})
-
-#get version from file
-
-file(STRINGS "tqslversion.ver" TQSLVERSION)
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\1" TQSL_VERSION_MAJOR TQSLVERSION)
-string(REGEX REPLACE "([0-9]+)\\.([0-9]+)" "\\2" TQSL_VERSION_MINOR TQSLVERSION)
-
-
-#get build # with git
-
-find_program(GIT_PROG git "C:\\Program Files (x86)\\Git\\bin" "C:\\Program Files\\Git\\bin")
-
-if(GIT_PROG) #we can use git
-execute_process(COMMAND ${GIT_PROG} describe RESULT_VARIABLE GITERROR ERROR_QUIET OUTPUT_VARIABLE HEAD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
-	if(NOT GITERROR) #git ran alright
-		set(BUILD ${HEAD_COMMIT})
-	endif()
-endif()
-
-if(BUILD) 
-	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
-else() #hope this is a source distribution, which will always include a correct tqslbuild
-	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
-		#but otherwise someone downloaded a snapshot without a buildfile
-		set(BUILD "unknown")
-		configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
-	endif()
-endif()
-
-set(TQSL_VERSION_MAJOR 1)
-set(TQSL_VERSION_MINOR 15)
-set(TQSLVERSION "${TQSL_VERSION_MAJOR}.${TQSL_VERSION_MINOR}")
-
-if(WIN32)
-set(TQSLLIB_NAME tqsllib2)
-set(srcdir ${CMAKE_CURRENT_SOURCE_DIR})
-set(TQSL_RCFILE "tqsl.rc")
-configure_file("${CMAKE_CURRENT_SOURCE_DIR}/${TQSL_RCFILE}.in" "${CMAKE_CURRENT_SOURCE_DIR}/${TQSL_RCFILE}")
-else()
-set(TQSLLIB_NAME tqsllib)
-endif()
-
-if(APPLE)
-set(OSX_ICONFILE "tqslicons.icns")
-set(MACOSX_BUNDLE_ICON_FILE ${OSX_ICONFILE})
-SET_SOURCE_FILES_PROPERTIES(${OSX_ICONFILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
-set(TQSL_RCFILE ${OSX_ICONFILE})
-endif()
-
-if(NOT WIN32) #rpath setup
-SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
-SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib")
-endif()
-
-
-set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp
-qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp
-crqwiz.cpp certtree.cpp getpassword.cpp loadcertwiz.cpp wxutil.cpp loctree.cpp)
-set(TQSL_HDR tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h
-tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h
-tqslvalidator.h tqslbuild.h tqslhelp.h certtree.h tqslctrls.h util.h
-getpassword.h extwizard.h loadcertwiz.h wxutil.h loctree.h tqsltrace.h)
-set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm cert.xpm nocert.xpm
-broken-cert.xpm folder.xpm replaced.xpm expired.xpm home.xpm delete.xpm edit.xpm
-loc_add_dis.xpm properties.xpm download_dis.xpm loc_add.xpm upload_dis.xpm
-download.xpm file_edit_dis.xpm upload.xpm delete_dis.xpm edit_dis.xpm
-file_edit.xpm properties_dis.xpm save.xpm import.xpm)
-add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQSL_RCFILE})
-
-#target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
-target_link_libraries(tqsl ${TQSLLIB_NAME}
-  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
-
-if(NOT APPLE AND NOT WIN32)
-add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
-install(TARGETS tqsl DESTINATION bin)
-#install(TARGETS tqslcert DESTINATION bin)
-install(DIRECTORY help DESTINATION share/TrustedQSL)
-install(FILES trustedqsl.5 DESTINATION share/man/man5)
-endif()
+add_subdirectory(src) #tqsllib
+add_subdirectory(apps)
