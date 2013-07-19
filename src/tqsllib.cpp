@@ -393,7 +393,7 @@ tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz) {
 
 	if (date == NULL || buf == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
-		buf[0] = '\0';
+		if (buf) buf[0] = '\0';
 		return NULL;
 	}
 	if (date->year < 1 || date->year > 9999 || date->month < 1
