@@ -113,9 +113,7 @@ using namespace std;
 
 #define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
 
-static wxMenu *file_menu;
 static wxMenu *stn_menu;
-static wxMenu *cert_menu;
 
 static wxString flattenCallSign(const wxString& call);
 
@@ -2727,10 +2725,9 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnPreferences");
-	Preferences dial(this, help);
-	dial.ShowModal();
-	cert_tree->Build(CERTLIST_FLAGS);
-	CertTreeReset();
+	Preferences* dial = new Preferences(this, help);
+	dial->Show(true);
+	file_menu->Enable(tm_f_preferences, false);
 }
 
 class TQSLConfig {

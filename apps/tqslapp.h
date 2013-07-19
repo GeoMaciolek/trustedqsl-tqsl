@@ -27,6 +27,7 @@
 #include "qsodatadialog.h"
 #include "certtree.h"
 #include "loctree.h"
+#include "wxutil.h"
 
 enum {
 	tm_f_import = 7000,
@@ -135,6 +136,8 @@ public:
 	LocTree *loc_tree;
 	wxTextCtrl *logwin;
 	wxHtmlHelpController *help;
+	wxMenu* file_menu;
+	wxMenu *cert_menu;
 	wxMenu* help_menu;
 
 	DECLARE_EVENT_TABLE()

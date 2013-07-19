@@ -16,6 +16,7 @@
 #include "wx/config.h"
 #include "tqsllib.h"
 #include "tqsltrace.h"
+#include "tqslapp.h"
 
 #include <stdlib.h>
 #include <iostream>
@@ -29,14 +30,15 @@ using namespace std;
   #define HEIGHT_ADJ(x) ((x)*3/2)
 #endif
 
-BEGIN_EVENT_TABLE(Preferences, wxDialog)
+BEGIN_EVENT_TABLE(Preferences, wxFrame)
 	EVT_BUTTON(ID_OK_BUT, Preferences::OnOK)
 	EVT_BUTTON(ID_CAN_BUT, Preferences::OnCancel)
 	EVT_BUTTON(ID_HELP_BUT, Preferences::OnHelp)
+	EVT_MENU(wxID_EXIT, Preferences::OnOK)
 END_EVENT_TABLE()
 
 Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
-	: wxDialog(parent, -1, wxString(wxT("Preferences"))), _help(help) {
+	: wxFrame(parent, -1, wxString(wxT("Preferences"))), _help(help) {
 	tqslTrace("Preferences::Preferences", "parent=0x%lx", (void *)parent);
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
@@ -72,6 +74,16 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	notebook->AddPage(onlinePrefs, wxT("Server Setup"));
 #endif
 
+#ifdef __WXMAC__
+	// You can't have a toplevel window without a menubar.
+	wxMenu *file_menu = new wxMenu;
+	file_menu->Append(wxID_EXIT, wxT("Close"));
+	// Main menu
+	wxMenuBar *menu_bar = new wxMenuBar;
+	menu_bar->Append(file_menu, wxT("&File"));
+	SetMenuBar(menu_bar);
+#endif
+
 	SetSizer(topsizer);
 	topsizer->Fit(this);
 	topsizer->SetSizeHints(this);
@@ -82,13 +94,22 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("Preferences::OnOK");
 #if defined(ENABLE_ONLINE_PREFS)
-	if (!fileprefs->TransferDataFromWindow())
+	if (!onlinePrefs->TransferDataFromWindow())
 		return;
 #endif
 	if (!fileprefs->TransferDataFromWindow())
 		return;
-	Close(true);
+	((MyFrame *) GetParent())->file_menu->Enable(tm_f_preferences, true);
+	Destroy();
 }
+
+void Preferences::OnCancel(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("Preferences::OnOK");
+	
+	((MyFrame *) GetParent())->file_menu->Enable(tm_f_preferences, true);
+	Destroy();
+}
+
 
 void Preferences::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("Preferences::OnHelp");

@@ -158,11 +158,11 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
-class Preferences : public wxDialog {
+class Preferences : public wxFrame {
 public:
 	Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
 	void OnOK(wxCommandEvent &);
-	void OnCancel(wxCommandEvent &) { Close(true); }
+	void OnCancel(wxCommandEvent &);
 	void OnHelp(wxCommandEvent &);
 	DECLARE_EVENT_TABLE()
 private:
