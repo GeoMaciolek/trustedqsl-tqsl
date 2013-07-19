@@ -41,10 +41,22 @@ if(GIT_PROG) #we can use git
 execute_process(COMMAND ${GIT_PROG} describe RESULT_VARIABLE GITERROR ERROR_QUIET OUTPUT_VARIABLE HEAD_COMMIT OUTPUT_STRIP_TRAILING_WHITESPACE)
 	if(NOT GITERROR) #git ran alright
 		set(BUILD ${HEAD_COMMIT})
+	else()		# Git error - hope this is a source distro
+		if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h)
+			file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h BUILDSTR REGEX "\\[.*\\]")
+			string(REGEX REPLACE ".*\\[(.*)\\].*" "\\1" BUILD ${BUILDSTR})
+		endif()
+	endif()
+else()	# No git, again grab from source
+	if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h)
+		file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h BUILDSTR REGEX "\\[.*\\]")
+		string(REGEX REPLACE ".*\\[(.*)\\].*" "\\1" BUILD ${BUILDSTR})
 	endif()
 endif()
 
-if(BUILD) 
+# If BUILD is set (we have a version) and BUILDSTR is not (we got that build from
+# git), then write a tqslbuild.h. Else leave it alone.
+if(BUILD AND NOT BUILDSTR)
 	configure_file("${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h.in" "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
 else() #hope this is a source distribution, which will always include a correct tqslbuild
 	if(NOT EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tqslbuild.h")
@@ -69,6 +81,12 @@ endif()
 
 if(APPLE)
 set(OSX_ICONFILE "tqslicons.icns")
+set(MACOSX_BUNDLE_INFO_STRING "tqsl")
+set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.arrl.tqsl")
+set(MACOSX_BUNDLE_LONG_VERSION_STRING "TQSL V ${TQSLVERSION} build ${BUILD}")
+set(MACOSX_BUNDLE_SHORT_VERSION_STRING "${TQSLVERSION}")
+set(MACOSX_BUNDLE_COPYRIGHT "Copyright 2001-2013 American Radio Relay League")
+
 set(MACOSX_BUNDLE_ICON_FILE ${OSX_ICONFILE})
 SET_SOURCE_FILES_PROPERTIES(${OSX_ICONFILE} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 set(TQSL_RCFILE ${OSX_ICONFILE})
