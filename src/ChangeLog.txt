@@ -23,6 +23,9 @@ Verify that the BAND and FREQ fields are consistent. Disallow freqencies
 outside of valid ranges for ham bands. This catches "10110" used (KHz)
 versus the ADIF required 10.110 (MHz).
 
+Always convert frequency values in Cabrillo logs to Megahertz
+independent of contest type (HF/VHF).
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement

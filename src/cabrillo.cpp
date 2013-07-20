@@ -31,6 +31,7 @@ static char errmsgdata[40];
 struct TQSL_CABRILLO;
 
 static int freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp);
+static int freq_to_mhz(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp);
 static int mode_xlat(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp);
 static int time_fixer(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp);
 
@@ -46,7 +47,7 @@ static cabrillo_field_def cabrillo_dummy[] = {
 	{ "MODE", 1, mode_xlat },
 	{ "QSO_DATE", 2, 0 },
 	{ "TIME_ON", 3, time_fixer },
-	{ "FREQ", 0, 0 },
+	{ "FREQ", 0, freq_to_mhz },
 	{ "MYCALL", 4, 0 },
 };
 
@@ -290,6 +291,70 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	if (band == 0)
 		return 1;
 	strcpy(fp->value, band);
+	return 0;
+}
+
+static int
+freq_to_mhz(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
+	if (!strcasecmp(fp->value, "light")) {
+		return 0;
+	}
+	int freq = strtol(fp->value, NULL, 10);
+	double freqmhz = freq;
+	freqmhz /= 1000;
+
+	if (cab->contest->type == TQSL_CABRILLO_HF) {
+		if (freq < 30) {
+			// Handle known CT misbehavior
+			if (freq == 7)
+				freqmhz = 7.0;
+			if (freq == 14)
+				freqmhz = 14.0;
+			if (freq == 21)
+				freqmhz = 21.0;
+			if (freq == 28)
+				freqmhz = 28.0;
+		}
+	} else {
+		// VHF+
+		if (freq == 50)
+			freqmhz = 50.0;
+		else if (freq == 144)
+			freqmhz = 144.0;
+		else if (freq == 222)
+			freqmhz = 222.0;
+		else if (freq == 432)
+			freqmhz = 432.0;
+		else if (freq == 903)
+			freqmhz = 303.0;
+		else if (!strncmp(fp->value, "1.2", 3))
+			freqmhz = 1200;
+		else if (!strncmp(fp->value, "2.3", 3))
+			freqmhz = 2300;
+		else if (!strncmp(fp->value, "3.4", 3))
+			freqmhz = 3400;
+		else if (!strncmp(fp->value, "5.7", 3))
+			freqmhz = 5700;
+		else if (freq == 10)
+			freqmhz = 10000;
+		else if (freq == 24)
+			freqmhz = 24000;
+		else if (freq == 47)
+			freqmhz = 47000;
+		else if (freq == 76)
+			freqmhz = 76000;
+		else if (freq == 119)
+			freqmhz = 119000;
+		else if (freq == 142)
+			freqmhz = 142000;
+		else if (freq == 242)
+			freqmhz = 242000;
+		else if (freq == 300)
+			freqmhz = 300000;
+	}
+	char strfreq[100];
+	sprintf(strfreq, "%#f", freqmhz);
+	strcpy(fp->value, strfreq);
 	return 0;
 }
 
