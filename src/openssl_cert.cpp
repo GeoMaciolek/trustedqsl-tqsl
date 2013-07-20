@@ -745,7 +745,9 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	else {
 		string sup = buf;
 		sup += ";";
-		sprintf(buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
+		long serial = 0;		
+		tqsl_getCertificateSerial(cert, &serial);
+		sprintf(buf, "%ld", serial);
 		sup += buf;
 		set<string>::iterator it;
 		for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {

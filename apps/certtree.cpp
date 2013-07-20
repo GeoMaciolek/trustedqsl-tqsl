@@ -154,10 +154,10 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 				icon_type = BROKEN_ICON;
 			else if (keyonly)
 				icon_type = NOCERT_ICON;
-			else if (exp)
-				icon_type = EXPIRED_ICON;
 			else if (sup)
 				icon_type = REPLACED_ICON;
+			else if (exp)
+				icon_type = EXPIRED_ICON;
 			else
 				icon_type = CERT_ICON;
 			AppendItem(_nissuers > 1 ? id : rootId, list[i].first, icon_type, -1, cert);
