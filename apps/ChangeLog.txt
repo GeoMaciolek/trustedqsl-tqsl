@@ -87,6 +87,9 @@ activity in the help screen, etc.
 
 Warn the user about obsolete mode maps when signing a log.
 
+When creating a station location, default to the callsign selected on
+the locations tree if one is selected.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed

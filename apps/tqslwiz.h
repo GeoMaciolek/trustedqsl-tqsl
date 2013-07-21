@@ -52,14 +52,16 @@ public:
 	TQSLWizPage *GetPage(bool final = false);
 	TQSLWizPage *GetCurrentTQSLPage() { return (TQSLWizPage *)GetCurrentPage(); }
 	void SetLocationName(wxString& s) { sl_name = s; }
+	void SetDefaultCallsign(wxString& c) {sl_call = c; };
 	wxString GetLocationName() { return sl_name; }
+	wxString GetDefaultCallsign() {return sl_call; };
 	TQSLWizPage *GetFinalPage() { return (_pages.size() > 0) ? _pages[0] : 0; }
-
 	bool page_changing;
 	bool expired;
 private:
 	void OnPageChanged(wxWizardEvent&);
 	wxString sl_name;
+	wxString sl_call;
 	tQSL_Location loc;
 	int _curpage;
 	std::map<int, TQSLWizPage *> _pages;

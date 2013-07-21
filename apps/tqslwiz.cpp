@@ -85,7 +85,6 @@ void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
 	UpdateFields();
 }
 
-
 TQSLWizPage *
 TQSLWizCertPage::GetPrev() const {
 	tqslTrace("TQSLWizCertPage::GetPrev");
@@ -161,9 +160,15 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			char gabbi_name[40];
 			tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
 			int selected;
+			bool defaulted = false;
 			tqsl_getLocationFieldIndex(loc, i, &selected);
 			int new_sel = 0;
 			wxString old_sel = ((wxComboBox *)controls[i])->GetStringSelection();
+			if (old_sel.IsEmpty() && strcmp(gabbi_name, "CALL") == 0) { 
+				old_sel = ((TQSLWizard*)GetParent())->GetDefaultCallsign();
+				if (!old_sel.IsEmpty())
+					defaulted = true;		// Set from default
+			}
 			((wxComboBox *)controls[i])->Clear();
 			int nitems;
 			tqsl_getNumLocationFieldListItems(loc, i, &nitems);
@@ -178,7 +183,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 					*p = '\0';
 				wxString item_text(item, wxConvLocal);
 				((wxComboBox *)controls[i])->Append(item_text);
-				if (item_text == old_sel)
+				if (item_text == old_sel) 
 					new_sel = j;
 				wxCoord w, h;
 				((wxComboBox *)controls[i])->GetTextExtent(item_text, &w, &h);
@@ -190,7 +195,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				((wxComboBox *)controls[i])->GetSize(&w, &h);
 				((wxComboBox *)controls[i])->SetSize(text_width + text_size.GetWidth()*4, h);
 			}
-			if (noupdate_field < 0)
+			if (noupdate_field < 0 && !defaulted)
 				new_sel = selected;
 			((wxComboBox *)controls[i])->SetSelection(new_sel);
 			tqsl_setLocationFieldIndex(loc, i, new_sel);

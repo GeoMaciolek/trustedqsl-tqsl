@@ -905,6 +905,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_add_button = new wxBitmapButton(lb1Panel, tl_AddLoc, locaddbm);
 	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
+	// Note - the doubling below is to size the label to allow the control to stretch later
 	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station LocationCreate a new Station\n"));
 	lb1sizer->Add(loc_add_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb1Panel, 1, wxALL, 1);
@@ -1059,13 +1060,14 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 static wxString
 run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
-	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT("")) {
-	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s", loc, expired, _S(title), _S(dataname));
+	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT(""), wxString callsign = wxT("")) {
+	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s, callsign=%s", loc, expired, _S(title), _S(dataname), _S(callsign));
 	wxString rval(wxT(""));
 	get_certlist("", 0, expired, false);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title, expired);
+	wiz->SetDefaultCallsign(callsign);
 	wiz->GetPage(true);
 	TQSLWizPage *page = wiz->GetPage();
 	if (page == 0)
@@ -1151,11 +1153,11 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 }
 
 static void
-AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location")) {
-	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s", loc, expired, _S(title));
+AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location"), const wxString& callsign = wxT("")) {
+	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s, callsign=%s", loc, expired, _S(title), _S(callsign));
 	try {
 		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
-		run_station_wizard(frame, loc, frame->help, expired, title);
+		run_station_wizard(frame, loc, frame->help, expired, title, wxT(""), callsign);
 		frame->loc_tree->Build();
 	}
 	catch (TQSLException& x) {
@@ -1165,12 +1167,24 @@ AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& 
 
 void
 MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("MyFrame::AddEditStationLocation");
+	tqslTrace("MyFrame::AddStationLocation");
+	wxTreeItemId root = loc_tree->GetRootItem();
+	wxTreeItemId id = loc_tree->GetSelection();
+	wxString call;
+	if (id != root && id.IsOk()) {		// If something selected
+		LocTreeItemData *data = (LocTreeItemData *)loc_tree->GetItemData(id);
+		if (data) {
+			call = data->getCallSign();		// Station location
+		} else {
+			call = loc_tree->GetItemText(id);	// Callsign folder selected
+		}
+		tqslTrace("MyFrame::AddStationLocation", "Call selected is %s", _S(call));
+	}
 	tQSL_Location loc;
 	if (tqsl_initStationLocationCapture(&loc)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
-	AddEditStationLocation(loc, false);
+	AddEditStationLocation(loc, false, wxT("Add Station Location"), call);
 	if (tqsl_endStationLocationCapture(&loc)) {
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	}
