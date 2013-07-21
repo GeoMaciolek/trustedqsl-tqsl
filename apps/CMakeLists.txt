@@ -111,7 +111,7 @@ set(TQSL_XPM left.xpm right.xpm bottom.xpm top.xpm key.xpm cert.xpm nocert.xpm
 broken-cert.xpm folder.xpm replaced.xpm expired.xpm home.xpm delete.xpm edit.xpm
 loc_add_dis.xpm properties.xpm download_dis.xpm loc_add.xpm upload_dis.xpm
 download.xpm file_edit_dis.xpm upload.xpm delete_dis.xpm edit_dis.xpm
-file_edit.xpm properties_dis.xpm save.xpm import.xpm)
+file_edit.xpm properties_dis.xpm save.xpm import.xpm lotw.xpm)
 add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQSL_RCFILE})
 
 #target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
