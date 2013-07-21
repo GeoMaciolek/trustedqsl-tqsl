@@ -90,11 +90,14 @@ Warn the user about obsolete mode maps when signing a log.
 When creating a station location, default to the callsign selected on
 the locations tree if one is selected.
 
+Add a button to the Log Operations window that opens the Logbook of the
+world website.
+
 1.14.3
 ------
-On Windows, use a newer verions of libcurl that doesn't suffer from the defect fixed
-by http://support.microsoft.com/kb/975858. On all platforms: show some additional 
-libraries' versions in the about screen
+On Windows, use a newer verions of libcurl that doesn't suffer from the defect
+fixed by http://support.microsoft.com/kb/975858. On all platforms: show some
+additional libraries' versions in the about screen
 
 1.14.2
 ------

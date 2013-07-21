@@ -44,6 +44,7 @@ enum {		// Window IDs
 	tc_LocTree,
 	tc_LogGrid,
 	tl_Upload,
+	tl_Login,
 	tl_Save,
 	tl_Edit,
 	tl_AddLoc,

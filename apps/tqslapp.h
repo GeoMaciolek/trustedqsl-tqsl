@@ -127,6 +127,7 @@ public:
 	void OnLocDelete(wxCommandEvent& event);
 	void OnLocEdit(wxCommandEvent& event);
 	void OnLocTreeSel(wxTreeEvent& event);
+	void OnLoginToLogbook(wxCommandEvent& event);
 	void LocTreeReset(void);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
 	void FirstTime(void);

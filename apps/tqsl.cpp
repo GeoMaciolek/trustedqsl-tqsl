@@ -103,6 +103,7 @@
 #include "properties.xpm"
 #include "properties_dis.xpm"
 #include "import.xpm"
+#include "lotw.xpm"
 
 using namespace std;
 
@@ -689,6 +690,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
 	EVT_MENU(tl_c_Edit, MyFrame::OnLocEdit)
+	EVT_BUTTON(tl_Login, MyFrame::OnLoginToLogbook)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnCertTreeSel)
 	EVT_TREE_SEL_CHANGED(tc_LocTree, MyFrame::OnLocTreeSel)
 
@@ -741,6 +743,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmap propertiesbm(properties_xpm);
 	wxBitmap properties_disbm(properties_dis_xpm);
 	wxBitmap importbm(import_xpm);
+	wxBitmap lotwbm(lotw_xpm);
 	loc_edit_button = NULL;
 	cert_save_label = NULL;
 	req = NULL;
@@ -857,6 +860,14 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b3sizer->Add(fed, 0, wxALL, 1);
 	b3sizer->Add(new wxStaticText(b3Panel, -1, wxT("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
 	bsizer->Add(b3Panel, 0, wxALL, 1);
+
+	wxPanel* b4Panel = new wxPanel(buttons);
+	wxBoxSizer* b4sizer = new wxBoxSizer(wxHORIZONTAL);
+	b4Panel->SetBackgroundColour(wxColour(255, 255, 255));
+	b4Panel->SetSizer(b4sizer);
+	b4sizer->Add(new wxBitmapButton(b4Panel, tl_Login, lotwbm), 0, wxALL, 1);
+	b4sizer->Add(new wxStaticText(b4Panel, -1, wxT("\nLog in to the Logbook of the World Site")), 1, wxALL, 1);
+	bsizer->Add(b4Panel, 0, wxALL, 1);
 
 	notebook->AddPage(buttons, wxT("Log Operations"));
 
@@ -4207,6 +4218,14 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	}
 	loc_tree->Build();
 	LocTreeReset();
+}
+
+void MyFrame::OnLoginToLogbook(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnLoginToLogbook");
+	wxString url = wxConfig::Get()->Read(wxT("LogbookURL"), DEFAULT_LOTW_LOGIN_URL);
+	if (!url.IsEmpty())
+		wxLaunchDefaultBrowser(url);
+	return;
 }
 
 class CertPropDial : public wxDialog {

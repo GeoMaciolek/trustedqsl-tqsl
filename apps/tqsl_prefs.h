@@ -55,6 +55,8 @@
 #define DEFAULT_UPD_CONFIG_URL wxT("https://lotw.arrl.org/lotw/config_xml_version")
 #define DEFAULT_CONFIG_FILE_URL wxT("https://lotw.arrl.org/lotw/config.tq6")
 
+#define DEFAULT_LOTW_LOGIN_URL wxT("https://lotw.arrl.org/lotwuser/default")
+
 enum {		// Window IDs
 	ID_OK_BUT,
 	ID_CAN_BUT,
