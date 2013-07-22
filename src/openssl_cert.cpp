@@ -3811,8 +3811,8 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		/* Friendly error for file not found, permission errors */
 		if (tQSL_Errno == ENOENT || tQSL_Errno == EPERM) {
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
-				"Can't open private key for callsign %s: %s", 
-				aro, strerror(tQSL_Errno));
+				"Can't open private key for callsign %s: %s\nThis file can only be opened on the same computer where you created the callsign certificate request for %s", 
+				aro, strerror(tQSL_Errno), aro);
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 		}
 		return rval;
