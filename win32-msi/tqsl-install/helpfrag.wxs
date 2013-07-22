@@ -43,6 +43,9 @@
       <Component Id="cmpB94C1CBE3102168C346589D7DCA1CE12" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil6F7D8BD1E9384A9D920EFD0CCA00C1E1" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\certreq.htm" />
       </Component>
+      <Component Id="cmp4D904CC7FE1192B0D38FD24BB06A37A3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil04E1F4256AC42CC163CDE69C908E9A30" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\certs-icons.htm" />
+      </Component>
       <Component Id="cmp4A384EF01568F299B0D5BDCB25C157CC" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filC537FF4F59F21276E95862575C23013C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\cmdline.htm" />
       </Component>
@@ -76,6 +79,9 @@
       <Component Id="cmp04B9E0F1BE7366E913A98D0B490BAC37" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil908ECFA1D809855C4B7CBFBA84454F54" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\daterng.htm" />
       </Component>
+      <Component Id="cmp86DD3953700BFA13AB18612160BCB6F8" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil1AED73B0567AFA4E47F36D2EC9748C72" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\deletecert.htm" />
+      </Component>
       <Component Id="cmp48825CD14C0EDE9D9323EE3D7E788082" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil509DA4A8003D7F012394D9BDDC902412" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\diagmode.htm" />
       </Component>
@@ -87,6 +93,9 @@
       </Component>
       <Component Id="cmp933A3253A9C91A2CBF0707D967815572" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filC909776F38A920CC06B30C7218347D23" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\expiration.htm" />
+      </Component>
+      <Component Id="cmp3217AF9EC22E5F28EDE478BDDCF2A148" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil3D879B04340E640572623065656B5A9C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\expired.bmp" />
       </Component>
       <Component Id="cmpE8608C93D253DEA391BD9154E21739F9" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filBD463648073CD3E2B1C36409B4DF19C6" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\fileops.htm" />
@@ -156,6 +165,9 @@
       </Component>
       <Component Id="cmp297A333A5CA0DFE15C019C28CF178904" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filEF7E46DEC1A4F2FE535ED6F318F50FEA" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\renewing.htm" />
+      </Component>
+      <Component Id="cmpE07EAD116E565817D54EAEAC302362D3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil4A18C557E601270F050AB7DD1AAC5F7C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\replaced.bmp" />
       </Component>
       <Component Id="cmp30F508E99503CAD14819FF9444545105" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil80FE1467EA8CAFE6C58CE262A438521A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\save.htm" />
