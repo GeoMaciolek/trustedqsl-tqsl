@@ -77,6 +77,11 @@
 					<param name="Local" value="moving.htm">
 					 </OBJECT>
 					 
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Deleting a Callsign Certificate">
+					<param name="Local" value="deletecert.htm">
+					 </OBJECT>
+					 
 			</UL>
 					 
 		<LI> <OBJECT type="text/sitemap">
@@ -152,6 +157,11 @@
 					<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="LotW Files and Icons">
 					<param name="Local" value="files-icons.htm">
+					 </OBJECT>
+					 
+					<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="TQSL Callsign Certificate Icons">
+					<param name="Local" value="certs-icons.htm">
 					 </OBJECT>
 					 
 					<LI> <OBJECT type="text/sitemap">
