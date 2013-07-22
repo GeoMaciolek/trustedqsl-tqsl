@@ -1,6 +1,9 @@
 QUICK-START
 ===========
 
+Installation
+============
+
 In Windows, once the software is installed you'll find the TQSL program
 under the Start/Programs/TrustedQSL menu. (Unless you selected a
 different menu during installation.) The installer also lets you place
@@ -21,15 +24,33 @@ to do this once for a given TQSL release.
 Instructions for installing on Linux can be found in the INSTALL document
 included with the source code.
 
-Initial Setup
-=============
-IT IS NOT NECESSARY TO PERFORM THE FOLLOWING STEPS IF YOU ARE SIMPLY
-UPGRADING TO A NEW VERSION OF THE SOFTWARE.
 
-1) CREATE A CERTIFICATE REQUEST. Run TQSLCert. You'll get a message
-reporting that you have no certificates and asking if you want to
-request one. Say YES. Then proceed through the request wizard, saving
-the request into a file.
+If you're updating an existing TQSL installation
+================================================
+
+This version of TQSL includes the functionality previously provided by TQSLCert,
+so TQSLCert has been removed from your computer. Use the "Callsign Certificates" 
+tab on TQSL's Main window.
+
+By default, TQSLCert was configured to hide both "replaced" and "expired" 
+certificates. TQSL displays all Callsign Certificates on its Main window's 
+"Callsign Certificates" tab:
+
+- "replaced" Certificates are denoted by an A=>B icon
+
+- "expired" Certificates are denoted by an alarm clock icon. 
+
+You should delete each "replaced" or "expired" Callsign Certificate by clicking 
+its entry on the "Callsign Certificates" tab, and then selecting the "Callsign 
+Certificate" menu's "Delete Callsign Certificate" command.
+
+
+If you're installing TQSL for the first time
+============================================
+
+1) CREATE A CERTIFICATE REQUEST. Start TQSL. You'll get a message
+reporting that you have no Callsign Certificates and asking if you want to
+request one. Choose YES. Then proceed through the request wizard:
 
    a) The request wizard will ask you to supply a call sign. Use your
    present call sign -- without any portable identifiers.
@@ -44,76 +65,73 @@ the request into a file.
    register your new address with the FCC.
 
    d) The request wizard includes a page that allows you to digitally
-   sign the certificate request. On your initial request, you must choose
-   "unsigned" since you have no certificate with which to sign.
+   sign the certificate request; on your initial request, you must choose
+   "unsigned".
 
-   e) Remember where on your computer you save the certificate
-   request file for the next step!
+   e) If your computer is connected to the internet, TQSL will offer to submit
+   your Callsign Certificate Request; choose YES. Otherwise, you'll be 
+   prompted to save a .tq5 file, which you should then attach to an email 
+   message to lotw-logs@arrl.org, or upload via the Web 
+   (https://www.arrl.org/lotw/). 
 
-2) SUBMIT THE CERTIFICATE REQUEST. Send the .TQ5 file created in step 1 as
-an attachment in an email message to lotw-logs@arrl.org, or upload it via
-the Web (https://www.arrl.org/lotw/). If you are a US licensee, you will
-then receive a post card in the mail with further instructions. (The
-post card will be sent to the address you have in the FCC database, so
-make sure that's correct!) If you are a non-US licensee, you must submit
-proof of license and identity to receive your certificate. See
-http://www.arrl.org/lotw/ for details.
+   f) If you are a US licensee, you will receive a post card in the mail with
+   further instructions; the post card will be sent to your address in the FCC
+   database, so make sure that's correct! If you are a non-US licensee, you must
+   submit proof of license and identity to receive your Callsign Certificate.
+   See http://www.arrl.org/lotw/ for details.
 
-NOTE! IT IS IMPORTANT that you do NOT delete the certificate request (the 
-red-lined icon) from TQSLCert once it has been sent. Each certificate
-request is unique and must match the certificate that will be returned to
-you by the issuer. If you delete the certificate request from TQSLCert, you
-will NEVER be able to load or use the received certificate!
+NOTE! IT IS IMPORTANT that you NOT delete the Callsign Certificate Request (the 
+red-lined "pending" icon) from TQSL's "Callsign Certificates" tab after the
+request has been sent. Each Certificate Request is unique and must match
+the Callsign Certificate that will be sent to you by the ARRL. If you direct TQSL
+to delete the Certificate Request, you will not be able to load the Callsign 
+Certificate the ARRL sends you in response.
 
-3) LOAD THE CERTIFICATE. Once your certificate has been issued it will
-be sent as a .TQ6 file to the email address you entered into the certificate
-request during step 1. You should be able to double-click the attachment
-in the received message to launch TQSLCert to load the .TQ6 file. If
-that doesn't work, save the attachment to disk, run TQSLCert and use its
-File menu's "Load Certificate File" command to find and load in the
-.TQ6 file. Once that's done, TQSLCert should show your certificate in its
-certificate list with a gold emblem next to your call.
+3) LOAD THE CERTIFICATE. Your Callsign Certificate will arrive as a .TQ6 file
+attached to an email message sent to the email address that you specified in
+step 1. Using the same computer with which you generated the Callsign Certificate
+Request, double-click the email attachment in the received message to launch 
+TQSL and direct it to load the .TQ6 file; if that doesn't work, save the 
+attached .tq6 file to a folder, run TQSL, and use its Callsign Certificate menu's 
+"Load Callsign Certificate From File" command to load your Callsign Certificate;
+this certificate will appear on the "Callsign Certificates" tab with a yellow 
+medal icon indicating that it is "valid".
 
-4) SAVE THE CERTIFICATE. This step is strongly recommended. If you do not
-perform this step and later lose your certificate (due to a hard-drive crash
-or system reinstall, for example), your certificate will be unrecoverable.
-Click on the certificate in the certificate list to select it, then choose
-the Certificate menu's Save command. Save the certificate file onto a floppy
-disk or other off-line medium.
+4) MAKE A BACKUP. This step is strongly recommended; if you fail to make a backup
+and later lose your Callsign Certificate to a hard-drive crash or operating system
+reinstallation, your Certificate will not be recoverable. Select the File menu's 
+"Backup Station Locations, Certificates, and Preferences..." command, and create
+a backup on a flash (thumb) drive, an external hard drive, or on a cloud storage
+service like DropBox, Google Drive, or Microsoft Sky Drive.
 
 5) REQUEST ADDITIONAL CERTIFICATES. Logbook of the World treats a call
 sign with a portable identifier (e.g. NU1AW/4 or KP2/W1AW) as a separate
-call sign. To submit log data using such a call sign, you need a
-certificate with that call sign in it. Once you have received your
-certificate for your present call sign, repeat the process above, but in
-step 1d, sign the request with the certificate for your present call sign.
-This will speed the process of getting the certificate and will ensure that
-all of your certificates appear under your Web site user account.
+call sign. To submit QSOs using such a callsign, you need a
+Callsign Certificate for that callsign. After you have received your
+Callsign Certificate for your present call sign, repeat the process above, but in
+step 1a specify your portable callsign, and in step 1d digitally sign the request
+with the Callsign Certificate for your present callsign.
 
 6) CREATE A LOG FILE. If you have a logging program that can produce log
 files in ADIF or Cabrillo format, you can use those files directly. If
-you just want to enter a few QSOs into a log file, you can run TQSL and
-choose the File menu's "Create New ADIF file" command.
+you just want to create a log file containing a few QSOs, start TQSL, select the
+"Log Operations" tab, and click the "Create an ADIF file for signing and uploading"
+button.
 
-7) CREATE A STATION LOCATION. In TQSL, select "Station/Add Location"
-from the menu. Step through the wizard to specify the location of the
-station used to make the contacts you'll be submitting. At the end of the
-wizard, enter a name to use for this station location, e.g., "Home" or
-"Portable in EM29."
+7) CREATE A STATION LOCATION. In TQSL, select the "Station Locations" tab and
+click the "Create a new Station Location" button. Step through the wizard to 
+specify the location of the station used to make the QSOs you'll be submitting. 
+At the end of the wizard, enter a name that identifies this station location, 
+e.g., "Home" or "Portable in EM29."
 
-8) CREATE A SIGNED LOG SUBMISSION. In TQSL, select "Sign existing ADIF
-or Cabrillo file" from the File menu. In the resulting "Select Station
-Location" dialog, select the station location and click "Ok." You'll
-then be asked to select the log file (a file in ADIF or Cabrillo format)
-to sign. Finally, you'll be asked to name the file and select the location
-(directory) where TQSL will save the .TQ8 (signed log) file.
+8) CREATE A SIGNED LOG SUBMISSION. In TQSL, select the "Station Locations" tab and
+click the "Sign a log and upload it automatically to LoTW" button. In the 
+"Select Station Location" dialog, select the station location and click "Ok"; TQSL
+will upload your digitally signed QSOs over the internet to LotW.
 
-9) SEND THE SUBMISSION. Send the .TQ8 file created in step 8 as an
-attachment via email to lotw-logs@arrl.org. You will receive an email
-response. (More than one file can be attached to an email message.) Or you
-can upload the file at https://www.arrl.org/lotw/
+9) Visit the LotW Web site at https://www.arrl.org/lotw/ to view your
+submitted data and confirmations and apply for award credits; from TQSL, you can 
+go there by clicking the "Log Operations" tab's "Log in to the Logbook of the World
+Site" button.
 
-10) Visit the LOTW Web site at https://www.arrl.org/lotw/ to view your
-submitted data and confirmations and apply for award credits. Submit any
-bug reports to lotw-help@arrl.org.
-
+10) For assistance or to report defects, send email to lotw-help@arrl.org.
