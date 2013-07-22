@@ -133,15 +133,15 @@ cmake  \
         $* .
 make
 
-The build will result in the directories apps/tqsl.app and
-apps/tqslcert.app, which comprise complete Mac OS X applications. You
-can simply move those folders to your system's Applications folder
-or the location of your choice, then launch the applications from
-Finder. If you want to distribute the built applications:
+The build will result in the directory apps/tqsl.app, which contains the
+complete Mac OS X application. You can simply move that folder to your
+system's Applications folder or the location of your choice, then launch
+the application from Finder.
+If you want to distribute the built application:
 
 ./osx_createdmg.sh
 
-will make TrustedQSL-1.14.dmg, a Mac distributable disk image
+will make TrustedQSL-2.0.dmg, a Mac distributable disk image
 containing the TrustedQSL applications folder and document files.
 
 ===================================================================

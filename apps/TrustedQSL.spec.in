@@ -12,7 +12,7 @@ BuildPrereq: tqsllib-devel
 %description
 The TrustedQSL applications are used for generating digitally signed
 QSO records (records of Amateur Radio contacts). This package
-contains the GUI applications tqslcert and tqsl.
+contains the GUI application tqsl.
 
 %prep
 %setup -q -n TrustedQSL-%{version}
@@ -26,7 +26,6 @@ rm -rf $RPM_BUILD_ROOT
 make DESTDIR=$RPM_BUILD_ROOT install
 mkdir -p $RPM_BUILD_ROOT/usr/share/applications
 cp tqsl.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqsl.desktop
-cp tqslcert.desktop $RPM_BUILD_ROOT/usr/share/applications/TrustedQSL-tqslcert.desktop
 mkdir -p $RPM_BUILD_ROOT/usr/share/pixmaps
 cp icons/key48.png $RPM_BUILD_ROOT/usr/share/pixmaps/TrustedQSL.png
 
@@ -38,9 +37,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc LICENSE
 
 /usr/bin/tqsl
-/usr/bin/tqslcert
-/usr/share/TrustedQSL/help/tqslcert
 /usr/share/TrustedQSL/help/tqslapp
 /usr/share/applications/TrustedQSL-tqsl.desktop
-/usr/share/applications/TrustedQSL-tqslcert.desktop
 /usr/share/pixmaps/TrustedQSL.png

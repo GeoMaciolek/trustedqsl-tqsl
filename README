@@ -4,7 +4,7 @@ signing Amateur Radio QSO records.
 src: Source code and documentation for tqsllib, the TrustedQSL
      library.
 
-apps: Source code for "tqsl" and "tqslcert" applications.
+apps: Source code for "tqsl" and other sample applications.
 
 html: Various legacy documents
 
@@ -86,7 +86,8 @@ in conjunction with the "-s" option to define a location for editing.
 This option can be used to create a new Station Location (-s without -l) or
 to edit an existing Station Location (when both -s and -l are provided).
 
-  -o <str>      Output file name (defaults to input name minus extension plus .tq8)
+  -o <str>      Output file name (defaults to input name minus extension
+                plus .tq8)
 
 This option instructs tqsl where the signed output file will be stored. If it
 is not provided, the output file will be written to the same location as the
@@ -243,11 +244,8 @@ Of course, error checking should be performed for each call.
         tqsl_beginADIFConverter(&conv, input_file, certlist, ncerts, loc);
         tqsl_setConverterAllowDuplicates(conv, false);
 
-        write the GABBI header to the output file.
-            This is an ADIF-format record of the form
-            <TQSL_IDENT:nn>YourApp V1.0 Lib: V1.1 Config: V1.1 AllowDupes: false
-            Use tqsl_getVersion and tqsl_GetConfigVersion to determine the
-            tqsllib version and configuration file version.
+	tqsl_setConverterAppName(conv, "myAppName");
+		(tell tqsllib the name of your application)
 
         while (cp = tqsl_getConverterGABBI(conv) != 0)
             write the string pointed to by "cp" to your file

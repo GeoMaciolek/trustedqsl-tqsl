@@ -3808,11 +3808,16 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 	if (!tqsl_make_key_path(aro, path, sizeof path))
 		goto end_nokey;
 	if (tqsl_open_key_file(path)) {
-		/* Friendly error for file not found, permission errors */
-		if (tQSL_Errno == ENOENT || tQSL_Errno == EPERM) {
-			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
-				"Can't open private key for callsign %s: %s\nThis file can only be opened on the same computer where you created the callsign certificate request for %s", 
-				aro, strerror(tQSL_Errno), aro);
+		/* Friendly error for file not found */
+		if (tQSL_Error == TQSL_SYSTEM_ERROR) {
+			if (tQSL_Errno == ENOENT) {
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+					"You can only open this callsign certificate by running TQSL on the computer where you created the certificate request for %s.", aro);
+			} else {
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+					"Can't open %s: %s\nThis file is needed to open this callsign certificate.", 
+					aro, strerror(tQSL_Errno));
+			}
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 		}
 		return rval;

@@ -686,7 +686,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			wxT("the correct selection. Otherwise, you probably\n")
 			wxT("should use the \"Back\" button to return to the DXCC\n")
 			wxT("page after clicking \"OK\""),
-			wxT("TQSLCert Warning"));
+			wxT("TQSL Warning"));
 
 	if (!tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
 		if (wxMessageBox(
