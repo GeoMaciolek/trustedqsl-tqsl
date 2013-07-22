@@ -99,6 +99,7 @@ main(int argc, char *argv[]) {
 		fprintf(stderr, "Unable to open %s\n", ofile);
 		exit (EXIT_FAILURE);
 	}
+	tqsl_setConverterAppName(conv, "converter-sample");
 	do {
 		const char *gabbi = tqsl_getConverterGABBI(conv);
 		if (gabbi) {
