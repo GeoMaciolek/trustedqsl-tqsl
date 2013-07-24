@@ -35,6 +35,7 @@ BEGIN_EVENT_TABLE(Preferences, wxFrame)
 	EVT_BUTTON(ID_CAN_BUT, Preferences::OnCancel)
 	EVT_BUTTON(ID_HELP_BUT, Preferences::OnHelp)
 	EVT_MENU(wxID_EXIT, Preferences::OnOK)
+	EVT_CLOSE(Preferences::OnClose)
 END_EVENT_TABLE()
 
 Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
@@ -110,6 +111,12 @@ void Preferences::OnCancel(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
+void Preferences::OnClose(wxCloseEvent& WXUNUSED(event)) {
+	tqslTrace("Preferences::OnClose");
+	
+	((MyFrame *) GetParent())->file_menu->Enable(tm_f_preferences, true);
+	Destroy();
+}
 
 void Preferences::OnHelp(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("Preferences::OnHelp");

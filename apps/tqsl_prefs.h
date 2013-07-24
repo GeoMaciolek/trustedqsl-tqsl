@@ -166,6 +166,7 @@ public:
 	void OnOK(wxCommandEvent &);
 	void OnCancel(wxCommandEvent &);
 	void OnHelp(wxCommandEvent &);
+	void OnClose(wxCloseEvent&);
 	DECLARE_EVENT_TABLE()
 private:
 	wxNotebook *notebook;
