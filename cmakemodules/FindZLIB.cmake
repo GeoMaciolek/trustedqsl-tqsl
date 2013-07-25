@@ -36,6 +36,7 @@
 FIND_PATH(ZLIB_INCLUDE_DIR zlib.h
     "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]/include"
 	"C:\\zlib\\"
+	"C:\\zlib-1.2.8\\"
 	"C:\\zlib-1.2.7\\"
 )
 
@@ -56,6 +57,7 @@ FIND_LIBRARY(ZLIB_LIBRARY_DBG
     PATHS
         "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]/lib"
 		"C:\\zlib\\Debug"
+		"C:\\zlib-1.2.8\\Debug"
 		"C:\\zlib-1.2.7\\Debug"
 )
 
@@ -65,6 +67,7 @@ FIND_LIBRARY(ZLIB_LIBRARY_REL
     PATHS
         "[HKEY_LOCAL_MACHINE\\SOFTWARE\\GnuWin32\\Zlib;InstallPath]/lib"
 		"C:\\zlib\\Release"
+		"C:\\zlib-1.2.8\\Release"
 		"C:\\zlib-1.2.7\\Release"
 )
 

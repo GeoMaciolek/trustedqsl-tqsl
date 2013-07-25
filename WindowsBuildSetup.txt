@@ -3,6 +3,7 @@
  - By Robert, KC2YWE - Written 2/14/2013 -
  
 v1.0 - Initial writing
+V1.1 - Update to newer library versions, 7/25/2013
 
 -- Conventions --
 
@@ -270,11 +271,11 @@ needed.
  
  Download and extract to C:\ (will make a new folder):
 	http://curl.haxx.se/download.html
-	"curl-7.29.0.tar.gz"
+	"curl-7.31.0.tar.gz"
 	
  The below comes from winbuild\BUILD.WINDOWS
  
-	In your developer command prompt, 'cd \curl-7.29.0\winbuild'
+	In your developer command prompt, 'cd \curl-7.31.0\winbuild'
 	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes'
 	
 	Verify that a folder called
@@ -298,22 +299,22 @@ libexpat.lib.
  - zlib
  
  Download and extract to C:\ (will make a new folder): http://zlib.net/
-	"zlib source code, version 1.2.7, tar.gz format" - "US (zlib.net)"
+	"zlib source code, version 1.2.8, tar.gz format" - "US (zlib.net)"
 
  ZLIB seems to disagree with running a release version in a debug build and
 crashes. So you'll want both. cmake will automatically set up the correct one
 to link based on the build type.
  
  Also, we'll get our first taste of cmake.
-  - Open your developer command prompt; 'cd \zlib-1.2.7'.
+  - Open your developer command prompt; 'cd \zlib-1.2.8'.
   - Type 'cmake .'
   - Type 'msbuild /p:Configuration=Debug ALL_BUILD.vcxproj'
   - Type 'msbuild /p:Configuration=Release ALL_BUILD.vcxproj'
 
  - Berkeley DB
 
- Download from http://download.oracle.com/berkeley-db/db-5.3.21.NC.zip
- and unzip to c:\db-5.3.21.NC. From Visual Studio, open the 
+ Download from http://download.oracle.com/berkeley-db/db-6.0.20.NC.zip
+ and unzip to c:\db-6.0.20.NC. From Visual Studio, open the 
  build_windows\Berkeley_DB.sln project and upgrade it when prompted. Update
  the project to build static libraries (Configuration Properties/General/
  Configuration Type). You can now build the Debug and Release libraries.
@@ -321,7 +322,7 @@ to link based on the build type.
 
 -- 4) Running cmake --
 
- Almost there! Open a command prompt and run cmake . -DCMAKE_LIBRARY_PATH="C:\expat\Bin" -DCMAKE_INCLUDE_PATH="C:\expat\Source\lib" -DwxWidgets_ROOT_DIR="C:\wxWidgets-2.8.12" -DBDB_INCLUDE_DIR="C:\db-5.3.21.NC\build_windows" -DBDB_LIBRARY="C:\db-5.3.21.NC\build_windows\Win32\Release\db.lib"
+ Almost there! Open a command prompt and run cmake . -DCMAKE_LIBRARY_PATH="C:\expat\Bin" -DCMAKE_INCLUDE_PATH="C:\expat\Source\lib" -DwxWidgets_ROOT_DIR="C:\wxWidgets-2.8.12" -DBDB_INCLUDE_DIR="C:\db-6.0.20.NC\build_windows" -DBDB_LIBRARY="C:\db-6.0.20.NC\build_windows\Win32\Release\db.lib"
 
 
 -- 5) Building --
