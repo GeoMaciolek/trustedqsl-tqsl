@@ -66,8 +66,8 @@ else() #hope this is a source distribution, which will always include a correct 
 	endif()
 endif()
 
-set(TQSL_VERSION_MAJOR 1)
-set(TQSL_VERSION_MINOR 15)
+set(TQSL_VERSION_MAJOR 2)
+set(TQSL_VERSION_MINOR 0)
 set(TQSLVERSION "${TQSL_VERSION_MAJOR}.${TQSL_VERSION_MINOR}")
 
 if(WIN32)
