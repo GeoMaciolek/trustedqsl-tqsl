@@ -22,6 +22,7 @@ lib/
 
 #linux-specific products
 Makefile
+tqsl-*.tar.gz
 
 #OSX-specific cruft
 .DS_Store
