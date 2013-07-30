@@ -93,6 +93,10 @@ the locations tree if one is selected.
 Add a button to the Log Operations window that opens the Logbook of the
 world website.
 
+Add a new command line option, -n, which checks for new versions of critical
+TQSL files then exits. This is designed for use by logging programs that
+operate TQSL on behalf of the user.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect

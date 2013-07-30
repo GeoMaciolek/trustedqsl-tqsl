@@ -2435,10 +2435,9 @@ MyFrame::DoCheckExpiringCerts(void) {
 	free_certlist();
 }
 
-void MyFrame::DoCheckForUpdates(bool silent) {
+void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d", silent);
 	wxConfig* config=(wxConfig*)wxConfig::Get();
-	CURL* req=curl_easy_init();
 
 	wxString lastUpdateTime=config->Read(wxT("UpdateCheckTime"));
 	int numdays=config->Read(wxT("UpdateCheckInterval"), 1); // in days
@@ -2455,6 +2454,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 
 	if (!check) return; //if we really weren't supposed to check, get out of here
 
+	CURL* req=curl_easy_init();
 	revLevel* programRev = new revLevel(wxT(VERSION));
 
 	int currentConfigMajor, currentConfigMinor;
@@ -2470,7 +2470,6 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
 		fprintf(diagFile, "Version Check Log:\n");
 	}
-
 
 	//follow redirects
 	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
@@ -2560,7 +2559,7 @@ void MyFrame::DoCheckForUpdates(bool silent) {
 			} 
 
 			if (!newProgram && !newConfig) 
-				if (!silent) 
+				if (!silent && !noOKmsg) 
 					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 		} else {
 			// Couldn't read config file version
@@ -3391,6 +3390,7 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_SWITCH, wxT("q"), wxT("quiet"),	wxT("Quiet Mode - same behavior as -x") },
 		{ wxCMD_LINE_OPTION, wxT("t"), wxT("diagnose"),	wxT("File name for diagnostic tracking log") },
 		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
+		{ wxCMD_LINE_SWITCH, wxT("n"), wxT("updates"),	wxT("Check for updates to tqsl and the configuration file") },
 		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
 		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
 		{ wxCMD_LINE_NONE }
@@ -3419,16 +3419,16 @@ QSLApp::OnInit() {
 		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 
-	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
-		quiet = true;
-		wxLog::SetActiveTarget(new LogStderr());
-	}
-
 	// print version and exit
 	if (parser.Found(wxT("v"))) { 
 		wxMessageOutput::Set(new wxMessageOutputStderr);
 		wxMessageOutput::Get()->Printf(wxT("TQSL Version " VERSION " " BUILD "\n"));
 		return false;
+	}
+
+	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
+		quiet = true;
+		wxLog::SetActiveTarget(new LogStderr());
 	}
 
 	if (parser.Found(wxT("t"), &diagfile)) {
@@ -3454,6 +3454,20 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("s")) && parser.GetParamCount() > 0) {
 		cerr << "Option -s cannot be combined with an input file" << endl;
 		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+	}
+
+	// Request to check for new versions of tqsl/config/certs
+	if (parser.Found(wxT("n"))) {
+		if (parser.Found(wxT("i")) || parser.Found(wxT("o")) ||
+		    parser.Found(wxT("s")) || parser.Found(wxT("u"))) {
+			cerr << "Option -n cannot be combined with any other options" << endl;
+			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+		}
+		if (!frame)
+			frame = GUIinit(false);
+		// Check for updates then bail out.
+		frame->DoCheckForUpdates(false, true);
+		exitNow(TQSL_EXIT_SUCCESS, quiet);
 	}
 
 	if (quiet) {

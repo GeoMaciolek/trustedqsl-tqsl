@@ -14,21 +14,21 @@ explains how applications can use TQSL in their applications.
 Command Line Changes
 --------------------
 Many applications use the 'tqsl' application in command line mode to sign
-log files. There are several new capabilities added to command line operation
+log files. There were several new capabilities added to command line operation
 in 1.14. The first is that tqsl can now automatically sign and upload a log to
 the LoTW site for the user. This allows your application to simply write
 an adif file which is then processed and uploaded to LoTW without requiring
 the application to read the output file and either upload it or tell your user
 to upload it.
 
-The command line parser in 1.14 has been rewritten and is less
+The command line parser in 1.14 was rewritten and is less
 forgiving of improperly formatted command lines. 
 
 Command Line Options
 --------------------
 The following summarizes the command line options and what they do:
 Usage: tqsl [-a <str>] [-b <date> ] [-e <date>] [-d] [-l <str>] [-s]
-            [-o <str>] [-u] [-x] [-p <str>] [-q] [-v] [-h]
+            [-o <str>] [-u] [-x] [-p <str>] [-q] [-n] [-v] [-h]
             [-t <file>] [Input ADIF or Cabrillo log file to sign]
 
 
@@ -108,6 +108,16 @@ can see the results of the command action. If these options are not included,
 a calling application cannot distinguish between a successful signing and
 one where a user cancels the signing.
 
+  -n            Look for updated (new) versions of key files.
+
+If -n is given on the command line, tqsl checks for new versions of
+the tqsl program, an updated tqsl configuration file, and verifies that any
+user certificates are not about to expire. If any of these circumstances
+exist, the user is prompted to perform the required updates. When the check is
+completed, tqsl exits. This command line option can not be combined with any
+other command line options as it only performs an update check and does not
+sign any logs submitted with the command.
+
   -p <str>      Password for the signing key
 
 This option allows an application to provide the password for the private key
@@ -160,9 +170,9 @@ provides information on success or failure using the following values:
 This exit status is also written to stderr in a format that can be parsed
 by the calling application. The last output from tqsl will be of the format
 hh:mm:ss AM|PM Final Status: Description (code) 
-The first two fields are a timestamp, the words "Final Status: always appears.
+The first two fields are a timestamp, the words "Final Status:" always appears.
 Following that is a short descriptive message giving the exit status. The
-last thing on the line is the numeeric exit code (as above) in parenthesis.
+last thing on the line is the numeric exit code (as above) in parenthesis.
 
 Examples of output follows:
 05:57:39 PM: Warning: Signing cancelled
@@ -244,8 +254,8 @@ Of course, error checking should be performed for each call.
         tqsl_beginADIFConverter(&conv, input_file, certlist, ncerts, loc);
         tqsl_setConverterAllowDuplicates(conv, false);
 
-	tqsl_setConverterAppName(conv, "myAppName");
-		(tell tqsllib the name of your application)
+        tqsl_setConverterAppName(conv, "myAppName");
+            (tell tqsllib the name of your application)
 
         while (cp = tqsl_getConverterGABBI(conv) != 0)
             write the string pointed to by "cp" to your file

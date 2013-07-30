@@ -18,8 +18,8 @@ separated from the preceding switch by one or more spaces.
 <P>
 A filename not preceded by a switch is assumed to be the name of a log file whose QSOs are to be signed.
 <P>
-After taking the actions specified by command line options, TQSL will enter its menu-driven mode of operation unless the <code>-q</code> or <code>-x</code>
-switch is present, in which case it will terminate.
+After taking the actions specified by command line options, TQSL will enter its menu-driven mode of operation unless one of the <code>-q</code>, <code>-x</code>
+or <code>-n</code> switches are present, in which case it will terminate.
 <P>
 <TABLE BORDER=1 CALLPADDING=3 CELLSPACING=0 valign="top">
 <TR><TD><B>Option</B></TD><TD><B>Description</B></TD></TR>
@@ -78,6 +78,16 @@ otherwise, a dialog will be provided that enables a new Station Location to be d
 
 <TR><TD><code>-v</code></TD>
 <TD>Display TQSL version information, and terminate.</TD></TR>
+
+<TR><TD><code>-n</code></TD>
+<TD>Look for updated (new) versions of key files, then terminate. <BR>
+TQSL checks for new versions of the TQSL program, an updated TQSL
+configuration file, and verifies that any user certificates are not about to
+expire. If any of these circumstances exist, the user is prompted to perform
+the required updates. When the check is completed, TQSL exits. This command
+line option can not be combined with any other command line options as it
+only performs an update check and does not sign any logs submitted with the
+command.</TD></TR>
 
 <TR><TD><code>-x</code></TD>
 <TD>Operate in batch mode: status information will be routed to <b>stderr</b>, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
