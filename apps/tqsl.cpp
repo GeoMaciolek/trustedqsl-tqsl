@@ -4486,7 +4486,9 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 	if (callsign) 
 	    prompt = prompt + wxT(" for ") + wxString((const char *)callsign, wxConvLocal);
 
-	GetPasswordDialog dial(wxGetApp().GetTopWindow(), wxT("Enter password"), prompt);
+	wxWindow* top = wxGetApp().GetTopWindow();
+	top->SetFocus();
+	GetPasswordDialog dial(top, wxT("Enter password"), prompt);
 	if (dial.ShowModal() != wxID_OK)
 		return 1;
 	strncpy(buf, dial.Password().mb_str(), bufsiz);
