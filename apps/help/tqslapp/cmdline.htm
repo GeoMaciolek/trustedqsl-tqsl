@@ -80,12 +80,13 @@ otherwise, a dialog will be provided that enables a new Station Location to be d
 <TD>Display TQSL version information, and terminate.</TD></TR>
 
 <TR><TD><code>-n</code></TD>
-<TD>Look for updated (new) versions of key files, then terminate. <BR>
+<TD>Check for updated (new) versions of key files, then terminate. <BR>
 TQSL checks for new versions of the TQSL program, an updated TQSL
 configuration file, and verifies that any user certificates are not about to
-expire. If any of these circumstances exist, the user is prompted to perform
-the required updates. When the check is completed, TQSL exits. This command
-line option can not be combined with any other command line options as it
+expire. If any of these circumstances exist, a message is displayed to
+standard error. When the check is completed, TQSL exits. If no updates
+are available, then the command exits with no messages displayed.
+This command line option can not be combined with any other command line options as it
 only performs an update check and does not sign any logs submitted with the
 command.</TD></TR>
 
