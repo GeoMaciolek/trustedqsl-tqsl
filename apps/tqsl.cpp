@@ -68,6 +68,7 @@
 
 #ifdef __WINDOWS__
 	#include <io.h>
+	#include <winhttp.h>
 #endif
 #include <zlib.h>
 #include <openssl/opensslv.h> // only for version info!
@@ -1918,11 +1919,55 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 	}
 }
 
+static CURL*
+tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile) {
+
+	CURL* req=curl_easy_init();
+	if (!req)
+		return NULL;
+#ifdef __WINDOWS__
+	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG proxyConfig;
+	if (!WinHttpGetIEProxyConfigForCurrentUser(&proxyConfig)) {
+		proxyConfig.lpszProxy = NULL;
+	}
+	if (proxyConfig.lpszProxyBypass)
+			GlobalFree(proxyConfig.lpszProxyBypass);
+	if (proxyConfig.lpszAutoConfigUrl)
+			GlobalFree(proxyConfig.lpszAutoConfigUrl);
+#endif
+
+	if (diagFile) {
+		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
+		fprintf(diagFile, "%s\n", logTitle);
+	} else {
+		if (logFile) {
+			wxString filename;
+			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+			*logFile = fopen(filename.mb_str(), "wb");
+			if (*logFile) {
+				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
+				curl_easy_setopt(req, CURLOPT_STDERR, *logFile);
+				fprintf(*logFile, "%s:\n", logTitle);
+			}
+		}
+	}
+	//set up options
+	curl_easy_setopt(req, CURLOPT_URL, url);
+
+#ifdef __WINDOWS__
+	if (proxyConfig.lpszProxy) {
+		curl_easy_setopt(req, CURLOPT_PROXY, proxyConfig.lpszProxy);
+			GlobalFree(proxyConfig.lpszProxy);
+	}
+#endif
+	return req;
+}
+
 int MyFrame::UploadFile(wxString& infile, const char* filename, int numrecs, void *content, size_t clen, wxString& fileType) {
 	tqslTrace("MyFrame::UploadFile", "infile=%s, filename=%s, numrecs=%d, content=0x%lx, clen=%d fileType=%s",  _S(infile), filename, numrecs, (void *)content, clen, _S(fileType));
 
 	FILE *logFile = NULL; 
-	
 	//upload the file
 
 	//get the url from the config, can be overridden by an installer
@@ -1945,7 +1990,7 @@ int MyFrame::UploadFile(wxString& infile, const char* filename, int numrecs, voi
 
 retry_upload:
 
-	CURL* req=curl_easy_init();
+	CURL* req=tqsl_curl_init("Upload Log", urlstr, &logFile);
 
 	if (!req) {
 		wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
@@ -1953,30 +1998,6 @@ retry_upload:
 		free(cpUF);
 		return TQSL_EXIT_TQSL_ERROR; 
 	}
-
-	//debug
-	if (diagFile) {
-		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
-		fprintf(diagFile, "Upload Log:\n");
-	} else {
-		wxString filename;
-		filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
-		logFile = fopen(filename.mb_str(), "wb");
-		if (logFile) {
-			curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-			curl_easy_setopt(req, CURLOPT_STDERR, logFile);
-			fprintf(logFile, "Upload Log:\n");
-		}
-	}
-	//set up options
-	curl_easy_setopt(req, CURLOPT_URL, urlstr);
-
-	if(!uplVerifyCA) curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, 0);
-
-		
-	//follow redirects
-	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
 
 	//the following allow us to write our log and read the result
 
@@ -2334,19 +2355,8 @@ private:
 void MyFrame::UpdateConfigFile() {
 	tqslTrace("MyFrame::UpdateConfigFile()");
 	wxConfig* config=(wxConfig*)wxConfig::Get();
-	CURL* req=curl_easy_init();
 	wxString newConfigURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
-
-	curl_easy_setopt(req, CURLOPT_URL, (const char*)newConfigURL.mb_str());
-
-	if (diagFile) {
-		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
-		fprintf(diagFile, "Config File Download Log:\n");
-	}
-
-	//follow redirects
-	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
+	CURL* req=tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.mb_str(), NULL);
 
 	ConfigFileDownloadHandler handler(40000);
 
@@ -2454,7 +2464,6 @@ void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 
 	if (!check) return; //if we really weren't supposed to check, get out of here
 
-	CURL* req=curl_easy_init();
 	revLevel* programRev = new revLevel(wxT(VERSION));
 
 	int currentConfigMajor, currentConfigMinor;
@@ -2463,16 +2472,7 @@ void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 
 	wxString updateURL=config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
-	curl_easy_setopt(req, CURLOPT_URL, (const char*)updateURL.mb_str());
-
-	if (diagFile) {
-		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
-		curl_easy_setopt(req, CURLOPT_STDERR, diagFile);
-		fprintf(diagFile, "Version Check Log:\n");
-	}
-
-	//follow redirects
-	curl_easy_setopt(req, CURLOPT_FOLLOWLOCATION, 1);
+	CURL* req=tqsl_curl_init("Version Check Log", (const char*)updateURL.mb_str(), NULL);
 
 	//the following allow us to analyze our file
 

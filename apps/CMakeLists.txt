@@ -8,6 +8,7 @@ if(WIN32)
 set(wxWidgets_USE_STATIC ON)
 add_definitions(-DCURL_STATICLIB)
 add_definitions(-DXML_STATIC)
+find_library(WINHTTP_LIBRARY winhttp)
 endif()
 
 find_package(CURL REQUIRED)
@@ -116,7 +117,7 @@ add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQ
 
 #target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
 target_link_libraries(tqsl ${TQSLLIB_NAME}
-  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
+  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES} ${WINHTTP_LIBRARY})
 
 if(NOT APPLE AND NOT WIN32)
 add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
