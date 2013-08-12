@@ -108,8 +108,8 @@ public:
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
-	void DoCheckForUpdates(bool quiet, bool noOKmsg=false);
-	void DoCheckExpiringCerts(void);
+	void DoCheckForUpdates(bool quiet, bool noGUI=false);
+	void DoCheckExpiringCerts(bool noGUI=false);
 	void UpdateConfigFile(void);
 
 	void OnQuit(wxCommandEvent& event);

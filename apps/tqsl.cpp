@@ -2309,9 +2309,9 @@ public:
 		wxSizer* buttons=CreateButtonSizer(flags);
 		wxString notice;
 		if (newProg)
-			notice = wxString::Format(wxT("A new TrustedQSL release (%s) is available!"), newProgRev->Value().c_str());
+			notice = wxString::Format(wxT("A new TQSL release (V%s) is available!"), newProgRev->Value().c_str());
 		else if (newConfig)
-			notice = wxString::Format(wxT("A new TrustedQSL configuration file (%s) is available!"), newConfigRev->Value().c_str());
+			notice = wxString::Format(wxT("A new TrustedQSL configuration file (V%s) is available!"), newConfigRev->Value().c_str());
 
 		overall->Add(new wxStaticText(this, wxID_ANY, notice), 0, wxALIGN_CENTER_HORIZONTAL);
 		
@@ -2409,7 +2409,7 @@ void MyFrame::UpdateConfigFile() {
 
 // Check for certificates expiring in the next nn (default 60) days
 void
-MyFrame::DoCheckExpiringCerts(void) {
+MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	get_certlist("", 0, false, false);
 	if (ncerts == 0) return;
 
@@ -2423,6 +2423,7 @@ MyFrame::DoCheckExpiringCerts(void) {
 	d.month = tm->tm_mon + 1;
 	d.day = tm->tm_mday;
 	tQSL_Date exp;
+
 	for (int i = 0; i < ncerts; i ++) {
 		if (0 == tqsl_getCertificateNotAfterDate(certlist[i], &exp)) {
 			int days_left;
@@ -2430,22 +2431,35 @@ MyFrame::DoCheckExpiringCerts(void) {
 			if (days_left < expireDays) {
 				char callsign[64];
 				check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
-				if (wxMessageBox(
-					wxString::Format(wxT("The certificate for %hs expires in %d days\n")
-						wxT("Do you want to renew it now?"), callsign, days_left), wxT("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+				if (noGUI) {
+					wxLogMessage(wxT("The certificate for %hs expires in %d days."),
+						callsign, days_left);
+				} else {
+					if (wxMessageBox(
+						wxString::Format(wxT("The certificate for %hs expires in %d days\n")
+							wxT("Do you want to renew it now?"), callsign, days_left), wxT("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 							// Select the certificate in the tree
 							cert_tree->SelectCert(certlist[i]);
 							// Then start the renewal
 							wxCommandEvent dummy;
 							CRQWizardRenew(dummy);
+					}
 				}
 			}
 		}
 	}
 	free_certlist();
+	if (noGUI) {
+		wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
+		if (!pend.IsEmpty()){
+			wxLogMessage(wxT("A Callsign Certificate Request for %s is pending."), pend.c_str());
+		}
+	}
+	return;
 }
 
-void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
+void
+MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d", silent);
 	wxConfig* config=(wxConfig*)wxConfig::Get();
 
@@ -2462,7 +2476,7 @@ void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 
 	if (!silent) check=true; //unless the user explicitly asked
 
-	if (!check) return; //if we really weren't supposed to check, get out of here
+	if (!check) return;	//if we really weren't supposed to check, get out of here
 
 	revLevel* programRev = new revLevel(wxT(VERSION));
 
@@ -2542,24 +2556,32 @@ void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 					if (map.count(tok)) { ourPlatURL=map[tok]; break; }
 
 				}
-				//will create ("homepage"->"") if none there, which is what we'd be checking for anyway
-				UpdateDialogMsgBox msg(this, true, false, programRev, newProgramRev,
+				if (noGUI) {
+					wxLogMessage(wxT("A new TQSL release (V%s) is available."), newProgramRev->Value().c_str());
+				} else {
+					//will create ("homepage"->"") if none there, which is what we'd be checking for anyway
+					UpdateDialogMsgBox msg(this, true, false, programRev, newProgramRev,
 							configRev, newConfigRev, ourPlatURL, map[wxT("homepage")]);
 
-				msg.ShowModal();
+					msg.ShowModal();
+				}
 			}
 			if (newConfig) {
 
-				UpdateDialogMsgBox msg(this, false, true, programRev, newProgramRev,
+				if( noGUI) {
+					wxLogMessage(wxT("A new TrustedQSL configuration file (V%s) is available."), newConfigRev->Value().c_str());
+				} else {
+					UpdateDialogMsgBox msg(this, false, true, programRev, newProgramRev,
 							configRev, newConfigRev, wxT(""), wxT(""));
 
-				if (msg.ShowModal() == wxID_OK) {
-					UpdateConfigFile();
+					if (msg.ShowModal() == wxID_OK) {
+						UpdateConfigFile();
+					}
 				}
 			} 
 
 			if (!newProgram && !newConfig) 
-				if (!silent && !noOKmsg) 
+				if (!silent && !noGUI) 
 					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 		} else {
 			// Couldn't read config file version
@@ -2579,7 +2601,8 @@ void MyFrame::DoCheckForUpdates(bool silent, bool noOKmsg) {
 	curl_easy_cleanup(req);
 	
 	// After update check, validate user certificates
-	DoCheckExpiringCerts();
+	DoCheckExpiringCerts(noGUI);
+	return;
 }
 
 static void
@@ -3466,8 +3489,9 @@ QSLApp::OnInit() {
 		if (!frame)
 			frame = GUIinit(false);
 		// Check for updates then bail out.
+		wxLog::SetActiveTarget(new LogStderr());
 		frame->DoCheckForUpdates(false, true);
-		exitNow(TQSL_EXIT_SUCCESS, quiet);
+		return(false);
 	}
 
 	if (quiet) {
