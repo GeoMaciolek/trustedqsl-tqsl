@@ -85,7 +85,7 @@ Add the ability to automatically upload a certificate request.
 Make the preferences window a top-level window so it doesn't block
 activity in the help screen, etc.
 
-Warn the user about obsolete mode maps when signing a log.
+Delete obsolete mode maps when signing a log.
 
 When creating a station location, default to the callsign selected on
 the locations tree if one is selected.
@@ -96,6 +96,12 @@ world website.
 Add a new command line option, -n, which checks for new versions of critical
 TQSL files then exits. This is designed for use by logging programs that
 operate TQSL on behalf of the user.
+
+Add network proxy preference settings to allow users to use the TQSL network
+based functions on networks that require all traffic to use a proxy.
+
+Grab window focus when prompting for the certificate password to ensure that
+the password window appears on top of the calling logger.
 
 1.14.3
 ------
