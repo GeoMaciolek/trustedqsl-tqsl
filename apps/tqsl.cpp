@@ -501,6 +501,7 @@ init_modes() {
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 	long cookie;
 	wxString key, value;
+	vector<wxString> badModes;
 	config->SetPath(wxT("/modeMap"));
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
@@ -512,8 +513,9 @@ init_modes() {
 				const char *modestr;
 				if (tqsl_getMode(i, &modestr, NULL) == 0) {
 					if (strcasecmp(key.mb_str(), modestr) == 0) {
-						wxLogWarning(wxT("Your custom mode map %s conflicts with the standard mode definition for %hs and was ignored."), key.c_str(), modestr);
+						wxLogWarning(wxT("Your custom mode map %s conflicts with the standard mode definition for %hs and was deleted."), key.c_str(), modestr);
 						newMode = false;
+						badModes.push_back(key);
 						break;
 					}
 				}
@@ -522,6 +524,10 @@ init_modes() {
 		if (newMode)
 			tqsl_setADIFMode(key.mb_str(), value.mb_str());
 		stat = config->GetNextEntry(key, cookie);
+	}
+	// Delete the conflicting entries
+	for (int i = 0; i < (int)badModes.size(); i++) {
+		config->DeleteEntry(badModes[i]);
 	}
 	config->SetPath(wxT("/"));
 }
