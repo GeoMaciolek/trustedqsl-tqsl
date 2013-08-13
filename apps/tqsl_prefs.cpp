@@ -547,7 +547,7 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 					      wxT("Incorrect settings can cause TQSL to be unable to upload\n")
 					      wxT("logs or check for updates.\n")));
 
-	proxyEnabled =new wxCheckBox(this, ID_PREF_PROXY_ENABLED, wxT("Use a network Proxy"));
+	proxyEnabled =new wxCheckBox(this, ID_PREF_PROXY_ENABLED, wxT("Enable a Network Proxy"));
 	proxyEnabled->SetValue(enabled);
 	sizer->Add(proxyEnabled, 0, wxTop|wxCENTER|wxRIGHT, 10);
 
@@ -591,6 +591,13 @@ void ProxyPrefs::ShowHide() {
 	proxyHost->Enable(enabled);
 	proxyPort->Enable(enabled);
 	proxyType->Enable(enabled);
+	for (int i=2; i<5; i++) GetSizer()->Show(i, enabled); // 5 items in sizer; hide all but warning and checkbox
+
+	Layout();
+  //wxNotebook caches best size
+	GetParent()->InvalidateBestSize();
+	GetParent()->Fit();
+	GetGrandParent()->Fit();
 }
 
 bool ProxyPrefs::TransferDataFromWindow() {
