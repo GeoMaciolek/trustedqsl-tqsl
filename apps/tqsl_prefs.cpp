@@ -69,6 +69,8 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	contestmap = new ContestMap(notebook);
 	notebook->AddPage(contestmap, wxT("Cabrillo Specs"));
 
+	proxyPrefs=new ProxyPrefs(notebook);
+	notebook->AddPage(proxyPrefs, wxT("Network Proxy"));
 	//don't let the user play with these
 #if defined(ENABLE_ONLINE_PREFS)
 	onlinePrefs=new OnlinePrefs(notebook);
@@ -98,6 +100,8 @@ void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
 	if (!onlinePrefs->TransferDataFromWindow())
 		return;
 #endif
+	if (!proxyPrefs->TransferDataFromWindow())
+		return;
 	if (!fileprefs->TransferDataFromWindow())
 		return;
 	((MyFrame *) GetParent())->file_menu->Enable(tm_f_preferences, true);
@@ -323,7 +327,7 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	autobackup->SetValue(ab);
 	sizer->Add(autobackup, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 
-	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
 	wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
 	dirPick = new wxDirPickerCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxT("Select a Folder"), wxDefaultPosition,
 		wxSize(char_width, HEIGHT_ADJ(char_height)), wxDIRP_USE_TEXTCTRL);
@@ -413,8 +417,8 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 		(uplStatOK==DEFAULT_UPL_STATUSOK) &&
 		(uplMsgRE==DEFAULT_UPL_MESSAGERE) &&
 		(uplVerifyCA==DEFAULT_UPL_VERIFYCA) &&
-		(cfgUpdURL=DEFAULT_UPD_CONFIG_URL) &&
-		(cfgFileUpdURL=DEFAULT_CONFIG_FILE_URL));
+		(cfgUpdURL==DEFAULT_UPD_CONFIG_URL) &&
+		(cfgFileUpdURL==DEFAULT_CONFIG_FILE_URL));
 
 
 
@@ -510,6 +514,99 @@ bool OnlinePrefs::TransferDataFromWindow() {
 	return true;
 }
 #endif // ENABLE_ONLINE_PREFS
+
+BEGIN_EVENT_TABLE(ProxyPrefs, PrefsPanel)
+	EVT_CHECKBOX(ID_PREF_PROXY_ENABLED, ProxyPrefs::OnShowHide)
+END_EVENT_TABLE()
+
+ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm")) {
+	tqslTrace("ProxyPrefs::ProxyPrefs", "parent=0x%lx", (void *)parent);
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	config->SetPath(wxT("/Proxy"));
+	SetAutoLayout(true);
+
+	wxArrayString ptypes;
+	ptypes.Add(wxT("HTTP"));
+	ptypes.Add(wxT("Socks4"));
+	ptypes.Add(wxT("Socks5"));
+
+	wxClientDC dc(this);
+	wxCoord char_width, char_height;
+	dc.GetTextExtent(wxString(wxT('M'), FILE_TEXT_WIDTH), &char_width, &char_height);
+	
+	config->Read(wxT("proxyEnabled"), &enabled, false);
+	wxString pHost = config->Read(wxT("proxyHost"));
+	wxString pPort = config->Read(wxT("proxyPort"));
+	wxString pType = config->Read(wxT("proxyType"));
+
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("\nUse these settings to configure a network proxy\n")
+					      wxT("for Internet uploads and downloads. You should only\n")
+					      wxT("enable a proxy if directed by your network administrator.\n")
+					      wxT("Incorrect settings can cause TQSL to be unable to upload\n")
+					      wxT("logs or check for updates.\n")));
+
+	proxyEnabled =new wxCheckBox(this, ID_PREF_PROXY_ENABLED, wxT("Use a network Proxy"));
+	proxyEnabled->SetValue(enabled);
+	sizer->Add(proxyEnabled, 0, wxTop|wxCENTER|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Proxy Address:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
+	
+	proxyHost = new wxTextCtrl(this, ID_PREF_PROXY_HOST, pHost, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(proxyHost, 0, wxLEFT|wxRIGHT, 10);
+	proxyHost->Enable(enabled);
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxStaticText(this, -1, wxT("Port Number:")), 0, wxTOP|wxALIGN_LEFT, 4);
+	
+	proxyPort = new wxTextCtrl(this, ID_PREF_PROXY_PORT, pPort, wxPoint(0, 0),
+		wxSize(char_width/6, HEIGHT_ADJ(char_height)));
+	hsizer->Add(proxyPort, 0, wxLEFT|wxRIGHT|wxALIGN_BOTTOM, 0);
+	proxyPort->Enable(enabled);
+
+	hsizer->Add(new wxStaticText(this, -1, wxT("    Proxy Type:")), 0, wxTOP|wxALIGN_LEFT, 4);
+	
+	proxyType = new wxChoice(this, ID_PREF_PROXY_TYPE, wxPoint(0, 0),
+		wxSize(char_width/4, HEIGHT_ADJ(char_height)), ptypes, 0, wxDefaultValidator, wxT("ProxyType"));
+	hsizer->Add(proxyType, 0, wxALIGN_BOTTOM, 0);
+	proxyType->Enable(enabled);
+	proxyType->SetStringSelection(pType);
+	sizer->Add(hsizer, 0, wxALL|wxALIGN_LEFT, 10);
+
+	config->SetPath(wxT("/"));
+
+	SetSizer(sizer);
+
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
+	ShowHide();
+}
+
+void ProxyPrefs::ShowHide() {
+	tqslTrace("ProxyPrefs::ShowHide");
+
+	enabled=proxyEnabled->GetValue();
+	proxyHost->Enable(enabled);
+	proxyPort->Enable(enabled);
+	proxyType->Enable(enabled);
+}
+
+bool ProxyPrefs::TransferDataFromWindow() {
+	tqslTrace("ProxyPrefs::TransferDataFromWindow");
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+
+	config->SetPath(wxT("/Proxy"));
+	config->Write(wxT("ProxyEnabled"), enabled);
+	config->Write(wxT("ProxyHost"), proxyHost->GetValue());
+	config->Write(wxT("ProxyPort"), proxyPort->GetValue());
+	config->Write(wxT("ProxyType"), proxyType->GetStringSelection());
+	config->SetPath(wxT("/"));
+
+	return true;
+
+}
 
 BEGIN_EVENT_TABLE(ContestMap, PrefsPanel)
 	EVT_BUTTON(ID_PREF_CAB_DELETE, ContestMap::OnDelete)

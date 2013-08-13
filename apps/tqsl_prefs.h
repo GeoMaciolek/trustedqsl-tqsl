@@ -84,7 +84,11 @@ enum {		// Window IDs
 	ID_PREF_ONLINE_MESSAGERE,
 	ID_PREF_ONLINE_VERIFYCA,
 	ID_PREF_ONLINE_UPD_CONFIGURL, 
-        ID_PREF_ONLINE_UPD_CONFIGFILE
+        ID_PREF_ONLINE_UPD_CONFIGFILE,
+	ID_PREF_PROXY_ENABLED,
+	ID_PREF_PROXY_HOST,
+	ID_PREF_PROXY_PORT,
+	ID_PREF_PROXY_TYPE
 };
 
 class PrefsPanel : public wxPanel {
@@ -160,6 +164,21 @@ private:
 	DECLARE_EVENT_TABLE()
 };
 
+class ProxyPrefs : public PrefsPanel {
+public:
+	ProxyPrefs(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
+	void ShowHide();
+	void OnShowHide(wxCommandEvent&) { ShowHide(); }
+	DECLARE_EVENT_TABLE()
+private:
+	wxCheckBox *proxyEnabled;
+	wxTextCtrl *proxyHost, *proxyPort;
+	wxChoice *proxyType;
+	bool enabled;
+};
+
+typedef std::map <wxString, wxString> ModeSet;
 class Preferences : public wxFrame {
 public:
 	Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
@@ -173,6 +192,7 @@ private:
 	FilePrefs *fileprefs;
 	ModeMap *modemap;
 	ContestMap *contestmap;
+	ProxyPrefs *proxyPrefs;
 #if defined(ENABLE_ONLINE_PREFS)
 	OnlinePrefs *onlinePrefs;
 #endif

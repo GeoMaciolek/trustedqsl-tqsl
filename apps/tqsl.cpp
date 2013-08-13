@@ -68,7 +68,6 @@
 
 #ifdef __WINDOWS__
 	#include <io.h>
-	#include <winhttp.h>
 #endif
 #include <zlib.h>
 #include <openssl/opensslv.h> // only for version info!
@@ -1925,16 +1924,6 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile) {
 	CURL* req=curl_easy_init();
 	if (!req)
 		return NULL;
-#ifdef __WINDOWS__
-	WINHTTP_CURRENT_USER_IE_PROXY_CONFIG proxyConfig;
-	if (!WinHttpGetIEProxyConfigForCurrentUser(&proxyConfig)) {
-		proxyConfig.lpszProxy = NULL;
-	}
-	if (proxyConfig.lpszProxyBypass)
-			GlobalFree(proxyConfig.lpszProxyBypass);
-	if (proxyConfig.lpszAutoConfigUrl)
-			GlobalFree(proxyConfig.lpszAutoConfigUrl);
-#endif
 
 	if (diagFile) {
 		curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
@@ -1955,12 +1944,31 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile) {
 	//set up options
 	curl_easy_setopt(req, CURLOPT_URL, url);
 
-#ifdef __WINDOWS__
-	if (proxyConfig.lpszProxy) {
-		curl_easy_setopt(req, CURLOPT_PROXY, proxyConfig.lpszProxy);
-			GlobalFree(proxyConfig.lpszProxy);
+	// Get the proxy configuration and pass it to cURL
+        wxConfig *config = (wxConfig *)wxConfig::Get();
+        config->SetPath(wxT("/Proxy"));
+
+	bool enabled;
+        config->Read(wxT("proxyEnabled"), &enabled, false);
+        wxString pHost = config->Read(wxT("proxyHost"), wxT(""));
+        wxString pPort = config->Read(wxT("proxyPort"), wxT(""));
+        wxString pType = config->Read(wxT("proxyType"), wxT(""));
+
+	if (!enabled) return req;	// No proxy defined
+
+	long port = strtol(pPort.mb_str(), NULL, 10);
+	if (port == 0 || pHost.IsEmpty())
+		return req;		// Invalid proxy. Ignore it.
+
+	curl_easy_setopt(req, CURLOPT_PROXY, (const char *)pHost.mb_str());
+	curl_easy_setopt(req, CURLOPT_PROXYPORT, port);
+	if (pType == wxT("HTTP")) {
+		curl_easy_setopt(req, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);	// Default is HTTP
+	} else if (pType == wxT("Socks4")) {
+		curl_easy_setopt(req, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS4);
+	} else if (pType == wxT("Socks5")) {
+		curl_easy_setopt(req, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
 	}
-#endif
 	return req;
 }
 
@@ -2356,7 +2364,8 @@ void MyFrame::UpdateConfigFile() {
 	tqslTrace("MyFrame::UpdateConfigFile()");
 	wxConfig* config=(wxConfig*)wxConfig::Get();
 	wxString newConfigURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
-	CURL* req=tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.mb_str(), NULL);
+	FILE *logFile = NULL; 
+	CURL* req=tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.mb_str(), &logFile);
 
 	ConfigFileDownloadHandler handler(40000);
 
@@ -2378,6 +2387,7 @@ void MyFrame::UpdateConfigFile() {
 		if (!configFile) {
 			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			curl_easy_cleanup(req);
+			if (logFile) fclose(logFile);
 			return;
 		}
 		size_t left = handler.used;
@@ -2386,6 +2396,7 @@ void MyFrame::UpdateConfigFile() {
 			if (written == 0) {
 				wxMessageBox(wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 				curl_easy_cleanup(req);
+				if (logFile) fclose(logFile);
 				return;
 			}
 			left -= written;
@@ -2393,6 +2404,7 @@ void MyFrame::UpdateConfigFile() {
 		if (fclose(configFile)) {
 			wxMessageBox(wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			curl_easy_cleanup(req);
+			if (logFile) fclose(logFile);
 			return;
 		}
 		notifyData nd;
@@ -2404,7 +2416,7 @@ void MyFrame::UpdateConfigFile() {
 	} else
 		wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 	curl_easy_cleanup(req);
-	
+	if (logFile) fclose(logFile);
 }
 
 // Check for certificates expiring in the next nn (default 60) days
@@ -2461,6 +2473,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 void
 MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d", silent);
+	FILE *logFile = NULL; 
 	wxConfig* config=(wxConfig*)wxConfig::Get();
 
 	wxString lastUpdateTime=config->Read(wxT("UpdateCheckTime"));
@@ -2486,7 +2499,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 
 	wxString updateURL=config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
-	CURL* req=tqsl_curl_init("Version Check Log", (const char*)updateURL.mb_str(), NULL);
+	CURL* req=tqsl_curl_init("Version Check Log", (const char*)updateURL.mb_str(), &logFile);
 
 	//the following allow us to analyze our file
 
@@ -2599,6 +2612,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	config->Write(wxT("UpdateCheckTime"), wxDateTime::Today().FormatISODate());
 
 	curl_easy_cleanup(req);
+	if (logFile) fclose(logFile);
 	
 	// After update check, validate user certificates
 	DoCheckExpiringCerts(noGUI);

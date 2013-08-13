@@ -8,7 +8,6 @@ if(WIN32)
 set(wxWidgets_USE_STATIC ON)
 add_definitions(-DCURL_STATICLIB)
 add_definitions(-DXML_STATIC)
-find_library(WINHTTP_LIBRARY winhttp)
 endif()
 
 find_package(CURL REQUIRED)
@@ -115,14 +114,12 @@ download.xpm file_edit_dis.xpm upload.xpm delete_dis.xpm edit_dis.xpm
 file_edit.xpm properties_dis.xpm save.xpm import.xpm lotw.xpm)
 add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQSL_RCFILE})
 
-#target_link_libraries(tqslcert ${TQSLLIB_NAME} ${wxWidgets_LIBRARIES} ${CARBON_LIBRARY})
 target_link_libraries(tqsl ${TQSLLIB_NAME}
-  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES} ${WINHTTP_LIBRARY})
+  ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
 
 if(NOT APPLE AND NOT WIN32)
 add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
 install(TARGETS tqsl DESTINATION bin)
-#install(TARGETS tqslcert DESTINATION bin)
 install(DIRECTORY help DESTINATION share/TrustedQSL)
 install(FILES trustedqsl.5 DESTINATION share/man/man5)
 endif()
