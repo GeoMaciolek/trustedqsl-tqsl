@@ -92,7 +92,7 @@
 			 <UL>
 			 
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Configuring TQSL">
+					<param name="Name" value="Setting TQSL Options">
 					<param name="Local" value="pref-opt.htm">
 					 </OBJECT>
 					 
@@ -115,6 +115,11 @@
 					<param name="Name" value="Adding and Deleting Cabrillo Contest Definitions">
 					<param name="Local" value="pref-cab.htm">
 					 </OBJECT>
+
+				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Configuring a Network Proxy for Internet Access">
+					<param name="Local" value="netproxy.htm">
+					 </OBJECT>
 					 
 				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="Enabling and Disabling Diagnostic Mode">
@@ -136,7 +141,7 @@
 					 </OBJECT>
 					 
 				<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="Backing up and Restoring TQSL information">
+					<param name="Name" value="Backing up and Restoring TQSL Information">
 					<param name="Local" value="backuprestore.htm">
 					 </OBJECT>
 					 
@@ -155,7 +160,7 @@
 					 </OBJECT>
 					 
 					<LI> <OBJECT type="text/sitemap">
-					<param name="Name" value="LotW Files and Icons">
+					<param name="Name" value="LoTW Files and Icons">
 					<param name="Local" value="files-icons.htm">
 					 </OBJECT>
 					 

@@ -50,6 +50,17 @@ be displayed before signing a log.</TD></TR>
 quoted in a manner suitable for the operating system and shell that's being used. If the specified Station Location doesn't exist, no QSOs will be signed or uploaded unless <code>-s</code> is also specified. 
 If <code>-l</code> is not present and a log file is being signed, a dialog will be provided that prompts the user to select a Station Location.</TD></TR>
 
+<TR><TD><code>-n</code></TD>
+<TD>Checks for and reports the availablility of <BR>
+<UL>
+<LI>a new version of TQSL</LI>
+<LI>a new version of TQSL's <A HREF="configxml.htm">Configuration Data file</A></LI>
+<LI>expiring <a href="glossary.htm#callsign_certificate">Callsign Certificates</A> </LI>
+<LI>pending <a href="glossary.htm#callsign_certificate">Callsign Certificates</A> </LI>
+</UL>
+TQSL displays the above information (if any) to <b>stderr</b>, then exits without digitally signing any specified filename. This command line option should therefore not be used with any other command line option.
+</TD></TR>
+
 <TR><TD><code>-o&nbsp;Filename</code></TD>
 <TD>Specify the name of the <A HREF="glossary.htm#signed_log_file">digitally signed log file</A> to be created. If the specified Filename contains embedded spaces, it must be 
 quoted in a manner suitable for the operating system and shell that's being used. If <code>-o</code> is not present, the specified log filename with its extension set to <code>.tq8</code> will be used.</TD></TR>
@@ -78,17 +89,6 @@ otherwise, a dialog will be provided that enables a new Station Location to be d
 
 <TR><TD><code>-v</code></TD>
 <TD>Display TQSL version information, and terminate.</TD></TR>
-
-<TR><TD><code>-n</code></TD>
-<TD>Check for updated (new) versions of key files, then terminate. <BR>
-TQSL checks for new versions of the TQSL program, an updated TQSL
-configuration file, and verifies that any user certificates are not about to
-expire. If any of these circumstances exist, a message is displayed to
-standard error. When the check is completed, TQSL exits. If no updates
-are available, then the command exits with no messages displayed.
-This command line option can not be combined with any other command line options as it
-only performs an update check and does not sign any logs submitted with the
-command.</TD></TR>
 
 <TR><TD><code>-x</code></TD>
 <TD>Operate in batch mode: status information will be routed to <b>stderr</b>, and TQSL will terminate after taking the actions specified by command line options.</TD></TR>
@@ -119,6 +119,11 @@ Edit the &quot;Home&quot; station location before beginning menu-driven operatio
 Add a station location, and then terminate:
 <BR>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -s -x
+</CODE>
+<P>
+Check for new versions and expiring or pending Callsign Certificates, and then terminate:
+<BR>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl -n 2>news.txt
 </CODE>
 
 <H5>Status Information</H5>
@@ -161,6 +166,26 @@ where
 <code>Note: TQSL assumes that this file will be uploaded to LoTW.</code><br>
 <code>Resubmitting these QSOs will cause them to be reported as duplicates.</code><br>
 <code>06:05:56 PM: Final Status: Some QSOs were duplicates or out of date range (9)</code><br>
-
 <p>
+<code>17:21:32 PM: /Signing using Callsign W4TV, DXCC Entity UNITED STATES OF AMERICA</code><br>
+<code>17:21:32 PM: /Warning: Your custom mode map WSPR conflicts with the standard mode definition for WSPR and was deleted.</code><br>
+<code>17:21:32 PM: /Attempting to upload 2 QSOs</code><br>
+<code>17:21:33 PM: /C:\Program Files\LogsAreUs\LotWUpload.ADI: Log uploaded successfully with result "File queued for processing"!</code><br>
+<code>17:21:33 PM: /After reading this message, you may close this program.</code><br>
+<code>17:21:33 PM: /Final Status: Success (0)</code><br>
+<p>
+in response to <code>-n</code><br>
+<code>17:21:32 PM: A new TQSL release (v2.0) is available.</code><br>
+<code>17:21:32 PM: A new TrustedQSL configuration file (V2.4) is available.</code><br>
+<code>17:21:32 PM: The certificate for VE6LB expires in 9 days.</code><br>
+<code>17:21:33 PM: The certificate for VE6LB/A3 expires in 15 days.</code><br>
+<code>17:21:33 PM: A Callsign Certificate for VE6LB/P5 is pending.</code><br>
+
+
+
+
+
+
+
+
 </BODY></HTML>
