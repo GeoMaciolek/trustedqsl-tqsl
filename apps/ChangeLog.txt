@@ -103,6 +103,12 @@ based functions on networks that require all traffic to use a proxy.
 Grab window focus when prompting for the certificate password to ensure that
 the password window appears on top of the calling logger.
 
+Simplify the messages displayed on certificate import (relegate the details
+to the diagnostic log).
+
+Detect additional cURL errors and translate them into more user-friendly
+text.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect

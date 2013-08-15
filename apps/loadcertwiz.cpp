@@ -23,23 +23,23 @@
 wxString
 notifyData::Message() const {
 	
-	wxString msgs = status;
-	if (!wxIsEmpty(status))
-		msgs = status + wxT("\n");
-
-	return wxString::Format(
-		wxT("%s")
-		wxT("Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Callsign Certificates:\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n")
-		wxT("Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d"),
-		msgs.c_str(),
-		root.loaded, root.duplicate, root.error,
-		ca.loaded, ca.duplicate, ca.error,
-		user.loaded, user.duplicate, user.error,
-		pkey.loaded, pkey.duplicate, pkey.error,
-		config.loaded, config.duplicate, config.error);
+	if (diagFile) {
+		fprintf(diagFile, "%s\n"
+			"Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
+			"CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
+			"Callsign Certificates:\tLoaded: %d  Duplicate: %d  Error: %d\n"
+			"Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
+			"Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d\n",
+			_S(status),
+			root.loaded, root.duplicate, root.error,
+			ca.loaded, ca.duplicate, ca.error,
+			user.loaded, user.duplicate, user.error,
+			pkey.loaded, pkey.duplicate, pkey.error,
+			config.loaded, config.duplicate, config.error);
+	}
+	if (status.IsEmpty())
+		return wxString(wxT("\nImport completed successfully"));
+	return status;
 }
 
 int
@@ -99,16 +99,21 @@ notifyImport(int type, const char *message, void *data) {
 				break;
 		}
 		if (counts) {
-			if (message) nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
 			switch (TQSL_CERT_CB_RESULT_TYPE(type)) {
 				case TQSL_CERT_CB_DUPLICATE:
+					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER && message)
+						nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
 					counts->duplicate++;
 					break;
 				case TQSL_CERT_CB_ERROR:
+					if (message)
+						nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
 					counts->error++;
 					// wxMessageBox(wxString(message, wxConvLocal), wxT("Error"));
 					break;
 				case TQSL_CERT_CB_LOADED:
+					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER)
+						nd->status = nd->status + wxString("User certificate loaded", wxConvLocal) + wxT("\n");
 					counts->loaded++;
 					break;
 			}
