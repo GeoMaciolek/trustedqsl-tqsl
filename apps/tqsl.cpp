@@ -1925,7 +1925,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, wxString& infile, bool compressed,
 }
 
 static CURL*
-tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile) {
+tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile, bool newFile) {
 
 	CURL* req=curl_easy_init();
 	if (!req)
@@ -1939,7 +1939,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile) {
 		if (logFile) {
 			wxString filename;
 			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
-			*logFile = fopen(filename.mb_str(), "wb");
+			*logFile = fopen(filename.mb_str(), newFile ? "wb" : "ab");
 			if (*logFile) {
 				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
 				curl_easy_setopt(req, CURLOPT_STDERR, *logFile);
@@ -2004,7 +2004,7 @@ int MyFrame::UploadFile(wxString& infile, const char* filename, int numrecs, voi
 
 retry_upload:
 
-	CURL* req=tqsl_curl_init("Upload Log", urlstr, &logFile);
+	CURL* req=tqsl_curl_init("Upload Log", urlstr, &logFile, true);
 
 	if (!req) {
 		wxLogMessage(wxT("Error: Could not upload file (CURL Init error)"));
@@ -2019,6 +2019,7 @@ retry_upload:
 
 	curl_easy_setopt(req, CURLOPT_WRITEFUNCTION, &FileUploadHandler::recv);
 	curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
+	curl_easy_setopt(req, CURLOPT_SSL_VERIFYPEER, uplVerifyCA);
 
 	char errorbuf[CURL_ERROR_SIZE];
 	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
@@ -2113,17 +2114,28 @@ retry_upload:
 			retval=TQSL_EXIT_UNEXP_RESP;
 		}
 
-	} else if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-		wxLogMessage(wxT("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
-		retval=TQSL_EXIT_CONNECTION_FAILED;
-	} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
-		wxLogMessage(wxT("%s: Upload cancelled"), infile.c_str());
-		retval=TQSL_EXIT_CANCEL;
-	} else { //error
-		//don't know why the conversion from char* -> wxString -> char* is necessary but it 
-		// was turned into garbage otherwise
-		wxLogMessage(wxT("%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"), infile.c_str(), curl_easy_strerror((CURLcode)retval), errorbuf);
-		retval=TQSL_EXIT_TQSL_ERROR;
+	} else {
+		if (diagFile) {
+			fprintf(diagFile, "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			wxLogMessage(wxT("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			retval=TQSL_EXIT_CONNECTION_FAILED;
+		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+			wxLogMessage(wxT("%s: Unable to upload. The nework is down or the LoTW site is too busy.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			retval=TQSL_EXIT_CONNECTION_FAILED;
+		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+			wxLogMessage(wxT("%s: Unable to connect to the upload site.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			retval=TQSL_EXIT_CONNECTION_FAILED;
+		} else if (retval==CURLE_ABORTED_BY_CALLBACK) { //cancelled.
+			wxLogMessage(wxT("%s: Upload cancelled"), infile.c_str());
+			retval=TQSL_EXIT_CANCEL;
+		} else { //error
+			//don't know why the conversion from char* -> wxString -> char* is necessary but it 
+			// was turned into garbage otherwise
+			wxLogMessage(wxT("%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"), infile.c_str(), curl_easy_strerror((CURLcode)retval), errorbuf);
+			retval=TQSL_EXIT_TQSL_ERROR;
+		}
 	}
 	if (this) upload->Destroy();
 
@@ -2371,7 +2383,7 @@ void MyFrame::UpdateConfigFile() {
 	wxConfig* config=(wxConfig*)wxConfig::Get();
 	wxString newConfigURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
 	FILE *logFile = NULL; 
-	CURL* req=tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.mb_str(), &logFile);
+	CURL* req=tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.mb_str(), &logFile, false);
 
 	ConfigFileDownloadHandler handler(40000);
 
@@ -2385,7 +2397,8 @@ void MyFrame::UpdateConfigFile() {
 
 	char errorbuf[CURL_ERROR_SIZE];
 	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
-	if (curl_easy_perform(req) == CURLE_OK) {
+	int retval = curl_easy_perform(req);
+	if (retval == CURLE_OK) {
 		char *newconfig = (char *)handler.s;
 		wxString filename;
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
@@ -2419,8 +2432,23 @@ void MyFrame::UpdateConfigFile() {
 		} else {
 			wxMessageBox(wxT("Configuration file successfully updated"), wxT("Update Completed"), wxOK|wxICON_INFORMATION, this);
 		}
-	} else
-		wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+	} else {
+		if (diagFile) {
+			fprintf(diagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (logFile) {
+			fprintf(logFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			wxLogMessage(wxT("Unable to update - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
+		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+			wxLogMessage(wxT("Unable to update. The nework is down or the LoTW site is too busy.\nPlease try again later."));
+		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+			wxLogMessage(wxT("Unable to connect to the update site.\nPlease try again later."));
+		} else { // some other error
+			wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		}
+	}
 	curl_easy_cleanup(req);
 	if (logFile) fclose(logFile);
 }
@@ -2505,7 +2533,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 
 	wxString updateURL=config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
-	CURL* req=tqsl_curl_init("Version Check Log", (const char*)updateURL.mb_str(), &logFile);
+	CURL* req=tqsl_curl_init("Version Check Log", (const char*)updateURL.mb_str(), &logFile, true);
 
 	//the following allow us to analyze our file
 
@@ -2524,12 +2552,14 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	char errorbuf[CURL_ERROR_SIZE];
 	curl_easy_setopt(req, CURLOPT_ERRORBUFFER, errorbuf);
 
-	if (curl_easy_perform(req) == CURLE_OK) {
+	int retval = curl_easy_perform(req);
+	if (retval == CURLE_OK) {
 		// Add the config.xml text to the result
 		wxString configURL=config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
 		curl_easy_setopt(req, CURLOPT_URL, (const char*)configURL.mb_str());
 
-		if (curl_easy_perform(req) == CURLE_OK) {
+		retval = curl_easy_perform(req);
+		if (retval == CURLE_OK) {
 			wxString result=wxString::FromAscii(handler.s.c_str());
 			wxString url;
 			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
@@ -2603,14 +2633,46 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 				if (!silent && !noGUI) 
 					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 		} else {
-			// Couldn't read config file version
-				if(!silent)
-					wxMessageBox(wxString::Format(wxT("Error checking for configuration updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			if (diagFile) {
+				fprintf(diagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+			}
+			if (logFile) {
+				fprintf(logFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+			}
+			if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+				if (!silent)
+					wxLogMessage(wxT("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
+			} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+				if (!silent)
+					wxLogMessage(wxT("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later."));
+			} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+				if (!silent)
+					wxLogMessage(wxT("Unable to connect to the update site.\nPlease try again later."));
+			} else { // some other error
+				if (!silent)
+					wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			}
 		}
 	} else {
-		// Couldn't read program version
-			if(!silent)
-				wxMessageBox(wxString::Format(wxT("Error checking for program updates:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		if (diagFile) {
+			fprintf(diagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (logFile) {
+			fprintf(logFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			if (!silent)
+				wxLogMessage(wxT("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
+		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+			if (!silent)
+				wxLogMessage(wxT("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later."));
+		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+			if (!silent)
+				wxLogMessage(wxT("Unable to connect to the update site.\nPlease try again later."));
+		} else { // some other error
+			if (!silent)
+				wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		}
 	}
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval
