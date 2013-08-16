@@ -1956,9 +1956,10 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile, bool newFi
 
 	bool enabled;
         config->Read(wxT("proxyEnabled"), &enabled, false);
-        wxString pHost = config->Read(wxT("proxyHost"), wxT(""));
-        wxString pPort = config->Read(wxT("proxyPort"), wxT(""));
-        wxString pType = config->Read(wxT("proxyType"), wxT(""));
+	wxString pHost = config->Read(wxT("proxyHost"), wxT(""));
+	wxString pPort = config->Read(wxT("proxyPort"), wxT(""));
+	wxString pType = config->Read(wxT("proxyType"), wxT(""));
+	config->SetPath(wxT("/"));
 
 	if (!enabled) return req;	// No proxy defined
 
