@@ -39,6 +39,11 @@
 					 </OBJECT>
 					 
 				<LI> <OBJECT type="text/sitemap">
+					<param name="Name" value="Visit the LoTW web site to View QSOs and QSLs">
+					<param name="Local" value="login.htm">
+					 </OBJECT>
+					 
+				<LI> <OBJECT type="text/sitemap">
 					<param name="Name" value="Checking for Updates">
 					<param name="Local" value="update.htm">
 					 </OBJECT>
