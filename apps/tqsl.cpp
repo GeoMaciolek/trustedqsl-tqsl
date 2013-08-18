@@ -793,7 +793,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 #ifdef __WXMAC__
 		help_menu->Append(tm_h_contents, wxT("&Contents"));
 #else
-		help_menu->Append(tm_h_contents, wxT("Display Table of &Contents"));
+		help_menu->Append(tm_h_contents, wxT("Display &Documentation"));
 		help_menu->AppendSeparator();
 #endif
 	}
@@ -1121,7 +1121,7 @@ static wxString getAbout() {
 	if (tqsl_getConfigVersion(&major, &minor))
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
 	else
-		msg += wxString::Format(wxT("Configuration data V%d.%d\n"), major, minor);
+		msg += wxString::Format(wxT("\nConfiguration data V%d.%d\n\n"), major, minor);
 	msg += wxVERSION_STRING;
 #ifdef wxUSE_UNICODE
 	if (wxUSE_UNICODE)
