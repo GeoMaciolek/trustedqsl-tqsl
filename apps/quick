@@ -12,9 +12,9 @@ location from which you operated when making every QSO in that log file.
 To make this easy, TQSL lets you define and name a Station Location that
 specifies your Callsign Certificate and operating location.
 
-Documentation for TQSL is available via its Help menu's "Display Table of
-Contents" command. The information in this Quick-Start Guide is a subset
-extracted from the documentation.
+Documentation for TQSL is available via its Help menu's "Display Documentation"
+command. The information in this Quick-Start Guide is a subset extracted from
+the documentation.
 
 TQSL can be installed and executed on Windows, Mac OS X, and Linux.
 
@@ -48,7 +48,7 @@ If you're updating an existing TQSL installation
 Note that this version of TQSL includes the Callsign Certificate management
 functionality previously provided by TQSLCert; TQSLCert is no longer required,
 and has been removed from your computer. To request, load, save, renew, or
-delete a "Callsign Certificate", use the "Callsign Certificates" tab on TQSL's
+delete a Callsign Certificate, use the "Callsign Certificates" tab on TQSL's
 main window and its "Callsign Certificate" menu commands.
 
 TQSLCert was by default configured to hide both "replaced" and "expired"
