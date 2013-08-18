@@ -33,10 +33,10 @@ an existing installation of TQSL, you should choose "Replace All" when
 prompted.
 
 On a Mac OS X 10.8 or later system, you may need to grant permission for
-the TQSL application to run: right click on the application icon, and then
-choose "Open"; when an "Are you sure" dialog box appears, click the "Open"
-button to permit TQSL to start. You will only need to do this when installing
-a TQSL release.
+the TQSL application to run: right-click or control-click on the application
+icon, and then choose "Open"; when an "Are you sure" dialog box appears, click
+the "Open" button to permit TQSL to start. You will only need to do this when
+installing a TQSL release.
 
 To install on Linux, consult the instructions in the INSTALL document included
 with the source code.
