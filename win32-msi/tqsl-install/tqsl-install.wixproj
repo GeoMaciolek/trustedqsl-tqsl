@@ -6,7 +6,7 @@
     <ProductVersion>3.7</ProductVersion>
     <ProjectGuid>1dfa6e6b-1725-4fa3-81d7-64d8a82cb824</ProjectGuid>
     <SchemaVersion>2.0</SchemaVersion>
-    <OutputName>tqsl-20</OutputName>
+    <OutputName>tqsl-2.0</OutputName>
     <OutputType>Package</OutputType>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' AND '$(MSBuildExtensionsPath32)' != '' ">$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
     <WixTargetsPath Condition=" '$(WixTargetsPath)' == '' ">$(MSBuildExtensionsPath)\Microsoft\WiX\v3.x\Wix.targets</WixTargetsPath>
@@ -17,12 +17,12 @@
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
     <DefineConstants>Debug</DefineConstants>
-    <LinkerAdditionalOptions>-b "..\..\bin\Release" -b "..\..\apps" -b "..\..\src"</LinkerAdditionalOptions>
+    <LinkerAdditionalOptions>-b "..\..\bin\Release" -b "..\..\apps" -b "..\..\src" -b "..\..\src\Release" -b "..\..\apps\Release" </LinkerAdditionalOptions>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <OutputPath>bin\$(Configuration)\</OutputPath>
     <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
-    <LinkerAdditionalOptions>-b "..\..\bin\Release" -b "..\..\apps" -b "..\..\src"</LinkerAdditionalOptions>
+    <LinkerAdditionalOptions>-b "..\..\bin\Release" -b "..\..\apps" -b "..\..\src" -b "..\..\src\Release" -b "..\..\..\apps\Release" </LinkerAdditionalOptions>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AlertUninstall.wxs" />
