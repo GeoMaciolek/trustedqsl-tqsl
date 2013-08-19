@@ -2325,7 +2325,7 @@ class UpdateDialogMsgBox: public wxDialog
 public:
 	UpdateDialogMsgBox(wxWindow* parent, bool newProg, bool newConfig, revLevel* currentProgRev, revLevel* newProgRev,
 			revLevel* currentConfigRev, revLevel* newConfigRev, wxString platformURL, wxString homepage) :
-			wxDialog(parent, (wxWindowID)wxID_ANY, wxT("Update Available"), wxDefaultPosition, wxDefaultSize)
+			wxDialog(parent, (wxWindowID)wxID_ANY, wxT("TQSL Update Available"), wxDefaultPosition, wxDefaultSize)
 	{
 		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newProg=%d, newConfig=%d, currentProgRev %s, newProgRev %s, newConfigRev %s, currentConfigRev=%s, platformURL=%s, homepage=%s", (void*)parent, newProg, newConfig, _S(currentProgRev->Value()), _S(newProgRev->Value()), _S(currentConfigRev->Value()), _S(newConfigRev->Value()), _S(platformURL), _S(homepage));
 		wxSizer* overall=new wxBoxSizer(wxVERTICAL);
