@@ -153,6 +153,8 @@ DLLEXPORTDATA extern char tQSL_ErrorFile[256];
 DLLEXPORTDATA extern char tQSL_CustomError[256];
 /// System errno - stored when tQSL_Error == TQSL_SYSTEM_ERROR
 DLLEXPORTDATA extern int tQSL_Errno;
+/// Callsign used in import - used for missing public key error
+DLLEXPORTDATA extern char tQSL_ImportCall[256];
 
 /** Initialize the tQSL library
   *

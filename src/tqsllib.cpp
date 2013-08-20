@@ -41,6 +41,7 @@ DLLEXPORTDATA TQSL_ADIF_GET_FIELD_ERROR tQSL_ADIF_Error;
 DLLEXPORTDATA const char *tQSL_BaseDir = 0;
 DLLEXPORTDATA char tQSL_ErrorFile[256];
 DLLEXPORTDATA char tQSL_CustomError[256];
+DLLEXPORTDATA char tQSL_ImportCall[256];
 
 #define TQSL_OID_BASE "1.3.6.1.4.1.12348.1."
 #define TQSL_OID_CALLSIGN TQSL_OID_BASE "1"
@@ -80,7 +81,7 @@ static const char *error_strings[] = {
 	"Unable to initialize random number generator",		/* TQSL_RANDOM_ERROR */
 	"Invalid argument",					/* TQSL_ARGUMENT_ERROR */
 	"Operator aborted operation",				/* TQSL_OPERATOR_ABORT */
-	"No private key matches the selected callsign certificate",/* TQSL_NOKEY_ERROR */
+	"No Certificate Request matches the selected Callsign Certificate",/* TQSL_NOKEY_ERROR */
 	"Buffer too small",					/* TQSL_BUFFER_ERROR */
 	"Invalid date format",					/* TQSL_INVALID_DATE */
 	"Certificate not initialized for signing",		/* TQSL_SIGNINIT_ERROR */
@@ -93,7 +94,7 @@ static const char *error_strings[] = {
 	"Certificate provider not found",			/* TQSL_PROVIDER_NOT_FOUND */
 	"No callsign certificate for key",			/* TQSL_CERT_KEY_ONLY */
 	"Configuration file cannot be opened",			/* TQSL_CONFIG_ERROR */
-	"Callsign Certificate or private key not found",	/* TQSL_CERT_NOT_FOUND */
+	"Callsign Certificate or Certificate Request not found",/* TQSL_CERT_NOT_FOUND */
 	"PKCS#12 file not TQSL compatible",			/* TQSL_PKCS12_ERROR */
 	"Callsign Certificate not TQSL compatible",		/* TQSL_CERT_TYPE_ERROR */
 	"Date out of range",					/* TQSL_DATE_OUT_OF_RANGE */
@@ -286,6 +287,10 @@ tqsl_getErrorString_v(int err) {
 			int(SSLeay() >> 28) & 0xff, int(SSLeay() >> 20) & 0xff, int(SSLeay() >> 12) & 0xff,
 			int(OPENSSL_VERSION_NUMBER >> 28) & 0xff, int(OPENSSL_VERSION_NUMBER >> 20) & 0xff,
 			int(OPENSSL_VERSION_NUMBER >> 12) & 0xff);
+		return buf;
+	}
+	if (err == TQSL_CERT_NOT_FOUND && tQSL_ImportCall[0] != '\0') {
+		sprintf(buf, "Callsign Certificate or Certificate Request not found for callsign %s", tQSL_ImportCall);
 		return buf;
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;
