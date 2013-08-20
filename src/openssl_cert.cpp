@@ -338,6 +338,7 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *,voi
 	 * reported via the callback (if any) but will not be fatal unless
 	 * the callback says so.
 	 */
+	tQSL_ImportCall[0] = '\0';
 	stat = (*(handler->func))(data, cert, cb, userdata);
 	X509_free(cert);
 	if (stat) {
@@ -3406,7 +3407,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	else if (type == TQSL_CERT_CB_CA)
 		stype = "Certificate Authority";
 	else if (type == TQSL_CERT_CB_USER)
-		stype = "User";
+		stype = "Callsign";
 
 	tqsl_make_cert_path(certfile, path, sizeof path);
 	item.name_buf = name;
@@ -3416,6 +3417,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	if (tqsl_cert_get_subject_name_entry(cert, "AROcallsign", &item)) {
 		// Subject contains a call sign (probably a user cert)
 		callsign = value;
+		strncpy(tQSL_ImportCall, callsign.c_str(), sizeof(tQSL_ImportCall));
 		subjid = string("  ") + value;
 		tm = X509_get_notAfter(cert);
 		if (tm)
@@ -3515,7 +3517,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 				rval = (*cb)(TQSL_CERT_CB_RESULT | type | TQSL_CERT_CB_DUPLICATE, msg.c_str(), userdata);
 				if (rval) {
 					tQSL_Error = TQSL_CUSTOM_ERROR;
-					strcpy(tQSL_CustomError, "Duplicate callsign certificate");
+					strcpy(tQSL_CustomError, "Duplicate Callsign certificate");
 					return 1;
 				}
 			}
@@ -3524,7 +3526,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	}
 	/* Cert is not a duplicate. Append it to the certificate file */
 	if (cb != NULL) {
-		msg = "Adding " + stype + " cert for: " + subjid;
+		msg = "Adding " + stype + " Certificate for: " + subjid;
 
 		rval = (*cb)(TQSL_CERT_CB_MILESTONE | type | TQSL_CERT_CB_PROMPT, msg.c_str(), userdata);
 		if (rval) {
@@ -3805,6 +3807,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 
 	if (!tqsl_cert_get_subject_name_entry(cert, "AROcallsign", &item))
 		return rval;
+	strncpy(tQSL_ImportCall, aro, sizeof tQSL_ImportCall);
 	if (!tqsl_make_key_path(aro, path, sizeof path))
 		goto end_nokey;
 	if (tqsl_open_key_file(path)) {
