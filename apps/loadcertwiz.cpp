@@ -101,8 +101,13 @@ notifyImport(int type, const char *message, void *data) {
 		if (counts) {
 			switch (TQSL_CERT_CB_RESULT_TYPE(type)) {
 				case TQSL_CERT_CB_DUPLICATE:
-					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER && message)
-						nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
+					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER) {
+						if (message) {
+							nd->status = nd->status + wxString(message, wxConvLocal) + wxT("\n");
+						} else {
+							nd->status = nd->status + wxT("This callsign certificate is already installed");
+						}
+					}
 					counts->duplicate++;
 					break;
 				case TQSL_CERT_CB_ERROR:
@@ -113,7 +118,8 @@ notifyImport(int type, const char *message, void *data) {
 					break;
 				case TQSL_CERT_CB_LOADED:
 					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER)
-						nd->status = nd->status + wxString("User certificate loaded", wxConvLocal) + wxT("\n");
+						nd->status = nd->status + wxString("Callsign Certificate ", wxConvLocal) +
+							wxString(message, wxConvLocal) + wxT("\n");
 					counts->loaded++;
 					break;
 			}
