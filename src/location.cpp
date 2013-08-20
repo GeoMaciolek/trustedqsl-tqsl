@@ -19,6 +19,7 @@
 
 #include "location.h"
 
+#include <errno.h>
 #include <cstring>
 #include <fstream>
 #include <algorithm>
@@ -2783,7 +2784,9 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		}
 		catch (exception& x) {
 			tQSL_Error = TQSL_CUSTOM_ERROR;
-			strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
+			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+				"Error writing new configuration file (%s): %s/%s",
+				fn.c_str(), strerror(errno), x.what());
 			if (cb)
 				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR | TQSL_CERT_CB_CONFIG,
 					fn.c_str(), userdata);
