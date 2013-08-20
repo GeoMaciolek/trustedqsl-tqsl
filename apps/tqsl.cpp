@@ -2499,7 +2499,10 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	if (noGUI) {
 		wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
 		if (!pend.IsEmpty()){
-			wxLogMessage(wxT("A Callsign Certificate Request for %s is pending."), pend.c_str());
+			if (pend.Find(wxT(",")) != wxNOT_FOUND)
+				wxLogMessage(wxT("Callsign Certificate Requests are pending for %s."), pend.c_str());
+			else
+				wxLogMessage(wxT("A Callsign Certificate Request for %s is pending."), pend.c_str());
 		}
 	}
 	return;
@@ -3584,11 +3587,23 @@ QSLApp::OnInit() {
 	}
 	if (parser.Found(wxT("i"), &importfile)) {
 		notifyData nd;
-		if (tqsl_importTQSLFile(importfile.mb_str(), notifyImport, &nd))
+		if (tqsl_importTQSLFile(importfile.mb_str(), notifyImport, &nd)) {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
-		else
-			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+		} else {
+			wxLogMessage(nd.Message());
+			frame->cert_tree->Build(CERTLIST_FLAGS);
+			wxString call = wxString(tQSL_ImportCall, wxConvLocal);
+			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+			pending.Replace(call, wxT(""), true);
+			if (pending[0] == ',')
+				pending.Replace(wxT(","), wxT(""));
+			if (pending.Last() == ',')
+				pending.Truncate(pending.Len()-1);
+			wxConfig::Get()->Write(wxT("RequestPending"), pending);
+		}
+		return(true);
 	}
+
 	if (parser.Found(wxT("l"), &locname)) {
 		tqsl_endStationLocationCapture(&loc);
 		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
@@ -3784,8 +3799,10 @@ void MyFrame::FirstTime(void) {
 		wxCommandEvent e;
 		CRQWizard(e);
 	}
-	wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
-	if (pend != wxT("")) {
+	wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+	wxStringTokenizer tkz(pending, wxT(","));
+	while (tkz.HasMoreTokens()) {
+		wxString pend = tkz.GetNextToken();
 		bool found = false;
 		tQSL_Cert *certs;
 		int ncerts = 0;
@@ -3801,7 +3818,14 @@ void MyFrame::FirstTime(void) {
 		}
 
 		if (!found) {
-			wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+			// Remove this call from the list of pending certificate requests
+			wxString p = wxConfig::Get()->Read(wxT("RequestPending"));
+			p.Replace(pend, wxT(""), true);
+			if (p[0] == ',')
+				p.Replace(wxT(","), wxT(""));
+			if (p.Last() == ',')
+				p.Truncate(pending.Len()-1);
+			wxConfig::Get()->Write(wxT("RequestPending"), p);
 		} else {
 			if (wxMessageBox(wxT("Are you ready to load your new callsign certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
 				wxCommandEvent e;
@@ -3991,6 +4015,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 	char renew = (req != 0) ? 1 : 0;
 	tQSL_Cert cert = (renew ? ((CertTreeItemData *)cert_tree->GetItemData(cert_tree->GetSelection()))->getCert() : 0);
 	CRQWiz wiz(req, cert, this, help, renew ? wxT("Renew a Callsign Certificate") : wxT("Request a new Callsign Certificate"));
+	int retval = 0;
 /*
 	CRQ_ProviderPage *prov = new CRQ_ProviderPage(wiz, req);
 	CRQ_IntroPage *intro = new CRQ_IntroPage(wiz, req);
@@ -4031,9 +4056,10 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				wxT("tQSL Cert Request files (*.") wxT(TQSL_CRQ_FILE_EXT) wxT(")|*.") wxT(TQSL_CRQ_FILE_EXT)
 					wxT("|All files (") wxT(ALLFILESWILD) wxT(")|") wxT(ALLFILESWILD),
 				wxSAVE | wxOVERWRITE_PROMPT);
-			if (file.IsEmpty())
+			if (file.IsEmpty()) {
 				wxLogMessage(wxT("Request cancelled"));
 				return;
+			}
 		}
 		TQSL_CERT_REQ req;
 		strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
@@ -4087,7 +4113,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				in.close();
 
 				wxString fileType(wxT("Certificate Request"));
-				int retval = UploadFile(filename, filename.mb_str(), 0, (void *)contents.c_str(), contents.size(), fileType);
+				retval = UploadFile(filename, filename.mb_str(), 0, (void *)contents.c_str(), contents.size(), fileType);
 				if (retval != 0)
 					wxLogError(wxT("Your certificate request did not upload properly\nPlease try again."));
 			}
@@ -4104,7 +4130,14 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				msg += wxString(wxT("see:\n   ")) + wxString(wiz.provider.url, wxConvLocal);
 			}
 			wxMessageBox(msg, wxT("TQSL"));
-			wxConfig::Get()->Write(wxT("RequestPending"),wiz.callsign);
+		}
+		if (retval == 0) {
+			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+			if (pending.IsEmpty())
+				pending = wiz.callsign;
+			else
+				pending += wxT(",") + wiz.callsign;
+			wxConfig::Get()->Write(wxT("RequestPending"),pending);
 		}
 		if (req.signer)
 			tqsl_endSigning(req.signer);

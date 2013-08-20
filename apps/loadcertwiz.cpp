@@ -221,11 +221,12 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_final = final;
 	_p12pw = p12pw;
 
+	wxConfig *config = (wxConfig *)wxConfig::Get();
 	wxString ext(wxT("p12"));
 	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
 	wild += wxT("|All files (*.*)|*.*");
 
-	wxString path = wxConfig::Get()->Read(wxT("CertFilePath"), wxT(""));
+	wxString path = config->Read(wxT("CertFilePath"), wxT(""));
 	wxString filename = wxFileSelector(wxT("Select Certificate File"), path,
 		wxT(""), ext, wild, wxOPEN|wxFILE_MUST_EXIST);
 	if (filename == wxT("")) {
@@ -236,14 +237,23 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 		wxString path, basename, ext;
 		wxSplitPath(filename, &path, &basename, &ext);
 		
-		wxConfig::Get()->Write(wxT("CertFilePath"), path);
+		config->Write(wxT("CertFilePath"), path);
 		if (ext.MakeLower() == wxT("tq6")) {
 			_first = _final;
 			_final->SetPrev(0);
 			if (tqsl_importTQSLFile(filename.mb_str(), notifyImport, GetNotifyData()))
 				wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
 			else {
-				wxConfig::Get()->Write(wxT("RequestPending"), wxT(""));
+				if (tQSL_ImportCall[0] != '\0') {
+					wxString call = wxString(tQSL_ImportCall, wxConvLocal);
+					wxString pending = config->Read(wxT("RequestPending"));
+					pending.Replace(call, wxT(""), true);
+					if (pending[0] == ',')
+						pending.Replace(wxT(","), wxT(""));
+					if (pending.Last() == ',')
+						pending.Truncate(pending.Len()-1);
+					config->Write(wxT("RequestPending"), pending);
+				}
 				export_new_cert(this, filename.mb_str());
 			}
 		} else {
