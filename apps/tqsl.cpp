@@ -220,8 +220,8 @@ ConvertingDialog::ConvertingDialog(wxWindow *parent, const char *filename)
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxString label = wxString(wxT("Converting ")) + wxString(filename, wxConvLocal) + wxT(" to TQSL format");
 	sizer->Add(new wxStaticText(this, -1, label), 0, wxALL|wxALIGN_CENTER, 10);
-	msg = new wxStaticText(this, TQSL_CD_MSG, wxT(""));
-	sizer->Add(msg, 0, wxALL|wxALIGN_CENTER, 10);
+	msg = new wxStaticText(this, TQSL_CD_MSG, wxT(" "));
+	sizer->Add(msg, 0, wxALL|wxALIGN_LEFT, 10);
 	canbut = new wxButton(this, TQSL_CD_CANBUT, wxT("Cancel"));
 	sizer->Add(canbut, 0, wxALL|wxEXPAND, 10);
 	SetAutoLayout(TRUE);
@@ -1527,11 +1527,24 @@ restart:
 						++n;
 						++processed;
 					}
-					if ((n % 10) == 0)
-		   	   			conv_dial->msg->SetLabel(wxString::Format(wxT("%d"), n));
-
+					if ((processed % 10) == 0) {
+						wxString progress = wxString::Format(wxT("QSOs: %d"), processed);
+						if (duplicates > 0) 
+							progress += wxString::Format(wxT(" Duplicates: %d"), duplicates);
+						if (errors > 0 || out_of_range > 0) 
+							progress += wxString::Format(wxT(" Errors: %d"), errors + out_of_range);
+		   	   			conv_dial->msg->SetLabel(progress);
+					}
 					output<<(wxString(cp, wxConvLocal)+wxT("\n"));
    			}
+			if ((processed % 10) == 0) {
+				wxString progress = wxString::Format(wxT("QSOs: %d"), processed);
+				if (duplicates > 0) 
+					progress += wxString::Format(wxT(" Duplicates: %d"), duplicates);
+				if (errors > 0 || out_of_range > 0) 
+					progress += wxString::Format(wxT(" Errors: %d"), errors + out_of_range);
+   	   			conv_dial->msg->SetLabel(progress);
+			}
 			if (cp == 0) {
 				wxSafeYield(conv_dial);
 				if (!conv_dial->running)
@@ -1558,6 +1571,9 @@ restart:
 				processed++;
 				out_of_range++;
 				continue;
+			}
+			if (tQSL_Error == TQSL_CERT_DATE_MISMATCH) {
+				processed++;
 			}
 			if (tQSL_Error == TQSL_DUPLICATE_QSO) {
 				processed++;
