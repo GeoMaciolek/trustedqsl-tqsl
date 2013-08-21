@@ -1746,6 +1746,12 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 
 	if (numrecs == 0) {
 		wxLogMessage(wxT("No records output"));
+		if (compressed) {
+			gzclose(gout);
+		} else {
+			out.close();
+		}
+		unlink(outfile.mb_str());
 		if (status == TQSL_EXIT_CANCEL || TQSL_EXIT_QSOS_SUPPRESSED)
 			return status;
 		else
@@ -1759,6 +1765,11 @@ MyFrame::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 			}
 		} else {
 			out<<output;
+			if (out.fail()) {
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				return TQSL_EXIT_LIB_ERROR;
+			}
 			out.close();
 			if (out.fail()) {
 				tqsl_converterRollBack(conv);
