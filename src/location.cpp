@@ -281,7 +281,7 @@ tqsl_load_xml_config() {
 		wval = RegQueryValueEx(hkey, "InstallPath", 0, &dtype, (LPBYTE)wpath, &bsize);
 		RegCloseKey(hkey);
 		if (wval == ERROR_SUCCESS)
-			default_path = string(wpath) + "/config.xml";
+			default_path = string(wpath) + "\\config.xml";
 	}
 #elif defined(__APPLE__)
 	// Get path to config.xml resource from bundle
@@ -305,7 +305,11 @@ tqsl_load_xml_config() {
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
 
+#ifdef __WINDOWS__
+	string user_path = string(tQSL_BaseDir) + "\\config.xml";
+#else
 	string user_path = string(tQSL_BaseDir) + "/config.xml";
+#endif
 
 	int default_status = default_config.parseFile(default_path.c_str());
 	int user_status = user_config.parseFile(user_path.c_str());
@@ -1829,8 +1833,13 @@ tqsl_getLocationFieldListItem(tQSL_Location locp, int field_num, int item_idx, c
 }
 
 static string
-tqsl_station_data_filename(const char *f = "/station_data") {
+tqsl_station_data_filename(const char *f = "station_data") {
 	string s = tQSL_BaseDir;
+#ifdef __WINDOWS__
+	s += "\\";
+#else
+	s += "/";
+#endif
 	s += f;
 	return s;
 }
@@ -2774,7 +2783,11 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 				return 0;
 
 		// Save the configuration file
+#ifdef __WINDOWS__
+		string fn = string(tQSL_BaseDir) + "\\config.xml";
+#else
 		string fn = string(tQSL_BaseDir) + "/config.xml";
+#endif
 		ofstream out;
 		out.exceptions(std::ios::failbit | std::ios::eofbit | std::ios::badbit);
 		try {

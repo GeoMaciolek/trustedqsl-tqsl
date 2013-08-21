@@ -718,7 +718,11 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
 		wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
+#ifdef __WINDOWS__
+		bdir += wxT("\\tqslconfig.tbk");
+#else
 		bdir += wxT("/tqslconfig.tbk");
+#endif
 		BackupConfig(bdir, true);
 	}
 }
@@ -1938,7 +1942,11 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile, bool newFi
 	} else {
 		if (logFile) {
 			wxString filename;
+#ifdef __WINDOWS__
+			filename.Printf(wxT("%hs\\curl.log"), tQSL_BaseDir);
+#else
 			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+#endif
 			*logFile = fopen(filename.mb_str(), newFile ? "wb" : "ab");
 			if (*logFile) {
 				curl_easy_setopt(req, CURLOPT_VERBOSE, 1);
@@ -2402,7 +2410,11 @@ void MyFrame::UpdateConfigFile() {
 	if (retval == CURLE_OK) {
 		char *newconfig = (char *)handler.s;
 		wxString filename;
+#ifdef __WINDOWS__
+		filename.Printf(wxT("%hs\\/config.tq6"), tQSL_BaseDir);
+#else
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
+#endif
 		FILE *configFile = fopen(filename.mb_str(), "wb");
 		if (!configFile) {
 			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
@@ -4046,7 +4058,11 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 	if (wiz.RunWizard()) {
 		// Save or upload?
 		wxString filename = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
+#ifdef __WINDOWS__
+		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("\\") + filename;
+#else
 		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + filename;
+#endif
 		bool upload = false;
 		if (wxMessageBox(wxT("Do you want to upload this certificate request to LoTW now?"), wxT("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 			upload = true;

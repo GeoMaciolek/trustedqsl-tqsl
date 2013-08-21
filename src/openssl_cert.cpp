@@ -3252,13 +3252,21 @@ tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx) {
 static char *
 tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncpy(path, tQSL_BaseDir, size);
+#ifdef __WINDOWS__
+	strncat(path, "\\certs", size - strlen(path));
+#else
 	strncat(path, "/certs", size - strlen(path));
+#endif
 	if (MKDIR(path, 0700) && errno != EEXIST) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return NULL;
 	}
+#ifdef __WINDOWS
+	strncat(path, "\\", size - strlen(path));
+#else
 	strncat(path, "/", size - strlen(path));
+#endif
 	strncat(path, filename, size - strlen(path));
 	return path;
 }
@@ -3287,14 +3295,22 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 
 	tqsl_clean_call(callsign, fixcall, sizeof fixcall);
 	strncpy(path, tQSL_BaseDir, size);
+#ifdef __WINDOWS__
+	strncat(path, "\\keys", size - strlen(path));
+#else
 	strncat(path, "/keys", size - strlen(path));
+#endif
 	if (MKDIR(path, 0700) && errno != EEXIST) {
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return 0;
 	}
+#ifdef __WINDOWS__
+	strncat(path, "\\", size - strlen(path));
+#else
 	strncat(path, "/", size - strlen(path));
+#endif
 	strncat(path, fixcall, size - strlen(path));
 	return path;
 }
@@ -3897,7 +3913,11 @@ tqsl_make_key_list(vector< map<string,string> > & keys) {
 	keys.clear();	
 
 	string path = tQSL_BaseDir;
+#ifdef __WINDOWS__
+	path += "\\keys";
+#else
 	path += "/keys";
+#endif
 	MKDIR(path.c_str(), 0700);
 
 	DIR *dir = opendir(path.c_str());
@@ -3912,7 +3932,11 @@ tqsl_make_key_list(vector< map<string,string> > & keys) {
 		char fixcall[256];
 		if (ent->d_name[0] == '.')
 			continue;
+#ifdef __WINDOWS__
+		string filename = path + "\\" + ent->d_name;
+#else
 		string filename = path + "/" + ent->d_name;
+#endif
 		if (!tqsl_open_key_file(filename.c_str())) {
 			map<string,string> fields;
 			while (!tqsl_read_key(fields)) {

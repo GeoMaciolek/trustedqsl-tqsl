@@ -117,7 +117,11 @@ static int pmkdir(const char *path, int perm) {
 	npath[0] = 0;
 	while (cp) {
 		if (strlen(cp) > 0 && cp[strlen(cp)-1] != ':') {
+#ifdef __WINDOWS__
+			strcat(npath, "\\");
+#else
 			strcat(npath, "/");
+#endif
 			strcat(npath, cp);
 			if (MKDIR(npath, perm) != 0 && errno != EEXIST)
 				return 1;
@@ -189,7 +193,7 @@ tqsl_init() {
 			wval = GetShortPathName(path, shortPath, TQSL_MAX_PATH_LEN);
 			if (wval != 0)
 				strncpy(path, shortPath, TQSL_MAX_PATH_LEN);
-			strcat(path, "/TrustedQSL");
+			strcat(path, "\\TrustedQSL");
 #elif defined(LOTW_SERVER)
 			strcpy(path, "/var/lotw/tqsl");
 #else //some unix flavor

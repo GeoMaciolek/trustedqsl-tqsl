@@ -24,7 +24,11 @@
 class DocPaths : public wxPathList {
 public:
 	DocPaths(wxString subdir) : wxPathList() {
+#ifdef __WINDOWS__
+		Add(wxGetHomeDir() + wxT("\\help\\") + subdir);
+#else
 		Add(wxGetHomeDir() + wxT("/help/") + subdir);
+#endif
 #if defined(_WIN32)
 		HKEY hkey;
 		if (RegOpenKeyEx(HKEY_LOCAL_MACHINE, "Software\\TrustedQSL",
@@ -35,10 +39,10 @@ public:
 			DWORD bsize = sizeof path;
 			if (RegQueryValueEx(hkey, "HelpDir", 0, &dtype, (LPBYTE)path, &bsize)
 				== ERROR_SUCCESS) {
-				Add(wxString(path) + "/" + subdir);
+				Add(wxString(path) + "\\" + subdir);
 			}
 		}
-		Add(wxT("help/") + subdir);
+		Add(wxT("help\\") + subdir);
 #elif defined(__APPLE__)
 		CFBundleRef tqslBundle = CFBundleGetMainBundle();
 		CFURLRef bundleURL = CFBundleCopyBundleURL(tqslBundle);
