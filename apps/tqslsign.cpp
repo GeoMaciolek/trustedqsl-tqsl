@@ -36,7 +36,7 @@ using namespace std;
 #include <iostream>
 #include <fstream>
 #include <memory>
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	#include <io.h>
 #endif
 #include <zlib.h>

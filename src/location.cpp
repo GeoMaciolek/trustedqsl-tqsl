@@ -305,7 +305,7 @@ tqsl_load_xml_config() {
 	default_path = CONFDIR "config.xml"; //KC2YWE: Removed temporarily. There's got to be a better way to do this
 #endif
 
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	string user_path = string(tQSL_BaseDir) + "\\config.xml";
 #else
 	string user_path = string(tQSL_BaseDir) + "/config.xml";
@@ -1835,7 +1835,7 @@ tqsl_getLocationFieldListItem(tQSL_Location locp, int field_num, int item_idx, c
 static string
 tqsl_station_data_filename(const char *f = "station_data") {
 	string s = tQSL_BaseDir;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	s += "\\";
 #else
 	s += "/";
@@ -2783,7 +2783,7 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 				return 0;
 
 		// Save the configuration file
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		string fn = string(tQSL_BaseDir) + "\\config.xml";
 #else
 		string fn = string(tQSL_BaseDir) + "/config.xml";

@@ -24,7 +24,7 @@
 class DocPaths : public wxPathList {
 public:
 	DocPaths(wxString subdir) : wxPathList() {
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		Add(wxGetHomeDir() + wxT("\\help\\") + subdir);
 #else
 		Add(wxGetHomeDir() + wxT("/help/") + subdir);

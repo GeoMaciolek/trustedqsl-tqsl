@@ -117,7 +117,7 @@ static int pmkdir(const char *path, int perm) {
 	npath[0] = 0;
 	while (cp) {
 		if (strlen(cp) > 0 && cp[strlen(cp)-1] != ':') {
-#ifdef __WINDOWS__
+#ifdef _WIN32
 			strcat(npath, "\\");
 #else
 			strcat(npath, "/");

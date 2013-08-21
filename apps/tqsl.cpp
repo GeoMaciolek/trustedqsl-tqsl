@@ -66,7 +66,7 @@
 #include <stdint.h> //for uint8_t; should be cstdint but this is C++11 and not universally supported
 #endif
 
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	#include <io.h>
 #endif
 #include <zlib.h>
@@ -598,7 +598,7 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	wxTextCtrl *_logwin = 0;
 
 	if (diagFile)  {
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		fprintf(diagFile, "%hs\n", szString);
 #else
 //		const char *cstr = wxString(szString).mb_str();
@@ -613,7 +613,7 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	if (_frame != 0)
 		_logwin = _frame->logwin;
 	if (_logwin == 0) {
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		cerr << szString << endl;
 #else
 		fprintf(stderr, "%ls\n", szString);
@@ -633,7 +633,7 @@ public:
 void LogStderr::DoLogString(const wxChar *szString, time_t) {
 
 	if (diagFile) {
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		fprintf(diagFile, "%hs\n", szString);
 #else
 		fprintf(diagFile, "%ls\n", szString);
@@ -643,7 +643,7 @@ void LogStderr::DoLogString(const wxChar *szString, time_t) {
 	}
 	if (wxString(szString).StartsWith(wxT("Debug:")))
 		return;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	cerr << szString << endl;
 #else
 	fprintf(stderr, "%ls\n", szString);
@@ -718,7 +718,7 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
 		wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		bdir += wxT("\\tqslconfig.tbk");
 #else
 		bdir += wxT("/tqslconfig.tbk");
@@ -1942,7 +1942,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **logFile, bool newFi
 	} else {
 		if (logFile) {
 			wxString filename;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 			filename.Printf(wxT("%hs\\curl.log"), tQSL_BaseDir);
 #else
 			filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
@@ -2410,7 +2410,7 @@ void MyFrame::UpdateConfigFile() {
 	if (retval == CURLE_OK) {
 		char *newconfig = (char *)handler.s;
 		wxString filename;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		filename.Printf(wxT("%hs\\/config.tq6"), tQSL_BaseDir);
 #else
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
@@ -4058,7 +4058,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 	if (wiz.RunWizard()) {
 		// Save or upload?
 		wxString filename = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("\\") + filename;
 #else
 		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + filename;

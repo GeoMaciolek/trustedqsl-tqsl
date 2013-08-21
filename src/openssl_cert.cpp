@@ -3252,7 +3252,7 @@ tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx) {
 static char *
 tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncpy(path, tQSL_BaseDir, size);
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	strncat(path, "\\certs", size - strlen(path));
 #else
 	strncat(path, "/certs", size - strlen(path));
@@ -3262,7 +3262,7 @@ tqsl_make_cert_path(const char *filename, char *path, int size) {
 		tQSL_Errno = errno;
 		return NULL;
 	}
-#ifdef __WINDOWS
+#ifdef _WIN32
 	strncat(path, "\\", size - strlen(path));
 #else
 	strncat(path, "/", size - strlen(path));
@@ -3295,7 +3295,7 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 
 	tqsl_clean_call(callsign, fixcall, sizeof fixcall);
 	strncpy(path, tQSL_BaseDir, size);
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	strncat(path, "\\keys", size - strlen(path));
 #else
 	strncat(path, "/keys", size - strlen(path));
@@ -3306,7 +3306,7 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 		tQSL_Errno = errno;
 		return 0;
 	}
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	strncat(path, "\\", size - strlen(path));
 #else
 	strncat(path, "/", size - strlen(path));
@@ -3913,7 +3913,7 @@ tqsl_make_key_list(vector< map<string,string> > & keys) {
 	keys.clear();	
 
 	string path = tQSL_BaseDir;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 	path += "\\keys";
 #else
 	path += "/keys";
@@ -3932,7 +3932,7 @@ tqsl_make_key_list(vector< map<string,string> > & keys) {
 		char fixcall[256];
 		if (ent->d_name[0] == '.')
 			continue;
-#ifdef __WINDOWS__
+#ifdef _WIN32
 		string filename = path + "\\" + ent->d_name;
 #else
 		string filename = path + "/" + ent->d_name;
