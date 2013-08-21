@@ -19,6 +19,8 @@
 #include "wx/validate.h"
 #include "wx/datetime.h"
 #include "wx/config.h"
+#include "wx/tokenzr.h"
+
 
 #include "winstrdefs.h"
 
@@ -657,6 +659,16 @@ CRQ_IntroPage::validate() {
 			if (ok == false) {
 				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%d) having QSO dates: "), val.c_str(), Parent()->dxcc);
 				msg += wxString(cert_before_buf, wxConvLocal) + wxT(" to ") + wxString(cert_after_buf, wxConvLocal);
+			}
+		}
+		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+		wxStringTokenizer tkz(pending, wxT(","));
+		while (tkz.HasMoreTokens()) {
+			wxString pend = tkz.GetNextToken();
+			if (pend == val) {
+				msg = wxString::Format(wxT("There is an outstanding certificate request for %s\n")
+							wxT("Please wait until this is processed by LoTW or delete\n")
+							wxT("the certificate request."), val.c_str());
 			}
 		}
 	}
