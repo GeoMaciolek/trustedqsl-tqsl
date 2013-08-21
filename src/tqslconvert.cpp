@@ -486,8 +486,9 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		conv->rec_done = false;
 		conv->clearRec();
 		int cstat = 0;
+		int saveErr = 0;
 		if (conv->adif) {
-	 		do {
+	 		while (1) {
  				tqsl_adifFieldResults result;
 				if (tqsl_getADIFField(conv->adif, &result, &stat, adif_qso_record_fields, notypes, adif_allocate))
 					break;
@@ -524,9 +525,14 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				}
 				if (result.data)
 						delete[] result.data;
-			} while (cstat == 0);
-			if (cstat)
+				if (cstat)
+				    saveErr = tQSL_Error;
+			}
+			if (saveErr) {
+				tQSL_Error = saveErr;
+				conv->rec_done = true;
 				return 0;
+			}
 			if (stat == TQSL_ADIF_GET_FIELD_EOF)
 				return 0;
 			if (stat != TQSL_ADIF_GET_FIELD_SUCCESS) {
@@ -563,10 +569,16 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					if (conv->rec_text != "")
 						conv->rec_text += "\n";
 					conv->rec_text += string(field.name) + ": " + field.value;
+					if (cstat)
+						saveErr = tQSL_Error;
 				}
-			} while (stat == TQSL_CABRILLO_NO_ERROR && cstat == 0);
-			if (cstat || stat != TQSL_CABRILLO_EOR)
+			} while (stat == TQSL_CABRILLO_NO_ERROR);
+			if (saveErr)
+				tQSL_Error = saveErr;
+			if (saveErr || stat != TQSL_CABRILLO_EOR) {
+				conv->rec_done = true;
 				return 0;
+			}
 		} else {
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			strcpy(tQSL_CustomError, "Converter not initialized");
