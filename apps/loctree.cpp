@@ -80,7 +80,6 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 	DeleteAllItems();
 	wxTreeItemId rootId = AddRoot(wxT("Station Locations"), FOLDER_ICON);
-	tqsl_init();
         tQSL_Location loc;
         check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         check_tqsl_error(tqsl_getNumStationLocations(loc, &_nloc));

@@ -96,7 +96,6 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 	DeleteAllItems();
 	wxTreeItemId rootId = AddRoot(wxT("tQSL Certificates"), FOLDER_ICON);
-	tqsl_init();
 	tQSL_Cert *certs;
 	if (tqsl_selectCertificates(&certs, &_ncerts, 0, 0, 0, provider, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || errno != ENOENT)

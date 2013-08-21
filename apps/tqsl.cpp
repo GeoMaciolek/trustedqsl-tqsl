@@ -1171,6 +1171,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString about = getAbout();
 	fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
 	fprintf(diagFile, "Command Line: %s\n", (const char *)origCommandLine.mb_str());
+	fprintf(diagFile, "Working Directory:%s\n", tQSL_BaseDir);
 }
 
 static void
@@ -3576,9 +3577,12 @@ QSLApp::OnInit() {
 			wxString about = getAbout();
 			fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
 			fprintf(diagFile, "Command Line: %s\n", (const char *)origCommandLine.mb_str());
+			tqsl_init();
+			fprintf(diagFile, "Working Directory: %s\n", tQSL_BaseDir);
 		}
 	}
 
+	tqsl_init();	// Init tqsllib
 	// check for logical command switches
 	if (parser.Found(wxT("o")) && parser.Found(wxT("u"))) {
 		cerr << "Option -o cannot be combined with -u" << endl;
