@@ -13,7 +13,8 @@ To make this easy, TQSL lets you define and name a Station Location that
 specifies your Callsign Certificate and operating location.
 
 Documentation for TQSL is available via its Help menu's "Display Documentation"
-command. The information in this Quick-Start Guide is a subset extracted from
+command; on OS X, documentation is available via the Help menu's "Contents" 
+command). The information in this Quick-Start Guide is a subset extracted from
 the documentation.
 
 TQSL can be installed and executed on Windows, Mac OS X, and Linux.
