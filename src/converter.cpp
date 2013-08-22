@@ -118,7 +118,7 @@ main(int argc, char *argv[]) {
 		char buf[40] = "";
 		int lineno;
 		if (conv && !tqsl_getConverterLine(conv, &lineno)) // && lineno > 0)
-			sprintf(buf, " on line %d", lineno);
+			snprintf(buf, sizeof buf, " on line %d", lineno);
 		cerr << "Aborted: " << x.what() << buf << endl;
 		tqsl_converterRollBack(conv);
 		return EXIT_FAILURE;

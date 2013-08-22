@@ -193,7 +193,7 @@ tqsl_init() {
 			wval = GetShortPathName(path, shortPath, TQSL_MAX_PATH_LEN);
 			if (wval != 0)
 				strncpy(path, shortPath, TQSL_MAX_PATH_LEN);
-			strcat(path, "\\TrustedQSL");
+			strncat(path, "\\TrustedQSL", sizeof path - strlen(path) - 1);
 #elif defined(LOTW_SERVER)
 			strcpy(path, "/var/lotw/tqsl");
 #else //some unix flavor
@@ -246,7 +246,7 @@ tqsl_getErrorString_v(int err) {
 		}
 	}
 	if (err == TQSL_DB_ERROR && tQSL_CustomError[0] != 0) {
-		sprintf(buf, "Database Error: %s", tQSL_CustomError);
+		snprintf(buf, sizeof buf, "Database Error: %s", tQSL_CustomError);
 		return buf;
 	}
 	
@@ -287,19 +287,19 @@ tqsl_getErrorString_v(int err) {
 		return buf;
 	}
 	if (err == TQSL_OPENSSL_VERSION_ERROR) {
-		sprintf(buf, "Incompatible OpenSSL Library version %d.%d.%d; expected %d.%d.%d",
+		snprintf(buf, sizeof buf, "Incompatible OpenSSL Library version %d.%d.%d; expected %d.%d.%d",
 			int(SSLeay() >> 28) & 0xff, int(SSLeay() >> 20) & 0xff, int(SSLeay() >> 12) & 0xff,
 			int(OPENSSL_VERSION_NUMBER >> 28) & 0xff, int(OPENSSL_VERSION_NUMBER >> 20) & 0xff,
 			int(OPENSSL_VERSION_NUMBER >> 12) & 0xff);
 		return buf;
 	}
 	if (err == TQSL_CERT_NOT_FOUND && tQSL_ImportCall[0] != '\0') {
-		sprintf(buf, "Callsign Certificate or Certificate Request not found for callsign %s", tQSL_ImportCall);
+		snprintf(buf, sizeof buf, "Callsign Certificate or Certificate Request not found for callsign %s", tQSL_ImportCall);
 		return buf;
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;
 	if (adjusted_err < 0 || adjusted_err >= (int)(sizeof error_strings / sizeof error_strings[0])) {
-		sprintf(buf, "Invalid error code: %d", err);
+		snprintf(buf, sizeof buf, "Invalid error code: %d", err);
 		return buf;
 	}
 	return error_strings[adjusted_err];
@@ -410,16 +410,16 @@ tqsl_convertDateToText(const tQSL_Date *date, char *buf, int bufsiz) {
 		buf[0] = '\0';
 		return NULL;
 	}
-	len = sprintf(lbuf, "%04d-", date->year);
+	len = snprintf(lbuf, sizeof lbuf, "%04d-", date->year);
 	strncpy(cp, lbuf, bufleft);
 	cp += len;
 	bufleft -= len;
-	len = sprintf(lbuf, "%02d-", date->month);
+	len = snprintf(lbuf, sizeof lbuf, "%02d-", date->month);
 	if (bufleft > 0)
 		strncpy(cp, lbuf, bufleft);
 	cp += len;
 	bufleft -= len;
-	len = sprintf(lbuf, "%02d", date->day);
+	len = snprintf(lbuf, sizeof lbuf, "%02d", date->day);
 	if (bufleft > 0)
 		strncpy(cp, lbuf, bufleft);
 	bufleft -= len;
@@ -474,16 +474,16 @@ tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz) {
 	}
 	if (!tqsl_isTimeValid(time))
 		return NULL;
-	len = sprintf(lbuf, "%02d:", time->hour);
+	len = snprintf(lbuf, sizeof lbuf, "%02d:", time->hour);
 	strncpy(cp, lbuf, bufleft);
 	cp += len;
 	bufleft -= len;
-	len = sprintf(lbuf, "%02d:", time->minute);
+	len = snprintf(lbuf, sizeof lbuf, "%02d:", time->minute);
 	if (bufleft > 0)
 		strncpy(cp, lbuf, bufleft);
 	cp += len;
 	bufleft -= len;
-	len = sprintf(lbuf, "%02d", time->second);
+	len = snprintf(lbuf, sizeof lbuf, "%02d", time->second);
 	if (bufleft > 0)
 		strncpy(cp, lbuf, bufleft);
 	cp += len;

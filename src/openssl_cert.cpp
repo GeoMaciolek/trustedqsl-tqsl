@@ -472,7 +472,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	int libmaj, libmin, configmaj, configmin;
 	tqsl_getVersion(&libmaj, &libmin);
 	tqsl_getConfigVersion(&configmaj, &configmin);
-	sprintf(buf, "Lib: V%d.%d, Config: %d, %d", libmaj, libmin, configmaj, configmin);
+	snprintf(buf, sizeof buf, "Lib: V%d.%d, Config: %d, %d", libmaj, libmin, configmaj, configmin);
 	tqsl_write_adif_field(out, "TQSL_IDENT", 0, (unsigned char *)buf, -1);
 	tqsl_write_adif_field(out, type, 0, NULL, 0);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
@@ -484,7 +484,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	tqsl_write_adif_field(out, "TQSL_CRQ_STATE", 0, (unsigned char *)req->state, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_POSTAL", 0, (unsigned char *)req->postalCode, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_COUNTRY", 0, (unsigned char *)req->country, -1);
-	sprintf(buf, "%d", req->dxccEntity);
+	snprintf(buf, sizeof buf, "%d", req->dxccEntity);
 	tqsl_write_adif_field(out, "TQSL_CRQ_DXCC_ENTITY", 0, (unsigned char *)buf, -1);
 	tqsl_convertDateToText(&(req->qsoNotBefore), buf, sizeof buf);
 	tqsl_write_adif_field(out, "TQSL_CRQ_QSO_NOT_BEFORE", 0, (unsigned char *)buf, -1);
@@ -528,7 +528,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	if (req->signer != NULL) {
 		char *b64;
-		char ibuf[256];
+		char ibuf[20];
 
 		if ((b64 = tqsl_sign_base64_data(req->signer, cp)) == NULL) {
 			fclose(out);
@@ -537,7 +537,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		tqsl_write_adif_field(out, "TQSL_CRQ_SIGNATURE", 0, (unsigned char *)b64, -1);
 		tqsl_getCertificateIssuer(req->signer, ibuf, sizeof ibuf);
 		tqsl_write_adif_field(out, "TQSL_CRQ_SIGNATURE_CERT_ISSUER", 0, (unsigned char *)ibuf, -1);
-		sprintf(ibuf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(TQSL_API_TO_CERT(req->signer)->cert)));
+		snprintf(ibuf, sizeof ibuf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(TQSL_API_TO_CERT(req->signer)->cert)));
 		tqsl_write_adif_field(out, "TQSL_CRQ_SIGNATURE_CERT_SERIAL", 0, (unsigned char *)ibuf, -1);
 	}
 
@@ -570,7 +570,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	tqsl_write_adif_field(out, "TQSL_CRQ_POSTAL", 0, (unsigned char *)req->postalCode, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_COUNTRY", 0, (unsigned char *)req->country, -1);
 	tqsl_write_adif_field(out, "CALLSIGN", 0, (unsigned char *)req->callSign, -1);
-	sprintf(buf, "%d", req->dxccEntity);
+	snprintf(buf, sizeof buf, "%d", req->dxccEntity);
 	tqsl_write_adif_field(out, "TQSL_CRQ_DXCC_ENTITY", 0, (unsigned char *)buf, -1);
 	tqsl_convertDateToText(&(req->qsoNotBefore), buf, sizeof buf);
 	tqsl_write_adif_field(out, "TQSL_CRQ_QSO_NOT_BEFORE", 0, (unsigned char *)buf, -1);
@@ -748,7 +748,7 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		sup += ";";
 		long serial = 0;		
 		tqsl_getCertificateSerial(cert, &serial);
-		sprintf(buf, "%ld", serial);
+		snprintf(buf, sizeof buf, "%ld", serial);
 		sup += buf;
 		set<string>::iterator it;
 		for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
@@ -1901,7 +1901,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	}
 	if (tqsl_getCertificateDXCCEntity(cert, &dxcc))
 		return 1;
-	sprintf(buf, "%d", dxcc);
+	snprintf(buf, sizeof buf, "%d", dxcc);
 	dxccEntity = buf;
 
 	if (TQSL_API_TO_CERT(cert)->key == NULL) {
@@ -2763,7 +2763,7 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 			else {
 				string sup = buf;
 				sup += ";";
-				sprintf(buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
+				snprintf(buf, sizeof buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
 				sup += buf;
 				set<string>::iterator it;
 				for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
@@ -3220,7 +3220,7 @@ tqsl_bio_write_adif_field(BIO *bio, const char *fieldname, char type, const unsi
 		if ((bret = BIO_write(bio, ":", 1)) <= 0)
 			return 1;
 		char numbuf[20];
-		sprintf(numbuf, "%d>", len);
+		snprintf(numbuf, sizeof numbuf, "%d>", len);
 		if ((bret = BIO_write(bio, numbuf, strlen(numbuf))) <= 0)
 			return 1;
 		if ((bret = BIO_write(bio, value, len)) != len)
@@ -3701,9 +3701,9 @@ tqsl_replace_key(const char *callsign, const char *path, map<string,string>& new
 	if (newfields["PRIVATE_KEY"] != "")
 		records.push_back(newfields);
 	strcpy(newpath, path);
-	strcat(newpath, ".new");
+	strncat(newpath, ".new", sizeof newpath - strlen(newpath)-1);
 	strcpy(savepath, path);
-	strcat(savepath, ".save");
+	strncat(savepath, ".save", sizeof savepath - strlen(savepath)-1);
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;

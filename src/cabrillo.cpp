@@ -353,7 +353,7 @@ freq_to_mhz(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 			freqmhz = 300000;
 	}
 	char strfreq[100];
-	sprintf(strfreq, "%#f", freqmhz);
+	snprintf(strfreq, sizeof strfreq, "%#f", freqmhz);
 	strcpy(fp->value, strfreq);
 	return 0;
 }
@@ -385,7 +385,7 @@ time_fixer(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 			break;
 	if (*cp)
 		return 1;
-	sprintf(fp->value, "%04d", (int) strtol(fp->value, NULL, 10));
+	snprintf(fp->value, sizeof fp->value, "%04d", (int) strtol(fp->value, NULL, 10));
 	return 0;
 }
 

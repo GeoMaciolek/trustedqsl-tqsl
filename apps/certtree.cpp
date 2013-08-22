@@ -114,7 +114,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 			displayTQSLError("Error parsing certificate for call sign");
 			return _ncerts;
 		}
-		strcat(callsign, " - ");
+		strncat(callsign, " - ", sizeof callsign - strlen(callsign)-1);
 		DXCC dxcc;
 		int dxccEntity;
 		if (tqsl_getCertificateDXCCEntity(certs[i], &dxccEntity)) {

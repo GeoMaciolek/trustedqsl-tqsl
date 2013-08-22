@@ -77,9 +77,10 @@ main(int argc, char *argv[]) {
 			if (ncerts < 1) {
 				string erm = "No signing certificate found for " + sign_call;
 				if (sign_dxcc) {
-					char buf[30];
-					sprintf(buf, " with DXCC=%d", sign_dxcc);
-					erm += buf;
+					const char *entity;
+					tqsl_getDXCCEntityName(sign_dxcc, &entity);
+					erm += " with DXCC Entity=";
+					erm += entity;
 				}
 				throw myexc(erm);
 			}

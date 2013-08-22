@@ -4467,14 +4467,14 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 			case 0:
 				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
-					strcpy(buf, "N/A");
+					strncpy(buf, "N/A", sizeof buf);
 				else if (!tqsl_getCertificateNotBeforeDate(cert, &date))
 					tqsl_convertDateToText(&date, buf, sizeof buf);
 				break;
 			case 1:
 				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
-					strcpy(buf, "N/A");
+					strncpy(buf, "N/A", sizeof buf);
 				else if (!tqsl_getCertificateNotAfterDate(cert, &date))
 					tqsl_convertDateToText(&date, buf, sizeof buf);
 				break;
@@ -4487,16 +4487,16 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 			case 4:
 				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
-					strcpy(buf, "N/A");
+					strncpy(buf, "N/A", sizeof buf);
 				else {
 					tqsl_getCertificateSerial(cert, &serial);
-					sprintf(buf, "%ld", serial);
+					snprintf(buf, sizeof buf, "%ld", serial);
 				}
 				break;
 			case 5:
 				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
-					strcpy(buf, "N/A");
+					strncpy(buf, "N/A", sizeof buf);
 				else
 					tqsl_getCertificateAROName(cert, buf, sizeof buf);
 				break;
@@ -4519,21 +4519,21 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent) :
 			case 10:
 //				tqsl_getCertificateKeyOnly(cert, &keyonly);
 //				if (keyonly)
-//					strcpy(buf, "N/A");
+//					strncpy(buf, "N/A", sizeof buf);
 //				else {
 					switch (tqsl_getCertificatePrivateKeyType(cert)) {
 						case TQSL_PK_TYPE_ERR:
 							wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
-							strcpy(buf, "<ERROR>");
+							strncpy(buf, "<ERROR>", sizeof buf);
 							break;
 						case TQSL_PK_TYPE_NONE:
-							strcpy(buf, "None");
+							strncpy(buf, "None", sizeof buf);
 							break;
 						case TQSL_PK_TYPE_UNENC:
-							strcpy(buf, "Unencrypted");
+							strncpy(buf, "Unencrypted", sizeof buf);
 							break;
 						case TQSL_PK_TYPE_ENC:
-							strcpy(buf, "Password protected");
+							strncpy(buf, "Password protected", sizeof buf);
 							break;
 					}
 //				}

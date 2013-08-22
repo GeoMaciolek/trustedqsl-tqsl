@@ -477,7 +477,7 @@ tqsl_adifMakeField(const char *fieldname, char type, const unsigned char *value,
 		char nbuf[20];
 		if ((cp = tqsl_condx_copy((const unsigned char *)":", 1, cp, &buflen)) == NULL)
 			return 1;
-		sprintf(nbuf, "%d", len);
+		snprintf(nbuf, sizeof nbuf, "%d", len);
 		if ((cp = tqsl_condx_copy((const unsigned char *)nbuf, -1, cp, &buflen)) == NULL)
 			return 1;
 		if (type && type != ' ' && type != '\0') {

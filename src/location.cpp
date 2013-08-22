@@ -427,7 +427,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 					s = f.items[f.idx].text;
 			} else if (f.data_type == TQSL_LOCATION_FIELD_INT) {
 				char buf[20];
-				sprintf(buf, "%d", f.idata);
+				snprintf(buf, sizeof buf, "%d", f.idata);
 				s = buf;
 			} else
 				s = f.cdata;
@@ -1081,7 +1081,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
 					tqsl_getCertificateDXCCEntity(certlist[i], &dxcc);
 					char ibuf[10];
-					sprintf(ibuf, "%d", dxcc);
+					snprintf(ibuf, sizeof ibuf, "%d", dxcc);
 					p.hash[callsign].push_back(ibuf);
 					tqsl_freeCertificate(certlist[i]);
 				}
@@ -1250,7 +1250,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 							char buf[40];
 							for (int j = lower; j <= upper; j++) {
 								if (!zoneMap || inMap(j, j, cqz, ituz, zoneMap)) {
-									sprintf(buf, "%d", j);
+									snprintf(buf, sizeof buf, "%d", j);
 									TQSL_LOCATION_ITEM item;
 									item.text = buf;
 									item.ivalue = j;
@@ -2191,7 +2191,7 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							} else if (field.idx == 0 && field.items[field.idx].label == "[None]") {
 								strncpy(namebuf, "", bufsize);
 							} else {
-								sprintf(numbuf, "%d", field.items[field.idx].ivalue);
+								snprintf(numbuf, sizeof numbuf, "%d", field.items[field.idx].ivalue);
 								strncpy(namebuf, numbuf, bufsize);
 							}
 						} else if (field.idx < 0 || field.idx >= (int)field.items.size())
@@ -2242,7 +2242,7 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 						fd.setText("");
 					} else if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 						char numbuf[20];
-						sprintf(numbuf, "%d", field.items[field.idx].ivalue);
+						snprintf(numbuf, sizeof numbuf, "%d", field.items[field.idx].ivalue);
 						fd.setText(numbuf);
 					} else
 						fd.setText(field.items[field.idx].text);
@@ -2427,10 +2427,10 @@ tqsl_getGABBItCERT(tQSL_Cert cert, int uid) {
 		cp = buf;
 	s = "<Rec_Type:5>tCERT\n";
 	char sbuf[10], lbuf[40];
-	sprintf(sbuf, "%d", uid);
-	sprintf(lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
+	snprintf(sbuf, sizeof sbuf, "%d", uid);
+	snprintf(lbuf, sizeof lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	s += lbuf;
-	sprintf(lbuf, "<CERTIFICATE:%d>", (int)strlen(cp));
+	snprintf(lbuf, sizeof lbuf, "<CERTIFICATE:%d>", (int)strlen(cp));
 	s += lbuf;
 	s += cp;
 	s += "<eor>\n";
@@ -2446,11 +2446,11 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 	int bufsiz = 0;
 	loc->tSTATION = "<Rec_Type:8>tSTATION\n";
 	char sbuf[10], lbuf[40];
-	sprintf(sbuf, "%d", uid);
-	sprintf(lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
+	snprintf(sbuf, sizeof sbuf, "%d", uid);
+	snprintf(lbuf, sizeof lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tSTATION += lbuf;
-	sprintf(sbuf, "%d", certuid);
-	sprintf(lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
+	snprintf(sbuf, sizeof sbuf, "%d", certuid);
+	snprintf(lbuf, sizeof lbuf, "<CERT_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tSTATION += lbuf;
 	int old_page = loc->page;
 	tqsl_setStationLocationCapturePage(loc, 1);
@@ -2476,7 +2476,7 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 				}
 			} else if (f.data_type == TQSL_LOCATION_FIELD_INT) {
 				char buf[20];
-				sprintf(buf, "%d", f.idata);
+				snprintf(buf, sizeof buf, "%d", f.idata);
 				s = buf;
 			} else
 				s = f.cdata;
@@ -2581,8 +2581,8 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 		return 0;
 	loc->tCONTACT = "<Rec_Type:8>tCONTACT\n";
 	char sbuf[10], lbuf[40];
-	sprintf(sbuf, "%d", stationuid);
-	sprintf(lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
+	snprintf(sbuf, sizeof sbuf, "%d", stationuid);
+	snprintf(lbuf, sizeof lbuf, "<STATION_UID:%d>%s\n", (int)strlen(sbuf), sbuf);
 	loc->tCONTACT += lbuf;
 	char buf[256];
 	tqsl_adifMakeField("CALL", 0, (const unsigned char *)qso->callsign, -1, (unsigned char *)buf, sizeof buf);
