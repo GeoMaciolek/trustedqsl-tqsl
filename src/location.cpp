@@ -2186,7 +2186,9 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 					case TQSL_LOCATION_FIELD_LIST:
 						if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 							char numbuf[20];
-							if (field.idx == 0 && field.items[field.idx].label == "[None]") {
+							if ((int) field.items.size() <= field.idx) {
+								strncpy(namebuf, field.cdata.c_str(), bufsize);
+							} else if (field.idx == 0 && field.items[field.idx].label == "[None]") {
 								strncpy(namebuf, "", bufsize);
 							} else {
 								sprintf(numbuf, "%d", field.items[field.idx].ivalue);
