@@ -1,7 +1,7 @@
 TQSL/TQSLCERT changes
 =====================
 
-2.0 alpha
+2.0 beta
 ----------
 Major feature Additions:
 
@@ -108,6 +108,37 @@ to the diagnostic log).
 
 Detect additional cURL errors and translate them into more user-friendly
 text.
+
+Don't use "Private Key" in certificate load error messages - use certificate
+request. Provide the callsign associated with certificate loading errors.
+
+Display detailed error on certificate import errors.
+
+Display system error reason when attempts to update the TrustedQSL
+configuration file fail.
+
+Track multiple pending certificate requests and warn the user when they try to
+ask for a new or renewed certificate for callsigns where requests are already
+pending.
+
+Fix pathname separators so Windows always uses "\" for folder/directory names,
+not mixed forward and backward slashes.
+
+Add more information to signing progress display including processed, error,
+and duplicate counts.
+
+Recover from invalid ADIF files by ignoring invalid data until the next EOR
+(end of record) field is seen.
+
+Add working directory string to diagnostic log.
+
+Update documentation to reference differences for Mac OS X menus.
+
+Delete pending log file when signing cancelled.
+
+Fix crash when location entity data is missing.
+
+Display the DXCC entity name in location properties, not the entity number.
 
 1.14.3
 ------
