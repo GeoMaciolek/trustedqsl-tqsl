@@ -109,7 +109,7 @@ using namespace std;
 
 /// GEOMETRY
 
-#define LABEL_HEIGHT 15
+#define LABEL_HEIGHT 20
 #define LABEL_WIDTH 100
 
 #define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
@@ -4579,7 +4579,7 @@ BEGIN_EVENT_TABLE(LocPropDial, wxDialog)
 END_EVENT_TABLE()
 
 LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
-		wxDialog(parent, -1, wxT("Station Location Properties"), wxDefaultPosition, wxSize(600, 15 * LABEL_HEIGHT))
+		wxDialog(parent, -1, wxT("Station Location Properties"), wxDefaultPosition, wxSize(1000, 15 * LABEL_HEIGHT))
 {
 	tqslTrace("LocPropDial", "locname=%s", _S(locname));
 
@@ -4610,10 +4610,16 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
 				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
 				wxStaticText *st = new wxStaticText(this, -1, wxString(fields[i+1], wxConvLocal),
 					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
-				line_sizer->Add(st, 50);
+				line_sizer->Add(st, 30);
+				if (!strcmp(fields[i], "DXCC")) {
+					int dxcc = strtol(fieldbuf, NULL, 10);
+					const char *dxccname = NULL;
+					tqsl_getDXCCEntityName(dxcc, &dxccname);
+					strncpy(fieldbuf, dxccname, sizeof fieldbuf);
+				}
 				line_sizer->Add(
 					new wxStaticText(this, -1, wxString(fieldbuf, wxConvLocal),
-					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT)), 50
+					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT)), 70
 				);
 				prop_sizer->Add(line_sizer);
 				y += LABEL_HEIGHT;
