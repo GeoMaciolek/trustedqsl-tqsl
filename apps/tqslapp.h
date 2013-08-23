@@ -40,12 +40,12 @@ enum {
 	tm_f_saveconfig,
 	tm_f_new,
 	tm_f_edit,
+	tm_f_diag,
 	tm_f_exit,
 	tm_s_add,
 	tm_s_edit,
 	tm_h_contents,
 	tm_h_about,
-	tm_h_diag,
 	tm_h_update
 };
 

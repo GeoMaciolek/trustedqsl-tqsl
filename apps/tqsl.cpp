@@ -669,7 +669,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_f_saveconfig, MyFrame::OnSaveConfig)
 	EVT_MENU(tm_h_contents, MyFrame::OnHelpContents)
 	EVT_MENU(tm_h_about, MyFrame::OnHelpAbout)
-	EVT_MENU(tm_h_diag, MyFrame::OnHelpDiagnose)
+	EVT_MENU(tm_f_diag, MyFrame::OnHelpDiagnose)
 
 	EVT_MENU(tm_h_update, MyFrame::CheckForUpdates)
 
@@ -774,6 +774,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 #else
 	file_menu->Append(tm_f_preferences, wxT("Display or Modify &Preferences..."));
 #endif
+	file_menu->AppendSeparator();
+	file_menu->AppendCheckItem(tm_f_diag, wxT("Dia&gnostic Mode"));
+	file_menu->Check(tm_f_diag, false);
 #ifndef __WXMAC__	// On Mac, Exit not on File menu
 	file_menu->AppendSeparator();
 #endif
@@ -805,9 +808,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	help_menu->Append(tm_h_update, wxT("Check for &Updates..."));
 
 	help_menu->Append(tm_h_about, wxT("&About"));
-	help_menu->AppendSeparator();
-	help_menu->AppendCheckItem(tm_h_diag, wxT("Dia&gnostic Mode"));
-	help_menu->Check(tm_h_diag, false);
 	// Main menu
 	wxMenuBar *menu_bar = new wxMenuBar;
 	menu_bar->Append(file_menu, wxT("&File"));
@@ -1148,7 +1148,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString s_fname;
 
 	if (diagFile) {
-		help_menu->Check(tm_h_diag, false);
+		file_menu->Check(tm_f_diag, false);
 		fclose(diagFile);
 		diagFile = NULL;
 		wxMessageBox(wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
@@ -1158,7 +1158,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 			wxT("Log files (*.log)|*.log|All files (*.*)|*.*"),
 			wxSAVE|wxOVERWRITE_PROMPT, this);
 	if (s_fname == wxT("")) {
-		help_menu->Check(tm_h_diag, false); //would be better to not check at all, but no, apparently that's a crazy thing to want
+		file_menu->Check(tm_f_diag, false); //would be better to not check at all, but no, apparently that's a crazy thing to want
 		return;
 	}
 	diagFile = fopen(s_fname.mb_str(), "wb");
@@ -1167,7 +1167,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 		wxMessageBox(errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
 		return;
 	}
-	help_menu->Check(tm_h_diag, true);
+	file_menu->Check(tm_f_diag, true);
 	wxString about = getAbout();
 	fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.mb_str());
 	fprintf(diagFile, "Command Line: %s\n", (const char *)origCommandLine.mb_str());
