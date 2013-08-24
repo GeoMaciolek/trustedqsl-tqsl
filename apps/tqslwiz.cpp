@@ -396,11 +396,11 @@ TQSLWizCertPage::validate() {
 				if (grid.size() > 5 && (grid[5] <= 'Z' && grid[5] >= 'A'))
 					grid[5] = grid[5] - 'A' + 'a';
 
-				if (grid.size() > 4 && (grid[4] <= 'a' || grid[4] >= 'z')) {
+				if (grid.size() > 4 && (grid[4] < 'a' || grid[4] > 'z')) {
 					if (error.IsEmpty()) 
 						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
 				}
-				if (grid.size() > 5 && (grid[5] <= 'a' || grid[5] >= 'z')) {
+				if (grid.size() > 5 && (grid[5] < 'a' || grid[5] > 'z')) {
 					if (error.IsEmpty()) 
 						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
 				}
