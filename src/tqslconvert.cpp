@@ -504,8 +504,12 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					strncpy(conv->rec.mode, (char *)(result.data), sizeof conv->rec.mode);
 				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
 					strncpy(conv->rec.freq, (char *)(result.data), sizeof conv->rec.freq);
+					if (atof(conv->rec.freq) == 0.0)
+						conv->rec.freq[0] = '\0';
 				} else if (!strcasecmp(result.name, "FREQ_RX") && result.data) {
 					strncpy(conv->rec.rxfreq, (char *)(result.data), sizeof conv->rec.rxfreq);
+					if (atof(conv->rec.rxfreq) == 0.0)
+						conv->rec.rxfreq[0] = '\0';
 				} else if (!strcasecmp(result.name, "BAND_RX") && result.data) {
 					strncpy(conv->rec.rxband, (char *)(result.data), sizeof conv->rec.rxband);
 				} else if (!strcasecmp(result.name, "SAT_NAME") && result.data) {
@@ -643,7 +647,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	}
 	if (conv->rec.rxfreq[0] && strcmp(conv->rec.rxband, tqsl_infer_band(conv->rec.rxfreq))) {
 		conv->rec_done = true;
-		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "RX Frequency %s is out of range for band %s", conv->rec.freq, conv->rec.band);
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "RX Frequency %s is out of range for band %s", conv->rec.rxfreq, conv->rec.band);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		return 0;
 	}
