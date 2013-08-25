@@ -140,6 +140,17 @@ Fix crash when location entity data is missing.
 
 Display the DXCC entity name in location properties, not the entity number.
 
+Correct Grid Square parsing to allow 'a' and 'z' in subsquare fields.
+
+Update documentation to reference Mac OS X GUI fields and menu layout.
+
+Move Diagnostic Mode menu to File menu - the OS X Help menu doesn't allow
+checked items.
+
+Correct other instances of DXCC entity number being used in user messages
+to emit entity name, not the number.
+
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect

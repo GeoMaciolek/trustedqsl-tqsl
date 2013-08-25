@@ -26,6 +26,10 @@ versus the ADIF required 10.110 (MHz).
 Always convert frequency values in Cabrillo logs to Megahertz
 independent of contest type (HF/VHF).
 
+Remove strcpy/strcat/sprintf and replace with strn* variants where possble.
+
+Allow FREQ=0 when BAND is set. 
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
