@@ -224,7 +224,7 @@ CertTree::OnRightDown(wxMouseEvent& event) {
 		int keyonly = 1;
 		if (cert)
 			tqsl_getCertificateKeyOnly(cert, &keyonly);
-		wxMenu *cm = makeCertificateMenu(true, keyonly);
+		wxMenu *cm = makeCertificateMenu(true, (keyonly != 0));
 		PopupMenu(cm, event.GetPosition());
 		delete cm;
 	}
