@@ -14,7 +14,6 @@
 #include <algorithm>
 
 #include "tqslctrls.h"
-#include "dxcc.h"
 #include "tqslerrno.h"
 #include "tqsltrace.h"
 #include <errno.h>

@@ -657,7 +657,9 @@ CRQ_IntroPage::validate() {
 				tqsl_freeCertificate(certlist[i]);
 			}
 			if (ok == false) {
-				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%d) having QSO dates: "), val.c_str(), Parent()->dxcc);
+				DXCC dxcc;
+				dxcc.getByEntity(Parent()->dxcc);
+				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
 				msg += wxString(cert_before_buf, wxConvLocal) + wxT(" to ") + wxString(cert_after_buf, wxConvLocal);
 			}
 		}

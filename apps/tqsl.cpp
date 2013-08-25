@@ -174,14 +174,14 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqslTrace("getCertPassword", "buf = %lx, bufsiz=%d, cert=%lx", buf, bufsiz, cert);
 	char call[TQSL_CALLSIGN_MAX+1] = "";
 	int dxcc = 0;
-	const char *dxccname = "Unknown";
 	tqsl_getCertificateCallSign(cert, call, sizeof call);
 	tqsl_getCertificateDXCCEntity(cert, &dxcc);
-	tqsl_getDXCCEntityName(dxcc, &dxccname);
+	DXCC dx;
+	dx.getByEntity(dxcc);
 	
 	wxString message = wxString::Format(wxT("Enter the password to unlock the callsign certificate for\n"
 		wxT("%hs -- %hs\n(This is the password you made up when you\nrequested the callsign certificate.)")),
-		call, dxccname);
+		call, dx.name());
 
 	wxWindow* top = wxGetApp().GetTopWindow();
 	top->SetFocus();
@@ -1438,23 +1438,22 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 	wxString name, ext;
 	bool allow_dupes = false;
 	bool restarting = false;
-	const char *dxccname = "Unknown";
 
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
-
-	tqsl_getDXCCEntityName(dxcc, &dxccname);
+	DXCC dx;
+	dx.getByEntity(dxcc);
 
 	get_certlist(callsign, dxcc, false, false);
 	if (ncerts == 0) {
-		wxString msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs.\nSigning aborted.\n"), callsign);
+		wxString msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs in entity %hs.\nSigning aborted.\n"), callsign, dx.name());
 		throw TQSLException(msg.mb_str());
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
-	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs"), callsign, dxccname);
+	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs"), callsign, dx.name());
 
 	init_modes();
 	init_contests();
@@ -2818,9 +2817,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
-                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
-			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
-			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
+			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			ConvertLogFile(loc, infile, outfile, compressed);
 		else
 			wxLogMessage(wxT("Signing abandoned"));
@@ -2894,9 +2892,8 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
-                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %s\nIs this correct?")), infile.c_str(), loc_name,
-			callsign, wxString(dxcc.name(), wxConvLocal).c_str()),
-			wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+                                          wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
+			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			UploadLogFile(loc, infile);
 		else
 			wxLogMessage(wxT("Signing abandoned"));
