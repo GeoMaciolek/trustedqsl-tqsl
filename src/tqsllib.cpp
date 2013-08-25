@@ -15,7 +15,7 @@
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "adif.h"
-#include <stdio.h>
+#include "winstrdefs.h"
 #include <string.h>
 #include <errno.h>
 #include <ctype.h>
