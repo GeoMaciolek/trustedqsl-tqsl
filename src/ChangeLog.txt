@@ -30,6 +30,9 @@ Remove strcpy/strcat/sprintf and replace with strn* variants where possble.
 
 Allow FREQ=0 when BAND is set. 
 
+Try to deduce worked call field for unknown Cabrillo file contest
+names.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement

@@ -30,6 +30,7 @@
   */
 /** @{ */
 
+#define TQSL_CABRILLO_MAX_FIELDS 12
 #define TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX 64
 #define TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX 40
 
@@ -47,6 +48,7 @@ typedef enum {
 typedef enum {
 	TQSL_CABRILLO_HF,
 	TQSL_CABRILLO_VHF,
+	TQSL_CABRILLO_UNKNOWN,
 } TQSL_CABRILLO_FREQ_TYPE;
 
 // Minimum field number for callsign and default field number
