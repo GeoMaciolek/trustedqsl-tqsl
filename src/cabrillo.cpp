@@ -330,7 +330,7 @@ mode_xlat(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 		const char *cmode;
 		const char *gmode;
 	} modes[] = {
-		{"CW", "CW"}, {"PH", "Phone"}, {"FM", "Phone"}, {"RY", "RTTY"}
+		{"CW", "CW"}, {"PH", "SSB"}, {"FM", "FM"}, {"RY", "RTTY"}
 	};
 	for (int i = 0; i < int(sizeof modes / sizeof modes[0]); i++) {
 		if (!strcasecmp(fp->value, modes[i].cmode)) {

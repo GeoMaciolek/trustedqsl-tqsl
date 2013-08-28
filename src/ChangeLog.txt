@@ -33,6 +33,9 @@ Allow FREQ=0 when BAND is set.
 Try to deduce worked call field for unknown Cabrillo file contest
 names.
 
+Update mode mapping in Cabrillo files to pass FM through as is and
+convert PH to SSB.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
