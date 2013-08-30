@@ -181,11 +181,18 @@ Location you've defined, e.g., "Home" or "Portable in EM29".
 
 7) Digitally Sign and Submit a Log File
 
-In TQSL, select the "Station Locations" tab and click the "Sign a log and
-upload it automatically to LoTW" button. In the  "Select Station Location"
-dialog, select the Station Location from which you were operating when you
-made all of the QSOs in the log file, and click the "OK" button; TQSL will
-digitally sign your QSOs and submit them to LoTW via the internet.
+In TQSL, select the "Log Operations" tab and click the "Sign a log and
+upload it automatically to LoTW" button. In the "Select File to Sign" dialog, 
+specify either ADIF (.adi) or Cabrillo (.cbr or .log) format, navigate to the
+folder containing your log file, select your log file, and click the "Open" 
+button. In the "Select Station Location" dialog, select the Station Location 
+from which you were operating when you made all of the QSOs in the log file, 
+and click the "OK" button; TQSL will digitally sign your QSOs and submit them 
+to LoTW via the internet.
+
+When submitting log files in Cabrillo format, previous versions of TQSL
+submitted FM and PH modes as PHONE. TQSL now submits FM mode as FM, and PH
+mode as SSB.
 
 
 8) Visit the Logbook of the World Web site at https://www.arrl.org/lotw/ to
