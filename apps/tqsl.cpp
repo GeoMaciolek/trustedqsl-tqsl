@@ -705,14 +705,19 @@ END_EVENT_TABLE()
 void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	int x, y, w, h;
-	GetPosition(&x, &y);
-	GetSize(&w, &h);
-	wxConfig *config = (wxConfig *)wxConfig::Get();
-	config->Write(wxT("MainWindowX"), x);
-	config->Write(wxT("MainWindowY"), y);
-	config->Write(wxT("MainWindowWidth"), w);
-	config->Write(wxT("MainWindowHeight"), h);
-	config->Flush(false);
+	// Don't save window size/position if minimized or too small
+	if (!IsIconized()) {
+		GetPosition(&x, &y);
+		GetSize(&w, &h);
+		if (w >= MAIN_WINDOW_MIN_WIDTH && h >= MAIN_WINDOW_MIN_HEIGHT) {
+			wxConfig *config = (wxConfig *)wxConfig::Get();
+			config->Write(wxT("MainWindowX"), x);
+			config->Write(wxT("MainWindowY"), y);
+			config->Write(wxT("MainWindowWidth"), w);
+			config->Write(wxT("MainWindowHeight"), h);
+			config->Flush(false);
+		}
+	}
 	Destroy();		// close the window
 	bool ab;
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
@@ -3458,6 +3463,9 @@ QSLApp::GUIinit(bool checkUpdates) {
 	config->Read(wxT("MainWindowY"), &y, 50);
 	config->Read(wxT("MainWindowWidth"), &w, 800);
 	config->Read(wxT("MainWindowHeight"), &h, 600);
+
+	if (w < MAIN_WINDOW_MIN_WIDTH) w = MAIN_WINDOW_MIN_WIDTH;
+	if (h < MAIN_WINDOW_MIN_HEIGHT) w = MAIN_WINDOW_MIN_HEIGHT;
 
 	MyFrame *frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
 	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
