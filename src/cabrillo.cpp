@@ -26,7 +26,7 @@
 DLLEXPORTDATA TQSL_CABRILLO_ERROR_TYPE tQSL_Cabrillo_Error;
 
 static char errmsgbuf[256];
-static char errmsgdata[40];
+static char errmsgdata[128];
 
 struct TQSL_CABRILLO;
 
@@ -603,22 +603,31 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 				}
 			}
 			if (nlet > 0 && ndig > 0 && nlet+ndig > 3) {
-				fp->loc = i;
 				// OK, looks like a callsign. Is it possibly a gridsquare?
 				if (strlen(p) == 6) {
-					if ((!isalpha(p[0]) || toupper(p[0]) > 'R') ||
-					    (!isalpha(p[1]) || toupper(p[1]) > 'R') ||
-				    	    !isdigit(p[2]) || !isdigit(p[3]) ||
-					    (!isalpha(p[4]) || toupper(p[4]) > 'X') ||
-					    (!isalpha(p[5]) || toupper(p[5]) > 'X')) 
-						break;		// We're done.
+					if ((isalpha(p[0]) && toupper(p[0]) < 'S') &&
+					    (isalpha(p[1]) && toupper(p[1]) < 'S') &&
+				    	    (isdigit(p[2]) && isdigit(p[3])) &&
+					    (isalpha(p[4]) && toupper(p[4]) < 'Y') &&
+					    (isalpha(p[5]) && toupper(p[5]) < 'Y')) 
+						continue;	// Gridsquare. Don't use it.
+				}
+				if (fp->loc < 0) {		// No callsign candidate yet
+					fp->loc = i;
+				} else {
+					tQSL_Cabrillo_Error = TQSL_CABRILLO_UNKNOWN_CONTEST;
+					tQSL_Error = TQSL_CABRILLO_ERROR;
+					snprintf(errmsgdata, sizeof errmsgdata, "%s\nUnable to find a unique call-worked field.\n"
+						"Please define a custom Cabrillo entry for this contest.\n", cab->contest->contest_name);
+					goto err;
 				}
 			}
 		}
 		if (fp->loc < 0) {	// Still can't find a call. Have to bail.
 			tQSL_Cabrillo_Error = TQSL_CABRILLO_UNKNOWN_CONTEST;
 			tQSL_Error = TQSL_CABRILLO_ERROR;
-			strncpy(errmsgdata, "Can't find a valid callsign in the QSO record", sizeof errmsgdata);
+			snprintf(errmsgdata, sizeof errmsgdata, "%s\nUnable to find a valid call-worked field.\n"
+				"Please define a custom Cabrillo entry for this contest.\n", cab->contest->contest_name);
 			goto err;
 		}
 	}
