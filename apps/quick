@@ -164,10 +164,18 @@ steps 1, 2, and 3 above, but
 
 TQSL accepts log files saved from logging applications in either ADIF or
 Cabrillo format.
+
 If you're not yet using a logging application and want to create a log file
 containing a few QSOs, start TQSL, select the "Log Operations" tab, and click
 the "Create an ADIF file for signing and uploading" button.
 
+Because new modes may not yet be specified in ADIF, and because LoTW may not
+accept all modes specified in ADIF, TQSL enables you to "map" a new mode to a 
+mode or mode group recognized by LoTW; this most often takes the form of mapping
+a new digital mode to the DATA mode group. Previous versions of TQSL would allow
+you to map modes accepted by LoTW. This version of TQSL will refuse to map a mode 
+that is recognized by LoTW. Any existing mappings of modes recognized by LoTW 
+will be automatically removed on startup.
 
 6) Define a Station Location
 

@@ -5,12 +5,13 @@
 <BODY>
 <H3>Adding and Deleting ADIF Mode Mappings</H3>
 <P>
-The ADIF MODE field is defined by the ADIF specification to have only a particular
-set of mode values. This set is not exactly the same set of mode values
-supported by LoTW, but TQSL automatically maps ADIF modes to the appropriate LoTW modes.
+Because new modes may not yet be specified in <A HREF="glossary.htm#adif">ADIF</a>, and because LoTW may not accept all modes specified in ADIF, TQSL enables you to "map" a new mode to a mode or mode group
+recognized by LoTW. This most often takes the form of mapping a new digital mode <code>CoolNewDigitalMode</code> to the <code>DATA</code> mode group. Note that TQSL will
+refuse to map a mode that is accepted by LoTW.
+
 <P>
 <H5>Adding ADIF Mode Mappings</H5>
-Because new modes are developed that TQSL does not yet recognize, QSL enables you to specify additional mappings:
+To create a mapping from a new mode to an existing mode or mode group,
 
 <table border="0" valign="top">
 	<col style="width:30px">
@@ -44,7 +45,8 @@ In the example shown above, when <I>BPSK</I> appears in the MODE field of an ADI
 	<col style="width:40px">
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>4.c</td><td>Click the <b>OK</b> button.</td></tr>
 	<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td><td><img src="pref-adi3.bmp" width=469 height=316 border=0></td></tr>
-	<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td><td>Now, when <I>MCW</I> appears in the MODE field of an ADIF record during digital signing, the QSO will specify <i>CW</i> in the digitally signed log file.</td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td>&nbsp;&nbsp;</td><td>Now, when <I>MCW</I> appears in the MODE field of an ADIF record during digital signing, the QSO will specify <i>CW</i> in the digitally signed log file. 
+	Were <I>MCW</I> a mode accepted by LoTW, TQSL would refuse to add the mapping when the <b>OK</b> button was clicked.</td></tr>
 </table>
 <P>
 <H5>Deleting ADIF Mode Mappings</H5>
