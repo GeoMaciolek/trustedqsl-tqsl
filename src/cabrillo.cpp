@@ -586,8 +586,7 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 
 			// First, eliminate grid squares
 			if (strlen(p) == 4) {
-				if (isalpha(p[0]) && toupper(p[0]) <= 'R' &&
-				    isalpha(p[1]) && toupper(p[1]) <= 'R' &&
+				if (isalpha(p[0]) && isalpha(p[1]) &&
 				    isdigit(p[2]) && isdigit(p[3])) 
 					continue;
 			}
