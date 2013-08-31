@@ -706,11 +706,11 @@ void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	int x, y, w, h;
 	// Don't save window size/position if minimized or too small
+	wxConfig *config = (wxConfig *)wxConfig::Get();
 	if (!IsIconized()) {
 		GetPosition(&x, &y);
 		GetSize(&w, &h);
 		if (w >= MAIN_WINDOW_MIN_WIDTH && h >= MAIN_WINDOW_MIN_HEIGHT) {
-			wxConfig *config = (wxConfig *)wxConfig::Get();
 			config->Write(wxT("MainWindowX"), x);
 			config->Write(wxT("MainWindowY"), y);
 			config->Write(wxT("MainWindowWidth"), w);
@@ -3949,6 +3949,8 @@ void MyFrame::FirstTime(void) {
 		wxConfig::Get()->SetPath(wxT("/"));
 		wxConfig::Get()->Flush();
 	}	
+	// Find and report conflicting mode maps
+	init_modes();
 	return;
 }
 
