@@ -189,7 +189,7 @@ void ModeMap::SetModeList() {
 	}
 	config->SetPath(wxT("/"));
 	for (ModeSet::iterator it = modemap.begin(); it != modemap.end(); it++) {
-		map->Append(it->first + wxT(" -> ") + it->second, (void*)it->first.c_str()); //char_str on >=2.9
+		map->Append(it->first + wxT(" -> ") + it->second, (void *) &it->first);
 	}
 	if (map->GetCount() > 0)
 		map->SetSelection(0);
@@ -200,11 +200,11 @@ void ModeMap::OnDelete(wxCommandEvent &) {
 	tqslTrace("ModeMap::OnDelete");
 	int sel = map->GetSelection();
 	if (sel >= 0) {
-		const char *keystr = (const char *)map->GetClientData(sel);
-		if (keystr) {
+		wxString* keystr = (wxString*) map->GetClientData(sel);
+		if (!keystr->IsEmpty()) {
 			wxConfig *config = (wxConfig *)wxConfig::Get();
 			config->SetPath(wxT("/modeMap"));
-			config->DeleteEntry(wxString(keystr, wxConvLocal), true);
+			config->DeleteEntry(*keystr, true);
 			config->Flush(false);
 			SetModeList();
 		}
@@ -288,11 +288,24 @@ AddMode::AddMode(wxWindow *parent) : wxDialog(parent, -1, wxString(wxT("Add ADIF
 
 void AddMode::OnOK(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("AddMode::OnOK");
+	if (!TransferDataFromWindow()) return;
 	key = adif->GetValue().Trim(true).Trim(false).MakeUpper();
 	int sel = modelist->GetSelection();
 	if (sel >= 0)
 		value = modelist->GetString(sel);
 	EndModal(ID_OK_BUT);
+}
+
+bool AddMode::TransferDataFromWindow() {
+	tqslTrace("AddMode::TransferDataFromWindow");
+	key = adif->GetValue().Trim(true).Trim(false).MakeUpper();
+	if (key.IsEmpty()) return true;
+	if (modelist->FindString(key) != wxNOT_FOUND) {	// This duplicates an existing mode
+		wxMessageBox(wxString::Format(wxT("This mode definition conflicts with a standard mode definition for %s"),
+				key.c_str()), wxT("Mode Conflict"), wxOK, this);
+		return false;
+	}
+	return true;
 }
 
 #define FILE_TEXT_WIDTH 30

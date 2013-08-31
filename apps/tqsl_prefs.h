@@ -202,6 +202,7 @@ private:
 class AddMode : public wxDialog {
 public:
 	AddMode(wxWindow *parent);
+	virtual bool TransferDataFromWindow();
 	void OnOK(wxCommandEvent &);
 	void OnCancel(wxCommandEvent &) { Close(true); }
 	wxString key, value;
