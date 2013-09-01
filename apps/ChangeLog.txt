@@ -150,6 +150,13 @@ checked items.
 Correct other instances of DXCC entity number being used in user messages
 to emit entity name, not the number.
 
+Generate error message on startup when stale mode maps are in place.
+
+Don't allow a user to redefine a standard mode.
+
+When the user chooses to not ignore errors in a log, don't save or 
+upload it.
+
 
 1.14.3
 ------

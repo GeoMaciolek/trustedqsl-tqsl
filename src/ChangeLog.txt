@@ -36,6 +36,10 @@ names.
 Update mode mapping in Cabrillo files to pass FM through as is and
 convert PH to SSB.
 
+When trying to deduce call-worked field, ensure that anything that
+looks gridsquare-like is skipped. Don't accept a log if there are 
+two fields that look like callsigns.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
