@@ -1637,8 +1637,10 @@ abortSigning:
 
    		if (cancelled) {
    			wxLogWarning(wxT("Signing cancelled"));
+			n = 0;
    		} else if (aborted) {
    			wxLogWarning(wxT("Signing aborted"));
+			n = 0;
    		} else if (tQSL_Error != TQSL_NO_ERROR) {
    			check_tqsl_error(1);
 		}
@@ -1658,7 +1660,7 @@ abortSigning:
 		wxLogError(wxT("Signing aborted due to errors"));
    		throw TQSLException(msg.c_str());
    	}
-	if (out_of_range > 0)
+	if (!cancelled && out_of_range > 0)
 		wxLogMessage(wxT("%s: %d QSO records were outside the selected date range"),
 			infile.c_str(), out_of_range);
 	if (duplicates > 0) {
@@ -4102,7 +4104,9 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + filename;
 #endif
 		bool upload = false;
-		if (wxMessageBox(wxT("Do you want to upload this certificate request to LoTW now?"), wxT("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		if (wxMessageBox(wxT("Do you want to upload this certificate request to LoTW now?\n"
+				     "You do not need an account on LoTW to do this."),
+				wxT("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 			upload = true;
 		} else {
 			// Where to put it?
