@@ -5,8 +5,9 @@
 <BODY>
 <H3>Adding and Deleting Cabrillo Contest Definitions</H3>
 <P>
-Without additional configuration, TQSL can <A HREF="glossary.htm#digital_signature">digitally sign</A> and submit Cabrillo files that specify <A HREF="cabrillo.htm">these contests</A>. 
-To submit Cabrillo files that specify other contests, TQSL must be configured with
+TQSL can <A HREF="glossary.htm#digital_signature">digitally sign</A> and submit Cabrillo logs for the set of contests described in the <A HREF="configxml.htm">Configuration Data</A> file. When directed to digitally sign a Cabrillo log for a contest that is not in this set, TQSL will attempt to extract the necessary information from each QSO by searching for valid callsigns. If this process succeeds, the log will be digitally signed; if this process fails, you will be prompted 
+to define a  Contest Definition that specifies
+
 <ul>
 <li>the contest's <b>Type</b>: <i>HF</i>, or <i>VHF</i> (and above)</li>
 <li>the contest's <b>Field</b>: the numeric designator of the field of a QSO line in a Cabrillo log file that contains the callsign of the station that was worked</li>
