@@ -211,31 +211,31 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 		band = "70CM";
 	else if (freq == 902 || freq == 903)
 		band = "33CM";
-	else if (!strcasecmp(fp->value, "1.2G"))
+	else if (!strcasecmp(fp->value, "1.2G") || !strcasecmp(fp->value, "1.2"))
 		band = "23CM";
-	else if (!strcasecmp(fp->value, "2.3G"))
+	else if (!strcasecmp(fp->value, "2.3G") || !strcasecmp(fp->value, "2.3"))
 		band = "13CM";
-	else if (!strcasecmp(fp->value, "3.4G"))
+	else if (!strcasecmp(fp->value, "3.4G") || !strcasecmp(fp->value, "3.4"))
 		band = "9CM";
-	else if (!strcasecmp(fp->value, "5.7G"))
+	else if (!strcasecmp(fp->value, "5.7G") || !strcasecmp(fp->value, "5.7"))
 		band = "6CM";
-	else if (!strcasecmp(fp->value, "10G"))
+	else if (!strcasecmp(fp->value, "10G") || !strcasecmp(fp->value, "10"))
 		band = "3CM";
-	else if (!strcasecmp(fp->value, "24G"))
+	else if (!strcasecmp(fp->value, "24G") || !strcasecmp(fp->value, "24"))
 		band = "1.25CM";
-	else if (!strcasecmp(fp->value, "47G"))
+	else if (!strcasecmp(fp->value, "47G") || !strcasecmp(fp->value, "47"))
 		band = "6MM";
-	else if (!strcasecmp(fp->value, "75G") ||
-	         !strcasecmp(fp->value, "76G"))
+	else if (!strcasecmp(fp->value, "75G") || !strcasecmp(fp->value, "75") ||
+	         !strcasecmp(fp->value, "76G") || !strcasecmp(fp->value, "76"))
 		band = "4MM";
-	else if (!strcasecmp(fp->value, "119G"))
+	else if (!strcasecmp(fp->value, "119G") || !strcasecmp(fp->value, "119"))
 		band = "2.5MM";
-	else if (!strcasecmp(fp->value, "142G"))
+	else if (!strcasecmp(fp->value, "142G") || !strcasecmp(fp->value, "142"))
 		band = "2MM";
-	else if (!strcasecmp(fp->value, "241G") ||
-	         !strcasecmp(fp->value, "242G"))
+	else if (!strcasecmp(fp->value, "241G")  || !strcasecmp(fp->value, "241")||
+	         !strcasecmp(fp->value, "242G") || !strcasecmp(fp->value, "242"))
 		band = "1MM";
-	else if (!strcasecmp(fp->value, "300G"))
+	else if (!strcasecmp(fp->value, "300G") || !strcasecmp(fp->value, "300"))
 		band = "SUBMM";
 
 	if (band && cab->contest->type ==  TQSL_CABRILLO_UNKNOWN) {
@@ -284,31 +284,31 @@ freq_to_mhz(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	else if (!strcasecmp(fp->value, "902") ||
 		 !strcasecmp(fp->value, "903"))
 		freqmhz = 902.0;
-	else if (!strcasecmp(fp->value, "1.2G"))
+	else if (!strcasecmp(fp->value, "1.2G") || !strcasecmp(fp->value, "1.2"))
 		freqmhz = 1240.0;
-	else if (!strcasecmp(fp->value, "2.3G"))
+	else if (!strcasecmp(fp->value, "2.3G") || !strcasecmp(fp->value, "2.3"))
 		freqmhz = 2300.0;
-	else if (!strcasecmp(fp->value, "3.4G"))
+	else if (!strcasecmp(fp->value, "3.4G") || !strcasecmp(fp->value, "3.4"))
 		freqmhz = 3300.0;
-	else if (!strcasecmp(fp->value, "5.7G"))
+	else if (!strcasecmp(fp->value, "5.7G") || !strcasecmp(fp->value, "5.7"))
 		freqmhz = 5650.0;
-	else if (!strcasecmp(fp->value, "10G"))
+	else if (!strcasecmp(fp->value, "10G")  || !strcasecmp(fp->value, "10"))
 		freqmhz = 10000.0;
-	else if (!strcasecmp(fp->value, "24G"))
+	else if (!strcasecmp(fp->value, "24G")  || !strcasecmp(fp->value, "24"))
 		freqmhz = 24000.0;
-	else if (!strcasecmp(fp->value, "47G"))
+	else if (!strcasecmp(fp->value, "47G")  || !strcasecmp(fp->value, "47"))
 		freqmhz = 47000.0;
-	else if (!strcasecmp(fp->value, "75G") ||
-		 !strcasecmp(fp->value, "76G"))
+	else if (!strcasecmp(fp->value, "75G")  || !strcasecmp(fp->value, "75") ||
+		 !strcasecmp(fp->value, "76G")  || !strcasecmp(fp->value, "76"))
 		freqmhz = 75500.0;
-	else if (!strcasecmp(fp->value, "119G"))
+	else if (!strcasecmp(fp->value, "119G") || !strcasecmp(fp->value, "119"))
 		freqmhz = 119980.0;
-	else if (!strcasecmp(fp->value, "142G"))
+	else if (!strcasecmp(fp->value, "142G") || !strcasecmp(fp->value, "142"))
 		freqmhz = 142000.0;
-	else if (!strcasecmp(fp->value, "241G") ||
-		 !strcasecmp(fp->value, "242G"))
+	else if (!strcasecmp(fp->value, "241G") || !strcasecmp(fp->value, "241") ||
+		 !strcasecmp(fp->value, "242G") || !strcasecmp(fp->value, "242"))
 		freqmhz = 241000.0;
-	else if (!strcasecmp(fp->value, "300G"))
+	else if (!strcasecmp(fp->value, "300G") || !strcasecmp(fp->value, "300"))
 		freqmhz = 300000.0;
 
 	if (freqmhz > 0 && cab->contest->type ==  TQSL_CABRILLO_UNKNOWN) {
