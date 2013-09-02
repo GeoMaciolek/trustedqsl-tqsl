@@ -4666,11 +4666,17 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 	if (callsign) 
 	    prompt = prompt + wxT(" for ") + wxString((const char *)callsign, wxConvLocal);
 
+	tqslTrace("getPassword", "Probing for top window");
 	wxWindow* top = wxGetApp().GetTopWindow();
+	tqslTrace("getPassword", "Top window = 0x%lx", (void *)top);
 	top->SetFocus();
+	tqslTrace("getPassword", "Focus grabbed. About to pop up password dialog");
 	GetPasswordDialog dial(top, wxT("Enter password"), prompt);
-	if (dial.ShowModal() != wxID_OK)
+	if (dial.ShowModal() != wxID_OK) {
+		tqslTrace("getPassword", "Password entry cancelled");
 		return 1;
+	}
+	tqslTrace("getPassword", "Password entered OK");
 	strncpy(buf, dial.Password().mb_str(), bufsiz);
 	buf[bufsiz-1] = 0;
 	return 0;
