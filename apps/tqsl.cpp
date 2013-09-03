@@ -1616,7 +1616,11 @@ restart:
 						}
 					}
 					if (!ignore_err) {
-						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, this) == wxNO) {
+						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", _S(msg));
+						wxWindow* top = wxGetApp().GetTopWindow();
+						top->SetFocus();
+						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, top) == wxNO) {
+							tqslTrace("MyFrame::ConvertLogToString", "Cancelled due to user action");
 							cancelled = true;
 							goto abortSigning;
 						}
