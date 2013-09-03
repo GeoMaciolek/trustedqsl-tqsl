@@ -46,6 +46,8 @@
       <li class="current"><a href="globals_func.html"><span>Functions</span></a></li>
       <li><a href="globals_vars.html"><span>Variables</span></a></li>
       <li><a href="globals_type.html"><span>Typedefs</span></a></li>
+      <li><a href="globals_enum.html"><span>Enumerations</span></a></li>
+      <li><a href="globals_defs.html"><span>Macros</span></a></li>
     </ul>
   </div>
   <div id="navrow4" class="tabs3">
@@ -58,8 +60,20 @@
 &#160;
 
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
+<li>tqsl_adifGetError()
+: <a class="el" href="group__ADIF.html#gacd79a0a74672b30ae72e5cf186d4f21e">adif.h</a>
+</li>
+<li>tqsl_adifMakeField()
+: <a class="el" href="group__ADIF.html#gafe9c900f5b9b30c5ad3d06e8c6f9871b">adif.h</a>
+</li>
+<li>tqsl_beginADIF()
+: <a class="el" href="group__ADIF.html#ga5d9dcf7853fbe8681b7641769f538323">adif.h</a>
+</li>
 <li>tqsl_beginADIFConverter()
 : <a class="el" href="group__Convert.html#ga8d5b6cc95fb9218af2e0d32a82fa36be">tqslconvert.h</a>
+</li>
+<li>tqsl_beginCabrillo()
+: <a class="el" href="group__Cabrillo.html#ga5ef8d993c66af3f433ab54f7016c964e">cabrillo.h</a>
 </li>
 <li>tqsl_beginCabrilloConverter()
 : <a class="el" href="group__Convert.html#gaafe65049d8da2ef00d8a22517ede8e23">tqslconvert.h</a>
@@ -69,6 +83,9 @@
 </li>
 <li>tqsl_beginSigning()
 : <a class="el" href="group__Sign.html#ga8b45c2b6aec68b17582e4f741e37976d">tqsllib.h</a>
+</li>
+<li>tqsl_cabrilloGetError()
+: <a class="el" href="group__Cabrillo.html#gac4e219bef0ae92af30b7ca59858eef7a">cabrillo.h</a>
 </li>
 <li>tqsl_checkSigningStatus()
 : <a class="el" href="group__Sign.html#gab302699c74a178ae1dce31cb299bedd5">tqsllib.h</a>
@@ -109,6 +126,12 @@
 <li>tqsl_encodeBase64()
 : <a class="el" href="group__Util.html#ga9af2110f7a46a78a98938558f1e90101">tqsllib.h</a>
 </li>
+<li>tqsl_endADIF()
+: <a class="el" href="group__ADIF.html#ga6e8181b32c13b22bc187514eea952db5">adif.h</a>
+</li>
+<li>tqsl_endCabrillo()
+: <a class="el" href="group__Cabrillo.html#ga72c455d6ee59a1a3267020e5d9f78f9f">cabrillo.h</a>
+</li>
 <li>tqsl_endConverter()
 : <a class="el" href="group__Convert.html#ga4ff919df8164947b0736f0251d544059">tqslconvert.h</a>
 </li>
@@ -130,14 +153,35 @@
 <li>tqsl_freeStationDataEnc()
 : <a class="el" href="group__Data.html#ga3072afdbd5a6b827e4212e50122be66c">tqsllib.h</a>
 </li>
+<li>tqsl_getADIFField()
+: <a class="el" href="group__ADIF.html#ga494c219d3010666224c0b56f81fcd35f">adif.h</a>
+</li>
+<li>tqsl_getADIFLine()
+: <a class="el" href="group__ADIF.html#ga3481c0c09d53a3cd4afb2b2070a4cc65">adif.h</a>
+</li>
 <li>tqsl_getADIFMode()
 : <a class="el" href="group__Data.html#ga0425489687991212e7257f6365d1a552">tqsllib.h</a>
 </li>
 <li>tqsl_getBand()
 : <a class="el" href="group__Data.html#gaa5de32b57d4fca574d5a72134cce83d7">tqsllib.h</a>
 </li>
+<li>tqsl_getCabrilloContest()
+: <a class="el" href="group__Cabrillo.html#gaa09e6bb7109798c5637c8e3a0a304c17">cabrillo.h</a>
+</li>
+<li>tqsl_getCabrilloField()
+: <a class="el" href="group__Cabrillo.html#gae6b4d0e267d95dc7cb6af70571e6bdc2">cabrillo.h</a>
+</li>
+<li>tqsl_getCabrilloFreqType()
+: <a class="el" href="group__Cabrillo.html#ga81a456c1873510044ee869266e7e0444">cabrillo.h</a>
+</li>
+<li>tqsl_getCabrilloLine()
+: <a class="el" href="group__Cabrillo.html#ga0146432c7aef64330579bf1265f41d46">cabrillo.h</a>
+</li>
 <li>tqsl_getCabrilloMapEntry()
 : <a class="el" href="group__Data.html#gadab2850ca8f7d442afa4fe2c3812c171">tqsllib.h</a>
+</li>
+<li>tqsl_getCabrilloRecordText()
+: <a class="el" href="group__Cabrillo.html#ga1269e63f6a875cc1f3aeec0cefa715b7">cabrillo.h</a>
 </li>
 <li>tqsl_getCertificateAROName()
 : <a class="el" href="group__CertStuff.html#ga090c3788cdce240ac09be017d8ef527d">tqsllib.h</a>
@@ -246,6 +290,9 @@
 </li>
 <li>tqsl_getGABBItCONTACT()
 : <a class="el" href="group__Data.html#ga2e2ffbaaa0911f04254ec6b4e5e61bb4">tqsllib.h</a>
+</li>
+<li>tqsl_getGABBItCONTACTData()
+: <a class="el" href="group__Data.html#gae8088e04e167511748742c33479060ff">tqsllib.h</a>
 </li>
 <li>tqsl_getGABBItSTATION()
 : <a class="el" href="group__Data.html#ga7576095bcc4747243934d8b647b1193d">tqsllib.h</a>

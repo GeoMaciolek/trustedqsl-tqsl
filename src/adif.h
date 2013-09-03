@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*! \file */
+
 /** \defgroup ADIF ADIF API
   *
   * These functions and data structures provide a means of parsing an ADIF
@@ -23,15 +25,22 @@
 /** @{ */
 
 
-#define TQSL_ADIF_FIELD_NAME_LENGTH_MAX 64
-#define TQSL_ADIF_FIELD_SIZE_LENGTH_MAX 10
-#define TQSL_ADIF_FIELD_TYPE_LENGTH_MAX 1
+#define TQSL_ADIF_FIELD_NAME_LENGTH_MAX 64	///< Max length of ADIF field
+#define TQSL_ADIF_FIELD_SIZE_LENGTH_MAX 10	///< Max length of field name
+#define TQSL_ADIF_FIELD_TYPE_LENGTH_MAX 1	///< Max length of field type
 
+/*! \enum TQSL_ADIF_BOOLEAN
+ * Boolean type - TRUE/FALSE
+ */
 #ifndef TQSL_ADIF_BOOLEAN
-typedef enum { TQSL_FALSE, TQSL_TRUE } TQSL_ADIF_BOOLEAN;
+typedef enum
+{
+	TQSL_FALSE,
+	TQSL_TRUE
+} TQSL_ADIF_BOOLEAN;
 #endif
 
-typedef void * tQSL_ADIF;
+typedef void * tQSL_ADIF;	///< Opaque ADIF type
 
 /// Specifies the type of range limits to apply to a field
 typedef enum
@@ -61,25 +70,25 @@ typedef enum
 /** An ADIF field definition */
 typedef struct
 {
-	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];
-	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];
-	TQSL_ADIF_RANGE_TYPE rangeType;
-	unsigned int max_length;
-	long signed min_value;
-	long signed max_value;
-	const char **enumStrings;
-	void *userPointer;
+	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];	///< Field name
+	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];	///< Field type
+	TQSL_ADIF_RANGE_TYPE rangeType;			///< Range type
+	unsigned int max_length;			///< Max length
+	long signed min_value;				///< Min value
+	long signed max_value;				///< Max value
+	const char **enumStrings;			///< Enumerated values
+	void *userPointer;				///< user poitner
 } tqsl_adifFieldDefinitions;
 
 /** Field returned from parsing */
 typedef struct
 {
-	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];
-	char size[TQSL_ADIF_FIELD_SIZE_LENGTH_MAX + 1];
-	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];
-	unsigned char *data;
-	unsigned int adifNameIndex;
-	void *userPointer;
+	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];	///< Field name
+	char size[TQSL_ADIF_FIELD_SIZE_LENGTH_MAX + 1];	///< Size
+	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];	///< Type
+	unsigned char *data;				///< data
+	unsigned int adifNameIndex;			///< Name index
+	void *userPointer;				///< User pointer
 } tqsl_adifFieldResults;
 
 

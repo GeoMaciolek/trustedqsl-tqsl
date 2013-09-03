@@ -24,7 +24,9 @@
   */
 /** @{ */
 
-typedef void * tQSL_Converter;
+typedef void * tQSL_Converter;  //!< Opaque converter type used by applications 
+				//!< to access conversion functions
+				//!<
 
 #ifdef __cplusplus
 extern "C" {
@@ -143,8 +145,8 @@ DLLEXPORT int CALLCONVENTION tqsl_setADIFConverterDateFilter(tQSL_Converter conv
   * Returns the NULL pointer on error or EOF. (Test tQSL_Error to determine which.)
   *
   * tQSL_Error is set to TQSL_DATE_OUT_OF_RANGE if QSO date range checking
-  * is active (see ::tqsl_useADIFConverterDateFilter) and the QSO date is
-  * outside the specified range. This is a non-fatal error.
+  * is active and the QSO date is outside the specified range.
+  * This is a non-fatal error.
   *
   * tQSL_Error is set to TQSL_DUPLICATE_QSO if the QSO has already been
   * processed on the current computer.

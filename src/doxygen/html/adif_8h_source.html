@@ -46,7 +46,7 @@
 <div class="title">adif.h</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/***************************************************************************</span></div>
+<a href="adif_8h.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/***************************************************************************</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment">                          adif.h  -  description</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">                             -------------------</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment">    begin                : Wed May 15 2002</span></div>
@@ -63,88 +63,93 @@
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;stdio.h&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;stdlib.h&gt;</span></div>
 <div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#define TQSL_ADIF_FIELD_NAME_LENGTH_MAX 64</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TQSL_ADIF_FIELD_SIZE_LENGTH_MAX 10</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define TQSL_ADIF_FIELD_TYPE_LENGTH_MAX 1</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#ifndef TQSL_ADIF_BOOLEAN</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor"></span><span class="keyword">typedef</span> <span class="keyword">enum</span> { TQSL_FALSE, TQSL_TRUE } TQSL_ADIF_BOOLEAN;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">void</span> * tQSL_ADIF;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631">   37</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        TQSL_ADIF_RANGE_TYPE_NONE,</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        TQSL_ADIF_RANGE_TYPE_MINMAX,</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        TQSL_ADIF_RANGE_TYPE_ENUMERATION</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;} <a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631" title="Specifies the type of range limits to apply to a field.">TQSL_ADIF_RANGE_TYPE</a>;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108">   45</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;{</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        TQSL_ADIF_GET_FIELD_SUCCESS,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        TQSL_ADIF_GET_FIELD_NO_NAME_MATCH,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH,</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        TQSL_ADIF_GET_FIELD_NO_RANGE_MATCH,</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH,</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        TQSL_ADIF_GET_FIELD_NO_RESULT_ALLOCATION,</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        TQSL_ADIF_GET_FIELD_NAME_LENGTH_OVERFLOW,</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        TQSL_ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW,</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        TQSL_ADIF_GET_FIELD_SIZE_OVERFLOW,</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        TQSL_ADIF_GET_FIELD_TYPE_OVERFLOW,</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE,</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        TQSL_ADIF_GET_FIELD_EOF</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a>;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html">   62</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordtype">char</span> name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keywordtype">char</span> type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631" title="Specifies the type of range limits to apply to a field.">TQSL_ADIF_RANGE_TYPE</a> rangeType;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> max_length;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">signed</span> min_value;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">signed</span> max_value;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> **enumStrings;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        <span class="keywordtype">void</span> *userPointer;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;} <a class="code" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a>;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00075"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html">   75</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;{</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordtype">char</span> name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        <span class="keywordtype">char</span> size[TQSL_ADIF_FIELD_SIZE_LENGTH_MAX + 1];</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordtype">char</span> type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *data;</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> adifNameIndex;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordtype">void</span> *userPointer;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;} <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a>;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="comment">/* function prototypes */</span></div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;DLLEXPORT <span class="keyword">const</span> <span class="keywordtype">char</span>* CALLCONVENTION <a class="code" href="group__ADIF.html#gacd79a0a74672b30ae72e5cf186d4f21e">tqsl_adifGetError</a>( <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a> status );</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="code" href="group__ADIF.html#gafce40bc42b337b0eb8bd35d6db345064">   28</a></span>&#160;<span class="preprocessor">#define TQSL_ADIF_FIELD_NAME_LENGTH_MAX 64      </span></div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="code" href="group__ADIF.html#gaa818ba0c386904b5e64b419be1560886">   29</a></span>&#160;<span class="preprocessor">#define TQSL_ADIF_FIELD_SIZE_LENGTH_MAX 10      </span></div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="code" href="group__ADIF.html#ga567981b931d916ddabf68dfd2c2cef7b">   30</a></span>&#160;<span class="preprocessor">#define TQSL_ADIF_FIELD_TYPE_LENGTH_MAX 1       </span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#ifndef TQSL_ADIF_BOOLEAN</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="code" href="group__ADIF.html#ga10c7b482c44b326ded8908251012d656">   36</a></span>&#160;<span class="preprocessor"></span><span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        TQSL_FALSE,</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        TQSL_TRUE</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;} <a class="code" href="group__ADIF.html#ga10c7b482c44b326ded8908251012d656">TQSL_ADIF_BOOLEAN</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00043"></a><span class="lineno"><a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987">   43</a></span>&#160;<span class="keyword">typedef</span> <span class="keywordtype">void</span> * <a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987" title="Opaque ADIF type.">tQSL_ADIF</a>;       </div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631">   46</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;{</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        TQSL_ADIF_RANGE_TYPE_NONE,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        TQSL_ADIF_RANGE_TYPE_MINMAX,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        TQSL_ADIF_RANGE_TYPE_ENUMERATION</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;} <a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631" title="Specifies the type of range limits to apply to a field.">TQSL_ADIF_RANGE_TYPE</a>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108">   54</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">enum</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        TQSL_ADIF_GET_FIELD_SUCCESS,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        TQSL_ADIF_GET_FIELD_NO_NAME_MATCH,</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH,</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        TQSL_ADIF_GET_FIELD_NO_RANGE_MATCH,</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH,</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        TQSL_ADIF_GET_FIELD_NO_RESULT_ALLOCATION,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        TQSL_ADIF_GET_FIELD_NAME_LENGTH_OVERFLOW,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        TQSL_ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW,</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        TQSL_ADIF_GET_FIELD_SIZE_OVERFLOW,</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        TQSL_ADIF_GET_FIELD_TYPE_OVERFLOW,</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE,</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        TQSL_ADIF_GET_FIELD_EOF</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;} <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a>;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00071"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html">   71</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;{</div>
+<div class="line"><a name="l00073"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#ab1a5b107da4959a4835c6c23c43bad03">   73</a></span>&#160;        <span class="keywordtype">char</span> name[<a class="code" href="group__ADIF.html#gafce40bc42b337b0eb8bd35d6db345064" title="Max length of ADIF field.">TQSL_ADIF_FIELD_NAME_LENGTH_MAX</a> + 1]; </div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#aca930c1f2dc5e1bfc13ac2d86285894f">   74</a></span>&#160;        <span class="keywordtype">char</span> type[<a class="code" href="group__ADIF.html#ga567981b931d916ddabf68dfd2c2cef7b" title="Max length of field type.">TQSL_ADIF_FIELD_TYPE_LENGTH_MAX</a> + 1]; </div>
+<div class="line"><a name="l00075"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#ac2c370e1433b5dbcc85e5870ca70130d">   75</a></span>&#160;        <a class="code" href="group__ADIF.html#gae362c91c075f58c7de962b7122df9631" title="Specifies the type of range limits to apply to a field.">TQSL_ADIF_RANGE_TYPE</a> <a class="code" href="structtqsl__adifFieldDefinitions.html#ac2c370e1433b5dbcc85e5870ca70130d" title="Range type.">rangeType</a>;                 </div>
+<div class="line"><a name="l00076"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#a1364ae4b654c0145294af44170524d85">   76</a></span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structtqsl__adifFieldDefinitions.html#a1364ae4b654c0145294af44170524d85" title="Max length.">max_length</a>;                        </div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#afd7fdd3392dd6c85c36e47d83ff7bef4">   77</a></span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">signed</span> <a class="code" href="structtqsl__adifFieldDefinitions.html#afd7fdd3392dd6c85c36e47d83ff7bef4" title="Min value.">min_value</a>;                          </div>
+<div class="line"><a name="l00078"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#afc185d6dad52683d066c4f8d1b4583b6">   78</a></span>&#160;        <span class="keywordtype">long</span> <span class="keywordtype">signed</span> <a class="code" href="structtqsl__adifFieldDefinitions.html#afc185d6dad52683d066c4f8d1b4583b6" title="Max value.">max_value</a>;                          </div>
+<div class="line"><a name="l00079"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#a8e003ea53c639a6ed12e806913beef60">   79</a></span>&#160;        <span class="keyword">const</span> <span class="keywordtype">char</span> **<a class="code" href="structtqsl__adifFieldDefinitions.html#a8e003ea53c639a6ed12e806913beef60" title="Enumerated values.">enumStrings</a>;                       </div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldDefinitions.html#ac1183de144bbd5181ca954bd7ead00f3">   80</a></span>&#160;        <span class="keywordtype">void</span> *<a class="code" href="structtqsl__adifFieldDefinitions.html#ac1183de144bbd5181ca954bd7ead00f3" title="user poitner">userPointer</a>;                              </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;} <a class="code" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a>;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
+<div class="line"><a name="l00084"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html">   84</a></span>&#160;<span class="keyword">typedef</span> <span class="keyword">struct</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;{</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#a8dac1b9e6c3e1ab0c42e1e2bd2b20eb5">   86</a></span>&#160;        <span class="keywordtype">char</span> name[<a class="code" href="group__ADIF.html#gafce40bc42b337b0eb8bd35d6db345064" title="Max length of ADIF field.">TQSL_ADIF_FIELD_NAME_LENGTH_MAX</a> + 1]; </div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#ac5f2ffcb27173eba16ab1fd246800a9f">   87</a></span>&#160;        <span class="keywordtype">char</span> size[<a class="code" href="group__ADIF.html#gaa818ba0c386904b5e64b419be1560886" title="Max length of field name.">TQSL_ADIF_FIELD_SIZE_LENGTH_MAX</a> + 1]; </div>
+<div class="line"><a name="l00088"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#a7da8be90cd8e26c1f696ba5ef24c29c9">   88</a></span>&#160;        <span class="keywordtype">char</span> type[<a class="code" href="group__ADIF.html#ga567981b931d916ddabf68dfd2c2cef7b" title="Max length of field type.">TQSL_ADIF_FIELD_TYPE_LENGTH_MAX</a> + 1]; </div>
+<div class="line"><a name="l00089"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#a2f95a101ca54a29df4c960bb8b1b4ec9">   89</a></span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *<a class="code" href="structtqsl__adifFieldResults.html#a2f95a101ca54a29df4c960bb8b1b4ec9" title="data">data</a>;                            </div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#a91f5460240e65d1342c206bb7fc1327f">   90</a></span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> <a class="code" href="structtqsl__adifFieldResults.html#a91f5460240e65d1342c206bb7fc1327f" title="Name index.">adifNameIndex</a>;                     </div>
+<div class="line"><a name="l00091"></a><span class="lineno"><a class="code" href="structtqsl__adifFieldResults.html#a12906467cc71b0f524237b8e99440450">   91</a></span>&#160;        <span class="keywordtype">void</span> *<a class="code" href="structtqsl__adifFieldResults.html#a12906467cc71b0f524237b8e99440450" title="User pointer.">userPointer</a>;                              </div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;} <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a>;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;DLLEXPORT <span class="keywordtype">int</span>  CALLCONVENTION <a class="code" href="group__ADIF.html#ga5d9dcf7853fbe8681b7641769f538323">tqsl_beginADIF</a>(tQSL_ADIF *adifp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;DLLEXPORT <span class="keywordtype">int</span>  CALLCONVENTION <a class="code" href="group__ADIF.html#ga494c219d3010666224c0b56f81fcd35f">tqsl_getADIFField</a>(tQSL_ADIF adif, <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a> *status,</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        <span class="keyword">const</span> <a class="code" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a> *adifFields, <span class="keyword">const</span> <span class="keywordtype">char</span> * <span class="keyword">const</span> *typesDefined,</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *(*allocator)(<span class="keywordtype">size_t</span>) );</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;DLLEXPORT <span class="keywordtype">int</span>  CALLCONVENTION <a class="code" href="group__ADIF.html#ga3481c0c09d53a3cd4afb2b2070a4cc65">tqsl_getADIFLine</a>(tQSL_ADIF adif, <span class="keywordtype">int</span> *lineno);</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;DLLEXPORT <span class="keywordtype">int</span>  CALLCONVENTION <a class="code" href="group__ADIF.html#ga6e8181b32c13b22bc187514eea952db5">tqsl_endADIF</a>(tQSL_ADIF *adifp);</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;DLLEXPORT <span class="keywordtype">int</span>  CALLCONVENTION <a class="code" href="group__ADIF.html#gafe9c900f5b9b30c5ad3d06e8c6f9871b">tqsl_adifMakeField</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *fieldname, <span class="keywordtype">char</span> type, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *value, <span class="keywordtype">int</span> len,</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> buflen);</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="preprocessor"></span>}</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __ADIF_H */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;<span class="comment">/* function prototypes */</span></div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;<span class="preprocessor"></span><span class="keyword">extern</span> <span class="stringliteral">&quot;C&quot;</span> {</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keyword">const</span> <span class="keywordtype">char</span>* <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#gacd79a0a74672b30ae72e5cf186d4f21e">tqsl_adifGetError</a>( <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a> status );</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keywordtype">int</span>  <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#ga5d9dcf7853fbe8681b7641769f538323">tqsl_beginADIF</a>(<a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987" title="Opaque ADIF type.">tQSL_ADIF</a> *adifp, <span class="keyword">const</span> <span class="keywordtype">char</span> *filename);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keywordtype">int</span>  <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#ga494c219d3010666224c0b56f81fcd35f">tqsl_getADIFField</a>(<a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987" title="Opaque ADIF type.">tQSL_ADIF</a> adif, <a class="code" href="structtqsl__adifFieldResults.html">tqsl_adifFieldResults</a> *field, <a class="code" href="group__ADIF.html#ga541595975b217ec3bd64a63bb487c108" title="Response values returned from tqsl_getADIFField()">TQSL_ADIF_GET_FIELD_ERROR</a> *status,</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keyword">const</span> <a class="code" href="structtqsl__adifFieldDefinitions.html">tqsl_adifFieldDefinitions</a> *adifFields, <span class="keyword">const</span> <span class="keywordtype">char</span> * <span class="keyword">const</span> *typesDefined,</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *(*allocator)(<span class="keywordtype">size_t</span>) );</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keywordtype">int</span>  <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#ga3481c0c09d53a3cd4afb2b2070a4cc65">tqsl_getADIFLine</a>(<a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987" title="Opaque ADIF type.">tQSL_ADIF</a> adif, <span class="keywordtype">int</span> *lineno);</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keywordtype">int</span>  <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#ga6e8181b32c13b22bc187514eea952db5">tqsl_endADIF</a>(<a class="code" href="group__ADIF.html#ga0a9b253a8a2e35752eff4567f0966987" title="Opaque ADIF type.">tQSL_ADIF</a> *adifp);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;<a class="code" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0" title="Symbol exports - Windows only.">DLLEXPORT</a> <span class="keywordtype">int</span>  <a class="code" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8" title="Symbol exports - Windows only.">CALLCONVENTION</a> <a class="code" href="group__ADIF.html#gafe9c900f5b9b30c5ad3d06e8c6f9871b">tqsl_adifMakeField</a>(<span class="keyword">const</span> <span class="keywordtype">char</span> *fieldname, <span class="keywordtype">char</span> type, <span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *value, <span class="keywordtype">int</span> len,</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span> *buf, <span class="keywordtype">int</span> buflen);</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;<span class="preprocessor">#ifdef __cplusplus</span></div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="preprocessor"></span>}</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor"></span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* __ADIF_H */</span><span class="preprocessor"></span></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

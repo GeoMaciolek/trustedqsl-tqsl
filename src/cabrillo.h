@@ -15,10 +15,12 @@
 
 #undef CLIENT_STATIC
 #ifndef LOTW_SERVER
-#define CLIENT_STATIC static
+#define CLIENT_STATIC static	///< Static linkage
 #else
 #define CLIENT_STATIC
 #endif
+
+/*! \file */
 
 /** \defgroup Cabrillo Cabrillo API
   *
@@ -30,9 +32,9 @@
   */
 /** @{ */
 
-#define TQSL_CABRILLO_MAX_FIELDS 12
-#define TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX 64
-#define TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX 40
+#define TQSL_CABRILLO_MAX_FIELDS 12		///< Max field count
+#define TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX 64	///< Max field name length
+#define TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX 40	///< Max field value length
 
 /// Cabrillo status values
 typedef enum {
@@ -43,8 +45,11 @@ typedef enum {
 	TQSL_CABRILLO_UNKNOWN_CONTEST,
 	TQSL_CABRILLO_BAD_FIELD_DATA,
 	TQSL_CABRILLO_EOR,
-} TQSL_CABRILLO_ERROR_TYPE;
+} TQSL_CABRILLO_ERROR_TYPE;		///< Error type
 
+/*! \enum TQSL_CABRILLO_FREQ_TYPE
+ * Frequency type: HF, VHF, or UNKNOWN
+ */
 typedef enum {
 	TQSL_CABRILLO_HF,
 	TQSL_CABRILLO_VHF,
@@ -53,20 +58,20 @@ typedef enum {
 
 // Minimum field number for callsign and default field number
 // For VHF, default should be 7.
-#define TQSL_MIN_CABRILLO_MAP_FIELD 5
-#define TQSL_DEF_CABRILLO_MAP_FIELD 8
+#define TQSL_MIN_CABRILLO_MAP_FIELD 5	///< First possible call-worked field
+#define TQSL_DEF_CABRILLO_MAP_FIELD 8	///< Default call-worked field
 
 /** Cabrillo field data:
   *
   * \li \c name - ADIF field name
   * \li \c value - Field content
   */
-typedef struct {
-	char name[TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX +1];
-	char value[TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX +1];
+typedef struct {	///< Cabrillo field
+	char name[TQSL_CABRILLO_FIELD_NAME_LENGTH_MAX +1];	///< Field name
+	char value[TQSL_CABRILLO_FIELD_VALUE_LENGTH_MAX +1];	///< Field value
 } tqsl_cabrilloField;
 
-typedef void * tQSL_Cabrillo;
+typedef void * tQSL_Cabrillo;	///< Opaque cabrillo log type
 
 #ifdef __cplusplus
 extern "C" {
