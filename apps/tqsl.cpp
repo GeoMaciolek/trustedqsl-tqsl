@@ -121,6 +121,7 @@ static wxString flattenCallSign(const wxString& call);
 static wxString ErrorTitle(wxT("TQSL Error"));
 FILE *diagFile = NULL;
 static wxString origCommandLine = wxT("");
+static MyFrame *frame = 0;
 
 static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
@@ -183,6 +184,8 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 		wxT("%hs -- %hs\n(This is the password you made up when you\nrequested the callsign certificate.)")),
 		call, dx.name());
 
+	if (!frame)
+		frame = wxGetApp().GUIinit(false);
 	wxWindow* top = wxGetApp().GetTopWindow();
 	top->SetFocus();
 	wxString pwd = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
@@ -1070,13 +1073,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
-	
-	LogList *log = new LogList(this);
-	wxLog::SetActiveTarget(log);
 
 	//check for updates
-
 	if (checkUpdates) {
+		LogList *log = new LogList(this);
+		wxLog::SetActiveTarget(log);
 		wxConfig *config = (wxConfig *)wxConfig::Get();
 		if (config->Read(wxT("AutoUpdateCheck"), true)) {
 			DoCheckForUpdates(true); //TODO: in a thread?
@@ -1183,7 +1184,8 @@ static void
 AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location"), const wxString& callsign = wxT("")) {
 	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s, callsign=%s", loc, expired, _S(title), _S(callsign));
 	try {
-		MyFrame *frame = (MyFrame *)wxGetApp().GetTopWindow();
+		if (!frame)
+			frame = wxGetApp().GUIinit(false);
 		run_station_wizard(frame, loc, frame->help, expired, title, wxT(""), callsign);
 		frame->loc_tree->Build();
 	}
@@ -1486,6 +1488,10 @@ restart:
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
 		if (range && !suppressdate) {
+			// Can't prompt without toplevel window
+			if (!this && !frame) {
+				frame = wxGetApp().GUIinit(false);
+			}
 			if (!restarting) {
 				if (dial.ShowModal() != wxOK) {
 					wxLogMessage(wxT("Cancelled"));
@@ -1617,6 +1623,9 @@ restart:
 					}
 					if (!ignore_err) {
 						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", _S(msg));
+						if (!this && !frame) {
+							frame = wxGetApp().GUIinit(false);
+						}
 						wxWindow* top = wxGetApp().GetTopWindow();
 						top->SetFocus();
 						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, top) == wxNO) {
@@ -3473,7 +3482,7 @@ QSLApp::GUIinit(bool checkUpdates) {
 	if (w < MAIN_WINDOW_MIN_WIDTH) w = MAIN_WINDOW_MIN_WIDTH;
 	if (h < MAIN_WINDOW_MIN_HEIGHT) w = MAIN_WINDOW_MIN_HEIGHT;
 
-	MyFrame *frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
+	frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
 	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
 	if (checkUpdates)
 		frame->FirstTime();
@@ -3505,7 +3514,7 @@ QSLApp::OnRun() {
 
 bool
 QSLApp::OnInit() {
-	MyFrame *frame = 0;
+	frame = 0;
 	bool quiet = false;
 
 	int major, minor;
@@ -3742,13 +3751,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
 		if (!frame)
-#ifdef __clang__
-			GUIinit(!quiet);// It's nice to have 'frame' for
-					// debugging, but clang complains
-					// (correctly) that it's never read
-#else
 			frame = GUIinit(!quiet);
-#endif
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
