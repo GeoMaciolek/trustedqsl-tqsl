@@ -3851,7 +3851,7 @@ void MyFrame::FirstTime(void) {
 	}
 	int ncerts = cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
-	if (ncerts == 0 && wxMessageBox(wxT("You have no callsign certificate with which to sign log submissions.\n")
+	if (ncerts == 0 && wxMessageBox(wxT("You have no callsign certificate installed on this computer with which to sign log submissions.\n")
 		wxT("Would you like to request a callsign certificate now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
 		wxCommandEvent e;
 		CRQWizard(e);

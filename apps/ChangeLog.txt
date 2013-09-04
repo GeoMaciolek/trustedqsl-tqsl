@@ -150,12 +150,19 @@ checked items.
 Correct other instances of DXCC entity number being used in user messages
 to emit entity name, not the number.
 
-Generate error message on startup when stale mode maps are in place.
+Generate an error message on startup when stale mode maps are in place.
 
 Don't allow a user to redefine a standard mode.
 
 When the user chooses to not ignore errors in a log, don't save or 
 upload it.
+
+Fix the way user dialog boxes (for things like date range, passwords, and
+requests for how to handle errors) get instantiated so that the windows can
+appear on top of logging programs using command line log signing.
+
+Attempt to determine the field containing the call-worked data in unknown
+Cabrillo contests without requiring the user to define a custom contest.
 
 
 1.14.3
