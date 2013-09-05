@@ -4609,7 +4609,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent) :
 				 "IOTA", "IOTA Locator: ",
 				 "US_STATE", "State: ",
 				 "US_COUNTY", "County: ",
-				 "CA_PROVINCE", "Province: "
+				 "CA_PROVINCE", "Province: ",
 				 "RU_OBLAST", "Oblast: ",
 				 "CN_PROVINCE", "Province: ",
 				 "AU_STATE", "State: " };
