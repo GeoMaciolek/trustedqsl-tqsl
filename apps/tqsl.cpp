@@ -153,7 +153,7 @@ class QSLApp : public wxApp {
 public:
 	QSLApp();
 	virtual ~QSLApp();
-	class MyFrame *GUIinit(bool checkUpdates);
+	class MyFrame *GUIinit(bool checkUpdates, bool quiet=false);
 	bool OnInit();
 	virtual int OnRun();
 //	virtual wxLog *CreateLogTarget();
@@ -181,14 +181,21 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	dx.getByEntity(dxcc);
 	
 	wxString message = wxString::Format(wxT("Enter the password to unlock the callsign certificate for\n"
-		wxT("%hs -- %hs\n(This is the password you made up when you\nrequested the callsign certificate.)")),
+		wxT("%hs -- %hs\n(This is the password you made up when you\ninstalled the callsign certificate.)")),
 		call, dx.name());
 
-	if (!frame)
-		frame = wxGetApp().GUIinit(false);
 	wxWindow* top = wxGetApp().GetTopWindow();
+	if (frame->IsQuiet()) {
+		frame->Show(true);
+	}
 	top->SetFocus();
+	top->Raise();
+
 	wxString pwd = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
+	if (frame->IsQuiet()) {
+		frame->Show(false);
+		wxSafeYield(frame);
+	}
 	if (pwd.IsEmpty())
 		return 1;
 	strncpy(buf, pwd.mb_str(), bufsiz);
@@ -234,7 +241,7 @@ ConvertingDialog::ConvertingDialog(wxWindow *parent, const char *filename)
 	CenterOnParent();
 }
 
-#define TQSL_PROG_CANBUT TQSL_ID_LOW
+#define TQSL_PROG_CANBUT TQSL_ID_LOW+30
 
 DECLARE_EVENT_TYPE(wxEVT_LOGUPLOAD_DONE, -1)
 DEFINE_EVENT_TYPE(wxEVT_LOGUPLOAD_DONE)
@@ -297,11 +304,11 @@ int UploadDialog::doUpdateProgress(double dltotal, double dlnow, double ultotal,
 	return 0;
 }
 
-#define TQSL_DR_START TQSL_ID_LOW
-#define TQSL_DR_END TQSL_ID_LOW+1
-#define TQSL_DR_OK TQSL_ID_LOW+2
-#define TQSL_DR_CAN TQSL_ID_LOW+3
-#define TQSL_DR_MSG TQSL_ID_LOW+4
+#define TQSL_DR_START TQSL_ID_LOW+10
+#define TQSL_DR_END TQSL_ID_LOW+11
+#define TQSL_DR_OK TQSL_ID_LOW+12
+#define TQSL_DR_CAN TQSL_ID_LOW+13
+#define TQSL_DR_MSG TQSL_ID_LOW+14
 
 class DateRangeDialog : public wxDialog {
 public:
@@ -390,9 +397,9 @@ DateRangeDialog::OnCancel(wxCommandEvent&) {
 	EndModal(wxCANCEL);
 }
 
-#define TQSL_DP_OK TQSL_ID_LOW
-#define TQSL_DP_CAN TQSL_ID_LOW+1
-#define TQSL_DP_ALLOW TQSL_ID_LOW+2
+#define TQSL_DP_OK TQSL_ID_LOW+20
+#define TQSL_DP_CAN TQSL_ID_LOW+21
+#define TQSL_DP_ALLOW TQSL_ID_LOW+22
 
 class DupesDialog : public wxDialog {
 public:
@@ -495,6 +502,53 @@ DupesDialog::OnAllow(wxCommandEvent&) {
 		wxT("Are you sure you want to proceed? Click 'No' to review the choices"), wxT("Are you sure?"), wxYES_NO|wxICON_EXCLAMATION, this)==wxYES) {
 		EndModal(TQSL_DP_ALLOW);
 	}
+}
+
+#define TQSL_AE_OK TQSL_ID_LOW+40
+#define TQSL_AE_CAN TQSL_ID_LOW+41
+
+class ErrorsDialog : public wxDialog {
+public:
+	ErrorsDialog(wxWindow *parent = 0, wxString msg = wxT(""));
+private:
+	void OnOk(wxCommandEvent&);	
+	void OnCancel(wxCommandEvent&);
+	DECLARE_EVENT_TABLE()
+};
+
+BEGIN_EVENT_TABLE(ErrorsDialog, wxDialog)
+	EVT_BUTTON(TQSL_AE_OK, ErrorsDialog::OnOk)
+	EVT_BUTTON(TQSL_AE_CAN, ErrorsDialog::OnCancel)
+END_EVENT_TABLE()
+
+ErrorsDialog::ErrorsDialog(wxWindow *parent, wxString msg) :
+		wxDialog(parent, -1, wxString(wxT("Errors Detected")), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE) {
+	tqslTrace("ErrorsDialog::ErrorsDialog", "msg=%s", _S(msg));
+	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+
+	sizer->Add(new wxStaticText(this, -1, msg), 0, wxALL|wxALIGN_CENTER, 10);
+
+	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
+	hsizer->Add(new wxButton(this, TQSL_AE_OK, wxT("Ignore")), 0, wxRIGHT, 5);
+	hsizer->Add(new wxButton(this, TQSL_AE_CAN, wxT("Cancel")), 0, wxLEFT, 10);
+	sizer->Add(hsizer, 0, wxALIGN_CENTER|wxALL, 10);
+	SetAutoLayout(TRUE);
+	SetSizer(sizer);
+	sizer->Fit(this);
+	sizer->SetSizeHints(this);
+	CenterOnParent();
+}
+
+void
+ErrorsDialog::OnOk(wxCommandEvent&) {
+	tqslTrace("ErrorsDialog::OnOk");
+	EndModal(TQSL_AE_OK);
+}
+
+void
+ErrorsDialog::OnCancel(wxCommandEvent&) {
+	tqslTrace("ErrorsDialog::OnCancel");
+	EndModal(TQSL_AE_CAN);
 }
 
 static void
@@ -741,8 +795,10 @@ MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
-MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates)
+MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet)
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
+
+	_quiet = quiet;
 
 	DocPaths docpaths(wxT("tqslapp"));
 	wxBitmap savebm(save_xpm);
@@ -1184,8 +1240,6 @@ static void
 AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location"), const wxString& callsign = wxT("")) {
 	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s, callsign=%s", loc, expired, _S(title), _S(callsign));
 	try {
-		if (!frame)
-			frame = wxGetApp().GUIinit(false);
 		run_station_wizard(frame, loc, frame->help, expired, title, wxT(""), callsign);
 		frame->loc_tree->Build();
 	}
@@ -1445,6 +1499,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 	wxString name, ext;
 	bool allow_dupes = false;
 	bool restarting = false;
+	bool ignore_err = false;
 
 	wxConfig *config = (wxConfig *)wxConfig::Get();
 
@@ -1464,8 +1519,6 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& o
 
 	init_modes();
 	init_contests();
-
-	DateRangeDialog dial(this);
 
 restart:
 
@@ -1487,18 +1540,17 @@ restart:
 		}
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
-		if (range && !suppressdate) {
-			// Can't prompt without toplevel window
-			if (!this && !frame) {
-				frame = wxGetApp().GUIinit(false);
-			}
-			if (!restarting) {
-				if (dial.ShowModal() != wxOK) {
-					wxLogMessage(wxT("Cancelled"));
-					return TQSL_EXIT_CANCEL;
-				}
+		if (range && !suppressdate && !restarting) {
+			DateRangeDialog dial(this);
+			if (dial.ShowModal() != wxOK) {
+				wxLogMessage(wxT("Cancelled"));
+				return TQSL_EXIT_CANCEL;
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
+			if (this->IsQuiet()) {
+				this->Show(false);
+				wxSafeYield(this);
+			}
 		}
 		if (startdate || enddate) {
 			tqslTrace("MyFrame::ConvertLogToString", "startdate %d/%d/%d, enddate %d/%d/%d",
@@ -1520,33 +1572,33 @@ restart:
 		if (ext != wxT(""))
 			name += wxT(".") + ext;
 		// Only display windows if notin batch mode -- KD6PAG
-		if (this) {
+		if (!this->IsQuiet()) {
 			conv_dial->Show(TRUE);
-			this->Enable(FALSE);
 		}
-		bool ignore_err = false;
+		this->Enable(FALSE);
 
 		output = wxT("");
 
    		do {
    	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {
+				if (!this->IsQuiet())
   					wxSafeYield(conv_dial);
-  					if (!conv_dial->running)
-  						break;
-					// Only count QSO records
-					if (strstr(cp, "tCONTACT")) {
-						++n;
-						++processed;
-					}
-					if ((processed % 10) == 0) {
-						wxString progress = wxString::Format(wxT("QSOs: %d"), processed);
-						if (duplicates > 0) 
-							progress += wxString::Format(wxT(" Duplicates: %d"), duplicates);
-						if (errors > 0 || out_of_range > 0) 
-							progress += wxString::Format(wxT(" Errors: %d"), errors + out_of_range);
-		   	   			conv_dial->msg->SetLabel(progress);
-					}
-					output<<(wxString(cp, wxConvLocal)+wxT("\n"));
+  				if (!conv_dial->running)
+  					break;
+				// Only count QSO records
+				if (strstr(cp, "tCONTACT")) {
+					++n;
+					++processed;
+				}
+				if ((processed % 10) == 0) {
+					wxString progress = wxString::Format(wxT("QSOs: %d"), processed);
+					if (duplicates > 0) 
+						progress += wxString::Format(wxT(" Duplicates: %d"), duplicates);
+					if (errors > 0 || out_of_range > 0) 
+						progress += wxString::Format(wxT(" Errors: %d"), errors + out_of_range);
+		   	   		conv_dial->msg->SetLabel(progress);
+				}
+				output<<(wxString(cp, wxConvLocal)+wxT("\n"));
    			}
 			if ((processed % 10) == 0) {
 				wxString progress = wxString::Format(wxT("QSOs: %d"), processed);
@@ -1557,7 +1609,8 @@ restart:
    	   			conv_dial->msg->SetLabel(progress);
 			}
 			if (cp == 0) {
-				wxSafeYield(conv_dial);
+				if (!this->IsQuiet())
+					wxSafeYield(conv_dial);
 				if (!conv_dial->running)
 					break;
 			}
@@ -1576,6 +1629,10 @@ restart:
 					}
 				} while (tQSL_Error == TQSL_PASSWORD_ERROR);
    				check_tqsl_error(rval);
+				if (this->IsQuiet()) {
+					this->Show(false);
+					wxSafeYield(this);
+				}
    				continue;
    			}
 			if (tQSL_Error == TQSL_DATE_OUT_OF_RANGE) {
@@ -1606,7 +1663,7 @@ restart:
 						msg += wxString(wxT("\n")) + wxString(bad_text, wxConvLocal);
 
 					wxLogError(wxT("%s"), msg.c_str());
-					if (!this) { // No GUI
+					if (frame->IsQuiet()) { 
 						switch (action) {
 						 	case TQSL_ACTION_ABORT:
 								aborted = true;
@@ -1623,17 +1680,20 @@ restart:
 					}
 					if (!ignore_err) {
 						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", _S(msg));
-						if (!this && !frame) {
-							frame = wxGetApp().GUIinit(false);
-						}
-						wxWindow* top = wxGetApp().GetTopWindow();
-						top->SetFocus();
-						if (wxMessageBox(wxString(wxT("Error: ")) + msg + wxT("\n\nIgnore errors?"), wxT("Error"), wxYES_NO, top) == wxNO) {
-							tqslTrace("MyFrame::ConvertLogToString", "Cancelled due to user action");
+						ErrorsDialog dial(this, msg + wxT("\nClick 'Ignore' to continue signing this log while ignoring errors.\n")
+								wxT("Click 'Cancel' to abandon signing this log."));
+						int choice = dial.ShowModal();
+						if (choice == TQSL_AE_CAN) {
 							cancelled = true;
 							goto abortSigning;
 						}
-						ignore_err = true;
+						if (choice == TQSL_AE_OK) {
+							ignore_err = true;
+							if (this->IsQuiet()) {
+								this->Show(false);
+								wxSafeYield(this);
+							}
+						}
 					}
 				}
 			}
@@ -1645,8 +1705,7 @@ restart:
    		cancelled = !conv_dial->running;
 
 abortSigning:
-   		if (this)
-			this->Enable(TRUE);
+		this->Enable(TRUE);
 
    		if (cancelled) {
    			wxLogWarning(wxT("Signing cancelled"));
@@ -1660,8 +1719,7 @@ abortSigning:
    		delete conv_dial;
    	} catch (TQSLException& x) {
 
-		if (this)
-	   		this->Enable(TRUE);
+   		this->Enable(TRUE);
    		delete conv_dial;
 		string msg = x.what();
 		tqsl_getConverterLine(conv, &lineno);
@@ -1696,6 +1754,10 @@ abortSigning:
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
 				restarting = true;
+				if (this->IsQuiet()) {
+					this->Show(false);
+					wxSafeYield(this);
+				}
 				goto restart;
 			}
 		} else {
@@ -3470,7 +3532,7 @@ cerr << "called" << endl;
 */
 
 MyFrame *
-QSLApp::GUIinit(bool checkUpdates) {
+QSLApp::GUIinit(bool checkUpdates, bool quiet) {
 	tqslTrace("QSLApp::GUIinit", "checkUpdates=%d", checkUpdates);
 	int x, y, w, h;
 	wxConfig *config = (wxConfig *)wxConfig::Get();
@@ -3482,7 +3544,7 @@ QSLApp::GUIinit(bool checkUpdates) {
 	if (w < MAIN_WINDOW_MIN_WIDTH) w = MAIN_WINDOW_MIN_WIDTH;
 	if (h < MAIN_WINDOW_MIN_HEIGHT) w = MAIN_WINDOW_MIN_HEIGHT;
 
-	frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates);
+	frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates, quiet);
 	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
 	if (checkUpdates)
 		frame->FirstTime();
@@ -3527,7 +3589,7 @@ QSLApp::OnInit() {
 	//short circuit if no arguments
 
 	if (argc<=1) {
-		GUIinit(true);
+		GUIinit(true, quiet);
 		return true;
 	}
 
@@ -3635,18 +3697,18 @@ QSLApp::OnInit() {
 			cerr << "Option -n cannot be combined with any other options" << endl;
 			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 		}
-		if (!frame)
-			frame = GUIinit(false);
+		frame = GUIinit(false, true);
+		frame->Show(false);
 		// Check for updates then bail out.
 		wxLog::SetActiveTarget(new LogStderr());
 		frame->DoCheckForUpdates(false, true);
 		return(false);
 	}
 
+	frame =GUIinit(!quiet, quiet);
 	if (quiet) {
 		wxLog::SetActiveTarget(new LogStderr());
-	} else {
-		frame = GUIinit(true);
+		frame->Show(false);
 	}
 	if (parser.Found(wxT("i"), &importfile)) {
 		notifyData nd;
@@ -3750,8 +3812,6 @@ QSLApp::OnInit() {
 	}
 	if (parser.Found(wxT("s"))) {
 		// Add/Edit station location
-		if (!frame)
-			frame = GUIinit(!quiet);
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
@@ -3772,8 +3832,6 @@ QSLApp::OnInit() {
 		return false;
 	}
 	if (loc == 0) {
-		if (!frame)
-			frame = GUIinit(!quiet);
 		try {
 			loc = frame->SelectStationLocation(wxT("Select Station Location for Signing"));
 		}

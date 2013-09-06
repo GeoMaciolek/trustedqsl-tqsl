@@ -81,8 +81,9 @@ enum {
 
 class MyFrame : public wxFrame {
 public:
-	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates);
+	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet);
 
+	bool IsQuiet(void) { return _quiet; };
 	void AddStationLocation(wxCommandEvent& event);
 	void EditStationLocation(wxCommandEvent& event);
 	void EnterQSOData(wxCommandEvent& event);
@@ -163,6 +164,7 @@ private:
 	wxStaticText* loc_prop_label;
 	int renew;
 	TQSL_CERT_REQ *req;
+	bool _quiet;
 
 };
 
