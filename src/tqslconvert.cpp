@@ -320,8 +320,14 @@ tqsl_infer_band(const char* infreq) {
 			break;
 		bool match = false;
 		if (!strcmp(spectrum, "HF")) {
-			if (freq_khz >= low && freq_khz <= high)
+			// Allow for cases where loggers that don't log the
+			// real frequency.
+			if (low == 10100) low = 10000;
+			else if (low == 18068) low = 18000;
+			else if (low == 24890) low = 24000;
+			if (freq_khz >= low && freq_khz <= high) {
 				match = true;
+			}
 		} else {
 			if (freq >= low && freq <= high)
 				match = true;
