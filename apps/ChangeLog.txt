@@ -164,6 +164,11 @@ appear on top of logging programs using command line log signing.
 Attempt to determine the field containing the call-worked data in unknown
 Cabrillo contests without requiring the user to define a custom contest.
 
+Update the "Ignore Errors" dialog to have "Ignore" and "Cancel" options
+and to describe what each of those does.
+
+Correct batch/quiet mode (-q or -x command line options) to avoid unexpected
+windows from popping up before a dialog (password, errors, date range, etc.)
 
 1.14.3
 ------

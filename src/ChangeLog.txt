@@ -40,6 +40,9 @@ When trying to deduce call-worked field, ensure that anything that
 looks gridsquare-like is skipped. Don't accept a log if there are 
 two fields that look like callsigns.
 
+Relax lower limit for 30m, 17m, and 12m bands to allow 10MHz, 
+18MHz, and 24MHz to be allowed
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
