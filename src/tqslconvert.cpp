@@ -398,43 +398,45 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		}
 	}
 
-	// Create the database environment handle
-	if ((dbret = db_env_create(&conv->dbenv, 0))) {
-		// can't make env handle
-		dbinit_cleanup=true;
-		goto dbinit_end;
-	}
-
 	fixedpath += "/dberr.log";
 	conv->errfile = fopen(fixedpath.c_str(), "wb");
+
 	if (conv->errfile)
 		conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 
 	while (true) {
+		// Create the database environment handle
+		if ((dbret = db_env_create(&conv->dbenv, 0))) {
+			// can't make env handle
+			dbinit_cleanup=true;
+			goto dbinit_end;
+		}
+		if (conv->errfile)
+			conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
-			fprintf(conv->errfile, "opening DB %s returns status %d", conv->dbpath, dbret);
+			if (conv->errfile)
+				fprintf(conv->errfile, "opening DB %s returns status %d", conv->dbpath, dbret);
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
-				if ((dbret = db_env_create(&conv->dbenv, 0))) {
-					// can't make env handle
-					dbinit_cleanup=true;
-					goto dbinit_end;
-				}
-				if (conv->errfile)
-					conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 				triedRemove = true;
-				fprintf(conv->errfile, "About to retry after removing the environment\n");
+				if (conv->errfile)
+					fprintf(conv->errfile, "About to retry after removing the environment\n");
 				continue;
 			}
 
+			if (conv->errfile)
+				fprintf(conv->errfile, "Retry attempt after removing the environment failed.");
 			// can't open environment and cleanup efforts failed.
 			conv->dbenv = NULL;	// this can't be recovered
 			dbinit_cleanup=true;
 			goto dbinit_end;
 		}
-		break;
+		break;		// Opened OK.
 	}
+
+	// Automatically remove the log files that are not needed
+	conv->dbenv->set_flags(conv->dbenv, DB_LOG_AUTO_REMOVE, true);
 
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
 		// can't create db
