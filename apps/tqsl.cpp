@@ -3652,6 +3652,8 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_NONE }
 	};
 
+	// Always display TQSL version
+	cerr << "TQSL Version " VERSION " " BUILD "\n";
 	// Lowercase command options
 	origCommandLine = argv[0];
 	for (int i = 1; i < argc; i++) {
@@ -3675,10 +3677,8 @@ QSLApp::OnInit() {
 		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 	}
 
-	// print version and exit
+	// version already displayed - just exit
 	if (parser.Found(wxT("v"))) { 
-		wxMessageOutput::Set(new wxMessageOutputStderr);
-		wxMessageOutput::Get()->Printf(wxT("TQSL Version " VERSION " " BUILD "\n"));
 		return false;
 	}
 
