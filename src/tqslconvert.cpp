@@ -16,6 +16,7 @@
 #include "tqslconvert.h"
 #include <stdio.h>
 #include <errno.h>
+#include <sys/stat.h>
 #include "tqslerrno.h"
 #include <cstring>
 #include <string>
@@ -26,6 +27,13 @@
 
 #include <locale.h>
 //#include <iostream>
+
+#ifdef _WIN32
+    #include <direct.h>
+#else
+    #include <unistd.h>
+    #include <dirent.h>
+#endif
 
 #include "winstrdefs.h"
 
@@ -372,6 +380,24 @@ static bool open_db(TQSL_CONVERTER *conv) {
 
 	conv->dbpath = strdup(fixedpath.c_str());
 		
+	// Clean up junk in that directory
+	DIR *dir = opendir(fixedpath.c_str());
+	if (dir != NULL) {
+		struct dirent *ent;
+		while ((ent = readdir(dir)) != NULL) {
+			if (ent->d_name[0] == '.')
+				continue;
+			struct stat s;
+			// If it's a symlink pointing to itself, remove it.
+			string fname = fixedpath + "/" + ent->d_name;
+			if (stat(fname.c_str(), &s)) {
+				if (errno == ELOOP) {
+					unlink(fname.c_str());
+				}
+			}
+		}
+	}
+
 	// Create the database environment handle
 	if ((dbret = db_env_create(&conv->dbenv, 0))) {
 		// can't make env handle
@@ -386,14 +412,24 @@ static bool open_db(TQSL_CONVERTER *conv) {
 
 	while (true) {
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
+			fprintf(conv->errfile, "opening DB %s returns status %d", conv->dbpath, dbret);
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+				if ((dbret = db_env_create(&conv->dbenv, 0))) {
+					// can't make env handle
+					dbinit_cleanup=true;
+					goto dbinit_end;
+				}
+				if (conv->errfile)
+					conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 				triedRemove = true;
+				fprintf(conv->errfile, "About to retry after removing the environment\n");
 				continue;
 			}
 
 			// can't open environment and cleanup efforts failed.
+			conv->dbenv = NULL;	// this can't be recovered
 			dbinit_cleanup=true;
 			goto dbinit_end;
 		}

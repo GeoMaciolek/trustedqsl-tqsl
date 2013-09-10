@@ -3009,10 +3009,10 @@ public:
 		outstr = NULL;
 		conv = NULL;
         }
-	void SaveSettings (gzFile &out, wxString appname);
+	void SaveSettings (gzFile* out, wxString appname);
 	void RestoreCert (void);
 	void RestoreConfig (gzFile& in);
-	void ParseLocations (const tQSL_StationDataEnc loc, gzFile* out);
+	void ParseLocations (gzFile* out, const tQSL_StationDataEnc loc);
 	wxConfig *config;
 	long serial;
 	int dxcc;
@@ -3035,7 +3035,7 @@ private:
 // Save the user's configuration settings - appname is the
 // application name (tqslapp)
 
-void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
+void TQSLConfig::SaveSettings (gzFile* out, wxString appname) {
 	tqslTrace("TQSLConfig::SaveSettings", "appname=%s", _S(appname));
 	config = new wxConfig(appname);
 	wxString name, gname;
@@ -3046,22 +3046,27 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 	double	dvalue;
 	wxArrayString groupNames;
 
+	tqslTrace("TQSLConfig::SaveSettings", "... init groups");
 	groupNames.Add(wxT("/"));
 	bool more = config->GetFirstGroup(gname, context);
 	while (more) {
+		tqslTrace("TQSLConfig::SaveSettings", "... add group %s", _S(name));
 		groupNames.Add(wxT("/") + gname);
 		more = config->GetNextGroup(gname, context);
 	}
+	tqslTrace("TQSLConfig::SaveSettings", "... groups done.");
 
 	for (unsigned i = 0; i < groupNames.GetCount(); i++) {
+		tqslTrace("TQSLConfig::SaveSettings", "Group %d setting path %s", i, _S(groupNames[i]));
 		config->SetPath(groupNames[i]);
 		more = config->GetFirstEntry(name, context);
 		while (more) {
+			tqslTrace("TQSLConfig::SaveSettings", "name=%s", _S(name));
 			if (name.IsEmpty()) {
 				more = config->GetNextEntry(name, context);
 				continue;
 			}
-			gzprintf(out, "<Setting name=\"%s\" group=\"%s\" ", (const char *)name.mb_str(), (const char *)groupNames[i].mb_str());
+			gzprintf(*out, "<Setting name=\"%s\" group=\"%s\" ", (const char *)name.mb_str(), (const char *)groupNames[i].mb_str());
 			wxConfigBase::EntryType etype = config->GetEntryType(name);
 			switch (etype) {
 				case wxConfigBase::Type_Unknown:
@@ -3070,27 +3075,28 @@ void TQSLConfig::SaveSettings (gzFile &out, wxString appname) {
 					svalue.Replace(wxT("&"), wxT("&amp;"), true); 
 					svalue.Replace(wxT("<"), wxT("&lt;"), true); 
 					svalue.Replace(wxT(">"), wxT("&gt;"), true); 
-					gzprintf(out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.mb_str());
+					gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.mb_str());
 					break;
 				case wxConfigBase::Type_Boolean:
 					config->Read(name, &bvalue);
 					if (bvalue)
-						gzprintf(out, "Type=\"Bool\" Value=\"true\"/>\n");
+						gzprintf(*out, "Type=\"Bool\" Value=\"true\"/>\n");
 					else
-						gzprintf(out, "Type=\"Bool\" Value=\"false\"/>\n");
+						gzprintf(*out, "Type=\"Bool\" Value=\"false\"/>\n");
 					break;
 				case wxConfigBase::Type_Integer:
 					config->Read(name, &lvalue);
-					gzprintf(out, "Type=\"Int\" Value=\"%d\"/>\n", lvalue);
+					gzprintf(*out, "Type=\"Int\" Value=\"%d\"/>\n", lvalue);
 					break;
 				case wxConfigBase::Type_Float:
 					config->Read(name, &dvalue);
-					gzprintf(out, "Type=\"Float\" Value=\"%f\"/>\n", dvalue);
+					gzprintf(*out, "Type=\"Float\" Value=\"%f\"/>\n", dvalue);
 					break;
 			}
 			more = config->GetNextEntry(name, context);
 		}
 	}
+	tqslTrace("TQSLConfig::SaveSettings", "Done.");
 	config->SetPath(wxT("/"));
 	
 	return;
@@ -3116,6 +3122,8 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 
 		if (!quiet) {
 			wxLogMessage(wxT("Saving callsign certificates"));
+		} else {
+			tqslTrace("MyFrame::BackupConfig", "Saving callsign certificates");
 		}
 		int ncerts;
 		char buf[8192];
@@ -3169,27 +3177,35 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		gzprintf(out, "<Locations>\n");
 		if (!quiet) {
 			wxLogMessage(wxT("Saving Station Locations"));
+		} else {
+			tqslTrace("MyFrame::BackupConfig", "Saving Station Locations");
 		}
 		tQSL_StationDataEnc sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationDataEnc(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
-		parser->ParseLocations(sdbuf, &out);
+		parser->ParseLocations(&out, sdbuf);
 		check_tqsl_error(tqsl_freeStationDataEnc(sdbuf));
 		gzprintf(out, "</Locations>\n");
 
 		if (!quiet) {
 			wxLogMessage(wxT("Saving TQSL Preferences"));
+		} else {
+			tqslTrace("MyFrame::BackupConfig", "Saving TQSL Preferences - out=0x%lx", (void *)out);
 		}
 		gzprintf(out, "<TQSLSettings>\n");
-		conf->SaveSettings(out, wxT("tqslapp"));
+		conf->SaveSettings(&out, wxT("tqslapp"));
+		tqslTrace("MyFrame::BackupConfig", "Done with settings. out=0x%lx", (void *)out);
 		gzprintf(out, "</TQSLSettings>\n");
 
 		if (!quiet) {
 			wxLogMessage(wxT("Saving QSOs"));
+		} else {
+			tqslTrace("MyFrame::BackupConfig", "Saving QSOs");
 		}
 	
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
+		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
 		gzprintf(out, "<DupeDb>\n");
 
 		while (true) {
@@ -3202,15 +3218,24 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
 		}
 		gzprintf(out, "</DupeDb>\n");
+		tqslTrace("MyFrame::BackupConfig", "Dupes db saved OK");
 
 		gzprintf(out, "</TQSL_Configuration>\n");
 
 		gzclose(out);
-		if (!quiet)
+		if (!quiet) {
 			wxLogMessage(wxT("Save operation complete."));
+		} else {
+			tqslTrace("MyFrame::BackupConfig", "Save operation complete.");
+		}
 	}
 	catch (TQSLException& x) {
-		wxLogError(wxT("Backup operation failed: %hs"), x.what());
+		if (quiet) {
+			wxString errmsg = wxString::Format(wxT("Error performing automatic backup: %hs"), x.what());
+			wxMessageBox(errmsg, wxT("Backup Error"), wxOK|wxICON_EXCLAMATION);
+		} else {
+			wxLogError(wxT("Backup operation failed: %hs"), x.what());
+		}
 	}
 }
 
@@ -3463,7 +3488,7 @@ TQSLConfig::RestoreConfig (gzFile& in) {
 }
 
 void
-	TQSLConfig::ParseLocations (const tQSL_StationDataEnc loc, gzFile* out) {
+TQSLConfig::ParseLocations (gzFile* out, const tQSL_StationDataEnc loc) {
 	tqslTrace("TQSL::ParseLocations", "loc=%s", loc);
         XML_Parser xp = XML_ParserCreate(0);
 	XML_SetUserData(xp, (void *) this);
