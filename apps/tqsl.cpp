@@ -4187,17 +4187,18 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 
 	if (wiz.RunWizard()) {
 		// Save or upload?
-		wxString filename = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
-#ifdef _WIN32
-		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("\\") + filename;
-#else
-		wxString file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + filename;
-#endif
+		wxString file = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
 		bool upload = false;
 		if (wxMessageBox(wxT("Do you want to upload this certificate request to LoTW now?\n"
 				     "You do not need an account on LoTW to do this."),
 				wxT("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 			upload = true;
+			// Save it in the working directory
+#ifdef _WIN32
+			file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("\\") + file;
+#else
+			file = wxString(tQSL_BaseDir, wxConvLocal) + wxT("/") + file;
+#endif
 		} else {
 			// Where to put it?
 			file = wxFileSelector(wxT("Save request"), wxT(""), file, wxT(TQSL_CRQ_FILE_EXT),
@@ -4261,7 +4262,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				in.close();
 
 				wxString fileType(wxT("Certificate Request"));
-				retval = UploadFile(filename, filename.mb_str(), 0, (void *)contents.c_str(), contents.size(), fileType);
+				retval = UploadFile(file, file.mb_str(), 0, (void *)contents.c_str(), contents.size(), fileType);
 				if (retval != 0)
 					wxLogError(wxT("Your certificate request did not upload properly\nPlease try again."));
 			}
