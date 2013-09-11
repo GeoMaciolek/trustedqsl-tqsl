@@ -28,18 +28,12 @@
 #include <locale.h>
 //#include <iostream>
 
-#ifdef _WIN32
-    #include <direct.h>
-#else
+#ifndef _WIN32
     #include <unistd.h>
     #include <dirent.h>
 #endif
 
 #include "winstrdefs.h"
-
-#ifdef _MSC_VER //is a visual studio compiler
-#include "windirent.h"
-#endif
 
 using namespace std;
 
@@ -384,6 +378,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 
 	conv->dbpath = strdup(fixedpath.c_str());
 		
+#ifndef _WIN32
 	// Clean up junk in that directory
 	DIR *dir = opendir(fixedpath.c_str());
 	if (dir != NULL) {
@@ -401,7 +396,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 			}
 		}
 	}
-
+#endif
 	fixedpath += "/dberr.log";
 	conv->errfile = fopen(fixedpath.c_str(), "wb");
 
