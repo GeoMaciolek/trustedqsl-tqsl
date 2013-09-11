@@ -43,6 +43,10 @@ two fields that look like callsigns.
 Relax lower limit for 30m, 17m, and 12m bands to allow 10MHz, 
 18MHz, and 24MHz to be allowed
 
+Recover from invalid files in the working directory (symlink loops)
+by detecting and removing them. These would cause database opens to
+fail while searching for recovery logs.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement

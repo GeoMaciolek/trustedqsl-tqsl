@@ -70,7 +70,7 @@ Detect new verions of the TQSL configuration file when performing the
 update the configuration file if there is a newer one available.
 
 Add new command line options "-b" to select the start date for QSOs to be
-signed (begin) and -e to select the end date for QSOs to be signed.
+signed (begin) and "-e" to select the end date for QSOs to be signed.
 
 Warn users on startup when they have a certificate that's going to expire
 soon (in less than 60 days).
@@ -169,6 +169,9 @@ and to describe what each of those does.
 
 Correct batch/quiet mode (-q or -x command line options) to avoid unexpected
 windows from popping up before a dialog (password, errors, date range, etc.)
+
+Always print out the TQSL version number at the beginning of output for
+command line applications.
 
 1.14.3
 ------
