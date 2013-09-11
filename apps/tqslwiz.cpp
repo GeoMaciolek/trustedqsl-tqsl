@@ -528,7 +528,7 @@ TQSLWizFinalPage::validate() {
 	tqslTrace("TQSLWizFinalPage::validate");
 	wxString val = newname->GetValue();
 	const char *errmsg = 0;
-	val.Trim();
+	val.Trim().Trim(false);
 	if (val == wxT(""))
 		errmsg = "Station name must be provided";
 	return errmsg;

@@ -125,7 +125,7 @@ TQSLGetStationNameDialog::OnSetFocus(wxFocusEvent& event) {
 void
 TQSLGetStationNameDialog::OnOk(wxCommandEvent&) {
 	tqslTrace("TQSLGetStationNameDialog::OnOk");
-	wxString s = name_entry->GetValue().Trim();
+	wxString s = name_entry->GetValue().Trim().Trim(false);
 	if (editonly)
 		EndModal(wxID_CANCEL);
 	else if (s != wxT("")) {

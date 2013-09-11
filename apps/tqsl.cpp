@@ -3755,6 +3755,8 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("l"), &locname)) {
+		locname.Trim(true);			// clean up whitespace
+		locname.Trim(false);
 		tqsl_endStationLocationCapture(&loc);
 		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
 			if (quiet) {
