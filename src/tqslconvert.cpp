@@ -37,6 +37,10 @@
 
 #include "winstrdefs.h"
 
+#ifdef _MSC_VER //is a visual studio compiler
+#include "windirent.h"
+#endif
+
 using namespace std;
 
 
