@@ -401,9 +401,6 @@ static bool open_db(TQSL_CONVERTER *conv) {
 	fixedpath += "/dberr.log";
 	conv->errfile = fopen(fixedpath.c_str(), "wb");
 
-	if (conv->errfile)
-		conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
-
 	while (true) {
 		// Create the database environment handle
 		if ((dbret = db_env_create(&conv->dbenv, 0))) {

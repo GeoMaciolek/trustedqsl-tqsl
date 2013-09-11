@@ -528,7 +528,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	if (req->signer != NULL) {
 		char *b64;
-		char ibuf[20];
+		char ibuf[256];
 
 		if ((b64 = tqsl_sign_base64_data(req->signer, cp)) == NULL) {
 			fclose(out);
