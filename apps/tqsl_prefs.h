@@ -46,9 +46,9 @@
 //#define ENABLE_ONLINE_PREFS
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
 #define DEFAULT_UPL_FIELD wxT("upfile")
-#define DEFAULT_UPL_STATUSRE wxT("<!-- .UPL.[:space:]*([^-]+)[:space:]*-->")
+#define DEFAULT_UPL_STATUSRE wxT("<!-- .UPL.[[:space:]]*([^-]+)[[:space:]]*-->")
 #define DEFAULT_UPL_STATUSOK wxT("accepted")
-#define DEFAULT_UPL_MESSAGERE wxT("<!-- .UPLMESSAGE.[:space:]*([^-]+)[:space:]*-->")
+#define DEFAULT_UPL_MESSAGERE wxT("<!-- .UPLMESSAGE.[[:space:]]*([^-]+)[[:space:]]*-->")
 #define DEFAULT_UPL_VERIFYCA true
 
 #define DEFAULT_UPD_URL wxT("https://lotw.arrl.org/lotw/tqslupdate")
