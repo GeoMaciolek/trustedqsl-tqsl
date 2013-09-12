@@ -1740,7 +1740,7 @@ abortSigning:
 			tqsl_endConverter(&conv);
 			return TQSL_EXIT_CANCEL;
 		}
-		if (this || action == TQSL_ACTION_ASK || action==TQSL_ACTION_UNSPEC) { //if GUI or want to ask the user
+		if (action == TQSL_ACTION_ASK || action==TQSL_ACTION_UNSPEC) { // want to ask the user
 			DupesDialog dial(this, processed, duplicates, action);
 			int choice = dial.ShowModal();
 			if (choice == TQSL_DP_CAN) {
@@ -1760,8 +1760,7 @@ abortSigning:
 				}
 				goto restart;
 			}
-		} else {
-			if (action == TQSL_ACTION_ABORT) {
+		} else if (action == TQSL_ACTION_ABORT) {
 				if (processed==duplicates) {
 					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
 					tqsl_converterRollBack(conv);
@@ -1775,16 +1774,15 @@ abortSigning:
 					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				}
-			} else if (action == TQSL_ACTION_ALL) {
-				allow_dupes = true;
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
-				restarting = true;
-				goto restart;
-			}
-			// Otherwise it must be TQSL_ACTION_NEW, so fall through
-			// and output the new records.
+		} else if (action == TQSL_ACTION_ALL) {
+			allow_dupes = true;
+			tqsl_converterRollBack(conv);
+			tqsl_endConverter(&conv);
+			restarting = true;
+			goto restart;
 		}
+		// Otherwise it must be TQSL_ACTION_NEW, so fall through
+		// and output the new records.
 		wxLogMessage(wxT("%s: %d QSO records were duplicates"),
 			infile.c_str(), duplicates);
 	}

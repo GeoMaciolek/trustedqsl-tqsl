@@ -671,6 +671,7 @@ CRQ_IntroPage::validate() {
 				msg = wxString::Format(wxT("There is an outstanding certificate request for %s\n")
 							wxT("Please wait until this is processed by LoTW or delete\n")
 							wxT("the certificate request."), val.c_str());
+				ok = false;
 			}
 		}
 	}
