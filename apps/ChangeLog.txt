@@ -173,6 +173,16 @@ windows from popping up before a dialog (password, errors, date range, etc.)
 Always print out the TQSL version number at the beginning of output for
 command line applications.
 
+Use new application icons contributed by K1GQ.
+
+Correct regression where duplicate QSOs would result in an action prompt
+even though "-a abort" was specified on the command line.
+
+Don't display the TQSL version number when "-n" is used on the command line.
+
+Strip leading and trailing spaces from the location name passed on the
+command line.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
