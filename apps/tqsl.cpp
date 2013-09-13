@@ -3651,7 +3651,9 @@ QSLApp::OnInit() {
 	};
 
 	// Always display TQSL version
-	cerr << "TQSL Version " VERSION " " BUILD "\n";
+	if ((!parser.Found(wxT("n"))) || parser.Found(wxT("v"))) {
+		cerr << "TQSL Version " VERSION " " BUILD "\n";
+	}
 	// Lowercase command options
 	origCommandLine = argv[0];
 	for (int i = 1; i < argc; i++) {
