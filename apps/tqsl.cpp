@@ -2196,13 +2196,14 @@ retry_upload:
 			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both)==uplStatusSuccess) //success
 			{
 				if (uplMessageRE.Matches(uplresult)) { //and a message
+					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim();
 					if (fileType == wxT("Log")) {
 						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."), 
-							infile.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
+							infile.c_str(), lotwmessage.c_str());
 
 					} else {
 						wxLogMessage(wxT("%s uploaded successfully with result \"%s\"!"), 
-							fileType.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
+							fileType.c_str(), lotwmessage.c_str());
 					}
 				} else { // no message we could find
 					if (fileType == wxT("Log")) {
