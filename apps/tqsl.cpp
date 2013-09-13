@@ -2202,7 +2202,7 @@ retry_upload:
 							infile.c_str(), lotwmessage.c_str());
 
 					} else {
-						wxLogMessage(wxT("%s uploaded successfully with result \"%s\"!"), 
+						wxLogMessage(wxT("%s uploaded with result \"%s\"!"), 
 							fileType.c_str(), lotwmessage.c_str());
 					}
 				} else { // no message we could find
