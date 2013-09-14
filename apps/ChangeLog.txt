@@ -183,6 +183,8 @@ Don't display the TQSL version number when "-n" is used on the command line.
 Strip leading and trailing spaces from the location name passed on the
 command line.
 
+Properly handle and report upload errors displayed by the LoTW website.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
