@@ -185,6 +185,8 @@ command line.
 
 Properly handle and report upload errors displayed by the LoTW website.
 
+Install TQSL icon when "make install" used on Linux.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
