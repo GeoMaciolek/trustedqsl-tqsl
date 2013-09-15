@@ -3651,10 +3651,6 @@ QSLApp::OnInit() {
 		{ wxCMD_LINE_NONE }
 	};
 
-	// Always display TQSL version
-	if ((!parser.Found(wxT("n"))) || parser.Found(wxT("v"))) {
-		cerr << "TQSL Version " VERSION " " BUILD "\n";
-	}
 	// Lowercase command options
 	origCommandLine = argv[0];
 	for (int i = 1; i < argc; i++) {
@@ -3673,6 +3669,10 @@ QSLApp::OnInit() {
 	int parseStatus = parser.Parse(true);
 	if (parseStatus == -1) {	// said "-h"
 		return false;
+	}
+	// Always display TQSL version
+	if ((!parser.Found(wxT("n"))) || parser.Found(wxT("v"))) {
+		cerr << "TQSL Version " VERSION " " BUILD "\n";
 	}
 	if (parseStatus != 0)  {
 		exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
