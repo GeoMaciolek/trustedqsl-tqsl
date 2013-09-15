@@ -4430,6 +4430,17 @@ wxT("You will NOT be able to recover it by loading a .TQ6 file.\n")
 wxT("You WILL be able to recover it from a container (.p12) file only if you have\n")
 wxT("created one via the Callsign Certificate menu's 'Save Callsign Certificate' command.\n\n")
 wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		char buf[128];
+		if (!tqsl_getCertificateCallSign(data->getCert(), buf, sizeof buf)) {
+			wxString call = wxString(buf, wxConvLocal);
+			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+			pending.Replace(call, wxT(""), true);
+			if (pending[0] == ',')
+				pending.Replace(wxT(","), wxT(""));
+			if (pending.Last() == ',')
+				pending.Truncate(pending.Len()-1);
+			wxConfig::Get()->Write(wxT("RequestPending"), pending);
+		}
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		cert_tree->Build(CERTLIST_FLAGS);
