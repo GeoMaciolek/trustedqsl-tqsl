@@ -86,7 +86,11 @@
 
 #include "winstrdefs.h"
 
+#ifdef _WIN32
 #include "key.xpm"
+#else
+#include "key-new.xpm"
+#endif
 #include "save.xpm"
 #include "upload.xpm"
 #include "upload_dis.xpm"
