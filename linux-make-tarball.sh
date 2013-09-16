@@ -36,6 +36,7 @@ DESC=`git describe $TREEISH`
 VER=`git show $TREEISH:apps/tqslversion.ver`
 
 sed -e s/@BUILD@/pkg-$DESC/ -e s/@TQSLVERSION@/$VER/ $TEMPDIR/$OUTNAME/apps/tqslbuild.h.in > $TEMPDIR/$OUTNAME/apps/tqslbuild.h
+dos2unix -q $TEMPDIR/$OUTNAME/README
 
 WD=`pwd`
 
