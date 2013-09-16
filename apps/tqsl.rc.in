@@ -1,4 +1,7 @@
-TQSL_ICON1	ICON	"@srcdir@/tqsl.ico"
+TQSL_ICON1	ICON	"@srcdir@/tqsl-new.ico"
+TQSL_ICON2	ICON	"@srcdir@/key.ico"
+TQSL_ICON3	ICON	"@srcdir@/tqsl-key1.ico"
+TQSL_ICON4	ICON	"@srcdir@/tqsl.ico"
 #include "wx/msw/wx.rc"
 
 1 VERSIONINFO
