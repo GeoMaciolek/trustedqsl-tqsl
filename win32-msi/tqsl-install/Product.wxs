@@ -86,7 +86,7 @@
       <ComponentRef Id="DesktopShortcut"/>
     </Feature>
 
-    <Icon Id="tqsl.exe" SourceFile="tqsl.ico"/>
+    <Icon Id="tqsl.exe" SourceFile="key.ico"/>
     
     
     <!-- uninstall old version -->
