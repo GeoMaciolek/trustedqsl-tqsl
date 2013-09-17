@@ -779,6 +779,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	RSA *rsa = NULL;
 	vector< map<string,string> > keylist;
 	vector< map<string,string> >::iterator it;
+	if (ncerts) *ncerts = 0;
 	
 	if (tqsl_init())
 		return 1;
