@@ -1846,8 +1846,18 @@ tqsl_station_data_filename(const char *f = "station_data") {
 
 static int
 tqsl_load_station_data(XMLElement &xel) {
-	xel.parseFile(tqsl_station_data_filename().c_str());
-	return 0;
+	int status = xel.parseFile(tqsl_station_data_filename().c_str());
+	if (status) {
+		strncpy(tQSL_ErrorFile, tqsl_station_data_filename().c_str(), sizeof tQSL_ErrorFile);
+		if (status == XML_PARSE_SYSTEM_ERROR) {
+			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
+			tQSL_Errno = errno;
+		} else {
+			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
+		}
+		return 1;
+	}
+	return status;
 }
 
 static int

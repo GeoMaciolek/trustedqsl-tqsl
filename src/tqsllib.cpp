@@ -251,13 +251,21 @@ tqsl_getErrorString_v(int err) {
 		return buf;
 	}
 	
-	if (err == TQSL_SYSTEM_ERROR) {
+	if (err == TQSL_SYSTEM_ERROR || err == TQSL_FILE_SYSTEM_ERROR) {
 		strcpy(buf, "System error: ");
 		if (strlen(tQSL_ErrorFile) > 0) {
 			strncat(buf, tQSL_ErrorFile, sizeof buf - strlen(buf)-1);
 			strncat(buf, ": ", sizeof buf - strlen(buf)-1);
 		}
-		strncat(buf, strerror(errno), sizeof buf - strlen(buf)-1);
+		strncat(buf, strerror(tQSL_Errno), sizeof buf - strlen(buf)-1);
+		return buf;
+	}
+	if (err == TQSL_FILE_SYNTAX_ERROR) {
+		strcpy(buf, "File syntax error: ");
+		if (strlen(tQSL_ErrorFile) > 0) {
+			strncat(buf, tQSL_ErrorFile, sizeof buf - strlen(buf)-1);
+			strncat(buf, ": ", sizeof buf - strlen(buf)-1);
+		}
 		return buf;
 	}
 	if (err == TQSL_OPENSSL_ERROR) {
