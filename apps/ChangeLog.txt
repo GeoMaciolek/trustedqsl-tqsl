@@ -187,6 +187,14 @@ Properly handle and report upload errors displayed by the LoTW website.
 
 Install TQSL icon when "make install" used on Linux.
 
+Make the new icons optional.
+
+Correct the suppression of the TQSL version number when "-n" is used
+on the commmand line.
+
+Report errors when critical files cannot be opened (station data,
+certificates, etc.)
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
