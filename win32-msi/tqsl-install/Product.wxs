@@ -17,13 +17,17 @@
             <File Id="tqslExe" Name="tqsl.exe" Source="tqsl.exe" KeyPath="yes">
               <Shortcut Id="startmenuTqsl" Directory="ProgramMenuDir" Name="TQSL" WorkingDirectory="APPLICATIONFOLDER" Icon="tqsl.exe" IconIndex="0" Advertise="yes"/>
             </File>
-            <ProgId Id="tq6file" Description="TrustedQSL Certificate" Icon="tqslExe" Advertise="no">
+            <ProgId Id="tq6file" Description="TrustedQSL Callsign Certificate" Icon="tqslExe" Advertise="no">
               <Extension Id="tq6">
                 <Verb Id="import" Command="Import" TargetFile="tqslExe" Argument='"-i %1"'/>
               </Extension>
             </ProgId>
+            <ProgId Id="p12file" Description="Certificate Container" Icon="tqslExe" Advertise="no">
+              <Extension Id="p12">
+                <Verb Id="import" Command="Import" TargetFile="tqslExe" Argument='"-i %1"'/>
+              </Extension>
+            </ProgId>
           </Component>
-
           <Component Id="tqsllib2Comp" Guid="FD0C2985-070B-4AFD-ACD2-0FCE885CCFD5">
             <File Id="tqsllib2Dll" Name="tqsllib2.dll" Source="tqsllib2.dll" KeyPath="yes"/>
           </Component>
