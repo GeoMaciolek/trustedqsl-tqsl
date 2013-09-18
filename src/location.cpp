@@ -2748,10 +2748,12 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 	int status = topel.parseFile(file);
 	if (status) {
 		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
-		if (status == XML_PARSE_SYSTEM_ERROR) 
+		if (status == XML_PARSE_SYSTEM_ERROR) {
 			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
-		else
+			tQSL_Errno = errno;
+		} else {
 			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
+		}
 		return 1;
 	}
 	XMLElement tqsldata;
@@ -2845,10 +2847,12 @@ tqsl_getSerialFromTQSLFile(const char *file, long *serial) {
 	int status =  topel.parseFile(file);
 	if (status) {
 		strncpy(tQSL_ErrorFile, file, sizeof tQSL_ErrorFile);
-		if (status == XML_PARSE_SYSTEM_ERROR) 
+		if (status == XML_PARSE_SYSTEM_ERROR) {
 			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
-		else
+			tQSL_Errno = errno;
+		} else {
 			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
+		}
 		return 1;
 	}
 	XMLElement tqsldata;
