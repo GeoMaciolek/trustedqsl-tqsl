@@ -102,7 +102,7 @@ endif()
 
 set(TQSL_SRC tqsl.cpp extwizard.cpp tqslwiz.cpp dxcc.cpp stationdial.cpp
 qsodatadialog.cpp tqslvalidator.cpp tqsl_prefs.cpp wxutil.cpp tqslhelp.cpp
-crqwiz.cpp certtree.cpp getpassword.cpp loadcertwiz.cpp wxutil.cpp loctree.cpp)
+crqwiz.cpp certtree.cpp getpassword.cpp loadcertwiz.cpp loctree.cpp)
 set(TQSL_HDR tqslapp.h tqslwiz.h qsodatadialog.h tqslexcept.h
 tqslpaths.h stationdial.h dxcc.h tqsl_prefs.h extwizard.h certtree.h
 tqslvalidator.h tqslbuild.h tqslhelp.h certtree.h tqslctrls.h util.h
