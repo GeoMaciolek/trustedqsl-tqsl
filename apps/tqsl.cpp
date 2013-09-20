@@ -1156,6 +1156,9 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title, expired);
 	wiz->SetDefaultCallsign(callsign);
 	wiz->GetPage(true);
+	TQSLWizCertPage *cpage = (TQSLWizCertPage*) wiz->GetPage();
+	if (cpage && !callsign.IsEmpty())
+		cpage->UpdateFields(0);
 	TQSLWizPage *page = wiz->GetPage();
 	if (page == 0)
 		throw TQSLException("Error getting first wizard page");
