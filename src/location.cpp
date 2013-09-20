@@ -1082,7 +1082,17 @@ update_page(int page, TQSL_LOCATION *loc) {
 					tqsl_getCertificateDXCCEntity(certlist[i], &dxcc);
 					char ibuf[10];
 					snprintf(ibuf, sizeof ibuf, "%d", dxcc);
-					p.hash[callsign].push_back(ibuf);
+					bool found = false;
+					// Only add a given DXCC entity to a call once.
+					map<string, vector<string> >::iterator call_p;
+					for (call_p = p.hash.begin(); call_p != p.hash.end(); call_p++) {
+						if (call_p->first == callsign && call_p->second[0] == ibuf) {
+							found = true;
+							break;
+						}
+					}
+					if (!found)
+						p.hash[callsign].push_back(ibuf);
 					tqsl_freeCertificate(certlist[i]);
 				}
 				// Fill the call sign list
