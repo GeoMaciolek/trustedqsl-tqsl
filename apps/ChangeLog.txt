@@ -195,11 +195,28 @@ on the commmand line.
 Report errors when critical files cannot be opened (station data,
 certificates, etc.)
 
+Correct the behavior when the user selects a callsign or a location in the
+station location pane then clicks "Create new station location". The callsign
+selected was used in the location setup, but the DXCC entity was not properly
+selected.
+
+Only display the DXCC entity once in the station location page. This fixes
+the display when there are multiple callsign certificates for a given callsign
+(one valid and one expired, for example). This defect would cause TQSL to show
+a pulldown menu with multiple copies of the same entity name.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
-fixed by http://support.microsoft.com/kb/975858. On all platforms: show some
-additional libraries' versions in the about screen
+fixed by http://support.microsoft.com/kb/975858. This defect causes an error
+message "schannel: failed to setup extended errors".
+
+On all platforms: show some additional libraries' versions in the about screen
+
+Correct a defect when tqsl is used as a command line tool to sign a user's log
+for their logging program. If while signing that log, tqsl detected that a
+newer version of tqsl was available, it would exit without signing or
+uploading those QSOs.
 
 1.14.2
 ------
