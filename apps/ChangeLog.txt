@@ -205,6 +205,14 @@ the display when there are multiple callsign certificates for a given callsign
 (one valid and one expired, for example). This defect would cause TQSL to show
 a pulldown menu with multiple copies of the same entity name.
 
+Suppress warning messages when the user has no locations defined or callsign
+certificates installed as this is normal for an initial setup.
+
+When "Sign and Save" or "Sign and Upload" are used, first check if the user
+has any callsign certificates installed. The former behavior would ask for
+the input and output files, then try to select a station location. Since
+there are none, offering to create a station location would then fail.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect

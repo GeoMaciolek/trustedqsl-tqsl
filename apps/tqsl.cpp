@@ -646,7 +646,6 @@ get_certlist(string callsign, int dxcc, bool expired, bool superceded) {
 		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, select);
 }
 
-
 class LogList : public wxLog {
 public:
 	LogList(MyFrame *frame) : wxLog(), _frame(frame) {}
@@ -2838,6 +2837,14 @@ void
 MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	tqslTrace("MyFrame::ImportQSODataFile");
 	wxString infile;
+
+	// Does the user have any certificates?
+	if (ncerts == 0) {
+		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
+			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
+			   wxOK|wxICON_EXCLAMATION, this);
+		return;
+	}
 	try {
 		bool compressed = (event.GetId() == tm_f_import_compress || event.GetId() == tl_Save);
 		
@@ -2926,6 +2933,13 @@ void
 MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	tqslTrace("MyFrame::UploadQSODataFile");
 	wxString infile;
+	// Does the user have any certificates?
+	if (ncerts == 0) {
+		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
+			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
+			   wxOK|wxICON_EXCLAMATION, this);
+		return;
+	}
 	try {
 		
 		wxConfig *config = (wxConfig *)wxConfig::Get();
@@ -2969,7 +2983,6 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
 			return;
-
 
 		char callsign[40];
 		char loc_name[256];
@@ -3189,7 +3202,8 @@ MyFrame::BackupConfig(wxString& filename, bool quiet) {
 		tQSL_StationDataEnc sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationDataEnc(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
-		parser->ParseLocations(&out, sdbuf);
+		if (sdbuf)
+			parser->ParseLocations(&out, sdbuf);
 		check_tqsl_error(tqsl_freeStationDataEnc(sdbuf));
 		gzprintf(out, "</Locations>\n");
 
