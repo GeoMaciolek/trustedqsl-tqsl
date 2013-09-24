@@ -2839,6 +2839,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 
 	// Does the user have any certificates?
+	get_certlist("", 0, false, false);
+	free_certlist();
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
@@ -2934,6 +2936,8 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	tqslTrace("MyFrame::UploadQSODataFile");
 	wxString infile;
 	// Does the user have any certificates?
+	get_certlist("", 0, false, false);
+	free_certlist();
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
