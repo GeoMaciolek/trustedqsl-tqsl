@@ -1858,6 +1858,8 @@ static int
 tqsl_load_station_data(XMLElement &xel) {
 	int status = xel.parseFile(tqsl_station_data_filename().c_str());
 	if (status) {
+		if (errno == ENOENT)		// If there's no file, no error.
+			return 0;
 		strncpy(tQSL_ErrorFile, tqsl_station_data_filename().c_str(), sizeof tQSL_ErrorFile);
 		if (status == XML_PARSE_SYSTEM_ERROR) {
 			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
@@ -1962,9 +1964,16 @@ DLLEXPORT int CALLCONVENTION
 	size_t dlen = 0;
 	gzFile in = gzopen(tqsl_station_data_filename().c_str(), "rb");
 
-	if (!in)
+	if (!in) {
+		if (errno == ENOENT) {
+			*sdata = NULL;
+			return 0;
+		}
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		strncpy(tQSL_ErrorFile, tqsl_station_data_filename().c_str(), sizeof tQSL_ErrorFile);
 		return 1;
-
+	}
 	char buf[2048];
 	int rcount;
 	while ((rcount = gzread(in, buf, sizeof buf)) > 0) {
@@ -1986,7 +1995,8 @@ DLLEXPORT int CALLCONVENTION
 
 DLLEXPORT int CALLCONVENTION
 	tqsl_freeStationDataEnc(tQSL_StationDataEnc sdata) {
-	free(sdata);
+	if (sdata)
+		free(sdata);
 	return 0; //can never fail
 }
 

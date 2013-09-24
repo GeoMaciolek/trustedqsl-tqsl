@@ -779,7 +779,6 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	RSA *rsa = NULL;
 	vector< map<string,string> > keylist;
 	vector< map<string,string> >::iterator it;
-	if (ncerts) *ncerts = 0;
 	
 	if (tqsl_init())
 		return 1;
@@ -787,6 +786,9 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
+	*ncerts = 0;
+	*certlist = NULL;
+
 	/* Convert the dates to tQSL_Date objects */
 	if (date && !tqsl_isDateNull(date) && !tqsl_isDateValid(date)) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -799,6 +801,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	if (xcerts == NULL) {
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
 			return 1;
+		else if (tQSL_Error == TQSL_SYSTEM_ERROR && tQSL_Errno == ENOENT) // No file
+			return 0;
 	} else
 		selcerts = tqsl_filter_cert_list(xcerts, callsign, dxcc, date, issuer, flags);
 
