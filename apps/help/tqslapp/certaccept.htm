@@ -9,7 +9,7 @@ LoTW requires that you accept your Initial <a href="glossary.htm#callsign_certif
 <p>
 These instructions assume that your Callsign Certificate reside in the folder <CODE>C:\MyLoTWCertificates</CODE> (if you've stored them in a different folder, adjust the instructions accordingly).
 <p>
-When you receive an email message from the ARRL with an attached file named <CODE>YourCallsign.tq6</CODE> ,
+When you receive an email message from the ARRL with an attached file named <CODE>YourCallsign.tq6</CODE> (for example, <CODE>CT2IRY.tq6</CODE>),
 <table border="0" valign="top">
 	<col style="width:30px">
 	<tr><td>1.</td><td>Direct your email application to open the email message.</td></tr>
@@ -53,7 +53,7 @@ When you receive an email message from the ARRL with an attached file named <COD
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.e</td><td>The <b>Callsign Certificates</b> tab will show an entry for your Callsign Certificate, with a yellow medal <i>valid</i> icon: <img src="TQSLCert.bmp" width=17 height=19>. </td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;</td><td><img src="certaccept2.bmp" width=575 height=406></td></tr>
 	
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.f</td><td>To protect your new Callsign Certificate, direct TQSL to create a <A HREF="backuprestore.htm#backup">Backup File</A>.</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.f</td><td>To protect your new Callsign Certificate, direct <b>TQSL</b> to create a <A HREF="backuprestore.htm#backup">Backup File</A>.</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>3.g</td><td>You can terminate <b>TQSL</b> by selecting its <b>File</b> menu's <b>Exit</b> command (on <b>OS X</b>, by selecting the <b>Application</b> menu's <b>Quit tqsl</b> command).</td></tr>
 </table>
 
@@ -68,6 +68,23 @@ When you receive an email message from the ARRL with an attached file named <COD
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the <i>Certificate Request file</i> <CODE>YourCallsign.tq5</CODE> -- request sent to ARRL (no longer needed)</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>*</td><td>the <i>Certificate file</i> <CODE>YourCallsign.tq6</CODE> -- contains your actual Callsign Certificate, in a form that cannot be moved or copied</td></tr>
 </table>
+
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>5.</td><td>If you have <b>TQSL</b> installed on multiple computers, then perform the following steps on each such computer:</td></tr>
+</table>
+
+<table border="0" valign="top">
+	<col style="width:30px">
+	<col style="width:40px">
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>5.a</td><td>Delete the files <CODE>YourCallsign.tq6</CODE> and <CODE>YourCallsign.p12</CODE> if they are present, as these files now contain obsolete information</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>5.b</td><td>Obtain a copy of the <A HREF="backuprestore.htm#backup">Backup File</A> you created in step 3.f (via your home network, or by using a thumb drive)</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>5.c</td><td>Start <b>TQSL</b>, and direct it to <A HREF="backuprestore.htm#restore">Restore</A> from the backup file you obtained in step 5.b; 
+	this will update all Callsign Certificates, Station Locations, and Preferences on this computer to match those on the computer you used to accept the Callsign Certificate in step 3</td></tr>
+</table>
+
+
+
 
 <p>
 A table illustrating the icons used by <b>Windows</b> to designate the above-mentioned LoTW file types in <b>Windows Explorer</b> is provided <A HREF="files-icons.htm">here</a>.
