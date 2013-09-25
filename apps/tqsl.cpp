@@ -3762,6 +3762,7 @@ QSLApp::OnInit() {
 		frame->Show(false);
 	}
 	if (parser.Found(wxT("i"), &importfile)) {
+		importfile.Trim(true).Trim(false);
 		notifyData nd;
 		if (tqsl_importTQSLFile(importfile.mb_str(), notifyImport, &nd)) {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
