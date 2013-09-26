@@ -465,7 +465,7 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	int em_w = st->GetSize().GetWidth();
 	int em_h = st->GetSize().GetHeight();
 	st->SetLabel(
-wxT("You may protect this callsign certificate using a password\n")
+wxT("You may protect this callsign certificate using a password.\n")
 wxT("If you are using a computer system that is shared with\n")
 wxT("others, you should specify a password to protect this\n")
 wxT("callsign certificate. However, if you are using a computer\n")
@@ -513,17 +513,18 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	sizer->Add(new wxStaticText(this, -1, wxT("If this certificate is for your personal callsign, then you\n"
-						"should select 'Signed' and choose a callsign certificate from\n"
-						"the list to be used to sign this request.\n\n"
-						"If this certificate request is being submitted for a club station\n"
-						"or by a QSL manager on behalf of another licensee, select 'Unsigned'.")));
+	sizer->Add(new wxStaticText(this, -1, wxT("If the requested certificate is for your personal callsign, then you\n"
+						"should select 'Signed' and choose a callsign certificate for another of\n"
+						"your personal callsigns from the list below to be used to sign this request.\n\n"
+						"If you don't have a Callsign Certificate for another personal callsign, or\n"
+						"if the requested Callsign Certificate is for a club station or for use by a\n"
+						"QSL manager on behalf of another operator, select 'Unsigned'.")));
 
 	wxStaticText* text_sizer = new wxStaticText(this, -1, wxT("M"));
 	int em_h = text_sizer->GetSize().GetHeight();
 	int em_w = text_sizer->GetSize().GetWidth();
 	text_sizer->Show(false);
-	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*4));
+	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*3));
 
 	wxString choices[] = { wxT("Unsigned"), wxT("Signed") };
 
