@@ -502,6 +502,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 	}
 	do {
 		string value = field_data[specfield.getElementName()];
+		value = trim(value);
 		if (value == "") {
 			pair<string, bool> attr = specfield.getAttribute("required");
 			if (attr.second && strtol(attr.first.c_str(), NULL, 10)){
@@ -518,14 +519,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 				return 1;
 			}
 		} else {
-			string v(value);
-			string::size_type idx = v.find_first_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(idx);
-			idx = v.find_last_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(0, idx+1);
-			loc->signdata += v;
+			loc->signdata += value;
 		}
 		ok = tSTATION.getNextElement(specfield);
 	} while (ok);
