@@ -23,6 +23,7 @@
 #include <cstring>
 #include <fstream>
 #include <algorithm>
+#include <cctype>
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "xml.h"
@@ -247,6 +248,22 @@ string_toupper(const string& in) {
 	string out = in;
 	transform(out.begin(), out.end(), out.begin(), char_toupper);
 	return out;
+}
+// trim from start
+static inline std::string &ltrim(std::string &s) {
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+        return s;
+}
+
+// trim from end
+static inline std::string &rtrim(std::string &s) {
+	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	return s;
+}
+
+// trim from both ends
+static inline std::string &trim(std::string &s) {
+	return ltrim(rtrim(s));
 }
 
 #define TQSL_NPAGES 4
@@ -1931,6 +1948,7 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 							}
 							break;
 						case TQSL_LOCATION_FIELD_TEXT:
+							field.cdata = trim(field.cdata);
 							if (field.data_type == TQSL_LOCATION_FIELD_INT)
 								field.idata = strtol(field.cdata.c_str(), NULL, 10);
 							break;
@@ -2230,6 +2248,7 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
 						break;
 					case TQSL_LOCATION_FIELD_TEXT:
+						field.cdata = trim(field.cdata);
 						if (field.flags & TQSL_LOCATION_FIELD_UPPER)
 							field.cdata = string_toupper(field.cdata);
 						strncpy(namebuf, field.cdata.c_str(), bufsize);
@@ -2278,6 +2297,7 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 						fd.setText(field.items[field.idx].text);
 					break;
 				case TQSL_LOCATION_FIELD_TEXT:
+					field.cdata = trim(field.cdata);
 					if (field.flags & TQSL_LOCATION_FIELD_UPPER)
 						field.cdata = string_toupper(field.cdata);
 					fd.setText(field.cdata);
