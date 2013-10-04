@@ -2636,7 +2636,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 
 void
 MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
-	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d", silent);
+	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d, noGUI=%d", silent, noGUI);
 	FILE *logFile = NULL; 
 	wxConfig* config=(wxConfig*)wxConfig::Get();
 
@@ -2673,8 +2673,8 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
 
 	if(silent) { // if there's a problem, we don't want the program to hang while we're starting it
-		curl_easy_setopt(req, CURLOPT_CONNECTTIMEOUT, 3);
-		curl_easy_setopt(req, CURLOPT_TIMEOUT, 3); 
+		curl_easy_setopt(req, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_easy_setopt(req, CURLOPT_TIMEOUT, 10);
 	}
 
 	curl_easy_setopt(req, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
@@ -2684,12 +2684,14 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 
 	int retval = curl_easy_perform(req);
 	if (retval == CURLE_OK) {
+		tqslTrace("MyFrame::DoCheckForUpdates", "Program rev returns %d chars, %s", handler.s.size(), handler.s.c_str());
 		// Add the config.xml text to the result
 		wxString configURL=config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
 		curl_easy_setopt(req, CURLOPT_URL, (const char*)configURL.mb_str());
 
 		retval = curl_easy_perform(req);
 		if (retval == CURLE_OK) {
+			tqslTrace("MyFrame::DoCheckForUpdates", "Prog + Config rev returns %d chars, %s", handler.s.size(), handler.s.c_str());
 			wxString result=wxString::FromAscii(handler.s.c_str());
 			wxString url;
 			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
@@ -2764,44 +2766,44 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 					wxMessageBox(wxString::Format(wxT("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, configRev->Value().c_str()), wxT("No Updates"), wxOK|wxICON_INFORMATION, this);
 		} else {
 			if (diagFile) {
-				fprintf(diagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+				fprintf(diagFile, "cURL Error during config file version check: %d : %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
 			}
 			if (logFile) {
-				fprintf(logFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+				fprintf(logFile, "cURL Error during config file version check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 			}
 			if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-				if (!silent)
+				if (!silent && !noGUI)
 					wxLogMessage(wxT("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
 			} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
-				if (!silent)
+				if (!silent && !noGUI)
 					wxLogMessage(wxT("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later."));
 			} else if (retval == CURLE_SSL_CONNECT_ERROR) {
-				if (!silent)
+				if (!silent && !noGUI)
 					wxLogMessage(wxT("Unable to connect to the update site.\nPlease try again later."));
 			} else { // some other error
-				if (!silent)
-					wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+				if (!silent && !noGUI)
+					wxMessageBox(wxString::Format(wxT("Error downloading new version information:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 			}
 		}
 	} else {
 		if (diagFile) {
-			fprintf(diagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+			fprintf(diagFile, "cURL Error during program revision check: %d: %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
 		if (logFile) {
-			fprintf(logFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+			fprintf(logFile, "cURL Error during program revision check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-			if (!silent)
+			if (!silent && !noGUI)
 				wxLogMessage(wxT("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
 		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
-			if (!silent)
+			if (!silent && !noGUI)
 				wxLogMessage(wxT("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later."));
 		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
-			if (!silent)
+			if (!silent && !noGUI)
 				wxLogMessage(wxT("Unable to connect to the update site.\nPlease try again later."));
 		} else { // some other error
-			if (!silent)
-				wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+			if (!silent && !noGUI)
+				wxMessageBox(wxString::Format(wxT("Error downloading update version information:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
 	}
 
