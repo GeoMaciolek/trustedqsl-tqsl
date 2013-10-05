@@ -213,6 +213,15 @@ has any callsign certificates installed. The former behavior would ask for
 the input and output files, then try to select a station location. Since
 there are none, offering to create a station location would then fail.
 
+Trim extra spaces from station location fields. These could cause
+signing to fail as LoTW was removing these but TQSL was not.
+
+Update TQSL to provide the current LoTW configuration file (v2.5)
+
+Correct error messages on version update website failures, so that it's
+clear that it was the check that failed, not the download. Increase the
+version check timeout slightly to limit premature check failures.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect
