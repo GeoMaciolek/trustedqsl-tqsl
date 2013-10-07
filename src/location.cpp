@@ -2441,13 +2441,7 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 			}
 		} else {
 			string v(value);
-			string::size_type idx = v.find_first_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(idx);
-			idx = v.find_last_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(0, idx+1);
-			rec_sign_data += v;
+			rec_sign_data += trim(v);
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
 	}
@@ -2605,13 +2599,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 			}
 		} else {
 			string v(value);
-			string::size_type idx = v.find_first_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(idx);
-			idx = v.find_last_not_of(" \t");
-			if (idx != string::npos)
-				v = v.substr(0, idx+1);
-			rec_sign_data += v;
+			rec_sign_data += trim(v);
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
 	}
