@@ -50,6 +50,10 @@ fail while searching for recovery logs.
 Correctly handle permission problems and other system errors that occur
 when opening station data and certificate files.
 
+Strip spaces from entirely space-filled station location fields when
+creating signing data. Prior versions of tqsllib would not properly
+trim strings containing only spaces.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
