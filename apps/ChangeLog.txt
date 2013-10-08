@@ -222,6 +222,11 @@ Correct error messages on version update website failures, so that it's
 clear that it was the check that failed, not the download. Increase the
 version check timeout slightly to limit premature check failures.
 
+When performing the automatic update check at startup, wait for the main GUI
+window to appear. Provide a status message in the window until the update
+check completes. This keeps TQSL from appearing to hang at startup if the
+update check is slow.
+
 1.14.3
 ------
 On Windows, use a newer verions of libcurl that doesn't suffer from the defect

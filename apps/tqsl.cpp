@@ -760,6 +760,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_TREE_SEL_CHANGED(tc_CertTree, MyFrame::OnCertTreeSel)
 	EVT_TREE_SEL_CHANGED(tc_LocTree, MyFrame::OnLocTreeSel)
 
+	EVT_TIMER(tm_f_autoupdate, MyFrame::DoUpdateCheck)
 END_EVENT_TABLE()
 
 void
@@ -796,6 +797,20 @@ void
 MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Close();
 	Destroy();
+}
+
+void
+MyFrame::DoUpdateCheck(wxTimerEvent& WXUNUSED(event)) {
+	//check for updates
+	wxConfig *config = (wxConfig *)wxConfig::Get();
+	if (config->Read(wxT("AutoUpdateCheck"), true)) {
+	wxLogMessage(wxT("Checking for TQSL updates..."));
+		wxSafeYield();
+		wxBusyCursor wait;
+		wxSafeYield();
+		DoCheckForUpdates(true);
+		logwin->SetValue(wxT(""));              // Clear the checking message
+	}
 }
 
 MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet)
@@ -1133,14 +1148,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	//app icon
 	SetIcon(wxIcon(key_xpm));
 
-	//check for updates
 	if (checkUpdates) {
 		LogList *log = new LogList(this);
 		wxLog::SetActiveTarget(log);
-		wxConfig *config = (wxConfig *)wxConfig::Get();
-		if (config->Read(wxT("AutoUpdateCheck"), true)) {
-			DoCheckForUpdates(true); //TODO: in a thread?
-		}
+                // Start the autoupdate check 2 seconds after the page shows up
+		_timer = new wxTimer(this, tm_f_autoupdate);
+		_timer->Start(2000, true);
 	}
 }
 
@@ -2513,9 +2526,6 @@ void MyFrame::UpdateConfigFile() {
 	curl_easy_setopt(req, CURLOPT_WRITEFUNCTION, &ConfigFileDownloadHandler::recv);
 	curl_easy_setopt(req, CURLOPT_WRITEDATA, &handler);
 
-	curl_easy_setopt(req, CURLOPT_CONNECTTIMEOUT, 3);
-	curl_easy_setopt(req, CURLOPT_TIMEOUT, 3); 
-
 	curl_easy_setopt(req, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
 
 	char errorbuf[CURL_ERROR_SIZE];
@@ -2674,7 +2684,6 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 
 	if(silent) { // if there's a problem, we don't want the program to hang while we're starting it
 		curl_easy_setopt(req, CURLOPT_CONNECTTIMEOUT, 10);
-		curl_easy_setopt(req, CURLOPT_TIMEOUT, 10);
 	}
 
 	curl_easy_setopt(req, CURLOPT_FAILONERROR, 1); //let us find out about a server issue

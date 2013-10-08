@@ -46,7 +46,8 @@ enum {
 	tm_s_edit,
 	tm_h_contents,
 	tm_h_about,
-	tm_h_update
+	tm_h_update,
+	tm_f_autoupdate
 };
 
 // Action values
@@ -92,6 +93,7 @@ public:
 	void UploadQSODataFile(wxCommandEvent& event);
 	void OnExit(TQ_WXCLOSEEVENT& event);
 	void DoExit(wxCommandEvent& event);
+	void DoUpdateCheck(wxTimerEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 	void OnHelpDiagnose(wxCommandEvent& event);
@@ -165,6 +167,7 @@ private:
 	int renew;
 	TQSL_CERT_REQ *req;
 	bool _quiet;
+	wxTimer* _timer;
 
 };
 
