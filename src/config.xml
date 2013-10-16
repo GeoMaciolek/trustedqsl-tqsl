@@ -1,4 +1,4 @@
-<tqslconfig majorversion="2" minorversion="5">
+<tqslconfig majorversion="2" minorversion="6">
      <adifmap>
        <adifmode mode="AMTOR">AMTORFEC</adifmode>
        <adifmode mode="RTTY">ASCI</adifmode>
@@ -433,7 +433,7 @@
        <entity arrlId="245" zonemap="27:14">IRELAND</entity>
        <entity arrlId="246" zonemap="28:15">SOV MILITARY ORDER OF MALTA</entity>
        <entity arrlId="247" zonemap="50:26">SPRATLY ISLANDS</entity>
-       <entity arrlId="248" zonemap="28:15,28:33">ITALY</entity>
+       <entity arrlId="248" zonemap="28:15,37:33">ITALY</entity>
        <entity arrlId="249" zonemap="11:08">SAINT KITTS &amp; NEVIS</entity>
        <entity arrlId="250" zonemap="66:36">SAINT HELENA</entity>
        <entity arrlId="251" zonemap="28:14">LIECHTENSTEIN</entity>
