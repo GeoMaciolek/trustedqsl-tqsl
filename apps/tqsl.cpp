@@ -3608,7 +3608,7 @@ QSLApp::GUIinit(bool checkUpdates, bool quiet) {
 	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
 	if (checkUpdates)
 		frame->FirstTime();
-	frame->Show(true);
+	frame->Show(!quiet);
 	SetTopWindow(frame);
 
 	return frame;
@@ -3891,6 +3891,8 @@ QSLApp::OnInit() {
 	}
 	// We need a logfile, else there's nothing to do.
 	if (wxIsEmpty(infile)) {	// Nothing to sign
+		if (diagFile)		// Unless there's just a trace log
+			return true;	// in which case we let it open.
 		wxLogError(wxT("No logfile to sign!"));
 		if (quiet)
 			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);

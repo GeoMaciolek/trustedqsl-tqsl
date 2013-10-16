@@ -431,13 +431,6 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		break;		// Opened OK.
 	}
 
-	// Automatically remove the log files that are not needed
-#if defined(DB_LOG_AUTO_REMOVE)
-	conv->dbenv->set_flags(conv->dbenv, DB_LOG_AUTO_REMOVE, true);
-#elif defined(DB_LOG_AUTOREMOVE)
-	conv->dbenv->set_flags(conv->dbenv, DB_LOG_AUTOREMOVE, true);
-#endif
-
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
 		// can't create db
 		dbinit_cleanup=true;
