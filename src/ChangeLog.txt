@@ -54,6 +54,9 @@ Strip spaces from entirely space-filled station location fields when
 creating signing data. Prior versions of tqsllib would not properly
 trim strings containing only spaces.
 
+Remove code that was trying to remove unnecessary transaction log files
+as that was causing duplicate detection to fail.
+
 2.3
 ---
 Add a mechanism to the location definition process to allow enforcement
