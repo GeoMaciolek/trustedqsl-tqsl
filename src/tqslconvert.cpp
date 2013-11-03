@@ -965,6 +965,17 @@ hasValidCallSignChars(const string& call) {
 	// Need at least one number
 	if (call.find_first_of("0123456789") == string::npos)
 		return false;
+	// Invalid callsign patterns
+	// Starting with 0, Q, C7, or 4Y
+	// 1x other than 1A, 1M, 1S
+	string first = call.substr(0, 1);
+	string second = call.substr(1, 1);
+	if (first == "0" || first == "Q" ||
+	    (first == "C" && second == "7") ||
+	    (first == "4" && second == "Y") ||
+	    (first == "1" && second != "A" && second != "M" && second != "S"))
+		return false;
+
 	return true;
 }
 
