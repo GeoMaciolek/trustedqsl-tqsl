@@ -9,24 +9,29 @@
  ***************************************************************************/
 
 #include "xml.h"
-#include <stack>
-#include <fstream>
 #include <string.h>
 #include <zlib.h>
+#include <stack>
+#include <fstream>
+#include <utility>
+#include <string>
 
-using namespace std;
+using std::pair;
+using std::string;
+using std::ostream;
+using std::map;
 
 namespace tqsllib {
 
-pair<string,bool>
+pair<string, bool>
 XMLElement::getAttribute(const string& key) {
 	string s;
 	XMLElementAttributeList::iterator pos;
 	pos = _attributes.find(key);
-	pair<string,bool> rval;
-	if (pos == _attributes.end())
+	pair<string, bool> rval;
+	if (pos == _attributes.end()) {
 		rval.second = false;
-	else {
+	} else {
 		rval.first = pos->second;
 		rval.second = true;
 	}
@@ -35,7 +40,7 @@ XMLElement::getAttribute(const string& key) {
 
 void
 XMLElement::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
-	XMLElement *el = (XMLElement *)data;
+	XMLElement *el = reinterpret_cast<XMLElement *>(data);
 	XMLElement new_el(name);
 //cout << "Element: " << name << endl;
 	for (int i = 0; atts[i]; i += 2) {
@@ -43,9 +48,7 @@ XMLElement::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
 	}
 	if (el->_parsingStack.empty()) {
 		el->_parsingStack.push_back(el->addElement(new_el));
-//cout << "Empty: " << new_el.getElementName() << endl;
 	} else {
-//cout << "Adding: " << el->_parsingStack.back()->second.getElementName() << endl;
 		new_el.setPretext(el->_parsingStack.back()->second.getText());
 		el->_parsingStack.back()->second.setText("");
 		el->_parsingStack.push_back(el->_parsingStack.back()->second.addElement(new_el));
@@ -54,14 +57,14 @@ XMLElement::xml_start(void *data, const XML_Char *name, const XML_Char **atts) {
 
 void
 XMLElement::xml_end(void *data, const XML_Char *name) {
-	XMLElement *el = (XMLElement *)data;
+	XMLElement *el = reinterpret_cast<XMLElement *>(data);
 	if (!(el->_parsingStack.empty()))
 		el->_parsingStack.pop_back();
 }
 
 void
 XMLElement::xml_text(void *data, const XML_Char *text, int len) {
-	XMLElement *el = (XMLElement *)data;
+	XMLElement *el = reinterpret_cast<XMLElement *>(data);
 	el->_parsingStack.back()->second._text.append(text, len);
 }
 
@@ -100,7 +103,7 @@ XMLElement::parseFile(const char *filename) {
 int
 XMLElement::parseString(const char *xmlstring) {
 	XML_Parser xp = XML_ParserCreate(0);
-	XML_SetUserData(xp, (void *)this);
+	XML_SetUserData(xp, reinterpret_cast<void *>(this));
 	XML_SetStartElementHandler(xp, &XMLElement::xml_start);
 	XML_SetEndElementHandler(xp, &XMLElement::xml_end);
 	XML_SetCharacterDataHandler(xp, &XMLElement::xml_text);
@@ -123,7 +126,7 @@ XMLElement::parseFile(const char *filename) {
 		return XML_PARSE_SYSTEM_ERROR;	// Failed to open file
 	char buf[256];
 	XML_Parser xp = XML_ParserCreate(0);
-	XML_SetUserData(xp, (void *)this);
+	XML_SetUserData(xp, reinterpret_cast<void *>(this));
 	XML_SetStartElementHandler(xp, &XMLElement::xml_start);
 	XML_SetEndElementHandler(xp, &XMLElement::xml_end);
 	XML_SetCharacterDataHandler(xp, &XMLElement::xml_text);
@@ -151,10 +154,10 @@ static struct {
 	char c;
 	const char *ent;
 } xml_entity_table[] = {
-	{ '"', "&quot;" },
-	{ '\'', "&apos;" },
-	{ '>', "&gt;" },
-	{ '<', "&lt;" }
+        { '"', "&quot;" },
+        { '\'', "&apos;" },
+        { '>', "&gt;" },
+        { '<', "&lt;" }
 };
 
 static string
@@ -165,7 +168,7 @@ xml_entities(const string& s) {
 		ns.replace(idx, 1, "&amp;");
 		idx++;
 	}
-	for (int i = 0; i < int(sizeof xml_entity_table / sizeof xml_entity_table[0]); i++) {
+	for (int i = 0; i < static_cast<int>((sizeof xml_entity_table / sizeof xml_entity_table[0])); i++) {
 		while ((idx = ns.find(xml_entity_table[i].c)) != string::npos)
 			ns.replace(idx, 1, xml_entity_table[i].ent);
 	}
@@ -177,19 +180,20 @@ ostream&
 operator<< (ostream& stream, XMLElement& el) {
 	bool ok;
 	XMLElement subel;
- 	if (el.getElementName() != "") {
-	 	stream << "<" << el.getElementName();
- 		string key, val;
-	 	bool ok = el.getFirstAttribute(key, val);
- 		while (ok) {
- 			stream << " " << key << "=\"" << xml_entities(val) << "\"";
-	 		ok = el.getNextAttribute(key, val);
- 		}
-	 	if (el.getText() == "" && !el.getFirstElement(subel)) {
- 			stream << " />";
- 			return stream;
-	 	} else
+	if (el.getElementName() != "") {
+		stream << "<" << el.getElementName();
+		string key, val;
+		bool ok = el.getFirstAttribute(key, val);
+		while (ok) {
+			stream << " " << key << "=\"" << xml_entities(val) << "\"";
+			ok = el.getNextAttribute(key, val);
+		}
+		if (el.getText() == "" && !el.getFirstElement(subel)) {
+			stream << " />";
+			return stream;
+		} else {
 			stream << ">";
+		}
 	}
 	ok = el.getFirstElement(subel);
 	while (ok) {

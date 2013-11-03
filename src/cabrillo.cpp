@@ -11,13 +11,13 @@
 
 #define TQSLLIB_DEF
 
-#include "tqsllib.h"
-#include "tqslerrno.h"
-#include <cstdio>
-#include <cstring>
 #include <ctype.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <cstdio>
+#include <cstring>
+#include "tqsllib.h"
+#include "tqslerrno.h"
 
 #include "winstrdefs.h"
 
@@ -42,13 +42,13 @@ struct cabrillo_field_def {
 };
 
 static cabrillo_field_def cabrillo_dummy[] = {
-	{ "CALL", 6, 0 },
-	{ "BAND", 0, freq_to_band },
-	{ "MODE", 1, mode_xlat },
-	{ "QSO_DATE", 2, 0 },
-	{ "TIME_ON", 3, time_fixer },
-	{ "FREQ", 0, freq_to_mhz },
-	{ "MYCALL", 4, 0 },
+	 { "CALL", 6, 0 },
+	 { "BAND", 0, freq_to_band },
+	 { "MODE", 1, mode_xlat },
+	 { "QSO_DATE", 2, 0 },
+	 { "TIME_ON", 3, time_fixer },
+	 { "FREQ", 0, freq_to_mhz },
+	 { "MYCALL", 4, 0 },
 };
 
 /*
@@ -165,7 +165,7 @@ tqsl_parse_cabrillo_record(char *rec) {
 static int
 freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	if (!strcasecmp(fp->value, "light")) {
-		strcpy(fp->value, "SUBMM");
+		strncpy(fp->value, "SUBMM", sizeof fp->value);
 		return 0;
 	}
 	int freq = strtol(fp->value, NULL, 10);
@@ -246,7 +246,7 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	}
 	if (band == 0)
 		return 1;
-	strcpy(fp->value, band);
+	strncpy(fp->value, band, sizeof fp->value);
 	return 0;
 }
 
@@ -318,9 +318,7 @@ freq_to_mhz(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 			cab->contest->type = TQSL_CABRILLO_HF;
 	}
 
-	char strfreq[100];
-	snprintf(strfreq, sizeof strfreq, "%#f", freqmhz);
-	strcpy(fp->value, strfreq);
+	snprintf(fp->value, sizeof fp->value, "%#f", freqmhz);
 	return 0;
 }
 
@@ -330,11 +328,11 @@ mode_xlat(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 		const char *cmode;
 		const char *gmode;
 	} modes[] = {
-		{"CW", "CW"}, {"PH", "SSB"}, {"FM", "FM"}, {"RY", "RTTY"}
+		 { "CW", "CW"}, {"PH", "SSB"}, {"FM", "FM"}, {"RY", "RTTY" }
 	};
-	for (int i = 0; i < int(sizeof modes / sizeof modes[0]); i++) {
+	for (int i = 0; i < static_cast<int>(sizeof modes / sizeof modes[0]); i++) {
 		if (!strcasecmp(fp->value, modes[i].cmode)) {
-			strcpy(fp->value, modes[i].gmode);
+			strncpy(fp->value, modes[i].gmode, sizeof fp->value);
 			return 0;
 		}
 	}
@@ -351,7 +349,7 @@ time_fixer(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 			break;
 	if (*cp)
 		return 1;
-	snprintf(fp->value, sizeof fp->value, "%04d", (int) strtol(fp->value, NULL, 10));
+	snprintf(fp->value, sizeof fp->value, "%04d", static_cast<int>(strtol(fp->value, NULL, 10)));
 	return 0;
 }
 
@@ -366,14 +364,13 @@ tqsl_free_cabrillo_contest(struct cabrillo_contest *c) {
 
 static struct cabrillo_contest *
 tqsl_new_cabrillo_contest(const char *contest_name, int call_field, int contest_type) {
-	cabrillo_contest *c = (cabrillo_contest *)calloc(1, sizeof (struct cabrillo_contest));
+	cabrillo_contest *c = static_cast<cabrillo_contest *>(calloc(1, sizeof(struct cabrillo_contest)));
 	if (c == NULL)
 		return NULL;
-	if ((c->contest_name = (char *)malloc(strlen(contest_name)+1)) == NULL) {
+	if ((c->contest_name =  strdup(contest_name))) {
 		tqsl_free_cabrillo_contest(c);
 		return NULL;
 	}
-	strcpy(c->contest_name, contest_name);
 	c->type = (TQSL_CABRILLO_FREQ_TYPE)contest_type;
 	if ((c->fields = (struct cabrillo_field_def *)calloc(1, sizeof cabrillo_dummy)) == NULL) {
 		tqsl_free_cabrillo_contest(c);
@@ -407,7 +404,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 		return 1;
 	}
 	struct TQSL_CABRILLO *cab;
-	cab = (struct TQSL_CABRILLO *)calloc(1, sizeof (struct TQSL_CABRILLO));
+	cab = (struct TQSL_CABRILLO *)calloc(1, sizeof(struct TQSL_CABRILLO));
 	if (cab == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;
 		goto err;
@@ -438,7 +435,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 				terrno = TQSL_CABRILLO_UNKNOWN_CONTEST;
 				int callfield, contest_type;
 				if (tqsl_getCabrilloMapEntry(vp, &callfield, &contest_type)) {
-					// No defined contest with this name. 
+					// No defined contest with this name.
 					// callfield comes back as 0
 					contest_type = TQSL_CABRILLO_UNKNOWN;
 				}
@@ -461,19 +458,17 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 		tQSL_Error = TQSL_CABRILLO_ERROR;
 		goto err;
 	}
-	if ((cab->filename = (char *)malloc(strlen(filename)+1)) == NULL) {
+	if ((cab->filename = strdup(filename)) == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;
 		goto err;
 	}
-	strcpy(cab->filename, filename);
 	*((struct TQSL_CABRILLO **)cabp) = cab;
 	return 0;
-err:
+ err:
 	strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 	tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
 	tqsl_free_cab(cab);
 	return 1;
-
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -493,26 +488,26 @@ DLLEXPORT const char* CALLCONVENTION
 tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
 	const char *msg = 0;
 	switch (err) {
-		case TQSL_CABRILLO_NO_ERROR:
+                case TQSL_CABRILLO_NO_ERROR:
 			msg = "Cabrillo success";
 			break;
-		case TQSL_CABRILLO_EOF:
+                case TQSL_CABRILLO_EOF:
 			msg = "Cabrillo end-of-file";
 			break;
-		case TQSL_CABRILLO_EOR:
+                case TQSL_CABRILLO_EOR:
 			msg = "Cabrillo end-of-record";
 			break;
-		case TQSL_CABRILLO_NO_START_RECORD:
+                case TQSL_CABRILLO_NO_START_RECORD:
 			msg = "Cabrillo missing START-OF-LOG record";
 			break;
-		case TQSL_CABRILLO_NO_CONTEST_RECORD:
+                case TQSL_CABRILLO_NO_CONTEST_RECORD:
 			msg = "Cabrillo missing CONTEST record";
 			break;
-		case TQSL_CABRILLO_UNKNOWN_CONTEST:
+                case TQSL_CABRILLO_UNKNOWN_CONTEST:
 			snprintf(errmsgbuf, sizeof errmsgbuf, "Cabrillo unknown CONTEST: %s", errmsgdata);
 			msg = errmsgbuf;
 			break;
-		case TQSL_CABRILLO_BAD_FIELD_DATA:
+                case TQSL_CABRILLO_BAD_FIELD_DATA:
 			snprintf(errmsgbuf, sizeof errmsgbuf, "Cabrillo field data error in %s field", errmsgdata);
 			msg = errmsgbuf;
 			break;
@@ -550,7 +545,7 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 					cab->field_idx = 0;
 					char *fieldp = strtok(cab->datap, " \t\r\n");
 					memset(cab->fields, 0, sizeof cab->fields);
-					for (int i = 0; fieldp && i < int(sizeof cab->fields / sizeof cab->fields[0]); i++) {
+					for (int i = 0; fieldp && i < static_cast<int>(sizeof cab->fields / sizeof cab->fields[0]); i++) {
 						cab->fields[i] = fieldp;
 						fieldp = strtok(0, " \t\r\n");
 					}
@@ -573,21 +568,21 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 		}
 	}
 	// Record data is okay and field index is valid.
-		
-   	fp = cab->contest->fields + cab->field_idx;
-   	strncpy(field->name, fp->name, sizeof field->name);
+
+	fp = cab->contest->fields + cab->field_idx;
+	strncpy(field->name, fp->name, sizeof field->name);
 	if (fp->loc < 0) {  // New contest
 		for (int i = 6; i < TQSL_CABRILLO_MAX_FIELDS && cab->fields[i]; i++) {
 			char *p = cab->fields[i];
 			// Simple parse: a callsign is at least 3 chars long
 			// and has at least one digit and at least one letter
 			// Nothing but alphnumeric and '/' allowed.
-		
+
 
 			// First, eliminate grid squares
 			if (strlen(p) == 4) {
 				if (isalpha(p[0]) && isalpha(p[1]) &&
-				    isdigit(p[2]) && isdigit(p[3])) 
+				    isdigit(p[2]) && isdigit(p[3]))
 					continue;
 			}
 			int nlet = 0, ndig = 0;
@@ -607,9 +602,9 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 				if (strlen(p) == 6) {
 					if ((isalpha(p[0]) && toupper(p[0]) < 'S') &&
 					    (isalpha(p[1]) && toupper(p[1]) < 'S') &&
-				    	    (isdigit(p[2]) && isdigit(p[3])) &&
+					    (isdigit(p[2]) && isdigit(p[3])) &&
 					    (isalpha(p[4]) && toupper(p[4]) < 'Y') &&
-					    (isalpha(p[5]) && toupper(p[5]) < 'Y')) 
+					    (isalpha(p[5]) && toupper(p[5]) < 'Y'))
 						continue;	// Gridsquare. Don't use it.
 				}
 				if (fp->loc < 0) {		// No callsign candidate yet
@@ -623,7 +618,7 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 				}
 			}
 		}
-		if (fp->loc < 0) {	// Still can't find a call. Have to bail.
+		if (fp->loc < 0) {		// Still can't find a call. Have to bail.
 			tQSL_Cabrillo_Error = TQSL_CABRILLO_UNKNOWN_CONTEST;
 			tQSL_Error = TQSL_CABRILLO_ERROR;
 			snprintf(errmsgdata, sizeof errmsgdata, "%s\nUnable to find a valid call-worked field.\n"
@@ -638,7 +633,7 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 		strncpy(errmsgdata, field->name, sizeof errmsgdata);
 		goto err;
 	}
-   	strncpy(field->value, fielddat, sizeof field->value);
+	strncpy(field->value, fielddat, sizeof field->value);
 
 	if (fp->process && fp->process(cab, field)) {
 		tQSL_Cabrillo_Error = TQSL_CABRILLO_BAD_FIELD_DATA;
@@ -646,13 +641,13 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 		strncpy(errmsgdata, field->name, sizeof errmsgdata);
 		goto err;
 	}
-   	cab->field_idx++;
-   	if (cab->field_idx >= cab->contest->nfields)
-   		*error = TQSL_CABRILLO_EOR;
+	cab->field_idx++;
+	if (cab->field_idx >= cab->contest->nfields)
+		*error = TQSL_CABRILLO_EOR;
 	else
 		*error = TQSL_CABRILLO_NO_ERROR;
 	return 0;
-err:
+ err:
 	strncpy(tQSL_ErrorFile, cab->filename, sizeof tQSL_ErrorFile);
 	tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
 	return 1;
@@ -667,11 +662,11 @@ tqsl_getCabrilloContest(tQSL_Cabrillo cabp, char *buf, int bufsiz) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
-	if (bufsiz < (int)strlen(cab->contest->contest_name)+1) {
+	if (bufsiz < static_cast<int>(strlen(cab->contest->contest_name))+1) {
 		tQSL_Error = TQSL_BUFFER_ERROR;
 		return 1;
 	}
-	strcpy(buf, cab->contest->contest_name);
+	strncpy(buf, cab->contest->contest_name, bufsiz);
 	return 0;
 }
 

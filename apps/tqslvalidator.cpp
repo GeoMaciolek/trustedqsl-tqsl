@@ -37,7 +37,7 @@ TQSLValidator::TransferFromWindow() {
 		return FALSE;
 	if (_objp == 0)
 		return FALSE;
-	wxTextCtrl *ctl = (wxTextCtrl *) m_validatorWindow;
+	wxTextCtrl *ctl = reinterpret_cast<wxTextCtrl *>(m_validatorWindow);
 	wxString str = ctl->GetValue();
 	FromString(str);
 	return TRUE;
@@ -53,21 +53,21 @@ TQSLValidator::TransferToWindow() {
 	if (_objp == 0)
 		return FALSE;
 	wxString str = this->ToString();
-	wxTextCtrl *ctl = (wxTextCtrl *) m_validatorWindow;
+	wxTextCtrl *ctl = reinterpret_cast<wxTextCtrl *>(m_validatorWindow);
 	ctl->SetValue(str);
 	return TRUE;
 }
 
 bool
 TQSLValidator::Validate(wxWindow* parent) {
-	tqslTrace("TQSLValidator::Validate", "parent=%lx", (void *)parent);
+	tqslTrace("TQSLValidator::Validate", "parent=%lx", reinterpret_cast<void *>(parent));
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))
 		return FALSE;
 	if (_objp == 0)
 		return FALSE;
-	wxTextCtrl *ctl = (wxTextCtrl *) m_validatorWindow;
+	wxTextCtrl *ctl = reinterpret_cast<wxTextCtrl *>(m_validatorWindow);
 	wxString str = ctl->GetValue();
 	if (!IsValid(str)) {
 		m_validatorWindow->SetFocus();
@@ -82,14 +82,14 @@ TQSLValidator::Validate(wxWindow* parent) {
 void
 TQSLDateValidator::FromString(const wxString& str) {
 	if (_objp != 0)
-		tqsl_initDate((tQSL_Date *)_objp, str.mb_str());
+		tqsl_initDate(reinterpret_cast<tQSL_Date *>(_objp), str.mb_str());
 }
 
 wxString
 TQSLDateValidator::ToString() {
 	if (_objp == 0)
 		return wxT("");
-	tQSL_Date *_datep = (tQSL_Date *)_objp;
+	tQSL_Date *_datep = reinterpret_cast<tQSL_Date *>(_objp);
 	if (!tqsl_isDateValid(_datep))
 		return wxT("");
 	char buf[20];
@@ -106,16 +106,16 @@ TQSLDateValidator::IsValid(const wxString& str) {
 
 void
 TQSLTimeValidator::FromString(const wxString& str) {
-	tqslTrace("TQSLTimeValidator::FromString", "str=%s", _S( str));
+	tqslTrace("TQSLTimeValidator::FromString", "str=%s", _S(str));
 	if (_objp != 0)
-		tqsl_initTime((tQSL_Time *)_objp, str.mb_str());
+		tqsl_initTime(reinterpret_cast<tQSL_Time *>(_objp), str.mb_str());
 }
 
 wxString
 TQSLTimeValidator::ToString() {
 	if (_objp == 0)
 		return wxT("");
-	tQSL_Time *_timep = (tQSL_Time *)_objp;
+	tQSL_Time *_timep = reinterpret_cast<tQSL_Time *>(_objp);
 	if (!tqsl_isTimeValid(_timep))
 		return wxT("");
 	char buf[20];

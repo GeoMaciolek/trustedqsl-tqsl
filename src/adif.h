@@ -33,8 +33,7 @@
  * Boolean type - TRUE/FALSE
  */
 #ifndef TQSL_ADIF_BOOLEAN
-typedef enum
-{
+typedef enum {
 	TQSL_FALSE,
 	TQSL_TRUE
 } TQSL_ADIF_BOOLEAN;
@@ -43,16 +42,14 @@ typedef enum
 typedef void * tQSL_ADIF;	///< Opaque ADIF type
 
 /// Specifies the type of range limits to apply to a field
-typedef enum
-{
+typedef enum {
 	TQSL_ADIF_RANGE_TYPE_NONE,
 	TQSL_ADIF_RANGE_TYPE_MINMAX,
 	TQSL_ADIF_RANGE_TYPE_ENUMERATION
 } TQSL_ADIF_RANGE_TYPE;
 
 /// Response values returned from tqsl_getADIFField()
-typedef enum
-{
+typedef enum {
 	TQSL_ADIF_GET_FIELD_SUCCESS,
 	TQSL_ADIF_GET_FIELD_NO_NAME_MATCH,
 	TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH,
@@ -68,8 +65,7 @@ typedef enum
 } TQSL_ADIF_GET_FIELD_ERROR;
 
 /** An ADIF field definition */
-typedef struct
-{
+typedef struct {
 	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];	///< Field name
 	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];	///< Field type
 	TQSL_ADIF_RANGE_TYPE rangeType;			///< Range type
@@ -81,8 +77,7 @@ typedef struct
 } tqsl_adifFieldDefinitions;
 
 /** Field returned from parsing */
-typedef struct
-{
+typedef struct {
 	char name[TQSL_ADIF_FIELD_NAME_LENGTH_MAX + 1];	///< Field name
 	char size[TQSL_ADIF_FIELD_SIZE_LENGTH_MAX + 1];	///< Size
 	char type[TQSL_ADIF_FIELD_TYPE_LENGTH_MAX + 1];	///< Type
@@ -99,7 +94,7 @@ extern "C" {
 #endif
 
 /** Get the ADIF error message that corresponds to a particular error value */
-DLLEXPORT const char* CALLCONVENTION tqsl_adifGetError( TQSL_ADIF_GET_FIELD_ERROR status );
+DLLEXPORT const char* CALLCONVENTION tqsl_adifGetError(TQSL_ADIF_GET_FIELD_ERROR status);
 
 /** Initialize an ADIF file for reading */
 DLLEXPORT int  CALLCONVENTION tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename);

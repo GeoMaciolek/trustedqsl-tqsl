@@ -38,48 +38,52 @@
 #include <vector>
 #include <map>
 
+using std::map;
+using std::vector;
+
 #define TQSL_ID_LOW 6000
 
 class TQSLWizPage;
 
 class TQSLWizard : public ExtWizard {
-public:
+ public:
 	TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString, bool expired = false);
 
 //	TQSLWizard(tQSL_Location locp, wxWindow* parent, int id = -1, const wxString& title = wxEmptyString,
 //		const wxBitmap& bitmap = wxNullBitmap, const wxPoint& pos = wxDefaultPosition);
 
 	TQSLWizPage *GetPage(bool final = false);
-	TQSLWizPage *GetCurrentTQSLPage() { return (TQSLWizPage *)GetCurrentPage(); }
+	TQSLWizPage *GetCurrentTQSLPage() { return reinterpret_cast<TQSLWizPage *>(GetCurrentPage()); }
 	void SetLocationName(wxString& s) { sl_name = s; }
-	void SetDefaultCallsign(wxString& c) {sl_call = c; };
+	void SetDefaultCallsign(wxString& c) {sl_call = c; }
 	wxString GetLocationName() { return sl_name; }
-	wxString GetDefaultCallsign() {return sl_call; };
+	wxString GetDefaultCallsign() {return sl_call; }
 	TQSLWizPage *GetFinalPage() { return (_pages.size() > 0) ? _pages[0] : 0; }
 	bool page_changing;
 	bool expired;
-private:
+
+ private:
 	void OnPageChanged(wxWizardEvent&);
 	wxString sl_name;
 	wxString sl_call;
 	tQSL_Location loc;
 	int _curpage;
-	std::map<int, TQSLWizPage *> _pages;
+	map<int, TQSLWizPage *> _pages;
 	TQSLWizPage *final;
 
 	DECLARE_EVENT_TABLE()
 };
 
 class TQSLWizPage : public ExtWizard_Page {
-public:
+ public:
 	TQSLWizPage(TQSLWizard *parent, tQSL_Location locp) : ExtWizard_Page(parent) { loc = locp; }
-	virtual TQSLWizard *GetParent() const { return (TQSLWizard *)wxWindow::GetParent(); }
+	virtual TQSLWizard *GetParent() const { return reinterpret_cast<TQSLWizard *>(wxWindow::GetParent()); }
 
 	tQSL_Location loc;
 };
 
 class TQSLWizCertPage : public TQSLWizPage {
-public:
+ public:
 	TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp);
 	~TQSLWizCertPage();
 	virtual bool TransferDataFromWindow();
@@ -92,14 +96,14 @@ public:
 	virtual TQSLWizPage *GetNext() const;
 	void OnSize(wxSizeEvent&);
 	const char *valMsg;
-private:
-	std::vector<void *> controls;
+ private:
+	vector<void *> controls;
 	wxCheckBox *okEmptyCB;
 	DECLARE_EVENT_TABLE()
 };
 
 class TQSLWizFinalPage : public TQSLWizPage {
-public:
+ public:
 	TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev);
 	TQSLWizPage *GetPrev() const { return prev; }
 	TQSLWizPage *GetNext() const { return 0; }
@@ -107,11 +111,11 @@ public:
 	virtual bool TransferDataFromWindow();
 	void OnListbox(wxCommandEvent &);
 	virtual const char *validate();
-private:
+ private:
 	wxListBox *namelist;
 	wxTextCtrl *newname;
 	wxBoxSizer *sizer;
-	std::vector<wxString> item_data;
+	vector<wxString> item_data;
 
 	DECLARE_EVENT_TABLE()
 };

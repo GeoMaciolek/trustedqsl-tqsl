@@ -24,7 +24,9 @@
 #include "tqslconvert.h"
 #include "tqslexc.h"
 
-using namespace std;
+using std::cerr;
+using std::endl;
+using std::ofstream;
 
 int usage() {
 	cerr << "Usage: converter [-ac] station-location infile [outfile]\n";
@@ -38,13 +40,13 @@ main(int argc, char *argv[]) {
 
 	while ((opt = getopt(argc, argv, "ca")) != -1) {
 		switch (opt) {
-			case 'c':
+                         case 'c':
 				type = CABRILLO;
 				break;
-			case 'a':
+                         case 'a':
 				type = ADIF;
 				break;
-			default:
+                         default:
 				usage();
 		}
 	}
@@ -97,24 +99,24 @@ main(int argc, char *argv[]) {
 				out << gabbi;
 				continue;
 			}
-   			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
-   				tQSL_Cert cert;
-   				if (tqsl_getConverterCert(conv, &cert))
+			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
+				tQSL_Cert cert;
+				if (tqsl_getConverterCert(conv, &cert))
 					throw tqslexc();
-   				if (tqsl_beginSigning(cert, 0, 0, 0))
+				if (tqsl_beginSigning(cert, 0, 0, 0))
 					throw tqslexc();
-   				continue;
-   			}
+				continue;
+			}
 			if (tQSL_Error == TQSL_DUPLICATE_QSO)
 				continue;
-   			break;
+			break;
 		} while (1);
 		out.close();
 		if (tQSL_Error != TQSL_NO_ERROR)
 			throw tqslexc();
 		else if (!haveout)
-			cerr << "Empty log file" << endl;
-	} catch (exception& x) {
+		cerr << "Empty log file" << endl;
+	} catch(exception& x) {
 		char buf[40] = "";
 		int lineno;
 		if (conv && !tqsl_getConverterLine(conv, &lineno)) // && lineno > 0)

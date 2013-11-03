@@ -13,8 +13,6 @@
 #endif
 #include <stdlib.h>
 
-using namespace std;
-
 #include <wx/wxprec.h>
 #include <wx/object.h>
 #include <wx/wxchar.h>
@@ -53,6 +51,10 @@ using namespace std;
 
 #include "tqslbuild.h"
 
+using std::ofstream;
+using std::cerr;
+using std::endl;
+using std::ios;
 
 enum {
 	tm_f_import = 7000,
@@ -85,13 +87,13 @@ static wxString ErrorTitle(wxT("TQSL Error"));
 /////////// Application //////////////
 
 class QSLApp : public wxAppConsole {
-public:
+ public:
 	QSLApp();
 	virtual ~QSLApp();
 	bool OnInit();
 	int  OnRun();
 	bool ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, int action = TQSL_ACTION_UNSPEC, const char *password = NULL);
-private:
+ private:
 	tQSL_Location loc;
 	char *password;
 	bool suppressdate;
@@ -111,7 +113,7 @@ IMPLEMENT_APP_CONSOLE(QSLApp)
 static void
 init_modes() {
 	tqsl_clearADIFModes();
-	wxConfig *config = (wxConfig *)wxConfig::Get();
+	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	long cookie;
 	wxString key, value;
 	config->SetPath(wxT("/modeMap"));
@@ -127,7 +129,7 @@ init_modes() {
 static void
 init_contests() {
 	tqsl_clearCabrilloMap();
-	wxConfig *config = (wxConfig *)wxConfig::Get();
+	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	long cookie;
 	wxString key, value;
 	config->SetPath(wxT("/cabrilloMap"));
@@ -175,7 +177,7 @@ bool
 QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	bool compressed, bool suppressdate, int action, const char *password) {
 	static const char *iam = "TQSL V" VERSION;
-   	const char *cp;
+	const char *cp;
 	tQSL_Converter conv = 0;
 	char callsign[40];
 	int dxcc;
@@ -183,7 +185,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	bool allow_dupes = false;
 	gzFile gout = 0;
 	ofstream out;
-	wxConfig *config = (wxConfig *)wxConfig::Get();
+	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
 	if (action == TQSL_ACTION_ALL)
 		allow_dupes = true;
@@ -218,8 +220,8 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	int duplicates = 0;
 	int processed = 0;
 	bool cancelled = false;
-   	try {
-   		if (tqsl_beginCabrilloConverter(&conv, infile.mb_str(), certlist, ncerts, loc)) {
+	try {
+		if (tqsl_beginCabrilloConverter(&conv, infile.mb_str(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
@@ -242,14 +244,14 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		wxString ident = wxString::Format(wxT("%hs Lib: V%d.%d Config: V%d.%d AllowDupes: %hs"), iam,
 			major, minor, config_major, config_minor,
 			allow_dupes ? "true" : "false");
-		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), (int)ident.length(), ident.c_str());
+		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), static_cast<int>(ident.length()), ident.c_str());
 		gabbi_ident += wxT("\n");
 		if (compressed)
 			gzwrite(gout, (const char *)gabbi_ident.mb_str(), gabbi_ident.length());
 		else
 			out << gabbi_ident << endl;
-   		do {
-   	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {
+		do {
+	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {
 					// Only count QSO records
 					if (strstr(cp, "tCONTACT")) {
 						++n;
@@ -261,24 +263,24 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 					} else {
 						out << cp << endl;
 					}
-   			}
-   			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
-   				tQSL_Cert cert;
+			}
+			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
+				tQSL_Cert cert;
 				int rval;
-   				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
+				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
 				do {
-	   				if ((rval = tqsl_beginSigning(cert, (char *)password, 0, cert)) == 0)
+	   				if ((rval = tqsl_beginSigning(cert, const_cast<char *>(password), 0, cert)) == 0)
 						break;
 					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 						cerr << "Password error" << endl;
 						if (password)
-							free((void *)password);
+							free(reinterpret_cast<void *>(password));
 						password = NULL;
 					}
 				} while (tQSL_Error == TQSL_PASSWORD_ERROR);
-   				check_tqsl_error(rval);
-   				continue;
-   			}
+				check_tqsl_error(rval);
+				continue;
+			}
 			if (tQSL_Error == TQSL_DATE_OUT_OF_RANGE) {
 				processed++;
 				out_of_range++;
@@ -293,7 +295,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 			if (has_error) {
 				try {
 					check_tqsl_error(1);
-				} catch (TQSLException& x) {
+				} catch(TQSLException& x) {
 					tqsl_getConverterLine(conv, &lineno);
 					wxString msg = wxString(x.what(), wxConvLocal);
 					if (lineno)
@@ -305,27 +307,27 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 						cerr << msg << endl;
 					// Only ask if not in batch mode or ignoring errors - KD6PAG
 					switch (action) {
-						case TQSL_ACTION_ABORT:
+                                                case TQSL_ACTION_ABORT:
 							cancelled = true;
 							ignore_err = true;
 							goto abortSigning;
-						case TQSL_ACTION_NEW:
-						case TQSL_ACTION_ALL:
+                                                case TQSL_ACTION_NEW:
+                                                case TQSL_ACTION_ALL:
 							ignore_err = true;
 							break;
-						case TQSL_ACTION_ASK:
-						case TQSL_ACTION_UNSPEC:
+                                                case TQSL_ACTION_ASK:
+                                                case TQSL_ACTION_UNSPEC:
 							break;			// error message already displayed
 					}
 				}
 			}
-			tqsl_getErrorString();	// Clear error			
+			tqsl_getErrorString();	// Clear error
 			if (has_error && ignore_err)
 				continue;
-   			break;
+			break;
 		} while (1);
 
-abortSigning:
+ abortSigning:
 
 		if (cancelled)
 			cerr << "Signing cancelled" << endl;
@@ -333,15 +335,15 @@ abortSigning:
 			gzclose(gout);
 		else
 			out.close();
-   		if (tQSL_Error != TQSL_NO_ERROR) {
-   			check_tqsl_error(1);
+		if (tQSL_Error != TQSL_NO_ERROR) {
+			check_tqsl_error(1);
 		}
 		if (cancelled)
 			tqsl_converterRollBack(conv);
 		else
 			tqsl_converterCommit(conv);
-   		tqsl_endConverter(&conv);
-   	} catch (TQSLException& x) {
+		tqsl_endConverter(&conv);
+	} catch(TQSLException& x) {
 		if (compressed)
 			gzclose(gout);
 		else
@@ -349,13 +351,13 @@ abortSigning:
 		string msg = x.what();
 		tqsl_getConverterLine(conv, &lineno);
 		tqsl_converterRollBack(conv);
-   		tqsl_endConverter(&conv);
+		tqsl_endConverter(&conv);
 		if (lineno)
 			msg += wxString::Format(wxT(" on line %d"), lineno).mb_str();
 		unlink(outfile.mb_str());
 		cerr << "Signing aborted due to errors" << endl;
-   		throw TQSLException(msg.c_str());
-   	}
+		throw TQSLException(msg.c_str());
+	}
 	if (out_of_range > 0)
 		cerr << wxString::Format(wxT("%s: %d QSO records were outside the selected date range"),
 			infile.c_str(), out_of_range) << endl;
@@ -391,7 +393,6 @@ QSLApp::~QSLApp() {
 
 bool
 QSLApp::OnInit() {
-
 	suppressdate = false;
 	password = NULL;
 	loc = NULL;
@@ -400,25 +401,25 @@ QSLApp::OnInit() {
 	wxCmdLineParser parser;
 
 	static const wxCmdLineEntryDesc cmdLineDesc[] = {
-		{ wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
-		{ wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
-		{ wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
-		{ wxCMD_LINE_OPTION, wxT("o"), wxT("output"),	wxT("Output file name (defaults to input name minus extension plus .tq8") },
-		{ wxCMD_LINE_SWITCH, wxT("u"), wxT("upload"),	wxT("Upload after signing instead of saving") },
-		{ wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
-		{ wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
-		{ wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
-		{ wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-		{ wxCMD_LINE_NONE }
+	        { wxCMD_LINE_OPTION, wxT("a"), wxT("action"),	wxT("Specify dialog action - abort, all, compliant or ask") },
+	        { wxCMD_LINE_SWITCH, wxT("d"), wxT("nodate"),	wxT("Suppress date range dialog") },
+	        { wxCMD_LINE_OPTION, wxT("l"), wxT("location"),	wxT("Selects Station Location") },
+	        { wxCMD_LINE_OPTION, wxT("o"), wxT("output"),	wxT("Output file name (defaults to input name minus extension plus .tq8") },
+	        { wxCMD_LINE_SWITCH, wxT("u"), wxT("upload"),	wxT("Upload after signing instead of saving") },
+	        { wxCMD_LINE_OPTION, wxT("p"), wxT("password"),	wxT("Password for the signing key") },
+	        { wxCMD_LINE_SWITCH, wxT("v"), wxT("version"),  wxT("Display the version information and exit") },
+	        { wxCMD_LINE_SWITCH, wxT("h"), wxT("help"),	wxT("Display command line help"), wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
+	        { wxCMD_LINE_PARAM,  NULL,     NULL,		wxT("Input ADIF or Cabrillo log file to sign"), wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
+	        { wxCMD_LINE_NONE }
 	};
 
 	parser.SetCmdLine(argc, argv);
 	parser.SetDesc(cmdLineDesc);
 
-	if (parser.Parse(true)!=0) return false; // exit if help or syntax error
+	if (parser.Parse(true) != 0) return false; // exit if help or syntax error
 
 	// print version and exit
-	if (parser.Found(wxT("v"))) { 
+	if (parser.Found(wxT("v"))) {
 		cout << "TQSL Version" VERSION " " BUILD  << endl;
 		return false;
 	}
@@ -433,7 +434,7 @@ QSLApp::OnInit() {
 		}
 	}
 	wxString pwd;
-	if (parser.Found(wxT("p"), &pwd)) 
+	if (parser.Found(wxT("p"), &pwd))
 		password = strdup(pwd.mb_str());
 
 	if (parser.Found(wxT("d")))
@@ -443,15 +444,15 @@ QSLApp::OnInit() {
 
 	wxString act;
 	if (parser.Found(wxT("a"), &act)) {
-		if (!act.CmpNoCase(wxT("abort")))
+		if (!act.CmpNoCase(wxT("abort"))) {
 			action = TQSL_ACTION_ABORT;
-		else if (!act.CmpNoCase(wxT("compliant")))
+		} else if (!act.CmpNoCase(wxT("compliant"))) {
 			action = TQSL_ACTION_NEW;
-		else if (!act.CmpNoCase(wxT("all")))
+		} else if (!act.CmpNoCase(wxT("all"))) {
 			action = TQSL_ACTION_ALL;
-		else if (!act.CmpNoCase(wxT("ask")))
+		} else if (!act.CmpNoCase(wxT("ask"))) {
 			action = TQSL_ACTION_ASK;
-		else {
+		} else {
 			char tmp[100];
 			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
 			tmp[sizeof tmp -1] = '\0';
@@ -460,7 +461,7 @@ QSLApp::OnInit() {
 		}
 	}
 
-	if (parser.GetParamCount()>0) {
+	if (parser.GetParamCount() > 0) {
 		infile = parser.GetParam(0);
 		if (wxIsEmpty(infile)) {	// Nothing to sign
 			cerr << "No logfile to sign!" << endl;
@@ -474,7 +475,7 @@ QSLApp::OnInit() {
 
 int
 QSLApp::OnRun() {
-	if (loc == 0) 
+	if (loc == 0)
 		return 1;
 	wxString path, name, ext;
 	wxSplitPath(infile, &path, &name, &ext);
@@ -487,7 +488,7 @@ QSLApp::OnRun() {
 	try {
 		if (ConvertLogFile(loc, infile, outfile, true, suppressdate, action, password))
 			return 0;
-	} catch (TQSLException& x) {
+	} catch(TQSLException& x) {
 		wxString s;
 		if (infile)
 			s = infile + wxT(": ");

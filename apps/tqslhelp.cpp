@@ -1,3 +1,9 @@
+/***************************************************************************
+                          tqslhelp.cpp  -  description
+                             -------------------
+          copyright (C) 2013 by ARRL and the TrustedQSL Developers
+ ***************************************************************************/
+
 //Derived from wxWidgets fs_inet.cpp
 #include "wx/wxprec.h"
 
@@ -28,17 +34,20 @@
 // tqslInternetFSHandler
 // ----------------------------------------------------------------------------
 
-static wxString StripProtocolAnchor(const wxString& location)
-{
+static wxString StripProtocolAnchor(const wxString& location) {
 	tqslTrace("StripProtocolAnchor", "location=%s", _S(location));
 	wxString myloc(location.BeforeLast(wxT('#')));
-	if (myloc.empty()) myloc = location.AfterFirst(wxT(':'));
-	else myloc = myloc.AfterFirst(wxT(':'));
+	if (myloc.empty())
+		myloc = location.AfterFirst(wxT(':'));
+	else
+		myloc = myloc.AfterFirst(wxT(':'));
 
-	// fix malformed url:
+	// fix malformed url
 	if (!myloc.Left(2).IsSameAs(wxT("//"))) {
-		if (myloc.GetChar(0) != wxT('/')) myloc = wxT("//") + myloc;
-        	else myloc = wxT("/") + myloc;
+		if (myloc.GetChar(0) != wxT('/'))
+			myloc = wxT("//") + myloc;
+        	else
+			myloc = wxT("/") + myloc;
 	}
 	if (myloc.Mid(2).Find(wxT('/')) == wxNOT_FOUND) myloc << wxT('/');
 
@@ -73,17 +82,15 @@ bool tqslInternetFSHandler::CanOpen(const wxString& location) {
 }
 
 wxFSFile* tqslInternetFSHandler::OpenFile(wxFileSystem& WXUNUSED(fs), const wxString& location) {
-	return (wxFSFile*) NULL; // We never actually return anything
+	return NULL; // We never actually return anything
 }
 
 class tqslFileSystemInternetModule : public wxModule {
 	DECLARE_DYNAMIC_CLASS(tqslFileSystemInternetModule)
 
-public:
-	tqslFileSystemInternetModule() :
-           wxModule(),
-           m_handler(NULL)
-        {
+ public:
+	tqslFileSystemInternetModule()
+           : wxModule(), m_handler(NULL) {
         }
 
         virtual bool OnInit() {

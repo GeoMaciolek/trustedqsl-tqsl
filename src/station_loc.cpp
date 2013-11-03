@@ -12,13 +12,18 @@
 #include "sysconfig.h"
 #endif
 
+#include <string.h>
 #include <cstdlib>
 #include <iostream>
 #include <string>
 #include "tqsllib.h"
 #include "tqslexc.h"
 
-using namespace std;
+using std::string;
+using std::ios;
+using std::cerr;
+using std::cout;
+using std::endl;
 
 int
 usage() {
@@ -92,7 +97,7 @@ main(int argc, char *argv[]) {
 			throw tqslexc();
 		tqsl_endStationLocationCapture(&loc);
 		cout << "Wrote station location for " << call << " - " << buf << endl;
-	} catch (exception& x) {
+	} catch(exception& x) {
 		cerr << "Aborted: " << x.what() << endl;
 		return EXIT_FAILURE;
 	}

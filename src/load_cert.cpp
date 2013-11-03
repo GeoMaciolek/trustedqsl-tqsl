@@ -16,7 +16,11 @@
 #include <iostream>
 #include "tqsllib.h"
 
-using namespace std;
+using std::string;
+using std::ios;
+using std::cerr;
+using std::cout;
+using std::endl;
 
 int
 cb(int, const char *msg, void *) {

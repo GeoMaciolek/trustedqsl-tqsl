@@ -43,7 +43,7 @@ DXCC::init() {
 			tqsl_getDXCCEntity(i, &(entity_list[i].number), &(entity_list[i].name));
 			tqsl_getDXCCZoneMap(entity_list[i].number, &(entity_list[i].zonemap));
 		}
-		qsort(entity_list, num_entities, sizeof (struct _dxcc_entity), &_ent_cmp);
+		qsort(entity_list, num_entities, sizeof(struct _dxcc_entity), &_ent_cmp);
 //	}
 	_init = true;
 	return _init;

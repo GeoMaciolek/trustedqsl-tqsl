@@ -17,12 +17,19 @@
 #include <utility>
 #include <expat.h>
 
+using std::pair;
+using std::string;
+using std::ostream;
+using std::map;
+using std::multimap;
+using std::vector;
+
 namespace tqsllib {
 
 class XMLElement;
 
-typedef std::multimap<std::string,XMLElement> XMLElementList;
-typedef std::map<std::string,std::string> XMLElementAttributeList;
+typedef multimap<string, XMLElement> XMLElementList;
+typedef map<string, string> XMLElementAttributeList;
 
 /** Encapsulates an XML element
   *
@@ -34,26 +41,26 @@ typedef std::map<std::string,std::string> XMLElementAttributeList;
   * by a call to parseFile().
   */
 class XMLElement {
-public:
+ public:
 	XMLElement() : _name(""), _text(""), _pretext("") {}
 	/// Constructor initializes element name
-	XMLElement(const std::string& name) : _text(""), _pretext("") { _name = name; }
+	explicit XMLElement(const string& name) : _text(""), _pretext("") { _name = name; }
 	/// Clear the element of all data
 	void clear();
 	/// Set the element name
-	void setElementName(const std::string& name) { _name = name; }
+	void setElementName(const string& name) { _name = name; }
 	/// Get the element name
-	std::string getElementName() const { return _name; }
+	string getElementName() const { return _name; }
 	/// Set an attribute.
     /** Attributes are treated as unique key/value pairs. */
-	void setAttribute(const std::string& key, const std::string& value);
+	void setAttribute(const string& key, const string& value);
 	/// Get an attribute by its key.
 	/** Returns a pair where:
       *
       * \li \c getAttribute().first := the attribute's value
       * \li \c getAttribute().second := a bool, true if the atrtribute key exists
       */
-	std::pair<std::string,bool> getAttribute(const std::string& key);
+	pair<string, bool> getAttribute(const string& key);
 	/// Add an element to the list of contained subelements
 	XMLElementList::iterator addElement(const XMLElement& element);
 	XMLElementAttributeList& getAttributeList() { return _attributes; }
@@ -68,16 +75,16 @@ public:
 	/// Get the first attribute of the element
     /** Provides the attribute key and value. Returns \c false if the
       * element contains no attributes */
-	bool getFirstAttribute(std::string& key, std::string& attr);
+	bool getFirstAttribute(string& key, string& attr);
 	/// Get the next attribute of the element
     /** Should be called only after calling getFirstAttribute and getting
       * a return value of \c true.
       * Provides the attribute key and value. Returns \c false if the
       * element contains no more attributes */
-	bool getNextAttribute(std::string& key, std::string& attr);
+	bool getNextAttribute(string& key, string& attr);
 	/// Get the first contained element named \c name.
     /** Returns \c false if the element contains no elements named \c name */
-	bool getFirstElement(const std::string& name, XMLElement&);
+	bool getFirstElement(const string& name, XMLElement&);
 	/// Get the first contained element.
     /** Returns \c false if the element contains no elements */
 	bool getFirstElement(XMLElement&);
@@ -90,27 +97,27 @@ public:
       * Returns \c false if the element contains no more elements */
 	bool getNextElement(XMLElement&);
 	/// Set the contained text string
-	void setText(const std::string& s) { _text = s; }
+	void setText(const string& s) { _text = s; }
 	/// Get the contained text string.
 	/** Note that this string comprises the text contained in this
       * element only, not any text contained in elements on the
       * element list; they each have their own contained text.
       */
-	std::string getText() const { return _text; }
-	void setPretext(const std::string& s) { _pretext = s; }
-	std::string getPretext() const { return _pretext; }
+	string getText() const { return _text; }
+	void setPretext(const string& s) { _pretext = s; }
+	string getPretext() const { return _pretext; }
 
-private:
+ private:
 	static void xml_start(void *data, const XML_Char *name, const XML_Char **atts);
 	static void xml_end(void *data, const XML_Char *name);
 	static void xml_text(void *data, const XML_Char *text, int len);
-	std::string _name, _text, _pretext;
+	string _name, _text, _pretext;
 	XMLElementAttributeList _attributes;
 	XMLElementList _elements;
-	std::vector<XMLElementList::iterator> _parsingStack;
+	vector<XMLElementList::iterator> _parsingStack;
 	XMLElementList::iterator _iter;
 	bool _iterByName;
-	std::string _iterName;
+	string _iterName;
 	XMLElementAttributeList::iterator _aiter;
 };
 
@@ -122,7 +129,7 @@ inline void XMLElement::clear() {
 }
 
 inline void
-XMLElement::setAttribute(const std::string& key, const std::string& value) {
+XMLElement::setAttribute(const string& key, const string& value) {
 	_attributes[key] = value;
 }
 
@@ -140,7 +147,7 @@ XMLElement::getFirstElement(XMLElement& element) {
 }
 
 inline bool
-XMLElement::getFirstElement(const std::string& name, XMLElement& element) {
+XMLElement::getFirstElement(const string& name, XMLElement& element) {
 	_iterName = name;
 	_iterByName = true;
 	_iter = _elements.find(_iterName);
@@ -159,13 +166,13 @@ XMLElement::getNextElement(XMLElement& element) {
 }
 
 inline bool
-XMLElement::getFirstAttribute(std::string& key, std::string& attr) {
+XMLElement::getFirstAttribute(string& key, string& attr) {
 	_aiter = _attributes.begin();
 	return getNextAttribute(key, attr);
 }
 
 inline bool
-XMLElement::getNextAttribute(std::string& key, std::string& attr) {
+XMLElement::getNextAttribute(string& key, string& attr) {
 	if (_aiter == _attributes.end())
 		return false;
 	key = _aiter->first;
@@ -174,7 +181,7 @@ XMLElement::getNextAttribute(std::string& key, std::string& attr) {
 	return true;
 }
 
-std::ostream& operator<< (std::ostream& stream, XMLElement& el);
+ostream& operator<< (ostream& stream, XMLElement& el);
 
 }	// namespace tqsllib
 

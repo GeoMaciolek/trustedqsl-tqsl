@@ -41,9 +41,9 @@ ExtWizard::ReportSize(const wxSize& size) {
 		_minsize.SetHeight(size.GetHeight());
 }
 
-ExtWizard::ExtWizard(wxWindow *parent, wxHtmlHelpController *help, const wxString& title) :
-	wxWizard(parent, -1, title), _help(help) {
-	tqslTrace("ExtWizard::ExtWizard", "parent=%lx, title=%s", (void *)parent, _S(title));
+ExtWizard::ExtWizard(wxWindow *parent, wxHtmlHelpController *help, const wxString& title)
+	: wxWizard(parent, -1, title), _help(help) {
+	tqslTrace("ExtWizard::ExtWizard", "parent=%lx, title=%s", reinterpret_cast<void *>(parent), _S(title));
 
 	CenterOnParent();
 }

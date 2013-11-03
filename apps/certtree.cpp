@@ -9,21 +9,20 @@
  ***************************************************************************/
 
 #include "certtree.h"
+
+#include <errno.h>
+#include <wx/imaglist.h>
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <utility>
+#include <iostream>
 
 #include "tqslctrls.h"
 #include "util.h"
 #include "dxcc.h"
 #include "tqslerrno.h"
 #include "tqsltrace.h"
-#include <errno.h>
-#include <wx/imaglist.h>
-
-#include <iostream>
-
-using namespace std;
 
 #include "cert.xpm"
 #include "nocert.xpm"
@@ -31,6 +30,12 @@ using namespace std;
 #include "folder.xpm"
 #include "expired.xpm"
 #include "replaced.xpm"
+
+using std::pair;
+using std::vector;
+using std::map;
+using std::make_pair;
+
 enum {
 	CERT_ICON = 0,
 	NOCERT_ICON = 1,
@@ -49,8 +54,8 @@ BEGIN_EVENT_TABLE(CertTree, wxTreeCtrl)
 END_EVENT_TABLE()
 
 CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
-		const wxSize& size, long style) :
-		wxTreeCtrl(parent, id, pos, size, style), _ncerts(0) {
+		const wxSize& size, long style)
+		: wxTreeCtrl(parent, id, pos, size, style), _ncerts(0) {
 	tqslTrace("CertTree::CertTree");
 	useContextMenu = true;
 	wxBitmap certbm(cert_xpm);
@@ -80,7 +85,7 @@ CertTreeItemData::~CertTreeItemData() {
 		tqsl_freeCertificate(_cert);
 }
 
-typedef pair<wxString,int> certitem;
+typedef pair<wxString, int> certitem;
 typedef vector<certitem> certlist;
 
 static bool
@@ -90,8 +95,8 @@ cl_cmp(const certitem& i1, const certitem& i2) {
 
 int
 CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
-	tqslTrace("CertTree::Build", "flags=%d, provider=%lx", flags, (void *)provider);
-	typedef map<wxString,certlist> issmap;
+	tqslTrace("CertTree::Build", "flags=%d, provider=%lx", flags, static_cast<void *>(const_cast<TQSL_PROVIDER *>(provider)));
+	typedef map<wxString, certlist> issmap;
 	issmap issuers;
 
 	DeleteAllItems();
@@ -103,7 +108,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		return _ncerts;
 	}
 	// Separate certs into lists by issuer
-	for (int i = 0; i < _ncerts; i++) {	
+	for (int i = 0; i < _ncerts; i++) {
 		char issname[129];
 		if (tqsl_getCertificateIssuerOrganization(certs[i], issname, sizeof issname)) {
 			displayTQSLError("Error parsing certificate for issuer");
@@ -128,7 +133,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 			entityName = "<UNKNOWN ENTITY>";
 		strncat(callsign, entityName, sizeof callsign - strlen(callsign)-1);
 		callsign[sizeof callsign-1] = 0;
-		issuers[wxString(issname, wxConvLocal)].push_back(make_pair(wxString(callsign, wxConvLocal),i));
+		issuers[wxString(issname, wxConvLocal)].push_back(make_pair(wxString(callsign, wxConvLocal), i));
 	}
 	// Sort each issuer's list and add items to tree
 	issmap::iterator iss_it;
@@ -140,7 +145,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		}
 		certlist& list = iss_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
-		for (int i = 0; i < (int)list.size(); i++) {
+		for (int i = 0; i < static_cast<int>(list.size()); i++) {
 			CertTreeItemData *cert = new CertTreeItemData(certs[list[i].second]);
 			int keyonly = 1;
 			int exp = 0, sup = 0;
@@ -170,7 +175,6 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 void
 CertTree::SelectCert(tQSL_Cert cert) {
-
 	long serial;
 	if (tqsl_getCertificateSerial(cert, &serial))
 		return;
@@ -209,7 +213,7 @@ void
 CertTree::OnItemActivated(wxTreeEvent& event) {
 	tqslTrace("CertTree::OnItemActivated");
 	wxTreeItemId id = event.GetItem();
-	displayCertProperties((CertTreeItemData *)GetItemData(id), this);
+	displayCertProperties(reinterpret_cast<CertTreeItemData *>(GetItemData(id)), this);
 }
 
 void
@@ -229,4 +233,3 @@ CertTree::OnRightDown(wxMouseEvent& event) {
 		delete cm;
 	}
 }
-

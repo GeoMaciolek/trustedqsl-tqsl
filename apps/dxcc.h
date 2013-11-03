@@ -16,8 +16,8 @@
 #endif
 
 class DXCC {
-public:
-	DXCC() {};
+ public:
+	DXCC() {}
 	int number() const { return _number; }
 	const char * name() const { return _name; }
 	const char * zonemap() const { return _zonemap; }
@@ -25,7 +25,7 @@ public:
 	bool getNext();
 	bool getByEntity(int e);
 	static bool init();
-private:
+ private:
 	static bool _init;
 	int _number, _index;
 	const char *_name;

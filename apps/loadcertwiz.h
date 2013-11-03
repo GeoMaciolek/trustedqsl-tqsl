@@ -21,17 +21,17 @@ class LCW_Page;
 class notifyData;
 
 class LoadCertWiz : public ExtWizard {
-public:
+ public:
 	LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
 	~LoadCertWiz();
-	LCW_Page *GetCurrentPage() { return (LCW_Page *)wxWizard::GetCurrentPage(); }
+	LCW_Page *GetCurrentPage() { return reinterpret_cast<LCW_Page *>(wxWizard::GetCurrentPage()); }
 	bool RunWizard();
 	void ResetNotifyData();
 	notifyData *GetNotifyData() { return _nd; }
 	wxWindow *Parent() { return _parent; }
 	LCW_Page *Final() { return _final; }
 	LCW_Page *P12PW() { return _p12pw; }
-private:
+ private:
 	LCW_Page *_first;
 	LCW_Page *_final;
 	LCW_Page *_p12pw;
@@ -40,33 +40,33 @@ private:
 };
 
 class LCW_Page : public ExtWizard_Page {
-public:
-	LCW_Page(LoadCertWiz *parent) : ExtWizard_Page(parent) {}
-	LoadCertWiz *Parent() { return (LoadCertWiz *)_parent; }
+ public:
+	explicit LCW_Page(LoadCertWiz *parent) : ExtWizard_Page(parent) {}
+	LoadCertWiz *Parent() { return reinterpret_cast<LoadCertWiz *>(_parent); }
 };
 
 class LCW_P12PasswordPage : public LCW_Page {
-public:
-	LCW_P12PasswordPage(LoadCertWiz *parent);
+ public:
+	explicit LCW_P12PasswordPage(LoadCertWiz *parent);
 	virtual bool TransferDataFromWindow();
 	wxString GetPassword() const;
 	void SetFilename(const wxString& filename) { _filename = filename; }
-private:
+ private:
 	wxTextCtrl *_pwin;
 	wxString _filename;
 	wxStaticText *tc_status;
 };
 
 class LCW_FinalPage : public LCW_Page {
-public:
-	LCW_FinalPage(LoadCertWiz *parent);
+ public:
+	explicit LCW_FinalPage(LoadCertWiz *parent);
 	virtual void refresh();
-private:
+ private:
 	wxTextCtrl *tc_status;
 };
 
 class notifyData {
-public:
+ public:
 	struct counts {
 		int loaded, error, duplicate;
 	};

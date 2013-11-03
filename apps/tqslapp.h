@@ -81,10 +81,10 @@ enum {
 };
 
 class MyFrame : public wxFrame {
-public:
+ public:
 	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet);
 
-	bool IsQuiet(void) { return _quiet; };
+	bool IsQuiet(void) { return _quiet; }
 	void AddStationLocation(wxCommandEvent& event);
 	void EditStationLocation(wxCommandEvent& event);
 	void EnterQSOData(wxCommandEvent& event);
@@ -103,16 +103,16 @@ public:
 	void OnPreferences(wxCommandEvent& event);
 	void OnSaveConfig(wxCommandEvent& event);
 	void OnLoadConfig(wxCommandEvent& event);
-	int ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile, bool compress = false, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char *password = NULL);
+	int ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxString& outfile, bool compress = false, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char *password = NULL);
 	tQSL_Location SelectStationLocation(const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool editonly = false);
-	int ConvertLogToString(tQSL_Location loc, wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate=false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password=NULL);
-	int UploadLogFile(tQSL_Location loc, wxString& infile, bool compress=false, bool suppressdate=false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password=NULL);
-	int UploadFile(wxString& infile, const char* filename, int numrecs, void *content, size_t clen, wxString& fileType);
+	int ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password = NULL);
+	int UploadLogFile(tQSL_Location loc, const wxString& infile, bool compress = false, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password = NULL);
+	int UploadFile(const wxString& infile, const char* filename, int numrecs, void *content, size_t clen, const wxString& fileType);
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
-	void DoCheckForUpdates(bool quiet, bool noGUI=false);
-	void DoCheckExpiringCerts(bool noGUI=false);
+	void DoCheckForUpdates(bool quiet, bool noGUI = false);
+	void DoCheckExpiringCerts(bool noGUI = false);
 	void UpdateConfigFile(void);
 
 	void OnQuit(wxCommandEvent& event);
@@ -134,7 +134,7 @@ public:
 	void LocTreeReset(void);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
 	void FirstTime(void);
-	void BackupConfig(wxString& event, bool quiet);
+	void BackupConfig(const wxString& event, bool quiet);
 
 	CertTree *cert_tree;
 	LocTree *loc_tree;
@@ -145,7 +145,8 @@ public:
 	wxMenu* help_menu;
 
 	DECLARE_EVENT_TABLE()
-private:
+
+ private:
 	wxBitmapButton* loc_add_button;
 	wxStaticText* loc_add_label;
 	wxBitmapButton* loc_edit_button;
@@ -168,7 +169,6 @@ private:
 	TQSL_CERT_REQ *req;
 	bool _quiet;
 	wxTimer* _timer;
-
 };
 
 #endif // __tqslapp_h

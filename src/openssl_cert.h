@@ -38,9 +38,9 @@ void *d2i_ASN1_SET(void *a, const unsigned char **pp,
                    void (*free_func)(void*), int ex_tag,
                    int ex_class);
 void *ASN1_seq_unpack(const unsigned char *buf, int len,
-                      d2i_of_void *d2i, void (*free_func)(void*));
+                      d2i_of_void *d2i, void (*free_func)(void* dummy));
 unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
-                             unsigned char **buf, int *len );
+                             unsigned char **buf, int *len);
 #ifdef __cplusplus
 }
 #endif
@@ -71,7 +71,7 @@ int tqsl_import_cert(const char *cert, certtype type, int(*cb)(int, const char *
 
 int tqsl_get_pem_serial(const char *pem, long *serial);
 
-} // namespace
+}  // namespace tqsllib
 
 #if defined(LOTW_SERVER) || defined(OPENSSL_CERT_SOURCE)
 

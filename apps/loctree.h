@@ -30,18 +30,18 @@
 #include "wx/treectrl.h"
 
 class LocTreeItemData : public wxTreeItemData {
-public:
+ public:
 	LocTreeItemData(wxString locname, wxString callsign) : _locname(locname), _callsign(callsign)  {}
 	wxString getLocname() { return _locname; }
 	wxString getCallSign() { return _callsign; }
 
-private:
+ private:
 	wxString _locname;
 	wxString _callsign;
 };
 
 class LocTree : public wxTreeCtrl {
-public:
+ public:
 	LocTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style);
 	virtual ~LocTree();
@@ -49,13 +49,12 @@ public:
 	void OnItemActivated(wxTreeEvent& event);
 	void OnRightDown(wxMouseEvent& event);
 	bool useContextMenu;
-	LocTreeItemData *GetItemData(wxTreeItemId id) { return (LocTreeItemData *)wxTreeCtrl::GetItemData(id); }
+	LocTreeItemData *GetItemData(wxTreeItemId id) { return reinterpret_cast<LocTreeItemData *>(wxTreeCtrl::GetItemData(id)); }
 	int GetNumLocations() const { return _nloc; }
 
-private:
+ private:
 	int _nloc;
 	DECLARE_EVENT_TABLE()
-
 };
 
 #endif	// __loctree_h

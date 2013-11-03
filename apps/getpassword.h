@@ -28,13 +28,13 @@
 #include "wx/wxhtml.h"
 
 class GetPasswordDialog : public wxDialog {
-public:
+ public:
 	GetPasswordDialog(wxWindow *parent, const wxString& title = wxT("Enter password"),
 		const wxString& message = wxT("Enter password"),
 		wxHtmlHelpController *help = 0, wxString helpfile = wxT(""));
 	wxString Password() { return _password; }
 	virtual bool TransferDataFromWindow();
-private:
+ private:
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);
 	void OnHelp(wxCommandEvent&);
@@ -42,17 +42,17 @@ private:
 	wxHtmlHelpController *_help;
 	wxString _helpfile;
 	wxString _password;
-	wxTextCtrl *_pw;	
+	wxTextCtrl *_pw;
 	DECLARE_EVENT_TABLE()
 };
 
 class GetNewPasswordDialog : public wxDialog {
-public:
+ public:
 	GetNewPasswordDialog(wxWindow *parent, const wxString& title = wxT("New password"),
 		const wxString& message = wxT("Enter new password"), bool blankok = false,
 		wxHtmlHelpController *help = 0, wxString helpfile = wxT(""));
 	wxString Password() { return _password; }
-private:
+ private:
 	void PWChange(wxCommandEvent&);
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);

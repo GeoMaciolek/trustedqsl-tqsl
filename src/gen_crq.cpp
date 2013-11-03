@@ -29,7 +29,8 @@
 #include "tqsllib.h"
 #include "tqslexc.h"
 
-using namespace std;
+using std::cerr;
+using std::endl;
 
 int
 usage() {
@@ -49,19 +50,19 @@ main(int argc, char *argv[]) {
 		int c;
 		while ((c = getopt(argc, argv, "c:x:e:d:")) != -1) {
 			switch (c) {
-				case 'c':
+                                 case 'c':
 					sign_call = optarg;
 					break;
-				case 'x':
+                                 case 'x':
 					sign_dxcc = strtol(optarg, NULL, 10);
 					break;
-				case 'd':
+                                 case 'd':
 					dxcc = strtol(optarg, NULL, 10);
 					break;
-				case 'e':
+                                 case 'e':
 					email_addr = optarg;
 					break;
-				default:
+                                 default:
 					usage();
 			}
 		}
@@ -85,8 +86,9 @@ main(int argc, char *argv[]) {
 				throw myexc(erm);
 			}
 			sign_cert = *list;
-		} else if (sign_dxcc != 0)
+		} else if (sign_dxcc != 0) {
 			usage();
+		}
 		if (sign_cert) {
 			char buf[512];
 			long serial;
@@ -100,23 +102,23 @@ main(int argc, char *argv[]) {
 			cout << "Signing certificate issuer: " << buf << endl;
 			cout << "Signing certificate serial: " << serial << endl;
 			cout << "  Signing certificate DXCC: " << cdxcc << endl;
-			if (tqsl_beginSigning(sign_cert, (char *)"", 0, 0))
+			if (tqsl_beginSigning(sign_cert, const_cast<char *>(""), 0, 0))
 				throw tqslexc();
 		}
 		TQSL_CERT_REQ crq;
 		memset(&crq, 0, sizeof crq);
-		strcpy(crq.name, "Ish Kabibble");
-		strcpy(crq.address1, "1 No Place");
-		strcpy(crq.city, "City");
-		strcpy(crq.state, "ST");
-		strcpy(crq.country, "USA");
-		strcpy(crq.emailAddress, email_addr.c_str());
+		strncpy(crq.name, "Ish Kabibble", sizeof crq.name);
+		strncpy(crq.address1, "1 No Place", sizeof crq.address1);
+		strncpy(crq.city, "City", sizeof crq.city);
+		strncpy(crq.state, "ST", sizeof crq.state);
+		strncpy(crq.country, "USA", sizeof crq.country);
+		strncpy(crq.emailAddress, email_addr.c_str(), sizeof crq.emailAddress);
 		crq.dxccEntity = dxcc;
 		tqsl_initDate(&crq.qsoNotBefore, "1945-11-15");
 		crq.signer = sign_cert;
 		for (; optind < argc; optind++) {
 			string call = argv[optind];
-			strcpy(crq.callSign, call.c_str());
+			strncpy(crq.callSign, call.c_str(), sizeof crq.callSign);
 			for (char *cp = argv[optind]; *cp; cp++) {
 				if (*cp == '/')
 					*cp = '_';
@@ -127,7 +129,7 @@ main(int argc, char *argv[]) {
 				throw tqslexc();
 		}
 		return EXIT_SUCCESS;
-	} catch (exception& x) {
+	} catch(exception& x) {
 		cerr << "Aborting: " << x.what() << endl;
 		return EXIT_FAILURE;
 	}

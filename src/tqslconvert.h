@@ -24,7 +24,7 @@
   */
 /** @{ */
 
-typedef void * tQSL_Converter;  //!< Opaque converter type used by applications 
+typedef void * tQSL_Converter;  //!< Opaque converter type used by applications
 				//!< to access conversion functions
 				//!<
 

@@ -1,7 +1,13 @@
+/***************************************************************************
+                          tqslhelp.h  -  description
+                             -------------------
+          copyright (C) 2013 by ARRL and the TrustedQSL Developers
+ ***************************************************************************/
+
 // Derived from wxWidgets fs_inet.h
 
-#ifndef _TQSL_INET_H_
-#define _TQSL_INET_H_
+#ifndef _tqslhelp_h
+#define _tqslhelp_h
 
 #include "wx/defs.h"
 
@@ -12,10 +18,10 @@
 // ----------------------------------------------------------------------------
 
 class WXDLLIMPEXP_NET tqslInternetFSHandler : public wxFileSystemHandler {
-public:
+ public:
         virtual bool CanOpen(const wxString& location);
         virtual wxFSFile* OpenFile(wxFileSystem& fs, const wxString& location);
 };
 
-#endif // _TQSL_INET_H_
+#endif // _tqslhelp_h
 

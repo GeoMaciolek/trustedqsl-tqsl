@@ -36,15 +36,15 @@
 class ExtWizard_Page;
 
 class ExtWizard : public wxWizard {
-public:
+ public:
 	ExtWizard(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
-	ExtWizard_Page *GetCurrentPage() { return (ExtWizard_Page *)wxWizard::GetCurrentPage(); }
+	ExtWizard_Page *GetCurrentPage() { return reinterpret_cast<ExtWizard_Page *>(wxWizard::GetCurrentPage()); }
 	wxHtmlHelpController *GetHelp() { return _help; }
 	void DisplayHelp(const wxString& file) { if (_help) _help->Display(file); }
 	void ReportSize(const wxSize& size);
 	void AdjustSize() { SetPageSize(_minsize); }
 	bool HaveHelp() const { return _help != 0; }
-protected:
+ protected:
 	void OnPageChanged(wxWizardEvent&);
 	wxHtmlHelpController *_help;
 	wxSize _minsize;
@@ -53,16 +53,16 @@ protected:
 };
 
 class ExtWizard_Page : public wxWizardPageSimple {
-public:
-	ExtWizard_Page(ExtWizard *parent) : wxWizardPageSimple(parent), _parent(parent), _helpfile(wxT("")) {}
+ public:
+	explicit ExtWizard_Page(ExtWizard *parent) : wxWizardPageSimple(parent), _parent(parent), _helpfile(wxT("")) {}
 
 	virtual const char *validate() { return NULL; }	// Returns error message string or NULL=no error
 	virtual void refresh() { }	// Updates page contents based on page-specific criteria
 	void check_valid(TQ_WXTEXTEVENT&);
-protected:
+ protected:
 	ExtWizard *_parent;
 	void AdjustPage(wxBoxSizer *sizer, const wxString& helpfile = wxT(""));
-private:
+ private:
 	void OnHelp(wxCommandEvent&) { if (_helpfile != wxT("")) _parent->DisplayHelp(_helpfile); }
 	wxString _helpfile;
 

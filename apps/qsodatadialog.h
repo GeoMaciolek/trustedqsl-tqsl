@@ -32,13 +32,15 @@
 
 #include <vector>
 
+using std::vector;
+
 /** Display and edit QSO data
   *
   *@author Jon Bloom
   */
 
 class QSORecord {
-public:
+ public:
 	QSORecord() { _mode = wxT("CW"); _band = wxT("160M"); _rxband = wxT(""); }
 
 	wxString _call, _freq, _rxfreq;
@@ -48,10 +50,10 @@ public:
 	tQSL_Time _time;
 };
 
-typedef std::vector<QSORecord> QSORecordList;
+typedef vector<QSORecord> QSORecordList;
 
 class QSODataDialog : public wxDialog  {
-public: 
+ public:
 	QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist = 0,
 		wxWindowID id = -1, const wxString& title = wxT("QSO Data"));
 	~QSODataDialog();
@@ -61,7 +63,7 @@ public:
 	virtual bool TransferDataToWindow();
 	virtual bool TransferDataFromWindow();
 
-private:
+ private:
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);
 	void OnHelp(wxCommandEvent&);
@@ -71,7 +73,7 @@ private:
 	void OnRecTop(wxCommandEvent&);
 	void OnRecNew(wxCommandEvent&);
 	void OnRecDelete(wxCommandEvent&);
-	void SetRecno(int);
+	void SetRecno(int recno);
 	void UpdateControls();
 
 	wxTextCtrl *_recno_ctrl;
@@ -84,7 +86,6 @@ private:
 	DECLARE_EVENT_TABLE()
 	bool _isend;
 	wxHtmlHelpController *_help;
-
 };
 
 #endif

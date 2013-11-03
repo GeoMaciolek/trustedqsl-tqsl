@@ -18,13 +18,16 @@
 #include <exception>
 #include <string>
 
-class TQSLException : public std::exception {
-public:
-	TQSLException(const char *msg);
-	~TQSLException() throw () {}
+using std::exception;
+using std::string;
+
+class TQSLException : public exception {
+ public:
+	explicit TQSLException(const char *msg);
+	~TQSLException() throw() {}
 	virtual const char *what() throw () { return _msg.c_str(); }
-private:
-	std::string _msg;
+ private:
+	string _msg;
 };
 
 inline TQSLException::TQSLException(const char *msg) : exception() {

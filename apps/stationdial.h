@@ -29,8 +29,10 @@
 
 #include <vector>
 
+using std::vector;
+
 class item {
-public:
+ public:
 	wxString name;
 	wxString call;
 	wxString label;
@@ -39,7 +41,7 @@ public:
 class TQSLStationListBox;
 
 class TQSLGetStationNameDialog : public wxDialog {
-public:
+ public:
 	TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpController *help = 0, const wxPoint& pos = wxDefaultPosition,
 		bool i_issave = false, const wxString& title = wxT(""), const wxString& okLabel = wxT("Ok"), bool i_editonly = false);
 	void OnOk(wxCommandEvent& event);
@@ -56,14 +58,14 @@ public:
 	void SelectName(const wxString& name);
 	virtual int ShowModal();
 
-protected:
+ protected:
 	void UpdateButtons();
 	void UpdateControls();
 	void RefreshList();
 	void OnSetFocus(wxFocusEvent& event);
 	TQSLStationListBox *namelist;
 	wxString _station_data_name;
-	std::vector<item> item_data;
+	vector<item> item_data;
 	wxString _selected;
 	bool issave, editonly;
 	wxTextCtrl *name_entry;

@@ -37,25 +37,25 @@
   */
 
 class TQSLValidator : public wxValidator {
-public:
-	TQSLValidator(void *objp);
+ public:
+	explicit TQSLValidator(void *objp);
 	TQSLValidator(const TQSLValidator& val) { Copy(val); }
 	virtual ~TQSLValidator() {}
 	virtual bool Copy(const TQSLValidator&);
-	virtual bool Validate(wxWindow*);
+	virtual bool Validate(wxWindow* win);
 	virtual bool TransferToWindow();
 	virtual bool TransferFromWindow();
 	virtual wxString ToString() = 0;
 	virtual void FromString(const wxString&) = 0;
 	virtual bool IsValid(const wxString&) = 0;
-protected:
+ protected:
 	wxString _type;
 	void *_objp;
 };
 
 class TQSLDateValidator : public TQSLValidator {
-public:
-	TQSLDateValidator(tQSL_Date *date) : TQSLValidator(date) { _type = wxT("Date"); }
+ public:
+	explicit TQSLDateValidator(tQSL_Date *date) : TQSLValidator(date) { _type = wxT("Date"); }
 	TQSLDateValidator(const TQSLDateValidator& val) : TQSLValidator(val) {}
 	virtual ~TQSLDateValidator() {}
 	virtual wxObject *Clone() const { return new TQSLDateValidator(*this); }
@@ -65,8 +65,8 @@ public:
 };
 
 class TQSLTimeValidator : public TQSLValidator {
-public:
-	TQSLTimeValidator(tQSL_Time *time) : TQSLValidator(time) { _type = wxT("Time"); }
+ public:
+	explicit TQSLTimeValidator(tQSL_Time *time) : TQSLValidator(time) { _type = wxT("Time"); }
 	TQSLTimeValidator(const TQSLTimeValidator& val) : TQSLValidator(val) {}
 	virtual ~TQSLTimeValidator() {}
 	virtual wxObject *Clone() const { return new TQSLTimeValidator(*this); }

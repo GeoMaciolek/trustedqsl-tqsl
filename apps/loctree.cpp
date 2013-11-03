@@ -9,24 +9,28 @@
  ***************************************************************************/
 
 #include "loctree.h"
+#include <errno.h>
+#include <wx/imaglist.h>
 #include <map>
 #include <vector>
 #include <algorithm>
+#include <iostream>
+#include <utility>
 
 #include "tqslctrls.h"
 #include "tqslerrno.h"
 #include "tqsltrace.h"
-#include <errno.h>
-#include <wx/imaglist.h>
-
-#include <iostream>
 
 #include "util.h"
 
-using namespace std;
-
 #include "folder.xpm"
 #include "home.xpm"
+
+using std::pair;
+using std::vector;
+using std::map;
+using std::make_pair;
+
 enum {
 	FOLDER_ICON = 0,
 	HOME_ICON = 1
@@ -41,9 +45,9 @@ BEGIN_EVENT_TABLE(LocTree, wxTreeCtrl)
 END_EVENT_TABLE()
 
 LocTree::LocTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
-		const wxSize& size, long style) :
-		wxTreeCtrl(parent, id, pos, size, style), _nloc(0) {
-	tqslTrace("LocTree::LocTree", "parent=0x%lx, id=0x%lx, style=%d", (void *)parent, (void *)id, style);
+		const wxSize& size, long style)
+		: wxTreeCtrl(parent, id, pos, size, style), _nloc(0) {
+	tqslTrace("LocTree::LocTree", "parent=0x%lx, id=0x%lx, style=%d", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(id), style);
 	useContextMenu = true;
 	wxBitmap homebm(home_xpm);
 	wxBitmap folderbm(folder_xpm);
@@ -57,7 +61,7 @@ LocTree::LocTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 LocTree::~LocTree() {
 }
 
-typedef pair<wxString,int> locitem;
+typedef pair<wxString, int> locitem;
 typedef vector<locitem> loclist;
 
 static bool
@@ -73,8 +77,8 @@ check_tqsl_error(int rval) {
 
 int
 LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
-	tqslTrace("LocTree::Build", "provider=0x%lx", (void *)provider);
-	typedef map<wxString,loclist> locmap;
+	tqslTrace("LocTree::Build", "provider=0x%lx", reinterpret_cast<void *>(const_cast<TQSL_PROVIDER *>(provider)));
+	typedef map<wxString, loclist> locmap;
 	locmap callsigns;
 
 	DeleteAllItems();
@@ -87,7 +91,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
                 check_tqsl_error(tqsl_getStationLocationName(loc, i, locname, sizeof locname));
                 char callsign[256];
                 check_tqsl_error(tqsl_getStationLocationCallSign(loc, i, callsign, sizeof callsign));
-		callsigns[wxString(callsign, wxConvLocal)].push_back(make_pair(wxString(locname, wxConvLocal),i));
+		callsigns[wxString(callsign, wxConvLocal)].push_back(make_pair(wxString(locname, wxConvLocal), i));
         }
 	// Sort each callsign list and add items to tree
 	locmap::iterator loc_it;
@@ -95,7 +99,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		wxTreeItemId id = AppendItem(rootId, loc_it->first, FOLDER_ICON);
 		loclist& list = loc_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
-		for (int i = 0; i < (int)list.size(); i++) {
+		for (int i = 0; i < static_cast<int>(list.size()); i++) {
 			LocTreeItemData *loc = new LocTreeItemData(list[i].first, loc_it->first);
 			AppendItem(id, list[i].first, HOME_ICON, -1, loc);
 		}
@@ -109,7 +113,7 @@ void
 LocTree::OnItemActivated(wxTreeEvent& event) {
 	tqslTrace("LocTree::OnItemActivated");
 	wxTreeItemId id = event.GetItem();
-	displayLocProperties((LocTreeItemData *)GetItemData(id), this);
+	displayLocProperties(reinterpret_cast<LocTreeItemData *>(GetItemData(id)), this);
 }
 
 void
