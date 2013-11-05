@@ -916,7 +916,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP /* | wxNB_FIXEDWIDTH*/, wxT("Log Operations"));
 
-	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
+	topSizer->Add(notebook, 50, wxEXPAND | wxALL, 1);
 
 	topSizer->Add(new wxStaticText(topPanel, -1, wxT("Status Log")), 0, wxEXPAND | wxALL, 1);
 
