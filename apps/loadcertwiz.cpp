@@ -220,7 +220,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_p12pw = p12pw;
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
-	wxString ext(wxT("p12"));
+	wxString ext(wxT("tq6"));
 	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
 	wild += wxT("|All files (*.*)|*.*");
 
