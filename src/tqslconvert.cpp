@@ -266,7 +266,11 @@ tqsl_endConverter(tQSL_Converter *convp) {
 	if ((conv = check_conv(*convp))) {
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
-		if (conv->dbenv) conv->dbenv->close(conv->dbenv, 0);
+		if (conv->dbenv) {
+			char **unused;
+			conv->dbenv->log_archive(conv->dbenv, &unused, DB_ARCH_REMOVE);
+			conv->dbenv->close(conv->dbenv, 0);
+		}
 		// close files and clean up converters, if any
 		if (conv->adif) tqsl_endADIF(&conv->adif);
 		if (conv->cab) tqsl_endCabrillo(&conv->cab);
@@ -407,6 +411,8 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		}
 		if (conv->errfile)
 			conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
+		// Log files default to 10 Mb each. We don't need nearly that much.
+		conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
 			if (conv->errfile)
 				fprintf(conv->errfile, "opening DB %s returns status %d", conv->dbpath, dbret);
