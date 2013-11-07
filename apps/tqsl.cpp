@@ -1761,7 +1761,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			return TQSL_EXIT_CANCEL;
 		}
 		if (action == TQSL_ACTION_ASK || action == TQSL_ACTION_UNSPEC) { // want to ask the user
-			DupesDialog dial(this, processed, duplicates, action);
+			DupesDialog dial(this, processed - errors - out_of_range, duplicates, action);
 			int choice = dial.ShowModal();
 			if (choice == TQSL_DP_CAN) {
 				wxLogMessage(wxT("Cancelled"));
