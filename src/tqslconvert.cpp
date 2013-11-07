@@ -392,6 +392,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 				}
 			}
 		}
+		closedir(dir);
 	}
 #endif
 	fixedpath += "/dberr.log";
