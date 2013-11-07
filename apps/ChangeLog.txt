@@ -1,5 +1,16 @@
-TQSL/TQSLCERT changes
-=====================
+TQSL changes
+============
+
+2.0.1
+----------
+When asking about how to handle duplicate QSOs, don't count duplicate QSOs and
+QSOs with bad callsigns as "new" - ignore them.
+
+When importing certificates, default to .tq6 files.
+
+Force the callsign certificates and station locations pane of the UI to be
+fixed size. This fixes long lists of certificates or locations to use a
+scrollbar rather than having the pane stretch the whole UI.
 
 2.0
 ----------

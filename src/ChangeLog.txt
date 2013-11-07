@@ -3,6 +3,14 @@ TQSLLIB changes
 
 2.4
 ---
+Clean up database log files on exit. Shrink the default log file to avoid
+large amounts of wasted disk space.
+
+When scanning the working directory for bad files, close the directory to
+avoid file descriptor leaks.
+
+Add some new bad callsign patterns.
+
 Fix atoi() calls throughout to use strtol() so that strings like 012 aren't
 treated as Octal due to the leading zeroes.
 
