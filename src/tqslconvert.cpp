@@ -268,6 +268,7 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
 		if (conv->dbenv) {
 			char **unused;
+			conv->dbenv->txn_checkpoint(conv->dbenv, 0, 0, 0);
 			conv->dbenv->log_archive(conv->dbenv, &unused, DB_ARCH_REMOVE);
 			conv->dbenv->close(conv->dbenv, 0);
 		}
