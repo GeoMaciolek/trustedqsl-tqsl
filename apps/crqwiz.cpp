@@ -17,12 +17,15 @@
 #include <wx/tokenzr.h>
 #include <algorithm>
 #include <iostream>
+#include <string>
 #include "dxcc.h"
 #include "util.h"
 #include "tqslctrls.h"
 #include "tqsltrace.h"
 
 #include "winstrdefs.h"
+
+using std::string;
 
 CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelpController *help,
 	const wxString& title)
@@ -562,7 +565,7 @@ CRQ_IntroPage::validate() {
 	tqslTrace("CRQ_IntroPage::validate");
 	if (!initialized)
 		return 0;
-	wxString val = tc_call->GetValue();
+	wxString val = tc_call->GetValue().MakeUpper();
 	bool ok = true;
 	int sel;
 	wxString msg(wxT("You must enter a valid call sign."));
@@ -571,19 +574,27 @@ CRQ_IntroPage::validate() {
 	if (val.Len() < 3)
 		ok = false;
 	if (ok) {
-		bool havealpha = false, havenumeric = false;
-		const wxWX2MBbuf tmp_buf = val.mb_str();
-		const char *cp = (const char *)tmp_buf;
-		while (ok && *cp) {
-			char c = toupper(*cp++);
-			if (isalpha(c))
-				havealpha = true;
-			else if (isdigit(c))
-				havenumeric = true;
-			else if (c != '/')
-				ok = false;
-		}
-		ok = (ok && havealpha && havenumeric);
+		string call = string(val.mb_str());
+		// Check for invalid characters
+		if (call.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/") != string::npos) 
+			ok = false;
+		// Need at least one letter
+		if (call.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos) 
+			ok = false;
+		// Need at least one number
+		if (call.find_first_of("0123456789") == string::npos)
+			ok = false;
+		// Invalid callsign patterns
+		// Starting with 0, Q, C7, or 4Y
+		// 1x other than 1A, 1M, 1S
+		string first = call.substr(0, 1);
+		string second = call.substr(1, 1);
+		if (first == "0" || first == "Q" ||
+		    (first == "C" && second == "7") ||
+		    (first == "4" && second == "Y") ||
+		    (first == "1" && second != "A" && second != "M" && second != "S"))
+			ok = false;
+
 	}
 
 	if (!ok)
