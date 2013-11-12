@@ -105,7 +105,6 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	if (tqsl_selectCertificates(&certs, &_ncerts, 0, 0, 0, provider, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || tQSL_Errno != ENOENT)
 			displayTQSLError("Error while accessing certificate store");
-		return _ncerts;
 	}
 	// Separate certs into lists by issuer
 	for (int i = 0; i < _ncerts; i++) {

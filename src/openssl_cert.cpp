@@ -775,6 +775,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	RSA *rsa = NULL;
 	vector< map<string, string> > keylist;
 	vector< map<string, string> >::iterator it;
+	bool keyerror = false;
+	int savedError;
 
 	if (tqsl_init())
 		return 1;
@@ -804,8 +806,11 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	}
 	// Get a list of keys and find any unmatched (no cert) ones
 	if (withkeys) {
-		if (tqsl_make_key_list(keylist))
-			goto end;
+		if (tqsl_make_key_list(keylist)) {
+			keyerror = true;		// Remember tha an error occurred
+			savedError = tQSL_Error;	// but allow the rest of the certs to load
+			goto nokeys;
+		}
 		if (xcerts != NULL) {
 			for (i = 0; i < sk_X509_num(xcerts); i++) {
 				x = sk_X509_value(xcerts, i);
@@ -852,6 +857,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				it++;
 		}
 	}
+
+ nokeys:
 
 	// Done with the original cert list now
 	if (xcerts != NULL) {
@@ -920,7 +927,12 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 		(*certlist)[i++] = TQSL_OBJ_TO_API(cp);
 	}
 
-	rval = 0;
+	if (keyerror) {				// If an error happened with private key scan
+		tQSL_Error = savedError;	// Restore the error status from that
+		rval = 1;
+	} else {
+		rval = 0;
+	}
 	goto end;
  err:
 	tQSL_Error = TQSL_OPENSSL_ERROR;
@@ -3620,7 +3632,7 @@ static int
 tqsl_open_key_file(const char *path) {
 	if (keyf_adif)
 		tqsl_endADIF(&keyf_adif);
-	 return tqsl_beginADIF(&keyf_adif, path);
+	return tqsl_beginADIF(&keyf_adif, path);
 }
 
 static int
@@ -3947,6 +3959,8 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 		char fixcall[256];
 		if (ent->d_name[0] == '.')
 			continue;
+		if (strstr(ent->d_name, ".save"))
+			continue;
 #ifdef _WIN32
 		string filename = path + "\\" + ent->d_name;
 #else
@@ -3959,11 +3973,14 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 					rval = 1;
 					break;
 				}
-				if (strcmp(fixcall, ent->d_name))
+				if (strcasecmp(fixcall, ent->d_name))
 					continue;
 				keys.push_back(fields);
 			}
 			tqsl_close_key_file();
+		} else {
+			rval = 1;			// Unable to open - return error
+			break;
 		}
 	}
 	closedir(dir);
