@@ -502,7 +502,8 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
                         major, minor, config_major, config_minor,
                         conv->allow_dupes ? "true" : "false");
 		temp[sizeof temp - 1] = '\0';
-		snprintf(ident, sizeof ident, "<TQSL_IDENT:%d>%s\n", strlen(temp), temp);
+		int len = strlen(temp);
+		snprintf(ident, sizeof ident, "<TQSL_IDENT:%d>%s\n", len, temp);
 		ident[sizeof ident - 1] = '\0';
 		conv->need_ident_rec = false;
 		return ident;

@@ -2696,9 +2696,13 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 // The macro for declading a hash map defines a couple of typedefs
 // that it never uses. Current GCC warns about those. The pragma
 // below suppresses those warnings for those.
-#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#if !defined(__APPLE__) && !defined(_WIN32)
+	#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
 			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
-#pragma GCC diagnostic warning "-Wunused-local-typedefs"
+#if !defined(__APPLE__) && !defined(_WIN32)
+	#pragma GCC diagnostic warning "-Wunused-local-typedefs"
+#endif
 			URLHashMap map;
 			revLevel *newProgramRev = NULL;
 			revLevel *newConfigRev = NULL;
