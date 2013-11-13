@@ -152,7 +152,7 @@ TQSLGetStationNameDialog::RefreshList() {
 		item it;
 		char buf[256];
 		check_tqsl_error(tqsl_getStationLocationName(loc, i, buf, sizeof buf));
-		it.name = wxString(buf, wxConvLocal);
+		it.name = wxString::FromUTF8(buf);
 		char cbuf[256];
 		check_tqsl_error(tqsl_getStationLocationCallSign(loc, i, cbuf, sizeof cbuf));
 		it.call = wxString(cbuf, wxConvLocal);

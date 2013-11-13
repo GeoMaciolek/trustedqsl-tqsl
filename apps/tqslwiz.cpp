@@ -45,7 +45,7 @@ TQSLWizard::TQSLWizard(tQSL_Location locp, wxWindow *parent, wxHtmlHelpControlle
 
 	char buf[256];
 	if (!tqsl_getStationLocationCaptureName(locp, buf, sizeof buf)) {
-		wxString s(buf, wxConvLocal);
+		wxString s = wxString::FromUTF8(buf);
 		SetLocationName(s);
 	}
 	tqsl_setStationLocationCertFlags(locp, expired ? TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED : TQSL_SELECT_CERT_WITHKEYS);
@@ -491,7 +491,7 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	for (int i = 0; i < n; i++) {
 		char buf[256];
 		tqsl_getStationLocationName(loc, i, buf, sizeof buf);
-		item_data.push_back(wxString(buf, wxConvLocal));
+		item_data.push_back(wxString::FromUTF8(buf));
 		char cbuf[256];
 		tqsl_getStationLocationCallSign(loc, i, cbuf, sizeof cbuf);
 		wxString s(buf, wxConvLocal);

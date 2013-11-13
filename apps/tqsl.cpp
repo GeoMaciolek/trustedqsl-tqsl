@@ -1187,7 +1187,8 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	wiz->Destroy();
 	if (!okay)
 		return rval;
-	check_tqsl_error(tqsl_setStationLocationCaptureName(loc, rval.mb_str()));
+	wxCharBuffer locname = rval.ToUTF8();
+	check_tqsl_error(tqsl_setStationLocationCaptureName(loc, locname.data()));
 	check_tqsl_error(tqsl_saveStationLocationCapture(loc, 1));
 	return rval;
 }
@@ -2920,6 +2921,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
+		wxString lname = wxString(loc_name, wxConvUTF8);
+		strncpy(loc_name, (const char *)lname.mb_str(wxConvUTF8), sizeof loc_name);
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
@@ -3002,6 +3005,8 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
+		wxString lname = wxString(loc_name, wxConvUTF8);
+		strncpy(loc_name, (const char *)lname.mb_str(wxConvUTF8), sizeof loc_name);
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
