@@ -113,7 +113,7 @@ static int pmkdir(const char *path, int perm) {
 	char npath[TQSL_MAX_PATH_LEN];
 	char *cp;
 
-	int nleft = sizeof npath;
+	int nleft = sizeof npath - 1;
 	strncpy(dpath, path, sizeof dpath);
 	cp = strtok(dpath, "/\\");
 	npath[0] = 0;
