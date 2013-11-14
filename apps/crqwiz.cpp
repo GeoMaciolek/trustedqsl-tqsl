@@ -324,7 +324,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	hsizer->Add(st, 0, wxRIGHT, 5);
 	wxString s;
 	if (crq && crq->name)
-		s = wxString(crq->name, wxConvLocal);
+		s = wxString::FromUTF8(crq->name);
 	else if (config->Read(wxT("Name"), &val))
 		s = val;
 	tc_name = new wxTextCtrl(this, ID_CRQ_NAME, s, wxDefaultPosition, wxSize(def_w, -1));
@@ -334,7 +334,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->address1)
-		s = wxString(crq->address1, wxConvLocal);
+		s = wxString::FromUTF8(crq->address1);
 	else if (config->Read(wxT("Addr1"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -347,7 +347,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->address2)
-		s = wxString(crq->address2, wxConvLocal);
+		s = wxString::FromUTF8(crq->address2);
 	else if (config->Read(wxT("Addr2"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -360,7 +360,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->city)
-		s = wxString(crq->city, wxConvLocal);
+		s = wxString::FromUTF8(crq->city);
 	else if (config->Read(wxT("City"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -373,7 +373,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->state)
-		s = wxString(crq->state, wxConvLocal);
+		s = wxString::FromUTF8(crq->state);
 	else if (config->Read(wxT("State"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -386,7 +386,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->postalCode)
-		s = wxString(crq->postalCode, wxConvLocal);
+		s = wxString::FromUTF8(crq->postalCode);
 	else if (config->Read(wxT("ZIP"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -398,7 +398,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	s = wxT("");
 	if (crq && crq->country)
-		s = wxString(crq->country, wxConvLocal);
+		s = wxString::FromUTF8(crq->country);
 	else if (config->Read(wxT("Country"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);

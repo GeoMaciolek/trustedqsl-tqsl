@@ -2325,7 +2325,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				break;
 			case wxID_MORE:		// User hit Edit
-		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
+		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
 				if (verify_cert(loc)) {		// Check if there is a certificate before editing
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
@@ -2338,7 +2338,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				}
 				break;
 			case wxID_OK:		// User hit OK
-		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().mb_str()));
+		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
 				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 				if (strlen(errbuf) > 0) {
 					wxMessageBox(wxString::Format(wxT("%hs\nThis should be corrected before signing a log file."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
@@ -2921,8 +2921,6 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
-		wxString lname = wxString(loc_name, wxConvUTF8);
-		strncpy(loc_name, (const char *)lname.mb_str(wxConvUTF8), sizeof loc_name);
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
@@ -3005,8 +3003,6 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
 		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
-		wxString lname = wxString(loc_name, wxConvUTF8);
-		strncpy(loc_name, (const char *)lname.mb_str(wxConvUTF8), sizeof loc_name);
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
@@ -3113,7 +3109,7 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
 					svalue.Replace(wxT("&"), wxT("&amp;"), true);
 					svalue.Replace(wxT("<"), wxT("&lt;"), true);
 					svalue.Replace(wxT(">"), wxT("&gt;"), true);
-					gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.mb_str());
+					gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.ToUTF8());
 					break;
                                 case wxConfigBase::Type_Boolean:
 					config->Read(name, &bvalue);
@@ -3374,7 +3370,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 			} else if (strcmp(atts[i], "Type") == 0) {
 				stype = wxString(atts[i+1], wxConvLocal);
 			} else if (strcmp(atts[i], "Value") == 0) {
-				svalue = wxString(atts[i+1], wxConvLocal);
+				svalue = wxString::FromUTF8(atts[i+1]);
 			}
 		}
 		loader->config->SetPath(sgroup);
@@ -3399,15 +3395,15 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 	} else if (strcmp(name, "Location") == 0) {
 		for (i = 0; atts[i]; i+=2) {
 			if (strcmp(atts[i], "name") == 0) {
-				loader->locstring += wxT("<StationData name=\"") + wxString(atts[i+1], wxConvLocal) + wxT("\">\n");
+				loader->locstring += wxT("<StationData name=\"") + wxString::FromUTF8(atts[i+1]) + wxT("\">\n");
 				break;
 			}
 		}
 		for (i = 0; atts[i]; i+=2) {
 			if (strcmp(atts[i], "name") != 0) {
-				loader->locstring += wxT("<") + wxString(atts[i], wxConvLocal) + wxT(">") +
-					wxString(atts[i+1], wxConvLocal) + wxT("</") +
-					wxString(atts[i], wxConvLocal) + wxT(">\n");
+				loader->locstring += wxT("<") + wxString::FromUTF8(atts[i]) + wxT(">") +
+					wxString::FromUTF8(atts[i+1]) + wxT("</") +
+					wxString::FromUTF8(atts[i]) + wxT(">\n");
 			}
 		}
 	} else if (strcmp(name, "DupeDb") == 0) {
@@ -3443,7 +3439,7 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 		loader->locstring += wxT("</StationData>\n");
 	} else if (strcmp(name, "Locations") == 0) {
 		loader->locstring += wxT("</StationDataFile>\n");
-		if (tqsl_mergeStationLocations(loader->locstring.mb_str()) != 0) {
+		if (tqsl_mergeStationLocations(loader->locstring.ToUTF8()) != 0) {
 			wxLogError(wxT("\tError importing station locations: %hs"), tqsl_getErrorString());
 		}
 	} else if (strcmp(name, "TQSLSettings") == 0) {
@@ -3478,7 +3474,7 @@ TQSLConfig::xml_location_end(void *data, const XML_Char *name) {
 	// Anything else is a station attribute. Add it to the definition.
 	parser->elementBody.Trim(false);
 	parser->elementBody.Trim(true);
-	gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.mb_str());
+	gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.ToUTF8());
 	parser->elementBody = wxT("");
 }
 
@@ -3488,7 +3484,7 @@ TQSLConfig::xml_text(void *data, const XML_Char *text, int len) {
 	char buf[512];
 	memcpy(buf, text, len);
 	buf[len] = '\0';
-	loader->elementBody += wxString(buf, wxConvLocal);
+	loader->elementBody += wxString::FromUTF8(buf);
 }
 
 void
@@ -3802,7 +3798,7 @@ QSLApp::OnInit() {
 		locname.Trim(true);			// clean up whitespace
 		locname.Trim(false);
 		tqsl_endStationLocationCapture(&loc);
-		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
+		if (tqsl_getStationLocation(&loc, locname.ToUTF8())) {
 			if (quiet) {
 				wxLogError(wxT("%hs"), tqsl_getErrorString());
 				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
@@ -3866,7 +3862,7 @@ QSLApp::OnInit() {
 			action = TQSL_ACTION_ASK;
 		} else {
 			char tmp[100];
-			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
+			strncpy(tmp, (const char *)act.ToUTF8(), sizeof tmp);
 			tmp[sizeof tmp -1] = '\0';
 			if (quiet)
 				wxLogMessage(wxT("The -a parameter %hs is not recognized"), tmp);
@@ -4156,43 +4152,43 @@ void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
 		if (!tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf))
 			strncpy(req->providerUnit, buf, sizeof req->providerUnit);
 		if (!tqsl_getCertificateCallSign(cert, buf, sizeof buf)) {
-			callSign = wxString(buf, wxConvLocal);
-			strncpy(req->callSign, callSign.mb_str(), sizeof req->callSign);
+			callSign = wxString::FromUTF8(buf);
+			strncpy(req->callSign, callSign.ToUTF8(), sizeof req->callSign);
 		}
 		if (!tqsl_getCertificateAROName(cert, buf, sizeof buf)) {
-			name = wxString(buf, wxConvLocal);
-			strncpy(req->name, name.mb_str(), sizeof req->name);
+			name = wxString::FromUTF8(buf);
+			strncpy(req->name, name.ToUTF8(), sizeof req->name);
 		}
 		tqsl_getCertificateDXCCEntity(cert, &(req->dxccEntity));
 		tqsl_getCertificateQSONotBeforeDate(cert, &(req->qsoNotBefore));
 		tqsl_getCertificateQSONotAfterDate(cert, &(req->qsoNotAfter));
 		if (!tqsl_getCertificateEmailAddress(cert, buf, sizeof buf)) {
-			emailAddress = wxString(buf, wxConvLocal);
-			strncpy(req->emailAddress, emailAddress.mb_str(), sizeof req->emailAddress);
+			emailAddress = wxString::FromUTF8(buf);
+			strncpy(req->emailAddress, emailAddress.ToUTF8(), sizeof req->emailAddress);
 		}
 		if (!tqsl_getCertificateRequestAddress1(cert, buf, sizeof buf)) {
-			address1 = wxString(buf, wxConvLocal);
-			strncpy(req->address1, address1.mb_str(), sizeof req->address1);
+			address1 = wxString::FromUTF8(buf);
+			strncpy(req->address1, address1.ToUTF8(), sizeof req->address1);
 		}
 		if (!tqsl_getCertificateRequestAddress2(cert, buf, sizeof buf)) {
-			address2 = wxString(buf, wxConvLocal);
-			strncpy(req->address2, address2.mb_str(), sizeof req->address2);
+			address2 = wxString::FromUTF8(buf);
+			strncpy(req->address2, address2.ToUTF8(), sizeof req->address2);
 		}
 		if (!tqsl_getCertificateRequestCity(cert, buf, sizeof buf)) {
-			city = wxString(buf, wxConvLocal);
-			strncpy(req->city, city.mb_str(), sizeof req->city);
+			city = wxString::FromUTF8(buf);
+			strncpy(req->city, city.ToUTF8(), sizeof req->city);
 		}
 		if (!tqsl_getCertificateRequestState(cert, buf, sizeof buf)) {
-			state = wxString(buf, wxConvLocal);
-			strncpy(req->state, state.mb_str(), sizeof req->state);
+			state = wxString::FromUTF8(buf);
+			strncpy(req->state, state.ToUTF8(), sizeof req->state);
 		}
 		if (!tqsl_getCertificateRequestPostalCode(cert, buf, sizeof buf)) {
-			postalCode = wxString(buf, wxConvLocal);
-			strncpy(req->postalCode, postalCode.mb_str(), sizeof req->postalCode);
+			postalCode = wxString::FromUTF8(buf);
+			strncpy(req->postalCode, postalCode.ToUTF8(), sizeof req->postalCode);
 		}
 		if (!tqsl_getCertificateRequestCountry(cert, buf, sizeof buf)) {
-			country = wxString(buf, wxConvLocal);
-			strncpy(req->country, country.mb_str(), sizeof req->country);
+			country = wxString::FromUTF8(buf);
+			strncpy(req->country, country.ToUTF8(), sizeof req->country);
 		}
 	}
 	CRQWizard(event);
@@ -4262,18 +4258,18 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		TQSL_CERT_REQ req;
 		strncpy(req.providerName, wiz.provider.organizationName, sizeof req.providerName);
 		strncpy(req.providerUnit, wiz.provider.organizationalUnitName, sizeof req.providerUnit);
-		strncpy(req.callSign, wiz.callsign.mb_str(), sizeof req.callSign);
-		strncpy(req.name, wiz.name.mb_str(), sizeof req.name);
-		strncpy(req.address1, wiz.addr1.mb_str(), sizeof req.address1);
-		strncpy(req.address2, wiz.addr2.mb_str(), sizeof req.address2);
-		strncpy(req.city, wiz.city.mb_str(), sizeof req.city);
-		strncpy(req.state, wiz.state.mb_str(), sizeof req.state);
-		strncpy(req.postalCode, wiz.zip.mb_str(), sizeof req.postalCode);
+		strncpy(req.callSign, wiz.callsign.ToUTF8(), sizeof req.callSign);
+		strncpy(req.name, wiz.name.ToUTF8(), sizeof req.name);
+		strncpy(req.address1, wiz.addr1.ToUTF8(), sizeof req.address1);
+		strncpy(req.address2, wiz.addr2.ToUTF8(), sizeof req.address2);
+		strncpy(req.city, wiz.city.ToUTF8(), sizeof req.city);
+		strncpy(req.state, wiz.state.ToUTF8(), sizeof req.state);
+		strncpy(req.postalCode, wiz.zip.ToUTF8(), sizeof req.postalCode);
 		if (wiz.country.IsEmpty())
 			strncpy(req.country, "USA", sizeof req.country);
 		else
-			strncpy(req.country, wiz.country.mb_str(), sizeof req.country);
-		strncpy(req.emailAddress, wiz.email.mb_str(), sizeof req.emailAddress);
+			strncpy(req.country, wiz.country.ToUTF8(), sizeof req.country);
+		strncpy(req.emailAddress, wiz.email.ToUTF8(), sizeof req.emailAddress);
 		strncpy(req.password, wiz.password.mb_str(), sizeof req.password);
 		req.dxccEntity = wiz.dxcc;
 		req.qsoNotBefore = wiz.qsonotbefore;
@@ -4552,7 +4548,7 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (wxMessageBox(
 wxT("This will permanently remove this station location from your system.\n")
 wxT("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), wxT("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
-		if (tqsl_deleteStationLocation(data->getLocname().mb_str()))
+		if (tqsl_deleteStationLocation(data->getLocname().ToUTF8()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		loc_tree->Build();
 		LocTreeReset();
@@ -4569,7 +4565,7 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	wxString selname;
 	char errbuf[512];
 
-	check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().mb_str()));
+	check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
 	if (verify_cert(loc)) {		// Check if there is a certificate before editing
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
@@ -4756,7 +4752,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 				 "AU_STATE", "State: " };
 
 	tQSL_Location loc;
-	check_tqsl_error(tqsl_getStationLocation(&loc, locname.mb_str()));
+	check_tqsl_error(tqsl_getStationLocation(&loc, locname.ToUTF8()));
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);

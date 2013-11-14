@@ -282,7 +282,7 @@ TQSLGetStationNameDialog::OnDelete(wxCommandEvent&) {
 	if (name == wxT(""))
 		return;
 	if (wxMessageBox(wxString(wxT("Delete \"")) + name + wxT("\"?"), wxT("TQSL Confirm"), wxYES_NO|wxCENTRE, this) == wxYES) {
-		check_tqsl_error(tqsl_deleteStationLocation(name.mb_str()));
+		check_tqsl_error(tqsl_deleteStationLocation(name.ToUTF8()));
 		if (!issave)
 			name_entry->Clear();
 		RefreshList();
@@ -357,14 +357,14 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 	tQSL_Location loc;
 	try {
 		map<wxString, wxString> props;
-		check_tqsl_error(tqsl_getStationLocation(&loc, name.mb_str()));
+		check_tqsl_error(tqsl_getStationLocation(&loc, name.ToUTF8()));
 		do {
 			int nfield;
 			check_tqsl_error(tqsl_getNumLocationField(loc, &nfield));
 			for (int i = 0; i < nfield; i++) {
 				char buf[256];
 				check_tqsl_error(tqsl_getLocationFieldDataLabel(loc, i, buf, sizeof buf));
-				wxString key = wxString(buf, wxConvLocal);
+				wxString key = wxString::FromUTF8(buf);
 				int type;
 				check_tqsl_error(tqsl_getLocationFieldDataType(loc, i, &type));
 				if (type == TQSL_LOCATION_FIELD_DDLIST || type == TQSL_LOCATION_FIELD_LIST) {
@@ -374,7 +374,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 				} else {
 					check_tqsl_error(tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf));
 				}
-				props[key] = wxString(buf, wxConvLocal);
+				props[key] = wxString::FromUTF8(buf);
 			}
 			int rval;
 			if (tqsl_hasNextStationLocationCapture(loc, &rval) || !rval)

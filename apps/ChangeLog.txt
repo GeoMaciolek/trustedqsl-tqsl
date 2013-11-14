@@ -3,6 +3,10 @@ TQSL changes
 
 2.0.1
 ----------
+Properly handle non-ASCII characters in station location names and in callsign
+certificate request name/address fields. Store these in a form that allows
+transport between UNIX and Windows.
+
 When asking about how to handle duplicate QSOs, don't count duplicate QSOs and
 QSOs with bad callsigns as "new" - ignore them.
 

@@ -178,7 +178,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				char *p = strchr(item, '|');
 				if (p)
 					*p = '\0';
-				wxString item_text(item, wxConvLocal);
+				wxString item_text = wxString::FromUTF8(item);
 				(reinterpret_cast<wxComboBox *>(controls[i]))->Append(item_text);
 				if (item_text == old_sel)
 					new_sel = j;
@@ -208,7 +208,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			if (noupdate_field < 0) {
 				char buf[256];
 				tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
-				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(wxString(buf, wxConvLocal));
+				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(wxString::FromUTF8(buf));
 			}
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
 			int len;
@@ -218,11 +218,11 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetSize((len+1)*text_size.GetWidth(), h);
 			char buf[256];
 			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
-			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString(buf, wxConvLocal));
+			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(buf));
 			if (strlen(buf) == 0) {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(true);
 				if (valMsg)
-					(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString(valMsg, wxConvLocal));
+					(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(valMsg));
 			} else {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(false);
 			}
@@ -410,10 +410,10 @@ TQSLWizCertPage::validate() {
 					editedGrids += wxT(",");
 				editedGrids += grid;
 				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(editedGrids);
-				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().mb_str());
+				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().ToUTF8());
 			}
 			if (error.IsEmpty()) return 0;
-			strncpy(errtxt, error.mb_str(), sizeof errtxt);
+			strncpy(errtxt, error.ToUTF8(), sizeof errtxt);
 			return errtxt;
 		}
 	}
@@ -437,14 +437,8 @@ TQSLWizCertPage::TransferDataFromWindow() {
                         case TQSL_LOCATION_FIELD_LIST:
 				break;
                         case TQSL_LOCATION_FIELD_TEXT:
-				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().mb_str());
+				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().ToUTF8());
 				break;
-#if 0
-                        case TQSL_LOCATION_FIELD_BADZONE:
-				if (vmsg)
-					tqsl_setLocationFieldCharData(loc, i, vmsg);
-				break;
-#endif
 		}
 	}
 	return true;
@@ -496,7 +490,7 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 		tqsl_getStationLocationCallSign(loc, i, cbuf, sizeof cbuf);
 		wxString s(buf, wxConvLocal);
 		s += (wxString(wxT(" (")) + wxString(cbuf, wxConvLocal) + wxString(wxT(")")));
-		const void *v = item_data.back().mb_str();
+		const void *v = item_data.back().ToUTF8();
 		namelist->Append(s, const_cast<void *>(v));
 	}
 	if (namelist->GetCount() > 0)
