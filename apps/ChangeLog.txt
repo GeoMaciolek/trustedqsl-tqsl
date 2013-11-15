@@ -3,6 +3,10 @@ TQSL changes
 
 2.0.1
 ----------
+Correct problem where using characters like "<", ">" or quote in a station
+location field could cause restoring a .tbk file to fail with a syntax
+error.
+
 Properly handle non-ASCII characters in station location names and in callsign
 certificate request name/address fields. Store these in a form that allows
 transport between UNIX and Windows.

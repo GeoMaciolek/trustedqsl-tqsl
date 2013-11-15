@@ -37,5 +37,6 @@
 #endif
 
 wxSize getTextSize(wxWindow *win);
+wxString urlEncode(wxString& str);
 
 #endif	// __wxutil_h

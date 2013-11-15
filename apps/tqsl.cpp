@@ -3106,9 +3106,7 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
                                 case wxConfigBase::Type_Unknown:
                                 case wxConfigBase::Type_String:
 					config->Read(name, &svalue);
-					svalue.Replace(wxT("&"), wxT("&amp;"), true);
-					svalue.Replace(wxT("<"), wxT("&lt;"), true);
-					svalue.Replace(wxT(">"), wxT("&gt;"), true);
+					urlEncode(svalue);
 					gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.ToUTF8());
 					break;
                                 case wxConfigBase::Type_Boolean:
@@ -3394,16 +3392,17 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		loader->locstring = wxT("<StationDataFile>\n");
 	} else if (strcmp(name, "Location") == 0) {
 		for (i = 0; atts[i]; i+=2) {
+			wxString attname = wxString::FromUTF8(atts[i+1]);
 			if (strcmp(atts[i], "name") == 0) {
-				loader->locstring += wxT("<StationData name=\"") + wxString::FromUTF8(atts[i+1]) + wxT("\">\n");
+				loader->locstring += wxT("<StationData name=\"") + urlEncode(attname) + wxT("\">\n");
 				break;
 			}
 		}
 		for (i = 0; atts[i]; i+=2) {
+			wxString attname = wxString::FromUTF8(atts[i+1]);
 			if (strcmp(atts[i], "name") != 0) {
 				loader->locstring += wxT("<") + wxString::FromUTF8(atts[i]) + wxT(">") +
-					wxString::FromUTF8(atts[i+1]) + wxT("</") +
-					wxString::FromUTF8(atts[i]) + wxT(">\n");
+					urlEncode(attname) + wxT("</") + wxString::FromUTF8(atts[i]) + wxT(">\n");
 			}
 		}
 	} else if (strcmp(name, "DupeDb") == 0) {
@@ -3459,7 +3458,9 @@ TQSLConfig::xml_location_start(void *data, const XML_Char *name, const XML_Char 
 	if (strcmp(name, "StationDataFile") == 0)
 		return;
 	if (strcmp(name, "StationData") == 0) {
-		gzprintf(*parser->outstr, "<Location name=\"%s\"", atts[1]);
+		wxString locname = wxString::FromUTF8(atts[1]);
+		urlEncode(locname);
+		gzprintf(*parser->outstr, "<Location name=\"%s\"", (const char *)locname.ToUTF8());
 	}
 }
 void
@@ -3474,6 +3475,7 @@ TQSLConfig::xml_location_end(void *data, const XML_Char *name) {
 	// Anything else is a station attribute. Add it to the definition.
 	parser->elementBody.Trim(false);
 	parser->elementBody.Trim(true);
+	urlEncode(parser->elementBody);
 	gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.ToUTF8());
 	parser->elementBody = wxT("");
 }

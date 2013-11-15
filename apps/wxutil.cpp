@@ -22,3 +22,12 @@ getTextSize(wxWindow *win) {
 	return wxSize(char_width, char_height);
 }
 
+// Strip special characters from a string prior to writing to XML
+wxString
+urlEncode(wxString& str) {
+	str.Replace(wxT("&"), wxT("&amp;"), true);
+	str.Replace(wxT("<"), wxT("&lt;"), true);
+	str.Replace(wxT(">"), wxT("&gt;"), true);
+	str.Replace(wxT("\""), wxT("&#34;"), true);
+	return str;
+}
