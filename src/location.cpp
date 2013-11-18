@@ -224,7 +224,23 @@ operator< (const Mode& o1, const Mode& o2) {
 
 }	// namespace tqsllib
 
-using namespace tqsllib;
+using tqsllib::XMLElement;
+using tqsllib::XMLElementList;
+using tqsllib::Band;
+using tqsllib::Mode;
+using tqsllib::PropMode;
+using tqsllib::Satellite;
+using tqsllib::TQSL_LOCATION;
+using tqsllib::TQSL_LOCATION_PAGE;
+using tqsllib::TQSL_LOCATION_PAGELIST;
+using tqsllib::TQSL_LOCATION_FIELD;
+using tqsllib::TQSL_LOCATION_FIELDLIST;
+using tqsllib::TQSL_LOCATION_ITEM;
+using tqsllib::TQSL_NAME;
+using tqsllib::ROOTCERT;
+using tqsllib::CACERT;
+using tqsllib::USERCERT;
+using tqsllib::tqsl_get_pem_serial;
 
 #define CAST_TQSL_LOCATION(x) (reinterpret_cast<TQSL_LOCATION *>((x)))
 

@@ -49,8 +49,8 @@
 #define TQSL_BAND_MAX                6		///< Max length of a band name
 #define TQSL_MODE_MAX                16		///< Max length of a mode name
 #define TQSL_FREQ_MAX                20		///< Max length of a frequency
-#define TQSL_SATNAME_MAX             6		///< Max length of a sat name
-#define TQSL_PROPMODE_MAX            6		///< Max length of a prop mode
+#define TQSL_SATNAME_MAX             20		///< Max length of a sat name
+#define TQSL_PROPMODE_MAX            20		///< Max length of a prop mode
 
 #define TQSL_CERT_CB_USER            0		///< Callback is for user cert
 #define TQSL_CERT_CB_CA              1		///< Callback is for CA cert
