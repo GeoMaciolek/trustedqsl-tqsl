@@ -428,14 +428,14 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("l"), &locname)) {
 		if (loc)
 			tqsl_endStationLocationCapture(&loc);
-		if (tqsl_getStationLocation(&loc, locname.mb_str())) {
+		if (tqsl_getStationLocation(&loc, locname.ToUTF8())) {
 			cerr << tqsl_getErrorString() << endl;
 			return false;
 		}
 	}
 	wxString pwd;
 	if (parser.Found(wxT("p"), &pwd))
-		password = strdup(pwd.mb_str());
+		password = strdup(pwd.ToUTF8());
 
 	if (parser.Found(wxT("d")))
 		suppressdate = true;
@@ -454,7 +454,7 @@ QSLApp::OnInit() {
 			action = TQSL_ACTION_ASK;
 		} else {
 			char tmp[100];
-			strncpy(tmp, (const char *)act.mb_str(wxConvUTF8), sizeof tmp);
+			strncpy(tmp, (const char *)act.ToUTF8(), sizeof tmp);
 			tmp[sizeof tmp -1] = '\0';
 			cerr << "The action parameter " << tmp << " is not recognized" << endl;
 			exit(1);
