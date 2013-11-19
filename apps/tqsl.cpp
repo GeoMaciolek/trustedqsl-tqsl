@@ -133,6 +133,10 @@ FILE *diagFile = NULL;
 static wxString origCommandLine = wxT("");
 static MyFrame *frame = 0;
 
+#ifdef _WIN32
+static char unipwd[64];		// Unicode version of the password
+#endif
+
 static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
 				 "User Cancelled",
@@ -208,7 +212,11 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	}
 	if (pwd.IsEmpty())
 		return 1;
-	strncpy(buf, pwd.mb_str(), bufsiz);
+	strncpy(buf, pwd.ToUTF8(), bufsiz);
+#ifdef _WIN32
+	// Also store the Unicode version
+	strncpy(unipwd, pwd.mb_str(), sizeof unipwd);
+#endif
 	return 0;
 }
 
@@ -1643,6 +1651,12 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				do {
 	   				if ((rval = tqsl_beginSigning(cert, const_cast<char *>(password), getCertPassword, cert)) == 0)
 						break;
+#ifdef _WIN32
+					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
+						if ((rval = tqsl_beginSigning(cert, const_cast<char *>(unipwd), NULL, cert)) == 0)
+							break;
+					}
+#endif
 					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 						wxLogMessage(wxT("Password error"));
 						if (password)
@@ -3812,7 +3826,10 @@ QSLApp::OnInit() {
 	}
 	wxString pwd;
 	if (parser.Found(wxT("p"), &pwd)) {
-		password = strdup(pwd.mb_str());
+		password = strdup(pwd.ToUTF8());
+#ifdef _WIN32
+		strncpy(unipwd, pwd.mb_str(), sizeof unipwd);
+#endif
 	}
 	parser.Found(wxT("o"), &outfile);
 	if (parser.Found(wxT("d"))) {
@@ -4287,6 +4304,15 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 					wxLogError(wxT("%hs"), tqsl_getErrorString());
 					return;
 				}
+#ifdef _WIN32
+				if (tqsl_beginSigning(req.signer, unipwd, NULL, call)) {
+					break;
+				}
+				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
+					wxLogError(wxT("%hs"), tqsl_getErrorString());
+					return;
+				}
+#endif
 			}
 		}
 		req.renew = renew ? 1 : 0;
@@ -4448,14 +4474,24 @@ wxT("use a password.\n\n"), true, help, wxT("save.htm"));
 	do {
 		terr = tqsl_beginSigning(data->getCert(), 0, getPassword, reinterpret_cast<void *>(&call));
 		if (terr) {
-			if (tQSL_Error == TQSL_PASSWORD_ERROR)
+			if (tQSL_Error == TQSL_PASSWORD_ERROR) {
+#ifdef _WIN32
+				terr = tqsl_beginSigning(data->getCert(), unipwd, NULL, reinterpret_cast<void *>(&call));
+				if (terr) {
+					if (tQSL_Error == TQSL_PASSWORD_ERROR)
+						continue;
+					wxLogError(wxT("%hs"), tqsl_getErrorString());
+				}
+#endif
 				continue;
+			}
 			if (tQSL_Error == TQSL_OPERATOR_ABORT)
 				return;
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		}
 	} while (terr);
-	if (tqsl_exportPKCS12File(data->getCert(), filename.mb_str(), dial.Password().mb_str()))
+	// When setting the password, always use UTF8.
+	if (tqsl_exportPKCS12File(data->getCert(), filename.mb_str(), dial.Password().ToUTF8()))
 		wxLogError(wxT("Export to %s failed: %hs"), filename.c_str(), tqsl_getErrorString());
 	else
 		wxLogMessage(wxT("Certificate saved in file %s"), filename.c_str());
@@ -4822,8 +4858,12 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 		return 1;
 	}
 	tqslTrace("getPassword", "Password entered OK");
-	strncpy(buf, dial.Password().mb_str(), bufsiz);
+	strncpy(buf, dial.Password().ToUTF8(), bufsiz);
 	buf[bufsiz-1] = 0;
+#ifdef _WIN32
+	// Store the unicode version of the password too
+	strncpy(unipwd, dial.Password().mb_str(), sizeof unipwd);
+#endif
 	return 0;
 }
 

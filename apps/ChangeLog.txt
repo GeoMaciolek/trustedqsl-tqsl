@@ -3,6 +3,12 @@ TQSL changes
 
 2.0.1
 ----------
+Correct callsign certificate password handling to use UTF-8 for any
+new passwords. On Windows, try UTF-8 then Unicode to unlock.
+
+Issue more helpful error messages when errors occur while parsing an
+ADIF file, including what field is casing the error.
+
 Correct problem where using characters like "<", ">" or quote in a station
 location field could cause restoring a .tbk file to fail with a syntax
 error.

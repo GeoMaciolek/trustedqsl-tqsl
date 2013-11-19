@@ -576,10 +576,10 @@ CRQ_IntroPage::validate() {
 	if (ok) {
 		string call = string(val.mb_str());
 		// Check for invalid characters
-		if (call.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/") != string::npos) 
+		if (call.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/") != string::npos)
 			ok = false;
 		// Need at least one letter
-		if (call.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos) 
+		if (call.find_first_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ") == string::npos)
 			ok = false;
 		// Need at least one number
 		if (call.find_first_of("0123456789") == string::npos)
@@ -594,7 +594,6 @@ CRQ_IntroPage::validate() {
 		    (first == "4" && second == "Y") ||
 		    (first == "1" && second != "A" && second != "M" && second != "S"))
 			ok = false;
-
 	}
 
 	if (!ok)
