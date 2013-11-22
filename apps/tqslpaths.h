@@ -73,7 +73,7 @@ class DocPaths : public wxPathList {
                 		if ((strlen(npath) > 0) && (npath[strlen(npath)-1] != '/')) {
                         		strncat(npath, "/", 2);
                 		}
-                		Add(wxString(npath, wxConvLocal) + wxT("Help/"));
+                		Add(wxString::FromUTF8(npath) + wxT("Help/"));
 				Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
 				free(npath);
 			}

@@ -115,7 +115,7 @@ class valid_list : public vector<choice> {
 
 valid_list::valid_list(const char **values, int nvalues) {
 	while(nvalues--)
-		push_back(choice(wxString(*(values++), wxConvLocal)));
+		push_back(choice(wxString::FromUTF8(*(values++))));
 }
 
 wxString *
@@ -148,7 +148,7 @@ init_valid_lists() {
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getMode(i, &cp, 0))
 			return 1;
-		valid_modes.push_back(choice(wxString(cp, wxConvLocal)));
+		valid_modes.push_back(choice(wxString::FromUTF8(cp)));
 	}
 	valid_rxbands.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumBand(&count))
@@ -178,10 +178,10 @@ init_valid_lists() {
 			if (high == 0)
 				high_s = wxT("UP");
 		}
-		wxString display = wxString::Format(wxT("%s (%s-%s %s)"), wxString(cp, wxConvLocal).c_str(),
-			low_s.c_str(), high_s.c_str(), wxString(hz, wxConvLocal).c_str());
-		valid_bands.push_back(choice(wxString(cp, wxConvLocal), display, low*scale, high*scale));
-		valid_rxbands.push_back(choice(wxString(cp, wxConvLocal), display, low*scale, high*scale));
+		wxString display = wxString::Format(wxT("%hs (%s-%s %hs)"), cp, 
+                        low_s.c_str(), high_s.c_str(), hz);
+		valid_bands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
+		valid_rxbands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
 	}
 	valid_propmodes.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumPropagationMode(&count))
@@ -189,7 +189,7 @@ init_valid_lists() {
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getPropagationMode(i, &cp, &cp1))
 			return 1;
-		valid_propmodes.push_back(choice(wxString(cp, wxConvLocal), wxString(cp1, wxConvLocal)));
+		valid_propmodes.push_back(choice(wxString::FromUTF8(cp), wxString::FromUTF8(cp1)));
 	}
 	valid_satellites.push_back(choice(wxT(""), wxT("NONE")));
 	if (tqsl_getNumSatellite(&count))
@@ -197,7 +197,7 @@ init_valid_lists() {
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getSatellite(i, &cp, &cp1, 0, 0))
 			return 1;
-		valid_satellites.push_back(choice(wxString(cp, wxConvLocal), wxString(cp1, wxConvLocal)));
+		valid_satellites.push_back(choice(wxString::FromUTF8(cp), wxString::FromUTF8(cp1)));
 	}
 	return 0;
 }
@@ -434,7 +434,7 @@ QSODataDialog::TransferDataToWindow() {
 	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
 	else
-		wxLogWarning(wxT("QSO Data: Invalid Mode ignored - %s"), (const char*) rec._mode.Upper().mb_str());
+		wxLogWarning(wxT("QSO Data: Invalid Mode ignored - %s"), (const char*) rec._mode.Upper().ToUTF8());
 	if ((it = find(valid_bands.begin(), valid_bands.end(), rec._band.Upper())) != valid_bands.end())
 		_band = distance(valid_bands.begin(), it);
 	if ((it = find(valid_rxbands.begin(), valid_rxbands.end(), rec._rxband.Upper())) != valid_rxbands.end())

@@ -92,7 +92,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
                 char callsign[256];
                 check_tqsl_error(tqsl_getStationLocationCallSign(loc, i, callsign, sizeof callsign));
 		wxString locutf8 = wxString::FromUTF8(locname);
-		callsigns[wxString(callsign, wxConvLocal)].push_back(make_pair(locutf8, i));
+		callsigns[wxString::FromUTF8(callsign)].push_back(make_pair(locutf8, i));
         }
 	// Sort each callsign list and add items to tree
 	locmap::iterator loc_it;

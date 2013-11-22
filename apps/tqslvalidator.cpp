@@ -72,7 +72,7 @@ TQSLValidator::Validate(wxWindow* parent) {
 	if (!IsValid(str)) {
 		m_validatorWindow->SetFocus();
 		wxString buf;
-		buf.Printf(wxT("Invalid %s: \"%s\""), (const char *)_type.mb_str(), (const char *)str.mb_str());
+		buf.Printf(wxT("Invalid %s: \"%s\""), (const char *)_type.ToUTF8(), (const char *)str.ToUTF8());
 		wxMessageBox(buf, wxT("QSO Data Error"), wxOK | wxICON_EXCLAMATION, parent);
 		return FALSE;
 	}
@@ -82,7 +82,7 @@ TQSLValidator::Validate(wxWindow* parent) {
 void
 TQSLDateValidator::FromString(const wxString& str) {
 	if (_objp != 0)
-		tqsl_initDate(reinterpret_cast<tQSL_Date *>(_objp), str.mb_str());
+		tqsl_initDate(reinterpret_cast<tQSL_Date *>(_objp), str.ToUTF8());
 }
 
 wxString
@@ -94,21 +94,21 @@ TQSLDateValidator::ToString() {
 		return wxT("");
 	char buf[20];
 	tqsl_convertDateToText(_datep, buf, sizeof buf);
-	return wxString(buf, wxConvLocal);
+	return wxString::FromUTF8(buf);
 }
 
 bool
 TQSLDateValidator::IsValid(const wxString& str) {
 	tqslTrace("TQSLDateValidator::IsValid", "str=%s", _S(str));
 	tQSL_Date d;
-	return (!tqsl_initDate(&d, str.mb_str()) && tqsl_isDateValid(&d));
+	return (!tqsl_initDate(&d, str.ToUTF8()) && tqsl_isDateValid(&d));
 }
 
 void
 TQSLTimeValidator::FromString(const wxString& str) {
 	tqslTrace("TQSLTimeValidator::FromString", "str=%s", _S(str));
 	if (_objp != 0)
-		tqsl_initTime(reinterpret_cast<tQSL_Time *>(_objp), str.mb_str());
+		tqsl_initTime(reinterpret_cast<tQSL_Time *>(_objp), str.ToUTF8());
 }
 
 wxString
@@ -120,12 +120,12 @@ TQSLTimeValidator::ToString() {
 		return wxT("");
 	char buf[20];
 	tqsl_convertTimeToText(_timep, buf, sizeof buf);
-	return wxString(buf, wxConvLocal);
+	return wxString::FromUTF8(buf);
 }
 
 bool
 TQSLTimeValidator::IsValid(const wxString& str) {
 	tqslTrace("TQSLTimeValidator::IsValid", "str=%s", _S(str));
 	tQSL_Time t;
-	return (!tqsl_initTime(&t, str.mb_str()) && tqsl_isTimeValid(&t));
+	return (!tqsl_initTime(&t, str.ToUTF8()) && tqsl_isTimeValid(&t));
 }

@@ -58,6 +58,9 @@ using std::pair;
 #define DEFAULT_UPD_CONFIG_URL wxT("https://lotw.arrl.org/lotw/config_xml_version")
 #define DEFAULT_CONFIG_FILE_URL wxT("https://lotw.arrl.org/lotw/config.tq6")
 
+#define DEFAULT_CERT_CHECK_URL wxT("https://lotw.arrl.org/lotw/crl?serial=")
+#define DEFAULT_CERT_CHECK_RE wxT(".*<Status>(.*)</Status>.*")
+
 #define DEFAULT_LOTW_LOGIN_URL wxT("https://lotw.arrl.org/lotwuser/default")
 
 enum {		// Window IDs
@@ -88,6 +91,7 @@ enum {		// Window IDs
 	ID_PREF_ONLINE_VERIFYCA,
 	ID_PREF_ONLINE_UPD_CONFIGURL,
         ID_PREF_ONLINE_UPD_CONFIGFILE,
+	ID_PREF_ONLINE_CERT_CHECK,
 	ID_PREF_PROXY_ENABLED,
 	ID_PREF_PROXY_HOST,
 	ID_PREF_PROXY_PORT,
@@ -126,7 +130,7 @@ class OnlinePrefs : public PrefsPanel {
 	DECLARE_EVENT_TABLE()
  private:
 	wxTextCtrl *uploadURL, *postField, *statusRegex, *statusSuccess, *messageRegex;
-	wxTextCtrl *updConfigURL, *configFileURL;
+	wxTextCtrl *updConfigURL, *configFileURL, *certCheckURL;
 	wxCheckBox *verifyCA, *useDefaults;
 	bool defaults;
 };

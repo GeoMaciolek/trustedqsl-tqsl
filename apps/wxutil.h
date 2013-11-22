@@ -38,5 +38,6 @@
 
 wxSize getTextSize(wxWindow *win);
 wxString urlEncode(wxString& str);
+int utf8_to_ucs2(const char *in, char *out, size_t buflen);
 
 #endif	// __wxutil_h

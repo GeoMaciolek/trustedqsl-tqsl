@@ -11,6 +11,7 @@
 #include "tqsl_prefs.h"
 #include <stdlib.h>
 #include <utility>
+#include <curl/curl.h>
 
 #include "wx/sizer.h"
 #include "wx/button.h"
@@ -281,7 +282,7 @@ AddMode::AddMode(wxWindow *parent) : wxDialog(parent, -1, wxString(wxT("Add ADIF
 		for (int i = 0; i < n; i++) {
 			const char *modestr;
 			if (tqsl_getMode(i, &modestr, 0) == 0) {
-				modelist->Append(wxString(modestr, wxConvLocal));
+				modelist->Append(wxString::FromUTF8(modestr));
 			}
 		}
 	}
@@ -342,7 +343,7 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	sizer->Add(autobackup, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 
 	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
-	wxString bdir = config->Read(wxT("BackupFolder"), wxString(tQSL_BaseDir, wxConvLocal));
+	wxString bdir = config->Read(wxT("BackupFolder"), wxString::FromUTF8(tQSL_BaseDir));
 	dirPick = new wxDirPickerCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxT("Select a Folder"), wxDefaultPosition,
 		wxSize(char_width, HEIGHT_ADJ(char_height)), wxDIRP_USE_TEXTCTRL);
 	dirPick->Enable(ab);
@@ -373,13 +374,13 @@ fix_ext_str(const wxString& oldexts) {
 	static const char *delims = ".,;: ";
 
 	char *str = new char[oldexts.Length() + 1];
-	strncpy(str, oldexts.mb_str(), oldexts.Length() + 1);
+	strncpy(str, oldexts.ToUTF8(), oldexts.Length() + 1);
 	wxString exts;
 	char *tok = strtok(str, delims);
 	while (tok) {
 		if (exts != wxT(""))
 			exts += wxT(" ");
-		exts += wxString(tok, wxConvLocal);
+		exts += wxString::FromUTF8(tok);
 		tok = strtok(NULL, delims);
 	}
 	return exts;
@@ -420,6 +421,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	wxString uplMsgRE = config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
 	wxString cfgUpdURL = config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
 	wxString cfgFileUpdURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
+	wxString certCheckURL = config->Read(wxT("CertCheckURL"), DEFAULT_CERT_CHECK_URL);
 
 	bool uplVerifyCA;
 	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
@@ -432,7 +434,8 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 		(uplMsgRE == DEFAULT_UPL_MESSAGERE) &&
 		(uplVerifyCA == DEFAULT_UPL_VERIFYCA) &&
 		(cfgUpdURL == DEFAULT_UPD_CONFIG_URL) &&
-		(cfgFileUpdURL == DEFAULT_CONFIG_FILE_URL));
+		(cfgFileUpdURL == DEFAULT_CONFIG_FILE_URL) &&
+		(certCheckURL == DEFAULT_CERT_CHECK_URL));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -476,6 +479,11 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	configFileURL = new wxTextCtrl(this, ID_PREF_ONLINE_UPD_CONFIGFILE, cfgFileUpdURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(configFileURL, 0, wxLEFT|wxRIGHT, 10);
+
+	sizer->Add(new wxStaticText(this, -1, wxT("Certificate Status Check URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	certCheckURL = new wxTextCtrl(this, ID_PREF_ONLINE_CERT_CHECK, certCheckURL, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+	sizer->Add(certCheckURL, 0, wxLEFT|wxRIGHT, 10);
 
 	verifyCA = new wxCheckBox(this, ID_PREF_ONLINE_VERIFYCA, wxT("Verify server certificate"));
 	verifyCA->SetValue(uplVerifyCA);
@@ -699,8 +707,8 @@ void ContestMap::SetContestList() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = strtol(value.mb_str(), NULL, 10);
-		int fieldnum = strtol(value.AfterFirst(wxT(';')).mb_str(), NULL, 10);
+		int contest_type = strtol(value.ToUTF8(), NULL, 10);
+		int fieldnum = strtol(value.AfterFirst(wxT(';')).ToUTF8(), NULL, 10);
 		contestmap.insert(make_pair(key, make_pair(contest_type, fieldnum)));
 		stat = config->GetNextEntry(key, cookie);
 	}
@@ -765,8 +773,8 @@ void ContestMap::OnEdit(wxCommandEvent &) {
 			config->SetPath(wxT("/cabrilloMap"));
 			wxString val;
 			if (config->Read(contest, &val)) {
-				contest_type = strtol(val.mb_str(), NULL, 10);
-				callsign_field = strtol(val.AfterFirst(wxT(';')).mb_str(), NULL, 10);
+				contest_type = strtol(val.ToUTF8(), NULL, 10);
+				callsign_field = strtol(val.AfterFirst(wxT(';')).ToUTF8(), NULL, 10);
 			}
 			config->SetPath(wxT("/"));
 		}
@@ -855,7 +863,7 @@ bool EditContest::TransferDataFromWindow() {
 		return false;
 	}
 	contest_type = type->GetSelection();
-	callsign_field = strtol(fieldnum->GetValue().mb_str(), NULL, 10);
+	callsign_field = strtol(fieldnum->GetValue().ToUTF8(), NULL, 10);
 	if (callsign_field < TQSL_MIN_CABRILLO_MAP_FIELD) {
 		wxMessageBox(wxString::Format(wxT("Call-worked field must be %d or greater"), TQSL_MIN_CABRILLO_MAP_FIELD),
 			wxT("Error"), wxOK, this);

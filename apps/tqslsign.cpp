@@ -120,7 +120,7 @@ init_modes() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		tqsl_setADIFMode(key.mb_str(), value.mb_str());
+		tqsl_setADIFMode(key.ToUTF8(), value.ToUTF8());
 		stat = config->GetNextEntry(key, cookie);
 	}
 	config->SetPath(wxT("/"));
@@ -136,9 +136,9 @@ init_contests() {
 	bool stat = config->GetFirstEntry(key, cookie);
 	while (stat) {
 		value = config->Read(key, wxT(""));
-		int contest_type = strtol(value.mb_str(), NULL, 10);
-		int callsign_field = strtol(value.AfterFirst(';').mb_str(), NULL, 10);
-		tqsl_setCabrilloMapEntry(key.mb_str(), callsign_field, contest_type);
+		int contest_type = strtol(value.ToUTF8(), NULL, 10);
+		int callsign_field = strtol(value.AfterFirst(';').ToUTF8(), NULL, 10);
+		tqsl_setCabrilloMapEntry(key.ToUTF8(), callsign_field, contest_type);
 		stat = config->GetNextEntry(key, cookie);
 	}
 	config->SetPath(wxT("/"));
@@ -205,9 +205,9 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	init_contests();
 
 	if (compressed)
-		gout = gzopen(outfile.mb_str(), "wb9");
+		gout = gzopen(outfile.ToUTF8(), "wb9");
 	else
-		out.open(outfile.mb_str(), ios::out|ios::trunc|ios::binary);
+		out.open(outfile.ToUTF8(), ios::out|ios::trunc|ios::binary);
 
 	if ((compressed && !gout) || (!compressed && !out)) {
 		cerr << "Unable to open " << outfile << endl;
@@ -221,11 +221,11 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	int processed = 0;
 	bool cancelled = false;
 	try {
-		if (tqsl_beginCabrilloConverter(&conv, infile.mb_str(), certlist, ncerts, loc)) {
+		if (tqsl_beginCabrilloConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
-	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.mb_str(), certlist, ncerts, loc));
+	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc));
 		}
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
@@ -247,7 +247,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		wxString gabbi_ident = wxString::Format(wxT("<TQSL_IDENT:%d>%s"), static_cast<int>(ident.length()), ident.c_str());
 		gabbi_ident += wxT("\n");
 		if (compressed)
-			gzwrite(gout, (const char *)gabbi_ident.mb_str(), gabbi_ident.length());
+			gzwrite(gout, (const char *)gabbi_ident.ToUTF8(), gabbi_ident.length());
 		else
 			out << gabbi_ident << endl;
 		do {
@@ -297,12 +297,12 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 					check_tqsl_error(1);
 				} catch(TQSLException& x) {
 					tqsl_getConverterLine(conv, &lineno);
-					wxString msg = wxString(x.what(), wxConvLocal);
+					wxString msg = wxString::FromUTF8(x.what());
 					if (lineno)
 						msg += wxString::Format(wxT(" on line %d"), lineno);
 					const char *bad_text = tqsl_getConverterRecordText(conv);
 					if (bad_text)
-						msg += wxString(wxT("\n")) + wxString(bad_text, wxConvLocal);
+						msg += wxString(wxT("\n")) + wxString::FromUTF8(bad_text);
 					if (!ignore_err)
 						cerr << msg << endl;
 					// Only ask if not in batch mode or ignoring errors - KD6PAG
@@ -353,8 +353,8 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
 		if (lineno)
-			msg += wxString::Format(wxT(" on line %d"), lineno).mb_str();
-		unlink(outfile.mb_str());
+			msg += wxString::Format(wxT(" on line %d"), lineno).ToUTF8();
+		unlink(outfile.ToUTF8());
 		cerr << "Signing aborted due to errors" << endl;
 		throw TQSLException(msg.c_str());
 	}
@@ -376,7 +376,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	if (n > 0)
 		cout << outfile << " is ready to be emailed or uploaded" << endl;
 	else
-		unlink(outfile.mb_str());
+		unlink(outfile.ToUTF8());
 	return 0;
 }
 
@@ -492,7 +492,7 @@ QSLApp::OnRun() {
 		wxString s;
 		if (infile)
 			s = infile + wxT(": ");
-		s += wxString(x.what(), wxConvLocal);
+		s += wxString::FromUTF8(x.what());
 		cerr << s << endl;
 		return 1;
 	}

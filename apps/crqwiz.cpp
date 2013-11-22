@@ -91,7 +91,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	sizer->Add(tc_provider_info, 0, wxALL|wxEXPAND, 10);
 	int nprov = 0;
 	if (tqsl_getNumProviders(&nprov))
-		wxMessageBox(wxString(tqsl_getErrorString(), wxConvLocal), wxT("Error"));
+		wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), wxT("Error"));
 	for (int i = 0; i < nprov; i++) {
 		TQSL_PROVIDER prov;
 		if (!tqsl_getProvider(i, &prov))
@@ -100,7 +100,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	sort(providers.begin(), providers.end(), prov_cmp);
 	int selected = -1;
 	for (int i = 0; i < static_cast<int>(providers.size()); i++) {
-		tc_provider->Append(wxString(providers[i].organizationName, wxConvLocal), reinterpret_cast<void *>(i));
+		tc_provider->Append(wxString::FromUTF8(providers[i].organizationName), reinterpret_cast<void *>(i));
 		if (crq && !strcmp(providers[i].organizationName, crq->providerName)
 			&& !strcmp(providers[i].organizationalUnitName, crq->providerUnit)) {
 			selected = i;
@@ -122,13 +122,13 @@ CRQ_ProviderPage::DoUpdateInfo() {
 		if (idx >=0 && idx < static_cast<int>(providers.size())) {
 			Parent()->provider = providers[idx];
 			wxString info;
-			info = wxString(Parent()->provider.organizationName, wxConvLocal);
+			info = wxString::FromUTF8(Parent()->provider.organizationName);
 			if (Parent()->provider.organizationalUnitName[0] != 0)
-				info += wxString(wxT("\n  ")) + wxString(Parent()->provider.organizationalUnitName, wxConvLocal);
+				info += wxString(wxT("\n  ")) + wxString::FromUTF8(Parent()->provider.organizationalUnitName);
 			if (Parent()->provider.emailAddress[0] != 0)
-				info += wxString(wxT("\nEmail: ")) + wxString(Parent()->provider.emailAddress, wxConvLocal);
+				info += wxString(wxT("\nEmail: ")) + wxString::FromUTF8(Parent()->provider.emailAddress);
 			if (Parent()->provider.url[0] != 0)
-				info += wxString(wxT("\nURL: ")) + wxString(Parent()->provider.url, wxConvLocal);
+				info += wxString(wxT("\nURL: ")) + wxString::FromUTF8(Parent()->provider.url);
 			tc_provider_info->SetLabel(info);
 		}
 	}
@@ -175,7 +175,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	hsizer->Add(st, 0, wxRIGHT, 5);
 	wxString cs;
 	if (crq && crq->callSign)
-		cs = wxString(crq->callSign, wxConvLocal);
+		cs = wxString::FromUTF8(crq->callSign);
 	tc_call = new wxTextCtrl(this, ID_CRQ_CALL, cs, wxDefaultPosition, wxSize(em_w*15, -1));
 	hsizer->Add(tc_call, 0, wxEXPAND, 0);
 	sizer->Add(hsizer, 0, wxLEFT|wxRIGHT|wxTOP|wxEXPAND, 10);
@@ -192,7 +192,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	DXCC dx;
 	bool ok = dx.getFirst();
 	while (ok) {
-		tc_dxcc->Append(wxString(dx.name(), wxConvLocal), reinterpret_cast<void *>(dx.number()));
+		tc_dxcc->Append(wxString::FromUTF8(dx.name()), reinterpret_cast<void *>(dx.number()));
 		ok = dx.getNext();
 	}
 	const char *ent = "NONE";
@@ -202,7 +202,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 			tc_dxcc->Enable(false);
 		}
 	}
-	int i = tc_dxcc->FindString(wxString(ent, wxConvLocal));
+	int i = tc_dxcc->FindString(wxString::FromUTF8(ent));
 	if (i >= 0)
 		tc_dxcc->SetSelection(i);
 	struct {
@@ -228,7 +228,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	}
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		sels[i][0] = sels[i][1] = sels[i][2] = 0;
-		sizer->Add(new wxStaticText(this, -1, wxString(labels[i], wxConvLocal)), 0, wxBOTTOM, 5);
+		sizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(labels[i])), 0, wxBOTTOM, 5);
 		hsizer = new wxBoxSizer(wxHORIZONTAL);
 		hsizer->Add(new wxStaticText(this, -1, wxT("Y")), 0, wxLEFT, 20);
 		*(boxes[i][0].cb) = new wxComboBox(this, boxes[i][0].id, wxT(""), wxDefaultPosition,
@@ -431,7 +431,7 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	wxString val;
 	wxString s;
 	if (crq && crq->emailAddress)
-		s = wxString(crq->emailAddress, wxConvLocal);
+		s = wxString::FromUTF8(crq->emailAddress);
 	else if (config->Read(wxT("Email"), &val))
 		s = val;
 	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
@@ -574,7 +574,7 @@ CRQ_IntroPage::validate() {
 	if (val.Len() < 3)
 		ok = false;
 	if (ok) {
-		string call = string(val.mb_str());
+		string call = string(val.ToUTF8());
 		// Check for invalid characters
 		if (call.find_first_not_of("ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/") != string::npos)
 			ok = false;
@@ -608,12 +608,12 @@ CRQ_IntroPage::validate() {
 		ok = false;
 		goto notok;
 	}
-	Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().mb_str(), NULL, 10);
-	Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().mb_str(), NULL, 10);
-	Parent()->qsonotbefore.day = strtol(tc_qsobegind->GetStringSelection().mb_str(), NULL, 10);
-	Parent()->qsonotafter.year = strtol(tc_qsoendy->GetStringSelection().mb_str(), NULL, 10);
-	Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().mb_str(), NULL, 10);
-	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().mb_str(), NULL, 10);
+	Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().ToUTF8(), NULL, 10);
+	Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().ToUTF8(), NULL, 10);
+	Parent()->qsonotbefore.day = strtol(tc_qsobegind->GetStringSelection().ToUTF8(), NULL, 10);
+	Parent()->qsonotafter.year = strtol(tc_qsoendy->GetStringSelection().ToUTF8(), NULL, 10);
+	Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().ToUTF8(), NULL, 10);
+	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().ToUTF8(), NULL, 10);
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
 		msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
 		ok = false;
@@ -636,7 +636,7 @@ CRQ_IntroPage::validate() {
 		val.MakeUpper();
 		tQSL_Cert *certlist = 0;
 		int ncert = 0;
-		tqsl_selectCertificates(&certlist, &ncert, val.mb_str(), Parent()->dxcc, 0,
+		tqsl_selectCertificates(&certlist, &ncert, val.ToUTF8(), Parent()->dxcc, 0,
 			&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
 //cerr << "ncert: " << ncert << endl;
 		if (ncert > 0) {
@@ -665,7 +665,7 @@ CRQ_IntroPage::validate() {
 				DXCC dxcc;
 				dxcc.getByEntity(Parent()->dxcc);
 				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
-				msg += wxString(cert_before_buf, wxConvLocal) + wxT(" to ") + wxString(cert_after_buf, wxConvLocal);
+				msg += wxString::FromUTF8(cert_before_buf) + wxT(" to ") + wxString::FromUTF8(cert_after_buf);
 			}
 		}
 		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
@@ -683,7 +683,7 @@ CRQ_IntroPage::validate() {
  notok:
 	if (!ok) {
 		tc_status->SetLabel(msg);
-		msg_buf = msg.mb_str();
+		msg_buf = msg.ToUTF8();
 		return (const char *)msg_buf;
 	}
 	tc_status->SetLabel(wxT(""));
@@ -759,7 +759,7 @@ CRQ_NamePage::validate() {
 		errmsg = "You must enter your address";
 	if (!errmsg && cleanString(Parent()->city))
 		errmsg = "You must enter your city";
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT(""));
+	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
 	return errmsg;
 }
 
@@ -814,7 +814,7 @@ CRQ_EmailPage::validate() {
 	int j = Parent()->email.Last('.');
 	if (i < 1 || j < i+2 || j == static_cast<int>(Parent()->email.length())-1)
 		errmsg = "You must enter a valid email address";
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT(""));
+	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
 	return errmsg;
 }
 
@@ -841,7 +841,7 @@ CRQ_PasswordPage::validate() {
 
 	if (pw1 != pw2)
 		errmsg = "The two copies of the password do not match.";
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : wxT(""));
+	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
 	return errmsg;
 }
 
@@ -884,7 +884,7 @@ CRQ_SignPage::validate() {
 		}
 	}
 
-	tc_status->SetLabel(errmsg ? wxString(errmsg, wxConvLocal) : nextprompt);
+	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : nextprompt);
 	return errmsg;
 }
 

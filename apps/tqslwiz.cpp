@@ -268,7 +268,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 		wxCoord w, h;
 		char label[256];
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
-		sdc.GetTextExtent(wxString(label, wxConvLocal), &w, &h);
+		sdc.GetTextExtent(wxString::FromUTF8(label), &w, &h);
 		if (w > label_w)
 			label_w = w;
 	}
@@ -285,7 +285,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 		tqsl_getLocationFieldInputType(loc, i, &in_type);
 		if (in_type != TQSL_LOCATION_FIELD_BADZONE) {
 			hsizer = new wxBoxSizer(wxHORIZONTAL);
-			hsizer->Add(new wxStaticText(this, -1, wxString(label, wxConvLocal), wxDefaultPosition,
+			hsizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(label), wxDefaultPosition,
 				wxSize(label_w, -1), wxALIGN_RIGHT/*|wxST_NO_AUTORESIZE*/), 0, wxTOP, 5);
 		}
 		wxWindow *control_p = 0;
@@ -299,7 +299,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 					0, 0, wxCB_DROPDOWN|wxCB_READONLY);
 				if (flags & TQSL_LOCATION_FIELD_SELNXT) {
 					addCheckbox = true;
-					cbLabel = wxString(label, wxConvLocal);
+					cbLabel = wxString::FromUTF8(label);
 				}
 				break;
                         case TQSL_LOCATION_FIELD_TEXT:
@@ -310,7 +310,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				int tsize;
 				tqsl_getLocationFieldDataLength(loc, i, &tsize);
 				tsize /= 2;
-				sdc.GetTextExtent(wxString("X", wxConvLocal), &w, &h);
+				sdc.GetTextExtent(wxString::FromUTF8("X"), &w, &h);
 				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
 					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE);
 				break;
@@ -456,7 +456,7 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 	if (namelist->GetSelection() >= 0) {
 		const char *cp = (const char *)(namelist->GetClientData(namelist->GetSelection()));
 		if (cp)
-			newname->SetValue(wxString(cp, wxConvLocal));
+			newname->SetValue(wxString::FromUTF8(cp));
 	}
 }
 
@@ -485,12 +485,12 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	for (int i = 0; i < n; i++) {
 		char buf[256];
 		tqsl_getStationLocationName(loc, i, buf, sizeof buf);
-		item_data.push_back(wxString::FromUTF8(buf));
+		item_data.push_back(strdup(buf));
 		char cbuf[256];
 		tqsl_getStationLocationCallSign(loc, i, cbuf, sizeof cbuf);
-		wxString s(buf, wxConvLocal);
-		s += (wxString(wxT(" (")) + wxString(cbuf, wxConvLocal) + wxString(wxT(")")));
-		const void *v = item_data.back().ToUTF8();
+		wxString s = wxString::FromUTF8(buf);
+		s += (wxString(wxT(" (")) + wxString::FromUTF8(cbuf) + wxString(wxT(")")));
+		const void *v = item_data.back();
 		namelist->Append(s, const_cast<void *>(v));
 	}
 	if (namelist->GetCount() > 0)
@@ -523,4 +523,10 @@ TQSLWizFinalPage::validate() {
 	if (val == wxT(""))
 		errmsg = "Station name must be provided";
 	return errmsg;
+}
+
+TQSLWizFinalPage::~TQSLWizFinalPage() {
+        for (int i = 0; i < static_cast<int>(item_data.size()); i++) {
+               	free(item_data[i]);
+	}
 }

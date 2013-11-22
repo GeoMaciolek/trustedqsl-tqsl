@@ -105,6 +105,7 @@ class TQSLWizCertPage : public TQSLWizPage {
 class TQSLWizFinalPage : public TQSLWizPage {
  public:
 	TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev);
+	~TQSLWizFinalPage();
 	TQSLWizPage *GetPrev() const { return prev; }
 	TQSLWizPage *GetNext() const { return 0; }
 	TQSLWizPage *prev;
@@ -115,7 +116,7 @@ class TQSLWizFinalPage : public TQSLWizPage {
 	wxListBox *namelist;
 	wxTextCtrl *newname;
 	wxBoxSizer *sizer;
-	vector<wxString> item_data;
+	vector<char *> item_data;
 
 	DECLARE_EVENT_TABLE()
 };

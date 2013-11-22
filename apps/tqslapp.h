@@ -47,7 +47,8 @@ enum {
 	tm_h_contents,
 	tm_h_about,
 	tm_h_update,
-	tm_f_autoupdate
+	bg_updateCheck,
+	bg_expiring
 };
 
 // Action values
@@ -93,7 +94,8 @@ class MyFrame : public wxFrame {
 	void UploadQSODataFile(wxCommandEvent& event);
 	void OnExit(TQ_WXCLOSEEVENT& event);
 	void DoExit(wxCommandEvent& event);
-	void DoUpdateCheck(wxTimerEvent& event);
+	void DoUpdateCheck(bool silent, bool noGUI);
+	void OnUpdateCheckDone(wxCommandEvent& event);
 	void OnHelpAbout(wxCommandEvent& event);
 	void OnHelpContents(wxCommandEvent& event);
 	void OnHelpDiagnose(wxCommandEvent& event);
@@ -111,9 +113,10 @@ class MyFrame : public wxFrame {
 	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
-	void DoCheckForUpdates(bool quiet, bool noGUI = false);
-	void DoCheckExpiringCerts(bool noGUI = false);
+	void DoCheckForUpdates(bool quiet = false, bool noGUI = false);
 	void UpdateConfigFile(void);
+	void DoCheckExpiringCerts(bool noGUI = false);
+	void OnExpiredCertFound(wxCommandEvent& event);
 
 	void OnQuit(wxCommandEvent& event);
 	void CRQWizard(wxCommandEvent& event);
@@ -132,7 +135,7 @@ class MyFrame : public wxFrame {
 	void OnLocTreeSel(wxTreeEvent& event);
 	void OnLoginToLogbook(wxCommandEvent& event);
 	void LocTreeReset(void);
-	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString(file, wxConvLocal)); }
+	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString::FromUTF8(file)); }
 	void FirstTime(void);
 	void BackupConfig(const wxString& event, bool quiet);
 
@@ -143,6 +146,8 @@ class MyFrame : public wxFrame {
 	wxMenu* file_menu;
 	wxMenu *cert_menu;
 	wxMenu* help_menu;
+	FILE *curlLogFile;
+	CURL *curlReq;
 
 	DECLARE_EVENT_TABLE()
 

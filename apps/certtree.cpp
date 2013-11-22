@@ -132,7 +132,7 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 			entityName = "<UNKNOWN ENTITY>";
 		strncat(callsign, entityName, sizeof callsign - strlen(callsign)-1);
 		callsign[sizeof callsign-1] = 0;
-		issuers[wxString(issname, wxConvLocal)].push_back(make_pair(wxString(callsign, wxConvLocal), i));
+		issuers[wxString::FromUTF8(issname)].push_back(make_pair(wxString::FromUTF8(callsign), i));
 	}
 	// Sort each issuer's list and add items to tree
 	issmap::iterator iss_it;
