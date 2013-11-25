@@ -16,6 +16,7 @@
 
 #include "wxutil.h"
 #include "tqsltrace.h"
+#include "winstrdefs.h"
 
 #define TQSL_LOCATION_FIELD_UPPER	1
 #define TQSL_LOCATION_FIELD_MUSTSEL	2
