@@ -118,6 +118,8 @@ class MyFrame : public wxFrame {
 	void DoCheckExpiringCerts(bool noGUI = false);
 	void OnExpiredCertFound(wxCommandEvent& event);
 
+	bool CheckCertStatus(long serial, wxString& result);
+
 	void OnQuit(wxCommandEvent& event);
 	void CRQWizard(wxCommandEvent& event);
 	void CRQWizardRenew(wxCommandEvent& event);

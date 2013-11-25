@@ -1112,8 +1112,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_NONE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-	cert_tree->Build(CERTLIST_FLAGS);
-	CertTreeReset();
+//foo	cert_tree->Build(CERTLIST_FLAGS);
+//foo	CertTreeReset();
 	cgsizer->Add(cert_tree, 1, wxEXPAND);
 
 	cert_select_label = new wxStaticText(certgrid, -1, wxT("\nSelect a Callsign Certificate to process"));
@@ -2661,6 +2661,57 @@ void MyFrame::UpdateConfigFile() {
 	if (curlLogFile) fclose(curlLogFile);
 }
 
+// Check if a certificate is still valid and current at LoTW
+bool MyFrame::CheckCertStatus(long serial, wxString& result) {
+	tqslTrace("MyFrame::CheckCertStatus()", "Serial=%ld", serial);
+	wxConfig* config = reinterpret_cast<wxConfig *>(wxConfig::Get());
+
+	wxString certCheckURL = config->Read(wxT("CertCheckURL"), DEFAULT_CERT_CHECK_URL);
+	wxString certCheckRE = config->Read(wxT("StatusRegex"), DEFAULT_CERT_CHECK_RE);
+	certCheckURL = certCheckURL + wxString::Format(wxT("%ld"), serial);
+
+	curl_easy_setopt(curlReq, CURLOPT_URL, (const char *)certCheckURL.ToUTF8());
+
+	FileUploadHandler handler;
+
+	curl_easy_setopt(curlReq, CURLOPT_WRITEFUNCTION, &FileUploadHandler::recv);
+	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, &handler);
+
+	curl_easy_setopt(curlReq, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
+
+	char errorbuf[CURL_ERROR_SIZE];
+	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
+	int retval = curl_easy_perform(curlReq);
+	result = wxString(wxT("Unknown"));
+	bool ret = false;
+	if (retval == CURLE_OK) {
+                wxString checkresult = wxString::FromAscii(handler.s.c_str());
+
+		wxRegEx checkStatusRE(certCheckRE);
+
+                if (checkStatusRE.Matches(checkresult)) { // valid response
+			result = checkStatusRE.GetMatch(checkresult, 1).Strip(wxString::both);
+			ret = true;
+		}
+	} else {
+		if (diagFile) {
+			fprintf(diagFile, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (curlLogFile) {
+			fprintf(curlLogFile, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT ||
+		    retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR ||
+		    retval == CURLE_SSL_CONNECT_ERROR) {
+			// Network is down, unknown status
+			return ret;
+		} else { // some other error
+			wxMessageBox(wxString::Format(wxT("Error while checking certificates:\n%hs"), errorbuf), wxT("Status Check"), wxOK|wxICON_EXCLAMATION, this);
+		}
+	}
+	return ret;
+}
+
 class expInfo {
  public:
 	expInfo(bool _noGUI = false) {
@@ -2712,6 +2763,8 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 		wxString status = wxString(wxT("KeyOnly"));
 		if (!keyonly) {
 			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			CheckCertStatus(serial, status);
+			check_tqsl_error(tqsl_setCertificateStatus(serial, (const char *)status.ToUTF8()));
 			check_tqsl_error(tqsl_isCertificateSuperceded(certlist[i], &superceded));
 			check_tqsl_error(tqsl_isCertificateExpired(certlist[i], &expired));
 		}

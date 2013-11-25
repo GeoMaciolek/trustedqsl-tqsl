@@ -192,9 +192,12 @@ unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
 #include <vector>
 #include <set>
 #include <string>
+#include <fstream>
+#include <iostream>
 
 #include "tqsllib.h"
 #include "tqslerrno.h"
+#include "xml.h"
 
 #include "winstrdefs.h"
 
@@ -216,6 +219,12 @@ using std::vector;
 using std::map;
 using std::set;
 using std::string;
+using std::ofstream;
+using std::ios;
+using std::endl;
+using std::exception;
+using tqsllib::XMLElement;
+using tqsllib::XMLElementList;
 
 #ifdef _WIN32
 #define TQSL_OPEN_READ  "rb"
@@ -656,6 +665,12 @@ tqsl_isCertificateExpired(tQSL_Cert cert, int *status) {
 		return 1;
 	}
 
+	long serial = 0;
+	tqsl_getCertificateSerial(cert, &serial);
+	if (tqsl_getCertificateStatus(serial) == TQSL_CERT_STATUS_EXP) {
+		*status = true;
+		return 0;
+	}
 	*status = false;
 	/* Check for expired */
 	time_t t = time(0);
@@ -700,6 +715,12 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		return 1;
 	}
 
+	long serial = 0;
+	tqsl_getCertificateSerial(cert, &serial);
+	if (tqsl_getCertificateStatus(serial) == TQSL_CERT_STATUS_SUP) {
+		*status = true;
+		return 0;
+	}
 	*status = false;
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path("user", path, sizeof path);
@@ -4098,4 +4119,134 @@ safe_strncpy(char *dest, const char *src, int size) {
 	strncpy(dest, src, size);
 	dest[size-1] = 0;
 	return ((static_cast<int>((strlen(src))) < size));
+}
+
+static string
+tqsl_cert_status_filename(const char *f = "cert_status.xml") {
+	string s = tQSL_BaseDir;
+#ifdef _WIN32
+	s += "\\";
+#else
+	s += "/";
+#endif
+	s += f;
+	return s;
+}
+
+static int
+tqsl_load_cert_status_data(XMLElement &xel) {
+	int status = xel.parseFile(tqsl_cert_status_filename().c_str());
+	if (status) {
+		if (errno == ENOENT)		// No file is OK
+			return 0;
+		strncpy(tQSL_ErrorFile, tqsl_cert_status_filename().c_str(), sizeof tQSL_ErrorFile);
+		if (status == XML_PARSE_SYSTEM_ERROR) {
+			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
+			tQSL_Errno = errno;
+		} else {
+			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
+		}
+		return 1;
+	}
+	return status;
+}
+
+static int
+tqsl_dump_cert_status_data(XMLElement &xel) {
+	ofstream out;
+	string fn = tqsl_cert_status_filename();
+
+	out.exceptions(std::ios::failbit | std::ios::eofbit | std::ios::badbit);
+	try {
+		out.open(fn.c_str());
+		out << xel << endl;
+		out.close();
+	}
+	catch (exception& x) {
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
+		return 1;
+	}
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getCertificateStatus(long serial) {
+	XMLElement top_el;
+	if (tqsl_load_cert_status_data(top_el))
+		return 1;
+	XMLElement sfile;
+	if (top_el.getFirstElement(sfile)) {
+		XMLElement cd;
+		bool ok = sfile.getFirstElement("Cert", cd);
+		while (ok && cd.getElementName() == "Cert") {
+			pair<string, bool> s = cd.getAttribute("serial");
+			if (s.second && strtol(s.first.c_str(), NULL, 10) == serial) {
+				XMLElement xs;
+				if (cd.getFirstElement("status", xs)) {
+					if (!strcasecmp(xs.getText().c_str(), "Bad serial"))
+						return TQSL_CERT_STATUS_INV;
+					else if (!strcasecmp(xs.getText().c_str(), "Superceded"))
+						return TQSL_CERT_STATUS_SUP;
+					else if (!strcasecmp(xs.getText().c_str(), "Expired"))
+						return TQSL_CERT_STATUS_EXP;
+					else if (!strcasecmp(xs.getText().c_str(), "Unrevoked"))
+						return TQSL_CERT_STATUS_OK;
+					else return TQSL_CERT_STATUS_UNK;
+				}
+			}
+			ok = sfile.getNextElement(cd);
+		}
+	}
+	return TQSL_CERT_STATUS_UNK;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_setCertificateStatus(long serial, const char *status) {
+	if (status == NULL) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	char sstr[32];
+	snprintf(sstr, sizeof sstr, "%ld", serial);
+
+	XMLElement top_el;
+	if (tqsl_load_cert_status_data(top_el))
+		return 1;
+
+	XMLElement sfile;
+	if (!top_el.getFirstElement(sfile))
+		sfile.setElementName("CertStatus");
+
+	XMLElementList& ellist = sfile.getElementList();
+	bool exists = false;
+	XMLElementList::iterator ep;
+	for (ep = ellist.find("Cert"); ep != ellist.end(); ep++) {
+		if (ep->first != "Cert")
+			break;
+		pair<string, bool> rval = ep->second.getAttribute("serial");
+		if (rval.second && strtol(rval.first.c_str(), NULL, 10) == serial) {
+			exists = true;
+			break;
+		}
+	}
+	
+	XMLElement cs("Cert");
+	cs.setPretext("\n  ");
+	XMLElement se;
+	se.setPretext(cs.getPretext() + "  ");
+	se.setElementName("status");
+	se.setText(status);
+	cs.addElement(se);
+
+	cs.setAttribute("serial", sstr);
+	cs.setText("\n  ");
+
+	if (exists)
+		ellist.erase(ep);
+
+	sfile.addElement(cs);
+	sfile.setText("\n");
+	tqsl_dump_cert_status_data(sfile);
+	return 0;
 }
