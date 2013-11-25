@@ -3,11 +3,21 @@ TQSL changes
 
 2.0.1
 ----------
+Use the LoTW certificate status web query to determine if any callsign
+certificates are current. Store this information when updates are done
+(by default, once daily) and use that to inform users that the
+callsign certificate they are using are no longer valid.
+
+Move the update operations performed at startup to a separate thread so
+the GUI can initialize while this work is ongoing. This replaces the
+2.0 behavior of starting the updates (and blocking the GUI) two seconds
+after the GUI appeared.
+
 Correct callsign certificate password handling to use UTF-8 for any
-new passwords. On Windows, try UTF-8 then Unicode to unlock.
+new passwords. On Windows, try UTF-8 then UCS-2 to unlock.
 
 Issue more helpful error messages when errors occur while parsing an
-ADIF file, including what field is casing the error.
+ADIF file, including what field is causing the error.
 
 Correct problem where using characters like "<", ">" or quote in a station
 location field could cause restoring a .tbk file to fail with a syntax
