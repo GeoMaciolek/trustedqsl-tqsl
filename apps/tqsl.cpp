@@ -2714,7 +2714,7 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 
 class expInfo {
  public:
-	expInfo(bool _noGUI = false) {
+	explicit expInfo(bool _noGUI = false) {
 		noGUI = _noGUI;
 		days = 0;
 		callsign = NULL;
@@ -2806,7 +2806,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 
 void
 MyFrame::OnExpiredCertFound(wxCommandEvent& event) {
-	expInfo *ei = (expInfo *) event.GetClientData();
+	expInfo *ei = reinterpret_cast<expInfo *>(event.GetClientData());
 	if (ei->noGUI) {
 		wxLogMessage(wxT("The certificate for %hs expires in %d days."),
 			ei->callsign, ei->days);
@@ -2830,7 +2830,7 @@ MyFrame::OnExpiredCertFound(wxCommandEvent& event) {
 
 void
 MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
-	revInfo *ri = (revInfo *) event.GetClientData();
+	revInfo *ri = reinterpret_cast<revInfo *>(event.GetClientData());
 	if (!ri) return;
 	if (ri->error) {
 		if (ri->silent || ri->noGUI)

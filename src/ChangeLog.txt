@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.4
 ---
+Add new functions to add and look up certificate status.
+
 Clean up database log files on exit. Shrink the default log file to avoid
 large amounts of wasted disk space.
 

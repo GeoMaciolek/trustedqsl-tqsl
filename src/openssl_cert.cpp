@@ -4162,7 +4162,7 @@ tqsl_dump_cert_status_data(XMLElement &xel) {
 		out << xel << endl;
 		out.close();
 	}
-	catch (exception& x) {
+	catch(exception& x) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
 		return 1;
@@ -4192,7 +4192,8 @@ tqsl_getCertificateStatus(long serial) {
 						return TQSL_CERT_STATUS_EXP;
 					else if (!strcasecmp(xs.getText().c_str(), "Unrevoked"))
 						return TQSL_CERT_STATUS_OK;
-					else return TQSL_CERT_STATUS_UNK;
+					else
+						return TQSL_CERT_STATUS_UNK;
 				}
 			}
 			ok = sfile.getNextElement(cd);
@@ -4230,7 +4231,7 @@ tqsl_setCertificateStatus(long serial, const char *status) {
 			break;
 		}
 	}
-	
+
 	XMLElement cs("Cert");
 	cs.setPretext("\n  ");
 	XMLElement se;

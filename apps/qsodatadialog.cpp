@@ -178,7 +178,7 @@ init_valid_lists() {
 			if (high == 0)
 				high_s = wxT("UP");
 		}
-		wxString display = wxString::Format(wxT("%hs (%s-%s %hs)"), cp, 
+		wxString display = wxString::Format(wxT("%hs (%s-%s %hs)"), cp,
                         low_s.c_str(), high_s.c_str(), hz);
 		valid_bands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
 		valid_rxbands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
