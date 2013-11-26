@@ -1112,8 +1112,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		wxDefaultSize, wxTR_DEFAULT_STYLE | wxBORDER_NONE); //wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
 
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
-//foo	cert_tree->Build(CERTLIST_FLAGS);
-//foo	CertTreeReset();
 	cgsizer->Add(cert_tree, 1, wxEXPAND);
 
 	cert_select_label = new wxStaticText(certgrid, -1, wxT("\nSelect a Callsign Certificate to process"));
@@ -2789,6 +2787,12 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	}
 	delete ei;
 	free_certlist();
+	// Refresh the cert tree in case any new info on expires/supercedes
+	if (!noGUI) {
+		cert_tree->Build(CERTLIST_FLAGS);
+		CertTreeReset();
+	}
+
 	if (noGUI) {
 		wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
 		if (!pend.IsEmpty()) {
