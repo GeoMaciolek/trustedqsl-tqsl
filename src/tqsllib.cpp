@@ -261,6 +261,7 @@ tqsl_getErrorString_v(int err) {
 		if (strlen(tQSL_ErrorFile) > 0) {
 			snprintf(buf, sizeof buf, "System error: %s : %s",
 				tQSL_ErrorFile, strerror(tQSL_Errno));
+			tQSL_ErrorFile[0] = '\0';
 		} else {
 			snprintf(buf, sizeof buf, "System error: %s",
 				strerror(tQSL_Errno));
@@ -271,6 +272,7 @@ tqsl_getErrorString_v(int err) {
 		if (strlen(tQSL_ErrorFile) > 0) {
 			snprintf(buf, sizeof buf, "File syntax error: %s",
 				tQSL_ErrorFile);
+			tQSL_ErrorFile[0] = '\0';
 		} else {
 			strncpy(buf, "File syntax error", sizeof buf);
 		}
@@ -290,6 +292,7 @@ tqsl_getErrorString_v(int err) {
 		if (strlen(tQSL_ErrorFile) > 0) {
 			snprintf(buf, sizeof buf, "%s: %s",
 				tQSL_ErrorFile, tqsl_adifGetError(tQSL_ADIF_Error));
+			tQSL_ErrorFile[0] = '\0';
 		} else {
 			snprintf(buf, sizeof buf, "%s",
 				tqsl_adifGetError(tQSL_ADIF_Error));
@@ -301,6 +304,7 @@ tqsl_getErrorString_v(int err) {
 		if (strlen(tQSL_ErrorFile) > 0) {
 			snprintf(buf, sizeof buf, "%s: %s",
 				tQSL_ErrorFile, tqsl_cabrilloGetError(tQSL_Cabrillo_Error));
+			tQSL_ErrorFile[0] = '\0';
 		} else {
 			snprintf(buf, sizeof buf, "%s",
 				tqsl_cabrilloGetError(tQSL_Cabrillo_Error));

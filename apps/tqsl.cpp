@@ -3150,9 +3150,12 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	}
 	catch(TQSLException& x) {
 		wxString s;
-		if (infile != wxT(""))
-			s = infile + wxT(": ");
-		s += wxString::FromUTF8(x.what());
+		wxString err = wxString::FromUTF8(x.what());
+		if (err.Find(infile) == wxNOT_FOUND) {
+			if (infile != wxT(""))
+				s = infile + wxT(": ");
+		}
+		s += err;
 		wxLogError(wxT("%s"), (const char *)s.c_str());
 	}
 	free_certlist();
@@ -3232,9 +3235,12 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	}
 	catch(TQSLException& x) {
 		wxString s;
-		if (infile != wxT(""))
-			s = infile + wxT(": ");
-		s += wxString::FromUTF8(x.what());
+		wxString err = wxString::FromUTF8(x.what());
+		if (err.Find(infile) == wxNOT_FOUND) {
+			if (infile != wxT(""))
+				s = infile + wxT(": ");
+		}
+		s += err;
 		wxLogError(wxT("%s"), (const char *)s.c_str());
 	}
 	free_certlist();
@@ -4153,10 +4159,13 @@ QSLApp::OnInit() {
 				return true;	// Run the GUI
 		} catch(TQSLException& x) {
 			wxString s;
-			if (!infile.empty())
-				s = infile + wxT(": ");
-			s += wxString::FromUTF8(x.what());
-			wxLogError(wxT("%s"), (const char*)s.c_str());
+			wxString err = wxString::FromUTF8(x.what());
+			if (err.Find(infile) == wxNOT_FOUND) {
+				if (!infile.empty())
+                                	s = infile + wxT(": ");
+                	}
+			s += err;
+			wxLogError(wxT("%s"), (const char *)s.c_str());
 			if (quiet)
 				exitNow(TQSL_EXIT_LIB_ERROR, quiet);
 			else
@@ -4171,10 +4180,13 @@ QSLApp::OnInit() {
 				return true;
 		} catch(TQSLException& x) {
 			wxString s;
-			if (!infile.empty())
-				s = infile + wxT(": ");
-			s += wxString::FromUTF8(x.what());
-			wxLogError(wxT("%s"), (const char*)s.c_str());
+			wxString err = wxString::FromUTF8(x.what());
+			if (err.Find(infile) == wxNOT_FOUND) {
+				if (infile != wxT(""))
+					s = infile + wxT(": ");
+			}
+			s += err;
+			wxLogError(wxT("%s"), (const char *)s.c_str());
 			if (quiet)
 				exitNow(TQSL_EXIT_LIB_ERROR, quiet);
 			else
