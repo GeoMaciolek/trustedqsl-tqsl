@@ -208,9 +208,9 @@ wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
 	}
 }
 
-LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxString& title)
+LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxString& title, const wxString& ext)
 	: ExtWizard(parent, help, title), _nd(0) {
-	tqslTrace("LoadCertWiz::LoadCertWiz", "parent=0x%lx, title=%s", reinterpret_cast<void *>(parent), _S(title));
+	tqslTrace("LoadCertWiz::LoadCertWiz", "parent=0x%lx, title=%s, ext=%s", reinterpret_cast<void *>(parent), _S(title), _S(ext));
 
 	LCW_FinalPage *final = new LCW_FinalPage(this);
 	LCW_P12PasswordPage *p12pw = new LCW_P12PasswordPage(this);
@@ -221,7 +221,6 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_p12pw = p12pw;
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
-	wxString ext(wxT("tq6"));
 	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
 	wild += wxT("|All files (*.*)|*.*");
 

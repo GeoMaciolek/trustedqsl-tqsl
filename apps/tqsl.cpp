@@ -2793,15 +2793,6 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 		CertTreeReset();
 	}
 
-	if (noGUI) {
-		wxString pend = wxConfig::Get()->Read(wxT("RequestPending"));
-		if (!pend.IsEmpty()) {
-			if (pend.Find(wxT(",")) != wxNOT_FOUND)
-				wxLogMessage(wxT("Callsign Certificate Requests are pending for %s."), pend.c_str());
-			else
-				wxLogMessage(wxT("A Callsign Certificate Request for %s is pending."), pend.c_str());
-		}
-	}
 	curl_easy_cleanup(curlReq);
 	if (curlLogFile) fclose(curlLogFile);
 
@@ -4238,11 +4229,6 @@ void MyFrame::FirstTime(void) {
 			if (p.Last() == ',')
 				p.Truncate(pending.Len()-1);
 			wxConfig::Get()->Write(wxT("RequestPending"), p);
-		} else {
-			if (wxMessageBox(wxT("Are you ready to load your new callsign certificate for ") + pend + wxT(" from LoTW now?"), wxT("Alert"), wxYES_NO, this) == wxYES) {
-				wxCommandEvent e;
-				OnLoadCertificateFile(e);
-			}
 		}
 	}
 

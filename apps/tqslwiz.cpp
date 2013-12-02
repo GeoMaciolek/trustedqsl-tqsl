@@ -62,6 +62,7 @@ TQSLWizard::GetPage(bool final) {
 		page_num = 0;
 	else if (tqsl_getStationLocationCapturePage(loc, &page_num))
 		return 0;
+	tqslTrace("TQSLWizard::GetPage", "page_num = %d", page_num);
 	if (_pages[page_num]) {
 		if (page_num == 0)
 			(reinterpret_cast<TQSLWizFinalPage *>(_pages[0]))->prev = GetCurrentTQSLPage();
