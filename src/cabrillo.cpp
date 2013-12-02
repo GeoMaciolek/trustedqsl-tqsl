@@ -367,7 +367,7 @@ tqsl_new_cabrillo_contest(const char *contest_name, int call_field, int contest_
 	cabrillo_contest *c = static_cast<cabrillo_contest *>(calloc(1, sizeof(struct cabrillo_contest)));
 	if (c == NULL)
 		return NULL;
-	if ((c->contest_name =  strdup(contest_name))) {
+	if ((c->contest_name = strdup(contest_name)) == NULL) {
 		tqsl_free_cabrillo_contest(c);
 		return NULL;
 	}
