@@ -203,14 +203,16 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	top->SetFocus();
 	top->Raise();
 
-	wxString pwd = wxGetPasswordFromUser(message, wxT("Enter password"), wxT(""), top);
+	wxString pwd;
+	int ret = getPasswordFromUser(pwd, message, wxT("Enter password"), wxT(""), top);
 	if (frame->IsQuiet()) {
 		frame->Show(false);
 		wxSafeYield(frame);
 	}
-	if (pwd.IsEmpty())
+	if (ret != wxID_OK)
 		return 1;
 	strncpy(buf, pwd.ToUTF8(), bufsiz);
+	utf8_to_ucs2(buf, unipwd, sizeof unipwd);
 	return 0;
 }
 
@@ -1675,7 +1677,6 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	   				if ((rval = tqsl_beginSigning(cert, const_cast<char *>(password), getCertPassword, cert)) == 0)
 						break;
 					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
-						utf8_to_ucs2(password, unipwd, sizeof unipwd);
 						if ((rval = tqsl_beginSigning(cert, const_cast<char *>(unipwd), NULL, cert)) == 0)
 							break;
 					}
