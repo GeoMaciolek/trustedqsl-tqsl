@@ -39,5 +39,6 @@
 wxSize getTextSize(wxWindow *win);
 wxString urlEncode(wxString& str);
 int utf8_to_ucs2(const char *in, char *out, size_t buflen);
+int getPasswordFromUser(wxString& result, const wxString& message, const wxString& caption, const wxString& defaultValue, wxWindow *parent);
 
 #endif	// __wxutil_h
