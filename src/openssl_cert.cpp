@@ -1831,10 +1831,12 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 							sk_ASN1_TYPE_push(attrib->value.set, val);
 #if (OPENSSL_VERSION_NUMBER & 0xfffff000) == 0x00906000
 							attrib->set = 1;
-#elif (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00907000
-							attrib->single = 0;
 #else
-#error "Unexpected OpenSSL version; check X509_ATTRIBUTE struct compatibility"
+    #if (OPENSSL_VERSION_NUMBER & 0xfffff000) >= 0x00907000
+							attrib->single = 0;
+    #else
+        #error "Unexpected OpenSSL version; check X509_ATTRIBUTE struct compatibility"
+    #endif
 #endif
 							if (bag->attrib) {
 								sk_X509_ATTRIBUTE_push(bag->attrib, attrib);

@@ -35,7 +35,7 @@ int i2d_ASN1_SET(void *a, unsigned char **pp,
                  int is_set);
 void *d2i_ASN1_SET(void *a, const unsigned char **pp,
                    long length, d2i_of_void *d2i,
-                   void (*free_func)(void*), int ex_tag,
+                   void (*free_func)(void*), int ex_tag, // NOLINT(readability/casting)
                    int ex_class);
 void *ASN1_seq_unpack(const unsigned char *buf, int len,
                       d2i_of_void *d2i, void (*free_func)(void* dummy));

@@ -1405,7 +1405,7 @@ make_page(TQSL_LOCATION_PAGELIST& pagelist, int page_num) {
 			strtol(config_field.getAttribute("len").first.c_str(), NULL, 10),
 			strtol(config_field.getAttribute("intype").first.c_str(), NULL, 10),
 			strtol(config_field.getAttribute("flags").first.c_str(), NULL, 10)
-		);
+		);	// NOLINT(whitespace/parens)
 		pagelist.back().fieldlist.push_back(loc_field);
 		field_ok = config_page.getNextElement(config_pageField);
 	}

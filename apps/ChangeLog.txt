@@ -3,6 +3,18 @@ TQSL changes
 
 2.0.1
 ----------
+When prompting for a password, don't treat an empty password response
+as a cancel. Try to use that and report a password error if appropriate.
+
+When reporting errors, don't include the filename of the proximate cause
+twice in the same error message.
+
+Don't notify users of pending callsign certificate requests with the "are
+you ready to install" prompt. This is confusing as it seems to indicate
+that TQSL has the .TQ6 already downloaded and ready to install. Since we
+can't tell when LoTW has delivered the e-mail, don't prompt for the TQ6
+at every startup.
+
 Use the LoTW certificate status web query to determine if any callsign
 certificates are current. Store this information when updates are done
 (by default, once daily) and use that to inform users that the

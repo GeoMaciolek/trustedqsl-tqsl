@@ -189,7 +189,7 @@ tqsl_adifGetError(TQSL_ADIF_GET_FIELD_ERROR status) {
 	}
 	snprintf(errorText, sizeof errorText, fmt, ADIF_ErrorField);
 	return( errorText );
-};
+}
 
 static TQSL_ADIF_GET_FIELD_ERROR
 tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,

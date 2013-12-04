@@ -103,7 +103,7 @@ class tqslFileSystemInternetModule : public wxModule {
             delete wxFileSystem::RemoveHandler(m_handler);
         }
 
-    private:
+ private:
         wxFileSystemHandler* m_handler;
 };
 

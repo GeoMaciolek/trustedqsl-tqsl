@@ -72,7 +72,7 @@ getPasswordFromUser(wxString& result, const wxString& message, const wxString& c
 	long style = wxTextEntryDialogStyle;
 
 	wxPasswordEntryDialog dialog(parent, message, caption, defaultValue, style);
-	
+
 	int ret = dialog.ShowModal();
 	if (ret == wxID_OK)
 		result = dialog.GetValue();
