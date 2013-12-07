@@ -849,8 +849,12 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	while (updateMutex.TryLock() == wxMUTEX_BUSY)
 		wxSafeYield();
 	updateMutex.Unlock();
-	if (!noGUI)
+	if (!noGUI) {
 		logwin->SetValue(wxT(""));		// Clear the checking message
+		// Refresh the cert tree in case any new info on expires/supercedes
+		cert_tree->Build(CERTLIST_FLAGS);
+		CertTreeReset();
+	}
 	wxEndBusyCursor();
 }
 
@@ -2656,7 +2660,6 @@ void MyFrame::UpdateConfigFile() {
 			wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
 	}
-	curl_easy_cleanup(curlReq);
 	if (curlLogFile) fclose(curlLogFile);
 }
 
@@ -2704,8 +2707,6 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 		    retval == CURLE_SSL_CONNECT_ERROR) {
 			// Network is down, unknown status
 			return ret;
-		} else { // some other error
-			wxMessageBox(wxString::Format(wxT("Error while checking certificates:\n%hs"), errorbuf), wxT("Status Check"), wxOK|wxICON_EXCLAMATION, this);
 		}
 	}
 	return ret;
@@ -2788,12 +2789,6 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	}
 	delete ei;
 	free_certlist();
-	// Refresh the cert tree in case any new info on expires/supercedes
-	if (!noGUI) {
-		cert_tree->Build(CERTLIST_FLAGS);
-		CertTreeReset();
-	}
-
 	curl_easy_cleanup(curlReq);
 	if (curlLogFile) fclose(curlLogFile);
 
