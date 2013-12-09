@@ -23,7 +23,9 @@ callsign certificate they are using are no longer valid.
 Move the update operations performed at startup to a separate thread so
 the GUI can initialize while this work is ongoing. This replaces the
 2.0 behavior of starting the updates (and blocking the GUI) two seconds
-after the GUI appeared.
+after the GUI appeared. This also corrects a potential deadlock on
+OSX where the first-time user message could appear along with an update
+dialog, both of which locked each other out.
 
 Correct callsign certificate password handling to use UTF-8 for any
 new passwords. On Windows, try UTF-8 then UCS-2 to unlock.

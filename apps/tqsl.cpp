@@ -2824,15 +2824,17 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 	revInfo *ri = reinterpret_cast<revInfo *>(event.GetClientData());
 	if (!ri) return;
 	if (ri->error) {
-		if (ri->silent || ri->noGUI)
-			return;
-		wxLogMessage(ri->errorText);
+		if (!ri->silent && !ri->noGUI)
+			wxLogMessage(ri->errorText);
+		wxMutexLocker lock(*ri->mutex);
+		ri->condition->Signal();
 		return;
 	}
 	if (ri->message) {
-		if (ri->silent || ri->noGUI)
-			return;
-		wxMessageBox(ri->errorText, wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		if (!ri->silent && !ri->noGUI)
+			wxMessageBox(ri->errorText, wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
+		wxMutexLocker lock(*ri->mutex);
+		ri->condition->Signal();
 		return;
 	}
 	if (ri->newProgram) {
@@ -2930,7 +2932,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 			tqslTrace("MyFrame::DoCheckForUpdates", "Prog + Config rev returns %d chars, %s", handler.s.size(), handler.s.c_str());
 			wxString result = wxString::FromAscii(handler.s.c_str());
 			wxString url;
-// The macro for declading a hash map defines a couple of typedefs
+// The macro for declaring a hash map defines a couple of typedefs
 // that it never uses. Current GCC warns about those. The pragma
 // below suppresses those warnings for those.
 #if !defined(__APPLE__) && !defined(_WIN32)
