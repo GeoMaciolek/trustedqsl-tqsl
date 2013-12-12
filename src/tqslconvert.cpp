@@ -314,7 +314,7 @@ find_matching_cert(TQSL_CONVERTER *conv) {
 static const char *notypes[] = { "D", "T", "M", "N", "C", "" };
 
 static const char *
-tqsl_infer_band(char* infreq) {
+tqsl_infer_band(const char* infreq) {
 	setlocale(LC_NUMERIC, "C");
 	double freq = atof(infreq);
 	double freq_khz = freq * 1000.0;
@@ -334,10 +334,6 @@ tqsl_infer_band(char* infreq) {
 			else if (low == 18068) low = 18000;
 			else if (low == 24890) low = 24000;
 			if (freq_khz >= low && freq_khz <= high) {
-				match = true;
-			}
-			if (freq >= low && freq <= high) {
-				sprintf(infreq, "%.4f", freq / 1000.0);
 				match = true;
 			}
 		} else {
