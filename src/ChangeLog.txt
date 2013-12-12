@@ -3,6 +3,10 @@ TQSLLIB changes
 
 2.4
 ---
+If both FREQ and BAND are provided in an ADIF file, and the band doesn't
+match the frequency because it was specified in KHz versus the ADIF-
+required MHz, convert it to MHz and use that frequency setting.
+
 Add new functions to add and look up certificate status.
 
 Clean up database log files on exit. Shrink the default log file to avoid
