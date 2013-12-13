@@ -469,6 +469,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	/* Try opening the output stream */
 
 	if ((out = fopen(filename, TQSL_OPEN_WRITE)) == NULL) {
+		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto end;
@@ -552,6 +553,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	bio = NULL;
 	tqsl_write_adif_field(out, "eor", 0, NULL, 0);
 	if (fclose(out) == EOF) {
+		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto end;
@@ -563,6 +565,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	if (!tqsl_make_key_path(req->callSign, path, sizeof path))
 		goto end;
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
+		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto end;
@@ -798,6 +801,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	vector< map<string, string> >::iterator it;
 	bool keyerror = false;
 	int savedError;
+	int savedErrno;
 
 	if (tqsl_init())
 		return 1;
@@ -828,9 +832,9 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	// Get a list of keys and find any unmatched (no cert) ones
 	if (withkeys) {
 		if (tqsl_make_key_list(keylist)) {
-			keyerror = true;		// Remember tha an error occurred
+			keyerror = true;		// Remember that an error occurred
 			savedError = tQSL_Error;	// but allow the rest of the certs to load
-			goto nokeys;
+			savedErrno = tQSL_Errno;
 		}
 		if (xcerts != NULL) {
 			for (i = 0; i < sk_X509_num(xcerts); i++) {
@@ -878,8 +882,6 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 				it++;
 		}
 	}
-
- nokeys:
 
 	// Done with the original cert list now
 	if (xcerts != NULL) {
@@ -950,6 +952,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 
 	if (keyerror) {				// If an error happened with private key scan
 		tQSL_Error = savedError;	// Restore the error status from that
+		tQSL_Errno = savedErrno;
 		rval = 1;
 	} else {
 		rval = 0;
@@ -3978,6 +3981,10 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 	}
 	struct dirent *ent;
 	int rval = 0;
+	int savedError = 0;
+	int savedErrno = 0;
+	char *savedFile = NULL;
+
 	while ((ent = readdir(dir)) != NULL) {
 		char fixcall[256];
 		if (ent->d_name[0] == '.')
@@ -3989,12 +3996,22 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 #else
 		string filename = path + "/" + ent->d_name;
 #endif
+		struct stat s;
+		if (stat(filename.c_str(), &s) == 0) {
+			if (S_ISDIR(s.st_mode))
+				continue;		// If it's a directory, skip it.
+		}
 		if (!tqsl_open_key_file(filename.c_str())) {
 			map<string, string> fields;
 			while (!tqsl_read_key(fields)) {
 				if (tqsl_clean_call(fields["CALLSIGN"].c_str(), fixcall, sizeof fixcall)) {
 					rval = 1;
-					break;
+					savedError = tQSL_Error;
+					savedErrno = tQSL_Errno;
+					if (savedFile)
+						free(savedFile);
+					savedFile = strdup(tQSL_ErrorFile);
+					continue;	// Keep looking for keys
 				}
 				if (strcasecmp(fixcall, ent->d_name))
 					continue;
@@ -4002,11 +4019,23 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 			}
 			tqsl_close_key_file();
 		} else {
-			rval = 1;			// Unable to open - return error
-			break;
+			rval = 1;			// Unable to open - remember that
+			savedErrno = tQSL_Errno;
+			savedError = tQSL_Error;
+			if (savedFile)
+				free(savedFile);
+			savedFile = strdup(tQSL_ErrorFile);
 		}
 	}
 	closedir(dir);
+	if (rval) {
+		tQSL_Error = savedError;
+		tQSL_Errno = savedErrno;
+		if (savedFile) {
+			strcpy(tQSL_ErrorFile, savedFile);
+			free (savedFile);
+		}
+	}
 	return rval;
 }
 

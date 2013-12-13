@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.4
 ---
+Don't stop loading private keys just due to a file permission error in
+the keys directory.
+
 Add new functions to add and look up certificate status.
 
 Clean up database log files on exit. Shrink the default log file to avoid
