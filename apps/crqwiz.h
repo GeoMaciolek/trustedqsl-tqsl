@@ -99,6 +99,7 @@ class CRQ_IntroPage : public CRQ_Page {
 	wxComboBox *tc_qsoendy, *tc_qsoendm, *tc_qsoendd;
 	wxStaticText *tc_status;
 	bool initialized;		// Set true when validating makes sense
+	int em_w;
 
 	DECLARE_EVENT_TABLE()
 };

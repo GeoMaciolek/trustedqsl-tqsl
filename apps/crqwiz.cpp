@@ -167,7 +167,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"), wxDefaultPosition, wxDefaultSize,
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
 	int em_h = st->GetSize().GetHeight();
-	int em_w = st->GetSize().GetWidth();
+	em_w = st->GetSize().GetWidth();
 	st->SetLabel(wxT("Call sign:"));
 	st->SetSize(dst->GetSize());
 
@@ -683,6 +683,7 @@ CRQ_IntroPage::validate() {
  notok:
 	if (!ok) {
 		tc_status->SetLabel(msg);
+		tc_status->Wrap(em_w * 35);
 		msg_buf = msg.ToUTF8();
 		return (const char *)msg_buf;
 	}
