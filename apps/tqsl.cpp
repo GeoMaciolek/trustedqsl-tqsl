@@ -792,7 +792,6 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 			config->Flush(false);
 		}
 	}
-	Destroy();		// close the window
 	bool ab;
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
@@ -804,6 +803,7 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 #endif
 		BackupConfig(bdir, true);
 	}
+	Destroy();		// close the window
 }
 
 void
@@ -2758,6 +2758,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 		char callsign[64];
 		check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
 		int keyonly, superceded, expired;
+		keyonly = superceded = expired = 0;
 		check_tqsl_error(tqsl_getCertificateKeyOnly(certlist[i], &keyonly));
 		long serial = 0;
 		wxString status = wxString(wxT("KeyOnly"));
@@ -4526,7 +4527,9 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		if (tqsl_createCertRequest(file.ToUTF8(), &req, 0, 0)) {
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			const char *msg = tqsl_getErrorString();
+			wxLogError(wxT("%hs"), msg);
+			wxMessageBox(wxString::Format(wxT("Error creating callsign certificate request: %hs"), msg), wxT("Error creating Callsign Certificate Request"), wxOK|wxICON_EXCLAMATION);
 			return;
 		}
 		if (upload) {

@@ -3,6 +3,14 @@ TQSL changes
 
 2.0.1
 ----------
+Word wrap "overlapping certificate" message properly.
+
+Fix crash that occurred when an error was displayed due to the
+automatic backup being performed at exit.
+
+Display errors that happen while saving creating callsign certificate
+requests more prominently.
+
 When prompting for a password, don't treat an empty password response
 as a cancel. Try to use that and report a password error if appropriate.
 
