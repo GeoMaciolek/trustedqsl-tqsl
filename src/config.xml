@@ -1,4 +1,4 @@
-<tqslconfig majorversion="2" minorversion="6">
+<tqslconfig majorversion="2" minorversion="7">
      <adifmap>
        <adifmode mode="AMTOR">AMTORFEC</adifmode>
        <adifmode mode="RTTY">ASCI</adifmode>
@@ -4221,17 +4221,18 @@
        </provider>
      </providers>
      <satellites>
-       <satellite name="AO-10" startDate="1983-06-06">AMSAT-OSCAR 10</satellite>
+       <satellite name="AO-10" startDate="1983-06-16">AMSAT-OSCAR 10</satellite>
        <satellite endDate="1996-12-07" name="AO-13" startDate="1988-06-15">AMSAT-OSCAR 13</satellite>
        <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
        <satellite endDate="1994-09-16" name="AO-21" startDate="1991-01-29">OSCAR 21/RS-14</satellite>
        <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
        <satellite endDate="1965-03-27" name="AO-3" startDate="1965-03-18">AMSAT-OSCAR 3</satellite>
        <satellite endDate="1966-03-16" name="AO-4" startDate="1965-12-21">AMSAT-OSCAR 4</satellite>
-       <satellite name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
-       <satellite name="AO-51" startDate="2004-06-29">AMSAT-OSCAR 51</satellite>
+       <satellite endDate="2004-01-25" name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
+       <satellite endDate="2011-11-29" name="AO-51" startDate="2004-06-29">AMSAT-OSCAR 51</satellite>
        <satellite endDate="1977-06-21" name="AO-6" startDate="1972-10-15">AMSAT-OSCAR 6</satellite>
        <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
+       <satellite name="AO-73" startDate="2013-11-21">AMSAT-OSCAR 73</satellite>
        <satellite endDate="1983-06-24" name="AO-8" startDate="1978-03-15">AMSAT-OSCAR 8</satellite>
        <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
        <satellite endDate="1993-09-10" name="Arsene" startDate="1993-05-13">OSCAR 24</satellite>
