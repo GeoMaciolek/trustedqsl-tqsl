@@ -5,8 +5,8 @@ TQSL_ICON4	ICON	"@srcdir@/tqsl.ico"
 #include "wx/msw/wx.rc"
 
 1 VERSIONINFO
-FILEVERSION @TQSL_VERSION_MAJOR@, @TQSL_VERSION_MINOR@, 0, 0
-PRODUCTVERSION @TQSL_VERSION_MAJOR@, @TQSL_VERSION_MINOR@, 0, 0
+FILEVERSION @TQSL_VERSION_MAJOR@, @TQSL_VERSION_MINOR@, @TQSL_VERSION_UPDATE@, 0
+PRODUCTVERSION @TQSL_VERSION_MAJOR@, @TQSL_VERSION_MINOR@, @TQSL_VERSION_UPDATE@, 0
 FILEFLAGSMASK 0
 FILEFLAGS VS_FFI_FILEFLAGSMASK
 FILEOS VOS__WINDOWS32
@@ -21,7 +21,7 @@ BEGIN
       VALUE "FileDescription", "TrustedQSL\000"
       VALUE "FileVersion", "@TQSLVERSION@\000"
       VALUE "InternalName", "TQSL\000"
-      VALUE "LegalCopyright", "Copyright  2005 American Radio Relay League.\000"
+      VALUE "LegalCopyright", "Copyright  2005-2013 American Radio Relay League.\000"
       VALUE "OriginalFilename", "tqsl.exe\000"
       VALUE "ProductName", "TQSL\000"
       VALUE "ProductVersion", "@TQSLVERSION@\000"
