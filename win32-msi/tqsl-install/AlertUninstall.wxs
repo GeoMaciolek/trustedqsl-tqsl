@@ -10,7 +10,7 @@
         <Control Id="Cancel" Type="PushButton" X="140" Y="57" Width="80" Height="17" Cancel="yes" Text="Cancel installation">
           <Publish Event="EndDialog" Value="Exit">1</Publish>
         </Control>
-        <Control Id="Text" Type="Text" X="48" Y="22" Width="194" Height="30" Text="The old version must be uninstalled before continuing. This will not affect your certificates or settings"/>
+        <Control Id="Text" Type="Text" X="48" Y="22" Width="194" Height="30" Text="Any versions of TQSL now present will be removed so the new version can be installed. This will not affect your certificates or settings"/>
         <Control Id="Icon" Type="Icon" X="15" Y="15" Width="24" Height="24" FixedSize="yes" IconSize="32" Text="WixUI_Ico_Info" />
       </Dialog>
     </UI>
