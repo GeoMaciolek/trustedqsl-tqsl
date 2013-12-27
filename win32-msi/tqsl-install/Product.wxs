@@ -82,6 +82,7 @@
       <ComponentRef Id="LicenseComp"/>
       <ComponentRef Id="ChangeLogComp"/>
       <ComponentRef Id="DesktopShortcut"/>
+      <ComponentRef ID="CABundleComp"/>
     </Feature>
 
     <Icon Id="tqsl.exe" SourceFile="key.ico"/>
