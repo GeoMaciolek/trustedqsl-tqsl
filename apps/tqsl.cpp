@@ -2121,7 +2121,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	//set up options
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
 	
-	wxStandardPaths sp
+	wxStandardPaths sp;
 	wxString cabundlePath;
 	wxSplitPath(sp.GetExecutablePath(), &cabundlePath, 0, 0);
 #ifdef _WIN32
