@@ -25,6 +25,7 @@
 #include <wx/notebook.h>
 #include <wx/statline.h>
 #include <wx/app.h>
+#include <wx/stdpaths.h>
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
@@ -2119,6 +2120,16 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	}
 	//set up options
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
+	
+	wxStandardPaths sp
+	wxString cabundlePath;
+	wxSplitPath(sp.GetExecutablePath(), &cabundlePath, 0, 0);
+#ifdef _WIN32
+	cabundlePath += wxT("\\ca-bundle.crt");
+#else
+	cabundlePath += wxT("/ca-bundle.crt");
+#endif
+	curl_easy_setopt(curlReq, CURLOPT_CAINFO, cabundlePath.ToUTF8());
 
 	// Get the proxy configuration and pass it to cURL
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
