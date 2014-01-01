@@ -41,6 +41,7 @@ class DocPaths : public wxPathList {
 			DWORD bsize = sizeof path;
 			if (RegQueryValueEx(hkey, "HelpDir", 0, &dtype, (LPBYTE)path, &bsize)
 				== ERROR_SUCCESS) {
+				Add(wxString(path) + "\\");
 				Add(wxString(path) + "\\" + subdir);
 			}
 		}
@@ -74,11 +75,13 @@ class DocPaths : public wxPathList {
                         		strncat(npath, "/", 2);
                 		}
                 		Add(wxString::FromUTF8(npath) + wxT("Help/"));
+				Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/"));
 				Add(wxT("/Applications/") + subdir + wxT(".app/Contents/Resources/Help/"));
 				free(npath);
 			}
 		}
 #else
+		Add(wxT(CONFDIR) wxT("help/"));
 		Add(wxT(CONFDIR) wxT("help/") + subdir);
 		Add(subdir);
 #endif
