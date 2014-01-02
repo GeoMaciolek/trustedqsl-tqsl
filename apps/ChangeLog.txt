@@ -3,6 +3,12 @@ TQSL changes
 
 2.0.1
 ----------
+Install and use a certificate bundle so TQSL is no longer dependent upon the
+host OS for certificate validation. 
+
+On Windows, use OpenSSL for SSL connections rather than the unreliable
+Windows SChannel implementation.
+
 Word wrap "overlapping certificate" message properly.
 
 Fix crash that occurred when an error was displayed due to the
