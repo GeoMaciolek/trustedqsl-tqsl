@@ -2125,10 +2125,17 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 #ifdef CONFDIR
 	docpaths.Add(wxT(CONFDIR));
 #endif
+#ifdef _WIN32
+	wxStandardPaths sp;
+	wxString exePath;
+	wxSplitPath(sp.GetExecutablePath(), &exePath, 0, 0);
+	docpaths.Add(exePath);
+#endif
 	wxString caBundlePath = docpaths.FindAbsoluteValidPath(wxT("ca-bundle.crt"));
 	if (!caBundlePath.IsEmpty()) {
-		const char *caBundle = caBundlePath.ToUTF8();
-	        curl_easy_setopt(curlReq, CURLOPT_CAINFO, caBundle);
+		char caBundle[256];
+		strncpy(caBundle, caBundlePath.ToUTF8(), sizeof caBundle);
+		curl_easy_setopt(curlReq, CURLOPT_CAINFO, caBundle);
 	}
 	// Get the proxy configuration and pass it to cURL
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
