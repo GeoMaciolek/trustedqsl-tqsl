@@ -824,8 +824,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	if (xcerts == NULL) {
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
 			return 1;
-		else if (tQSL_Error == TQSL_SYSTEM_ERROR && tQSL_Errno == ENOENT) // No file
-			return 0;
+		else if (tQSL_Error != TQSL_SYSTEM_ERROR || tQSL_Errno != ENOENT) // No file
+			return 1;
 	} else {
 		selcerts = tqsl_filter_cert_list(xcerts, callsign, dxcc, date, issuer, flags);
 	}
