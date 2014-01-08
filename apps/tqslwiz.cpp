@@ -458,7 +458,7 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 	if (namelist->GetSelection() >= 0) {
 		const char *cp = (const char *)(namelist->GetClientData(namelist->GetSelection()));
 		if (cp)
-			newname->SetValue(wxString::FromUTF8(cp));
+			newname->SetValue(wxString::FromUTF8(cp).Trim(true).Trim(false));
 	}
 }
 
@@ -511,7 +511,7 @@ TQSLWizFinalPage::TransferDataFromWindow() {
 	tqslTrace("TQSLWizFinalPage::TransferDataFromWindow");
 	if (validate())	 // Must be a "back"
 		return true;
-	wxString s = newname->GetValue();
+	wxString s = newname->GetValue().Trim(true).Trim(false);
 	(reinterpret_cast<TQSLWizard *>(GetParent()))->SetLocationName(s);
 	return true;
 }
@@ -519,7 +519,7 @@ TQSLWizFinalPage::TransferDataFromWindow() {
 const char *
 TQSLWizFinalPage::validate() {
 	tqslTrace("TQSLWizFinalPage::validate");
-	wxString val = newname->GetValue();
+	wxString val = newname->GetValue().Trim(true).Trim(false);
 	const char *errmsg = 0;
 	val.Trim().Trim(false);
 	if (val == wxT(""))

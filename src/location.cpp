@@ -30,6 +30,7 @@
 #include <map>
 #include <string>
 #include <cctype>
+#include <functional>
 #include "tqsllib.h"
 #include "tqslerrno.h"
 #include "xml.h"
@@ -2155,7 +2156,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 		if (ep->first != "StationData")
 			break;
 		pair<string, bool> rval = ep->second.getAttribute("name");
-		if (rval.second && !strcasecmp(rval.first.c_str(), loc->name.c_str())) {
+		if (rval.second && !strcasecmp(trim(rval.first).c_str(), trim(loc->name).c_str())) {
 			exists = true;
 			break;
 		}
