@@ -1934,7 +1934,7 @@ tqsl_load_station_data(XMLElement &xel) {
 					prov = xc.getText();
 					if (prov == "PQ") {
 						xc.setText("QC");
-					} else if (prov == "NB") {
+					} else if (prov == "NF") {
 						xc.setText("NL");
 					}
 				}

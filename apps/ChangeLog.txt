@@ -4,7 +4,7 @@ TQSL changes
 2.0.1
 ----------
 For Canadian Station Locations, correct the province abbreviation of
-"PQ" to be "QC" and "NB" to "NL".
+"PQ" to be "QC" and "NF" to "NL".
 
 Correct handling of Station Location names with leading and/or trailing
 whitespace. Strip those characters when creating and editing a station
