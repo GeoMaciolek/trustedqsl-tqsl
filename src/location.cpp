@@ -1920,6 +1920,28 @@ tqsl_load_station_data(XMLElement &xel) {
 		}
 		return 1;
 	}
+	// Fix the invalid Canadian Provinces
+	XMLElement sfile;
+	if (xel.getFirstElement(sfile)) {
+		XMLElement sd;
+		bool ok = sfile.getFirstElement("StationData", sd);
+		while (ok && sd.getElementName() == "StationData") {
+			pair<string, bool> name = sd.getAttribute("name");
+			if (name.second) {
+				XMLElement xc;
+				string prov;
+				if (sd.getFirstElement("CA_PROVINCE", xc)) {
+					prov = xc.getText();
+					if (prov == "PQ") {
+						xc.setText("QC");
+					} else if (prov == "NB") {
+						xc.setText("NL");
+					}
+				}
+			}
+			ok = sfile.getNextElement(sd);
+		}
+	}
 	return status;
 }
 
