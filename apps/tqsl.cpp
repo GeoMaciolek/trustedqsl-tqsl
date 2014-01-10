@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <expat.h>
+#include <sys/stat.h>
 
 #include <wx/wxprec.h>
 #include <wx/object.h>
@@ -130,6 +131,9 @@ static wxMenu *stn_menu;
 static wxString flattenCallSign(const wxString& call);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
+
+static bool verify_cert(tQSL_Location loc);
+
 FILE *diagFile = NULL;
 static wxString origCommandLine = wxT("");
 static MyFrame *frame = 0;
@@ -1348,6 +1352,8 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		if (data == NULL) return;
 
 		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
+		if (!verify_cert(loc))		// Check if there is a certificate before editing
+			return;
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
 			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Location data error"), wxOK|wxICON_EXCLAMATION, this);
@@ -2120,7 +2126,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	}
 	//set up options
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
-	
+
 	DocPaths docpaths(wxT("tqslapp"));
 #ifdef CONFDIR
 	docpaths.Add(wxT(CONFDIR));
@@ -3616,7 +3622,18 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 			svalue.Replace(wxT("&lt;"), wxT("<"), true);
 			svalue.Replace(wxT("&gt;"), wxT(">"), true);
 			svalue.Replace(wxT("&amp;"), wxT("&"), true);
-			loader->config->Write(sname, svalue);
+			if (sname == wxT("BackupFolder") && !svalue.IsEmpty()) {
+				// If it's the backup directory, don't restore it if the
+				// referenced directory doesn't exist.
+				struct stat s;
+				if (lstat(svalue.ToUTF8(), &s) == 0) {		// Does it exist?
+					if (S_ISDIR(s.st_mode)) {		// And is it a directory?
+						loader->config->Write(sname, svalue); // OK to use it.
+					}
+                		}
+			} else {
+				loader->config->Write(sname, svalue);
+			}
 		} else if (stype == wxT("Bool")) {
 			bool bsw = (svalue == wxT("true"));
 			loader->config->Write(sname, bsw);

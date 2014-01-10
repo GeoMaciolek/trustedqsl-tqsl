@@ -3,15 +3,22 @@ TQSL changes
 
 2.0.1
 ----------
+For Canadian Station Locations, correct the province abbreviation of
+"PQ" to be "QC" and "NB" to "NL".
+
+Correct handling of Station Location names with leading and/or trailing
+whitespace. Strip those characters when creating and editing a station
+location and ignore them when looking up existing station locations.
+
 Install and use a certificate bundle so TQSL is no longer dependent upon the
 host OS for certificate validation. 
 
 On Windows, use OpenSSL for SSL connections rather than the unreliable
 Windows SChannel implementation.
 
-Word wrap "overlapping certificate" message properly.
+Word wrap the "overlapping certificate" message properly.
 
-Fix crash that occurred when an error was displayed due to the
+Fix a crash that occurred when an error was displayed due to the
 automatic backup being performed at exit.
 
 Display errors that happen while saving creating callsign certificate

@@ -343,7 +343,7 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	sizer->Add(autobackup, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 
 	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
-	wxString bdir = config->Read(wxT("BackupFolder"), wxString::FromUTF8(tQSL_BaseDir));
+	wxString bdir = config->Read(wxT("BackupFolder"));
 	dirPick = new wxDirPickerCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxT("Select a Folder"), wxDefaultPosition,
 		wxSize(char_width, HEIGHT_ADJ(char_height)), wxDIRP_USE_TEXTCTRL);
 	dirPick->Enable(ab);
