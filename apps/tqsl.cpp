@@ -3626,6 +3626,11 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				// If it's the backup directory, don't restore it if the
 				// referenced directory doesn't exist.
 				struct stat s;
+#ifdef _WIN32
+#define lstat stat
+#define S_ISDIR(mode)	(((mode) & S_IFMT) == _S_IFDIR)
+#endif
+
 				if (lstat(svalue.ToUTF8(), &s) == 0) {		// Does it exist?
 					if (S_ISDIR(s.st_mode)) {		// And is it a directory?
 						loader->config->Write(sname, svalue); // OK to use it.
