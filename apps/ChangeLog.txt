@@ -3,6 +3,9 @@ TQSL changes
 
 2.0.1
 ----------
+For uploaded files, use .tq8 as the extension, not the original .adi/.log to
+avoid user confusion.
+
 Remove hang when certain command line strings are empty (-p, for example).
 
 When editing a station location where there the associated callsign

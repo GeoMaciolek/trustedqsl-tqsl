@@ -2072,7 +2072,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 
 		wxString name, ext;
 		wxFileName::SplitPath(infile, 0, &name, &ext);
-		if (!ext.IsEmpty()) name+=wxT(".")+ext;
+		name += wxT(".tq8");
 
 		//unicode mess. can't just use mb_str directly because it's a temp ptr
 		// and the curl form expects it to still be there during perform() so
