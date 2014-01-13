@@ -40,17 +40,15 @@ utf8_to_ucs2(const char *in, char *out, size_t buflen) {
 
 	while (len < buflen) {
 		if ((unsigned char)*in < 0x80) {		// ASCII range
-			*out++ = *in++;
+			*out++ = *in;
+			if (*in++ == '\0')			// End of string
+				break;
 			len++;
-			continue;
-		}
-		if (((unsigned char)*in & 0xc0) == 0xc0) {	// Two-byte
+		} else if (((unsigned char)*in & 0xc0) == 0xc0) {  // Two-byte
 			*out++ = ((in[0] & 0x1f) << 6) | (in[1] & 0x3f);
 			in += 2;
 			len++;
-			continue;
-		}
-		if (((unsigned char)*in & 0xe0) == 0xe0) {	// Three-byte
+		} else if (((unsigned char)*in & 0xe0) == 0xe0) {  // Three-byte
 			unsigned short three =	((in[0] & 0x0f) << 12) |
 					        ((in[1] & 0x3f) << 6) |
 						 (in[2] & 0x3f);
@@ -61,7 +59,8 @@ utf8_to_ucs2(const char *in, char *out, size_t buflen) {
 				len++;
 			}
 			in += 3;
-			continue;
+		} else {
+			in++;		// Unknown. Skip input.
 		}
 	}
 	out[len-1] = '\0';

@@ -3,8 +3,11 @@ TQSL changes
 
 2.0.1
 ----------
-For Canadian Station Locations, correct the province abbreviation of
-"PQ" to be "QC" and "NF" to "NL".
+Remove hang when certain command line strings are empty (-p, for example).
+
+When editing a station location where there the associated callsign
+certificate is no longer installed, don't default to the first certificate.
+Display an error to properly notify the user.
 
 Correct handling of Station Location names with leading and/or trailing
 whitespace. Strip those characters when creating and editing a station
