@@ -318,7 +318,11 @@ void UploadDialog::OnDone(wxCommandEvent&) {
 }
 
 int UploadDialog::doUpdateProgress(double dltotal, double dlnow, double ultotal, double ulnow) {
-	tqslTrace("UploadDialog::doUpdaeProgresss", "dltotal=%f, dlnow=%f, ultotal=%f, ulnow=%f", dltotal, dlnow, ultotal, ulnow);
+	static double lastDlnow = 0.0;
+	if (dlnow != lastDlnow) {
+		tqslTrace("UploadDialog::doUpdaeProgresss", "dltotal=%f, dlnow=%f, ultotal=%f, ulnow=%f", dltotal, dlnow, ultotal, ulnow);
+		lastDlnow = dlnow;
+	}
 	if (cancelled) return 1;
 	if (ultotal > 0.0000001) progress->SetValue(static_cast<int>((100*(ulnow/ultotal))));
 	return 0;
@@ -889,6 +893,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_save_label = NULL;
 	req = NULL;
 	curlReq = NULL;
+	curlLogFile = NULL;
 
 	// File menu
 	file_menu = new wxMenu;
@@ -2250,7 +2255,10 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 		        upload->Destroy();
 			free(urlstr);
 			free(cpUF);
-			if (curlLogFile) fclose(curlLogFile);
+			if (curlLogFile) {
+				fclose(curlLogFile);
+				curlLogFile = NULL;
+			}
 			return TQSL_EXIT_TQSL_ERROR;
 		}
 
@@ -2341,7 +2349,10 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 	if (urlstr) free(urlstr);
 	if (cpUF) free (cpUF);
-	if (curlLogFile) fclose(curlLogFile);
+	if (curlLogFile) {
+		fclose(curlLogFile);
+		curlLogFile = NULL;
+	}
 	return retval;
 }
 
@@ -2639,7 +2650,10 @@ void MyFrame::UpdateConfigFile() {
 		if (!configFile) {
 			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			curl_easy_cleanup(curlReq);
-			if (curlLogFile) fclose(curlLogFile);
+			if (curlLogFile) {
+				fclose(curlLogFile);
+				curlLogFile = NULL;
+			}
 			return;
 		}
 		size_t left = handler.used;
@@ -2648,7 +2662,10 @@ void MyFrame::UpdateConfigFile() {
 			if (written == 0) {
 				wxMessageBox(wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 				curl_easy_cleanup(curlReq);
-				if (curlLogFile) fclose(curlLogFile);
+				if (curlLogFile) {
+					fclose(curlLogFile);
+					curlLogFile = NULL;
+				}
 				if (configFile) fclose(configFile);
 				return;
 			}
@@ -2657,7 +2674,10 @@ void MyFrame::UpdateConfigFile() {
 		if (fclose(configFile)) {
 			wxMessageBox(wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			curl_easy_cleanup(curlReq);
-			if (curlLogFile) fclose(curlLogFile);
+			if (curlLogFile) {
+				fclose(curlLogFile);
+				curlLogFile = NULL;
+			}
 			return;
 		}
 		notifyData nd;
@@ -2683,7 +2703,10 @@ void MyFrame::UpdateConfigFile() {
 			wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
 	}
-	if (curlLogFile) fclose(curlLogFile);
+	if (curlLogFile) {
+		fclose(curlLogFile);
+		curlLogFile = NULL;
+	}
 }
 
 // Check if a certificate is still valid and current at LoTW
@@ -2814,8 +2837,10 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	delete ei;
 	free_certlist();
 	curl_easy_cleanup(curlReq);
-	if (curlLogFile) fclose(curlLogFile);
-
+	if (curlLogFile) {
+		fclose(curlLogFile);
+		curlLogFile = NULL;
+	}
 	return;
 }
 
