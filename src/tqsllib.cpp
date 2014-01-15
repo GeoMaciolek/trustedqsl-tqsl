@@ -502,7 +502,7 @@ tqsl_convertTimeToText(const tQSL_Time *time, char *buf, int bufsiz) {
 	char *cp = buf;
 	int bufleft = bufsiz-1;
 
-	if (time == NULL || time == NULL) {
+	if (time == NULL || buf == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return NULL;
 	}
