@@ -561,8 +561,12 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					strncpy(conv->rec.propmode, reinterpret_cast<char *>(result.data), sizeof conv->rec.propmode);
 				} else if (!strcasecmp(result.name, "QSO_DATE") && result.data) {
 					cstat = tqsl_initDate(&(conv->rec.date), (const char *)result.data);
+					if (cstat)
+						saveErr = tQSL_Error;
 				} else if (!strcasecmp(result.name, "TIME_ON") && result.data) {
 					cstat = tqsl_initTime(&(conv->rec.time), (const char *)result.data);
+					if (cstat)
+						saveErr = tQSL_Error;
 				}
 				if (stat == TQSL_ADIF_GET_FIELD_SUCCESS) {
 					conv->rec_text += string(reinterpret_cast<char *>(result.name)) + ": ";
@@ -571,9 +575,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					conv->rec_text += "\n";
 				}
 				if (result.data)
-						delete[] result.data;
-				if (cstat)
-				    saveErr = tQSL_Error;
+					delete[] result.data;
 			}
 			if (saveErr) {
 				tQSL_Error = saveErr;
@@ -610,14 +612,16 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 						strncpy(conv->rec.freq, field.value, sizeof conv->rec.freq);
 					} else if (!strcasecmp(field.name, "QSO_DATE")) {
 						cstat = tqsl_initDate(&(conv->rec.date), field.value);
+						if (cstat)
+							saveErr = tQSL_Error;
 					} else if (!strcasecmp(field.name, "TIME_ON")) {
 						cstat = tqsl_initTime(&(conv->rec.time), field.value);
+						if (cstat)
+							saveErr = tQSL_Error;
 					}
 					if (conv->rec_text != "")
 						conv->rec_text += "\n";
 					conv->rec_text += string(field.name) + ": " + field.value;
-					if (cstat)
-						saveErr = tQSL_Error;
 				}
 			} while (stat == TQSL_CABRILLO_NO_ERROR);
 			if (saveErr)
