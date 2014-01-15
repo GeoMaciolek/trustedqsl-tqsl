@@ -3188,6 +3188,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
+		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
+				_S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
 				 wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
@@ -3260,7 +3262,7 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		config->Write(wxT("ImportPath"), inPath);
 		config->Write(wxT("ImportExtension"), inExt);
 
-		// Get output file
+		// Get Station Location
 		tQSL_Location loc = SelectStationLocation(wxT("Select Station Location for Signing"));
 		if (loc == 0)
 			return;
@@ -3273,6 +3275,8 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
+		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
+				_S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
 				wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
