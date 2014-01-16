@@ -3,6 +3,10 @@ TQSL changes
 
 2.0.1
 ----------
+When a user tries to sign a log using a Station Location that refers to an
+invalid Callsign Certificate, refuse the signing operation and let the user
+know that the Callsign Certificate is invalid.
+
 For uploaded files, use .tq8 as the extension, not the original .adi/.log to
 avoid user confusion.
 

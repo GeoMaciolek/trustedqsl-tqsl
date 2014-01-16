@@ -132,7 +132,7 @@ static wxString flattenCallSign(const wxString& call);
 
 static wxString ErrorTitle(wxT("TQSL Error"));
 
-static bool verify_cert(tQSL_Location loc);
+static bool verify_cert(tQSL_Location loc, bool editing);
 
 FILE *diagFile = NULL;
 static wxString origCommandLine = wxT("");
@@ -1357,7 +1357,7 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		if (data == NULL) return;
 
 		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
-		if (!verify_cert(loc))		// Check if there is a certificate before editing
+		if (!verify_cert(loc, true))	// Check if there is a certificate before editing
 			return;
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
@@ -2358,17 +2358,24 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 // Verify that a certificate exists for this station location
 // before allowing the location to be edited
-static bool verify_cert(tQSL_Location loc) {
-	tqslTrace("verify_cert", "loc=%lx", reinterpret_cast<void *>(loc));
+static bool verify_cert(tQSL_Location loc, bool editing) {
+	tqslTrace("verify_cert", "loc=%lx, editing=%d", reinterpret_cast<void *>(loc), editing);
 	char call[128];
 	tQSL_Cert *certlist;
 	int ncerts;
 	// Get the callsign from the location
 	check_tqsl_error(tqsl_getLocationCallSign(loc, call, sizeof(call)));
 	// See if there is a certificate for that call
-	tqsl_selectCertificates(&certlist, &ncerts, call, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED);
+	int flags = 0;
+	if (editing)
+		flags = TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED;
+	tqsl_selectCertificates(&certlist, &ncerts, call, 0, 0, 0, flags);
 	if (ncerts == 0) {
-		wxMessageBox(wxString::Format(wxT("There are no callsign certificates for callsign %hs. This station location cannot be edited."), call), wxT("No Certificate"), wxOK|wxICON_EXCLAMATION);
+		if (editing) {
+			wxMessageBox(wxString::Format(wxT("There are no callsign certificates for callsign %hs. This station location cannot be edited."), call), wxT("No Certificate"), wxOK|wxICON_EXCLAMATION);
+		} else {
+			wxMessageBox(wxString::Format(wxT("There are no current callsign certificates for callsign %hs. This station location cannot be used to sign a log file."), call), wxT("No Certificate"), wxOK|wxICON_EXCLAMATION);
+		}
 		return false;
 	}
 	for (int i = 0; i  < ncerts; i++)
@@ -2398,7 +2405,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				break;
 			case wxID_MORE:		// User hit Edit
 		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
-				if (verify_cert(loc)) {		// Check if there is a certificate before editing
+				if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
 						wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
@@ -3180,6 +3187,8 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		if (loc == 0)
 			return;
 
+		if (!verify_cert(loc, false))
+			return;
 		char callsign[40];
 		char loc_name[256];
 		int dxccnum;
@@ -4880,7 +4889,7 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	char errbuf[512];
 
 	check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
-	if (verify_cert(loc)) {		// Check if there is a certificate before editing
+	if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
 			wxMessageBox(wxString::Format(wxT("%hs\nThe invalid data was ignored."), errbuf), wxT("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);

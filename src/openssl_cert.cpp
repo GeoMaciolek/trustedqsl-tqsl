@@ -1911,27 +1911,29 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	if (tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf))
 		return 1;
 	issuerOrganizationalUnit = buf;
-	if (tqsl_getCertificateEmailAddress(cert, buf, sizeof buf))
-		return 1;
-	Email = buf;
-	if (tqsl_getCertificateRequestAddress1(cert, buf, sizeof buf))
-		return 1;
-	Address1 = buf;
-	if (tqsl_getCertificateRequestAddress2(cert, buf, sizeof buf))
-		return 1;
-	Address2 = buf;
-	if (tqsl_getCertificateRequestCity(cert, buf, sizeof buf))
-		return 1;
-	City = buf;
-	if (tqsl_getCertificateRequestState(cert, buf, sizeof buf))
-		return 1;
-	State = buf;
-	if (tqsl_getCertificateRequestPostalCode(cert, buf, sizeof buf))
-		return 1;
-	Postal = buf;
-	if (tqsl_getCertificateRequestCountry(cert, buf, sizeof buf))
-		return 1;
-	Country = buf;
+	if (!TQSL_API_TO_CERT(cert)->keyonly) {
+		if (tqsl_getCertificateEmailAddress(cert, buf, sizeof buf))
+			return 1;
+		Email = buf;
+		if (tqsl_getCertificateRequestAddress1(cert, buf, sizeof buf))
+			return 1;
+		Address1 = buf;
+		if (tqsl_getCertificateRequestAddress2(cert, buf, sizeof buf))
+			return 1;
+		Address2 = buf;
+		if (tqsl_getCertificateRequestCity(cert, buf, sizeof buf))
+			return 1;
+		City = buf;
+		if (tqsl_getCertificateRequestState(cert, buf, sizeof buf))
+			return 1;
+		State = buf;
+		if (tqsl_getCertificateRequestPostalCode(cert, buf, sizeof buf))
+			return 1;
+		Postal = buf;
+		if (tqsl_getCertificateRequestCountry(cert, buf, sizeof buf))
+			return 1;
+		Country = buf;
+	}
 	if (tqsl_getCertificateQSONotBeforeDate(cert, &date))
 		return 1;
 	if (!tqsl_convertDateToText(&date, buf, sizeof buf))

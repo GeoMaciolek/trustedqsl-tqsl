@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.4
 ---
+Fix export of "key only" certificates to correct "Invalid argument" error.
+
 Don't stop loading private keys just due to a file permission error in
 the keys directory.
 
