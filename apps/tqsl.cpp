@@ -4087,10 +4087,11 @@ QSLApp::OnInit() {
 			wxString call = wxString::FromUTF8(tQSL_ImportCall);
 			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
 			pending.Replace(call, wxT(""), true);
-			if (pending[0] == ',')
-				pending.Replace(wxT(","), wxT(""));
-			if (pending.Last() == ',')
-				pending.Truncate(pending.Len()-1);
+			wxString rest;
+			while (pending.StartsWith(wxT(","), &rest))
+				pending = rest;
+			while (pending.EndsWith(wxT(","), &rest))
+				pending = rest;
 			wxConfig::Get()->Write(wxT("RequestPending"), pending);
 		}
 		return(true);
@@ -4312,10 +4313,11 @@ void MyFrame::FirstTime(void) {
 			// Remove this call from the list of pending certificate requests
 			wxString p = wxConfig::Get()->Read(wxT("RequestPending"));
 			p.Replace(pend, wxT(""), true);
-			if (p[0] == ',')
-				p.Replace(wxT(","), wxT(""));
-			if (p.Last() == ',')
-				p.Truncate(pending.Len()-1);
+			wxString rest;
+			while (p.StartsWith(wxT(","), &rest))
+				p = rest;
+			while (p.EndsWith(wxT(","), &rest))
+				p = rest;
 			wxConfig::Get()->Write(wxT("RequestPending"), p);
 		}
 	}
@@ -4801,10 +4803,11 @@ wxT("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), wxT("Warning"), wxYES_N
 			wxString call = wxString::FromUTF8(buf);
 			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
 			pending.Replace(call, wxT(""), true);
-			if (pending[0] == ',')
-				pending.Replace(wxT(","), wxT(""));
-			if (pending.Last() == ',')
-				pending.Truncate(pending.Len()-1);
+			wxString rest;
+			while (pending.StartsWith(wxT(","), &rest))
+				pending = rest;
+			while (pending.EndsWith(wxT(","), &rest))
+				pending = rest;
 			wxConfig::Get()->Write(wxT("RequestPending"), pending);
 		}
 		if (tqsl_deleteCertificate(data->getCert()))

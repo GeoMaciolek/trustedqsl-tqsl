@@ -246,10 +246,11 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 					wxString call = wxString::FromUTF8(tQSL_ImportCall);
 					wxString pending = config->Read(wxT("RequestPending"));
 					pending.Replace(call, wxT(""), true);
-					if (pending[0] == ',')
-						pending.Replace(wxT(","), wxT(""));
-					if (pending.Last() == ',')
-						pending.Truncate(pending.Len()-1);
+					wxString rest;
+					while (pending.StartsWith(wxT(","), &rest))
+						pending = rest;
+					while (pending.EndsWith(wxT(","), &rest))
+						pending = rest;
 					config->Write(wxT("RequestPending"), pending);
 				}
 				export_new_cert(this, filename.ToUTF8());
