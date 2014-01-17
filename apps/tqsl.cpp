@@ -2541,7 +2541,6 @@ class revInfo {
 		mutex->Lock();
 	}
 	~revInfo() {
-		mutex->Unlock();
 		if (programRev)
 			delete programRev;
 		if (newProgramRev)
@@ -2837,11 +2836,13 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 				event.SetClientData(ei);
 				wxPostEvent(frame, event);
 				ei->condition->Wait();
+				ei->mutex->Unlock();
 				delete ei;
 				ei = new expInfo;
 			}
 		}
 	}
+	ei->mutex->Unlock();
 	delete ei;
 	free_certlist();
 	curl_easy_cleanup(curlReq);
@@ -3089,6 +3090,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	event.SetClientData(ri);
 	wxPostEvent(frame, event);
 	ri->condition->Wait();
+	ri->mutex->Unlock();
 	delete ri;
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval
