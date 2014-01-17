@@ -123,7 +123,7 @@ TQSLGetStationNameDialog::OnSetFocus(wxFocusEvent& event) {
 void
 TQSLGetStationNameDialog::OnOk(wxCommandEvent&) {
 	wxString s = name_entry->GetValue().Trim().Trim(false);
-	tqslTrace("TQSLGetStationNameDialog::OnOk, selected = %s",_S(s));
+	tqslTrace("TQSLGetStationNameDialog::OnOk, selected = %s",S(s));
 	if (editonly)
 		EndModal(wxID_CANCEL);
 	else if (s != wxT("")) {
@@ -168,7 +168,7 @@ TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpC
 	bool i_issave, const wxString& title, const wxString& okLabel, bool i_editonly)
 	: wxDialog(parent, -1, wxT("Select Station Data"), pos), issave(i_issave), editonly(i_editonly),
 	newbut(0), modbut(0), updating(false), firstFocused(false), _help(help) {
-	tqslTrace("TQSLGetStationNameDialog::TQSLGetStationNameDialog", "parent=0x%lx, i_issave=%d, title=%s, okLabel=%s, i_editonly=%d", parent, i_issave, _S(title), _S(okLabel), i_editonly);
+	tqslTrace("TQSLGetStationNameDialog::TQSLGetStationNameDialog", "parent=0x%lx, i_issave=%d, title=%s, okLabel=%s, i_editonly=%d", parent, i_issave, S(title), S(okLabel), i_editonly);
 	wxBoxSizer *topsizer = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxSize text_size = getTextSize(this);
@@ -399,7 +399,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 
 void
 TQSLGetStationNameDialog::SelectName(const wxString& name) {
-	tqslTrace("TQSLGetStationNameDialog::SelectName", "name=%s", _S(name));
+	tqslTrace("TQSLGetStationNameDialog::SelectName", "name=%s", S(name));
 	wxArrayInt sels;
 	namelist->GetSelections(sels);
 	for (int i = 0; i < static_cast<int>(sels.GetCount()); i++)

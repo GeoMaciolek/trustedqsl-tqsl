@@ -99,14 +99,14 @@ TQSLDateValidator::ToString() {
 
 bool
 TQSLDateValidator::IsValid(const wxString& str) {
-	tqslTrace("TQSLDateValidator::IsValid", "str=%s", _S(str));
+	tqslTrace("TQSLDateValidator::IsValid", "str=%s", S(str));
 	tQSL_Date d;
 	return (!tqsl_initDate(&d, str.ToUTF8()) && tqsl_isDateValid(&d));
 }
 
 void
 TQSLTimeValidator::FromString(const wxString& str) {
-	tqslTrace("TQSLTimeValidator::FromString", "str=%s", _S(str));
+	tqslTrace("TQSLTimeValidator::FromString", "str=%s", S(str));
 	if (_objp != 0)
 		tqsl_initTime(reinterpret_cast<tQSL_Time *>(_objp), str.ToUTF8());
 }
@@ -125,7 +125,7 @@ TQSLTimeValidator::ToString() {
 
 bool
 TQSLTimeValidator::IsValid(const wxString& str) {
-	tqslTrace("TQSLTimeValidator::IsValid", "str=%s", _S(str));
+	tqslTrace("TQSLTimeValidator::IsValid", "str=%s", S(str));
 	tQSL_Time t;
 	return (!tqsl_initTime(&t, str.ToUTF8()) && tqsl_isTimeValid(&t));
 }

@@ -43,7 +43,7 @@ ExtWizard::ReportSize(const wxSize& size) {
 
 ExtWizard::ExtWizard(wxWindow *parent, wxHtmlHelpController *help, const wxString& title)
 	: wxWizard(parent, -1, title), _help(help) {
-	tqslTrace("ExtWizard::ExtWizard", "parent=%lx, title=%s", reinterpret_cast<void *>(parent), _S(title));
+	tqslTrace("ExtWizard::ExtWizard", "parent=%lx, title=%s", reinterpret_cast<void *>(parent), S(title));
 
 	CenterOnParent();
 }

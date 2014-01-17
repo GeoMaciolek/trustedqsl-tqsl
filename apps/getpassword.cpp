@@ -32,7 +32,7 @@ END_EVENT_TABLE()
 GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 	const wxString& message, wxHtmlHelpController *help, wxString helpfile)
 	: wxDialog(parent, -1, title), _help(help), _helpfile(helpfile) {
-	tqslTrace("GetPassword::GetPasswordDialog", "parent=%lx, title=%s, message=%s", reinterpret_cast<void *>(parent), _S(title), _S(helpfile));
+	tqslTrace("GetPassword::GetPasswordDialog", "parent=%lx, title=%s, message=%s", reinterpret_cast<void *>(parent), S(title), S(helpfile));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
@@ -95,7 +95,7 @@ END_EVENT_TABLE()
 GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& title,
 	const wxString& message, bool blankok, wxHtmlHelpController *help, wxString helpfile)
 	: wxDialog(parent, -1, title), _blankok(blankok), _help(help), _helpfile(helpfile) {
-	tqslTrace("GetNewPasswordDialog::GetNewPasswordDialog", "parent=%lx, title=%s, message=%s, blankok=%d", reinterpret_cast<void *>(parent), _S(title), _S(message));
+	tqslTrace("GetNewPasswordDialog::GetNewPasswordDialog", "parent=%lx, title=%s, message=%s, blankok=%d", reinterpret_cast<void *>(parent), S(title), S(message));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);

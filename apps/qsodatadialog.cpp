@@ -218,7 +218,7 @@ END_EVENT_TABLE()
 
 QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist, wxWindowID id, const wxString& title)
 	: wxDialog(parent, id, title), _reclist(reclist), _isend(false), _help(help) {
-	tqslTrace("QSODataDialog::QSODataDialog", "parent=0x%lx, reclist=0x%lx, id=0x%lx, %s", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(reclist), reinterpret_cast<void *>(id), _S(title));
+	tqslTrace("QSODataDialog::QSODataDialog", "parent=0x%lx, reclist=0x%lx, id=0x%lx, %s", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(reclist), reinterpret_cast<void *>(id), S(title));
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxFont font = GetFont();
 //	font.SetPointSize(TEXT_POINTS);

@@ -14,6 +14,6 @@
 extern FILE *diagFile;
 
 void tqslTrace(const char *name, const char *format = NULL, ...);
-#define _S(x) ((const char *) x.ToUTF8())
+#define S(x) ((const char *) x.ToUTF8())
 
 #endif	// __tqslltrace_h

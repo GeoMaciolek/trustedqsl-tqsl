@@ -804,7 +804,7 @@ EditContest::EditContest(wxWindow *parent, wxString ctype, wxString _contest,
 		int _contest_type, int _callsign_field)
 		: wxDialog(parent, -1, ctype + wxT(" Contest")), contest(_contest),
 		contest_type(_contest_type), callsign_field(_callsign_field) {
-	tqslTrace("EditContest::EditContest", "parent=0x%lx, ctype=%s, _contest=%s, _contest_type=%d, _callsign_field=%d", reinterpret_cast<void *>(parent), _S(ctype), _S(_contest), _contest_type, _callsign_field);
+	tqslTrace("EditContest::EditContest", "parent=0x%lx, ctype=%s, _contest=%s, _contest_type=%d, _callsign_field=%d", reinterpret_cast<void *>(parent), S(ctype), S(_contest), _contest_type, _callsign_field);
 	SetAutoLayout(true);
 
 	wxClientDC dc(this);

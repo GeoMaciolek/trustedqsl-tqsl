@@ -30,7 +30,7 @@ notifyData::Message() const {
 			"Callsign Certificates:\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"Private Keys:\t\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"Configuration Data:\tLoaded: %d  Duplicate: %d  Error: %d\n",
-			_S(status),
+			S(status),
 			root.loaded, root.duplicate, root.error,
 			ca.loaded, ca.duplicate, ca.error,
 			user.loaded, user.duplicate, user.error,
@@ -210,7 +210,7 @@ wxT("Would you like to back up your callsign certificate now?"), wxT("Warning"),
 
 LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxString& title, const wxString& ext)
 	: ExtWizard(parent, help, title), _nd(0) {
-	tqslTrace("LoadCertWiz::LoadCertWiz", "parent=0x%lx, title=%s, ext=%s", reinterpret_cast<void *>(parent), _S(title), _S(ext));
+	tqslTrace("LoadCertWiz::LoadCertWiz", "parent=0x%lx, title=%s, ext=%s", reinterpret_cast<void *>(parent), S(title), S(ext));
 
 	LCW_FinalPage *final = new LCW_FinalPage(this);
 	LCW_P12PasswordPage *p12pw = new LCW_P12PasswordPage(this);

@@ -35,7 +35,7 @@
 // ----------------------------------------------------------------------------
 
 static wxString StripProtocolAnchor(const wxString& location) {
-	tqslTrace("StripProtocolAnchor", "location=%s", _S(location));
+	tqslTrace("StripProtocolAnchor", "location=%s", S(location));
 	wxString myloc(location.BeforeLast(wxT('#')));
 	if (myloc.empty())
 		myloc = location.AfterFirst(wxT(':'));
@@ -62,7 +62,7 @@ static wxString StripProtocolAnchor(const wxString& location) {
 // think it's actually been handled.
 //
 bool tqslInternetFSHandler::CanOpen(const wxString& location) {
-	tqslTrace("tqslInternetFSHandler::CanOpen", "location=%s", _S(location));
+	tqslTrace("tqslInternetFSHandler::CanOpen", "location=%s", S(location));
 	static wxString lastLocation;
 #if wxUSE_URL
 	wxString p = GetProtocol(location);
