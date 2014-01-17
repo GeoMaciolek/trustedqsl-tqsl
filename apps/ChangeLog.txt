@@ -3,6 +3,12 @@ TQSL changes
 
 2.0.1
 ----------
+Correct defect in thread handling that causes hangs on pthread-based
+systems.
+
+Change handling of the Pending Callsign Certificate request list to avoid
+using a function that misbehaves on some Linux variants.
+
 When a user tries to sign a log using a Station Location that refers to an
 invalid Callsign Certificate, refuse the signing operation and let the user
 know that the Callsign Certificate is invalid.

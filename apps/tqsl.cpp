@@ -390,7 +390,7 @@ bool
 DateRangeDialog::TransferDataFromWindow() {
 	tqslTrace("DateRangeDialog::TransferDataFromWindow");
 	wxString text = start_tc->GetValue();
-	tqslTrace("DateRangeDialog::TransferDataFromWindow: start=%s", _S(text));
+	tqslTrace("DateRangeDialog::TransferDataFromWindow: start=%s", S(text));
 	if (text.Trim() == wxT(""))
 		start.year = start.month = start.day = 0;
 	else if (tqsl_initDate(&start, text.ToUTF8()) || !tqsl_isDateValid(&start)) {
@@ -398,7 +398,7 @@ DateRangeDialog::TransferDataFromWindow() {
 		return false;
 	}
 	text = end_tc->GetValue();
-	tqslTrace("DateRangeDialog::TransferDataFromWindow: end=%s", _S(text));
+	tqslTrace("DateRangeDialog::TransferDataFromWindow: end=%s", S(text));
 	if (text.Trim() == wxT(""))
 		end.year = end.month = end.day = 0;
 	else if (tqsl_initDate(&end, text.ToUTF8()) || !tqsl_isDateValid(&end)) {
@@ -548,7 +548,7 @@ END_EVENT_TABLE()
 
 ErrorsDialog::ErrorsDialog(wxWindow *parent, wxString msg)
 		: wxDialog(parent, -1, wxString(wxT("Errors Detected")), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE) {
-	tqslTrace("ErrorsDialog::ErrorsDialog", "msg=%s", _S(msg));
+	tqslTrace("ErrorsDialog::ErrorsDialog", "msg=%s", S(msg));
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	sizer->Add(new wxStaticText(this, -1, msg), 0, wxALL|wxALIGN_CENTER, 10);
@@ -829,9 +829,9 @@ class UpdateThread : public wxThread {
 		_frame = frame;
 		_silent = silent;
 		_noGUI = noGUI;
-		updateMutex.Lock();
 	}
 	virtual void *Entry() {
+		updateMutex.Lock();
 		_frame->DoCheckForUpdates(_silent, _noGUI);
 		updateMutex.Unlock();
 		return NULL;
@@ -1210,7 +1210,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 static wxString
 run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *help = 0,
 	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT(""), wxString callsign = wxT("")) {
-	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s, callsign=%s", loc, expired, _S(title), _S(dataname), _S(callsign));
+	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s, callsign=%s", loc, expired, S(title), S(dataname), S(callsign));
 	wxString rval(wxT(""));
 	get_certlist("", 0, expired, false);
 	if (ncerts == 0)
@@ -1308,7 +1308,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 
 static void
 AddEditStationLocation(tQSL_Location loc, bool expired = false, const wxString& title = wxT("Add Station Location"), const wxString& callsign = wxT("")) {
-	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s, callsign=%s", loc, expired, _S(title), _S(callsign));
+	tqslTrace("AddEditStationLocation", "loc=%lx, expired=%lx, title=%s, callsign=%s", loc, expired, S(title), S(callsign));
 	try {
 		run_station_wizard(frame, loc, frame->help, expired, title, wxT(""), callsign);
 		frame->loc_tree->Build();
@@ -1331,7 +1331,7 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 		} else {
 			call = loc_tree->GetItemText(id);	// Callsign folder selected
 		}
-		tqslTrace("MyFrame::AddStationLocation", "Call selected is %s", _S(call));
+		tqslTrace("MyFrame::AddStationLocation", "Call selected is %s", S(call));
 	}
 	tQSL_Location loc;
 	if (tqsl_initStationLocationCapture(&loc)) {
@@ -1562,7 +1562,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 }
 
 int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password) {
-	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d", reinterpret_cast<void *>(loc), _S(infile), _S(output), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
+	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d", reinterpret_cast<void *>(loc), S(infile), S(output), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -1754,7 +1754,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 						}
 					}
 					if (!ignore_err) {
-						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", _S(msg));
+						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", S(msg));
 						ErrorsDialog dial(this, msg + wxT("\nClick 'Ignore' to continue signing this log while ignoring errors.\n")
 								wxT("Click 'Cancel' to abandon signing this log."));
 						int choice = dial.ShowModal();
@@ -1877,7 +1877,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 int
 MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxString& outfile,
 	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password) {
-	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), _S(infile), _S(outfile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void*>(enddate), action);
+	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), S(outfile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void*>(enddate), action);
 
 	gzFile gout = 0;
 	ofstream out;
@@ -2050,7 +2050,7 @@ class UploadThread: public wxThread {
 };
 
 int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password) {
-	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx, enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), _S(infile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
+	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx, enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
 	int numrecs = 0;
 	wxString signedOutput;
 	tQSL_Converter conv = 0;
@@ -2178,7 +2178,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 }
 
 int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrecs, void *content, size_t clen, const wxString& fileType) {
-	tqslTrace("MyFrame::UploadFile", "infile=%s, filename=%s, numrecs=%d, content=0x%lx, clen=%d fileType=%s",  _S(infile), filename, numrecs, reinterpret_cast<void *>(content), clen, _S(fileType));
+	tqslTrace("MyFrame::UploadFile", "infile=%s, filename=%s, numrecs=%d, content=0x%lx, clen=%d fileType=%s",  S(infile), filename, numrecs, reinterpret_cast<void *>(content), clen, S(fileType));
 
 	//upload the file
 
@@ -2385,7 +2385,7 @@ static bool verify_cert(tQSL_Location loc, bool editing) {
 
 tQSL_Location
 MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, bool editonly) {
-	tqslTrace("MyFrame::SelectStationLocation", "title=%s, okLabel=%s, editonly=%d", _S(title), _S(okLabel), editonly);
+	tqslTrace("MyFrame::SelectStationLocation", "title=%s, okLabel=%s, editonly=%d", S(title), S(okLabel), editonly);
 	int rval;
 	tQSL_Location loc;
 	wxString selname;
@@ -2541,6 +2541,7 @@ class revInfo {
 		mutex->Lock();
 	}
 	~revInfo() {
+		mutex->Unlock();
 		if (programRev)
 			delete programRev;
 		if (newProgramRev)
@@ -2549,10 +2550,10 @@ class revInfo {
 			delete configRev;
 		if (newConfigRev)
 			delete newConfigRev;
-		if (mutex)
-			delete mutex;
 		if (condition)
 			delete condition;
+		if (mutex)
+			delete mutex;
 	}
 	bool error;
 	bool message;
@@ -2577,7 +2578,7 @@ class UpdateDialogMsgBox: public wxDialog {
 	UpdateDialogMsgBox(wxWindow* parent, bool newProg, bool newConfig, revLevel* currentProgRev, revLevel* newProgRev,
 			revLevel* currentConfigRev, revLevel* newConfigRev, wxString platformURL, wxString homepage)
 			: wxDialog(parent, (wxWindowID)wxID_ANY, wxT("TQSL Update Available"), wxDefaultPosition, wxDefaultSize) {
-		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newProg=%d, newConfig=%d, currentProgRev %s, newProgRev %s, currentConfigRev %s, newConfigRev=%s, platformURL=%s, homepage=%s", reinterpret_cast<void *>(parent), newProg, newConfig, _S(currentProgRev->Value()), _S(newProgRev->Value()), _S(currentConfigRev->Value()), _S(newConfigRev->Value()), _S(platformURL), _S(homepage));
+		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newProg=%d, newConfig=%d, currentProgRev %s, newProgRev %s, currentConfigRev %s, newConfigRev=%s, platformURL=%s, homepage=%s", reinterpret_cast<void *>(parent), newProg, newConfig, S(currentProgRev->Value()), S(newProgRev->Value()), S(currentConfigRev->Value()), S(newConfigRev->Value()), S(platformURL), S(homepage));
 		wxSizer* overall = new wxBoxSizer(wxVERTICAL);
 		long flags = wxOK;
 		if (newConfig)
@@ -2783,8 +2784,8 @@ class expInfo {
 	wxCondition* condition;
 	~expInfo() {
 		if (callsign) free(callsign);
-		if (mutex) delete mutex;
 		if (condition) delete condition;
+		if (mutex) delete mutex;
 	}
 };
 
@@ -3198,7 +3199,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
-				_S(infile), loc_name, callsign, dxcc.name());
+				S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
 				 wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
@@ -3285,7 +3286,7 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
-				_S(infile), loc_name, callsign, dxcc.name());
+				S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
 				wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
 			callsign, dxcc.name()), wxT("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
@@ -3354,7 +3355,7 @@ class TQSLConfig {
 // application name (tqslapp)
 
 void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
-	tqslTrace("TQSLConfig::SaveSettings", "appname=%s", _S(appname));
+	tqslTrace("TQSLConfig::SaveSettings", "appname=%s", S(appname));
 	config = new wxConfig(appname);
 	wxString name, gname;
 	long	context;
@@ -3368,18 +3369,18 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
 	groupNames.Add(wxT("/"));
 	bool more = config->GetFirstGroup(gname, context);
 	while (more) {
-		tqslTrace("TQSLConfig::SaveSettings", "... add group %s", _S(name));
+		tqslTrace("TQSLConfig::SaveSettings", "... add group %s", S(name));
 		groupNames.Add(wxT("/") + gname);
 		more = config->GetNextGroup(gname, context);
 	}
 	tqslTrace("TQSLConfig::SaveSettings", "... groups done.");
 
 	for (unsigned i = 0; i < groupNames.GetCount(); i++) {
-		tqslTrace("TQSLConfig::SaveSettings", "Group %d setting path %s", i, _S(groupNames[i]));
+		tqslTrace("TQSLConfig::SaveSettings", "Group %d setting path %s", i, S(groupNames[i]));
 		config->SetPath(groupNames[i]);
 		more = config->GetFirstEntry(name, context);
 		while (more) {
-			tqslTrace("TQSLConfig::SaveSettings", "name=%s", _S(name));
+			tqslTrace("TQSLConfig::SaveSettings", "name=%s", S(name));
 			if (name.IsEmpty()) {
 				more = config->GetNextEntry(name, context);
 				continue;
@@ -3420,7 +3421,7 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
 
 void
 MyFrame::BackupConfig(const wxString& filename, bool quiet) {
-	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", _S(filename), quiet);
+	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", S(filename), quiet);
 	int i;
 	try {
 		gzFile out = 0;
@@ -4838,7 +4839,7 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		int w, h;
 		wxString lname = data->getLocname();
 		wxString call = data->getCallSign();
-		tqslTrace("MyFrame::OnLocTreeSel", "lname=%s, call=%s", _S(lname), _S(call));
+		tqslTrace("MyFrame::OnLocTreeSel", "lname=%s, call=%s", S(lname), S(call));
 
 		loc_add_label->GetSize(&w, &h);
 
@@ -5062,7 +5063,7 @@ END_EVENT_TABLE()
 
 LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 		: wxDialog(parent, -1, wxT("Station Location Properties"), wxDefaultPosition, wxSize(1000, 15 * LABEL_HEIGHT)) {
-	tqslTrace("LocPropDial", "locname=%s", _S(locname));
+	tqslTrace("LocPropDial", "locname=%s", S(locname));
 
 	const char *fields[] = { "CALL", "Call sign: ",
 				 "DXCC", "DXCC Entity: ",
@@ -5164,7 +5165,7 @@ displayTQSLError(const char *pre) {
 
 static wxString
 flattenCallSign(const wxString& call) {
-	tqslTrace("flattenCallSign", "call=%s", _S(call));
+	tqslTrace("flattenCallSign", "call=%s", S(call));
 	wxString flat = call;
 	size_t idx;
 	while ((idx = flat.find_first_not_of(wxT("ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890_"))) != wxString::npos)
