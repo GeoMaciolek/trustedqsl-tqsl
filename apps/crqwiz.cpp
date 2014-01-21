@@ -506,17 +506,21 @@ void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
 CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	:  CRQ_Page(parent) {
 	tqslTrace("CRQ_SignPage::CRQ_SignPage", "parent=%lx", reinterpret_cast<void *>(parent));
+	
 
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+	wxStaticText* introText;
 
-	sizer->Add(new wxStaticText(this, -1, wxT("If the requested certificate is for your personal callsign, then you\n"
-						"should select 'Signed' and choose a callsign certificate for another of\n"
-						"your personal callsigns from the list below to be used to sign this request.\n\n"
-						"If you don't have a Callsign Certificate for another personal callsign, or\n"
-						"if the requested Callsign Certificate is for a club station or for use by a\n"
-						"QSL manager on behalf of another operator, select 'Unsigned'.")));
+	introText = new wxStaticText(this, -1,
+				     wxT("If the requested certificate is for your personal callsign, then you\n"
+		 			 "should select 'Signed' and choose a callsign certificate for another of\n"
+					 "your personal callsigns from the list below to be used to sign this request.\n\n"
+					 "If you don't have a Callsign Certificate for another personal callsign, or\n"
+					 "if the requested Callsign Certificate is for a club station or for use by a\n"
+					 "QSL manager on behalf of another operator, select 'Unsigned'."));
 
+	sizer->Add(introText);
 	wxStaticText* text_sizer = new wxStaticText(this, -1, wxT("M"));
 	int em_h = text_sizer->GetSize().GetHeight();
 	int em_w = text_sizer->GetSize().GetWidth();
@@ -534,10 +538,16 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	// Default to 'signed' unless there's no valid certificates to use for signing.
-	if (cert_tree->GetNumCerts() == 0) {
-		choice->SetSelection(0);
-	} else {
+	if (cert_tree->Build(0, &(Parent()->provider)) > 0) {
 		choice->SetSelection(1);
+	} else {
+		choice->SetSelection(0);
+		choice->Enable(false);
+		cert_tree->Enable(false);
+		introText->SetLabel(wxT("Since you have no callsign certificates, you must\n"
+			    		"submit an 'Unsigned' certificate request. This will allow you to\n"
+					"create your initial callsign certificate for LoTW use.\n"
+					"Click 'Finish' to complete this callsign certificate request."));
 	}
 	AdjustPage(sizer, wxT("crq4.htm"));
 	initialized = true;
@@ -673,9 +683,14 @@ CRQ_IntroPage::validate() {
 		while (tkz.HasMoreTokens()) {
 			wxString pend = tkz.GetNextToken();
 			if (pend == val) {
-				msg = wxString::Format(wxT("There is an outstanding certificate request for %s\n")
-							wxT("Please wait until this is processed by LoTW or delete\n")
-							wxT("the certificate request."), val.c_str());
+				msg = wxString::Format(wxT("You have already requested a callsign certificate for %s\n")
+						       wxT("and can not request another for %s until the original\n")
+						       wxT("request is completed by the LoTW Staff.\n\n")
+						       wxT("Please wait until you receive the e-mail with the new\n")
+						       wxT("TQ6 file for %s.\n\n")
+						       wxT("If you are sure that the earlier request is now invalid\n")
+						       wxT("you should delete the pending callsign certificate for %s."),
+						       val.c_str(), val.c_str(), val.c_str(), val.c_str());
 				ok = false;
 			}
 		}
