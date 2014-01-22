@@ -684,13 +684,13 @@ CRQ_IntroPage::validate() {
 			wxString pend = tkz.GetNextToken();
 			if (pend == val) {
 				msg = wxString::Format(wxT("You have already requested a callsign certificate for %s\n")
-						       wxT("and can not request another for %s until the original\n")
-						       wxT("request is completed by the LoTW Staff.\n\n")
-						       wxT("Please wait until you receive the e-mail with the new\n")
-						       wxT("TQ6 file for %s.\n\n")
+						       wxT("and can not request another until that request has been\n")
+						       wxT("processed by LoTW Staff.\n\n")
+						       wxT("Please wait until you receive an e-mail bearing your\n")
+						       wxT("requested callsign certificate.\n\n")
 						       wxT("If you are sure that the earlier request is now invalid\n")
 						       wxT("you should delete the pending callsign certificate for %s."),
-						       val.c_str(), val.c_str(), val.c_str(), val.c_str());
+						       val.c_str(), val.c_str());
 				ok = false;
 			}
 		}

@@ -3,6 +3,11 @@ TQSL changes
 
 2.0.1
 ----------
+Update the messages displayed during callsign certificate creation to
+make it more clear when signed requests are appropriate. Warn when
+a duplicate certificate request is being created that there are pending
+operations and that the user should wait.
+
 Correct defect in thread handling that causes hangs on pthread-based
 systems.
 
