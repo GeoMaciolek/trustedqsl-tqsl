@@ -92,6 +92,11 @@ else()
 	set(TQSLVERSION "${TQSL_VERSION_MAJOR}.${TQSL_VERSION_MINOR}")
 endif()
 
+if(${BUILD} MATCHES "-(alpha|beta|test|rc[0-9])")
+	message("${BUILD} is a test build")
+	add_definitions(-DTQSL_TEST_BUILD)
+endif()
+
 if(WIN32)
 	set(TQSLLIB_NAME tqsllib2)
 	set(srcdir ${CMAKE_CURRENT_SOURCE_DIR})

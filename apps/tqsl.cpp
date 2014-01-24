@@ -2525,6 +2525,16 @@ class revLevel {
 		}
 		return false;
 	}
+	bool operator  >=(const revLevel& other) {
+		if (major > other.major) return true;
+		if (major == other.major) {
+			if (minor > other.minor) return true;
+			if (minor == other.minor) {
+				if (patch >= other.patch) return true;
+			}
+		}
+		return false;
+	}
 };
 
 class revInfo {
@@ -3028,7 +3038,11 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 					map[plat]=url;
 				}
 			}
+#ifdef TQSL_TEST_BUILD
+			ri->newProgram = ri->newProgramRev ? (*ri->newProgramRev >= *ri->programRev) : false;
+#else
 			ri->newProgram = ri->newProgramRev ? (*ri->newProgramRev > *ri->programRev) : false;
+#endif
 			ri->newConfig = ri->newConfigRev ? (*ri->newConfigRev > *ri->configRev) : false;
 			if (ri->newProgram) {
 				wxString ourPlatURL; //empty by default (we check against this later)
