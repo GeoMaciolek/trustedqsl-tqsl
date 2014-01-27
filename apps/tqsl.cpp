@@ -2781,6 +2781,7 @@ class expInfo {
 		noGUI = _noGUI;
 		days = 0;
 		callsign = NULL;
+		error = false;
 		mutex = new wxMutex;
 		condition = new wxCondition(*mutex);
 		mutex->Lock();
@@ -2789,6 +2790,8 @@ class expInfo {
 	int days;
 	int index;
 	char* callsign;
+	bool error;
+	wxString errorText;
 	wxMutex* mutex;
 	wxCondition* condition;
 	~expInfo() {
@@ -2797,6 +2800,22 @@ class expInfo {
 		if (mutex) delete mutex;
 	}
 };
+
+// Report an error back to the main thread
+static void
+report_error(expInfo **eip) {
+	expInfo *ei = *eip;
+	ei->error = true;
+	ei->errorText = wxString::FromUTF8(tqsl_getErrorString());
+	// Send the result back to the main thread
+	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
+	event.SetClientData(ei);
+	wxPostEvent(frame, event);
+	ei->condition->Wait();		// stalls here until the main thread resumes the thread
+	ei->mutex->Unlock();
+	delete ei;
+	*eip = new expInfo;
+}
 
 // Check for certificates expiring in the next nn (default 60) days
 void
@@ -2819,18 +2838,36 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 
 	for (int i = 0; i < ncerts; i ++) {
 		char callsign[64];
-		check_tqsl_error(tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign));
+		if (tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign)) {
+			report_error(&ei);
+			continue;
+		}
 		int keyonly, superceded, expired;
 		keyonly = superceded = expired = 0;
-		check_tqsl_error(tqsl_getCertificateKeyOnly(certlist[i], &keyonly));
+		if (tqsl_getCertificateKeyOnly(certlist[i], &keyonly)) {
+			report_error(&ei);
+			continue;
+		}
 		long serial = 0;
 		wxString status = wxString(wxT("KeyOnly"));
 		if (!keyonly) {
-			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+				report_error(&ei);
+				continue;
+			}
 			CheckCertStatus(serial, status);
-			check_tqsl_error(tqsl_setCertificateStatus(serial, (const char *)status.ToUTF8()));
-			check_tqsl_error(tqsl_isCertificateSuperceded(certlist[i], &superceded));
-			check_tqsl_error(tqsl_isCertificateExpired(certlist[i], &expired));
+			if (tqsl_setCertificateStatus(serial, (const char *)status.ToUTF8())) {
+				report_error(&ei);
+				continue;
+			}
+			if (tqsl_isCertificateSuperceded(certlist[i], &superceded)) {
+				report_error(&ei);
+				continue;
+			}
+			if (tqsl_isCertificateExpired(certlist[i], &expired)) {
+				report_error(&ei);
+				continue;
+			}
 		}
 		if (superceded || expired || keyonly)
 			continue;
@@ -2866,7 +2903,14 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 void
 MyFrame::OnExpiredCertFound(wxCommandEvent& event) {
 	expInfo *ei = reinterpret_cast<expInfo *>(event.GetClientData());
-	if (ei->noGUI) {
+	if (ei->error) {
+		if (ei->noGUI) {
+			wxLogError(ei->errorText);
+		} else {
+			wxMessageBox(wxString(wxT("Error checking for expired callsign certificates:")) + ei->errorText,
+				     wxT("Check Error"), wxOK|wxICON_EXCLAMATION, this);
+		}
+	} else if (ei->noGUI) {
 		wxLogMessage(wxT("The certificate for %hs expires in %d days."),
 			ei->callsign, ei->days);
 	} else {
