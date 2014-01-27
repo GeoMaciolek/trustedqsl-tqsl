@@ -4207,7 +4207,7 @@ DLLEXPORT int CALLCONVENTION
 tqsl_getCertificateStatus(long serial) {
 	XMLElement top_el;
 	if (tqsl_load_cert_status_data(top_el))
-		return 1;
+		return TQSL_CERT_STATUS_UNK;
 	XMLElement sfile;
 	if (top_el.getFirstElement(sfile)) {
 		XMLElement cd;
@@ -4245,7 +4245,8 @@ tqsl_setCertificateStatus(long serial, const char *status) {
 	snprintf(sstr, sizeof sstr, "%ld", serial);
 
 	XMLElement top_el;
-	if (tqsl_load_cert_status_data(top_el))
+	int stat = tqsl_load_cert_status_data(top_el);
+	if (stat == TQSL_FILE_SYSTEM_ERROR)
 		return 1;
 
 	XMLElement sfile;
