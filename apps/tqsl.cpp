@@ -859,7 +859,9 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 		wxSafeYield();
 	updateMutex.Unlock();
 	if (!noGUI) {
-		logwin->SetValue(wxT(""));		// Clear the checking message
+		wxString val = logwin->GetValue();
+		val.Replace(wxT("Checking for TQSL updates...\n"), wxT(""));
+		logwin->SetValue(val);		// Clear the checking message
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
@@ -1248,7 +1250,7 @@ MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 // Return the "About" string
 //
 static wxString getAbout() {
-	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2013\nAmerican Radio Relay League\n\n");
+	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2014\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
 		wxLogError(wxT("%hs"), tqsl_getErrorString());
