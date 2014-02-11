@@ -1485,9 +1485,9 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	QSORecordList recs;
 	wxString file = wxFileSelector(wxT("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
 #ifdef __linux__
-			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
-#else
 			wxT("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
+#else
+			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
 #endif
 			wxOPEN|wxFILE_MUST_EXIST, this);
 	if (file == wxT(""))

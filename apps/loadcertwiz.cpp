@@ -222,9 +222,9 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 #ifdef __linux__
-	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
-#else
 	wxString wild(wxT("Callsign Certificate container files (*.p12;*.P12)|*.p12;*.P12|Certificate Request response files (*.tq6;*.TQ6)|*.tq6;*.TQ6"));
+#else
+	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
 #endif
 	wild += wxT("|All files (*.*)|*.*");
 
