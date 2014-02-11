@@ -3,6 +3,12 @@ TQSL changes
 
 2.0.1
 ----------
+Don't prompt the user to renew a callsign certificate that's going to
+expire soon if they've already submitted a renewal.
+
+Correct handling of callsign certificates to avoid an "Invalid argument"
+loop in some circumstances during update checking. 
+
 Fix crash when the callsign certificate status file is empty or invalid.
 
 Update the messages displayed during callsign certificate creation to

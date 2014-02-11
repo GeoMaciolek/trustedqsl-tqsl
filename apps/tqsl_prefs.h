@@ -42,7 +42,11 @@ using std::map;
 using std::pair;
 
 #define DEFAULT_CABRILLO_FILES wxT("log cbr")
-#define DEFAULT_ADIF_FILES wxT("adi")
+#ifdef __linux__
+#define DEFAULT_ADIF_FILES wxT("adi adif ADI ADIF")
+#else
+#define DEFAULT_ADIF_FILES wxT("adi adif")
+#endif
 #define DEFAULT_AUTO_BACKUP true
 #define DEFAULT_CERT_WARNING 60
 //online

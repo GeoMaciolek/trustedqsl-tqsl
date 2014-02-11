@@ -344,7 +344,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(new wxButton(this, QD_HELP, wxT("Help")), 0, wxALL, 10);
 	sizer->Add(new wxButton(this, QD_CANCEL, wxT("Cancel")), 0, wxALL, 10);
-	sizer->Add(new wxButton(this, QD_OK, wxT("Ok")), 0, wxALL, 10);
+	sizer->Add(new wxButton(this, QD_OK, wxT("OK")), 0, wxALL, 10);
 	topsizer->Add(sizer, 0, wxALIGN_CENTER);
 
 	UpdateControls();

@@ -151,7 +151,7 @@ GetNewPassword(char *buf, int bufsiz, void *) {
 		wxT("This password will have to be entered each time\n")
 		wxT("you use this callsign certificate for signing or\n")
 		wxT("when saving the key.\n\n")
-		wxT("Leave the password blank and click 'Ok' unless you want\n")
+		wxT("Leave the password blank and click 'OK' unless you want\n")
 		wxT("to use a password.\n\n"), true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().ToUTF8(), bufsiz);
@@ -221,7 +221,11 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_p12pw = p12pw;
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
+#ifdef __linux__
 	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));
+#else
+	wxString wild(wxT("Callsign Certificate container files (*.p12;*.P12)|*.p12;*.P12|Certificate Request response files (*.tq6;*.TQ6)|*.tq6;*.TQ6"));
+#endif
 	wild += wxT("|All files (*.*)|*.*");
 
 	wxString path = config->Read(wxT("CertFilePath"), wxT(""));

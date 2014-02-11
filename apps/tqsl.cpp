@@ -122,7 +122,7 @@ using std::string;
 /// GEOMETRY
 
 #define LABEL_HEIGHT 20
-#define LABEL_WIDTH 100
+#define LABEL_WIDTH 120
 
 #define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
 
@@ -376,7 +376,7 @@ DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxStri
 	msg = new wxStaticText(this, TQSL_DR_MSG, wxT(""));
 	sizer->Add(msg, 0, wxALL, 5);
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxButton(this, TQSL_DR_OK, wxT("Ok")), 0, wxRIGHT, 5);
+	hsizer->Add(new wxButton(this, TQSL_DR_OK, wxT("OK")), 0, wxRIGHT, 5);
 	hsizer->Add(new wxButton(this, TQSL_DR_CAN, wxT("Cancel")), 0, wxLEFT, 10);
 	sizer->Add(hsizer, 0, wxALIGN_CENTER|wxALL, 10);
 	SetAutoLayout(TRUE);
@@ -654,6 +654,7 @@ free_certlist() {
 			tqsl_freeCertificate(certlist[i]);
 		certlist = 0;
 	}
+	ncerts = 0;
 }
 
 static void
@@ -1401,7 +1402,11 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 		if (path == wxT(""))
 			path = wxConfig::Get()->Read(wxT("QSODataPath"), wxT(""));
 		s_fname = wxFileSelector(wxT("Save File"), path, basename, wxT("adi"),
-			wxT("ADIF files (*.adi)|*.adi|All files (*.*)|*.*"),
+#ifdef __linux__
+			wxT("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
+#else
+			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
+#endif
 			wxSAVE|wxOVERWRITE_PROMPT, this);
 		if (s_fname == wxT(""))
 			return;
@@ -1479,7 +1484,11 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::EditQSOData");
 	QSORecordList recs;
 	wxString file = wxFileSelector(wxT("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
-			wxT("ADIF files (*.adi)|*.adi|All files (*.*)|*.*"),
+#ifdef __linux__
+			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
+#else
+			wxT("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
+#endif
 			wxOPEN|wxFILE_MUST_EXIST, this);
 	if (file == wxT(""))
 		return;
@@ -2382,6 +2391,7 @@ static bool verify_cert(tQSL_Location loc, bool editing) {
 	}
 	for (int i = 0; i  < ncerts; i++)
 		tqsl_freeCertificate(certlist[i]);
+	tqsl_freeStationDataEnc(reinterpret_cast<char *>(certlist));
 	return true;
 }
 
@@ -2824,7 +2834,7 @@ void
 MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	expInfo *ei = new expInfo;
 
-	get_certlist("", 0, true, true);
+	get_certlist("", 0, false, false);
 	if (ncerts == 0) return;
 
 	long expireDays = DEFAULT_CERT_WARNING;
@@ -2844,8 +2854,8 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 			report_error(&ei);
 			continue;
 		}
-		int keyonly, superceded, expired;
-		keyonly = superceded = expired = 0;
+		int keyonly, pending;
+		keyonly = pending = 0;
 		if (tqsl_getCertificateKeyOnly(certlist[i], &keyonly)) {
 			report_error(&ei);
 			continue;
@@ -2862,17 +2872,20 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 				report_error(&ei);
 				continue;
 			}
-			if (tqsl_isCertificateSuperceded(certlist[i], &superceded)) {
-				report_error(&ei);
-				continue;
-			}
-			if (tqsl_isCertificateExpired(certlist[i], &expired)) {
-				report_error(&ei);
-				continue;
+		}
+		wxString reqPending = wxConfig::Get()->Read(wxT("RequestPending"));
+		wxStringTokenizer tkz(reqPending, wxT(","));
+		while (tkz.HasMoreTokens()) {
+			wxString pend = tkz.GetNextToken();
+                        if (pend == wxString::FromUTF8(callsign)) {
+				pending = true;
+				break;
 			}
 		}
-		if (superceded || expired || keyonly)
+
+		if (keyonly || pending)
 			continue;
+
 		if (0 == tqsl_getCertificateNotAfterDate(certlist[i], &exp)) {
 			int days_left;
 			tqsl_subtractDates(&d, &exp, &days_left);
@@ -3185,13 +3198,14 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 
 	// Does the user have any certificates?
 	get_certlist("", 0, false, false);
-	free_certlist();
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
 			   wxOK|wxICON_EXCLAMATION, this);
+		free_certlist();
 		return;
 	}
+	free_certlist();
 	try {
 		bool compressed = (event.GetId() == tm_f_import_compress || event.GetId() == tl_Save);
 
@@ -3206,19 +3220,26 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		vector<wxString> exts;
 		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
+		wxString extList;
 		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			extList += wxT("*.") + exts[i] + wxT(";");
 			if (exts[i] == defext)
 				defFound = true;
 		}
+		extList.RemoveLast();		// Remove the trailing semicolon
+		filter += wxT("|ADIF files (") + extList + wxT(")|") + extList;
+
 		exts.clear();
+		extList.Clear();
 		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			extList += wxT("*.") + exts[i] + wxT(";");
 			if (exts[i] == defext)
 				defFound = true;
 		}
+		extList.RemoveLast();
+		filter += wxT("|Cabrillo files (") + extList + wxT(")|") + extList;
 		if (defext.IsEmpty() || !defFound)
 			defext = wxString(wxT("adi"));
 		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
@@ -3289,13 +3310,14 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 	// Does the user have any certificates?
 	get_certlist("", 0, false, false);
-	free_certlist();
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
 			   wxOK|wxICON_EXCLAMATION, this);
+		free_certlist();
 		return;
 	}
+	free_certlist();
 	try {
 		wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 		// Get input file
@@ -3308,19 +3330,26 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		vector<wxString> exts;
 		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
 		wx_tokens(file_exts, exts);
+		wxString extList;
 		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			filter += wxT("|ADIF files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			extList += wxT("*.") + exts[i] + wxT(";");
 			if (exts[i] == defext)
 				defFound = true;
 		}
+		extList.RemoveLast();		// Remove the trailing semicolon
+		filter += wxT("|ADIF files (") + extList + wxT(")|") + extList;
+
 		exts.clear();
+		extList.Clear();
 		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
 		wx_tokens(file_exts, exts);
 		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			filter += wxT("|Cabrillo files (*.") + exts[i] + wxT(")|*.") + exts[i];
+			extList += wxT("*.") + exts[i] + wxT(";");
 			if (exts[i] == defext)
 				defFound = true;
 		}
+		extList.RemoveLast();
+		filter += wxT("|Cabrillo files (") + extList + wxT(")|") + extList;
 		if (defext.IsEmpty() || !defFound)
 			defext = wxString(wxT("adi"));
 		infile = wxFileSelector(wxT("Select file to Sign"), path, wxT(""), defext, filter,
@@ -4370,6 +4399,7 @@ void MyFrame::FirstTime(void) {
 				}
 				tqsl_freeCertificate(certs[i]);
 			}
+			tqsl_freeStationDataEnc(reinterpret_cast<char *>(certs));
 		}
 
 		if (!found) {
@@ -4818,7 +4848,7 @@ wxT("protect this certificate. However, if you are using\n")
 wxT("a computer in a private residence, no password need be specified.\n\n")
 wxT("You will have to enter the password any time you\n")
 wxT("load the file into TrustedQSL\n\n")
-wxT("Leave the password blank and click 'Ok' unless you want to\n")
+wxT("Leave the password blank and click 'OK' unless you want to\n")
 wxT("use a password.\n\n"), true, help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled
