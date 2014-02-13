@@ -32,7 +32,9 @@
 #include "wx/checkbox.h"
 #include "wx/grid.h"
 #include "wx/wxhtml.h"
+#ifndef __linux__
 #include "wx/filepicker.h"
+#endif
 
 #include "tqslctrls.h"
 
@@ -120,7 +122,11 @@ class FilePrefs : public PrefsPanel {
  private:
 	wxTextCtrl *cabrillo, *adif;
 	wxCheckBox *autobackup, *badcalls, *daterange;
+#ifdef __linux__
+	wxTextCtrl *dirPick;
+#else
 	wxDirPickerCtrl *dirPick;
+#endif
 	DECLARE_EVENT_TABLE()
 };
 

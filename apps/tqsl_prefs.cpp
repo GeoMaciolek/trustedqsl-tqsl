@@ -344,8 +344,13 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 
 	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
 	wxString bdir = config->Read(wxT("BackupFolder"));
+#ifdef __linux__
+	dirPick = new wxTextCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxPoint(0, 0),
+		wxSize(char_width, HEIGHT_ADJ(char_height)));
+#else
 	dirPick = new wxDirPickerCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxT("Select a Folder"), wxDefaultPosition,
 		wxSize(char_width, HEIGHT_ADJ(char_height)), wxDIRP_USE_TEXTCTRL);
+#endif
 	dirPick->Enable(ab);
 	sizer->Add(dirPick, 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
 
@@ -395,7 +400,11 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("BadCalls"), badcalls->GetValue());
 	config->Write(wxT("DateRange"), daterange->GetValue());
 	config->Write(wxT("AutoBackup"), autobackup->GetValue());
+#ifndef __linux__
 	config->Write(wxT("BackupFolder"), dirPick->GetPath());
+#else
+	config->Write(wxT("BackupFolder"), dirPick->GetValue());
+#endif
 	return true;
 }
 
