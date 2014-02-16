@@ -221,7 +221,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 	_p12pw = p12pw;
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
-#ifdef __linux__
+#if !defined(__APPLE__) && !defined(_WIN32)
 	wxString wild(wxT("Callsign Certificate container files (*.p12;*.P12)|*.p12;*.P12|Certificate Request response files (*.tq6;*.TQ6)|*.tq6;*.TQ6"));
 #else
 	wxString wild(wxT("Callsign Certificate container files (*.p12)|*.p12|Certificate Request response files (*.tq6)|*.tq6"));

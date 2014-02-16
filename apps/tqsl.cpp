@@ -1402,7 +1402,7 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 		if (path == wxT(""))
 			path = wxConfig::Get()->Read(wxT("QSODataPath"), wxT(""));
 		s_fname = wxFileSelector(wxT("Save File"), path, basename, wxT("adi"),
-#ifdef __linux__
+#if !defined(__APPLE__) && !defined(_WIN32)
 			wxT("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
 #else
 			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
@@ -1484,7 +1484,7 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::EditQSOData");
 	QSORecordList recs;
 	wxString file = wxFileSelector(wxT("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
-#ifdef __linux__
+#if !defined(__APPLE__) && !defined(_WIN32)
 			wxT("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
 #else
 			wxT("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
@@ -2998,6 +2998,12 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 	ri->condition->Signal();
 }
 
+// The macro for declaring a hash map defines a couple of typedefs
+// that it never uses. Current GCC warns about those. The pragma
+// below suppresses those warnings for those.
+#if !defined(__APPLE__) && !defined(_WIN32)
+	#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
+#endif
 void
 MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	tqslTrace("MyFrame::DoCheckForUpdates", "silent=%d noGUI=%d", silent, noGUI);
@@ -3059,16 +3065,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 			tqslTrace("MyFrame::DoCheckForUpdates", "Prog + Config rev returns %d chars, %s", handler.s.size(), handler.s.c_str());
 			wxString result = wxString::FromAscii(handler.s.c_str());
 			wxString url;
-// The macro for declaring a hash map defines a couple of typedefs
-// that it never uses. Current GCC warns about those. The pragma
-// below suppresses those warnings for those.
-#if !defined(__APPLE__) && !defined(_WIN32)
-	#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#endif
 			WX_DECLARE_STRING_HASH_MAP(wxString, URLHashMap);
-#if !defined(__APPLE__) && !defined(_WIN32)
-	#pragma GCC diagnostic warning "-Wunused-local-typedefs"
-#endif
 			URLHashMap map;
 			ri->newProgramRev = NULL;
 			ri->newConfigRev = NULL;
@@ -3174,6 +3171,9 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	DoCheckExpiringCerts(noGUI);
 	return;
 }
+#if !defined(__APPLE__) && !defined(_WIN32)
+	#pragma GCC diagnostic warning "-Wunused-local-typedefs"
+#endif
 
 static void
 wx_tokens(const wxString& str, vector<wxString> &toks) {

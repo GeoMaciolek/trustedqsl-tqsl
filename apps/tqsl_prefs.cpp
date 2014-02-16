@@ -344,7 +344,7 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 
 	sizer->Add(new wxStaticText(this, -1, wxT("Backup File Folder:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
 	wxString bdir = config->Read(wxT("BackupFolder"));
-#ifdef __linux__
+#if !defined(__APPLE__) && !defined(_WIN32)
 	dirPick = new wxTextCtrl(this, ID_PREF_FILE_BACKUP, bdir, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 #else
@@ -400,10 +400,10 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("BadCalls"), badcalls->GetValue());
 	config->Write(wxT("DateRange"), daterange->GetValue());
 	config->Write(wxT("AutoBackup"), autobackup->GetValue());
-#ifndef __linux__
-	config->Write(wxT("BackupFolder"), dirPick->GetPath());
-#else
+#if !defined(__APPLE__) && !defined(_WIN32)
 	config->Write(wxT("BackupFolder"), dirPick->GetValue());
+#else
+	config->Write(wxT("BackupFolder"), dirPick->GetPath());
 #endif
 	return true;
 }
