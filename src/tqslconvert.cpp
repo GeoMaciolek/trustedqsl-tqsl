@@ -413,10 +413,11 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		if (conv->errfile)
 			conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 		// Log files default to 10 Mb each. We don't need nearly that much.
-		conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
+		if (conv->dbenv->set_lg_max)
+			conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
 			if (conv->errfile)
-				fprintf(conv->errfile, "opening DB %s returns status %d", conv->dbpath, dbret);
+				fprintf(conv->errfile, "opening DB %s returns status %d\n", conv->dbpath, dbret);
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
