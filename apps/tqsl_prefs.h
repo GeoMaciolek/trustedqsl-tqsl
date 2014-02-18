@@ -32,7 +32,7 @@
 #include "wx/checkbox.h"
 #include "wx/grid.h"
 #include "wx/wxhtml.h"
-#if !defined(__APPLE__) && !defined(_WIN32)
+#if defined(__APPLE__) || defined(_WIN32)
 #include "wx/filepicker.h"
 #endif
 
