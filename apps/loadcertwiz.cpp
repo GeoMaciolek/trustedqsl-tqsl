@@ -265,9 +265,13 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 				_first = _final;
 				_final->SetPrev(0);
 			} else {
-				_first = _p12pw;
-				_p12pw->SetPrev(0);
-				p12pw->SetFilename(filename);
+				if (tQSL_Error == TQSL_PASSWORD_ERROR) {
+					_first = _p12pw;
+					_p12pw->SetPrev(0);
+					p12pw->SetFilename(filename);
+				} else {
+					_first = 0;	// Cancel
+				}
 			}
 		}
 	}

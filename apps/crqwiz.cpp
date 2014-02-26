@@ -506,7 +506,6 @@ void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
 CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	:  CRQ_Page(parent) {
 	tqslTrace("CRQ_SignPage::CRQ_SignPage", "parent=%lx", reinterpret_cast<void *>(parent));
-	
 
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);

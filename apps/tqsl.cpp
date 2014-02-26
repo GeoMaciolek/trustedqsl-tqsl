@@ -140,6 +140,9 @@ static MyFrame *frame = 0;
 
 static char unipwd[64];
 
+static int lock_db(bool wait);
+static void unlock_db(void);
+
 static void exitNow(int status, bool quiet) {
 	const char *errors[] = { "Success",
 				 "User Cancelled",
@@ -1601,6 +1604,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 	init_modes();
 	init_contests();
+	lock_db(true);
 
  restart:
 
@@ -1626,6 +1630,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			DateRangeDialog dial(this);
 			if (dial.ShowModal() != wxOK) {
 				wxLogMessage(wxT("Cancelled"));
+				unlock_db();
 				return TQSL_EXIT_CANCEL;
 			}
 			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
@@ -1810,6 +1815,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		tqsl_getConverterLine(conv, &lineno);
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
+		unlock_db();
 		if (lineno)
 			msg += wxString::Format(wxT(" on line %d"), lineno).ToUTF8();
 
@@ -1823,6 +1829,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		if (cancelled) {
 			tqsl_converterRollBack(conv);
 			tqsl_endConverter(&conv);
+			unlock_db();
 			return TQSL_EXIT_CANCEL;
 		}
 		if (action == TQSL_ACTION_ASK || action == TQSL_ACTION_UNSPEC) { // want to ask the user
@@ -1832,6 +1839,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				wxLogMessage(wxT("Cancelled"));
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
+				unlock_db();
 				return TQSL_EXIT_CANCEL;
 			}
 			if (choice == TQSL_DP_ALLOW) {
@@ -1850,12 +1858,14 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					wxLogMessage(wxT("All QSOs are duplicates; aborted"));
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					unlock_db();
 					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				} else {
 					wxLogMessage(wxT("%d of %d QSOs are duplicates; aborted"), duplicates, processed);
 					tqsl_converterRollBack(conv);
 					tqsl_endConverter(&conv);
+					unlock_db();
 					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				}
@@ -1876,6 +1886,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
 	}
+	unlock_db();
 	if (cancelled)
 		return TQSL_EXIT_CANCEL;
 	if (processed == 0)
@@ -3281,7 +3292,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
+		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed using:\n"
 				 wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
@@ -3376,7 +3387,7 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs", 
+		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
 		if (wxMessageBox(wxString::Format(wxT("The file (%s) will be signed and uploaded using:\n"
 				wxT("Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?")), infile.c_str(), loc_name,
@@ -3612,6 +3623,12 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			tqslTrace("MyFrame::BackupConfig", "Saving QSOs");
 		}
 
+		if (lock_db(false) < 0) {
+			wxSafeYield();
+			wxLogMessage(wxT("Waiting for the database to become available..."));
+			wxSafeYield();
+			lock_db(true);
+		}
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
 		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
@@ -3627,6 +3644,9 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
 		}
 		gzprintf(out, "</DupeDb>\n");
+		tqsl_converterCommit(conv);
+		tqsl_endConverter(&conv);
+		unlock_db();
 		tqslTrace("MyFrame::BackupConfig", "Dupes db saved OK");
 
 		gzprintf(out, "</TQSL_Configuration>\n");
@@ -3836,8 +3856,7 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 	} else if (strcmp(name, "TQSLSettings") == 0) {
 		loader->config->Flush(false);
 	} else if (strcmp(name, "DupeDb") == 0) {
-		if (loader->dupes > 0)
-			check_tqsl_error(tqsl_converterCommit(loader->conv));
+		check_tqsl_error(tqsl_converterCommit(loader->conv));
 		check_tqsl_error(tqsl_endConverter(&loader->conv));
 	}
 	loader->elementBody = wxT("");
@@ -5280,5 +5299,41 @@ void tqslTrace(const char *name, const char *format, ...) {
 	va_end(ap);
 	fprintf(diagFile, "\r\n");
 	fflush(diagFile);
+}
+
+static int lockfileFD = -1;
+
+static int
+lock_db(bool wait) {
+	struct flock fl;
+	fl.l_type = F_WRLCK;
+	fl.l_whence = SEEK_SET;
+	fl.l_start = 0;
+	fl.l_len = 1;
+
+	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("/dblock");
+
+	if (lockfileFD < 0) {
+		lockfileFD = open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
+		if (lockfileFD < 0)
+			return 1;
+	}
+	if (wait) {
+		fcntl(lockfileFD, F_SETLKW, &fl);
+		return 0;
+	}
+	int ret = fcntl(lockfileFD, F_SETLK, &fl);
+	if (ret < 0 && (errno == EACCES || errno == EAGAIN)) {
+		return -1;
+	}
+	return 0;
+}
+
+static void
+unlock_db(void) {
+	if (lockfileFD < 0) return;
+	close(lockfileFD);
+	lockfileFD = -1;
+	return;
 }
 

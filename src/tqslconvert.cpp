@@ -265,7 +265,10 @@ tqsl_endConverter(tQSL_Converter *convp) {
 
 	if ((conv = check_conv(*convp))) {
 		if (conv->txn) conv->txn->abort(conv->txn);
-		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
+		if (conv->seendb) {
+			conv->seendb->compact(conv->seendb, NULL, NULL, NULL, NULL, 0, NULL);
+			conv->seendb->close(conv->seendb, 0);
+		}
 		if (conv->dbenv) {
 			char **unused;
 			conv->dbenv->txn_checkpoint(conv->dbenv, 0, 0, 0);
@@ -275,7 +278,6 @@ tqsl_endConverter(tQSL_Converter *convp) {
 		// close files and clean up converters, if any
 		if (conv->adif) tqsl_endADIF(&conv->adif);
 		if (conv->cab) tqsl_endCabrillo(&conv->cab);
-		if (conv->cursor) conv->cursor->c_close(conv->cursor);
 		if (conv->dbpath) free(conv->dbpath);
 		if (conv->errfile) fclose(conv->errfile);
 	}
@@ -364,10 +366,11 @@ tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Dat
 
 // Open the duplicates database
 
-static bool open_db(TQSL_CONVERTER *conv) {
+static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	bool dbinit_cleanup = false;
 	int dbret;
 	bool triedRemove = false;
+	int envflags = DB_INIT_TXN|DB_INIT_LOG|DB_INIT_MPOOL|DB_RECOVER|DB_REGISTER|DB_CREATE;
 	string fixedpath = tQSL_BaseDir; //must be first because of gotos
 	size_t found = fixedpath.find('\\');
 
@@ -400,8 +403,8 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		closedir(dir);
 	}
 #endif
-	fixedpath += "/dberr.log";
-	conv->errfile = fopen(fixedpath.c_str(), "wb");
+	string logpath = fixedpath + "/dberr.log";
+	conv->errfile = fopen(logpath.c_str(), "wb");
 
 	while (true) {
 		// Create the database environment handle
@@ -415,7 +418,13 @@ static bool open_db(TQSL_CONVERTER *conv) {
 		// Log files default to 10 Mb each. We don't need nearly that much.
 		if (conv->dbenv->set_lg_max)
 			conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
-		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, DB_INIT_TXN|DB_INIT_LOCK|DB_INIT_LOG|DB_INIT_MPOOL|DB_CREATE|DB_RECOVER, 0600))) {
+		// Allocate additional locking resources - some have run out with
+		// the default 1000 locks
+		if (conv->dbenv->set_lk_max_locks)
+			conv->dbenv->set_lk_max_locks(conv->dbenv, 20000);
+		if (conv->dbenv->set_lk_max_objects)
+			conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
+		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
 			if (conv->errfile)
 				fprintf(conv->errfile, "opening DB %s returns status %d\n", conv->dbpath, dbret);
 			// can't open environment - try to delete it and try again.
@@ -426,13 +435,13 @@ static bool open_db(TQSL_CONVERTER *conv) {
 					fprintf(conv->errfile, "About to retry after removing the environment\n");
 				continue;
 			}
-
 			if (conv->errfile)
-				fprintf(conv->errfile, "Retry attempt after removing the environment failed.");
-			// can't open environment and cleanup efforts failed.
-			conv->dbenv = NULL;	// this can't be recovered
-			dbinit_cleanup = true;
-			goto dbinit_end;
+				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
+				// can't open environment and cleanup efforts failed.
+				conv->dbenv->close(conv->dbenv, 0);
+				conv->dbenv = NULL;	// this can't be recovered
+				dbinit_cleanup = true;
+				goto dbinit_end;
 		}
 		break;		// Opened OK.
 	}
@@ -446,16 +455,140 @@ static bool open_db(TQSL_CONVERTER *conv) {
 #ifndef DB_TXN_BULK
 #define DB_TXN_BULK 0
 #endif
-	if ((dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
+	if (!readonly && (dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
 		// can't start a txn
 		dbinit_cleanup = true;
 		goto dbinit_end;
 	}
 
-	if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_BTREE, DB_CREATE, 0600))) {
-		// can't open the db
-		dbinit_cleanup = true;
-		goto dbinit_end;
+	// Probe the database type
+	if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_UNKNOWN, 0, 0600))) {
+		if (dbret == ENOENT) {
+			dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_HASH, DB_CREATE, 0600);
+		}
+		if (dbret) {
+			// can't open the db
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+	}
+
+	DBTYPE type;
+	conv->seendb->get_type(conv->seendb, &type);
+	if (type ==  DB_BTREE) {
+		// Have to convert the database.
+		string dumpfile = fixedpath + "/dupedump.txt";
+		FILE *dmp = fopen(dumpfile.c_str(), "wb+");
+		if (!dmp) {
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+		if (!conv->cursor) {
+			int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
+			if (err) {
+				strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
+				tQSL_Error = TQSL_DB_ERROR;
+				tQSL_Errno = errno;
+				dbinit_cleanup = true;
+				goto dbinit_end;
+			}
+		}
+
+		DBT dbkey, dbdata;
+		char duprec[512];
+		while (1) {
+			memset(&dbkey, 0, sizeof dbkey);
+			memset(&dbdata, 0, sizeof dbdata);
+			int status = conv->cursor->c_get(conv->cursor, &dbkey, &dbdata, DB_NEXT);
+			if (DB_NOTFOUND == status) {
+				break;	// No more records
+			}
+			if (status != 0) {
+				strncpy(tQSL_CustomError, db_strerror(status), sizeof tQSL_CustomError);
+				tQSL_Error = TQSL_DB_ERROR;
+				tQSL_Errno = errno;
+				dbinit_cleanup = true;
+				goto dbinit_end;
+			}
+			memcpy(duprec, dbkey.data, dbkey.size);
+			duprec[dbkey.size] = '\0';
+			fprintf(dmp, "%s\n", duprec);
+		}
+		conv->cursor->close(conv->cursor);
+		conv->seendb->close(conv->seendb, 0);
+		conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+		conv->dbenv->close(conv->dbenv, 0);
+		conv->cursor = NULL;
+		conv->seendb = NULL;
+		conv->dbenv = NULL;
+
+		// Remove the old dupe db
+		DIR *dir = opendir(fixedpath.c_str());
+		if (dir != NULL) {
+			struct dirent *ent;
+			while ((ent = readdir(dir)) != NULL) {
+				if (!strcmp(ent->d_name, "duplicates.db") ||
+				    !strncmp(ent->d_name, "log.", 4) ||
+				    !strncmp(ent->d_name, "__db.", 5)) {
+					string fname = fixedpath + "/" + ent->d_name;
+					unlink(fname.c_str());
+				}
+			}
+			closedir(dir);
+		}
+
+		// Now create the new database
+		if ((dbret = db_env_create(&conv->dbenv, 0))) {
+			// can't make env handle
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+		if (conv->errfile)
+			conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
+		if (conv->dbenv->set_lg_max)
+			conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
+		if (conv->dbenv->set_lk_max_locks)
+			conv->dbenv->set_lk_max_locks(conv->dbenv, 20000);
+		if (conv->dbenv->set_lk_max_objects)
+			conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
+		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
+			if (conv->errfile)
+				fprintf(conv->errfile, "opening DB %s returns status %d\n", conv->dbpath, dbret);
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+
+		if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
+			// can't create db
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+
+		// Create the new database
+		if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_HASH, DB_CREATE, 0600))) {
+			// can't open the db
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+		fseek(dmp, 0, SEEK_SET);
+
+		char d[1]= {'D'};
+		memset(&dbkey, 0, sizeof dbkey);
+		memset(&dbdata, 0, sizeof dbdata);
+		dbdata.data = d;
+		dbdata.size = 1;
+		char *foo;
+		while ((foo = fgets(duprec, sizeof duprec, dmp))) {
+			dbkey.data = duprec;
+			dbkey.size = strlen(duprec) - 1;
+			conv->seendb->put(conv->seendb, NULL, &dbkey, &dbdata, 0);
+		}
+
+		if (!readonly && (dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
+			// can't start a txn
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
 	}
 
  dbinit_end:
@@ -473,7 +606,7 @@ static bool open_db(TQSL_CONVERTER *conv) {
 			}
 			conv->dbenv->close(conv->dbenv, 0);
 		}
-		if (conv->cursor) conv->cursor->c_close(conv->cursor);
+		if (conv->cursor) conv->cursor->close(conv->cursor);
 		if (conv->errfile) fclose(conv->errfile);
 		conv->txn = NULL;
 		conv->dbenv = NULL;
@@ -518,7 +651,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		return tStation;
 	}
 	if (!conv->allow_dupes && !conv->seendb) {
-		if (!open_db(conv)) {	// If can't open dupes DB
+		if (!open_db(conv, false)) {	// If can't open dupes DB
 			return 0;
 		}
 	}
@@ -763,8 +896,6 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 			strncat(signdata, conv->serial, sizeof(signdata) - strlen(signdata)-1);
 			dbkey.size = strlen(signdata);
 			dbkey.data = signdata;
-			dbdata.size = sizeof(temp);
-			dbdata.data = temp;
 			int dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
 			if (0 == dbget_err) {
 				//lookup was successful; thus duplicate
@@ -778,6 +909,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				// could be more specific but there's very little the user can do at this point anyway
 			}
 			temp[0] = 'D';
+			dbdata.data = temp;
 			dbdata.size = 1;
 			int dbput_err;
 			dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
@@ -896,7 +1028,7 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 		return 1;
 
 	if (!conv->seendb) {
-		if (!open_db(conv)) {	// If can't open dupes DB
+		if (!open_db(conv, true)) {	// If can't open dupes DB
 			return 1;
 		}
 	}
@@ -941,7 +1073,7 @@ tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data,
 		return 0;
 
 	if (!conv->seendb) {
-		if (!open_db(conv)) {	// If can't open dupes DB
+		if (!open_db(conv, false)) {	// If can't open dupes DB
 			return 0;
 		}
 	}
@@ -950,7 +1082,8 @@ tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data,
 	memset(&dbdata, 0, sizeof dbdata);
 	dbkey.size = keylen;
 	dbkey.data = const_cast<char *>(key);
-	dbdata.size = 2;
+
+	dbdata.size = 1;
 	dbdata.data = const_cast<char *>(data);
 
 	int status = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);

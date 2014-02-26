@@ -123,7 +123,7 @@ TQSLGetStationNameDialog::OnSetFocus(wxFocusEvent& event) {
 void
 TQSLGetStationNameDialog::OnOk(wxCommandEvent&) {
 	wxString s = name_entry->GetValue().Trim().Trim(false);
-	tqslTrace("TQSLGetStationNameDialog::OnOk, selected = %s",S(s));
+	tqslTrace("TQSLGetStationNameDialog::OnOk, selected = %s", S(s));
 	if (editonly)
 		EndModal(wxID_CANCEL);
 	else if (s != wxT("")) {
