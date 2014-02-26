@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.4
 ---
+Use a hash table for the duplicates database rather than a btree. The
+format of the dupe records causes btree to perform poorly.
+
 If the certificate status file can't be parsed, discard it and create a
 new file.
 

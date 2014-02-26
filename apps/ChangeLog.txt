@@ -3,6 +3,9 @@ TQSL changes
 
 2.0.1
 ----------
+Lock the duplicates datbase so only a single TQSL instance can
+access it in cases where users have multiple TQSL windows open.
+
 Don't use the Directory chooser widget in the preferences pane for
 selecting a backup directory on Linux systems. That widget is
 not usable and can crash TQSL. Use a simple text box instead.
