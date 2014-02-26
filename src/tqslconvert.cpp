@@ -30,6 +30,9 @@
 #ifndef _WIN32
     #include <unistd.h>
     #include <dirent.h>
+#else
+    #include <direct.h>
+    #include "windirent.h"
 #endif
 
 #include "winstrdefs.h"

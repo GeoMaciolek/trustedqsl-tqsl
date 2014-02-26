@@ -11,6 +11,10 @@
 #include <curl/curl.h> // has to be before something else in this list
 #include <stdlib.h>
 #include <errno.h>
+#ifndef _WIN32
+#include <unistd.h>
+#include <fcntl.h>
+#endif
 #include <expat.h>
 #include <sys/stat.h>
 
@@ -1604,7 +1608,13 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 	init_modes();
 	init_contests();
-	lock_db(true);
+
+	if (lock_db(false) < 0) {
+		wxSafeYield();
+		wxLogMessage(wxT("TQSL must wait for other running copies of TQSL to exit before signing..."));
+		wxSafeYield();
+		lock_db(true);
+	}
 
  restart:
 
@@ -3525,6 +3535,14 @@ void
 MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", S(filename), quiet);
 	int i;
+	if (lock_db(false) < 0) {
+		if (quiet)			// If there's an active signing thread,
+			return;			// then exit without taking a backup.
+		wxSafeYield();
+		wxLogMessage(wxT("TQSL must wait for other running copies of TQSL to exit before backing up..."));
+		wxSafeYield();
+		lock_db(true);
+	}
 	try {
 		gzFile out = 0;
 		out = gzopen(filename.ToUTF8(), "wb9");
@@ -3623,12 +3641,6 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			tqslTrace("MyFrame::BackupConfig", "Saving QSOs");
 		}
 
-		if (lock_db(false) < 0) {
-			wxSafeYield();
-			wxLogMessage(wxT("Waiting for the database to become available..."));
-			wxSafeYield();
-			lock_db(true);
-		}
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
 		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
@@ -5303,6 +5315,7 @@ void tqslTrace(const char *name, const char *format, ...) {
 
 static int lockfileFD = -1;
 
+#ifndef _WIN32
 static int
 lock_db(bool wait) {
 	struct flock fl;
@@ -5336,4 +5349,52 @@ unlock_db(void) {
 	lockfileFD = -1;
 	return;
 }
+#else /* _WIN32 */
 
+static OVERLAPPED ov;
+static HANDLE hFile;
+
+static int
+lock_db(bool wait) {
+
+	BOOL ret = FALSE;
+	DWORD locktype = LOCKFILE_EXCLUSIVE_LOCK;
+
+	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("\\dblock");
+
+	if (lockfileFD < 0) {
+		lockfileFD = _open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
+		if (lockfileFD < 0)
+			return 1;
+		ZeroMemory(&ov, sizeof(ov));
+		ov.hEvent = NULL;
+		ov.Offset = 0;
+		ov.OffsetHigh = 0x800000000;
+	}
+
+	hFile = (HANDLE) _get_osfhandle(lockfileFD);
+
+	if (!wait) {
+		locktype |= LOCKFILE_FAIL_IMMEDIATELY;
+	}
+	ret = LockFileEx(hFile, locktype, 0, 0, 0x80000000, &ov);
+	if (!ret) {
+		switch (GetLastError()) {
+			case ERROR_SHARING_VIOLATION:
+			case ERROR_LOCK_VIOLATION:
+			case ERROR_IO_PENDING:
+				return -1;
+			default:
+				return 0;
+		}
+	}
+	return 0;
+}
+
+static void
+unlock_db(void) {
+	UnlockFileEx(hFile, 0, 0, 0x80000000, &ov);
+	_close(lockfileFD);
+	lockfileFD = -1;
+}
+#endif /* _WIN32 */
