@@ -5369,7 +5369,7 @@ lock_db(bool wait) {
 		ZeroMemory(&ov, sizeof(ov));
 		ov.hEvent = NULL;
 		ov.Offset = 0;
-		ov.OffsetHigh = 0x800000000;
+		ov.OffsetHigh = 0x80000000;
 	}
 
 	hFile = (HANDLE) _get_osfhandle(lockfileFD);
