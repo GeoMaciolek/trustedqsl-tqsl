@@ -409,6 +409,8 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	string logpath = fixedpath + "/dberr.log";
 	conv->errfile = fopen(logpath.c_str(), "wb");
 
+ reopen:
+
 	while (true) {
 		// Create the database environment handle
 		if ((dbret = db_env_create(&conv->dbenv, 0))) {
@@ -518,6 +520,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			fprintf(dmp, "%s\n", duprec);
 		}
 		conv->cursor->close(conv->cursor);
+		if (conv->txn) conv->txn->commit(conv->txn, 0);
 		conv->seendb->close(conv->seendb, 0);
 		conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
 		conv->dbenv->close(conv->dbenv, 0);
@@ -568,7 +571,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		}
 
 		// Create the new database
-		if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_HASH, DB_CREATE, 0600))) {
+		if ((dbret = conv->seendb->open(conv->seendb, NULL, "duplicates.db", NULL, DB_HASH, DB_CREATE, 0600))) {
 			// can't open the db
 			dbinit_cleanup = true;
 			goto dbinit_end;
@@ -580,18 +583,15 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		memset(&dbdata, 0, sizeof dbdata);
 		dbdata.data = d;
 		dbdata.size = 1;
-		char *foo;
-		while ((foo = fgets(duprec, sizeof duprec, dmp))) {
+
+		while (fgets(duprec, sizeof duprec, dmp)) {
 			dbkey.data = duprec;
 			dbkey.size = strlen(duprec) - 1;
 			conv->seendb->put(conv->seendb, NULL, &dbkey, &dbdata, 0);
 		}
-
-		if (!readonly && (dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
-			// can't start a txn
-			dbinit_cleanup = true;
-			goto dbinit_end;
-		}
+		conv->seendb->close(conv->seendb, 0);
+		conv->dbenv->close(conv->dbenv, 0);
+		goto reopen;
 	}
 
  dbinit_end:
