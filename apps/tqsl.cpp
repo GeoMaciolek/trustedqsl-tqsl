@@ -2165,6 +2165,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
 
 	DocPaths docpaths(wxT("tqslapp"));
+	docpaths.Add(wxString::FromUTF8(tQSL_BaseDir));
 #ifdef CONFDIR
 	docpaths.Add(wxT(CONFDIR));
 #endif
@@ -5356,7 +5357,6 @@ static HANDLE hFile;
 
 static int
 lock_db(bool wait) {
-
 	BOOL ret = FALSE;
 	DWORD locktype = LOCKFILE_EXCLUSIVE_LOCK;
 
