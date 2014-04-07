@@ -1,11 +1,10 @@
 /***************************************************************************
-                          tqsl.cpp  -  description
+                                  tqsl.cpp
                              -------------------
     begin                : Mon Nov 4 2002
-    copyright            : (C) 2002 by ARRL
+    copyright            : (C) 2002-2014 by ARRL and the TrustedQSL Developers
     author               : Jon Bloom
     email                : jbloom@arrl.org
-    revision             : $Id: tqsl.cpp,v 1.13 2010/03/19 21:31:02 k1mu Exp $
  ***************************************************************************/
 
 #include <curl/curl.h> // has to be before something else in this list
@@ -2700,11 +2699,6 @@ void MyFrame::UpdateConfigFile() {
 		FILE *configFile = fopen(filename.ToUTF8(), "wb");
 		if (!configFile) {
 			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
-			curl_easy_cleanup(curlReq);
-			if (curlLogFile) {
-				fclose(curlLogFile);
-				curlLogFile = NULL;
-			}
 			return;
 		}
 		size_t left = handler.used;
@@ -2712,11 +2706,6 @@ void MyFrame::UpdateConfigFile() {
 			size_t written = fwrite(newconfig, 1, left, configFile);
 			if (written == 0) {
 				wxMessageBox(wxString::Format(wxT("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
-				curl_easy_cleanup(curlReq);
-				if (curlLogFile) {
-					fclose(curlLogFile);
-					curlLogFile = NULL;
-				}
 				if (configFile) fclose(configFile);
 				return;
 			}
@@ -2724,11 +2713,6 @@ void MyFrame::UpdateConfigFile() {
 		}
 		if (fclose(configFile)) {
 			wxMessageBox(wxString::Format(wxT("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
-			curl_easy_cleanup(curlReq);
-			if (curlLogFile) {
-				fclose(curlLogFile);
-				curlLogFile = NULL;
-			}
 			return;
 		}
 		notifyData nd;
@@ -2753,10 +2737,6 @@ void MyFrame::UpdateConfigFile() {
 		} else { // some other error
 			wxMessageBox(wxString::Format(wxT("Error downloading new configuration file:\n%hs"), errorbuf), wxT("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
-	}
-	if (curlLogFile) {
-		fclose(curlLogFile);
-		curlLogFile = NULL;
 	}
 }
 
