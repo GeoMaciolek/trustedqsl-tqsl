@@ -1,6 +1,14 @@
 TQSL changes
 ============
 
+2.0.2
+----------
+Use OpenSSL 1.0.1g to correct the Heartbleed bug.
+
+Add a newline after "Signing using.." message when signing a log so
+any errors show up under that message, not tacked onto the end of it.
+
+
 2.0.1
 ----------
 Lock the duplicates datbase so only a single TQSL instance can

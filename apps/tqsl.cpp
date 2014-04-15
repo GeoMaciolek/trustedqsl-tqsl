@@ -1603,7 +1603,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
-	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs"), callsign, dx.name());
+	wxLogMessage(wxT("Signing using Callsign %hs, DXCC Entity %hs\n"), callsign, dx.name());
 
 	init_modes();
 	init_contests();
