@@ -29,6 +29,12 @@
 #include "loctree.h"
 #include "wxutil.h"
 
+#if defined(_WIN32)
+#define tqslName(x) x.mb_str()
+#else
+#define tqslName(x) x.ToUTF8()
+#endif
+
 enum {
 	tm_f_import = 7000,
 	tm_f_import_compress,

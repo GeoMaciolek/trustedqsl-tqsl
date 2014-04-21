@@ -1627,11 +1627,11 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	int processed = 0;
 	int errors = 0;
 	try {
-		if (tqsl_beginCabrilloConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc)) {
+		if (tqsl_beginCabrilloConverter(&conv, tqslName(infile), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
-	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc));
+	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, tqslName(infile), certlist, ncerts, loc));
 		}
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
@@ -1740,9 +1740,6 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				out_of_range++;
 				continue;
 			}
-			if (tQSL_Error == TQSL_CERT_DATE_MISMATCH) {
-				processed++;
-			}
 			if (tQSL_Error == TQSL_DUPLICATE_QSO) {
 				processed++;
 				duplicates++;
@@ -1750,6 +1747,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			}
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
+				processed++;
 				errors++;
 				try {
 					check_tqsl_error(1);
@@ -1914,9 +1912,9 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 	ofstream out;
 
 	if (compressed)
-		gout = gzopen(outfile.ToUTF8(), "wb9");
+		gout = gzopen(tqslName(outfile), "wb9");
 	else
-		out.open(outfile.ToUTF8(), ios::out|ios::trunc|ios::binary);
+		out.open(tqslName(outfile), ios::out|ios::trunc|ios::binary);
 
 	if ((compressed && !gout) || (!compressed && !out)) {
 		wxLogError(wxT("Unable to open %s for output"), outfile.c_str());
@@ -1935,14 +1933,14 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 		} else {
 			out.close();
 		}
-		unlink(outfile.ToUTF8());
+		unlink(tqslName(outfile));
 		if (status == TQSL_EXIT_CANCEL || TQSL_EXIT_QSOS_SUPPRESSED)
 			return status;
 		else
 			return TQSL_EXIT_NO_QSOS;
 	} else {
 		if(compressed) {
-			if (0 >= gzwrite(gout, output.ToUTF8(), output.size()) || Z_OK != gzclose(gout)) {
+			if (0 >= gzwrite(gout, tqslName(output), output.size()) || Z_OK != gzclose(gout)) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
 				return TQSL_EXIT_LIB_ERROR;
@@ -2153,7 +2151,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 #else
 		filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
 #endif
-		*curlLogFile = fopen(filename.ToUTF8(), newFile ? "wb" : "ab");
+		*curlLogFile = fopen(tqslName(filename), newFile ? "wb" : "ab");
 		if (*curlLogFile) {
 			curl_easy_setopt(curlReq, CURLOPT_VERBOSE, 1);
 			curl_easy_setopt(curlReq, CURLOPT_STDERR, *curlLogFile);
@@ -2177,7 +2175,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	wxString caBundlePath = docpaths.FindAbsoluteValidPath(wxT("ca-bundle.crt"));
 	if (!caBundlePath.IsEmpty()) {
 		char caBundle[256];
-		strncpy(caBundle, caBundlePath.ToUTF8(), sizeof caBundle);
+		strncpy(caBundle, tqslName(caBundlePath), sizeof caBundle);
 		curl_easy_setopt(curlReq, CURLOPT_CAINFO, caBundle);
 	}
 	// Get the proxy configuration and pass it to cURL
@@ -2696,7 +2694,7 @@ void MyFrame::UpdateConfigFile() {
 #else
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
 #endif
-		FILE *configFile = fopen(filename.ToUTF8(), "wb");
+		FILE *configFile = fopen(tqslName(filename), "wb");
 		if (!configFile) {
 			wxMessageBox(wxString::Format(wxT("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			return;
@@ -2716,7 +2714,7 @@ void MyFrame::UpdateConfigFile() {
 			return;
 		}
 		notifyData nd;
-		if (tqsl_importTQSLFile(filename.ToUTF8(), notifyImport, &nd)) {
+		if (tqsl_importTQSLFile(tqslName(filename), notifyImport, &nd)) {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		} else {
 			wxMessageBox(wxT("Configuration file successfully updated"), wxT("Update Completed"), wxOK|wxICON_INFORMATION, this);
@@ -3526,7 +3524,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	}
 	try {
 		gzFile out = 0;
-		out = gzopen(filename.ToUTF8(), "wb9");
+		out = gzopen(tqslName(filename), "wb9");
 		if (!out) {
 			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
 			return;
@@ -3774,7 +3772,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 #define S_ISDIR(mode)	(((mode) & S_IFMT) == _S_IFDIR)
 #endif
 
-				if (lstat(svalue.ToUTF8(), &s) == 0) {		// Does it exist?
+				if (lstat(tqslName(svalue), &s) == 0) {		// Does it exist?
 					if (S_ISDIR(s.st_mode)) {		// And is it a directory?
 						loader->config->Write(sname, svalue); // OK to use it.
 					}
@@ -3958,7 +3956,7 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 
 	gzFile in = 0;
 	try {
-		in = gzopen(filename.ToUTF8(), "rb");
+		in = gzopen(tqslName(filename), "rb");
 		if (!in) {
 			wxLogError(wxT("Error opening save file %s: %hs"), filename.c_str(), strerror(errno));
 			return;
@@ -4133,9 +4131,9 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("t"), &diagfile)) {
-		diagFile = fopen(diagfile.ToUTF8(), "wb");
+		diagFile = fopen(tqslName(diagfile), "wb");
 		if (!diagFile) {
-			cerr << "Error opening diagnostic log " << diagfile.ToUTF8() << ": " << strerror(errno) << endl;
+			cerr << "Error opening diagnostic log " << tqslName(diagfile) << ": " << strerror(errno) << endl;
 		} else {
 			wxString about = getAbout();
 			fprintf(diagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
@@ -4183,7 +4181,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("i"), &importfile)) {
 		importfile.Trim(true).Trim(false);
 		notifyData nd;
-		if (tqsl_importTQSLFile(importfile.ToUTF8(), notifyImport, &nd)) {
+		if (tqsl_importTQSLFile(tqslName(importfile), notifyImport, &nd)) {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		} else {
 			wxLogMessage(nd.Message());
@@ -4708,7 +4706,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			}
 		}
 		req.renew = renew ? 1 : 0;
-		if (tqsl_createCertRequest(file.ToUTF8(), &req, 0, 0)) {
+		if (tqsl_createCertRequest(tqslName(file), &req, 0, 0)) {
 			if (req.signer)
 				tqsl_endSigning(req.signer);
 			const char *msg = tqsl_getErrorString();
@@ -4717,7 +4715,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			return;
 		}
 		if (upload) {
-			ifstream in(file.ToUTF8(), ios::in | ios::binary);
+			ifstream in(tqslName(file), ios::in | ios::binary);
 			if (!in) {
 				wxLogError(wxT("Error opening certificate request file %s: %hs"), file.c_str(), strerror(errno));
 			} else {
@@ -4729,7 +4727,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				in.close();
 
 				wxString fileType(wxT("Certificate Request"));
-				retval = UploadFile(file, file.ToUTF8(), 0, reinterpret_cast<void *>(const_cast<char *>(contents.c_str())),
+				retval = UploadFile(file, tqslName(file), 0, reinterpret_cast<void *>(const_cast<char *>(contents.c_str())),
 							contents.size(), fileType);
 				if (retval != 0)
 					wxLogError(wxT("Your certificate request did not upload properly\nPlease try again."));
@@ -4883,7 +4881,7 @@ wxT("use a password.\n\n"), true, help, wxT("save.htm"));
 		}
 	} while (terr);
 	// When setting the password, always use UTF8.
-	if (tqsl_exportPKCS12File(data->getCert(), filename.ToUTF8(), dial.Password().ToUTF8()))
+	if (tqsl_exportPKCS12File(data->getCert(), tqslName(filename), dial.Password().ToUTF8()))
 		wxLogError(wxT("Export to %s failed: %hs"), filename.c_str(), tqsl_getErrorString());
 	else
 		wxLogMessage(wxT("Certificate saved in file %s"), filename.c_str());
@@ -5308,7 +5306,7 @@ lock_db(bool wait) {
 	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("/dblock");
 
 	if (lockfileFD < 0) {
-		lockfileFD = open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
+		lockfileFD = open(tqslName(lfname), O_RDWR| O_CREAT, 0644);
 		if (lockfileFD < 0)
 			return 1;
 	}
@@ -5343,7 +5341,7 @@ lock_db(bool wait) {
 	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("\\dblock");
 
 	if (lockfileFD < 0) {
-		lockfileFD = _open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
+		lockfileFD = _open(tqslName(lfname), O_RDWR| O_CREAT, 0644);
 		if (lockfileFD < 0)
 			return 1;
 		ZeroMemory(&ov, sizeof(ov));
