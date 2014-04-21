@@ -1002,7 +1002,7 @@ tqsl_converterRollBack(tQSL_Converter convp) {
 	if (!(conv = check_conv(convp)))
 		return 1;
 	if (!conv->seendb)
-		return 1;
+		return 0;
 	if (conv->txn)
 		conv->txn->abort(conv->txn);
 	conv->txn = NULL;
@@ -1016,7 +1016,7 @@ tqsl_converterCommit(tQSL_Converter convp) {
 	if (!(conv = check_conv(convp)))
 		return 1;
 	if (!conv->seendb)
-		return 1;
+		return 0;
 	if (conv->txn)
 		conv->txn->commit(conv->txn, 0);
 	conv->txn = NULL;
