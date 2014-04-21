@@ -1302,7 +1302,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 		file_menu->Check(tm_f_diag, false); //would be better to not check at all, but no, apparently that's a crazy thing to want
 		return;
 	}
-	diagFile = fopen(s_fname.ToUTF8(), "wb");
+	diagFile = fopen(tqslName(s_fname), "wb");
 	if (!diagFile) {
 		wxString errmsg = wxString::Format(wxT("Error opening diagnostic log %s: %hs"), s_fname.c_str(), strerror(errno));
 		wxMessageBox(errmsg, wxT("Log File Error"), wxOK|wxICON_EXCLAMATION);
