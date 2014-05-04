@@ -4197,7 +4197,9 @@ tqsl_dump_cert_status_data(XMLElement &xel) {
 	}
 	catch(exception& x) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
-		strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+			"Error writing certificate status file (%s): %s/%s",
+			fn.c_str(), x.what(), strerror(errno));
 		return 1;
 	}
 	return 0;
@@ -4282,6 +4284,5 @@ tqsl_setCertificateStatus(long serial, const char *status) {
 
 	sfile.addElement(cs);
 	sfile.setText("\n");
-	tqsl_dump_cert_status_data(sfile);
-	return 0;
+	return tqsl_dump_cert_status_data(sfile);
 }

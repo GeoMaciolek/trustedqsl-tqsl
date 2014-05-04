@@ -3,6 +3,14 @@ TQSL changes
 
 2.0.2
 ----------
+Correct defect that could cause errors when using files in directories
+containing non-ASCII characters on Windows.
+
+Correctly account for errors when signing a log so that the number of QSOs
+processed is displayed correctly. (For some cases where QSOs caused errors
+which the user chose to ignore, the number of QSOs processed could show up as
+a negative number.)
+
 Use OpenSSL 1.0.1g to correct the Heartbleed bug.
 
 Add a newline after "Signing using.." message when signing a log so

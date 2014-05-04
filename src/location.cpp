@@ -1936,7 +1936,9 @@ tqsl_dump_station_data(XMLElement &xel) {
 	}
 	catch(exception& x) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
-		strncpy(tQSL_CustomError, x.what(), sizeof tQSL_CustomError);
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, 
+				"Unable to save new station location file (%s): %s/%s",
+				fn.c_str(), x.what(), strerror(errno));
 		return 1;
 	}
 	return 0;
@@ -2423,8 +2425,7 @@ tqsl_saveStationLocationCapture(tQSL_Location locp, int overwrite) {
 
 	sfile.addElement(sd);
 	sfile.setText("\n");
-	tqsl_dump_station_data(sfile);
-	return 0;
+	return tqsl_dump_station_data(sfile);
 }
 
 
@@ -2876,7 +2877,7 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 				"Error writing new configuration file (%s): %s/%s",
-				fn.c_str(), strerror(errno), x.what());
+				fn.c_str(), x.what(), strerror(errno));
 			if (cb)
 				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR | TQSL_CERT_CB_CONFIG,
 					fn.c_str(), userdata);
