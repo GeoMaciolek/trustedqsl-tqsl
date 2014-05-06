@@ -1936,7 +1936,7 @@ tqsl_dump_station_data(XMLElement &xel) {
 	}
 	catch(exception& x) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
-		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, 
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 				"Unable to save new station location file (%s): %s/%s",
 				fn.c_str(), x.what(), strerror(errno));
 		return 1;

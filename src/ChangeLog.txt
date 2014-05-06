@@ -3,6 +3,10 @@ TQSLLIB changes
 
 2.4
 ---
+Use online certificate status checks to ensure that a superceded
+certificate is not seleceted even if the replacement certificate is
+not installed on the local system.
+
 Return errors when writing the station location data file to the user.
 Also return errors for the callsign certificate data file.
 

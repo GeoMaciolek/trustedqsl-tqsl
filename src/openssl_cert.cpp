@@ -770,12 +770,6 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		tqsl_getCertificateSerial(cert, &serial);
 		snprintf(buf, sizeof buf, "%ld", serial);
 		sup += buf;
-		set<string>::iterator it;
-		for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
-			if (*it == sup)
-				superceded = true;
-		}
-
 		if (superceded_certs.find(sup) != superceded_certs.end())
 			superceded = true;
 	}
@@ -2743,7 +2737,6 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 	const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flags) {
 	set<string> superceded_certs;
 
-	const char *cp;
 	char buf[256], name_buf[256];
 	TQSL_X509_NAME_ITEM item;
 	X509 *x;
@@ -2755,70 +2748,29 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 		return NULL;
 	if ((newsk = sk_X509_new_null()) == NULL)
 		return NULL;
-	if (!(flags & TQSL_SELECT_CERT_SUPERCEDED)) {
-		/* Make a list of superceded certs */
-		for (i = 0; i < sk_X509_num(sk); i++) {
-			x = sk_X509_value(sk, i);
-			len = sizeof buf-1;
-			if (!tqsl_get_cert_ext(x, "supercededCertificate", (unsigned char *)buf, &len, NULL)) {
-				buf[len] = 0;
-				string sup = buf;
-				superceded_certs.insert(sup);
-				/* Fix - the extension as inserted by ARRL
-				 * reads ".../Email=lotw@arrl.org", not
-				 * the expected ".../emailAddress=".
-				 * save both forms in case this gets
-				 * changed at the LoTW site
-				 */
-				size_t pos = sup.find("/Email");
-				if (pos != string::npos) {
-					sup.replace(pos, 6, "/emailAddress");
-					superceded_certs.insert(sup);
-				}
-			}
-		}
-	}
+
+	tqsl_cert* cp = tqsl_cert_new();
 	/* Loop through the list of certs */
 	for (i = 0; i < sk_X509_num(sk); i++) {
 		ok = 1;	/* Certificate is selected unless some check says otherwise */
 		x = sk_X509_value(sk, i);
+		cp->cert = x;
 		/* Check for expired unless asked not to */
 		if (ok && !(flags & TQSL_SELECT_CERT_EXPIRED)) {
-			time_t t = time(0);
-			struct tm *tm = gmtime(&t);
-			tQSL_Date d;
-			d.year = tm->tm_year + 1900;
-			d.month = tm->tm_mon + 1;
-			d.day = tm->tm_mday;
-			ASN1_TIME *ctm;
-			if ((ctm = X509_get_notAfter(x)) == NULL) {
-				ok = 0;
-			} else {
-				tQSL_Date cert_na;
-				tqsl_get_asn1_date(ctm, &cert_na);
-				if (tqsl_compareDates(&cert_na, &d) < 0)
+			int exp = false;
+			if (!tqsl_isCertificateExpired(TQSL_OBJ_TO_API(cp), &exp)) {
+				if (exp) {
 					ok = 0;
+				}
 			}
 		}
 		/* Check for superceded unless asked not to */
 		if (ok && !(flags & TQSL_SELECT_CERT_SUPERCEDED)) {
-			// "supercededCertificate" extension is <issuer>;<serial>
-			cp = X509_NAME_oneline(X509_get_issuer_name(x), buf, sizeof(buf));
-			if (cp == NULL) {
-				ok = 0;
-			} else {
-				string sup = buf;
-				sup += ";";
-				snprintf(buf, sizeof buf, "%ld", ASN1_INTEGER_get(X509_get_serialNumber(x)));
-				sup += buf;
-				set<string>::iterator it;
-				for (it = superceded_certs.begin(); it != superceded_certs.end(); it++) {
-					if (*it == sup)
-						ok = 0;
-				}
-
-				if (superceded_certs.find(sup) != superceded_certs.end())
+			int sup = false;
+			if (!tqsl_isCertificateSuperceded(TQSL_OBJ_TO_API(cp), &sup)) {
+				if (sup) {
 					ok = 0;
+				}
 			}
 		}
 		/* Compare issuer if asked to */
@@ -2888,6 +2840,7 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 		if (ok)
 			sk_X509_push(newsk, X509_dup(x));
 	}
+	tqsl_free(cp);
 	return newsk;
 }
 
@@ -4034,8 +3987,8 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 		tQSL_Error = savedError;
 		tQSL_Errno = savedErrno;
 		if (savedFile) {
-			strcpy(tQSL_ErrorFile, savedFile);
-			free (savedFile);
+			strncpy(tQSL_ErrorFile, savedFile, sizeof tQSL_ErrorFile);
+			free(savedFile);
 		}
 	}
 	return rval;
