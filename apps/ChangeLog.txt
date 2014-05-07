@@ -3,6 +3,9 @@ TQSL changes
 
 2.0.2
 ----------
+Allow restore from a .tbk file to restore multiple pending callsign
+certificates for a given callsign.
+
 Change message on upload dialog box when a certificate request is being
 uploaded to indicate that it's a callsign certificate request, not a
 log file being uploaded.

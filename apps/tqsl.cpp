@@ -3694,13 +3694,17 @@ restore_user_cert(TQSLConfig* loader) {
 		check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
 		if (!keyonly) {
 			check_tqsl_error(tqsl_getCertificateSerial(certlist[i], &serial));
+			if (serial == loader->serial && dxcc == loader->dxcc) {
+				return;			// This certificate is already installed.
+			}
 		} else {
-			// There can be only one pending request for
-			// a given callsign/entity
-			serial = loader->serial;
+			// See if the keyonly cert is the one we're trying to load
+			char buf[8192];
+			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
+			if (!strcmp(buf, loader->privateKey.ToUTF8())) {
+				return;			// Already installed
+			}
 		}
-		if (serial == loader->serial && dxcc == loader->dxcc)
-			return;			// This certificate is already installed.
 	}
 
 	// There is no certificate matching this callsign/entity/serial.
@@ -5131,26 +5135,21 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 					tqsl_convertDateToText(&date, buf, sizeof buf);
 				break;
                         case 10:
-//				tqsl_getCertificateKeyOnly(cert, &keyonly);
-//				if (keyonly)
-//					strncpy(buf, "N/A", sizeof buf);
-//				else {
-					switch (tqsl_getCertificatePrivateKeyType(cert)) {
-                                                case TQSL_PK_TYPE_ERR:
-							wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), wxT("Error"));
-							strncpy(buf, "<ERROR>", sizeof buf);
-							break;
-                                                case TQSL_PK_TYPE_NONE:
-							strncpy(buf, "None", sizeof buf);
-							break;
-                                                case TQSL_PK_TYPE_UNENC:
-							strncpy(buf, "Unencrypted", sizeof buf);
-							break;
-                                                case TQSL_PK_TYPE_ENC:
-							strncpy(buf, "Password protected", sizeof buf);
-							break;
-					}
-//				}
+				switch (tqsl_getCertificatePrivateKeyType(cert)) {
+                                        case TQSL_PK_TYPE_ERR:
+						wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), wxT("Error"));
+						strncpy(buf, "<ERROR>", sizeof buf);
+						break;
+                                        case TQSL_PK_TYPE_NONE:
+						strncpy(buf, "None", sizeof buf);
+						break;
+                                        case TQSL_PK_TYPE_UNENC:
+						strncpy(buf, "Unencrypted", sizeof buf);
+						break;
+                                        case TQSL_PK_TYPE_ENC:
+						strncpy(buf, "Password protected", sizeof buf);
+						break;
+				}
 				break;
 		}
 		line_sizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(buf)));
