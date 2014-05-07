@@ -2306,14 +2306,14 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 		wxRegEx uplStatusRE(uplStatus);
 		wxRegEx uplMessageRE(uplMessage);
-		wxRegEx stripSpacesRE("\\n +");
+		wxRegEx stripSpacesRE(wxT("\\n +"));
 
 		if (uplStatusRE.Matches(uplresult)) { //we can make sense of the error
 			//sometimes has leading/trailing spaces
 			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Trim(true).Trim(false) == uplStatusSuccess) { //success
 				if (uplMessageRE.Matches(uplresult)) { //and a message
 					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
-					stripSpaces.Replace(lotwmessage, "\\n", 0);
+					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n")), 0);
 					if (fileType == wxT("Log")) {
 						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."),
 							infile.c_str(), lotwmessage.c_str());
@@ -4190,6 +4190,17 @@ QSLApp::OnInit() {
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		} else {
 			wxLogMessage(nd.Message());
+			if (tQSL_ImportCall[0] != '\0') {
+				get_certlist(tQSL_ImportCall, 0, false, true);	// Get any superceded ones for this call
+				for (int i = 0; i < ncerts; i++) {
+					int sup;
+					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {
+						if (sup) {
+							tqsl_deleteCertificate(certlist[i]);	// and delete them.
+						}
+					}
+				}
+			}
 			frame->cert_tree->Build(CERTLIST_FLAGS);
 			wxString call = wxString::FromUTF8(tQSL_ImportCall);
 			wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
@@ -4552,7 +4563,12 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
 		get_certlist(tQSL_ImportCall, 0, false, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
-			tqsl_deleteCertificate(certlist[i]);	// and delete them.
+			int sup;
+			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {
+				if (sup) {
+					tqsl_deleteCertificate(certlist[i]);	// and delete them.
+				}
+			}
 		}
 	}
 	cert_tree->Build(CERTLIST_FLAGS);
