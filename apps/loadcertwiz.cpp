@@ -228,6 +228,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 #endif
 	wild += wxT("|All files (*.*)|*.*");
 
+	tQSL_ImportCall[0] = '\0';
 	wxString path = config->Read(wxT("CertFilePath"), wxT(""));
 	wxString filename = wxFileSelector(wxT("Select Certificate File"), path,
 		wxT(""), ext, wild, wxOPEN|wxFILE_MUST_EXIST);

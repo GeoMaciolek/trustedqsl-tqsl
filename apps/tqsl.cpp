@@ -273,7 +273,7 @@ DEFINE_EVENT_TYPE(wxEVT_LOGUPLOAD_DONE)
 
 class UploadDialog : public wxDialog {
  public:
-	explicit UploadDialog(wxWindow *parent);
+	explicit UploadDialog(wxWindow *parent, wxString title = wxString(wxT("Uploading Signed Data")), wxString label = wxString(wxT("Uploading signed log data...")));
 	void OnCancel(wxCommandEvent&);
 	void OnDone(wxCommandEvent&);
 	int doUpdateProgress(double dltotal, double dlnow, double ultotal, double ulnow);
@@ -298,11 +298,10 @@ UploadDialog::OnCancel(wxCommandEvent&) {
 	canbut->Enable(false);
 }
 
-UploadDialog::UploadDialog(wxWindow *parent)
-	: wxDialog(parent, -1, wxString(wxT("Uploading Signed Data"))), cancelled(false) {
+UploadDialog::UploadDialog(wxWindow *parent, wxString title, wxString label)
+	: wxDialog(parent, -1, title), cancelled(false) {
 	tqslTrace("UploadDialog::UploadDialog", "parent = %lx", parent);
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxString label = wxString(wxT("Uploading signed log data..."));
 	sizer->Add(new wxStaticText(this, -1, label), 0, wxALL|wxALIGN_CENTER, 10);
 
 	progress = new wxGauge(this, -1, 100);
@@ -326,7 +325,7 @@ void UploadDialog::OnDone(wxCommandEvent&) {
 int UploadDialog::doUpdateProgress(double dltotal, double dlnow, double ultotal, double ulnow) {
 	static double lastDlnow = 0.0;
 	if (dlnow != lastDlnow) {
-		tqslTrace("UploadDialog::doUpdaeProgresss", "dltotal=%f, dlnow=%f, ultotal=%f, ulnow=%f", dltotal, dlnow, ultotal, ulnow);
+		tqslTrace("UploadDialog::doUpdateProgresss", "dltotal=%f, dlnow=%f, ultotal=%f, ulnow=%f", dltotal, dlnow, ultotal, ulnow);
 		lastDlnow = dlnow;
 	}
 	if (cancelled) return 1;
@@ -2273,7 +2272,11 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 		wxLogMessage(wxT("Attempting to upload %s"), fileType.c_str());
 
 	if(this) {
-		upload = new UploadDialog(this);
+		if (fileType == wxT("Log")) {
+			upload = new UploadDialog(this);
+		} else {
+			upload = new UploadDialog(this, wxString(wxT("Uploading Callsign Certificate")), wxString(wxT("Uploading Callsign Certificate Request...")));
+		}
 
 		curl_easy_setopt(curlReq, CURLOPT_PROGRESSFUNCTION, &UploadDialog::UpdateProgress);
 		curl_easy_setopt(curlReq, CURLOPT_PROGRESSDATA, upload);
@@ -2303,12 +2306,14 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 		wxRegEx uplStatusRE(uplStatus);
 		wxRegEx uplMessageRE(uplMessage);
+		wxRegEx stripSpacesRE("\\n +");
 
 		if (uplStatusRE.Matches(uplresult)) { //we can make sense of the error
 			//sometimes has leading/trailing spaces
-			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Strip(wxString::both) == uplStatusSuccess) { //success
+			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Trim(true).Trim(false) == uplStatusSuccess) { //success
 				if (uplMessageRE.Matches(uplresult)) { //and a message
-					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim();
+					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
+					stripSpaces.Replace(lotwmessage, "\\n", 0);
 					if (fileType == wxT("Log")) {
 						wxLogMessage(wxT("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."),
 							infile.c_str(), lotwmessage.c_str());
@@ -2767,7 +2772,7 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 		wxRegEx checkStatusRE(certCheckRE);
 
                 if (checkStatusRE.Matches(checkresult)) { // valid response
-			result = checkStatusRE.GetMatch(checkresult, 1).Strip(wxString::both);
+			result = checkStatusRE.GetMatch(checkresult, 1).Trim(true).Trim(false);
 			ret = true;
 		}
 	} else {
@@ -4544,6 +4549,12 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnLoadCertificateFile");
 	LoadCertWiz lcw(this, help, wxT("Load Certificate File"));
 	lcw.RunWizard();
+	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
+		get_certlist(tQSL_ImportCall, 0, false, true);	// Get any superceded ones for this call
+		for (int i = 0; i < ncerts; i++) {
+			tqsl_deleteCertificate(certlist[i]);	// and delete them.
+		}
+	}
 	cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
 }

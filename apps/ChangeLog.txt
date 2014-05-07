@@ -3,6 +3,13 @@ TQSL changes
 
 2.0.2
 ----------
+Change message on upload dialog box when a certificate request is being
+uploaded to indicate that it's a callsign certificate request, not a
+log file being uploaded.
+
+When a renewed callsign certificate is installed, delete any older versions
+for that callsign.
+
 Correct defect that could cause errors when using files in directories
 containing non-ASCII characters on Windows.
 
