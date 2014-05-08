@@ -65,7 +65,7 @@
 			<param name="Local" value="addcertaccept.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Moving Callsign Certificates and Station Locations from One Computer to Another">
+			<param name="Name" value="Copying Callsign Certificates and Station Locations from One Computer to Another">
 			<param name="Local" value="moving.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
