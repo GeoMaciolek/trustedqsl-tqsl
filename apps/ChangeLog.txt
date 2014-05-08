@@ -3,6 +3,9 @@ TQSL changes
 
 2.0.2
 ----------
+Ensure that station locations added from the "sign a log" selection
+dialog are added to the list of station locations.
+
 Allow restore from a .tbk file to restore multiple pending callsign
 certificates for a given callsign.
 

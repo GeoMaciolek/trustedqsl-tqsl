@@ -2438,6 +2438,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
 				selname = run_station_wizard(this, loc, help, false);
 				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+				frame->loc_tree->Build();
 				break;
 			case wxID_MORE:		// User hit Edit
 		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
@@ -3519,6 +3520,7 @@ void
 MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", S(filename), quiet);
 	int i;
+	wxBusyCursor wait;
 	if (lock_db(false) < 0) {
 		if (quiet)			// If there's an active signing thread,
 			return;			// then exit without taking a backup.
@@ -3546,6 +3548,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		} else {
 			tqslTrace("MyFrame::BackupConfig", "Saving callsign certificates");
 		}
+		wxSafeYield(frame);
 		int ncerts;
 		char buf[8192];
 		// Save root certificates
@@ -3601,6 +3604,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		} else {
 			tqslTrace("MyFrame::BackupConfig", "Saving Station Locations");
 		}
+		wxSafeYield(frame);
 		tQSL_StationDataEnc sdbuf = NULL;
 		check_tqsl_error(tqsl_getStationDataEnc(&sdbuf));
 		TQSLConfig* parser = new TQSLConfig();
@@ -3614,6 +3618,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		} else {
 			tqslTrace("MyFrame::BackupConfig", "Saving TQSL Preferences - out=0x%lx", reinterpret_cast<void *>(out));
 		}
+		wxSafeYield(frame);
 		gzprintf(out, "<TQSLSettings>\n");
 		conf->SaveSettings(&out, wxT("tqslapp"));
 		tqslTrace("MyFrame::BackupConfig", "Done with settings. out=0x%lx", reinterpret_cast<void *>(out));
@@ -3625,19 +3630,24 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			tqslTrace("MyFrame::BackupConfig", "Saving QSOs");
 		}
 
+		wxSafeYield(frame);
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
 		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
 		gzprintf(out, "<DupeDb>\n");
 
+		char dupekey[256];
+		char dupedata[10];
+		int count = 0;
 		while (true) {
-			char dupekey[256];
-			char dupedata[10];
 			int status = tqsl_getDuplicateRecords(conv, dupekey, dupedata, sizeof(dupekey));
 			if (status == -1)		// End of file
 				break;
 			check_tqsl_error(status);
 			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
+			if ((count++ % 100000) == 0) {
+				wxSafeYield(frame);
+			}
 		}
 		gzprintf(out, "</DupeDb>\n");
 		tqsl_converterCommit(conv);
@@ -3709,6 +3719,7 @@ restore_user_cert(TQSLConfig* loader) {
 
 	// There is no certificate matching this callsign/entity/serial.
 	wxLogMessage(wxT("\tRestoring callsign certificate for %hs"), loader->callSign.c_str());
+	wxSafeYield(frame);
 	check_tqsl_error(tqsl_importKeyPairEncoded(loader->callSign.c_str(), "user", loader->privateKey.ToUTF8(), loader->signedCert.ToUTF8()));
 }
 
@@ -3750,6 +3761,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		loader->signedCert = wxT("");
 	} else if (strcmp(name, "TQSLSettings") == 0) {
 		wxLogMessage(wxT("Restoring Preferences"));
+		wxSafeYield(frame);
 		loader->config = new wxConfig(wxT("tqslapp"));
 	} else if (strcmp(name, "Setting") == 0) {
 		wxString sname;
@@ -3801,6 +3813,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		}
 	} else if (strcmp(name, "Locations") == 0) {
 		wxLogMessage(wxT("Restoring Station Locations"));
+		wxSafeYield(frame);
 		loader->locstring = wxT("<StationDataFile>\n");
 	} else if (strcmp(name, "Location") == 0) {
 		for (i = 0; atts[i]; i+=2) {
@@ -3819,6 +3832,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		}
 	} else if (strcmp(name, "DupeDb") == 0) {
 		wxLogMessage(wxT("Restoring QSO records"));
+		wxSafeYield(frame);
 		check_tqsl_error(tqsl_beginConverter(&loader->conv));
 	} else if (strcmp(name, "Dupe") == 0) {
 		for (i = 0; atts[i]; i+=2) {
@@ -3826,7 +3840,8 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				int status = tqsl_putDuplicateRecord(loader->conv,  atts[i+1], "D", strlen(atts[i+1]));
 				if (status >= 0) check_tqsl_error(status);
 			}
-			loader->dupes++;
+			if ((loader->dupes++ % 100000) == 0)
+				wxSafeYield(frame);
 		}
 	}
 }
@@ -3910,7 +3925,9 @@ TQSLConfig::RestoreConfig(const gzFile& in) {
 	XML_SetCharacterDataHandler(xp, &TQSLConfig::xml_text);
 
 	char buf[4096];
+	wxBusyCursor wait;
 	wxLogMessage(wxT("Restoring Callsign Certificates"));
+	wxSafeYield(frame);
 	int rcount = 0;
 	do {
 		rcount = gzread(in, buf, sizeof(buf));
