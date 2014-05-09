@@ -11,6 +11,7 @@ if(WIN32)
 endif()
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmakemodules/")
+find_package(OptionalAddSubdirectory REQUIRED)
 
 option(USE_STATIC_MSVCRT "Use a static Visual C++ Runtime when building with MSVC")
 
@@ -26,4 +27,4 @@ endif()
 
 add_subdirectory(src) #tqsllib
 add_subdirectory(apps)
-#add_subdirectory(tests)
+macro_optional_add_subdirectory(tests)
