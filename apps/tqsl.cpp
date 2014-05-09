@@ -852,6 +852,7 @@ void
 MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	//check for updates
 	if (!noGUI) {
+		wxBeginBusyCursor();
 		wxSafeYield();
 		wxLogMessage(wxT("Checking for TQSL updates..."));
 		wxSafeYield();
@@ -861,8 +862,10 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	wxSafeYield();
 	thread->Run();
 	wxSafeYield();
-	while (updateMutex.TryLock() == wxMUTEX_BUSY)
+	while (updateMutex.TryLock() == wxMUTEX_BUSY) {
+		wxSleep(2);
 		wxSafeYield();
+	}
 	updateMutex.Unlock();
 	if (!noGUI) {
 		wxString val = logwin->GetValue();
@@ -871,8 +874,8 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
+		wxEndBusyCursor();
 	}
-	wxEndBusyCursor();
 }
 
 MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet)
@@ -2467,7 +2470,6 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 
 void MyFrame::CheckForUpdates(wxCommandEvent&) {
 	tqslTrace("MyFrame::CheckForUpdates");
-	wxBeginBusyCursor();
 	DoUpdateCheck(false, false);
 }
 
@@ -4532,7 +4534,6 @@ void MyFrame::FirstTime(void) {
 	init_modes();
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	if (config->Read(wxT("AutoUpdateCheck"), true)) {
-		wxBeginBusyCursor();
 		DoUpdateCheck(true, false);
 	}
 	return;
