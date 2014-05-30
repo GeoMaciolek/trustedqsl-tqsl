@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.4
 ---
+If duplicates database recovery efforts fail, delete it and 
+recreate it.
+
 Use online certificate status checks to ensure that a superceded
 certificate is not seleceted even if the replacement certificate is
 not installed on the local system.

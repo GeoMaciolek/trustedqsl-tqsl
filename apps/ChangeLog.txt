@@ -3,6 +3,11 @@ TQSL changes
 
 2.0.2
 ----------
+Don't display the main TQSL window when requesting the user enter
+the password for their callsign certificate when in batch mode.
+
+Add timestamps to diagnostic log entries.
+
 Ensure that station locations added from the "sign a log" selection
 dialog are added to the list of station locations.
 
