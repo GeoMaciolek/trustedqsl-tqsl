@@ -208,18 +208,14 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 		call, dx.name());
 
 	wxWindow* top = wxGetApp().GetTopWindow();
-	if (frame->IsQuiet()) {
+	if (!frame->IsQuiet()) {
 		frame->Show(true);
+		top->SetFocus();
+		top->Raise();
 	}
-	top->SetFocus();
-	top->Raise();
 
 	wxString pwd;
 	int ret = getPasswordFromUser(pwd, message, wxT("Enter password"), wxT(""), top);
-	if (frame->IsQuiet()) {
-		frame->Show(false);
-		wxSafeYield(frame);
-	}
 	if (ret != wxID_OK)
 		return 1;
 	strncpy(buf, pwd.ToUTF8(), bufsiz);
@@ -859,12 +855,15 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	}
 	UpdateThread* thread = new UpdateThread(this, silent, noGUI);
 	thread->Create();
-	wxSafeYield();
+	if (!noGUI)
+		wxSafeYield();
 	thread->Run();
-	wxSafeYield();
+	if (!noGUI)
+		wxSafeYield();
 	while (updateMutex.TryLock() == wxMUTEX_BUSY) {
 		wxSleep(2);
-		wxSafeYield();
+		if (!noGUI)
+			wxSafeYield();
 	}
 	updateMutex.Unlock();
 	if (!noGUI) {
@@ -5323,7 +5322,11 @@ void tqslTrace(const char *name, const char *format, ...) {
 	va_list ap;
 	if (!diagFile) return;
 
-	fprintf(diagFile, "%s: ", name);
+	time_t t = time(0);
+	char timebuf[50];
+	strncpy(timebuf, ctime(&t), sizeof timebuf);
+	timebuf[strlen(timebuf) - 1] = '\0';		// Strip the newline
+	fprintf(diagFile, "%s %s: ", timebuf, name);
 	if (!format) {
 		fprintf(diagFile, "\r\n");
 		fflush(diagFile);
