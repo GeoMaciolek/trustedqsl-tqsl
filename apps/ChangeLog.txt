@@ -3,6 +3,15 @@ TQSL changes
 
 2.0.2
 ----------
+When run in command line "-n" mode (display new program and/or configuration
+files), TQSL could exit before the hheck was completed. Change the behavior
+so the program waits for the check to complete.
+
+Signing a log with a location that points to an incomplete certificate
+request would cause an "Invalid argument" error rather than the expected
+error message notify the user that they have no valid callsign certificates
+for that callsign. TQSL now properly displays the error.
+
 Don't display the main TQSL window when requesting the user enter
 the password for their callsign certificate when in batch mode.
 

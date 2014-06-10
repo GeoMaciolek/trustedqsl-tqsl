@@ -659,12 +659,13 @@ free_certlist() {
 }
 
 static void
-get_certlist(string callsign, int dxcc, bool expired, bool superceded) {
-	tqslTrace("get_certlist", "callsign=%s, dxcc=%d, expired=%d, superceded=%d", callsign.c_str(), dxcc, expired, superceded);
+get_certlist(string callsign, int dxcc, bool expired, bool superceded, bool withkeys) {
+	tqslTrace("get_certlist", "callsign=%s, dxcc=%d, expired=%d, superceded=%d withkeys=%d", callsign.c_str(), dxcc, expired, superceded, withkeys);
 	free_certlist();
-	int select = TQSL_SELECT_CERT_WITHKEYS;
+	int select = 0;
 	if (expired) select |= TQSL_SELECT_CERT_EXPIRED;
 	if (superceded) select |= TQSL_SELECT_CERT_SUPERCEDED;
+	if (withkeys) select |= TQSL_SELECT_CERT_WITHKEYS;
 	tqsl_selectCertificates(&certlist, &ncerts,
 		(callsign == "") ? 0 : callsign.c_str(), dxcc, 0, 0, select);
 }
@@ -828,12 +829,12 @@ static wxMutex updateMutex;
 class UpdateThread : public wxThread {
  public:
 	UpdateThread(MyFrame *frame, bool silent, bool noGUI) : wxThread(wxTHREAD_DETACHED) {
+		updateMutex.Lock();
 		_frame = frame;
 		_silent = silent;
 		_noGUI = noGUI;
 	}
 	virtual void *Entry() {
-		updateMutex.Lock();
 		_frame->DoCheckForUpdates(_silent, _noGUI);
 		updateMutex.Unlock();
 		return NULL;
@@ -855,15 +856,12 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	}
 	UpdateThread* thread = new UpdateThread(this, silent, noGUI);
 	thread->Create();
-	if (!noGUI)
-		wxSafeYield();
+	wxSafeYield();
 	thread->Run();
-	if (!noGUI)
-		wxSafeYield();
+	wxSafeYield();
 	while (updateMutex.TryLock() == wxMUTEX_BUSY) {
 		wxSleep(2);
-		if (!noGUI)
-			wxSafeYield();
+		wxSafeYield();
 	}
 	updateMutex.Unlock();
 	if (!noGUI) {
@@ -1222,7 +1220,7 @@ run_station_wizard(wxWindow *parent, tQSL_Location loc, wxHtmlHelpController *he
 	bool expired = false, wxString title = wxT("Add Station Location"), wxString dataname = wxT(""), wxString callsign = wxT("")) {
 	tqslTrace("run_station_wizard", "loc=%lx, expired=%d, title=%s, dataname=%s, callsign=%s", loc, expired, S(title), S(dataname), S(callsign));
 	wxString rval(wxT(""));
-	get_certlist("", 0, expired, false);
+	get_certlist("", 0, expired, false, false);
 	if (ncerts == 0)
 		throw TQSLException("No certificates available");
 	TQSLWizard *wiz = new TQSLWizard(loc, parent, help, title, expired);
@@ -1597,7 +1595,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
-	get_certlist(callsign, dxcc, false, false);
+	get_certlist(callsign, dxcc, false, false, false);
 	if (ncerts == 0) {
 		wxString msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs in entity %hs.\nSigning aborted.\n"), callsign, dx.name());
 		throw TQSLException(msg.ToUTF8());
@@ -2841,7 +2839,7 @@ void
 MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	expInfo *ei = new expInfo;
 
-	get_certlist("", 0, false, false);
+	get_certlist("", 0, false, false, false);
 	if (ncerts == 0) return;
 
 	long expireDays = DEFAULT_CERT_WARNING;
@@ -3052,7 +3050,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, &handler);
 
 	if(silent) { // if there's a problem, we don't want the program to hang while we're starting it
-		curl_easy_setopt(curlReq, CURLOPT_CONNECTTIMEOUT, 10);
+		curl_easy_setopt(curlReq, CURLOPT_CONNECTTIMEOUT, 120);
 	}
 
 	curl_easy_setopt(curlReq, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
@@ -3060,7 +3058,9 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	char errorbuf[CURL_ERROR_SIZE];
 	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
 
+	tqslTrace("MyFrame::DoCheckForUpdates", "calling curl_easy_perform");
 	int retval = curl_easy_perform(curlReq);
+	tqslTrace("MyFrame::DoCheckForUpdates", "Program rev check returns %d", retval);
 	if (retval == CURLE_OK) {
 		tqslTrace("MyFrame::DoCheckForUpdates", "Program rev returns %d chars, %s", handler.s.size(), handler.s.c_str());
 		// Add the config.xml text to the result
@@ -3204,7 +3204,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	wxString infile;
 
 	// Does the user have any certificates?
-	get_certlist("", 0, false, false);
+	get_certlist("", 0, false, false, true);
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
@@ -3316,7 +3316,7 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	tqslTrace("MyFrame::UploadQSODataFile");
 	wxString infile;
 	// Does the user have any certificates?
-	get_certlist("", 0, false, false);
+	get_certlist("", 0, false, false, true);
 	if (ncerts == 0) {
 		wxMessageBox(wxT("You have no callsign certificates to use to sign a log file.\n")
 			   wxT("Please install a callsign certificate then try again."), wxT("No Callsign Certificates"),
@@ -3696,7 +3696,7 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 
 void
 restore_user_cert(TQSLConfig* loader) {
-	get_certlist(loader->callSign.c_str(), loader->dxcc, true, true);
+	get_certlist(loader->callSign.c_str(), loader->dxcc, true, true, true);
 	for (int i = 0; i < ncerts; i++) {
 		long serial;
 		int dxcc;
@@ -4213,7 +4213,7 @@ QSLApp::OnInit() {
 		} else {
 			wxLogMessage(nd.Message());
 			if (tQSL_ImportCall[0] != '\0') {
-				get_certlist(tQSL_ImportCall, 0, false, true);	// Get any superceded ones for this call
+				get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
 					int sup;
 					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {
@@ -4582,7 +4582,7 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	LoadCertWiz lcw(this, help, wxT("Load Certificate File"));
 	lcw.RunWizard();
 	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
-		get_certlist(tQSL_ImportCall, 0, false, true);	// Get any superceded ones for this call
+		get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
 			int sup;
 			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {

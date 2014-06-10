@@ -7,7 +7,7 @@ If duplicates database recovery efforts fail, delete it and
 recreate it.
 
 Use online certificate status checks to ensure that a superceded
-certificate is not seleceted even if the replacement certificate is
+certificate is not selected even if the replacement certificate is
 not installed on the local system.
 
 Return errors when writing the station location data file to the user.
