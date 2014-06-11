@@ -1582,7 +1582,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
-	int dxcc;
+	int dxcc = 0;
 	wxString name, ext;
 	bool allow_dupes = false;
 	bool restarting = false;
@@ -1591,13 +1591,17 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
 	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
-	check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxcc));
+	tqsl_getLocationDXCCEntity(loc, &dxcc);
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
 	get_certlist(callsign, dxcc, false, false, false);
 	if (ncerts == 0) {
-		wxString msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs in entity %hs.\nSigning aborted.\n"), callsign, dx.name());
+		wxString msg;
+		if (dxcc != 0)
+			msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs in entity %hs.\nSigning aborted.\n"), callsign, dx.name());
+		else
+			msg = wxString::Format(wxT("There are no valid callsign certificates for callsign %hs.\nSigning aborted.\n"), callsign);
 		throw TQSLException(msg.ToUTF8());
 		return TQSL_EXIT_TQSL_ERROR;
 	}

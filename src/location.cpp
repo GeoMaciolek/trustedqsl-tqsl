@@ -1144,7 +1144,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 				}
 				// Fill the call sign list
 				map<string, vector<string> >::iterator call_p;
-				field.idx = 0;
+				field.idx = -1;
 				for (call_p = p.hash.begin(); call_p != p.hash.end(); call_p++) {
 					TQSL_LOCATION_ITEM item;
 					item.text = call_p->first;
@@ -1152,10 +1152,9 @@ update_page(int page, TQSL_LOCATION *loc) {
 						field.idx = static_cast<int>(field.items.size());
 					field.items.push_back(item);
 				}
-				if (field.items.size() > 0)
+				if (field.idx >= 0) {
 					field.cdata = field.items[field.idx].text;
-				else
-					field.cdata = "";
+				}
 			}
 		} else if (field.gabbi_name == "DXCC") {
 			// Note: Expects CALL to be field 0 of this page.
@@ -1980,6 +1979,8 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 									bad_cqz = strtol(field.cdata.c_str(), NULL, 10);
 								else if (field.gabbi_name == "ITUZ")
 									bad_ituz = strtol(field.cdata.c_str(), NULL, 10);
+								else if (field.gabbi_name == "CALL" || field.gabbi_name == "DXCC")
+									field.idx = -1;
 							}
 							break;
                                                 case TQSL_LOCATION_FIELD_TEXT:
@@ -2277,7 +2278,11 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 								strncpy(namebuf, numbuf, bufsize);
 							}
 						} else if (field.idx < 0 || field.idx >= static_cast<int>(field.items.size())) {
-							strncpy(namebuf, "", bufsize);
+							// Allow CALL to not be in the items list
+							if (field.idx == -1 && i == 0)
+								strncpy(namebuf, field.cdata.c_str(), bufsize);
+							else
+								strncpy(namebuf, "", bufsize);
 						} else {
 							strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
 						}
