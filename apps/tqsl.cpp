@@ -2842,6 +2842,7 @@ report_error(expInfo **eip) {
 void
 MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	expInfo *ei = new expInfo;
+	ei->noGUI = noGUI;
 
 	get_certlist("", 0, false, false, false);
 	if (ncerts == 0) return;
@@ -2910,6 +2911,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 				ei->mutex->Unlock();
 				delete ei;
 				ei = new expInfo;
+				ei->noGUI = noGUI;
 			}
 		}
 	}
