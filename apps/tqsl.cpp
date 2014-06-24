@@ -824,19 +824,18 @@ MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
 	Destroy();
 }
 
-static wxMutex updateMutex;
+static wxSemaphore *updateLocker;
 
 class UpdateThread : public wxThread {
  public:
 	UpdateThread(MyFrame *frame, bool silent, bool noGUI) : wxThread(wxTHREAD_DETACHED) {
-		updateMutex.Lock();
 		_frame = frame;
 		_silent = silent;
 		_noGUI = noGUI;
 	}
 	virtual void *Entry() {
 		_frame->DoCheckForUpdates(_silent, _noGUI);
-		updateMutex.Unlock();
+		updateLocker->Post();
 		return NULL;
 	}
  private:
@@ -847,6 +846,7 @@ class UpdateThread : public wxThread {
 
 void
 MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
+	tqslTrace("MyFrame::DoUpdateCheck", "silent=%d noGUI=%d", silent, noGUI);
 	//check for updates
 	if (!noGUI) {
 		wxBeginBusyCursor();
@@ -854,16 +854,16 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 		wxLogMessage(wxT("Checking for TQSL updates..."));
 		wxSafeYield();
 	}
+	updateLocker = new wxSemaphore(0, 1);		// One waiter
 	UpdateThread* thread = new UpdateThread(this, silent, noGUI);
 	thread->Create();
 	wxSafeYield();
 	thread->Run();
 	wxSafeYield();
-	while (updateMutex.TryLock() == wxMUTEX_BUSY) {
-		wxSleep(2);
+	while (updateLocker->WaitTimeout(200) == wxSEMA_TIMEOUT) {
 		wxSafeYield();
 	}
-	updateMutex.Unlock();
+	delete updateLocker;
 	if (!noGUI) {
 		wxString val = logwin->GetValue();
 		val.Replace(wxT("Checking for TQSL updates...\n"), wxT(""));
@@ -3175,6 +3175,10 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	ri->condition->Wait();
 	ri->mutex->Unlock();
 	delete ri;
+	if (curlReq) curl_easy_cleanup(curlReq);
+	if (curlLogFile) fclose(curlLogFile);
+	curlReq = NULL;
+	curlLogFile = NULL;
 
 	// we checked today, and whatever the result, no need to (automatically) check again until the next interval
 
