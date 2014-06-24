@@ -2253,6 +2253,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 	curl_easy_setopt(curlReq, CURLOPT_SSL_VERIFYPEER, uplVerifyCA);
 
 	char errorbuf[CURL_ERROR_SIZE];
+	errorbuf[0] = '\0';
 	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
 
 	struct curl_httppost* post = NULL, *lastitem = NULL;
@@ -2766,6 +2767,7 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 	curl_easy_setopt(curlReq, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
 
 	char errorbuf[CURL_ERROR_SIZE];
+	errorbuf[0] = '\0';
 	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
 	int retval = curl_easy_perform(curlReq);
 	result = wxString(wxT("Unknown"));
@@ -2844,6 +2846,8 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	expInfo *ei = new expInfo;
 	ei->noGUI = noGUI;
 
+	curl_easy_cleanup(curlReq);
+	curlReq = tqsl_curl_init("Certificate Check Log", "https://lotw.arrl.org", &curlLogFile, false);
 	get_certlist("", 0, false, false, false);
 	if (ncerts == 0) return;
 
