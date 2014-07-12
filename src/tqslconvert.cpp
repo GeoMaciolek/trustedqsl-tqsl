@@ -456,7 +456,11 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				fprintf(conv->errfile, "opening DB %s returns status %d\n", conv->dbpath, dbret);
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
-				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+				conv->dbenv->close(conv->dbenv, 0);
+				// Create a new environment to remove the dross
+				if (!(dbret = db_env_create(&conv->dbenv, 0))) {
+					dbret = conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+				}
 				triedRemove = true;
 				if (conv->errfile)
 					fprintf(conv->errfile, "About to retry after removing the environment\n");
@@ -464,7 +468,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			}
 			if (conv->errfile) {
 				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
-			} 
+			}
 			if (errno == EINVAL) {  // Something really wrong with the DB
 						// Remove it and try again.
 				remove_db(fixedpath.c_str());
