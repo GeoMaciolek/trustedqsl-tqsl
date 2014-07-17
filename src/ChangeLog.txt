@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.4
 ---
+Fix defect that doesn't allow adding station locations if only a single
+callsign certificate is installed.
+
 If duplicates database recovery efforts fail, delete it and 
 recreate it.
 

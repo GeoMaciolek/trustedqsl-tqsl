@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Name="Trusted QSL v2.0.2" Id="*" UpgradeCode="BA40FA93-F9D6-44E2-BB81-82B0A676E731" Version="2.0.2" Manufacturer="The TrustedQSL Developers" Language="1033">
-    <Package Id="*" Description="Installer for TrustedQSL 2.0.2" Compressed="yes"/>
+  <Product Name="Trusted QSL v2.0.3" Id="*" UpgradeCode="BA40FA93-F9D6-44E2-BB81-82B0A676E731" Version="2.0.3" Manufacturer="The TrustedQSL Developers" Language="1033">
+    <Package Id="*" Description="Installer for TrustedQSL 2.0.3" Compressed="yes"/>
     <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed." AllowSameVersionUpgrades="yes" MigrateFeatures="yes"/>
     <Condition Message="This application requires Windows 2000 or newer">
       NOT Version9X
