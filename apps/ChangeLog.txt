@@ -1,6 +1,11 @@
 TQSL changes
 ============
 
+2.0.3
+----------
+Correct defect that doesn't allow creating station locations when only one
+callsign certificate is installed.
+
 2.0.2
 ----------
 When run in command line "-n" mode (display new program and/or configuration
