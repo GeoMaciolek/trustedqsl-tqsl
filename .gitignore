@@ -8,17 +8,21 @@ install_manifest.txt
 *~
 
 #windows-specific products
+UpgradeLog*
 *.vcxproj*
+*.vcproj*
 *.dir
 *.sln
 *.suo
 *.*sdf
+*.ncb
 Win32
 ipch
 *.rc
 !*.rc.in
 bin/
 lib/
+_UpgradeReport_Files/
 
 #linux-specific products
 Makefile
