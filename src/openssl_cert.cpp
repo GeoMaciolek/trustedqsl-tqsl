@@ -697,9 +697,9 @@ tqsl_isCertificateExpired(tQSL_Cert cert, int *status) {
 	return 0;
 }
 
+static TQSL_X509_STACK *xcerts = NULL;
 DLLEXPORT int CALLCONVENTION
 tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
-	TQSL_X509_STACK *xcerts = NULL;
 	char path[256];
 	int i;
 	X509 *x = NULL;
@@ -727,7 +727,8 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	*status = false;
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path("user", path, sizeof path);
-	xcerts = tqsl_ssl_load_certs_from_file(path);
+	if (xcerts == NULL)
+		xcerts = tqsl_ssl_load_certs_from_file(path);
 	if (xcerts == NULL) {
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
 			return 1;
@@ -754,10 +755,12 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		}
 	}
 	// Done with the original cert list now
+#if 0
 	if (xcerts != NULL) {
 		sk_X509_free(xcerts);
 		xcerts = NULL;
 	}
+#endif
 
 	// "supercededCertificate" extension is <issuer>;<serial>
 	cp = X509_NAME_oneline(X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert), buf, sizeof(buf));
@@ -781,7 +784,7 @@ DLLEXPORT int CALLCONVENTION
 tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	const char *callsign, int dxcc, const tQSL_Date *date, const TQSL_PROVIDER *issuer, int flags) {
 	int withkeys = flags & TQSL_SELECT_CERT_WITHKEYS;
-	TQSL_X509_STACK *xcerts = NULL, *selcerts = NULL;
+	TQSL_X509_STACK *selcerts = NULL;
 	char path[256];
 	int i;
 	X509 *x;
@@ -814,7 +817,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path("user", path, sizeof path);
-	xcerts = tqsl_ssl_load_certs_from_file(path);
+	if (xcerts == NULL) 
+		xcerts = tqsl_ssl_load_certs_from_file(path);
 	if (xcerts == NULL) {
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
 			return 1;
@@ -877,11 +881,13 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 		}
 	}
 
+#if 0
 	// Done with the original cert list now
 	if (xcerts != NULL) {
 		sk_X509_free(xcerts);
 		xcerts = NULL;
 	}
+#endif
 
 //cerr << keylist.size() << " unmatched keys" << endl;
 
@@ -955,8 +961,10 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
  err:
 	tQSL_Error = TQSL_OPENSSL_ERROR;
  end:
+#if 0
 	if (xcerts != NULL)
 		sk_X509_free(xcerts);
+#endif
 	if (selcerts != NULL)
 		sk_X509_free(selcerts);
 	if (bio != NULL)
@@ -970,7 +978,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 
 DLLEXPORT int CALLCONVENTION
 tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type) {
-	TQSL_X509_STACK *xcerts = NULL;
+	TQSL_X509_STACK *cacerts = NULL;
 	int rval = 1;
 	char path[256];
 	int i;
@@ -988,16 +996,16 @@ tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type) {
 
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path(type, path, sizeof path);
-	xcerts = tqsl_ssl_load_certs_from_file(path);
-	if (xcerts == NULL)
+	cacerts = tqsl_ssl_load_certs_from_file(path);
+	if (cacerts == NULL)
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
 			return 1;
 
-	*ncerts = (xcerts ? sk_X509_num(xcerts) : 0) + keylist.size();
+	*ncerts = (cacerts ? sk_X509_num(cacerts) : 0) + keylist.size();
 	*certlist = reinterpret_cast<tQSL_Cert *>(tqsl_calloc(*ncerts, sizeof(tQSL_Cert)));
-	if (xcerts != NULL) {
-		for (i = 0; i < sk_X509_num(xcerts); i++) {
-			x = sk_X509_value(xcerts, i);
+	if (cacerts != NULL) {
+		for (i = 0; i < sk_X509_num(cacerts); i++) {
+			x = sk_X509_value(cacerts, i);
 			if ((cp = tqsl_cert_new()) == NULL)
 				goto end;
 			cp->cert = X509_dup(x);
@@ -1006,8 +1014,8 @@ tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type) {
 	}
 	rval = 0;
  end:
-	if (xcerts != NULL)
-		sk_X509_free(xcerts);
+	if (cacerts != NULL)
+		sk_X509_free(cacerts);
 	return rval;
 }
 
@@ -2526,7 +2534,6 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 
 	int rval = 1;
 	EVP_PKEY *key = 0;
-	TQSL_X509_STACK *xcerts = 0, *ncerts = 0;
 	BIO *bio = 0;
 	tQSL_Error = TQSL_OPENSSL_ERROR;
 
@@ -2565,8 +2572,9 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 
 	tqsl_make_cert_path("user", path, sizeof path);
 	tqsl_make_cert_path("user.new", newpath, sizeof newpath);
-	if ((xcerts = tqsl_ssl_load_certs_from_file(path)) == 0)
-		goto dc_end;
+	if (xcerts == NULL) 
+		if ((xcerts = tqsl_ssl_load_certs_from_file(path)) == 0)
+			goto dc_end;
 	if ((bio = BIO_new_file(newpath, "wb")) == 0)
 		goto dc_end;
 	X509 *x;
@@ -2595,10 +2603,10 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 	tQSL_Error = TQSL_NO_ERROR;
 
  dc_end:
-	if (xcerts)
+	if (xcerts) {
 		sk_X509_free(xcerts);
-	if (ncerts)
-		sk_X509_free(ncerts);
+		xcerts = NULL;
+	}
 	if (key)
 		EVP_PKEY_free(key);
 	if (bio)
@@ -3423,8 +3431,14 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 		stype = "Trusted Root Authority";
 	else if (type == TQSL_CERT_CB_CA)
 		stype = "Certificate Authority";
-	else if (type == TQSL_CERT_CB_USER)
+	else if (type == TQSL_CERT_CB_USER) {
 		stype = "Callsign";
+		// Invalidate the cached user certs
+		if (xcerts != NULL) {
+			sk_X509_free(xcerts);
+			xcerts = NULL;
+		}
+	}
 
 	tqsl_make_cert_path(certfile, path, sizeof path);
 	item.name_buf = name;
