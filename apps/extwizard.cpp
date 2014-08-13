@@ -68,7 +68,7 @@ ExtWizard_Page::AdjustPage(wxBoxSizer *sizer, const wxString& helpfile) {
 	if (_helpfile != wxT("") && _parent->HaveHelp()) {
 		// Space filler
 		sizer->Add(new wxStaticText(this, -1, wxT("")), 1, 0, 10);
-		sizer->Add(new wxButton(this, EW_HELP_BUT, wxT("Help")), 0, wxALL, 10);
+		sizer->Add(new wxButton(this, EW_HELP_BUT, _("Help")), 0, wxALL, 10);
 	}
 
 	SetAutoLayout(TRUE);

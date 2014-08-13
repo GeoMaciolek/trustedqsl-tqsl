@@ -29,7 +29,9 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(TQSLWizCertPage, TQSLWizPage)
 	EVT_COMBOBOX(-1, TQSLWizCertPage::OnComboBoxEvent)
 	EVT_CHECKBOX(-1, TQSLWizCertPage::OnCheckBoxEvent)
+#if wxMAJOR_VERSION < 3
 	EVT_SIZE(TQSLWizCertPage::OnSize)
+#endif
 END_EVENT_TABLE()
 
 void
@@ -79,8 +81,10 @@ TQSLWizard::GetPage(bool final) {
 }
 
 void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
+#if wxMAJOR_VERSION < 3
 	TQSLWizPage::OnSize(ev); //fix this
 	UpdateFields();
+#endif
 }
 
 TQSLWizPage *
@@ -196,10 +200,13 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			}
 			if (noupdate_field < 0 && !defaulted)
 				new_sel = selected;
-			(reinterpret_cast<wxComboBox *>(controls[i]))->SetSelection(new_sel);
+			if (nitems > new_sel)
+				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSelection(new_sel);
 			tqsl_setLocationFieldIndex(loc, i, new_sel);
 			if (noupdate_field >= 0)
 				tqsl_updateStationLocationCapture(loc);
+			if (nitems > new_sel)
+				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSelection(new_sel);
 			(reinterpret_cast<wxComboBox *>(controls[i]))->Enable(nitems > 1);
 		} else if (in_type == TQSL_LOCATION_FIELD_TEXT) {
 			int len;
@@ -328,7 +335,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 
 	if (addCheckbox) {
 		wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
-		okEmptyCB = new wxCheckBox(this, TQSL_ID_LOW+numf, wxT("Allow 'None' for ") + cbLabel, wxDefaultPosition, wxDefaultSize);
+		okEmptyCB = new wxCheckBox(this, TQSL_ID_LOW+numf, _("Allow 'None' for ") + cbLabel, wxDefaultPosition, wxDefaultSize);
 
 		hsizer->Add(new wxStaticText(this, -1, wxT(""),
 			wxDefaultPosition, wxSize(label_w, -1), wxALIGN_RIGHT|wxST_NO_AUTORESIZE), 0, wxTOP, 5);
@@ -371,23 +378,23 @@ TQSLWizCertPage::validate() {
 					grid[1] = grid[1] - 'a' + 'A';
 				if (grid[0] < 'A' || grid[0] > 'R') {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square Field"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
 				}
 				if (grid.size() > 1 && (grid[1] < 'A' || grid[1] > 'R')) {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square Field"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
 				}
 				if (grid.size() > 2 && (grid[2] < '0' || grid[2] > '9')) {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (grid.size() < 4) {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (grid[3] < '0' || grid[3] > '9') {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 
 				if (grid.size() > 4 && (grid[4] <= 'Z' && grid[4] >= 'A'))
@@ -397,16 +404,16 @@ TQSLWizCertPage::validate() {
 
 				if (grid.size() > 4 && (grid[4] < 'a' || grid[4] > 'x')) {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
 				}
 				if (grid.size() > 5 && (grid[5] < 'a' || grid[5] > 'x')) {
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Subsquare"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
 				}
 				if (grid.size() != 6 && grid.size() != 4) {
 					// Not long enough yet or too long.
 					if (error.IsEmpty())
-						error = wxString::Format(wxT("%s: Invalid Grid Square"), grid.c_str());
+						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (!editedGrids.IsEmpty())
 					editedGrids += wxT(",");
@@ -471,11 +478,11 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	int y = text_size.GetHeight();
 	sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("Station Data input complete"));
+	wxStaticText *st = new wxStaticText(this, -1, _("Station Data input complete"));
 	sizer->Add(st, 0, wxALIGN_CENTER|wxTOP, 10);
 
 	// Title
-	st = new wxStaticText(this, -1, wxT("Select or enter name of this station location"));
+	st = new wxStaticText(this, -1, _("Select or enter name of this station location"));
 	sizer->Add(st, 0, wxALIGN_CENTER|wxBOTTOM, 10);
 
 	// List of existing location names
@@ -498,7 +505,7 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	if (namelist->GetCount() > 0)
 		namelist->SetSelection(0, FALSE);
 	// New name
-	st = new wxStaticText(this, -1, wxT("Station Location Name"));
+	st = new wxStaticText(this, -1, _("Station Location Name"));
 	sizer->Add(st, 0, wxALIGN_LEFT|wxTOP, 10);
 	newname = new wxTextCtrl(this, TQSL_ID_LOW+1, wxT(""), wxPoint(0, y), wxSize(control_width, -1));
 	sizer->Add(newname, 0, wxEXPAND);

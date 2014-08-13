@@ -73,7 +73,7 @@ enum {		// Window IDs
 	ID_OK_BUT,
 	ID_CAN_BUT,
 	ID_HELP_BUT,
-	ID_PREF_FILE_CABRILLO = (wxID_HIGHEST+1),
+	ID_PREF_FILE_CABRILLO = (wxID_HIGHEST+100),
 	ID_PREF_FILE_ADIF,
 	ID_PREF_FILE_AUTO_BACKUP,
 	ID_PREF_FILE_BACKUP,
@@ -231,7 +231,7 @@ class AddMode : public wxDialog {
 
 class EditContest : public wxDialog {
  public:
-	EditContest(wxWindow *parent, wxString ctype = wxT("Edit"), wxString _contest = wxT(""),
+	EditContest(wxWindow *parent, wxString ctype = _("Edit"), wxString _contest = wxT(""),
 		int _contest_type = 0, int _callsign_field = 5);
 	void OnOK(wxCommandEvent&);
 	void OnCancel(wxCommandEvent &) { Close(true); }

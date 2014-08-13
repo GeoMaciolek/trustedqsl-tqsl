@@ -55,7 +55,7 @@ typedef vector<QSORecord> QSORecordList;
 class QSODataDialog : public wxDialog  {
  public:
 	QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORecordList *reclist = 0,
-		wxWindowID id = -1, const wxString& title = wxT("QSO Data"));
+		wxWindowID id = -1, const wxString& title = _("QSO Data"));
 	~QSODataDialog();
 	wxString GetMode() const;
 	bool SetMode(const wxString&);

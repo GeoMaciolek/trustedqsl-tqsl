@@ -82,7 +82,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	locmap callsigns;
 
 	DeleteAllItems();
-	wxTreeItemId rootId = AddRoot(wxT("Station Locations"), FOLDER_ICON);
+	wxTreeItemId rootId = AddRoot(_("Station Locations"), FOLDER_ICON);
         tQSL_Location loc;
         check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         check_tqsl_error(tqsl_getNumStationLocations(loc, &_nloc));

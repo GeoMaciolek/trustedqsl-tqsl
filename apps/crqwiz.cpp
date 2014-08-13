@@ -74,15 +74,15 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
 	int em_h = st->GetSize().GetHeight();
 	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(wxT("This will create a new callsign certificate request file.\n\n")
-		wxT("Once you supply the requested information and the\n")
-		wxT("request file has been created, you must send the\n")
-		wxT("request file to the certificate issuer."));
+	st->SetLabel(_("This will create a new callsign certificate request file.\n\n"
+		"Once you supply the requested information and the\n"
+		"request file has been created, you must send the\n"
+		"request file to the certificate issuer."));
 	st->SetSize(em_w * 30, em_h * 5);
 
 	sizer->Add(st, 0, wxALL, 10);
 
-	sizer->Add(new wxStaticText(this, -1, wxT("Certificate Issuer:")), 0, wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, _("Certificate Issuer:")), 0, wxLEFT|wxRIGHT, 10);
 	tc_provider = new wxComboBox(this, ID_CRQ_PROVIDER, wxT(""), wxDefaultPosition,
 		wxDefaultSize, 0, 0, wxCB_DROPDOWN|wxCB_READONLY);
 	sizer->Add(tc_provider, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
@@ -309,13 +309,13 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *zst = new wxStaticText(this, -1, wxT("Zip/Postal"));
+	wxStaticText *zst = new wxStaticText(this, -1, _("Zip/Postal"));
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"), wxDefaultPosition, wxDefaultSize,
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
 	int em_w = st->GetSize().GetWidth();
 	int def_w = em_w * 20;
-	st->SetLabel(wxT("Name"));
+	st->SetLabel(_("Name"));
 	st->SetSize(zst->GetSize());
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
@@ -338,7 +338,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	else if (config->Read(wxT("Addr1"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, wxT("Address"), wxDefaultPosition, zst->GetSize(),
+	hsizer->Add(new wxStaticText(this, -1, _("Address"), wxDefaultPosition, zst->GetSize(),
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
 	tc_addr1 = new wxTextCtrl(this, ID_CRQ_ADDR1, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_addr1, 1, 0, 0);
@@ -364,7 +364,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	else if (config->Read(wxT("City"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, wxT("City"), wxDefaultPosition, zst->GetSize(),
+	hsizer->Add(new wxStaticText(this, -1, _("City"), wxDefaultPosition, zst->GetSize(),
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
 	tc_city = new wxTextCtrl(this, ID_CRQ_CITY, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_city, 1, 0, 0);
@@ -377,7 +377,7 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	else if (config->Read(wxT("State"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, wxT("State"), wxDefaultPosition, zst->GetSize(),
+	hsizer->Add(new wxStaticText(this, -1, _("State"), wxDefaultPosition, zst->GetSize(),
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
 	tc_state = new wxTextCtrl(this, ID_CRQ_STATE, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_state, 1, 0, 0);
@@ -399,10 +399,10 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 	s = wxT("");
 	if (crq && crq->country)
 		s = wxString::FromUTF8(crq->country);
-	else if (config->Read(wxT("Country"), &val))
+	else if (config->Read(_("Country"), &val))
 		s = val;
 	hsizer = new wxBoxSizer(wxHORIZONTAL);
-	hsizer->Add(new wxStaticText(this, -1, wxT("Country"), wxDefaultPosition, zst->GetSize(),
+	hsizer->Add(new wxStaticText(this, -1, _("Country"), wxDefaultPosition, zst->GetSize(),
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT), 0, wxRIGHT, 5);
 	tc_country = new wxTextCtrl(this, ID_CRQ_COUNTRY, s, wxDefaultPosition, wxSize(def_w, -1));
 	hsizer->Add(tc_country, 1, 0, 0);
@@ -425,7 +425,7 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 
 	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
 	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(wxT("Your e-mail address"));
+	st->SetLabel(_("Your e-mail address"));
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	wxString val;
@@ -438,9 +438,9 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	tc_email = new wxTextCtrl(this, ID_CRQ_EMAIL, s, wxDefaultPosition, wxSize(em_w*30, -1));
 	sizer->Add(tc_email, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
 	tc_email->SetMaxLength(TQSL_CRQ_EMAIL_MAX);
-	sizer->Add(new wxStaticText(this, -1, wxT("Note: The e-mail address you provide here is the\n")
-		wxT("address to which the issued certificate will be sent.\n")
-		wxT("Make sure it's the correct address!\n")), 0, wxALL, 10);
+	sizer->Add(new wxStaticText(this, -1, _("Note: The e-mail address you provide here is the\n"
+		"address to which the issued certificate will be sent.\n"
+		"Make sure it's the correct address!\n")), 0, wxALL, 10);
 	tc_status = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer, wxT("crq2.htm"));
@@ -462,26 +462,26 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	int em_w = st->GetSize().GetWidth();
 	int em_h = st->GetSize().GetHeight();
 	st->SetLabel(
-wxT("You may protect this callsign certificate using a password.\n")
-wxT("If you are using a computer system that is shared with\n")
-wxT("others, you should specify a password to protect this\n")
-wxT("callsign certificate. However, if you are using a computer\n")
-wxT("in a private residence, no password need be specified.\n\n")
-wxT("Leave the password blank and click 'Next' unless you want to\n")
-wxT("use a password.\n\n")
-wxT("Password:")
+_("You may protect this callsign certificate using a password.\n"
+"If you are using a computer system that is shared with\n"
+"others, you should specify a password to protect this\n"
+"callsign certificate. However, if you are using a computer\n"
+"in a private residence, no password need be specified.\n\n"
+"Leave the password blank and click 'Next' unless you want to\n"
+"use a password.\n\n"
+"Password:")
 	);
 	st->SetSize(em_w * 30, em_h * 5);
 
 	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_pw1 = new wxTextCtrl(this, ID_CRQ_PW1, wxT(""), wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
 	sizer->Add(tc_pw1, 0, wxLEFT|wxRIGHT, 10);
-	sizer->Add(new wxStaticText(this, -1, wxT("Enter the password again for verification:")),
+	sizer->Add(new wxStaticText(this, -1, _("Enter the password again for verification:")),
 		0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_pw2 = new wxTextCtrl(this, ID_CRQ_PW2, wxT(""), wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
 	sizer->Add(tc_pw2, 0, wxLEFT|wxRIGHT, 10);
-	sizer->Add(new wxStaticText(this, -1, wxT("DO NOT lose the password you choose!\n")
-		wxT("You will be unable to use the certificate\nwithout this password!")),
+	sizer->Add(new wxStaticText(this, -1, _("DO NOT lose the password you choose!\n"
+		"You will be unable to use the certificate\nwithout this password!")),
 		0, wxALL, 10);
 	tc_status = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
@@ -512,7 +512,7 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	wxStaticText* introText;
 
 	introText = new wxStaticText(this, -1,
-				     wxT("If the requested certificate is for your personal callsign, then you\n"
+				     _("If the requested certificate is for your personal callsign, then you\n"
 		 			 "should select 'Signed' and choose a callsign certificate for another of\n"
 					 "your personal callsigns from the list below to be used to sign this request.\n\n"
 					 "If you don't have a Callsign Certificate for another personal callsign, or\n"
@@ -526,9 +526,9 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 	text_sizer->Show(false);
 	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*3));
 
-	wxString choices[] = { wxT("Unsigned"), wxT("Signed") };
+	wxString choices[] = { _("Unsigned"), _("Signed") };
 
-	choice = new wxRadioBox(this, ID_CRQ_SIGN, wxT("Sign Request"), wxDefaultPosition,
+	choice = new wxRadioBox(this, ID_CRQ_SIGN, _("Sign Request"), wxDefaultPosition,
 		wxSize(em_w*30, -1), 2, choices, 1, wxRA_SPECIFY_COLS);
 	sizer->Add(choice, 0, wxALL|wxEXPAND, 10);
 	cert_tree = new CertTree(this, ID_CRQ_CERT, wxDefaultPosition,
@@ -543,7 +543,7 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 		choice->SetSelection(0);
 		choice->Enable(false);
 		cert_tree->Enable(false);
-		introText->SetLabel(wxT("Since you have no callsign certificates, you must\n"
+		introText->SetLabel(_("Since you have no callsign certificates, you must\n"
 			    		"submit an 'Unsigned' certificate request. This will allow you to\n"
 					"create your initial callsign certificate for LoTW use.\n"
 					"Click 'Finish' to complete this callsign certificate request."));
@@ -577,7 +577,7 @@ CRQ_IntroPage::validate() {
 	wxString val = tc_call->GetValue().MakeUpper();
 	bool ok = true;
 	int sel;
-	wxString msg(wxT("You must enter a valid call sign."));
+	wxString msg(_("You must enter a valid call sign."));
 	static wxCharBuffer msg_buf(1);
 
 	if (val.Len() < 3)
@@ -613,7 +613,7 @@ CRQ_IntroPage::validate() {
 		Parent()->dxcc = (long)(tc_dxcc->GetClientData(sel));
 
 	if (sel < 0 || Parent()->dxcc < 0) {
-		msg = wxT("You must select a DXCC entity.");
+		msg = _("You must select a DXCC entity.");
 		ok = false;
 		goto notok;
 	}
@@ -624,14 +624,14 @@ CRQ_IntroPage::validate() {
 	Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().ToUTF8(), NULL, 10);
 	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().ToUTF8(), NULL, 10);
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
-		msg = wxT("QSO begin date: You must choose proper values for\nYear, Month and Day.");
+		msg = _("QSO begin date: You must choose proper values for\nYear, Month and Day.");
 		ok = false;
 	} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
-		msg = wxT("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
+		msg = _("QSO end date: You must either choose proper values\nfor Year, Month and Day or leave all three blank.");
 		ok = false;
 	} else if (tqsl_isDateValid(&Parent()->qsonotafter)
 		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
-		msg = wxT("QSO end date cannot be before QSO begin date.");
+		msg = _("QSO end date cannot be before QSO begin date.");
 		ok = false;
 	}
 
@@ -673,22 +673,22 @@ CRQ_IntroPage::validate() {
 			if (ok == false) {
 				DXCC dxcc;
 				dxcc.getByEntity(Parent()->dxcc);
-				msg = wxString::Format(wxT("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
-				msg += wxString::FromUTF8(cert_before_buf) + wxT(" to ") + wxString::FromUTF8(cert_after_buf);
+				msg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
+				msg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
 			}
 		}
-		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+		wxString pending = wxConfig::Get()->Read(_("RequestPending"));
 		wxStringTokenizer tkz(pending, wxT(","));
 		while (tkz.HasMoreTokens()) {
 			wxString pend = tkz.GetNextToken();
 			if (pend == val) {
-				msg = wxString::Format(wxT("You have already requested a callsign certificate for %s\n")
-						       wxT("and can not request another until that request has been\n")
-						       wxT("processed by LoTW Staff.\n\n")
-						       wxT("Please wait until you receive an e-mail bearing your\n")
-						       wxT("requested callsign certificate.\n\n")
-						       wxT("If you are sure that the earlier request is now invalid\n")
-						       wxT("you should delete the pending callsign certificate for %s."),
+				msg = wxString::Format(_("You have already requested a callsign certificate for %s\n"
+						       "and can not request another until that request has been\n"
+						       "processed by LoTW Staff.\n\n"
+						       "Please wait until you receive an e-mail bearing your\n"
+						       "requested callsign certificate.\n\n"
+						       "If you are sure that the earlier request is now invalid\n"
+						       "you should delete the pending callsign certificate for %s."),
 						       val.c_str(), val.c_str());
 				ok = false;
 			}
@@ -712,28 +712,28 @@ CRQ_IntroPage::TransferDataFromWindow() {
 		return true;
 	if (Parent()->dxcc == 0)
 		wxMessageBox(
-			wxT("You have selected DXCC Entity NONE\n\n")
-			wxT("QSO records signed using the certificate will not\n")
-			wxT("be valid for DXCC award credit (but will be valid \n")
-			wxT("for other applicable awards). If the certificate is\n")
-			wxT("to be used for signing QSOs from maritime/marine\n")
-			wxT("mobile, shipboard, or air mobile operations, that is\n")
-			wxT("the correct selection. Otherwise, you probably\n")
-			wxT("should use the \"Back\" button to return to the DXCC\n")
-			wxT("page after clicking \"OK\""),
-			wxT("TQSL Warning"));
+			_("You have selected DXCC Entity NONE\n\n"
+			"QSO records signed using the certificate will not\n"
+			"be valid for DXCC award credit (but will be valid \n"
+			"for other applicable awards). If the certificate is\n"
+			"to be used for signing QSOs from maritime/marine\n"
+			"mobile, shipboard, or air mobile operations, that is\n"
+			"the correct selection. Otherwise, you probably\n"
+			"should use the \"Back\" button to return to the DXCC\n"
+			"page after clicking \"OK\""),
+			_("TQSL Warning"));
 
 	if (!tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
 		if (wxMessageBox(
-			wxT("You have chosen a QSO end date for this Callsign Certificate. ")
-			wxT("The 'QSO end date' should ONLY be set if that date is the date when that callsign's license ")
-			wxT("expired or the license was replaced by a new callsign.\n\n")
-			wxT("If you set an end date, you will not be able to sign ")
-			wxT("QSOs past that date, even if the callsign certificate ")
-			wxT("itself is still valid.\n\n")
-			wxT("If you still hold this callsign (or if you plan to renew the license for the ")
-			wxT("callsign), you should not set a 'QSO end date'.\n")
-			wxT("Do you really want to keep this 'QSO end date'?"), wxT("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
+			_("You have chosen a QSO end date for this Callsign Certificate. "
+			"The 'QSO end date' should ONLY be set if that date is the date when that callsign's license "
+			"expired or the license was replaced by a new callsign.\n\n"
+			"If you set an end date, you will not be able to sign "
+			"QSOs past that date, even if the callsign certificate "
+			"itself is still valid.\n\n"
+			"If you still hold this callsign (or if you plan to renew the license for the "
+			"callsign), you should not set a 'QSO end date'.\n"
+			"Do you really want to keep this 'QSO end date'?"), _("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
 				tc_qsoendy->SetSelection(0);
 				tc_qsoendm->SetSelection(0);
 				tc_qsoendd->SetSelection(0);
@@ -877,7 +877,7 @@ CRQ_SignPage::validate() {
 	if (!initialized)
 		return 0;
 
-	wxString nextprompt = wxT("Click 'Finish' to complete this callsign certificate request.");
+	wxString nextprompt = _("Click 'Finish' to complete this callsign certificate request.");
 
 	cert_tree->Enable(choice->GetSelection() == 0 ? false : true);
 
@@ -891,9 +891,9 @@ CRQ_SignPage::validate() {
 			char callsign[512];
 			tQSL_Cert cert = cert_tree->GetItemData(cert_tree->GetSelection())->getCert();
 			if (0 == tqsl_getCertificateCallSign(cert, callsign, sizeof callsign)) {
-				nextprompt+=wxString::Format(wxT("\n\nYou are saying that the requested certificate for %s\n")
-							     wxT("belongs to the same person as %hs and are using\n")
-							     wxT("the selected certificate to prove %hs's identity."),
+				nextprompt+=wxString::Format(_("\n\nYou are saying that the requested certificate for %s\n"
+							     "belongs to the same person as %hs and are using\n"
+							     "the selected certificate to prove %hs's identity."),
 					Parent()->callsign.c_str(), callsign, callsign);
 			}
 		}
@@ -912,15 +912,15 @@ CRQ_SignPage::TransferDataFromWindow() {
 	if (choice->GetSelection() == 0) {
 		if (cert_tree->GetNumCerts() > 0) {
 			int rval = wxMessageBox(
-wxT("You have one or more callsign certificates that could be used\n")
-wxT("to sign this certificate request.\n\n")
-wxT("It is strongly recommended that you sign the request\n")
-wxT("unless the callsign certificates shown are not actually yours.\n")
-/*wxT("Certificate issuers may choose not to permit unsigned\n")
-wxT("certificate requests from existing certificate holders.\n\n") */
-wxT("Do you want to sign the certificate request?\n")
-wxT("Select \"Yes\" to sign the request, \"No\" to continue without signing."),
-				wxT("Warning"), wxYES_NO, this);
+_("You have one or more callsign certificates that could be used\n"
+"to sign this certificate request.\n\n"
+"It is strongly recommended that you sign the request\n"
+"unless the callsign certificates shown are not actually yours.\n"
+/*"Certificate issuers may choose not to permit unsigned\n"
+"certificate requests from existing certificate holders.\n\n" */
+"Do you want to sign the certificate request?\n"
+"Select \"Yes\" to sign the request, \"No\" to continue without signing."),
+				_("Warning"), wxYES_NO, this);
 			if (rval == wxYES)
 				return false;
 		}

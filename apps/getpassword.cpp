@@ -40,12 +40,12 @@ GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 	sizer->Add(_pw, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
-	wxButton *okButton = new wxButton(this, GPW_ID_OK, wxT("OK"));
+	wxButton *okButton = new wxButton(this, GPW_ID_OK, _("OK"));
 	butsizer->Add(okButton, 0, 0, 0);
 	okButton->SetDefault();
-	butsizer->Add(new wxButton(this, GPW_ID_CAN, wxT("Cancel")), 0, wxLEFT, 20);
+	butsizer->Add(new wxButton(this, GPW_ID_CAN, _("Cancel")), 0, wxLEFT, 20);
 	if (_help && _helpfile != wxT(""))
-		butsizer->Add(new wxButton(this, GPW_ID_HELP, wxT("Help")), 0, wxLEFT, 20);
+		butsizer->Add(new wxButton(this, GPW_ID_HELP, _("Help")), 0, wxLEFT, 20);
 
 	sizer->Add(butsizer, 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -99,22 +99,22 @@ GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& tit
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(new wxStaticText(this, -1, message), 1, wxALL|wxEXPAND, 10);
-	sizer->Add(new wxStaticText(this, -1, wxT("New password:")), 0, wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, _("New password:")), 0, wxLEFT|wxRIGHT, 10);
 	_pw1 = new wxTextCtrl(this, GPW_ID_PW1, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	sizer->Add(_pw1, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
-	sizer->Add(new wxStaticText(this, -1, wxT("Enter again to confirm:")), 0, wxLEFT|wxRIGHT, 10);
+	sizer->Add(new wxStaticText(this, -1, _("Enter again to confirm:")), 0, wxLEFT|wxRIGHT, 10);
 	_pw2 = new wxTextCtrl(this, GPW_ID_PW2, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
 	sizer->Add(_pw2, 0, wxLEFT|wxRIGHT|wxEXPAND, 10);
 	_pwstatus = new wxStaticText(this, -1, wxT(""));
 	sizer->Add(_pwstatus, 0, wxALL|wxEXPAND, 10);
 
 	wxBoxSizer *butsizer = new wxBoxSizer(wxHORIZONTAL);
-	_okbut = new wxButton(this, GPW_ID_OK, wxT("OK"));
+	_okbut = new wxButton(this, GPW_ID_OK, _("OK"));
 	_okbut->Enable(_blankok);
 	butsizer->Add(_okbut, 0, 0, 0);
-	butsizer->Add(new wxButton(this, GPW_ID_CAN, wxT("Cancel")), 0, wxLEFT, 20);
+	butsizer->Add(new wxButton(this, GPW_ID_CAN, _("Cancel")), 0, wxLEFT, 20);
 	if (_help && _helpfile != wxT(""))
-		butsizer->Add(new wxButton(this, GPW_ID_HELP, wxT("Help")), 0, wxLEFT, 20);
+		butsizer->Add(new wxButton(this, GPW_ID_HELP, _("Help")), 0, wxLEFT, 20);
 
 	sizer->Add(butsizer, 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -134,7 +134,7 @@ GetNewPasswordDialog::PWChange(wxCommandEvent&) {
 	wxString pw2 = _pw2->GetValue();
 
 	if (pw1 != pw2) {
-		_pwstatus->SetLabel(wxT("Password entries do not match"));
+		_pwstatus->SetLabel(_("Password entries do not match"));
 		_okbut->Enable(false);
 		return;
 	}
@@ -145,7 +145,7 @@ GetNewPasswordDialog::PWChange(wxCommandEvent&) {
 	}
 	_password = pw1;
 	if (pw1 != wxT(""))
-		_pwstatus->SetLabel(wxT("Password confirmed"));
+		_pwstatus->SetLabel(_("Password confirmed"));
 	_okbut->Enable(true);
 	_okbut->SetDefault();
 }
