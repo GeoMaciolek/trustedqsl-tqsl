@@ -817,7 +817,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path("user", path, sizeof path);
-	if (xcerts == NULL) 
+	if (xcerts == NULL)
 		xcerts = tqsl_ssl_load_certs_from_file(path);
 	if (xcerts == NULL) {
 		if (tQSL_Error == TQSL_OPENSSL_ERROR)
@@ -2572,7 +2572,7 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 
 	tqsl_make_cert_path("user", path, sizeof path);
 	tqsl_make_cert_path("user.new", newpath, sizeof newpath);
-	if (xcerts == NULL) 
+	if (xcerts == NULL)
 		if ((xcerts = tqsl_ssl_load_certs_from_file(path)) == 0)
 			goto dc_end;
 	if ((bio = BIO_new_file(newpath, "wb")) == 0)
