@@ -2059,59 +2059,75 @@ DLLEXPORT int CALLCONVENTION
 
 DLLEXPORT int CALLCONVENTION
 tqsl_mergeStationLocations(const char *locdata) {
-	XMLElement sfile;
+	XMLElement new_data;
+	XMLElement old_data;
 	XMLElement new_top_el;
-	XMLElement top_el;
-	vector<string> calls;
+	XMLElement old_top_el;
+	vector<string> locnames;
 
-	if (tqsl_load_station_data(top_el))
+	// Load the current station data
+	if (tqsl_load_station_data(old_top_el))
 		return 1;
+	// Parse the data to be merged
 	new_top_el.parseString(locdata);
 
-	if (!new_top_el.getFirstElement(sfile))
-		sfile.setElementName("StationDataFile");
+	if (!new_top_el.getFirstElement(new_data))
+		new_data.setElementName("StationDataFile");
 
-	// Build  alist of valid calls
-	tQSL_Cert *certlist;
-	int ncerts;
-	tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
-	calls.clear();
-	for (int i = 0; i < ncerts; i++) {
-		char callsign[40];
-		tqsl_getCertificateCallSign(certlist[i], callsign, sizeof(callsign));
-		calls.push_back(callsign);
-		tqsl_freeCertificate(certlist[i]);
+	if (!old_top_el.getFirstElement(old_data))
+		old_data.setElementName("StationDataFile");
+
+	// Build a list of existing station locations
+	XMLElementList& namelist = old_data.getElementList();
+	XMLElementList::iterator nameiter;
+	XMLElement locname;
+	for (nameiter = namelist.find("StationData"); nameiter != namelist.end(); nameiter++) {
+		if (nameiter->first != "StationData")
+			break;
+		pair<string, bool> rval = nameiter->second.getAttribute("name");
+		if (rval.second) {
+			locnames.push_back(rval.first);
+		}
 	}
 
-	XMLElementList& ellist = sfile.getElementList();
+	// Iterate the new locations
+	XMLElementList& ellist = new_data.getElementList();
 	XMLElementList::iterator ep;
-	XMLElement call;
+	old_data.setPretext(old_data.getPretext() + "  ");
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
 		pair<string, bool> rval = ep->second.getAttribute("name");
+		bool found = false;
 		if (rval.second) {
-			TQSL_LOCATION *oldloc;
-			TQSL_LOCATION *newloc;
-			ep->second.getFirstElement("CALL", call);
-			for (size_t j = 0; j < calls.size(); j++) {
-				if (calls[j] == call.getText()) {
-					if (tqsl_getStationLocation(reinterpret_cast<tQSL_Location *>(&oldloc), rval.first.c_str())) { // Location doesn't exist
-						if (tqsl_initStationLocationCapture(reinterpret_cast<tQSL_Location *>(&newloc)) == 0) {
-							if (tqsl_load_loc(newloc, ep, true) == 0) {	// new loads OK
-								tqsl_setStationLocationCaptureName(newloc, rval.first.c_str());
-								tqsl_saveStationLocationCapture(newloc, 0);
-								tqsl_endStationLocationCapture(reinterpret_cast<tQSL_Location *>(&newloc));
-							}
-						}
-					} else {
-						tqsl_endStationLocationCapture(reinterpret_cast<tQSL_Location *>(&oldloc));
-					}
+			for (size_t j = 0; j < locnames.size(); j++) {
+				if (locnames[j] == rval.first) {
+					found = true;
+					break;
 				}
 			}
 		}
+		if (!found) {
+			// Add this one to the station data file
+			XMLElement newtop("StationData");
+			newtop.setPretext("\n  ");
+			newtop.setAttribute("name", rval.first);
+			newtop.setText("\n  ");
+			XMLElement sub;
+			sub.setPretext(newtop.getPretext() + "  ");
+			XMLElement el;
+			bool elok = ep->second.getFirstElement(el);
+			while (elok) {
+				sub.setElementName(el.getElementName());
+				sub.setText(el.getText());
+				newtop.addElement(sub);
+				elok = ep->second.getNextElement(el);
+			}
+			old_data.addElement(newtop);
+			old_data.setText("\n");
+		}
 	}
-	return 0;
+	return tqsl_dump_station_data(old_data);
 }
 
 DLLEXPORT int CALLCONVENTION

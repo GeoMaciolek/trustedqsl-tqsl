@@ -3726,6 +3726,7 @@ MyFrame::OnSaveConfig(wxCommandEvent& WXUNUSED(event)) {
 
 void
 restore_user_cert(TQSLConfig* loader) {
+	tqslTrace("restore_user_cert", "Restoring certificate for callsign %s", loader->callSign.c_str());
 	get_certlist(loader->callSign.c_str(), loader->dxcc, true, true, true);
 	for (int i = 0; i < ncerts; i++) {
 		long serial;
@@ -3850,6 +3851,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		for (i = 0; atts[i]; i+=2) {
 			wxString attname = wxString::FromUTF8(atts[i+1]);
 			if (strcmp(atts[i], "name") == 0) {
+				tqslTrace("TQSLConfig::xml_restore_start", "Restoring location %s", atts[i+1]);
 				loader->locstring += wxT("<StationData name=\"") + urlEncode(attname) + wxT("\">\n");
 				break;
 			}
@@ -3896,9 +3898,11 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 		loader->locstring += wxT("</StationData>\n");
 	} else if (strcmp(name, "Locations") == 0) {
 		loader->locstring += wxT("</StationDataFile>\n");
+		tqslTrace("TQSLConfig::xml_restore_end", "Merging station locations");
 		if (tqsl_mergeStationLocations(loader->locstring.ToUTF8()) != 0) {
 			wxLogError(_("\tError importing station locations: %hs"), tqsl_getErrorString());
 		}
+		tqslTrace("TQSLConfig::xml_restore_end", "Completed merging station locations");
 	} else if (strcmp(name, "TQSLSettings") == 0) {
 		loader->config->Flush(false);
 	} else if (strcmp(name, "DupeDb") == 0) {
