@@ -1142,6 +1142,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 						p.hash[callsign].push_back(ibuf);
 					tqsl_freeCertificate(certlist[i]);
 				}
+				free(certlist);
 				// Fill the call sign list
 				map<string, vector<string> >::iterator call_p;
 				field.idx = -1;

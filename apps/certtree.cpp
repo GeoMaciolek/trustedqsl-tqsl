@@ -77,12 +77,11 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 
 CertTree::~CertTree() {
 	tqslTrace("CertTree::~CertTree");
+	tqsl_freeCertificateList(_certs, _ncerts);
 }
 
 CertTreeItemData::~CertTreeItemData() {
 	tqslTrace("CertTreeItemData::~CertTreeItemData");
-	if (_cert)
-		tqsl_freeCertificate(_cert);
 }
 
 typedef pair<wxString, int> certitem;
@@ -101,27 +100,26 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 	DeleteAllItems();
 	wxTreeItemId rootId = AddRoot(_("tQSL Certificates"), FOLDER_ICON);
-	tQSL_Cert *certs;
-	if (tqsl_selectCertificates(&certs, &_ncerts, 0, 0, 0, provider, flags)) {
+	if (tqsl_selectCertificates(&_certs, &_ncerts, 0, 0, 0, provider, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || tQSL_Errno != ENOENT)
 			displayTQSLError("Error while accessing certificate store");
 	}
 	// Separate certs into lists by issuer
 	for (int i = 0; i < _ncerts; i++) {
 		char issname[129];
-		if (tqsl_getCertificateIssuerOrganization(certs[i], issname, sizeof issname)) {
+		if (tqsl_getCertificateIssuerOrganization(_certs[i], issname, sizeof issname)) {
 			displayTQSLError("Error parsing certificate for issuer");
 			return _ncerts;
 		}
 		char callsign[129] = "";
-		if (tqsl_getCertificateCallSign(certs[i], callsign, sizeof callsign - 4)) {
+		if (tqsl_getCertificateCallSign(_certs[i], callsign, sizeof callsign - 4)) {
 			displayTQSLError("Error parsing certificate for call sign");
 			return _ncerts;
 		}
 		strncat(callsign, " - ", sizeof callsign - strlen(callsign)-1);
 		DXCC dxcc;
 		int dxccEntity;
-		if (tqsl_getCertificateDXCCEntity(certs[i], &dxccEntity)) {
+		if (tqsl_getCertificateDXCCEntity(_certs[i], &dxccEntity)) {
 			displayTQSLError("Error parsing certificate for DXCC entity");
 			return _ncerts;
 		}
@@ -145,14 +143,14 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		certlist& list = iss_it->second;
 		sort(list.begin(), list.end(), cl_cmp);
 		for (int i = 0; i < static_cast<int>(list.size()); i++) {
-			CertTreeItemData *cert = new CertTreeItemData(certs[list[i].second]);
+			CertTreeItemData *cert = new CertTreeItemData(_certs[list[i].second]);
 			int keyonly = 1;
 			int exp = 0, sup = 0;
 			int icon_type;
-			int keytype = tqsl_getCertificatePrivateKeyType(certs[list[i].second]);
-			tqsl_isCertificateExpired(certs[list[i].second], &exp);
-			tqsl_isCertificateSuperceded(certs[list[i].second], &sup);
-			tqsl_getCertificateKeyOnly(certs[list[i].second], &keyonly);
+			int keytype = tqsl_getCertificatePrivateKeyType(_certs[list[i].second]);
+			tqsl_isCertificateExpired(_certs[list[i].second], &exp);
+			tqsl_isCertificateSuperceded(_certs[list[i].second], &sup);
+			tqsl_getCertificateKeyOnly(_certs[list[i].second], &keyonly);
 			if (keytype == TQSL_PK_TYPE_ERR)
 				icon_type = BROKEN_ICON;
 			else if (keyonly)

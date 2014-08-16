@@ -1631,6 +1631,13 @@ tqsl_freeCertificate(tQSL_Cert cert) {
 	tqsl_cert_free(TQSL_API_TO_CERT(cert));
 }
 
+DLLEXPORT void CALLCONVENTION
+tqsl_freeCertificateList(tQSL_Cert* list, int ncerts) {
+	for (int i = 0; i < ncerts; i++)
+		tqsl_cert_free(TQSL_API_TO_CERT(list[i]));
+	if (list) free(list);
+}
+
 DLLEXPORT int CALLCONVENTION
 tqsl_beginSigning(tQSL_Cert cert, char *password, int(*pwcb)(char *, int, void *), void *userdata) {
 	if (tqsl_init())

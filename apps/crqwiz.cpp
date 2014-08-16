@@ -668,8 +668,8 @@ CRQ_IntroPage::validate() {
 					tqsl_convertDateToText(&cert_not_before, cert_before_buf, sizeof cert_before_buf);
 					tqsl_convertDateToText(&cert_not_after, cert_after_buf, sizeof cert_after_buf);
 				}
-				tqsl_freeCertificate(certlist[i]);
 			}
+			tqsl_freeCertificateList(certlist, ncert);
 			if (ok == false) {
 				DXCC dxcc;
 				dxcc.getByEntity(Parent()->dxcc);

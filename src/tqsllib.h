@@ -329,7 +329,9 @@ DLLEXPORT int CALLCONVENTION tqsl_getConfigVersion(int *major, int *minor);
   * Returns 0 on success, nonzero on failure.
   *
   * Each of the tQSL_Cert objects in the list should be freed
-  * by calling tqsl_freeCertificate().
+  * by calling tqsl_freeCertificate(). tqsl_freeCertificateList() is a better
+  * function to use for that as it also frees the allocated array that
+  * holds the certificate pointers.
   *
   */
 DLLEXPORT int CALLCONVENTION tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
@@ -341,7 +343,9 @@ DLLEXPORT int CALLCONVENTION tqsl_selectCertificates(tQSL_Cert **certlist, int *
   * The function produces a list of tQSL_Cert objects.
   *
   * Each of the tQSL_Cert objects in the list should be freed
-  * by calling tqsl_freeCertificate().
+  * by calling tqsl_freeCertificate(). tqsl_freeCertificateList() is a better
+  * function to use for that as it also frees the allocated array that
+  * holds the certificate pointers.
   *
   */
 DLLEXPORT int CALLCONVENTION tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type);
@@ -606,6 +610,13 @@ DLLEXPORT int CALLCONVENTION tqsl_getCertificatePrivateKeyType(tQSL_Cert cert);
   * \c cert should not be used again in any way.
   */
 DLLEXPORT void CALLCONVENTION tqsl_freeCertificate(tQSL_Cert cert);
+
+/** Free the memory used by a certificate list. The allocated list
+ * of tQSL_Certs are freed and the pointer array is freed.
+ * Once this function is called, the \c list or the \c cert 
+ * should not be used again in any way.
+ */
+DLLEXPORT void CALLCONVENTION tqsl_freeCertificateList(tQSL_Cert* list, int ncerts);
 
 #define TQSL_CERT_STATUS_UNK	0	///< Status is unknown
 #define TQSL_CERT_STATUS_SUP	1	///< Certificate is superceded

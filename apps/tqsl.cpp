@@ -652,8 +652,7 @@ static void
 free_certlist() {
 	tqslTrace("free_certlist");
 	if (certlist) {
-		for (int i = 0; i < ncerts; i++)
-			tqsl_freeCertificate(certlist[i]);
+		tqsl_freeCertificateList(certlist, ncerts);
 		certlist = 0;
 	}
 	ncerts = 0;
@@ -2434,9 +2433,7 @@ static bool verify_cert(tQSL_Location loc, bool editing) {
 		}
 		return false;
 	}
-	for (int i = 0; i  < ncerts; i++)
-		tqsl_freeCertificate(certlist[i]);
-	tqsl_freeStationDataEnc(reinterpret_cast<char *>(certlist));
+	tqsl_freeCertificateList(certlist, ncerts);
 	return true;
 }
 
@@ -3589,8 +3586,8 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "</RootCert>\n");
-			tqsl_freeCertificate(certlist[i]);
 		}
+		tqsl_freeCertificateList(certlist, ncerts);
 		// Save CA certificates
 		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "authorities"));
 		for (i = 0; i < ncerts; i++) {
@@ -3598,8 +3595,8 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "</CACert>\n");
-			tqsl_freeCertificate(certlist[i]);
 		}
+		tqsl_freeCertificateList(certlist, ncerts);
 		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
 		for (i = 0; i < ncerts; i++) {
 			char callsign[64];
@@ -3626,8 +3623,8 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
 			gzwrite(out, buf, strlen(buf));
 			gzprintf(out, "</PrivateKey>\n</UserCert>\n");
-			tqsl_freeCertificate(certlist[i]);
 		}
+		tqsl_freeCertificateList(certlist, ncerts);
 		gzprintf(out, "</Certificates>\n");
 		gzprintf(out, "<Locations>\n");
 		if (!quiet) {
@@ -4023,8 +4020,8 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 			return;
 		}
 
-		TQSLConfig* loader = new TQSLConfig();
-		loader->RestoreConfig(in);
+		TQSLConfig loader;
+		loader.RestoreConfig(in);
 		cert_tree->Build(CERTLIST_FLAGS);
 		loc_tree->Build();
 		LocTreeReset();
@@ -4486,9 +4483,8 @@ void MyFrame::FirstTime(void) {
 					if (!found && keyonly)
 						found = true;
 				}
-				tqsl_freeCertificate(certs[i]);
 			}
-			tqsl_freeStationDataEnc(reinterpret_cast<char *>(certs));
+			tqsl_freeCertificateList(certs, ncerts);
 		}
 
 		if (!found) {

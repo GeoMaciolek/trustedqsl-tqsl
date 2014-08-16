@@ -54,6 +54,7 @@ class CertTree : public wxTreeCtrl {
 	void SelectCert(tQSL_Cert cert);
 
  private:
+        tQSL_Cert *_certs;
 	int _ncerts;
 	int _nissuers;
 	DECLARE_EVENT_TABLE()
