@@ -754,13 +754,6 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 			}
 		}
 	}
-	// Done with the original cert list now
-#if 0
-	if (xcerts != NULL) {
-		sk_X509_free(xcerts);
-		xcerts = NULL;
-	}
-#endif
 
 	// "supercededCertificate" extension is <issuer>;<serial>
 	cp = X509_NAME_oneline(X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert), buf, sizeof(buf));
@@ -881,14 +874,6 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 		}
 	}
 
-#if 0
-	// Done with the original cert list now
-	if (xcerts != NULL) {
-		sk_X509_free(xcerts);
-		xcerts = NULL;
-	}
-#endif
-
 //cerr << keylist.size() << " unmatched keys" << endl;
 
 	*ncerts = (selcerts ? sk_X509_num(selcerts) : 0) + keylist.size();
@@ -961,10 +946,6 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
  err:
 	tQSL_Error = TQSL_OPENSSL_ERROR;
  end:
-#if 0
-	if (xcerts != NULL)
-		sk_X509_free(xcerts);
-#endif
 	if (selcerts != NULL)
 		sk_X509_free(selcerts);
 	if (bio != NULL)
