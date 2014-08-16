@@ -430,7 +430,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	wxString uplMsgRE = config->Read(wxT("MessageRegex"), DEFAULT_UPL_MESSAGERE);
 	wxString cfgUpdURL = config->Read(wxT("ConfigFileVerURL"), DEFAULT_UPD_CONFIG_URL);
 	wxString cfgFileUpdURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
-	wxString certCheckURL = config->Read(wxT("CertCheckURL"), DEFAULT_CERT_CHECK_URL);
+	wxString certCheckUpdURL = config->Read(wxT("CertCheckURL"), DEFAULT_CERT_CHECK_URL);
 
 	bool uplVerifyCA;
 	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
@@ -444,7 +444,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 		(uplVerifyCA == DEFAULT_UPL_VERIFYCA) &&
 		(cfgUpdURL == DEFAULT_UPD_CONFIG_URL) &&
 		(cfgFileUpdURL == DEFAULT_CONFIG_FILE_URL) &&
-		(certCheckURL == DEFAULT_CERT_CHECK_URL));
+		(certCheckUpdURL == DEFAULT_CERT_CHECK_URL));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -490,7 +490,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	sizer->Add(configFileURL, 0, wxLEFT|wxRIGHT, 10);
 
 	sizer->Add(new wxStaticText(this, -1, _("Certificate Status Check URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
-	certCheckURL = new wxTextCtrl(this, ID_PREF_ONLINE_CERT_CHECK, certCheckURL, wxPoint(0, 0),
+	certCheckURL = new wxTextCtrl(this, ID_PREF_ONLINE_CERT_CHECK, certCheckUpdURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(certCheckURL, 0, wxLEFT|wxRIGHT, 10);
 
