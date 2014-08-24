@@ -4258,8 +4258,8 @@ QSLApp::OnInit() {
 	wxConfig::Get()->Read(wxT("Language"), &lng, wxLANGUAGE_UNKNOWN);
 	lang = (wxLanguage) lng;
 
-	if (lang == wxLANGUAGE_UNKNOWN || lang == wxLANGUAGE_ENGLISH) {
-		lang = wxLANGUAGE_DEFAULT;
+	if (lang == wxLANGUAGE_UNKNOWN) {
+		lang = wxLANGUAGE_ENGLISH;
 	}
 
 	for (lng = 0; (unsigned) lng < sizeof (langNames); lng++) {
@@ -5314,8 +5314,6 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 	long lng = wxGetSingleChoiceIndex(_("Please choose language:"),
 					 _("Language"),
 					WXSIZEOF(langNames), langNames);
-	if (langIds[lng] == wxLANGUAGE_ENGLISH)
-		lng = wxLANGUAGE_DEFAULT;
 	if (lng != -1) {
 		wxConfig::Get()->Write(wxT("Language"), langIds[lng]);
 		wxConfig::Get()->Flush();

@@ -4,4 +4,4 @@ msgfmt it/tqslapp.po -o it/tqslapp.mo
 msgfmt fr/tqslapp.po -o fr/tqslapp.mo
 msgfmt es/tqslapp.po -o es/tqslapp.mo
 msgfmt de/tqslapp.po -o de/tqslapp.mo
-msgfmt en_GB/tqslapp.po -o en_GB/tqslapp.mo
+msgfmt en/tqslapp.po -o en/tqslapp.mo
