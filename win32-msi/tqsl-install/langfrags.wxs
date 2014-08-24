@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<?define var.langSrc="lang"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dirB6BE8680CD528F273EDD13CB88514148" Name="en" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dirDA8577371C3B761FBCA66742F426ABDC" Name="de" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dir68D9308D96ECB98AEB8347284978A013" Name="es" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dirD7430CCE8E23EAC3B55DD85B038538CA" Name="fr" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dir87830DC9C2DED45B7E26F428A1DA8251" Name="it" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dir2325DE467EB3C09A2BCC4942D90AC105" Name="ja" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dirE7D57DDBD1E700871049BD47E755B20D" Name="pt" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
+    <ComponentGroup Id="LangDirs">
+      <Component Id="cmpEF3482B9AA33243E102FA9EB4DC18734" Directory="dirB6BE8680CD528F273EDD13CB88514148" Guid="*">
+        <File Id="fil235FAF3DEB4E741BFEB46FCA97F1BD3A" KeyPath="yes" Source="$(var.langSrc)\en\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp701E9CE13EE2E668BBA72B1CA4F191D7" Directory="dirDA8577371C3B761FBCA66742F426ABDC" Guid="*">
+        <File Id="fil7BCEEBA899FBBC10FDAF76776D0AD6DA" KeyPath="yes" Source="$(var.langSrc)\de\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp018BE15D98577FD851F456FF667C3AD1" Directory="dir68D9308D96ECB98AEB8347284978A013" Guid="*">
+        <File Id="fil68A99CF3308E3D4794B73E63EDA2E94D" KeyPath="yes" Source="$(var.langSrc)\es\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp23FB2944D40F3F7463008B7B0ECBABD4" Directory="dirD7430CCE8E23EAC3B55DD85B038538CA" Guid="*">
+        <File Id="fil251B75DD8839E718810B77650CE1BE7B" KeyPath="yes" Source="$(var.langSrc)\fr\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp03C541E3239F387DC9BBA7E29B204380" Directory="dir87830DC9C2DED45B7E26F428A1DA8251" Guid="*">
+        <File Id="fil4C7B28D9431F64C171934E2ADB89E881" KeyPath="yes" Source="$(var.langSrc)\it\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp4A37025CE52B7B42A87BBDFFFEB978B0" Directory="dir2325DE467EB3C09A2BCC4942D90AC105" Guid="*">
+        <File Id="fil228219907990D3C20BA820247296E40B" KeyPath="yes" Source="$(var.langSrc)\ja\tqslapp.mo" />
+      </Component>
+      <Component Id="cmpD034F2F1F0808F51CC8FAEDB2272EDCB" Directory="dirE7D57DDBD1E700871049BD47E755B20D" Guid="*">
+        <File Id="fil5DFFBCC7D22EE96E4820414EF99CD614" KeyPath="yes" Source="$(var.langSrc)\pt\tqslapp.mo" />
+      </Component>
+    </ComponentGroup>
+  </Fragment>
+</Wix>

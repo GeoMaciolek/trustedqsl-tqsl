@@ -76,6 +76,7 @@
       <ComponentRef Id="tqsllib2Comp"/>
       <ComponentRef Id="ProgramMenuDir"/>
       <ComponentGroupRef Id="HelpDir"/>
+      <ComponentGroupRef Id="LangDirs" />
       <ComponentRef Id="configXMLComp"/>
       <ComponentRef Id="MachineRegKeys"/>
       <ComponentRef Id="QuickStartComp"/>

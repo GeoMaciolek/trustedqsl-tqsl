@@ -27,6 +27,7 @@
   <ItemGroup>
     <Compile Include="AlertUninstall.wxs" />
     <Compile Include="helpfrag.wxs" />
+    <Compile Include="langfrags.wxs" />
     <Compile Include="MyExitDialog.wxs" />
     <Compile Include="MyInstallDirDlg.wxs" />
     <Compile Include="MyWixUI_InstallDir.wxs" />
