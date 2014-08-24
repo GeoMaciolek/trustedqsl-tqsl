@@ -37,8 +37,11 @@ notifyData::Message() const {
 			pkey.loaded, pkey.duplicate, pkey.error,
 			config.loaded, config.duplicate, config.error);
 	}
-	if (status.IsEmpty())
-		return wxString(_("\nImport completed successfully"));
+	if (status.IsEmpty()) {
+		wxString msg = wxT("\n");
+		msg += _("Import completed successfully");
+		return msg;
+	}
 	return status;
 }
 
@@ -72,7 +75,7 @@ notifyImport(int type, const char *message, void *data) {
 		if (!b)
 			return 0;
 		wxString s(_("OK to install "));
-		s = s + wxString::FromUTF8(nametype) + _(" certificate?\n\n") + wxString::FromUTF8(message);
+		s = s + wxString::FromUTF8(nametype) + wxT(" ") + _("certificate?") + wxT("\n\n") + wxString::FromUTF8(message);
 		if (wxMessageBox(s, _("Install Certificate"), wxYES_NO) == wxYES)
 			return 0;
 		return 1;
@@ -141,18 +144,23 @@ static wxString pw_helpfile;
 static int
 GetNewPassword(char *buf, int bufsiz, void *) {
 	tqslTrace("GetNewPassword");
+	wxString msg = _("Enter a password for this callsign certificate.");
+		msg += wxT("\n\n");
+		msg += _("If you are using a computer system that is "
+		"shared with others, you should specify a "
+		"password to protect this certificate. However, if "
+		"you are using a computer in a private residence "
+		"no password need be specified.");
+		msg += wxT("\n\n");
+		msg += _("This password will have to be entered each time "
+		"you use this callsign certificate for signing or "
+		"when saving the key.");
+		msg += wxT("\n\n");
+		msg += _("Leave the password blank and click 'OK' unless you want "
+		"to use a password.");
+		msg += wxT("\n\n");
 	GetNewPasswordDialog dial(0, _("New Password"),
-		_("Enter a password for this callsign certificate.\n\n"
-		"If you are using a computer system that is\n"
-		"shared with others, you should specify a\n"
-		"password to protect this certificate. However, if\n"
-		"you are using a computer in a private residence\n"
-		"no password need be specified.\n\n"
-		"This password will have to be entered each time\n"
-		"you use this callsign certificate for signing or\n"
-		"when saving the key.\n\n"
-		"Leave the password blank and click 'OK' unless you want\n"
-		"to use a password.\n\n"), true, pw_help, pw_helpfile);
+		msg, true, pw_help, pw_helpfile);
 	if (dial.ShowModal() == wxID_OK) {
 		strncpy(buf, dial.Password().ToUTF8(), bufsiz);
 		buf[bufsiz-1] = 0;
@@ -186,11 +194,12 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 				if (!tqsl_getCertificateSerial(cert, &serial)) {
 					if (serial == newserial) {
 						wxCommandEvent e;
-	    					if (wxMessageBox(
-_("You will not be able to use this tq6 file to recover your\n"
-"callsign certificate if it gets lost. For security purposes, you should\n"
-"back up your certificate on removable media for safe-keeping.\n\n"
-"Would you like to back up your callsign certificate now?"), _("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+						wxString msg = _("You will not be able to use this tq6 file to recover your "
+							"callsign certificate if it gets lost. For security purposes, you should "
+							"back up your certificate on removable media for safe-keeping.");
+							msg += wxT("\n\n");
+							msg += _("Would you like to back up your callsign certificate now?");
+	    					if (wxMessageBox(msg, _("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);

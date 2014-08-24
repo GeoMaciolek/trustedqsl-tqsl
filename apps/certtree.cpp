@@ -77,7 +77,9 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 
 CertTree::~CertTree() {
 	tqslTrace("CertTree::~CertTree");
-	tqsl_freeCertificateList(_certs, _ncerts);
+	if (_ncerts >0)
+		tqsl_freeCertificateList(_certs, _ncerts);
+	_ncerts = 0;
 }
 
 CertTreeItemData::~CertTreeItemData() {

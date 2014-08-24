@@ -48,6 +48,7 @@ enum {
 	tm_f_edit,
 	tm_f_diag,
 	tm_f_exit,
+	tm_f_lang,
 	tm_s_add,
 	tm_s_edit,
 	tm_h_contents,
@@ -89,7 +90,7 @@ enum {
 
 class MyFrame : public wxFrame {
  public:
-	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet);
+	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale& locale);
 
 	bool IsQuiet(void) { return _quiet; }
 	void AddStationLocation(wxCommandEvent& event);
@@ -142,6 +143,7 @@ class MyFrame : public wxFrame {
 	void OnLocEdit(wxCommandEvent& event);
 	void OnLocTreeSel(wxTreeEvent& event);
 	void OnLoginToLogbook(wxCommandEvent& event);
+	void OnChooseLanguage(wxCommandEvent& event);
 	void LocTreeReset(void);
 	void DisplayHelp(const char *file = "main.htm") { help->Display(wxString::FromUTF8(file)); }
 	void FirstTime(void);
@@ -158,6 +160,8 @@ class MyFrame : public wxFrame {
 	CURL *curlReq;
 
 	DECLARE_EVENT_TABLE()
+
+	wxLocale& locale;
 
  private:
 	wxBitmapButton* loc_add_button;
@@ -183,5 +187,34 @@ class MyFrame : public wxFrame {
 	bool _quiet;
 	wxTimer* _timer;
 };
+
+// language data
+static const wxLanguage langIds[] = {
+    wxLANGUAGE_DEFAULT,
+    wxLANGUAGE_FRENCH,
+    wxLANGUAGE_ITALIAN,
+    wxLANGUAGE_GERMAN,
+    wxLANGUAGE_SPANISH,
+    wxLANGUAGE_PORTUGUESE,
+    wxLANGUAGE_JAPANESE,
+    wxLANGUAGE_ENGLISH
+};
+
+// note that it makes no sense to translate these strings, they are
+// shown before we set the locale anyhow
+const wxString langNames[] = {
+    wxT("System default"),
+    wxT("French"),
+    wxT("Italian"),
+    wxT("German"),
+    wxT("Spanish"),
+    wxT("Portuguese"),
+    wxT("Japanese"),
+    wxT("English")
+};
+
+// the arrays must be in sync
+wxCOMPILE_TIME_ASSERT(WXSIZEOF(langNames) == WXSIZEOF(langIds),
+                       LangArraysMismatch);
 
 #endif // __tqslapp_h

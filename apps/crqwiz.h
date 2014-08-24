@@ -156,6 +156,7 @@ class CRQ_SignPage : public CRQ_Page {
 	CertTree *cert_tree;
 	wxStaticText *tc_status;
 	bool initialized;
+	int em_w;
 
 	DECLARE_EVENT_TABLE()
 };

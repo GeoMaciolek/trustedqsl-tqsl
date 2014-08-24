@@ -417,10 +417,13 @@ TQSLGetStationNameDialog::SelectName(const wxString& name) {
 int
 TQSLGetStationNameDialog::ShowModal() {
 	tqslTrace("TQSLGetStationNameDialog::ShowModal");
-	if (namelist->GetCount() == 0 && !issave)
-		wxMessageBox(_("You have no Station Locations defined.\n\n"
-			"You must define at least one Station Location to use for signing.\n"
-			"Use the \"New\" Button of the dialog you're about to see to\ndefine a Station Location."),
-			_("TQSL Warning"), wxOK, this);
+	if (namelist->GetCount() == 0 && !issave) {
+		wxString msg = _("You have no Station Locations defined.");
+			msg += wxT("\n\n");
+			msg += _("You must define at least one Station Location to use for signing.");
+			msg += wxT("\n");
+			msg += _("Use the \"New\" Button of the dialog you're about to see to define a Station Location.");
+		wxMessageBox(msg, _("TQSL Warning"), wxOK, this);
+	}
 	return wxDialog::ShowModal();
 }

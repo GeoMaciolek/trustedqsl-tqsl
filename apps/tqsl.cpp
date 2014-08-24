@@ -178,9 +178,12 @@ class QSLApp : public wxApp {
 	QSLApp();
 	virtual ~QSLApp();
 	class MyFrame *GUIinit(bool checkUpdates, bool quiet = false);
-	bool OnInit();
+	virtual bool OnInit();
 	virtual int OnRun();
 //	virtual wxLog *CreateLogTarget();
+ protected:
+	wxLanguage lang;		// Language specified by user
+	wxLocale locale;		// Locale we're using
 };
 
 QSLApp::~QSLApp() {
@@ -193,7 +196,6 @@ QSLApp::~QSLApp() {
 
 IMPLEMENT_APP(QSLApp)
 
-
 static int
 getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	tqslTrace("getCertPassword", "buf = %lx, bufsiz=%d, cert=%lx", buf, bufsiz, cert);
@@ -204,9 +206,10 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
-	wxString message = wxString::Format(_("Enter the password to unlock the callsign certificate for\n"
-		"%hs -- %hs\n(This is the password you made up when you\ninstalled the callsign certificate.)"),
-		call, dx.name());
+	wxString fmt = _("Enter the password to unlock the callsign certificate for");
+		fmt += wxT("%hs -- %hs\n");
+		fmt += _("(This is the password you made up when you installed the callsign certificate.)");
+	wxString message = wxString::Format(fmt, call, dx.name());
 
 	wxWindow* top = wxGetApp().GetTopWindow();
 	if (!frame->IsQuiet()) {
@@ -250,7 +253,7 @@ ConvertingDialog::ConvertingDialog(wxWindow *parent, const char *filename)
 	: wxDialog(parent, -1, wxString(_("Signing QSO Data"))),
 	running(true) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxString label = wxString(_("Converting ")) + wxString::FromUTF8(filename) + _(" to TQSL format");
+	wxString label = wxString(_("Converting ")) + wxString::FromUTF8(filename) + wxT(" ") + _("to TQSL format");
 	sizer->Add(new wxStaticText(this, -1, label), 0, wxALL|wxALIGN_CENTER, 10);
 	msg = new wxStaticText(this, TQSL_CD_MSG, wxT(" "));
 	sizer->Add(msg, 0, wxALL|wxALIGN_LEFT, 10);
@@ -357,13 +360,18 @@ END_EVENT_TABLE()
 DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxString(_("QSO Date Range"))) {
 	tqslTrace("DateRangeDialog::DateRangeDialog");
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(new wxStaticText(this, -1,
-		_("You may set the starting and/or ending QSO dates\n"
-		  "in order to select QSOs from the input file.\n\n"
-		  "QSOs prior to the starting date or after the ending\n"
-		  "date will not be signed or included in the output file.\n\n"
-		  "You may leave either date (or both dates) blank.")
-	), 0, wxALL|wxALIGN_CENTER, 10);
+	wxString msgstr = _("You may set the starting and/or ending QSO dates "
+		  "in order to select QSOs from the input file.");
+		msgstr += wxT("\n\n");
+		msgstr += _("QSOs prior to the starting date or after the ending "
+		  "date will not be signed or included in the output file.");
+		msgstr += wxT("\n\n");
+		msgstr += _("You may leave either date (or both dates) blank.");
+        wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
+        int em_w = st->GetSize().GetWidth();
+	st->SetLabel(msgstr);
+	st->Wrap(em_w * 30);
+	sizer->Add(st, 0, wxALL|wxALIGN_CENTER, 10);
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	hsizer->Add(new wxStaticText(this, -1, _("Start Date (YYYY-MM-DD)")), 0, wxRIGHT, 5);
@@ -450,46 +458,66 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 	wxString message;
 
 	if (qso_count == dupes) {
-		message = wxString::Format(_("This log contains %d QSO(s) which appear "
-		"to have already been signed for upload to LoTW, and no new QSOs.\n\n"
-		"Click 'Cancel' to abandon processing this log file (Recommended).\n"
-		"Click 'Allow Duplicates' to re-process this "
-		"log while allowing duplicate QSOs."),
-			qso_count);
-
+		wxString fmt = _("This log contains %d QSO(s) which appear "
+		"to have already been signed for upload to LoTW, and no new QSOs.");
+		fmt += wxT("\n\n");
+		fmt += _("Click 'Cancel' to abandon processing this log file (Recommended).");
+		fmt += wxT("\n");
+		fmt += _("Click 'Allow Duplicates' to re-process this "
+		"log while allowing duplicate QSOs.");
+		message = wxString::Format(fmt, qso_count);
 	} else {
 		int newq = qso_count - dupes;
-		message = wxString::Format(_("This log contains %d QSO(s) which appear "
+		wxString fmt = _("This log contains %d QSO(s) which appear "
 			"to have already been signed for upload to LoTW, and "
-			"%d QSO%hs new.\n\n"
-		  	"Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).\n"
-		    	"Click 'Cancel' to abandon processing this log file.\n"
-		    	"Click 'Allow duplicates' to re-process this log "
-		    	"while allowing duplicate QSOs."),
-			dupes, newq,
-			(newq == 1) ? " which is" : "s which are");
+			"%d QSOs which are new.");
+			fmt += wxT("\n\n");
+		  	fmt += _("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).");
+			fmt += wxT("\n");
+		    	fmt += _("Click 'Cancel' to abandon processing this log file.");
+			fmt += wxT("\n");
+		    	fmt += _("Click 'Allow duplicates' to re-process this log "
+		    	"while allowing duplicate QSOs.");
+		wxString fmt1 = _("This log contains %d QSO(s) which appear "
+			"to have already been signed for upload to LoTW, and "
+			"one QSO which is new.");
+			fmt += wxT("\n\n");
+		  	fmt += _("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).");
+			fmt += wxT("\n");
+		    	fmt += _("Click 'Cancel' to abandon processing this log file.");
+			fmt += wxT("\n");
+		    	fmt += _("Click 'Allow duplicates' to re-process this log "
+		    	"while allowing duplicate QSOs.");
+		if (newq == 1) {
+			message = wxString::Format(fmt1, dupes);
+		} else {
+			message = wxString::Format(fmt, dupes, newq);
+		}
 	}
 
 	if (action == TQSL_ACTION_UNSPEC) {
 		if (qso_count == dupes) {
-			message+=
-				_("\n\nThe log file you are uploading using your QSO Logging system consists entirely of previously uploaded\n"
-				  "QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your QSO\n"
-				  "Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n"
-				  "In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n"
-				  "is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n"
+			message+= wxT("\n\n");
+			message += _("The log file you are uploading using your QSO Logging system consists entirely of previously uploaded "
+				  "QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your QSO "
+				  "Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.");
+			message += wxT("\n");
+			message += _("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates' "
+				  "is clicked. Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce "
 				  "strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		} else {
-			message+=
-				_("\n\nThe log file you are uploading using your QSO Logging system includes some previously uploaded\n"
-				  "QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your\n"
-				  "QSO Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.\n"
-				  "In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates'\n"
-				  "is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly\n"
-				  "set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates'\n"
-				  "and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though\n"
-				  "they would not be in this specific batch\n"
-				  "Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce\n"
+			message+= wxT("\n\n");
+			message += _("The log file you are uploading using your QSO Logging system includes some previously uploaded "
+				  "QSOs (duplicates) that create unnecessary work for LoTW. There may be a more recent version of your "
+				  "QSO Logging system that would prevent this. Please check with your QSO Logging system's vendor for an updated version.");
+			message += wxT("\n");
+			message += _("In the meantime, please note that some loggers may exhibit strange behavior if an option other than 'Allow duplicates' "
+				  "is clicked. 'Exclude duplicates' is recommended, but a logger that does its own duplicate tracking may incorrectly "
+				  "set the status in this case. A logger that doesn't track duplicates should be unaffected by choosing 'Exclude duplicates' "
+				  "and if it tracks 'QSO sent' status, will correctly mark all selected QSOs as sent - they are in your account even though "
+				  "they would not be in this specific batch");
+			message += wxT("\n");
+			message += _("Choosing 'Cancel' is usually safe, but a defective logger not checking the status messages reported by TrustedQSL may produce "
 				  "strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		}
 	}
@@ -524,9 +552,11 @@ void
 DupesDialog::OnAllow(wxCommandEvent&) {
 	tqslTrace("DupesDialog::OnAllow");
 
-	if (wxMessageBox(_("The only reason to re-sign duplicate QSOs is if a previous upload"
-		" went unprocessed by LoTW, either because it was never uploaded, or there was a server failure\n\n"
-		"Are you sure you want to proceed? Click 'No' to review the choices"), _("Are you sure?"), wxYES_NO|wxICON_EXCLAMATION, this) == wxYES) {
+	wxString msg = _("The only reason to re-sign duplicate QSOs is if a previous upload "
+		"was not processed by LoTW, either because it was never uploaded, or there was a server failure");
+		msg += wxT("\n\n");
+		msg += _("Are you sure you want to proceed? Click 'No' to review the choices");
+	if (wxMessageBox(msg, _("Are you sure?"), wxYES_NO|wxICON_EXCLAMATION, this) == wxYES) {
 		EndModal(TQSL_DP_ALLOW);
 	}
 }
@@ -753,6 +783,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tm_h_contents, MyFrame::OnHelpContents)
 	EVT_MENU(tm_h_about, MyFrame::OnHelpAbout)
 	EVT_MENU(tm_f_diag, MyFrame::OnHelpDiagnose)
+	EVT_MENU(tm_f_lang, MyFrame::OnChooseLanguage)
 
 	EVT_MENU(tm_h_update, MyFrame::CheckForUpdates)
 
@@ -867,7 +898,7 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	delete updateLocker;
 	if (!noGUI) {
 		wxString val = logwin->GetValue();
-		val.Replace(_("Checking for TQSL updates...\n"), wxT(""));
+		val.Replace(_("Checking for TQSL updates..."), wxT(""));
 		logwin->SetValue(val);		// Clear the checking message
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
@@ -876,8 +907,8 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	}
 }
 
-MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet)
-	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)) {
+MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale& loca)
+	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)), locale(loca) {
 	_quiet = quiet;
 
 	DocPaths docpaths(wxT("tqslapp"));
@@ -920,6 +951,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 #else
 	file_menu->Append(tm_f_preferences, _("Display or Modify &Preferences..."));
 #endif
+	file_menu->AppendSeparator();
+	file_menu->Append(tm_f_lang, _("Language"));
 	file_menu->AppendSeparator();
 	file_menu->AppendCheckItem(tm_f_diag, _("Dia&gnostic Mode"));
 	file_menu->Check(tm_f_diag, false);
@@ -997,7 +1030,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	up->SetName(_("Sign and Upload"));
 	up->SetBitmapDisabled(upload_disbm);
 	b1sizer->Add(up, 0, wxALL, 1);
-	b1sizer->Add(new wxStaticText(b1Panel, -1, _("\nSign a log and upload it automatically to LoTW")), 1, wxALL, 1);
+	wxString b1lbl = wxT("\n");
+	b1lbl += _("Sign a log and upload it automatically to LoTW");
+	b1sizer->Add(new wxStaticText(b1Panel, -1, b1lbl), 1, wxALL, 1);
 	bsizer->Add(b1Panel, 0, wxALL, 1);
 
 	wxPanel* b2Panel = new wxPanel(buttons);
@@ -1007,7 +1042,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmapButton *signsave = new wxBitmapButton(b2Panel, tl_Save, savebm);
 	signsave->SetName(_("Sign and Save"));
 	b2sizer->Add(signsave, 0, wxALL, 1);
-	b2sizer->Add(new wxStaticText(b2Panel, -1, _("\nSign a log and save it for uploading later")), 1, wxALL, 1);
+	wxString b2lbl = wxT("\n");
+	b2lbl += _("Sign a log and save it for uploading later");
+	b2sizer->Add(new wxStaticText(b2Panel, -1, b2lbl), 1, wxALL, 1);
 	bsizer->Add(b2Panel, 0, wxALL, 1);
 
 	wxPanel* b3Panel = new wxPanel(buttons);
@@ -1018,7 +1055,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	fed->SetBitmapDisabled(file_edit_disbm);
 	fed->SetName(_("Create an ADIF file"));
 	b3sizer->Add(fed, 0, wxALL, 1);
-	b3sizer->Add(new wxStaticText(b3Panel, -1, _("\nCreate an ADIF file for signing and uploading")), 1, wxALL, 1);
+	wxString b3lbl = wxT("\n");
+	b3lbl += _("Create an ADIF file for signing and uploading");
+	b3sizer->Add(new wxStaticText(b3Panel, -1, b3lbl), 1, wxALL, 1);
 	bsizer->Add(b3Panel, 0, wxALL, 1);
 
 	wxPanel* b4Panel = new wxPanel(buttons);
@@ -1028,7 +1067,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBitmapButton *lotw = new wxBitmapButton(b4Panel, tl_Login, lotwbm);
 	lotw->SetName(_("LoTW Web Site"));
 	b4sizer->Add(lotw, 0, wxALL, 1);
-	b4sizer->Add(new wxStaticText(b4Panel, -1, _("\nLog in to the Logbook of the World Site")), 1, wxALL, 1);
+	wxString b4lbl = wxT("\n");
+	b4lbl += _("Log in to the Logbook of the World Site");
+	b4sizer->Add(new wxStaticText(b4Panel, -1, b4lbl), 1, wxALL, 1);
 	bsizer->Add(b4Panel, 0, wxALL, 1);
 
 	notebook->AddPage(buttons, _("Log Operations"));
@@ -1056,7 +1097,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	LocTreeReset();
 	lgsizer->Add(loc_tree, 1, wxEXPAND);
 
-	loc_select_label = new wxStaticText(locgrid, -1, _("\nSelect a Station Location to process      "));
+	wxString lsl = wxT("\n");
+	lsl += _("Select a Station Location to process      ");
+	loc_select_label = new wxStaticText(locgrid, -1, lsl);
 	lgsizer->Add(loc_select_label, 0, wxALL, 1);
 
 	locsizer->Add(locgrid, 50, wxEXPAND);
@@ -1080,12 +1123,14 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
 	// Note - the doubling below is to size the label to allow the control to stretch later
-	loc_add_label = new wxStaticText(lb1Panel, -1, _("\nCreate a new Station LocationCreate a new Station\n"));
+	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station LocationCreate a new Station\n"));
 	lb1sizer->Add(loc_add_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb1Panel, 1, wxALL, 1);
 	int tw, th;
 	loc_add_label->GetSize(&tw, &th);
-	loc_add_label->SetLabel(_("\nCreate a new Station Location"));
+	wxString lal = wxT("\n");
+	lal += _("Create a new Station Location");
+	loc_add_label->SetLabel(lal);
 
 	wxPanel* lb2Panel = new wxPanel(lbuttons);
 	lb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1097,7 +1142,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_edit_button->SetBitmapDisabled(edit_disbm);
 	loc_edit_button->Enable(false);
 	lb2sizer->Add(loc_edit_button, 0, wxALL, 1);
-	loc_edit_label = new wxStaticText(lb2Panel, -1, _("\nEdit a Station Location"), wxDefaultPosition, wxSize(tw, th));
+	wxString lel = wxT("\n");
+	lel += _("Edit a Station Location");
+	loc_edit_label = new wxStaticText(lb2Panel, -1, lel, wxDefaultPosition, wxSize(tw, th));
 	lb2sizer->Add(loc_edit_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb2Panel, 1, wxALL, 1);
 
@@ -1111,7 +1158,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_delete_button->SetBitmapDisabled(delete_disbm);
 	loc_delete_button->Enable(false);
 	lb3sizer->Add(loc_delete_button, 0, wxALL, 1);
-	loc_delete_label = new wxStaticText(lb3Panel, -1, _("\nDelete a Station Location"), wxDefaultPosition, wxSize(tw, th));
+	wxString ldl = wxT("\n");
+	ldl += _("Delete a Station Location");
+	loc_delete_label = new wxStaticText(lb3Panel, -1, ldl, wxDefaultPosition, wxSize(tw, th));
 	lb3sizer->Add(loc_delete_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb3Panel, 1, wxALL, 1);
 
@@ -1125,7 +1174,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	loc_prop_button->SetBitmapDisabled(properties_disbm);
 	loc_prop_button->Enable(false);
 	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
-	loc_prop_label = new wxStaticText(lb4Panel, -1, _("\nDisplay Station Location Properties"), wxDefaultPosition, wxSize(tw, th));
+	wxString lpl = wxT("\n");
+	lpl += _("Display Station Location Properties");
+	loc_prop_label = new wxStaticText(lb4Panel, -1, lpl, wxDefaultPosition, wxSize(tw, th));
 	lb4sizer->Add(loc_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	lbsizer->Add(lb4Panel, 1, wxALL, 1);
 
@@ -1149,7 +1200,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_tree->SetBackgroundColour(wxColour(255, 255, 255));
 	cgsizer->Add(cert_tree, 1, wxEXPAND);
 
-	cert_select_label = new wxStaticText(certgrid, -1, _("\nSelect a Callsign Certificate to process"));
+	wxString csq = wxT("\n");
+	csq += _("Select a Callsign Certificate to process");
+	cert_select_label = new wxStaticText(certgrid, -1, csq);
 	cgsizer->Add(cert_select_label, 0, wxALL, 1);
 
 	certsizer->Add(certgrid, 50, wxEXPAND);
@@ -1173,7 +1226,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_button->SetName(_("Load a Callsign Certificate"));
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
-	cert_load_label = new wxStaticText(cb1Panel, -1, _("\nLoad a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	wxString lcl = wxT("\n");
+	lcl += _("Load a Callsign Certificate");
+	cert_load_label = new wxStaticText(cb1Panel, -1, lcl, wxDefaultPosition, wxSize(tw, th));
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
@@ -1187,7 +1242,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_save_button->SetBitmapDisabled(download_disbm);
 	cert_save_button->Enable(false);
 	cb2sizer->Add(cert_save_button, 0, wxALL, 1);
-	cert_save_label = new wxStaticText(cb2Panel, -1, _("\nSave a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	wxString csl = wxT("\n");
+	csl += _("Save a Callsign Certificate");
+	cert_save_label = new wxStaticText(cb2Panel, -1, csl, wxDefaultPosition, wxSize(tw, th));
 	cb2sizer->Add(cert_save_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb2Panel, 1, wxALL, 1);
 
@@ -1201,7 +1258,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_renew_button->SetBitmapDisabled(upload_disbm);
 	cert_renew_button->Enable(false);
 	cb3sizer->Add(cert_renew_button, 0, wxALL, 1);
-	cert_renew_label = new wxStaticText(cb3Panel, -1, _("\nRenew a Callsign Certificate"), wxDefaultPosition, wxSize(tw, th));
+	wxString crl = wxT("\n");
+	crl += _("Renew a Callsign Certificate");
+	cert_renew_label = new wxStaticText(cb3Panel, -1, crl, wxDefaultPosition, wxSize(tw, th));
 	cb3sizer->Add(cert_renew_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb3Panel, 1, wxALL, 1);
 
@@ -1215,7 +1274,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_prop_button->SetBitmapDisabled(properties_disbm);
 	cert_prop_button->Enable(false);
 	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
-	cert_prop_label = new wxStaticText(cb4Panel, -1, _("\nDisplay a Callsign Certificate's Properties"), wxDefaultPosition, wxSize(tw, th));
+	wxString dcl = wxT("\n");
+	dcl += _("Display a Callsign Certificate's Properties");
+	cert_prop_label = new wxStaticText(cb4Panel, -1, dcl, wxDefaultPosition, wxSize(tw, th));
 	cb4sizer->Add(cert_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb4Panel, 1, wxALL, 1);
 
@@ -1384,7 +1445,9 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 			return;
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
-			wxMessageBox(wxString::Format(_("%hs\nThe invalid data was ignored."), errbuf), _("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			wxString fmt = wxT("%hs\n");
+			fmt += _("The invalid data was ignored.");
+			wxMessageBox(wxString::Format(fmt, errbuf), _("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 		}
 		char loccall[512];
 		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
@@ -1613,15 +1676,27 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	get_certlist(callsign, dxcc, false, false, false);
 	if (ncerts == 0) {
 		wxString msg;
-		if (dxcc != 0)
-			msg = wxString::Format(_("There are no valid callsign certificates for callsign %hs in entity %hs.\nSigning aborted.\n"), callsign, dx.name());
-		else
-			msg = wxString::Format(_("There are no valid callsign certificates for callsign %hs.\nSigning aborted.\n"), callsign);
+		wxString fmt = _("There are no valid callsign certificates for callsign");
+		if (dxcc != 0) {
+			fmt += wxT("%hs ");
+			fmt += _("in entity");
+			fmt += wxT(" %hs.\n");
+			fmt += _("Signing aborted.");
+			fmt + wxT("\n");
+			msg = wxString::Format(fmt, callsign, dx.name());
+		} else {
+			fmt += wxT("%hs.\n");
+			fmt += _("Signing aborted.");
+			fmt + wxT("\n");
+			msg = wxString::Format(fmt, callsign);
+		}
 		throw TQSLException(msg.ToUTF8());
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
-	wxLogMessage(_("Signing using Callsign %hs, DXCC Entity %hs\n"), callsign, dx.name());
+	wxString msg = _("Signing using Callsign %hs, DXCC Entity %hs");
+	msg += wxT("\n");
+	wxLogMessage(msg, callsign, dx.name());
 
 	init_modes();
 	init_contests();
@@ -1707,9 +1782,9 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				if ((processed % 10) == 0) {
 					wxString progress = wxString::Format(_("QSOs: %d"), processed);
 					if (duplicates > 0)
-						progress += wxString::Format(_(" Duplicates: %d"), duplicates);
+						progress += wxT(" ") + wxString::Format(_("Duplicates: %d"), duplicates);
 					if (errors > 0 || out_of_range > 0)
-						progress += wxString::Format(_(" Errors: %d"), errors + out_of_range);
+						progress += wxT(" ") + wxString::Format(_("Errors: %d"), errors + out_of_range);
 		   	   		conv_dial->msg->SetLabel(progress);
 				}
 				output << (wxString::FromUTF8(cp) + wxT("\n"));
@@ -1717,9 +1792,9 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			if ((processed % 10) == 0) {
 				wxString progress = wxString::Format(_("QSOs: %d"), processed);
 				if (duplicates > 0)
-					progress += wxString::Format(_(" Duplicates: %d"), duplicates);
+					progress += wxT(" ") + wxString::Format(_("Duplicates: %d"), duplicates);
 				if (errors > 0 || out_of_range > 0)
-					progress += wxString::Format(_(" Errors: %d"), errors + out_of_range);
+					progress += wxT(" ") + wxString::Format(_("Errors: %d"), errors + out_of_range);
 				conv_dial->msg->SetLabel(progress);
 			}
 			if (cp == 0) {
@@ -1773,7 +1848,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					tqsl_getConverterLine(conv, &lineno);
 					wxString msg = wxString::FromUTF8(x.what());
 					if (lineno)
-						msg += wxString::Format(_(" on line %d"), lineno);
+						msg += wxT(" ") + wxString::Format(_("on line %d"), lineno);
 					const char *bad_text = tqsl_getConverterRecordText(conv);
 					if (bad_text)
 						msg += wxString(wxT("\n")) + wxString::FromUTF8(bad_text);
@@ -1796,8 +1871,11 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					}
 					if (!ignore_err) {
 						tqslTrace("MyFrame::ConvertLogToString", "Error: %s/asking for action", S(msg));
-						ErrorsDialog dial(this, msg + _("\nClick 'Ignore' to continue signing this log while ignoring errors.\n"
-								"Click 'Cancel' to abandon signing this log."));
+						wxString errmsg = msg + wxT("\n");
+						errmsg += _("Click 'Ignore' to continue signing this log while ignoring errors.");
+						errmsg += wxT("\n");
+						errmsg += _("Click 'Cancel' to abandon signing this log.");
+						ErrorsDialog dial(this, errmsg);
 						int choice = dial.ShowModal();
 						if (choice == TQSL_AE_CAN) {
 							cancelled = true;
@@ -1841,8 +1919,10 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		tqsl_converterRollBack(conv);
 		tqsl_endConverter(&conv);
 		unlock_db();
-		if (lineno)
-			msg += wxString::Format(_(" on line %d"), lineno).ToUTF8();
+		if (lineno) {
+			msg += " ";
+			msg += wxString::Format(_("on line %d"), lineno).ToUTF8();
+		}
 
 		wxLogError(_("Signing aborted due to errors"));
 		throw TQSLException(msg.c_str());
@@ -1983,7 +2063,9 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 
 		wxLogMessage(_("%s: wrote %d records to %s"), infile.c_str(), numrecs,
 			outfile.c_str());
-		wxLogMessage(_("%s is ready to be emailed or uploaded.\nNote: TQSL assumes that this file will be uploaded to LoTW.\nResubmitting these QSOs will cause them to be reported as duplicates."), outfile.c_str());
+		wxLogMessage(_("%s is ready to be emailed or uploaded."), outfile.c_str());
+		wxLogMessage(_("Note: TQSL assumes that this file will be uploaded to LoTW."));
+		wxLogMessage(_("Resubmitting these QSOs will cause them to be reported as duplicates."));
 	}
 
 	return status;
@@ -2335,8 +2417,9 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
 					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n")), 0);
 					if (fileType == wxT("Log")) {
-						wxLogMessage(_("%s: Log uploaded successfully with result \"%s\"!\nAfter reading this message, you may close this program."),
+						wxLogMessage(_("%s: Log uploaded successfully with result \"%s\"!"),
 							infile.c_str(), lotwmessage.c_str());
+						wxLogMessage(_("After reading this message, you may close this program."));
 
 					} else {
 						wxLogMessage(_("%s uploaded with result \"%s\"!"),
@@ -2344,7 +2427,8 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 					}
 				} else { // no message we could find
 					if (fileType == wxT("Log")) {
-						wxLogMessage(_("%s: Log uploaded successfully!\nAfter reading this message, you may close this program."), infile.c_str());
+						wxLogMessage(_("%s: Log uploaded successfully!"), infile.c_str());
+						wxLogMessage(_("After reading this message, you may close this program."));
 					} else {
 						wxLogMessage(_("%s uploaded successfully!"), fileType.c_str());
 					}
@@ -2372,13 +2456,16 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 			fprintf(diagFile, "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-			wxLogMessage(_("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			wxLogMessage(_("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable."), infile.c_str());
+			wxLogMessage(_("Please try uploading the %s later."), fileType.c_str());
 			retval = TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
-			wxLogMessage(_("%s: Unable to upload. The nework is down or the LoTW site is too busy.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			wxLogMessage(_("%s: Unable to upload. The nework is down or the LoTW site is too busy."), infile.c_str());
+			wxLogMessage(_("Please try uploading the %s later."), fileType.c_str());
 			retval = TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
-			wxLogMessage(_("%s: Unable to connect to the upload site.\nPlease try uploading the %s later."), infile.c_str(), fileType.c_str());
+			wxLogMessage(_("%s: Unable to connect to the upload site."), infile.c_str());
+			wxLogMessage(_("Please try uploading the %s later."), fileType.c_str());
 			retval = TQSL_EXIT_CONNECTION_FAILED;
 		} else if (retval == CURLE_ABORTED_BY_CALLBACK) { //cancelled.
 			wxLogMessage(_("%s: Upload cancelled"), infile.c_str());
@@ -2463,7 +2550,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 				if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
-						wxMessageBox(wxString::Format(_("%hs\nThe invalid data was ignored."), errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+						wxString fmt = wxT("%hs\n");
+						fmt += _("The invalid data was ignored.");
+						wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
 					char loccall[512];
 					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
@@ -2475,7 +2564,9 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
 				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 				if (strlen(errbuf) > 0) {
-					wxMessageBox(wxString::Format(_("%hs\nThis should be corrected before signing a log file."), errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+					wxString fmt = wxT("%hs\n");
+					fmt += _("This should be corrected before signing a log file.");
+					wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
 				}
 				break;
 		}
@@ -2750,13 +2841,18 @@ void MyFrame::UpdateConfigFile() {
 			fprintf(curlLogFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
-			wxLogMessage(_("Unable to update - either your Internet connection is down or LoTW is unreachable.\nPlease try again later."));
+			wxLogMessage(_("Unable to update - either your Internet connection is down or LoTW is unreachable."));
+			wxLogMessage(_("Please try again later."));
 		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
-			wxLogMessage(_("Unable to update. The nework is down or the LoTW site is too busy.\nPlease try again later."));
+			wxLogMessage(_("Unable to update. The nework is down or the LoTW site is too busy."));
+			wxLogMessage(_("Please try again later."));
 		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
-			wxLogMessage(_("Unable to connect to the update site.\nPlease try again later."));
+			wxLogMessage(_("Unable to connect to the update site."));
+			wxLogMessage(_("Please try again later."));
 		} else { // some other error
-			wxMessageBox(wxString::Format(_("Error downloading new configuration file:\n%hs"), errorbuf), _("Update"), wxOK|wxICON_EXCLAMATION, this);
+			wxString fmt = _("Error downloading new configuration file:");
+			fmt += wxT("\n%hs");
+			wxMessageBox(wxString::Format(fmt, errorbuf), _("Update"), wxOK|wxICON_EXCLAMATION, this);
 		}
 	}
 }
@@ -2957,10 +3053,10 @@ MyFrame::OnExpiredCertFound(wxCommandEvent& event) {
 		wxLogMessage(_("The certificate for %hs expires in %d days."),
 			ei->callsign, ei->days);
 	} else {
-		if (wxMessageBox(
-			wxString::Format(_("The certificate for %hs expires in %d days\n"
-					"Do you want to renew it now?"),
-					ei->callsign, ei->days),
+		wxString fmt = _("The certificate for %hs expires in %d days");
+			fmt += wxT("\n");
+			fmt += _("Do you want to renew it now?");
+		if (wxMessageBox(wxString::Format(fmt, ei->callsign, ei->days),
 					_("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 				// Select the certificate in the tree
 				cert_tree->SelectCert(certlist[ei->index]);
@@ -3018,7 +3114,12 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 
 	if (!ri->newProgram && !ri->newConfig) {
 		if (!ri->silent && !ri->noGUI) {
-			wxMessageBox(wxString::Format(_("Your system is up to date!\nTQSL Version %hs and Configuration Version %s\nare the newest available"), VERSION, ri->configRev->Value().c_str()), _("No Updates"), wxOK|wxICON_INFORMATION, this);
+			wxString fmt = _("Your system is up to date!");
+			fmt += wxT("\n");
+			fmt += _("TQSL Version %hs and Configuration Version %s");
+			fmt += wxT("\n");
+			fmt += _("are the newest available");
+			wxMessageBox(wxString::Format(fmt, VERSION, ri->configRev->Value().c_str()), _("No Updates"), wxOK|wxICON_INFORMATION, this);
 		}
 	}
 	// Tell the background thread that it's OK to continue
@@ -3041,6 +3142,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	int numdays = config->Read(wxT("UpdateCheckInterval"), 1); // in days
 
 	bool check = true;
+	bool networkError = false;
 	if (!lastUpdateTime.IsEmpty()) {
 		wxDateTime lastcheck; lastcheck.ParseFormat(lastUpdateTime, wxT("%Y-%m-%d"));
 		lastcheck+=wxDateSpan::Days(numdays); // x days from when we checked
@@ -3072,7 +3174,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	curl_easy_setopt(curlReq, CURLOPT_WRITEFUNCTION, &FileUploadHandler::recv);
 	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, &handler);
 
-	if(silent) { // if there's a problem, we don't want the program to hang while we're starting it
+	if (silent) { // if there's a problem, we don't want the program to hang while we're starting it
 		curl_easy_setopt(curlReq, CURLOPT_CONNECTTIMEOUT, 120);
 	}
 
@@ -3150,17 +3252,29 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 				fprintf(curlLogFile, "cURL Error during config file version check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 			}
 			if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+				networkError = true;
 				ri->error = true;
+				ri->errorText = wxString(_("Unable to check for updates - either your Internet connection is down or LoTW is unreachable."));
+				ri->errorText += wxT("\n");
+				ri->errorText += _("Please try again later.");
 				ri->errorText = wxString::FromUTF8("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later.");
 			} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+				networkError = true;
 				ri->error = true;
-				ri->errorText = wxString::FromUTF8("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later.");
+				ri->errorText = wxString(_("Unable to check for updates. The nework is down or the LoTW site is too busy."));
+				ri->errorText += wxT("\n");
+				ri->errorText += _("Please try again later.");
 			} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+				networkError = true;
 				ri->error = true;
-				ri->errorText = wxString::FromUTF8("Unable to connect to the update site.\nPlease try again later.");
+				ri->errorText = wxString(_("Unable to connect to the update site."));
+				ri->errorText += wxT("\n");
+				ri->errorText += _("Please try again later.");
 			} else { // some other error
 				ri->message = true;
-				ri->errorText = wxString::Format(_("Error downloading new version information:\n%hs"), errorbuf);
+				wxString fmt = _("Error downloading new version information:");
+				fmt += wxT("\n%hs");
+				ri->errorText = wxString::Format(fmt, errorbuf);
 			}
 		}
 	} else {
@@ -3171,17 +3285,28 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 			fprintf(curlLogFile, "cURL Error during program revision check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			networkError = true;
 			ri->error = true;
-			ri->errorText = wxString::FromUTF8("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later.");
+			ri->errorText = wxString(_("Unable to check for updates - either your Internet connection is down or LoTW is unreachable."));
+			ri->errorText += wxT("\n");
+			ri->errorText += _("Please try again later.");
 		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+			networkError = true;
 			ri->error = true;
-			ri->errorText = wxString::FromUTF8("Unable to check for updates. The nework is down or the LoTW site is too busy.\nPlease try again later.");
+			ri->errorText = wxString(_("Unable to check for updates. The nework is down or the LoTW site is too busy."));
+			ri->errorText += wxT("\n");
+			ri->errorText += _("Please try again later.");
 		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+			networkError = true;
 			ri->error = true;
-			ri->errorText = wxString::FromUTF8("Unable to connect to the update site.\nPlease try again later.");
+			ri->errorText = wxString(_("Unable to connect to the update site."));
+			ri->errorText += wxT("\n");
+			ri->errorText += _("Please try again later.");
 		} else { // some other error
 			ri->message = true;
-			ri->errorText = wxString::Format(_("Error downloading update version information:\n%hs"), errorbuf);
+			wxString fmt = _("Error downloading update version information:");
+			fmt += wxT("\n%hs");
+			ri->errorText = wxString::Format(fmt, errorbuf);
 		}
 	}
 
@@ -3202,7 +3327,8 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	config->Write(wxT("UpdateCheckTime"), wxDateTime::Today().FormatISODate());
 
 	// After update check, validate user certificates
-	DoCheckExpiringCerts(noGUI);
+	if (!networkError)
+		DoCheckExpiringCerts(noGUI);
 	return;
 }
 #if !defined(__APPLE__) && !defined(_WIN32)
@@ -3233,8 +3359,10 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	// Does the user have any certificates?
 	get_certlist("", 0, false, false, true);
 	if (ncerts == 0) {
-		wxMessageBox(_("You have no callsign certificates to use to sign a log file.\n"
-			       "Please install a callsign certificate then try again."), _("No Callsign Certificates"),
+		wxString msg = _("You have no callsign certificates to use to sign a log file.");
+			msg += wxT("\n");
+			msg += _("Please install a callsign certificate then try again.");
+		wxMessageBox(msg, _("No Callsign Certificates"),
 			   wxOK|wxICON_EXCLAMATION, this);
 		free_certlist();
 		return;
@@ -3317,8 +3445,16 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
-		if (wxMessageBox(wxString::Format(_("The file (%s) will be signed using:\n"
-				 "Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?"), infile.c_str(), loc_name,
+		wxString fmt = _("The file (%s) will be signed using:");
+			fmt += wxT("\n");
+			fmt += _("Station Location:");
+			fmt += wxT(" %hs\n");
+			fmt += _("Call sign:");
+			fmt += wxT(" %hs\n");
+			fmt += _("DXCC:");
+			fmt += wxT(" %hs\n");
+			fmt += _("Is this correct?");
+		if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
 			callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			ConvertLogFile(loc, infile, outfile, compressed);
 		else
@@ -3345,8 +3481,10 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	// Does the user have any certificates?
 	get_certlist("", 0, false, false, true);
 	if (ncerts == 0) {
-		wxMessageBox(_("You have no callsign certificates to use to sign a log file.\n"
-			       "Please install a callsign certificate then try again."), _("No Callsign Certificates"),
+		wxString msg = _("You have no callsign certificates to use to sign a log file.");
+			msg += wxT("\n");
+			msg += _("Please install a callsign certificate then try again.");
+		wxMessageBox(msg, _("No Callsign Certificates"),
 			   wxOK|wxICON_EXCLAMATION, this);
 		free_certlist();
 		return;
@@ -3412,8 +3550,14 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
-		if (wxMessageBox(wxString::Format(_("The file (%s) will be signed and uploaded using:\n"
-				"Station Location: %hs\nCall sign: %hs\nDXCC: %hs\nIs this correct?"), infile.c_str(), loc_name,
+		wxString fmt = _("The file (%s) will be signed and uploaded using:");
+			fmt += wxT("\n");
+			fmt += _("Station Location:");
+			fmt += wxT(" %hs\n");
+			fmt += _("Call sign:");
+			fmt += wxT(" %hs\nDXCC: %hs\n");
+			fmt += _("Is this correct?");
+		if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
 			callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
 			UploadLogFile(loc, infile);
 		else
@@ -4035,6 +4179,7 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 }
 
 QSLApp::QSLApp() : wxApp() {
+	lang = wxLANGUAGE_UNKNOWN;
 #ifdef __WXMAC__	// Tell wx to put these items on the proper menu
 	wxApp::s_macAboutMenuItemId = long(tm_h_about);
 	wxApp::s_macPreferencesMenuItemId = long(tm_f_preferences);
@@ -4068,7 +4213,7 @@ QSLApp::GUIinit(bool checkUpdates, bool quiet) {
 	if (w < MAIN_WINDOW_MIN_WIDTH) w = MAIN_WINDOW_MIN_WIDTH;
 	if (h < MAIN_WINDOW_MIN_HEIGHT) w = MAIN_WINDOW_MIN_HEIGHT;
 
-	frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates, quiet);
+	frame = new MyFrame(wxT("TQSL"), x, y, w, h, checkUpdates, quiet, locale);
 	frame->SetMinSize(wxSize(MAIN_WINDOW_MIN_WIDTH, MAIN_WINDOW_MIN_HEIGHT));
 	if (checkUpdates)
 		frame->FirstTime();
@@ -4102,14 +4247,49 @@ bool
 QSLApp::OnInit() {
 	frame = 0;
 	bool quiet = false;
+	long lng = -1;
 
 	int major, minor;
 	if (tqsl_getConfigVersion(&major, &minor)) {
 		wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), _("Error"), wxOK);
 		exitNow(TQSL_EXIT_TQSL_ERROR, quiet);
 	}
-	wxFileSystem::AddHandler(new tqslInternetFSHandler());
 
+	wxConfig::Get()->Read(wxT("Language"), &lng, wxLANGUAGE_UNKNOWN);
+	lang = (wxLanguage) lng;
+
+	if (lang == wxLANGUAGE_UNKNOWN || lang == wxLANGUAGE_ENGLISH) {
+		lang = wxLANGUAGE_DEFAULT;
+	}
+
+	for (lng = 0; (unsigned) lng < sizeof (langNames); lng++) {
+		if (lang == langIds[lng])
+			break;
+	}
+
+	if (!locale.Init(lang, wxLOCALE_CONV_ENCODING)) {
+		wxLogError(wxT("This language is not supported by the system."));
+		locale.Init(wxLANGUAGE_DEFAULT);
+	}
+
+	// Add a subdirectory for language files
+	wxLocale::AddCatalogLookupPathPrefix(wxT("lang"));
+
+	// Initialize the catalogs we'll be using
+	locale.AddCatalog(wxT("tqslapp"));
+
+	// this catalog is installed in standard location on Linux systems and
+	// shows that you may make use of the standard message catalogs as well
+	//
+	// If it's not installed on your system, it is just silently ignored
+#ifdef __LINUX__
+        {
+		wxLogNull nolog;
+		locale.AddCatalog(wxT("fileutils"));
+	}
+#endif
+
+	wxFileSystem::AddHandler(new tqslInternetFSHandler());
 	//short circuit if no arguments
 
 	if (argc <= 1) {
@@ -4453,7 +4633,6 @@ QSLApp::OnInit() {
 	return true;
 }
 
-
 void MyFrame::FirstTime(void) {
 	tqslTrace("MyFrame::FirstTime");
 	if (wxConfig::Get()->Read(wxT("HasRun")) == wxT("")) {
@@ -4464,10 +4643,14 @@ void MyFrame::FirstTime(void) {
 	}
 	int ncerts = cert_tree->Build(CERTLIST_FLAGS);
 	CertTreeReset();
-	if (ncerts == 0 && wxMessageBox(_("You have no callsign certificate installed on this computer with which to sign log submissions.\n"
-		"Would you like to request a callsign certificate now?"), _("Alert"), wxYES_NO, this) == wxYES) {
-		wxCommandEvent e;
-		CRQWizard(e);
+	if (ncerts == 0) {
+		wxString msg = _("You have no callsign certificate installed on this computer with which to sign log submissions.");
+		msg += wxT("\n");
+		msg += _("Would you like to request a callsign certificate now?");
+		if (wxMessageBox(msg, _("Alert"), wxYES_NO, this) == wxYES) {
+			wxCommandEvent e;
+			CRQWizard(e);
+		}
 	}
 	wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
 	wxStringTokenizer tkz(pending, wxT(","));
@@ -4730,9 +4913,10 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		// Save or upload?
 		wxString file = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
 		bool upload = false;
-		if (wxMessageBox(_("Do you want to upload this certificate request to LoTW now?\n"
-				     "You do not need an account on LoTW to do this."),
-				_("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+		wxString msg = _("Do you want to upload this certificate request to LoTW now?");
+			msg += wxT("\n");
+			msg += _("You do not need an account on LoTW to do this.");
+		if (wxMessageBox(msg, _("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 			upload = true;
 			// Save it in the working directory
 #ifdef _WIN32
@@ -4815,20 +4999,28 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				wxString fileType(_("Certificate Request"));
 				retval = UploadFile(file, tqslName(file), 0, reinterpret_cast<void *>(const_cast<char *>(contents.c_str())),
 							contents.size(), fileType);
-				if (retval != 0)
-					wxLogError(_("Your certificate request did not upload properly\nPlease try again."));
+				if (retval != 0) {
+					wxLogError(_("Your certificate request did not upload properly"));
+					wxLogError(_("Please try again."));
+				}
 			}
 		} else {
 			wxString msg = _("You may now send your new certificate request (");
 			msg += file;
 			msg += wxT(")");
-			if (wiz.provider.emailAddress[0] != 0)
-				msg += wxString(_("\nto:\n   ")) + wxString::FromUTF8(wiz.provider.emailAddress);
+			if (wiz.provider.emailAddress[0] != 0) {
+				msg += wxT("\n");
+				msg += _("to:");
+				msg += wxT("\n   ");
+				msg += wxString::FromUTF8(wiz.provider.emailAddress);
+			}
 			if (wiz.provider.url[0] != 0) {
 				msg += wxT("\n");
 				if (wiz.provider.emailAddress[0] != 0)
 					msg += _("or ");
-				msg += wxString(_("see:\n   ")) + wxString::FromUTF8(wiz.provider.url);
+				msg += wxString(_("see:"));
+				msg += wxT("\n    ");
+				msg += wxString::FromUTF8(wiz.provider.url);
 			}
 			wxMessageBox(msg, wxT("TQSL"));
 		}
@@ -4850,12 +5042,13 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 void
 MyFrame::CertTreeReset() {
 	if (!cert_save_label) return;
-	cert_save_label->SetLabel(_("\nSave a Callsign Certificate"));
-	cert_renew_label->SetLabel(_("\nRenew a Callsign Certificate"));
-	cert_prop_label->SetLabel(_("\nDisplay a Callsign Certificate"));
+	wxString nl = wxT("\n");
+	cert_save_label->SetLabel(nl + _("Save a Callsign Certificate"));
+	cert_renew_label->SetLabel(nl + _("Renew a Callsign Certificate"));
+	cert_prop_label->SetLabel(nl + _("Display a Callsign Certificate"));
 	cert_menu->Enable(tc_c_Renew, false);
 	cert_renew_button->Enable(false);
-	cert_select_label->SetLabel(_("\nSelect a Callsign Certificate to process"));
+	cert_select_label->SetLabel(nl + _("Select a Callsign Certificate to process"));
 	cert_save_button->Enable(false);
 	cert_prop_button->Enable(false);
 }
@@ -4887,15 +5080,16 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 
 		int w, h;
 		loc_add_label->GetSize(&w, &h);
-		cert_save_label->SetLabel(_("\nSave the callsign certificate for ") + callSign);
+		wxString nl = wxT("\n");
+		cert_save_label->SetLabel(nl + _("Save the callsign certificate for") + wxT(" ") + callSign);
 		cert_save_label->Wrap(w - 10);
-		cert_prop_label->SetLabel(_("\nDisplay the callsign certificate properties for ") + callSign);
+		cert_prop_label->SetLabel(nl + _("Display the callsign certificate properties for") + wxT(" ") + callSign);
 		cert_prop_label->Wrap(w - 10);
 		if (!(keyonly || expired || superseded)) {
-			cert_renew_label->SetLabel(_("\nRenew the callsign certificate for ") + callSign);
+			cert_renew_label->SetLabel(nl + _("Renew the callsign certificate for") +wxT(" ") + callSign);
 			cert_renew_label->Wrap(w - 10);
 		} else {
-			cert_renew_label->SetLabel(_("\nRenew a Callsign Certificate"));
+			cert_renew_label->SetLabel(nl + _("Renew a Callsign Certificate"));
 		}
 		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
 		cert_renew_button->Enable(!(keyonly || expired || superseded));
@@ -4936,16 +5130,20 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 	if (filename == wxT(""))
 		return;
 	wxConfig::Get()->Write(wxT("CertFilePath"), wxPathOnly(filename));
-	GetNewPasswordDialog dial(this, _("Certificate Container Password"),
-_("Enter the password for the certificate container file.\n\n"
-"If you are using a computer system that is shared\n"
-"with others, you should specify a password to\n"
-"protect this certificate. However, if you are using\n"
-"a computer in a private residence, no password need be specified.\n\n"
-"You will have to enter the password any time you\n"
-"load the file into TrustedQSL\n\n"
-"Leave the password blank and click 'OK' unless you want to\n"
-"use a password.\n\n"), true, help, wxT("save.htm"));
+	wxString msg = _("Enter the password for the certificate container file.");
+		msg += wxT("\n\n");
+		msg += _("If you are using a computer system that is shared "
+			"with others, you should specify a password to "
+			"protect this certificate. However, if you are using "
+			"a computer in a private residence, no password need be specified.");
+		msg += wxT("\n\n");
+		msg += _("You will have to enter the password any time you "
+			"load the file into TrustedQSL.");
+		msg += wxT("\n\n");
+		msg += _("Leave the password blank and click 'OK' unless you want to "
+			"use a password.");
+		msg += wxT("\n\n");
+	GetNewPasswordDialog dial(this, _("Certificate Container Password"), msg, true, help, wxT("save.htm"));
 	if (dial.ShowModal() != wxID_OK)
 		return;	// Cancelled
 	int terr;
@@ -4980,13 +5178,18 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	if (wxMessageBox(
-_("WARNING! BE SURE YOU REALLY WANT TO DO THIS!\n\n"
-"This will permanently remove the certificate from your system.\n"
-"You will NOT be able to recover it by loading a .TQ6 file.\n"
-"You WILL be able to recover it from a container (.p12) file only if you have\n"
-"created one via the Callsign Certificate menu's 'Save Callsign Certificate' command.\n\n"
-"ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?"), _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+	wxString warn = _("WARNING! BE SURE YOU REALLY WANT TO DO THIS!");
+	warn += wxT("\n\n");
+	warn += _("This will permanently remove the certificate from your system.");
+	warn += wxT("\n");
+	warn += _("You will NOT be able to recover it by loading a .TQ6 file.");
+	warn += wxT("\n");
+	warn += _("You WILL be able to recover it from a container (.p12) file only if you have");
+	warn += wxT("\n");
+	warn += _("created one via the Callsign Certificate menu's 'Save Callsign Certificate' command.");
+	warn += wxT("\n\n");
+	warn += _("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?");
+	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		char buf[128];
 		if (!tqsl_getCertificateCallSign(data->getCert(), buf, sizeof buf)) {
 			wxString call = wxString::FromUTF8(buf);
@@ -5013,10 +5216,11 @@ MyFrame::LocTreeReset() {
 	loc_delete_button->Disable();
 	loc_prop_button->Disable();
 	stn_menu->Enable(tm_s_Properties, false);
-	loc_edit_label->SetLabel(_("\nEdit a Station Location"));
-	loc_delete_label->SetLabel(_("\nDelete a Station Location"));
-	loc_prop_label->SetLabel(_("\nDisplay Station Location Properties"));
-	loc_select_label->SetLabel(_("\nSelect a Station Location to process"));
+	wxString nl = wxT("\n");
+	loc_edit_label->SetLabel(nl + _("Edit a Station Location"));
+	loc_delete_label->SetLabel(nl + _("Delete a Station Location"));
+	loc_prop_label->SetLabel(nl + _("Display Station Location Properties"));
+	loc_select_label->SetLabel(nl + _("Select a Station Location to process"));
 }
 
 void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
@@ -5060,9 +5264,10 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	if (wxMessageBox(
-_("This will permanently remove this station location from your system.\n"
-"ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?"), _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
+	wxString warn = _("This will permanently remove this station location from your system.");
+	warn += wxT("\n");
+	warn += _("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?");
+	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteStationLocation(data->getLocname().ToUTF8()))
 			wxLogError(wxT("%hs"), tqsl_getErrorString());
 		loc_tree->Build();
@@ -5084,7 +5289,9 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
-			wxMessageBox(wxString::Format(_("%hs\nThe invalid data was ignored."), errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			wxString fmt = wxT("%hs\n");
+			fmt += _("The invalid data was ignored.");
+			wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
 		}
 		char loccall[512];
 		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
@@ -5101,6 +5308,25 @@ void MyFrame::OnLoginToLogbook(wxCommandEvent& WXUNUSED(event)) {
 	if (!url.IsEmpty())
 		wxLaunchDefaultBrowser(url);
 	return;
+}
+
+void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
+	long lng = wxGetSingleChoiceIndex(_("Please choose language:"),
+					 _("Language"),
+					WXSIZEOF(langNames), langNames);
+	if (langIds[lng] == wxLANGUAGE_ENGLISH)
+		lng = wxLANGUAGE_DEFAULT;
+	if (lng != -1) {
+		wxConfig::Get()->Write(wxT("Language"), langIds[lng]);
+		wxConfig::Get()->Flush();
+	}
+
+	if (!locale.Init(langIds[lng], wxLOCALE_CONV_ENCODING)) {
+		wxLogError(wxT("This language is not supported by the system."));
+		locale.Init(wxLANGUAGE_DEFAULT);
+	}
+	Destroy();
+	(reinterpret_cast<QSLApp*>(wxTheApp))->OnInit();
 }
 
 class CertPropDial : public wxDialog {
@@ -5317,7 +5543,7 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 	wxString prompt(_("Enter the password to unlock the callsign certificate"));
 
 	if (callsign)
-	    prompt = prompt + _(" for ") + wxString::FromUTF8((const char *)callsign);
+	    prompt = prompt + wxT(" ") + _("for") + wxT(" ") + wxString::FromUTF8((const char *)callsign);
 
 	tqslTrace("getPassword", "Probing for top window");
 	wxWindow* top = wxGetApp().GetTopWindow();

@@ -568,11 +568,17 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	sizer->Add(new wxStaticText(this, -1, _("\nUse these settings to configure a network proxy\n"
-					      "for Internet uploads and downloads. You should only\n"
-					      "enable a proxy if directed by your network administrator.\n"
-					      "Incorrect settings can cause TQSL to be unable to upload\n"
-					      "logs or check for updates.\n")));
+	wxString msg = wxT("\n");
+		msg += _("Use these settings to configure a network proxy "
+		      "for Internet uploads and downloads. You should only "
+		      "enable a proxy if directed by your network administrator.");
+		msg += wxT("\n");
+		msg += _("Incorrect settings can cause TQSL to be unable to upload "
+		      "logs or check for updates.");
+	wxStaticText *st = new wxStaticText(this, -1, msg, wxDefaultPosition, wxSize(char_width, char_height *8));
+	sizer->Add(st);
+
+	st->Wrap(char_width * 60);
 
 	proxyEnabled =new wxCheckBox(this, ID_PREF_PROXY_ENABLED, _("Enable a Network Proxy"));
 	proxyEnabled->SetValue(enabled);
@@ -593,7 +599,7 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 	hsizer->Add(proxyPort, 0, wxLEFT|wxRIGHT|wxALIGN_BOTTOM, 0);
 	proxyPort->Enable(enabled);
 
-	hsizer->Add(new wxStaticText(this, -1, _("    Proxy Type:")), 0, wxTOP|wxALIGN_LEFT, 4);
+	hsizer->Add(new wxStaticText(this, -1, _("Proxy Type:")), 0, wxTOP|wxALIGN_LEFT, 4);
 
 	proxyType = new wxChoice(this, ID_PREF_PROXY_TYPE, wxPoint(0, 0),
 		wxSize(char_width/4, HEIGHT_ADJ(char_height)), ptypes, 0, wxDefaultValidator, _("ProxyType"));
@@ -811,7 +817,7 @@ END_EVENT_TABLE()
 
 EditContest::EditContest(wxWindow *parent, wxString ctype, wxString _contest,
 		int _contest_type, int _callsign_field)
-		: wxDialog(parent, -1, ctype + _(" Contest")), contest(_contest),
+		: wxDialog(parent, -1, ctype + wxT(" ") + _("Contest")), contest(_contest),
 		contest_type(_contest_type), callsign_field(_callsign_field) {
 	tqslTrace("EditContest::EditContest", "parent=0x%lx, ctype=%s, _contest=%s, _contest_type=%d, _callsign_field=%d", reinterpret_cast<void *>(parent), S(ctype), S(_contest), _contest_type, _callsign_field);
 	SetAutoLayout(true);
@@ -821,7 +827,7 @@ EditContest::EditContest(wxWindow *parent, wxString ctype, wxString _contest,
 	dc.GetTextExtent(wxString(wxT("M")), &char_width, &char_height);
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	sizer->Add(new wxStaticText(this, -1, ctype + _(" Cabrillo CONTEST")), 0, wxALL, 10);
+	sizer->Add(new wxStaticText(this, -1, ctype + wxT(" ") + _("Cabrillo CONTEST")), 0, wxALL, 10);
 
 	sizer->Add(new wxStaticText(this, -1, _("CONTEST Name:")), 0, wxLEFT|wxRIGHT, 10);
 	name = new wxTextCtrl(this, -1, contest, wxDefaultPosition, wxSize(char_width, HEIGHT_ADJ(char_height)));

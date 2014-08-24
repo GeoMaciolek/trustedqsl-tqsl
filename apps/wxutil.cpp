@@ -13,6 +13,9 @@
 #endif
 
 #include "wxutil.h"
+#include <wx/dir.h>
+#include <wx/config.h>
+#include <wx/filename.h>
 
 wxSize
 getTextSize(wxWindow *win) {

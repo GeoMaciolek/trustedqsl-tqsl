@@ -3,6 +3,11 @@ TQSL changes
 
 2.1
 ----------
+Allow TQSL's messages to be translated to the local language.
+
+When update checks are being performed and the Logbook website is not
+reachable, don't keep trying after the initial failure.
+
 Improve startup performance and performance with a large number of callsign
 certificates.
 

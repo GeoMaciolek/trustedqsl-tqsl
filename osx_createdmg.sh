@@ -22,6 +22,11 @@ do
     install_name_tool -change $TQSLLIBPATH @executable_path/libtqsllib.dylib $WORKDIR/TrustedQSL/$app.app/Contents/MacOS/$app
     cp src/config.xml $WORKDIR/TrustedQSL/$app.app/Contents/Resources
     cp apps/ca-bundle.crt $WORKDIR/TrustedQSL/$app.app/Contents/Resources
+    for lang in de es fr it ja pt
+    do
+	mkdir $WORKDIR/TrustedQSL/$app.app/$lang.lproj
+	cp apps/lang/$lang/tqslapp.mo $WORKDIR/TrustedQSL/$app.app/$lang.lproj
+    done
 done
 
 /bin/echo "done"

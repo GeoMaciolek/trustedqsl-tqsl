@@ -26,6 +26,8 @@
 	#include "wx/wx.h"
 #endif
 
+#include <wx/intl.h>
+
 #if wxCHECK_VERSION(2, 5, 0)
 	#define TQ_WXCLOSEEVENT wxCloseEvent
 	#define TQ_WXTEXTEVENT wxCommandEvent
