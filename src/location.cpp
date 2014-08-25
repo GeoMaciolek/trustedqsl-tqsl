@@ -1119,6 +1119,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 				field.changed = true;
 				field.items.clear();
 				loc->newflags = false;
+				field.flags = TQSL_LOCATION_FIELD_SELNXT;	// Must be selected
 				p.hash.clear();
 				tQSL_Cert *certlist;
 				int ncerts;
@@ -2349,6 +2350,9 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
                                 case TQSL_LOCATION_FIELD_LIST:
 					if (field.idx < 0 || field.idx >= static_cast<int>(field.items.size())) {
 						fd.setText("");
+						if (field.gabbi_name == "CALL") {
+							fd.setText("NONE");
+						}
 					} else if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 						char numbuf[20];
 						snprintf(numbuf, sizeof numbuf, "%d", field.items[field.idx].ivalue);

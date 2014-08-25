@@ -3,6 +3,10 @@ TQSL changes
 
 2.1
 ----------
+Properly handle station locations with callsign set to "NONE". They can't
+be used to sign a log, but they can be created and edited while waiting
+for a valid callsign certificate.
+
 Allow TQSL's messages to be translated to the local language.
 
 When update checks are being performed and the Logbook website is not
