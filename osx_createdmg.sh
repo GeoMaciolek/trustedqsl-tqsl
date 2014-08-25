@@ -22,11 +22,14 @@ do
     install_name_tool -change $TQSLLIBPATH @executable_path/libtqsllib.dylib $WORKDIR/TrustedQSL/$app.app/Contents/MacOS/$app
     cp src/config.xml $WORKDIR/TrustedQSL/$app.app/Contents/Resources
     cp apps/ca-bundle.crt $WORKDIR/TrustedQSL/$app.app/Contents/Resources
-    for lang in de es fr it ja pt en
+    for lang in de es fr it ja pt
     do
 	mkdir $WORKDIR/TrustedQSL/$app.app/Contents/Resources/$lang.lproj
 	cp apps/lang/$lang/tqslapp.mo $WORKDIR/TrustedQSL/$app.app/Contents/Resources/$lang.lproj
+	cp apps/lang/$lang/wxstd.mo $WORKDIR/TrustedQSL/$app.app/Contents/Resources/$lang.lproj
     done
+# Make an empty 'en.lproj' folder so wx knows it's default
+    mkdir $WORKDIR/TrustedQSL/$app.app/Contents/Resources/en.lproj
 done
 
 /bin/echo "done"

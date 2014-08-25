@@ -4,4 +4,3 @@ msgmerge -U it/tqslapp.po ../tqslapp.pot
 msgmerge -U fr/tqslapp.po ../tqslapp.pot
 msgmerge -U es/tqslapp.po ../tqslapp.pot
 msgmerge -U de/tqslapp.po ../tqslapp.pot
-msgmerge -U en/tqslapp.po ../tqslapp.pot

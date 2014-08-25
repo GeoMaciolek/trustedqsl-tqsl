@@ -1,2 +1,2 @@
 #!/bin/sh
-xgettext -d tqslapp -o tqslapp.pot  -k_  -E  *.cpp *.h
+xgettext -C -d tqslapp -o tqslapp.pot  -k_  -k__ -kwxTRANSLATE -E  *.cpp *.h
