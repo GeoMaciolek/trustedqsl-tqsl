@@ -124,6 +124,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 	tqslTrace("TQSLWizCertPage::UpdateFields", "noupdate_field=%d", noupdate_field);
 	wxSize text_size = getTextSize(this);
 
+	bool fwdok = true;
 	if (noupdate_field >= 0)
 		tqsl_updateStationLocationCapture(loc);
 	if (noupdate_field <= 0) {
@@ -131,7 +132,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 		tqsl_getLocationFieldFlags(loc, 0, &flags);
 		if (flags == TQSL_LOCATION_FIELD_SELNXT) {
 			int index;
-			bool fwdok = false;
+			fwdok = false;
 			tqsl_getLocationFieldIndex(loc, 0, &index);
 			if (index > 0)
 				fwdok = true;
@@ -228,8 +229,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			char buf[256];
 			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(buf));
-			if (strlen(buf) == 0) {
-				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(true);
+			if (strlen(buf) == 0 ) {
+				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(fwdok);
 				if (valMsg)
 					(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(valMsg));
 			} else {

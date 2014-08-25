@@ -215,8 +215,6 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	        { {&tc_qsobeginy, ID_CRQ_QBYEAR}, {&tc_qsobeginm, ID_CRQ_QBMONTH}, {&tc_qsobegind, ID_CRQ_QBDAY} },
 	        { {&tc_qsoendy, ID_CRQ_QEYEAR}, {&tc_qsoendm, ID_CRQ_QEMONTH}, {&tc_qsoendd, ID_CRQ_QEDAY} }
 	};
-	const char *labels[] = { "QSO begin date:", "QSO end date:" };
-
 	int year = wxDateTime::GetCurrentYear();
 
 	int sels[2][3];
@@ -229,9 +227,10 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		dates[1][1] = crq->qsoNotAfter.month;
 		dates[1][2] = crq->qsoNotAfter.day;
 	}
-	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
+	wxString label = _("QSO begin date:");
+	for (int i = 0; i < 2; i++) {
 		sels[i][0] = sels[i][1] = sels[i][2] = 0;
-		sizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(labels[i])), 0, wxBOTTOM, 5);
+		sizer->Add(new wxStaticText(this, -1, label), 0, wxBOTTOM, 5);
 		hsizer = new wxBoxSizer(wxHORIZONTAL);
 		hsizer->Add(new wxStaticText(this, -1, wxT("Y")), 0, wxLEFT, 20);
 		*(boxes[i][0].cb) = new wxComboBox(this, boxes[i][0].id, wxT(""), wxDefaultPosition,
@@ -274,6 +273,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 			(*(boxes[i][2].cb))->Append(s);
 		}
 		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
+		label = _("QSO end date:");
 	}
 	if (crq) {
 		tc_qsobeginy->SetSelection(sels[0][0]);

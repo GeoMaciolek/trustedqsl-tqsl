@@ -28,6 +28,9 @@
 
 #include <wx/intl.h>
 
+// String extract for translation
+#define __(x) (x)
+
 #if wxCHECK_VERSION(2, 5, 0)
 	#define TQ_WXCLOSEEVENT wxCloseEvent
 	#define TQ_WXTEXTEVENT wxCommandEvent

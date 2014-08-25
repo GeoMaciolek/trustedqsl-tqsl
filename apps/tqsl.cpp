@@ -148,26 +148,28 @@ static int lock_db(bool wait);
 static void unlock_db(void);
 
 static void exitNow(int status, bool quiet) {
-	const char *errors[] = { "Success",
-				 "User Cancelled",
-				 "Upload Rejected",
-				 "Unexpected LoTW Response",
-				 "TQSL Error",
-				 "TQSLLib Error",
-				 "Error opening input file",
-				 "Error opening output file",
-				 "No QSOs written",
-				 "Some QSOs suppressed",
-				 "Commmand Syntax Error",
-				 "LoTW Connection Failed",
-				 "Unknown"
+	const char *errors[] = { __("Success"),
+				 __("User Cancelled"),
+				 __("Upload Rejected"),
+				 __("Unexpected LoTW Response"),
+				 __("TQSL Error"),
+				 __("TQSLLib Error"),
+				 __("Error opening input file"),
+				 __("Error opening output file"),
+				 __("No QSOs written"),
+				 __("Some QSOs suppressed"),
+				 __("Command Syntax Error"),
+				 __("LoTW Connection Failed"),
+				 __("Unknown")
 				};
 	int stat = status;
 	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN;
+	wxString msg = wxGetTranslation(wxString::FromUTF8(errors[stat]));
+	const char *emsg = msg.ToUTF8();
 	if (quiet)
-		wxLogMessage(_("Final Status: %hs (%d)"), errors[stat], status);
+		wxLogMessage(_("Final Status: %hs (%d)"), emsg, status);
 	else
-		cerr << "Final Status: " << errors[stat] << "(" << status << ")" << endl;
+		cerr << "Final Status: " << emsg << "(" << status << ")" << endl;
 	exit(status);
 }
 
@@ -2512,7 +2514,7 @@ static bool verify_cert(tQSL_Location loc, bool editing) {
 	if (editing)
 		flags = TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED;
 	tqsl_selectCertificates(&certlist, &ncerts, call, 0, 0, 0, flags);
-	if (ncerts == 0) {
+	if (ncerts == 0 && strcmp(call, "NONE")) {
 		if (editing) {
 			wxMessageBox(wxString::Format(_("There are no callsign certificates for callsign %hs. This station location cannot be edited."), call), _("No Certificate"), wxOK|wxICON_EXCLAMATION);
 		} else {
@@ -4277,6 +4279,7 @@ QSLApp::OnInit() {
 
 	// Initialize the catalogs we'll be using
 	locale.AddCatalog(wxT("tqslapp"));
+	locale.AddCatalog(wxT("wxstd"));
 
 	// this catalog is installed in standard location on Linux systems and
 	// shows that you may make use of the standard message catalogs as well
@@ -5472,18 +5475,18 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 		: wxDialog(parent, -1, _("Station Location Properties"), wxDefaultPosition, wxSize(1000, 15 * LABEL_HEIGHT)) {
 	tqslTrace("LocPropDial", "locname=%s", S(locname));
 
-	const char *fields[] = { "CALL", "Call sign: ",
-				 "DXCC", "DXCC Entity: ",
-				 "GRIDSQUARE", "Grid Square: ",
-				 "ITUZ", "ITU Zone: ",
-				 "CQZ", "CQ Zone: ",
-				 "IOTA", "IOTA Locator: ",
-				 "US_STATE", "State: ",
-				 "US_COUNTY", "County: ",
-				 "CA_PROVINCE", "Province: ",
-				 "RU_OBLAST", "Oblast: ",
-				 "CN_PROVINCE", "Province: ",
-				 "AU_STATE", "State: " };
+	const char *fields[] = { "CALL", __("Call sign: "),
+				 "DXCC", __("DXCC Entity: "),
+				 "GRIDSQUARE", __("Grid Square: "),
+				 "ITUZ", __("ITU Zone: "),
+				 "CQZ", __("CQ Zone: "),
+				 "IOTA", __("IOTA Locator: "),
+				 "US_STATE", __("State: "),
+				 "US_COUNTY", __("County: "),
+				 "CA_PROVINCE", __("Province: "),
+				 "RU_OBLAST", __("Oblast: "),
+				 "CN_PROVINCE", __("Province: "),
+				 "AU_STATE", __("State: ") };
 
 	tQSL_Location loc;
 	check_tqsl_error(tqsl_getStationLocation(&loc, locname.ToUTF8()));
@@ -5497,7 +5500,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 		if (tqsl_getStationLocationField(loc, fields[i], fieldbuf, sizeof fieldbuf) == 0) {
 			if (strlen(fieldbuf) > 0) {
 				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
-				wxStaticText *st = new wxStaticText(this, -1, wxString::FromUTF8(fields[i+1]),
+				wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(fields[i+1])),
 					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
 				line_sizer->Add(st, 30);
 				if (!strcmp(fields[i], "DXCC")) {
