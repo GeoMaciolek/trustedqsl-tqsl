@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:30-0400\n"
-"PO-Revision-Date: 2014-08-25 19:52-0500\n"
+"POT-Creation-Date: 2014-08-26 08:55-0400\n"
+"PO-Revision-Date: 2014-08-26 17:17-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: de\n"
@@ -82,9 +82,9 @@ msgstr "Adresse"
 
 #: crqwiz.cpp:370
 msgid "City"
-msgstr " Stadt"
+msgstr "Stadt"
 
-#: crqwiz.cpp:383
+#: crqwiz.cpp:383 stationdial.cpp:349 stationdial.cpp:360
 msgid "State"
 msgstr "Staat"
 
@@ -269,7 +269,7 @@ msgstr ""
 "Ansonsten sollten Sie sich vielleicht die \"Zurück\"-Taste verwenden, um die "
 "DXCC Seite nach Klick zurück \"OK\""
 
-#: crqwiz.cpp:735 stationdial.cpp:426
+#: crqwiz.cpp:735 stationdial.cpp:445
 msgid "TQSL Warning"
 msgstr "TQSL Warnung"
 
@@ -650,17 +650,61 @@ msgstr "Löschen \""
 msgid "TQSL Confirm"
 msgstr "TQSL bestätigen"
 
-#: stationdial.cpp:421
+#: stationdial.cpp:350
+msgid "Call Sign"
+msgstr "Rufzeichen"
+
+#: stationdial.cpp:351
+msgid "Province"
+msgstr "Provinz"
+
+#: stationdial.cpp:352
+msgid "Continent"
+msgstr "Kontinent"
+
+#: stationdial.cpp:353
+msgid "CQ Zone"
+msgstr "CQ Zone"
+
+#: stationdial.cpp:354
+msgid "DXCC Entity"
+msgstr "DXCC Land"
+
+#: stationdial.cpp:355
+msgid "Grid Square"
+msgstr "Ungültige Planquadrat"
+
+#: stationdial.cpp:356
+msgid "IOTA ID"
+msgstr "IOTA-ID"
+
+#: stationdial.cpp:357
+msgid "ITU Zone"
+msgstr "ITU Zone"
+
+#: stationdial.cpp:358
+msgid "Oblast"
+msgstr "Oblast"
+
+#: stationdial.cpp:359
+msgid "County"
+msgstr "Land"
+
+#: stationdial.cpp:361
+msgid "WPX Prefix"
+msgstr "WPX Präfix"
+
+#: stationdial.cpp:440
 msgid "You have no Station Locations defined."
 msgstr "Sie haben keine Stationsorte definiert."
 
-#: stationdial.cpp:423
+#: stationdial.cpp:442
 msgid "You must define at least one Station Location to use for signing."
 msgstr ""
 "Sie müssen mindestens eine Station Lage zum Signieren verwenden zu "
 "definieren."
 
-#: stationdial.cpp:425
+#: stationdial.cpp:444
 msgid ""
 "Use the \"New\" Button of the dialog you're about to see to define a Station "
 "Location."
@@ -1823,7 +1867,7 @@ msgstr "Wiederherstellen QSO Aufzeichnungen"
 #: tqsl.cpp:4047
 #, c-format
 msgid "\tError importing station locations: %hs"
-msgstr "\terror Import Stationsorte: %hs"
+msgstr "\tError Import Stationsorte: %hs"
 
 #: tqsl.cpp:4108
 msgid "Restoring Callsign Certificates"
@@ -2404,34 +2448,34 @@ msgstr "Call-arbeitete Feld muss %d oder mehr"
 msgid "Invalid %s: \"%s\""
 msgstr "Ungültige %s \"%s\""
 
-#: tqslwiz.cpp:339
+#: tqslwiz.cpp:341
 msgid "Allow 'None' for "
 msgstr "Lassen Sie 'Keine' für "
 
-#: tqslwiz.cpp:382 tqslwiz.cpp:386
+#: tqslwiz.cpp:384 tqslwiz.cpp:388
 #, c-format
 msgid "%s: Invalid Grid Square Field"
 msgstr "%s: Ungültige Planquadrat Feld"
 
-#: tqslwiz.cpp:390 tqslwiz.cpp:394 tqslwiz.cpp:398 tqslwiz.cpp:417
+#: tqslwiz.cpp:392 tqslwiz.cpp:396 tqslwiz.cpp:400 tqslwiz.cpp:419
 #, c-format
 msgid "%s: Invalid Grid Square"
 msgstr "%s: Ungültige Planquadrat"
 
-#: tqslwiz.cpp:408 tqslwiz.cpp:412
+#: tqslwiz.cpp:410 tqslwiz.cpp:414
 #, c-format
 msgid "%s: Invalid Subsquare"
 msgstr "%s: Ungültige Teilquadrat"
 
-#: tqslwiz.cpp:482
+#: tqslwiz.cpp:484
 msgid "Station Data input complete"
 msgstr "Station Dateneingabe abgeschlossen"
 
-#: tqslwiz.cpp:486
+#: tqslwiz.cpp:488
 msgid "Select or enter name of this station location"
 msgstr "Wählen Sie oder geben Sie den Namen dieser Station Lage"
 
-#: tqslwiz.cpp:509
+#: tqslwiz.cpp:511
 msgid "Station Location Name"
 msgstr "Station Ort Name"
 

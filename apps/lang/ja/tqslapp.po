@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-08-25 15:30-0400\n"
-"PO-Revision-Date: 2014-08-25 21:34-0500\n"
+"POT-Creation-Date: 2014-08-26 08:55-0400\n"
+"PO-Revision-Date: 2014-08-26 17:23-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: ja\n"
@@ -82,7 +82,7 @@ msgstr "アドレス"
 msgid "City"
 msgstr "市区町村"
 
-#: crqwiz.cpp:383
+#: crqwiz.cpp:383 stationdial.cpp:349 stationdial.cpp:360
 msgid "State"
 msgstr "都道府県"
 
@@ -264,7 +264,7 @@ msgstr ""
 "い選択である。そうでなければ、おそらく \"OK\"をクリックした後DXCCページに戻る"
 "には、ボタン「戻るを使用する必要があります"
 
-#: crqwiz.cpp:735 stationdial.cpp:426
+#: crqwiz.cpp:735 stationdial.cpp:445
 msgid "TQSL Warning"
 msgstr "TQSL警告"
 
@@ -639,17 +639,61 @@ msgstr "削除\""
 msgid "TQSL Confirm"
 msgstr "TQSLの確認]"
 
-#: stationdial.cpp:421
+#: stationdial.cpp:350
+msgid "Call Sign"
+msgstr "コー​​ルサイン"
+
+#: stationdial.cpp:351
+msgid "Province"
+msgstr "県"
+
+#: stationdial.cpp:352
+msgid "Continent"
+msgstr "大陸"
+
+#: stationdial.cpp:353
+msgid "CQ Zone"
+msgstr "CQゾーン"
+
+#: stationdial.cpp:354
+msgid "DXCC Entity"
+msgstr "DXCCエンティティ"
+
+#: stationdial.cpp:355
+msgid "Grid Square"
+msgstr "グリッドスクエア"
+
+#: stationdial.cpp:356
+msgid "IOTA ID"
+msgstr "IOTA番号"
+
+#: stationdial.cpp:357
+msgid "ITU Zone"
+msgstr "ITUゾーン"
+
+#: stationdial.cpp:358
+msgid "Oblast"
+msgstr "州"
+
+#: stationdial.cpp:359
+msgid "County"
+msgstr "国"
+
+#: stationdial.cpp:361
+msgid "WPX Prefix"
+msgstr "WPXプレフィックス"
+
+#: stationdial.cpp:440
 msgid "You have no Station Locations defined."
 msgstr "あなたは、定義された駅の場所がありません。"
 
-#: stationdial.cpp:423
+#: stationdial.cpp:442
 msgid "You must define at least one Station Location to use for signing."
 msgstr ""
 "あなたは、署名に使用するには、少なくとも1つのステーションの場所を定義する必要"
 "があります。"
 
-#: stationdial.cpp:425
+#: stationdial.cpp:444
 msgid ""
 "Use the \"New\" Button of the dialog you're about to see to define a Station "
 "Location."
@@ -2377,34 +2421,34 @@ msgstr "コール働いたフィールドでなければなりません%d以上"
 msgid "Invalid %s: \"%s\""
 msgstr "無効な%s ：\" %s \""
 
-#: tqslwiz.cpp:339
+#: tqslwiz.cpp:341
 msgid "Allow 'None' for "
 msgstr "のための「なし」を許可しない"
 
-#: tqslwiz.cpp:382 tqslwiz.cpp:386
+#: tqslwiz.cpp:384 tqslwiz.cpp:388
 #, c-format
 msgid "%s: Invalid Grid Square Field"
 msgstr "%s ：無効なグリッド·スクエア·フィールド"
 
-#: tqslwiz.cpp:390 tqslwiz.cpp:394 tqslwiz.cpp:398 tqslwiz.cpp:417
+#: tqslwiz.cpp:392 tqslwiz.cpp:396 tqslwiz.cpp:400 tqslwiz.cpp:419
 #, c-format
 msgid "%s: Invalid Grid Square"
 msgstr "%s ：無効なグリッド·スクエア"
 
-#: tqslwiz.cpp:408 tqslwiz.cpp:412
+#: tqslwiz.cpp:410 tqslwiz.cpp:414
 #, c-format
 msgid "%s: Invalid Subsquare"
 msgstr "%s ：無効Subsquare"
 
-#: tqslwiz.cpp:482
+#: tqslwiz.cpp:484
 msgid "Station Data input complete"
 msgstr "局データ入力、完全な"
 
-#: tqslwiz.cpp:486
+#: tqslwiz.cpp:488
 msgid "Select or enter name of this station location"
 msgstr "このステーションの場所の名前を選択するか、入力します"
 
-#: tqslwiz.cpp:509
+#: tqslwiz.cpp:511
 msgid "Station Location Name"
 msgstr "駅の場所名"
 
