@@ -22,6 +22,7 @@
 #include "tqsltrace.h"
 
 #include "util.h"
+#include "wxutil.h"
 
 #include "folder.xpm"
 #include "home.xpm"
@@ -72,7 +73,7 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	wxLogError(wxT("%hs"), tqsl_getErrorString());
+	wxLogError(tqsl_getLocalizedErrorString());
 }
 
 int

@@ -672,7 +672,7 @@ check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
 	tqslTrace("check_tqsl_error", "rval=%d", rval);
-	const char *msg = tqsl_getErrorString();
+	const char *msg = tqsl_getLocalizedErrorString().ToUTF8();
 	tqslTrace("check_tqsl_error", "msg=%s", msg);
 	throw TQSLException(msg);
 }
@@ -1337,11 +1337,11 @@ static wxString getAbout() {
 	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2014\nAmerican Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 	else
 		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 	else
 		msg += wxString::Format(wxT("\nConfiguration data V%d.%d\n\n"), major, minor);
 	msg += wxVERSION_STRING;
@@ -1421,11 +1421,11 @@ MyFrame::AddStationLocation(wxCommandEvent& WXUNUSED(event)) {
 	}
 	tQSL_Location loc;
 	if (tqsl_initStationLocationCapture(&loc)) {
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 	}
 	AddEditStationLocation(loc, false, _("Add Station Location"), call);
 	if (tqsl_endStationLocationCapture(&loc)) {
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 	}
 	loc_tree->Build();
 	LocTreeReset();
@@ -1582,12 +1582,12 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 	TQSL_ADIF_GET_FIELD_ERROR stat;
 	tQSL_ADIF adif;
 	if (tqsl_beginADIF(&adif, file.ToUTF8())) {
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 	}
 	QSORecord rec;
 	do {
 		if (tqsl_getADIFField(adif, &field, &stat, fielddefs, defined_types, adif_alloc)) {
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		}
 		if (stat == TQSL_ADIF_GET_FIELD_SUCCESS) {
 			if (!strcasecmp(field.name, "CALL")) {
@@ -2831,7 +2831,7 @@ void MyFrame::UpdateConfigFile() {
 		}
 		notifyData nd;
 		if (tqsl_importTQSLFile(tqslName(filename), notifyImport, &nd)) {
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		} else {
 			wxMessageBox(_("Configuration file successfully updated"), _("Update Completed"), wxOK|wxICON_INFORMATION, this);
 		}
@@ -2940,7 +2940,7 @@ static void
 report_error(expInfo **eip) {
 	expInfo *ei = *eip;
 	ei->error = true;
-	ei->errorText = wxString::FromUTF8(tqsl_getErrorString());
+	ei->errorText = tqsl_getLocalizedErrorString();
 	// Send the result back to the main thread
 	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
 	event.SetClientData(ei);
@@ -4043,7 +4043,8 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 		loader->locstring += wxT("</StationDataFile>\n");
 		tqslTrace("TQSLConfig::xml_restore_end", "Merging station locations");
 		if (tqsl_mergeStationLocations(loader->locstring.ToUTF8()) != 0) {
-			wxLogError(_("\tError importing station locations: %hs"), tqsl_getErrorString());
+			const char *m = tqsl_getLocalizedErrorString().ToUTF8();
+			wxLogError(_("\tError importing station locations: %hs"), m);
 		}
 		tqslTrace("TQSLConfig::xml_restore_end", "Completed merging station locations");
 	} else if (strcmp(name, "TQSLSettings") == 0) {
@@ -4253,7 +4254,7 @@ QSLApp::OnInit() {
 
 	int major, minor;
 	if (tqsl_getConfigVersion(&major, &minor)) {
-		wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), _("Error"), wxOK);
+		wxMessageBox(tqsl_getLocalizedErrorString(), _("Error"), wxOK);
 		exitNow(TQSL_EXIT_TQSL_ERROR, quiet);
 	}
 
@@ -4430,7 +4431,7 @@ QSLApp::OnInit() {
 		importfile.Trim(true).Trim(false);
 		notifyData nd;
 		if (tqsl_importTQSLFile(tqslName(importfile), notifyImport, &nd)) {
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		} else {
 			wxLogMessage(nd.Message());
 			if (tQSL_ImportCall[0] != '\0') {
@@ -4464,10 +4465,10 @@ QSLApp::OnInit() {
 		tqsl_endStationLocationCapture(&loc);
 		if (tqsl_getStationLocation(&loc, locname.ToUTF8())) {
 			if (quiet) {
-				wxLogError(wxT("%hs"), tqsl_getErrorString());
+				wxLogError(tqsl_getLocalizedErrorString());
 				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 			} else {
-				wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), ErrorTitle, wxOK|wxCENTRE, frame);
+				wxMessageBox(tqsl_getLocalizedErrorString(), ErrorTitle, wxOK|wxCENTRE, frame);
 				return false;
 			}
 		}
@@ -4543,7 +4544,7 @@ QSLApp::OnInit() {
 		// Add/Edit station location
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
-				wxLogError(wxT("%hs"), tqsl_getErrorString());
+				wxLogError(tqsl_getLocalizedErrorString());
 			}
 			AddEditStationLocation(loc, true);
 		} else {
@@ -4966,14 +4967,14 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				call = &buf;
 			while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
-					wxLogError(wxT("%hs"), tqsl_getErrorString());
+					wxLogError(tqsl_getLocalizedErrorString());
 					return;
 				}
 				if (tqsl_beginSigning(req.signer, unipwd, NULL, call)) {
 					break;
 				}
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
-					wxLogError(wxT("%hs"), tqsl_getErrorString());
+					wxLogError(tqsl_getLocalizedErrorString());
 					return;
 				}
 			}
@@ -4982,7 +4983,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		if (tqsl_createCertRequest(tqslName(file), &req, 0, 0)) {
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			const char *msg = tqsl_getErrorString();
+			const char *msg = tqsl_getLocalizedErrorString().ToUTF8();
 			wxLogError(wxT("%hs"), msg);
 			wxMessageBox(wxString::Format(_("Error creating callsign certificate request: %hs"), msg), _("Error creating Callsign Certificate Request"), wxOK|wxICON_EXCLAMATION);
 			return;
@@ -5116,7 +5117,7 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 
 	char call[40];
 	if (tqsl_getCertificateCallSign(data->getCert(), call, sizeof call)) {
-		wxLogError(wxT("%hs"), tqsl_getErrorString());
+		wxLogError(tqsl_getLocalizedErrorString());
 		return;
 	}
 	tqslTrace("MyFrame::OnCertExport", "call=%s", call);
@@ -5158,20 +5159,22 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 				if (terr) {
 					if (tQSL_Error == TQSL_PASSWORD_ERROR)
 						continue;
-					wxLogError(wxT("%hs"), tqsl_getErrorString());
+					wxLogError(tqsl_getLocalizedErrorString());
 				}
 				continue;
 			}
 			if (tQSL_Error == TQSL_OPERATOR_ABORT)
 				return;
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		}
 	} while (terr);
 	// When setting the password, always use UTF8.
-	if (tqsl_exportPKCS12File(data->getCert(), tqslName(filename), dial.Password().ToUTF8()))
-		wxLogError(_("Export to %s failed: %hs"), filename.c_str(), tqsl_getErrorString());
-	else
+	if (tqsl_exportPKCS12File(data->getCert(), tqslName(filename), dial.Password().ToUTF8())) {
+		const char *m = tqsl_getLocalizedErrorString().ToUTF8();
+		wxLogError(_("Export to %s failed: %hs"), filename.c_str(), m);
+	} else {
 		wxLogMessage(_("Certificate saved in file %s"), filename.c_str());
+	}
 	tqsl_endSigning(data->getCert());
 }
 
@@ -5206,7 +5209,7 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 			wxConfig::Get()->Write(wxT("RequestPending"), pending);
 		}
 		if (tqsl_deleteCertificate(data->getCert()))
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
 	}
@@ -5272,7 +5275,7 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	warn += _("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?");
 	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteStationLocation(data->getLocname().ToUTF8()))
-			wxLogError(wxT("%hs"), tqsl_getErrorString());
+			wxLogError(tqsl_getLocalizedErrorString());
 		loc_tree->Build();
 		LocTreeReset();
 	}
@@ -5419,7 +5422,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
                         case 10:
 				switch (tqsl_getCertificatePrivateKeyType(cert)) {
                                         case TQSL_PK_TYPE_ERR:
-						wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), _("Error"));
+						wxMessageBox(tqsl_getLocalizedErrorString(), _("Error"));
 						strncpy(buf, "<ERROR>", sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_NONE:
@@ -5568,7 +5571,7 @@ displayTQSLError(const char *pre) {
 	tqslTrace("displayTQSLError", "pre=%s", pre);
 	wxString s = wxString::FromUTF8(pre);
 	s += wxT(":\n");
-	s += wxString::FromUTF8(tqsl_getErrorString());
+	s += tqsl_getLocalizedErrorString();
 	wxMessageBox(s, _("Error"));
 }
 

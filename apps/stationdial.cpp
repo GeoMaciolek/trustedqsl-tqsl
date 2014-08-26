@@ -82,7 +82,7 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	throw TQSLException(tqsl_getErrorString());
+	throw TQSLException(tqsl_getLocalizedErrorString().ToUTF8());
 }
 
 static bool

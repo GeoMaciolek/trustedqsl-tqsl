@@ -24,6 +24,7 @@
 #include "tqsllib.h"
 #include "tqslexcept.h"
 #include "tqsltrace.h"
+#include "wxutil.h"
 
 using std::vector;
 
@@ -227,7 +228,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 #define QD_MARGIN 3
 
 	if (init_valid_lists())
-		throw TQSLException(tqsl_getErrorString());
+		throw TQSLException(tqsl_getLocalizedErrorString().ToUTF8());
 	// Call sign
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(new wxStaticText(this, -1, _("Call Sign:"), wxDefaultPosition,

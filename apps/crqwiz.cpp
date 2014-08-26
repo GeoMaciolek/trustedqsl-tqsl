@@ -94,7 +94,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	sizer->Add(tc_provider_info, 0, wxALL|wxEXPAND, 10);
 	int nprov = 0;
 	if (tqsl_getNumProviders(&nprov))
-		wxMessageBox(wxString::FromUTF8(tqsl_getErrorString()), _("Error"));
+		wxMessageBox(tqsl_getLocalizedErrorString(), _("Error"));
 	for (int i = 0; i < nprov; i++) {
 		TQSL_PROVIDER prov;
 		if (!tqsl_getProvider(i, &prov))
