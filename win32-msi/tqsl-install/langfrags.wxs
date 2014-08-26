@@ -56,10 +56,10 @@
       <Component Id="cmp03C541E3239F387DC9BBA7E29B204380" Directory="dir87830DC9C2DED45B7E26F428A1DA8251" Guid="*">
         <File Id="fil4C7B28D9431F64C171934E2ADB89E881" KeyPath="yes" Source="$(var.langSrc)\it\tqslapp.mo" />
       </Component>
-      <Component Id="cmp03C541E3239F387DC9BBA7E29B204380" Directory="dir87830DC9C2DED45B7E26F428A1DA8251" Guid="*">
+      <Component Id="cmpF8b3feb99eed435e9b777C843F349E72" Directory="dir87830DC9C2DED45B7E26F428A1DA8251" Guid="*">
         <File Id="file48dee3f8d49465b9568fae072ae6e31" KeyPath="yes" Source="$(var.langSrc)\it\wxstd.mo" />
       </Component>
-      <Component Id="cmp4a37025ce52b7b42a87BBDFFFEB978B0" Directory="dir2325DE467EB3C09A2BCC4942D90AC105" Guid="*">
+      <Component Id="cmp4A37025CE52B7B42A87bbdfffeb978B0" Directory="dir2325DE467EB3C09A2BCC4942D90AC105" Guid="*">
         <File Id="fil228219907990D3C20BA820247296E40B" KeyPath="yes" Source="$(var.langSrc)\ja\tqslapp.mo" />
       </Component>
       <Component Id="cmp9375E74F9EC6417F84723B412D0D99E5" Directory="dir2325DE467EB3C09A2BCC4942D90AC105" Guid="*">
