@@ -73,7 +73,7 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	wxLogError(tqsl_getLocalizedErrorString());
+	wxLogError(getLocalizedErrorString());
 }
 
 int

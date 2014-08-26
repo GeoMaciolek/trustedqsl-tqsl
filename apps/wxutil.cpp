@@ -116,7 +116,7 @@ static const char *error_strings[] = {
 };
 
 static wxString
-tqsl_getLocalizedErrorString_v(int err) {
+getLocalizedErrorString_v(int err) {
 	int adjusted_err;
 	wxString buf;
 
@@ -139,14 +139,14 @@ tqsl_getLocalizedErrorString_v(int err) {
 				tQSL_ErrorFile, strerror(tQSL_Errno));
 			tQSL_ErrorFile[0] = '\0';
 		} else {
-			buf = wxString::Format(_("System error: %s"), 
+			buf = wxString::Format(_("System error: %s"),
 				strerror(tQSL_Errno));
 		}
 		return buf;
 	}
 	if (err == TQSL_FILE_SYNTAX_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
-			buf = wxString::Format(_("File syntax error: %s"), 
+			buf = wxString::Format(_("File syntax error: %s"),
 				tQSL_ErrorFile);
 			tQSL_ErrorFile[0] = '\0';
 		} else {
@@ -162,7 +162,7 @@ tqsl_getLocalizedErrorString_v(int err) {
 #if 0
 		unsigned long openssl_err;
 		openssl_err = ERR_get_error();
-		
+
 		strncpy(buf, "OpenSSL error: ", sizeof buf);
 		if (openssl_err)
 			return wxString::Format(_("OpenSSL error: %s"), ERR_error_string(openssl_err);
@@ -181,7 +181,7 @@ tqsl_getLocalizedErrorString_v(int err) {
 	}
 	if (err == TQSL_CABRILLO_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
-			buf = wxString::Format(wxT("%s: %s"), 
+			buf = wxString::Format(wxT("%s: %s"),
 				tQSL_ErrorFile, tqsl_cabrilloGetError(tQSL_Cabrillo_Error));
 			tQSL_ErrorFile[0] = '\0';
 		} else {
@@ -208,8 +208,8 @@ tqsl_getLocalizedErrorString_v(int err) {
 }
 
 wxString
-tqsl_getLocalizedErrorString() {
-	wxString cp = tqsl_getLocalizedErrorString_v(tQSL_Error);
+getLocalizedErrorString() {
+	wxString cp = getLocalizedErrorString_v(tQSL_Error);
 	tQSL_Error = TQSL_NO_ERROR;
 	tQSL_Errno = 0;
 	tQSL_ErrorFile[0] = 0;

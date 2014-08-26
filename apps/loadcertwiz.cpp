@@ -254,7 +254,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 			_first = _final;
 			_final->SetPrev(0);
 			if (tqsl_importTQSLFile(tqslName(filename), notifyImport, GetNotifyData())) {
-				wxMessageBox(tqsl_getLocalizedErrorString(), _("Error"));
+				wxMessageBox(getLocalizedErrorString(), _("Error"));
 			} else {
 				if (tQSL_ImportCall[0] != '\0') {
 					wxString call = wxString::FromUTF8(tQSL_ImportCall);
@@ -348,7 +348,7 @@ LCW_P12PasswordPage::TransferDataFromWindow() {
 			tc_status->SetLabel(_("Password error"));
 			return false;
 		} else {
-			wxMessageBox(tqsl_getLocalizedErrorString(), _("Error"));
+			wxMessageBox(getLocalizedErrorString(), _("Error"));
 		}
 	}
 	tc_status->SetLabel(wxT(""));

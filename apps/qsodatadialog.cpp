@@ -227,8 +227,11 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 
 #define QD_MARGIN 3
 
-	if (init_valid_lists())
-		throw TQSLException(tqsl_getLocalizedErrorString().ToUTF8());
+	if (init_valid_lists()) {
+		char err[256];
+		strncpy(err, getLocalizedErrorString().ToUTF8(), sizeof err);
+		throw TQSLException(err);
+	}
 	// Call sign
 	wxBoxSizer *sizer = new wxBoxSizer(wxHORIZONTAL);
 	sizer->Add(new wxStaticText(this, -1, _("Call Sign:"), wxDefaultPosition,

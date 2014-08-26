@@ -229,7 +229,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			char buf[256];
 			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(buf));
-			if (strlen(buf) == 0 ) {
+			if (strlen(buf) == 0) {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(fwdok);
 				if (valMsg)
 					(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(valMsg));
@@ -278,7 +278,8 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 		wxCoord w, h;
 		char label[256];
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
-		sdc.GetTextExtent(wxString::FromUTF8(label), &w, &h);
+		wxString lbl = wxGetTranslation(wxString::FromUTF8(label));
+		sdc.GetTextExtent(lbl, &w, &h);
 		if (w > label_w)
 			label_w = w;
 	}
@@ -292,10 +293,11 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 		int in_type, flags;
 		wxBoxSizer *hsizer;
 		tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
+		wxString lbl = wxGetTranslation(wxString::FromUTF8(label));
 		tqsl_getLocationFieldInputType(loc, i, &in_type);
 		if (in_type != TQSL_LOCATION_FIELD_BADZONE) {
 			hsizer = new wxBoxSizer(wxHORIZONTAL);
-			hsizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(label), wxDefaultPosition,
+			hsizer->Add(new wxStaticText(this, -1, lbl, wxDefaultPosition,
 				wxSize(label_w, -1), wxALIGN_RIGHT/*|wxST_NO_AUTORESIZE*/), 0, wxTOP, 5);
 		}
 		wxWindow *control_p = 0;
@@ -309,7 +311,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 					0, 0, wxCB_DROPDOWN|wxCB_READONLY);
 				if (flags & TQSL_LOCATION_FIELD_SELNXT) {
 					addCheckbox = true;
-					cbLabel = wxString::FromUTF8(label);
+					cbLabel = lbl;
 				}
 				break;
                         case TQSL_LOCATION_FIELD_TEXT:

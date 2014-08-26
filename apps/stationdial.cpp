@@ -82,7 +82,9 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	throw TQSLException(tqsl_getLocalizedErrorString().ToUTF8());
+	char err[256];
+	strncpy(err, getLocalizedErrorString().ToUTF8(), sizeof err);
+	throw TQSLException(err);
 }
 
 static bool
@@ -343,6 +345,25 @@ TQSLGetStationNameDialog::OnNameChange(wxCommandEvent&) {
 	UpdateButtons();
 }
 
+// Location fields, here for translation purposes
+#if 0
+static const char* labels[] = {
+	__("State"),
+	__("Call Sign"),
+	__("Province"),
+	__("Continent"),
+	__("CQ Zone"),
+	__("DXCC Entity"),
+	__("Grid Square"),
+	__("IOTA ID"),
+	__("ITU Zone"),
+	__("Oblast"),
+	__("County"),
+	__("State"),
+	__("WPX Prefix")
+}
+#endif
+
 void
 TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 	tqslTrace("TQSLGetStationNameDialog::DisplayProperties");
@@ -364,7 +385,7 @@ TQSLGetStationNameDialog::DisplayProperties(wxCommandEvent&) {
 			for (int i = 0; i < nfield; i++) {
 				char buf[256];
 				check_tqsl_error(tqsl_getLocationFieldDataLabel(loc, i, buf, sizeof buf));
-				wxString key = wxString::FromUTF8(buf);
+				wxString key = wxGetTranslation(wxString::FromUTF8(buf));
 				int type;
 				check_tqsl_error(tqsl_getLocationFieldDataType(loc, i, &type));
 				if (type == TQSL_LOCATION_FIELD_DDLIST || type == TQSL_LOCATION_FIELD_LIST) {
