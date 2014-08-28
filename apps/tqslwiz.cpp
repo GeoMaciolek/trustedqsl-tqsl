@@ -134,7 +134,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			int index;
 			fwdok = false;
 			tqsl_getLocationFieldIndex(loc, 0, &index);
-			if (index > 0)
+			if (index >= 0)
 				fwdok = true;
 			if (okEmptyCB && okEmptyCB->IsChecked())
 				fwdok = true;
@@ -221,6 +221,15 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(wxString::FromUTF8(buf));
 			}
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
+// Possible errors, here for harvesting
+#if 0
+	static const char* verrs[] = { 
+		__("Invalid zone selections for state"),
+		__("Invalid zone selections for province"),
+		__("Invalid zone selections for oblast"),
+		__("Invalid zone selections for DXCC entity")
+};
+#endif
 			int len;
 			tqsl_getLocationFieldDataLength(loc, i, &len);
 			int w, h;
@@ -228,7 +237,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetSize((len+1)*text_size.GetWidth(), h);
 			char buf[256];
 			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
-			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(buf));
+			wxString tbuf = wxGetTranslation(wxString::FromUTF8(buf));
+			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(tbuf);
 			if (strlen(buf) == 0) {
 				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(fwdok);
 				if (valMsg)
@@ -530,10 +540,12 @@ const char *
 TQSLWizFinalPage::validate() {
 	tqslTrace("TQSLWizFinalPage::validate");
 	wxString val = newname->GetValue().Trim(true).Trim(false);
-	const char *errmsg = 0;
+	static char errmsg[100];
 	val.Trim().Trim(false);
-	if (val == wxT(""))
-		errmsg = "Station name must be provided";
+	if (val == wxT("")) {
+		wxString err = wxGetTranslation(_("Station name must be provided"));
+		strncpy(errmsg, err.ToUTF8(), sizeof errmsg);
+	}
 	return errmsg;
 }
 

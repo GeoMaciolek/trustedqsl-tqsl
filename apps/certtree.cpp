@@ -23,6 +23,7 @@
 #include "dxcc.h"
 #include "tqslerrno.h"
 #include "tqsltrace.h"
+#include "wxutil.h"
 
 #include "cert.xpm"
 #include "nocert.xpm"
@@ -104,25 +105,25 @@ CertTree::Build(int flags, const TQSL_PROVIDER *provider) {
 	wxTreeItemId rootId = AddRoot(_("tQSL Certificates"), FOLDER_ICON);
 	if (tqsl_selectCertificates(&_certs, &_ncerts, 0, 0, 0, provider, flags)) {
 		if (tQSL_Error != TQSL_SYSTEM_ERROR || tQSL_Errno != ENOENT)
-			displayTQSLError("Error while accessing certificate store");
+			displayTQSLError(__("Error while accessing certificate store"));
 	}
 	// Separate certs into lists by issuer
 	for (int i = 0; i < _ncerts; i++) {
 		char issname[129];
 		if (tqsl_getCertificateIssuerOrganization(_certs[i], issname, sizeof issname)) {
-			displayTQSLError("Error parsing certificate for issuer");
+			displayTQSLError(__("Error parsing certificate for issuer"));
 			return _ncerts;
 		}
 		char callsign[129] = "";
 		if (tqsl_getCertificateCallSign(_certs[i], callsign, sizeof callsign - 4)) {
-			displayTQSLError("Error parsing certificate for call sign");
+			displayTQSLError(__("Error parsing certificate for call sign"));
 			return _ncerts;
 		}
 		strncat(callsign, " - ", sizeof callsign - strlen(callsign)-1);
 		DXCC dxcc;
 		int dxccEntity;
 		if (tqsl_getCertificateDXCCEntity(_certs[i], &dxccEntity)) {
-			displayTQSLError("Error parsing certificate for DXCC entity");
+			displayTQSLError(__("Error parsing certificate for DXCC entity"));
 			return _ncerts;
 		}
 		const char *entityName;

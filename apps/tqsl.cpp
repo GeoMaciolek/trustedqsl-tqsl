@@ -208,7 +208,7 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
-	wxString fmt = _("Enter the password to unlock the callsign certificate for");
+	wxString fmt = _("Enter the password to unlock the callsign certificate for ");
 		fmt += wxT("%hs -- %hs\n");
 		fmt += _("(This is the password you made up when you installed the callsign certificate.)");
 	wxString message = wxString::Format(fmt, call, dx.name());
@@ -5353,8 +5353,17 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 		: wxDialog(parent, -1, _("Certificate Properties"), wxDefaultPosition, wxSize(400, 15 * LABEL_HEIGHT)) {
 	tqslTrace("CertPropDial::CertPropDial", "cert=%lx", static_cast<void *>(cert));
 	const char *labels[] = {
-		"Begins: ", "Expires: ", "Organization: ", "", "Serial: ", "Operator: ",
-		"Call sign: ", "DXCC Entity: ", "QSO Start Date: ", "QSO End Date: ", "Key: "
+		__("Begins: "),
+		__("Expires: "),
+		__("Organization: "), 
+		"",
+		__("Serial: "),
+		__("Operator: "),
+		__("Call sign: "),
+		__("DXCC Entity: "),
+		__("QSO Start Date: "),
+		__("QSO End Date: "),
+		__("Key: ")
 	};
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
@@ -5363,7 +5372,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	int y = 10;
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
-		wxStaticText *st = new wxStaticText(this, -1, wxString::FromUTF8(labels[i]),
+		wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(labels[i])),
 			wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
 		line_sizer->Add(st);
 		char buf[128] = "";
@@ -5428,21 +5437,21 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				switch (tqsl_getCertificatePrivateKeyType(cert)) {
                                         case TQSL_PK_TYPE_ERR:
 						wxMessageBox(getLocalizedErrorString(), _("Error"));
-						strncpy(buf, "<ERROR>", sizeof buf);
+						strncpy(buf, __("<ERROR>"), sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_NONE:
-						strncpy(buf, "None", sizeof buf);
+						strncpy(buf, __("None"), sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_UNENC:
-						strncpy(buf, "Unencrypted", sizeof buf);
+						strncpy(buf, __("Unencrypted"), sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_ENC:
-						strncpy(buf, "Password protected", sizeof buf);
+						strncpy(buf, __("Password protected"), sizeof buf);
 						break;
 				}
 				break;
 		}
-		line_sizer->Add(new wxStaticText(this, -1, wxString::FromUTF8(buf)));
+		line_sizer->Add(new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(buf))));
 		prop_sizer->Add(line_sizer);
 		y += LABEL_HEIGHT;
 	}
@@ -5574,7 +5583,7 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 void
 displayTQSLError(const char *pre) {
 	tqslTrace("displayTQSLError", "pre=%s", pre);
-	wxString s = wxString::FromUTF8(pre);
+	wxString s = wxGetTranslation(wxString::FromUTF8(pre));
 	s += wxT(":\n");
 	s += getLocalizedErrorString();
 	wxMessageBox(s, _("Error"));

@@ -783,12 +783,12 @@ CRQ_NamePage::validate() {
 	const char *errmsg = 0;
 
 	if (cleanString(Parent()->name))
-		errmsg = "You must enter your name";
+		errmsg = __("You must enter your name");
 	if (!errmsg && cleanString(Parent()->addr1))
-		errmsg = "You must enter your address";
+		errmsg = __("You must enter your address");
 	if (!errmsg && cleanString(Parent()->city))
-		errmsg = "You must enter your city";
-	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
+		errmsg = __("You must enter your city");
+	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
 	return errmsg;
 }
 
@@ -842,8 +842,8 @@ CRQ_EmailPage::validate() {
 	int i = Parent()->email.First('@');
 	int j = Parent()->email.Last('.');
 	if (i < 1 || j < i+2 || j == static_cast<int>(Parent()->email.length())-1)
-		errmsg = "You must enter a valid email address";
-	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
+		errmsg = __("You must enter a valid email address");
+	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
 	return errmsg;
 }
 
@@ -869,8 +869,8 @@ CRQ_PasswordPage::validate() {
 	wxString pw2 = tc_pw2->GetValue();
 
 	if (pw1 != pw2)
-		errmsg = "The two copies of the password do not match.";
-	tc_status->SetLabel(errmsg ? wxString::FromUTF8(errmsg) : wxT(""));
+		errmsg = __("The two copies of the password do not match.");
+	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
 	return errmsg;
 }
 
