@@ -126,7 +126,6 @@ using std::string;
 /// GEOMETRY
 
 #define LABEL_HEIGHT 20
-#define LABEL_WIDTH 120
 
 #define CERTLIST_FLAGS TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_SUPERCEDED | TQSL_SELECT_CERT_EXPIRED
 
@@ -1030,8 +1029,12 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b1Panel->SetSizer(b1sizer);
 
 	wxBitmapButton *up = new wxBitmapButton(b1Panel, tl_Upload, uploadbm);
-	up->SetName(_("Sign and Upload"));
+	// Use a really tiny label font on the buttons, as the labels are there
+	// for accessibility only.
+	wxFont f(1, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
+	up->SetLabel(_("Sign a log and upload it automatically to LoTW"));
 	up->SetBitmapDisabled(upload_disbm);
+	up->SetFont(f);
 	b1sizer->Add(up, 0, wxALL, 1);
 	wxString b1lbl = wxT("\n");
 	b1lbl += _("Sign a log and upload it automatically to LoTW");
@@ -1043,7 +1046,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b2Panel->SetBackgroundColour(wxColour(255, 255, 255));
 	b2Panel->SetSizer(b2sizer);
 	wxBitmapButton *signsave = new wxBitmapButton(b2Panel, tl_Save, savebm);
-	signsave->SetName(_("Sign and Save"));
+	signsave->SetLabel(_("Sign a log and save it for uploading later"));
+	signsave->SetFont(f);
 	b2sizer->Add(signsave, 0, wxALL, 1);
 	wxString b2lbl = wxT("\n");
 	b2lbl += _("Sign a log and save it for uploading later");
@@ -1056,7 +1060,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b3Panel->SetSizer(b3sizer);
 	wxBitmapButton *fed = new wxBitmapButton(b3Panel, tl_Edit, file_editbm);
 	fed->SetBitmapDisabled(file_edit_disbm);
-	fed->SetName(_("Create an ADIF file"));
+	fed->SetLabel(_("Create an ADIF file for signing and uploading"));
+	fed->SetFont(f);
 	b3sizer->Add(fed, 0, wxALL, 1);
 	wxString b3lbl = wxT("\n");
 	b3lbl += _("Create an ADIF file for signing and uploading");
@@ -1068,7 +1073,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	b4Panel->SetBackgroundColour(wxColour(255, 255, 255));
 	b4Panel->SetSizer(b4sizer);
 	wxBitmapButton *lotw = new wxBitmapButton(b4Panel, tl_Login, lotwbm);
-	lotw->SetName(_("LoTW Web Site"));
+	lotw->SetLabel(_("Log in to the Logbook of the World Site"));
+	lotw->SetFont(f);
 	b4sizer->Add(lotw, 0, wxALL, 1);
 	wxString b4lbl = wxT("\n");
 	b4lbl += _("Log in to the Logbook of the World Site");
@@ -1122,7 +1128,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb1Panel->SetSizer(lb1sizer);
 
 	loc_add_button = new wxBitmapButton(lb1Panel, tl_AddLoc, locaddbm);
-	loc_add_button->SetName(_("Create a Station Location"));
+	loc_add_button->SetFont(f);
 	loc_add_button->SetBitmapDisabled(locadd_disbm);
 	lb1sizer->Add(loc_add_button, 0, wxALL, 1);
 	// Note - the doubling below is to size the label to allow the control to stretch later
@@ -1134,6 +1140,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxString lal = wxT("\n");
 	lal += _("Create a new Station Location");
 	loc_add_label->SetLabel(lal);
+	loc_add_button->SetLabel(lal);
 
 	wxPanel* lb2Panel = new wxPanel(lbuttons);
 	lb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1141,7 +1148,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb2Panel->SetSizer(lb2sizer);
 
 	loc_edit_button = new wxBitmapButton(lb2Panel, tl_EditLoc, editbm);
-	loc_edit_button->SetName(_("Edit a Station Location"));
+	loc_edit_button->SetFont(f);
 	loc_edit_button->SetBitmapDisabled(edit_disbm);
 	loc_edit_button->Enable(false);
 	lb2sizer->Add(loc_edit_button, 0, wxALL, 1);
@@ -1157,7 +1164,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb3Panel->SetSizer(lb3sizer);
 
 	loc_delete_button = new wxBitmapButton(lb3Panel, tl_DeleteLoc, deletebm);
-	loc_delete_button->SetName(_("Delete a Station Location"));
+	loc_delete_button->SetFont(f);
 	loc_delete_button->SetBitmapDisabled(delete_disbm);
 	loc_delete_button->Enable(false);
 	lb3sizer->Add(loc_delete_button, 0, wxALL, 1);
@@ -1173,7 +1180,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lb4Panel->SetSizer(lb4sizer);
 
 	loc_prop_button = new wxBitmapButton(lb4Panel, tl_PropLoc, propertiesbm);
-	loc_prop_button->SetName(_("Display Station Location Properties"));
+	loc_prop_button->SetFont(f);
 	loc_prop_button->SetBitmapDisabled(properties_disbm);
 	loc_prop_button->Enable(false);
 	lb4sizer->Add(loc_prop_button, 0, wxALL, 1);
@@ -1226,12 +1233,13 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb1Panel->SetSizer(cb1sizer);
 
 	cert_load_button = new wxBitmapButton(cb1Panel, tc_Load, importbm);
-	cert_load_button->SetName(_("Load a Callsign Certificate"));
+	cert_load_button->SetFont(f);
 	cert_load_button->SetBitmapDisabled(delete_disbm);
 	cb1sizer->Add(cert_load_button, 0, wxALL, 1);
 	wxString lcl = wxT("\n");
 	lcl += _("Load a Callsign Certificate");
 	cert_load_label = new wxStaticText(cb1Panel, -1, lcl, wxDefaultPosition, wxSize(tw, th));
+	cert_load_button->SetLabel(lcl);
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
 	cbsizer->Add(cb1Panel, 1, wxALL, 1);
 
@@ -1241,7 +1249,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb2Panel->SetSizer(cb2sizer);
 
 	cert_save_button = new wxBitmapButton(cb2Panel, tc_CertSave, downloadbm);
-	cert_save_button->SetName(_("Save a Callsign Certificate"));
+	cert_save_button->SetFont(f);
 	cert_save_button->SetBitmapDisabled(download_disbm);
 	cert_save_button->Enable(false);
 	cb2sizer->Add(cert_save_button, 0, wxALL, 1);
@@ -1257,7 +1265,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb3Panel->SetSizer(cb3sizer);
 
 	cert_renew_button = new wxBitmapButton(cb3Panel, tc_CertRenew, uploadbm);
-	cert_renew_button->SetName(_("Renew a Callsign Certificate"));
+	cert_renew_button->SetFont(f);
 	cert_renew_button->SetBitmapDisabled(upload_disbm);
 	cert_renew_button->Enable(false);
 	cb3sizer->Add(cert_renew_button, 0, wxALL, 1);
@@ -1273,7 +1281,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cb4Panel->SetSizer(cb4sizer);
 
 	cert_prop_button = new wxBitmapButton(cb4Panel, tc_CertProp, propertiesbm);
-	cert_prop_button->SetName(_("Display a Callsign Certificate's Properties"));
+	cert_prop_button->SetFont(f);
 	cert_prop_button->SetBitmapDisabled(properties_disbm);
 	cert_prop_button->Enable(false);
 	cb4sizer->Add(cert_prop_button, 0, wxALL, 1);
@@ -5052,8 +5060,11 @@ MyFrame::CertTreeReset() {
 	if (!cert_save_label) return;
 	wxString nl = wxT("\n");
 	cert_save_label->SetLabel(nl + _("Save a Callsign Certificate"));
+	cert_save_button->SetLabel(nl + _("Save a Callsign Certificate"));
 	cert_renew_label->SetLabel(nl + _("Renew a Callsign Certificate"));
+	cert_renew_button->SetLabel(nl + _("Renew a Callsign Certificate"));
 	cert_prop_label->SetLabel(nl + _("Display a Callsign Certificate"));
+	cert_prop_button->SetLabel(nl + _("Display a Callsign Certificate"));
 	cert_menu->Enable(tc_c_Renew, false);
 	cert_renew_button->Enable(false);
 	cert_select_label->SetLabel(nl + _("Select a Callsign Certificate to process"));
@@ -5091,13 +5102,17 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		wxString nl = wxT("\n");
 		cert_save_label->SetLabel(nl + _("Save the callsign certificate for") + wxT(" ") + callSign);
 		cert_save_label->Wrap(w - 10);
+		cert_save_button->SetLabel(nl + _("Save the callsign certificate for") + wxT(" ") + callSign);
 		cert_prop_label->SetLabel(nl + _("Display the callsign certificate properties for") + wxT(" ") + callSign);
 		cert_prop_label->Wrap(w - 10);
+		cert_prop_button->SetLabel(nl + _("Display the callsign certificate properties for") + wxT(" ") + callSign);
 		if (!(keyonly || expired || superseded)) {
 			cert_renew_label->SetLabel(nl + _("Renew the callsign certificate for") +wxT(" ") + callSign);
 			cert_renew_label->Wrap(w - 10);
+			cert_renew_button->SetLabel(nl + _("Renew the callsign certificate for") +wxT(" ") + callSign);
 		} else {
 			cert_renew_label->SetLabel(nl + _("Renew a Callsign Certificate"));
+			cert_renew_button->SetLabel(nl + _("Renew a Callsign Certificate"));
 		}
 		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
 		cert_renew_button->Enable(!(keyonly || expired || superseded));
@@ -5229,8 +5244,11 @@ MyFrame::LocTreeReset() {
 	stn_menu->Enable(tm_s_Properties, false);
 	wxString nl = wxT("\n");
 	loc_edit_label->SetLabel(nl + _("Edit a Station Location"));
+	loc_edit_button->SetLabel(nl + _("Edit a Station Location"));
 	loc_delete_label->SetLabel(nl + _("Delete a Station Location"));
+	loc_delete_button->SetLabel(nl + _("Delete a Station Location"));
 	loc_prop_label->SetLabel(nl + _("Display Station Location Properties"));
+	loc_prop_button->SetLabel(nl + _("Display Station Location Properties"));
 	loc_select_label->SetLabel(nl + _("Select a Station Location to process"));
 }
 
@@ -5252,10 +5270,13 @@ void MyFrame::OnLocTreeSel(wxTreeEvent& event) {
 		stn_menu->Enable(tm_s_Properties, true);
 		loc_edit_label->SetLabel(_("Edit Station Location ") + call + wxT(": ") + lname);
 		loc_edit_label->Wrap(w - 10);
+		loc_edit_button->SetLabel(_("Edit Station Location ") + call + wxT(": ") + lname);
 		loc_delete_label->SetLabel(_("Delete Station Location ") + call + wxT(": ") + lname);
 		loc_delete_label->Wrap(w - 10);
+		loc_delete_button->SetLabel(_("Delete Station Location ") + call + wxT(": ") + lname);
 		loc_prop_label->SetLabel(_("Display Station Location Properties for ") + call + wxT(": ") + lname);
 		loc_prop_label->Wrap(w - 10);
+		loc_prop_button->SetLabel(_("Display Station Location Properties for ") + call + wxT(": ") + lname);
 		loc_select_label->SetLabel(wxT(""));
 	} else {
 		LocTreeReset();
@@ -5369,11 +5390,27 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
 
+
+	int label_width = 0;
+	int label_height = 0;
+
+	wxStaticText* mst = new wxStaticText(this, -1, wxT(""));
+	// Measure the widest label
+	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
+		int em_w, em_h;
+		mst->SetLabel(wxGetTranslation(wxString::FromUTF8(labels[i])));
+        	em_w = mst->GetSize().GetWidth();
+        	em_h = mst->GetSize().GetHeight();
+		if (em_w > label_width) label_width = em_w;
+		if (em_h > label_height) label_height = em_h;
+	}
+	delete mst;
+		
 	int y = 10;
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
 		wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(labels[i])),
-			wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
+			wxDefaultPosition, wxSize(label_width, label_height), wxALIGN_RIGHT);
 		line_sizer->Add(st);
 		char buf[128] = "";
 		tQSL_Date date;
@@ -5453,7 +5490,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 		}
 		line_sizer->Add(new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(buf))));
 		prop_sizer->Add(line_sizer);
-		y += LABEL_HEIGHT;
+		y += label_height;
 	}
 	topsizer->Add(prop_sizer, 0, wxALL, 10);
 	topsizer->Add(
@@ -5511,6 +5548,21 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
 
+	int label_width = 0;
+	int label_height = 0;
+
+	// Measure the widest label
+	wxStaticText* mst = new wxStaticText(this, -1, wxT(""));
+	for (int i = 0; i < static_cast<int>(sizeof fields / sizeof fields[0]); i++) {
+		int em_w, em_h;
+		mst->SetLabel(wxGetTranslation(wxString::FromUTF8(fields[i])));
+        	em_w = mst->GetSize().GetWidth();
+        	em_h = mst->GetSize().GetHeight();
+		if (em_w > label_width) label_width = em_w;
+		if (em_h > label_height) label_height = em_h;
+	}
+	delete mst;
+
 	int y = 10;
 	char fieldbuf[512];
 	for (int i = 0; i < static_cast<int>(sizeof fields / sizeof fields[0]); i+=2) {
@@ -5518,7 +5570,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 			if (strlen(fieldbuf) > 0) {
 				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
 				wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(fields[i+1])),
-					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT), wxALIGN_RIGHT);
+					wxDefaultPosition, wxSize(label_width, label_height), wxALIGN_RIGHT);
 				line_sizer->Add(st, 30);
 				if (!strcmp(fields[i], "DXCC")) {
 					int dxcc = strtol(fieldbuf, NULL, 10);
@@ -5528,7 +5580,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 				}
 				line_sizer->Add(
 					new wxStaticText(this, -1, wxString::FromUTF8(fieldbuf),
-					wxDefaultPosition, wxSize(LABEL_WIDTH, LABEL_HEIGHT)), 70);
+					wxDefaultPosition, wxSize(label_width, label_height)), 70);
 				prop_sizer->Add(line_sizer);
 				y += LABEL_HEIGHT;
 			}
