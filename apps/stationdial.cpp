@@ -346,7 +346,7 @@ TQSLGetStationNameDialog::OnNameChange(wxCommandEvent&) {
 }
 
 // Location fields, here for translation purposes
-#if 0
+#ifdef tqsltranslate
 static const char* labels[] = {
 	__("State"),
 	__("Call Sign"),

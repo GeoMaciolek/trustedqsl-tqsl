@@ -5376,7 +5376,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	const char *labels[] = {
 		__("Begins: "),
 		__("Expires: "),
-		__("Organization: "), 
+		__("Organization: "),
 		"",
 		__("Serial: "),
 		__("Operator: "),
@@ -5405,7 +5405,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 		if (em_h > label_height) label_height = em_h;
 	}
 	delete mst;
-		
+
 	int y = 10;
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);

@@ -222,8 +222,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			}
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
 // Possible errors, here for harvesting
-#if 0
-	static const char* verrs[] = { 
+#ifdef tqsltranslate
+	static const char* verrs[] = {
 		__("Invalid zone selections for state"),
 		__("Invalid zone selections for province"),
 		__("Invalid zone selections for oblast"),

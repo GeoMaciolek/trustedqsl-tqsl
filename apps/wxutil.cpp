@@ -159,7 +159,7 @@ getLocalizedErrorString_v(int err) {
 		const char *msg = tqsl_getErrorString();
 		return wxString::FromUTF8(msg);
 		// Otherwise
-#if 0
+#ifdef tqsltranslate
 		unsigned long openssl_err;
 		openssl_err = ERR_get_error();
 
