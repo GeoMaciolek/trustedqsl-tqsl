@@ -472,7 +472,7 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 			"callsign certificate. However, if you are using a computer "
 			"in a private residence, no password need be specified.");
 	lbl += wxT("\n\n");
-	lbl += _("Leave the password blank and click 'Next' unless you want to use a password.");
+	lbl += _("Leave the password blank and click 'Finish' unless you want to use a password.");
 	lbl += wxT("\n\n");
 	lbl += _("Password:");
 	st->SetLabel(lbl);
