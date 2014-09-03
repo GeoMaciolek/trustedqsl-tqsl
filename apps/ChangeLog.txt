@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Update TQSL to interact better with accessibility libraries. These
+changes have been tested with MacOS VoiceOver.
+
 Properly handle station locations with callsign set to "NONE". They can't
 be used to sign a log, but they can be created and edited while waiting
 for a valid callsign certificate.
