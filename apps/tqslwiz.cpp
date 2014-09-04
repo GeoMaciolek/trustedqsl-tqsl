@@ -523,6 +523,9 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	newname = new wxTextCtrl(this, TQSL_ID_LOW+1, wxT(""), wxPoint(0, y), wxSize(control_width, -1));
 	sizer->Add(newname, 0, wxEXPAND);
 	newname->SetValue(parent->GetLocationName());
+	errlbl = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(control_width, -1),
+				wxALIGN_LEFT/*|wxST_NO_AUTORESIZE*/);
+	sizer->Add(errlbl, 0, wxTOP);
 	AdjustPage(sizer, wxT("stnloc2.htm"));
 }
 
@@ -540,13 +543,13 @@ const char *
 TQSLWizFinalPage::validate() {
 	tqslTrace("TQSLWizFinalPage::validate");
 	wxString val = newname->GetValue().Trim(true).Trim(false);
-	static char errmsg[100];
 	val.Trim().Trim(false);
 	if (val == wxT("")) {
 		wxString err = wxGetTranslation(_("Station name must be provided"));
-		strncpy(errmsg, err.ToUTF8(), sizeof errmsg);
-		return errmsg;
+		if (errlbl) errlbl->SetLabel(err);
+		return err.ToUTF8();
 	}
+	if (errlbl) errlbl->SetLabel(wxT(""));
 	return 0;
 }
 

@@ -115,6 +115,7 @@ class TQSLWizFinalPage : public TQSLWizPage {
  private:
 	wxListBox *namelist;
 	wxTextCtrl *newname;
+	wxStaticText *errlbl;
 	wxBoxSizer *sizer;
 	vector<char *> item_data;
 
