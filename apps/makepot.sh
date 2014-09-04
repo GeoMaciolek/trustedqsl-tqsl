@@ -4,4 +4,4 @@
 # That template is then merged into existing translation-specific .po
 # files, removing obsolete and adding new messages to those .po files.
 #
-gettext -C -d tqslapp -o tqslapp.pot  -k_  -k__ -ki18narg -E  *.cpp *.h
+xgettext -C -d tqslapp -o tqslapp.pot  -k_  -k__ -ki18narg -E  *.cpp *.h

@@ -545,8 +545,9 @@ TQSLWizFinalPage::validate() {
 	if (val == wxT("")) {
 		wxString err = wxGetTranslation(_("Station name must be provided"));
 		strncpy(errmsg, err.ToUTF8(), sizeof errmsg);
+		return errmsg;
 	}
-	return errmsg;
+	return 0;
 }
 
 TQSLWizFinalPage::~TQSLWizFinalPage() {
