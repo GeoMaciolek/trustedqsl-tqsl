@@ -485,6 +485,7 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev)
 	: TQSLWizPage(parent, locp), prev(i_prev) {
 	tqslTrace("TQSLWizFinalPage::TQSLWizFinalPage", "parent=0x%lx, locp=0x%lx, i_prev=0x%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(locp), reinterpret_cast<void *>(i_prev));
+	errlbl = NULL;
 	wxSize text_size = getTextSize(this);
 	int control_width = text_size.GetWidth()*30;
 
