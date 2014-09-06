@@ -5388,30 +5388,33 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	};
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
-
 
 	int label_width = 0;
-	int label_height = 0;
 
-	wxStaticText* mst = new wxStaticText(this, -1, wxT(""));
+	wxStaticText* mst = new wxStaticText(this, -1, wxT("M"));
+	int char_width = mst->GetSize().GetWidth();	
 	// Measure the widest label
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
-		int em_w, em_h;
-		mst->SetLabel(wxGetTranslation(wxString::FromUTF8(labels[i])));
+		int em_w;
+		wxString lab = wxGetTranslation(wxString::FromUTF8(labels[i]));
+		mst->SetLabel(lab);
         	em_w = mst->GetSize().GetWidth();
-        	em_h = mst->GetSize().GetHeight();
 		if (em_w > label_width) label_width = em_w;
-		if (em_h > label_height) label_height = em_h;
 	}
-	delete mst;
 
-	int y = 10;
+	wxString blob = wxT("");
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
-		wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
-		wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(labels[i])),
-			wxDefaultPosition, wxSize(label_width, label_height), wxALIGN_RIGHT);
-		line_sizer->Add(st);
+		wxString lbl = wxGetTranslation(wxString::FromUTF8(labels[i]));
+		while (1) {
+			mst->SetLabel(lbl);
+			int cur_size = mst->GetSize().GetWidth();
+			int delta = label_width - cur_size;
+			if (delta < char_width) break;
+			lbl += wxT(" ");
+		}
+		blob += lbl;
+		blob += wxT("\t");
+
 		char buf[128] = "";
 		tQSL_Date date;
 		int dxcc, keyonly;
@@ -5488,15 +5491,17 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				}
 				break;
 		}
-		line_sizer->Add(new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(buf))));
-		prop_sizer->Add(line_sizer);
-		y += label_height;
+		blob += wxGetTranslation(wxString::FromUTF8(buf));
+		blob += wxT("\n");
 	}
-	topsizer->Add(prop_sizer, 0, wxALL, 10);
+	delete mst;
+
+	topsizer->Add(new wxStaticText(this, -1, blob));
 	topsizer->Add(
 		new wxButton(this, tc_CertPropDialButton, _("Close")),
 		0, wxALIGN_CENTER | wxALL, 10
 	);
+	SetAffirmativeId(tc_CertPropDialButton);
 	SetAutoLayout(TRUE);
 	SetSizer(topsizer);
 	topsizer->Fit(this);
@@ -5546,51 +5551,53 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 	check_tqsl_error(tqsl_getStationLocation(&loc, locname.ToUTF8()));
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
-	wxBoxSizer *prop_sizer = new wxBoxSizer(wxVERTICAL);
 
 	int label_width = 0;
-	int label_height = 0;
 
+	wxStaticText* mst = new wxStaticText(this, -1, wxT("M"));
+	int char_width = mst->GetSize().GetWidth();
 	// Measure the widest label
-	wxStaticText* mst = new wxStaticText(this, -1, wxT(""));
 	for (int i = 0; i < static_cast<int>(sizeof fields / sizeof fields[0]); i++) {
-		int em_w, em_h;
+		int em_w;
 		mst->SetLabel(wxGetTranslation(wxString::FromUTF8(fields[i])));
         	em_w = mst->GetSize().GetWidth();
-        	em_h = mst->GetSize().GetHeight();
 		if (em_w > label_width) label_width = em_w;
-		if (em_h > label_height) label_height = em_h;
 	}
-	delete mst;
 
-	int y = 10;
+	wxString blob = wxT("");
 	char fieldbuf[512];
 	for (int i = 0; i < static_cast<int>(sizeof fields / sizeof fields[0]); i+=2) {
 		if (tqsl_getStationLocationField(loc, fields[i], fieldbuf, sizeof fieldbuf) == 0) {
 			if (strlen(fieldbuf) > 0) {
-				wxBoxSizer *line_sizer = new wxBoxSizer(wxHORIZONTAL);
-				wxStaticText *st = new wxStaticText(this, -1, wxGetTranslation(wxString::FromUTF8(fields[i+1])),
-					wxDefaultPosition, wxSize(label_width, label_height), wxALIGN_RIGHT);
-				line_sizer->Add(st, 30);
+				wxString lbl = wxGetTranslation(wxString::FromUTF8(fields[i+1]));
+				while(1) {
+					mst->SetLabel(lbl);
+					int cur_size = mst->GetSize().GetWidth();
+					int delta = label_width - cur_size;
+					if (delta < char_width) break;
+					lbl += wxT(" ");
+				}
+				blob += lbl;
+				blob += wxT("\t");
 				if (!strcmp(fields[i], "DXCC")) {
 					int dxcc = strtol(fieldbuf, NULL, 10);
 					const char *dxccname = NULL;
 					tqsl_getDXCCEntityName(dxcc, &dxccname);
 					strncpy(fieldbuf, dxccname, sizeof fieldbuf);
 				}
-				line_sizer->Add(
-					new wxStaticText(this, -1, wxString::FromUTF8(fieldbuf),
-					wxDefaultPosition, wxSize(label_width, label_height)), 70);
-				prop_sizer->Add(line_sizer);
-				y += LABEL_HEIGHT;
+				blob += wxString::FromUTF8(fieldbuf);
+				blob += wxT("\n");
 			}
 		}
 	}
-	topsizer->Add(prop_sizer, 0, wxALL, 10);
+	delete mst;
+
+	topsizer->Add(new wxStaticText(this, -1, blob));
 	topsizer->Add(
 		new wxButton(this, tl_LocPropDialButton, _("Close")),
 				0, wxALIGN_CENTER | wxALL, 10
 	);
+	SetAffirmativeId(tl_LocPropDialButton);
 	SetAutoLayout(TRUE);
 	SetSizer(topsizer);
 	topsizer->Fit(this);
