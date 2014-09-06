@@ -5100,16 +5100,16 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		int w, h;
 		loc_add_label->GetSize(&w, &h);
 		wxString nl = wxT("\n");
-		cert_save_label->SetLabel(nl + _("Save the callsign certificate for") + wxT(" ") + callSign);
+		cert_save_label->SetLabel(nl + _("Save the Callsign Certificate for") + wxT(" ") + callSign);
 		cert_save_label->Wrap(w - 10);
-		cert_save_button->SetLabel(nl + _("Save the callsign certificate for") + wxT(" ") + callSign);
-		cert_prop_label->SetLabel(nl + _("Display the callsign certificate properties for") + wxT(" ") + callSign);
+		cert_save_button->SetLabel(nl + _("Save the Callsign Certificate for") + wxT(" ") + callSign);
+		cert_prop_label->SetLabel(nl + _("Display the Callsign Certificate properties for") + wxT(" ") + callSign);
 		cert_prop_label->Wrap(w - 10);
-		cert_prop_button->SetLabel(nl + _("Display the callsign certificate properties for") + wxT(" ") + callSign);
+		cert_prop_button->SetLabel(nl + _("Display the Callsign Certificate properties for") + wxT(" ") + callSign);
 		if (!(keyonly || expired || superseded)) {
-			cert_renew_label->SetLabel(nl + _("Renew the callsign certificate for") +wxT(" ") + callSign);
+			cert_renew_label->SetLabel(nl + _("Renew the Callsign Certificate for") +wxT(" ") + callSign);
 			cert_renew_label->Wrap(w - 10);
-			cert_renew_button->SetLabel(nl + _("Renew the callsign certificate for") +wxT(" ") + callSign);
+			cert_renew_button->SetLabel(nl + _("Renew the Callsign Certificate for") +wxT(" ") + callSign);
 		} else {
 			cert_renew_label->SetLabel(nl + _("Renew a Callsign Certificate"));
 			cert_renew_button->SetLabel(nl + _("Renew a Callsign Certificate"));

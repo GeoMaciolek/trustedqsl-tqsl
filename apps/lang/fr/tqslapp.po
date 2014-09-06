@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-03 18:04-0400\n"
-"PO-Revision-Date: 2014-08-27 21:41-0500\n"
+"POT-Creation-Date: 2014-09-06 13:51-0400\n"
+"PO-Revision-Date: 2014-09-06 13:50-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: fr\n"
@@ -56,7 +56,7 @@ msgid "Certificate Issuer:"
 msgstr "Émetteur du certificat:"
 
 #: crqwiz.cpp:97 loadcertwiz.cpp:257 loadcertwiz.cpp:351 tqsl.cpp:4267
-#: tqsl.cpp:5476 tqsl.cpp:5641 tqsl_prefs.cpp:877 tqsl_prefs.cpp:884
+#: tqsl.cpp:5479 tqsl.cpp:5648 tqsl_prefs.cpp:877 tqsl_prefs.cpp:884
 msgid "Error"
 msgstr "Erreur"
 
@@ -138,8 +138,8 @@ msgid ""
 "Leave the password blank and click 'Finish' unless you want to use a "
 "password."
 msgstr ""
-"Laissez le mot de passe vide et cliquez sur «Terminer», sauf si vous souhaitez "
-"utiliser un mot de passe."
+"Laissez le mot de passe vide et cliquez sur «Terminer», sauf si vous "
+"souhaitez utiliser un mot de passe."
 
 #: crqwiz.cpp:477
 msgid "Password:"
@@ -818,7 +818,7 @@ msgstr ""
 "(Ceci est le mot de passe que vous avez fait quand vous avez installé le "
 "certificat de l'indicatif.)"
 
-#: tqsl.cpp:223 tqsl.cpp:5623 getpassword.h:32 getpassword.h:33
+#: tqsl.cpp:223 tqsl.cpp:5630 getpassword.h:32 getpassword.h:33
 msgid "Enter password"
 msgstr "Entrez le mot de passe"
 
@@ -1278,7 +1278,7 @@ msgstr "Modifier Emplacement de la station: %hs - %s"
 msgid "Edit Station Location"
 msgstr "Modifier Emplacement de la station"
 
-#: tqsl.cpp:1472 tqsl.cpp:5497 tqsl.cpp:5591 tqsl_prefs.cpp:85
+#: tqsl.cpp:1472 tqsl.cpp:5501 tqsl.cpp:5597 tqsl_prefs.cpp:85
 msgid "Close"
 msgstr "Fermer"
 
@@ -2158,16 +2158,16 @@ msgid "Display a Callsign Certificate"
 msgstr "Afficher un certificat Indicatif"
 
 #: tqsl.cpp:5103 tqsl.cpp:5105
-msgid "Save the callsign certificate for"
-msgstr "Enregistrez le certificat de l'indicatif pour"
+msgid "Save the Callsign Certificate for"
+msgstr "Enregistrez le Certificat de L'indicatif pour"
 
 #: tqsl.cpp:5106 tqsl.cpp:5108
-msgid "Display the callsign certificate properties for"
-msgstr "Affichez les propriétés du certificat de l'indicatif pour"
+msgid "Display the Callsign Certificate properties for"
+msgstr "Affichez les propriétés du Certificat de L'indicatif pour"
 
 #: tqsl.cpp:5110 tqsl.cpp:5112
-msgid "Renew the callsign certificate for"
-msgstr "Renouveler le certificat de l'indicatif pour"
+msgid "Renew the Callsign Certificate for"
+msgstr "Renouveler le Certificat de L'indicatif pour"
 
 #: tqsl.cpp:5150
 msgid "Enter the name for the new Certificate Container file"
@@ -2302,11 +2302,11 @@ msgstr "Série: "
 msgid "Operator: "
 msgstr "Opérateur: "
 
-#: tqsl.cpp:5383 tqsl.cpp:5532
+#: tqsl.cpp:5383 tqsl.cpp:5537
 msgid "Call sign: "
 msgstr "Indicatif d'appel: "
 
-#: tqsl.cpp:5384 tqsl.cpp:5533
+#: tqsl.cpp:5384 tqsl.cpp:5538
 msgid "DXCC Entity: "
 msgstr "DXCC entité: "
 
@@ -2322,63 +2322,63 @@ msgstr "QSO date de fin: "
 msgid "Key: "
 msgstr "Clé: "
 
-#: tqsl.cpp:5477
+#: tqsl.cpp:5480
 msgid "<ERROR>"
 msgstr "<Erreur>"
 
-#: tqsl.cpp:5480
+#: tqsl.cpp:5483
 msgid "None"
 msgstr "Aucun"
 
-#: tqsl.cpp:5483
+#: tqsl.cpp:5486
 msgid "Unencrypted"
 msgstr "Non cryptée"
 
-#: tqsl.cpp:5486
+#: tqsl.cpp:5489
 msgid "Password protected"
 msgstr "Mot de passe protégé"
 
-#: tqsl.cpp:5529
+#: tqsl.cpp:5534
 msgid "Station Location Properties"
 msgstr "Emplacement de la station Propriétés"
 
-#: tqsl.cpp:5534
+#: tqsl.cpp:5539
 msgid "Grid Square: "
 msgstr "Cadratin: "
 
-#: tqsl.cpp:5535
+#: tqsl.cpp:5540
 msgid "ITU Zone: "
 msgstr "UIT Zone: "
 
-#: tqsl.cpp:5536
+#: tqsl.cpp:5541
 msgid "CQ Zone: "
 msgstr "CQ Zone: "
 
-#: tqsl.cpp:5537
+#: tqsl.cpp:5542
 msgid "IOTA Locator: "
 msgstr "IOTA Locator: "
 
-#: tqsl.cpp:5538 tqsl.cpp:5543
+#: tqsl.cpp:5543 tqsl.cpp:5548
 msgid "State: "
 msgstr "Etat: "
 
-#: tqsl.cpp:5539
+#: tqsl.cpp:5544
 msgid "County: "
 msgstr "Pays: "
 
-#: tqsl.cpp:5540 tqsl.cpp:5542
+#: tqsl.cpp:5545 tqsl.cpp:5547
 msgid "Province: "
 msgstr "Province: "
 
-#: tqsl.cpp:5541
+#: tqsl.cpp:5546
 msgid "Oblast: "
 msgstr "Oblast: "
 
-#: tqsl.cpp:5613
+#: tqsl.cpp:5620
 msgid "Enter the password to unlock the callsign certificate"
 msgstr "Entrez le mot de passe pour déverrouiller le certificat de l'indicatif"
 
-#: tqsl.cpp:5616
+#: tqsl.cpp:5623
 msgid "for"
 msgstr "pour"
 
@@ -2636,19 +2636,19 @@ msgstr "%s: Invalid Cadratin"
 msgid "%s: Invalid Subsquare"
 msgstr "%s: Invalid sous-carré"
 
-#: tqslwiz.cpp:494
+#: tqslwiz.cpp:495
 msgid "Station Data input complete"
 msgstr "Station d'entrée de données complète"
 
-#: tqslwiz.cpp:498
+#: tqslwiz.cpp:499
 msgid "Select or enter name of this station location"
 msgstr "Sélectionnez ou saisissez le nom de cet endroit de la station"
 
-#: tqslwiz.cpp:521
+#: tqslwiz.cpp:522
 msgid "Station Location Name"
 msgstr "Nom de la station Lieu"
 
-#: tqslwiz.cpp:548
+#: tqslwiz.cpp:549
 msgid "Station name must be provided"
 msgstr "Nom de la station doit être fournie"
 
@@ -2840,6 +2840,9 @@ msgstr "Date :"
 #: tqslvalidator.h:69
 msgid "Time"
 msgstr "Heure"
+
+#~ msgid "Renew the Callsign certificate for"
+#~ msgstr "Renouveler le Certificat de L'indicatif pour"
 
 #~ msgid ""
 #~ "Leave the password blank and click 'Next' unless you want to use a "

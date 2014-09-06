@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-09-03 18:04-0400\n"
-"PO-Revision-Date: 2014-09-03 21:34-0500\n"
+"POT-Creation-Date: 2014-09-06 13:51-0400\n"
+"PO-Revision-Date: 2014-09-06 13:46-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: ja\n"
@@ -54,7 +54,7 @@ msgid "Certificate Issuer:"
 msgstr "証明書発行者："
 
 #: crqwiz.cpp:97 loadcertwiz.cpp:257 loadcertwiz.cpp:351 tqsl.cpp:4267
-#: tqsl.cpp:5476 tqsl.cpp:5641 tqsl_prefs.cpp:877 tqsl_prefs.cpp:884
+#: tqsl.cpp:5479 tqsl.cpp:5648 tqsl_prefs.cpp:877 tqsl_prefs.cpp:884
 msgid "Error"
 msgstr "エラー"
 
@@ -808,7 +808,7 @@ msgid ""
 msgstr ""
 "（これは、コールサインの証明書をインストールしたときに作らパスワードです。）"
 
-#: tqsl.cpp:223 tqsl.cpp:5623 getpassword.h:32 getpassword.h:33
+#: tqsl.cpp:223 tqsl.cpp:5630 getpassword.h:32 getpassword.h:33
 msgid "Enter password"
 msgstr "パスワードを入力する"
 
@@ -1255,7 +1255,7 @@ msgstr "編集ステーション所在地： %hs- %s"
 msgid "Edit Station Location"
 msgstr "編集局の位置"
 
-#: tqsl.cpp:1472 tqsl.cpp:5497 tqsl.cpp:5591 tqsl_prefs.cpp:85
+#: tqsl.cpp:1472 tqsl.cpp:5501 tqsl.cpp:5597 tqsl_prefs.cpp:85
 msgid "Close"
 msgstr "閉じる"
 
@@ -2119,15 +2119,15 @@ msgid "Display a Callsign Certificate"
 msgstr "コー​​ルサインの証明書を表示する"
 
 #: tqsl.cpp:5103 tqsl.cpp:5105
-msgid "Save the callsign certificate for"
+msgid "Save the Callsign Certificate for"
 msgstr "のためのコールサインの証明書を保存し"
 
 #: tqsl.cpp:5106 tqsl.cpp:5108
-msgid "Display the callsign certificate properties for"
+msgid "Display the Callsign Certificate properties for"
 msgstr "のためのコールサインの証明書のプロパティを表示します"
 
 #: tqsl.cpp:5110 tqsl.cpp:5112
-msgid "Renew the callsign certificate for"
+msgid "Renew the Callsign Certificate for"
 msgstr "のためのコールサインの証明書を更新"
 
 #: tqsl.cpp:5150
@@ -2258,11 +2258,11 @@ msgstr "シリアル："
 msgid "Operator: "
 msgstr "オペレーター："
 
-#: tqsl.cpp:5383 tqsl.cpp:5532
+#: tqsl.cpp:5383 tqsl.cpp:5537
 msgid "Call sign: "
 msgstr "コー​​ルサイン："
 
-#: tqsl.cpp:5384 tqsl.cpp:5533
+#: tqsl.cpp:5384 tqsl.cpp:5538
 msgid "DXCC Entity: "
 msgstr "DXCCエンティティ: "
 
@@ -2278,63 +2278,63 @@ msgstr "QSO終了日："
 msgid "Key: "
 msgstr "キー："
 
-#: tqsl.cpp:5477
+#: tqsl.cpp:5480
 msgid "<ERROR>"
 msgstr "<エラー>"
 
-#: tqsl.cpp:5480
+#: tqsl.cpp:5483
 msgid "None"
 msgstr "なし"
 
-#: tqsl.cpp:5483
+#: tqsl.cpp:5486
 msgid "Unencrypted"
 msgstr "暗号化されていない"
 
-#: tqsl.cpp:5486
+#: tqsl.cpp:5489
 msgid "Password protected"
 msgstr "パスワード保護された"
 
-#: tqsl.cpp:5529
+#: tqsl.cpp:5534
 msgid "Station Location Properties"
 msgstr "駅の場所のプロパティ"
 
-#: tqsl.cpp:5534
+#: tqsl.cpp:5539
 msgid "Grid Square: "
 msgstr "グリッドスクエア："
 
-#: tqsl.cpp:5535
+#: tqsl.cpp:5540
 msgid "ITU Zone: "
 msgstr "ITUゾーン："
 
-#: tqsl.cpp:5536
+#: tqsl.cpp:5541
 msgid "CQ Zone: "
 msgstr "CQゾーン："
 
-#: tqsl.cpp:5537
+#: tqsl.cpp:5542
 msgid "IOTA Locator: "
 msgstr "IOTAロケータ："
 
-#: tqsl.cpp:5538 tqsl.cpp:5543
+#: tqsl.cpp:5543 tqsl.cpp:5548
 msgid "State: "
 msgstr "状態："
 
-#: tqsl.cpp:5539
+#: tqsl.cpp:5544
 msgid "County: "
 msgstr "郡："
 
-#: tqsl.cpp:5540 tqsl.cpp:5542
+#: tqsl.cpp:5545 tqsl.cpp:5547
 msgid "Province: "
 msgstr "Province: "
 
-#: tqsl.cpp:5541
+#: tqsl.cpp:5546
 msgid "Oblast: "
 msgstr "州："
 
-#: tqsl.cpp:5613
+#: tqsl.cpp:5620
 msgid "Enter the password to unlock the callsign certificate"
 msgstr "コー​​ルサイン証明書のロックを解除するためのパスワードを入力してください"
 
-#: tqsl.cpp:5616
+#: tqsl.cpp:5623
 msgid "for"
 msgstr "のために"
 
@@ -2590,19 +2590,19 @@ msgstr "%s ：無効なグリッド·スクエア"
 msgid "%s: Invalid Subsquare"
 msgstr "%s ：無効Subsquare"
 
-#: tqslwiz.cpp:494
+#: tqslwiz.cpp:495
 msgid "Station Data input complete"
 msgstr "局データ入力、完全な"
 
-#: tqslwiz.cpp:498
+#: tqslwiz.cpp:499
 msgid "Select or enter name of this station location"
 msgstr "このステーションの場所の名前を選択するか、入力します"
 
-#: tqslwiz.cpp:521
+#: tqslwiz.cpp:522
 msgid "Station Location Name"
 msgstr "駅の場所名"
 
-#: tqslwiz.cpp:548
+#: tqslwiz.cpp:549
 msgid "Station name must be provided"
 msgstr "ステーション名を指定する必要があります"
 
@@ -2790,6 +2790,9 @@ msgstr "日付"
 #: tqslvalidator.h:69
 msgid "Time"
 msgstr "時間"
+
+#~ msgid "Renew the Callsign certificate for"
+#~ msgstr "のためのコールサインの証明書を更新"
 
 #~ msgid ""
 #~ "Leave the password blank and click 'Next' unless you want to use a "
