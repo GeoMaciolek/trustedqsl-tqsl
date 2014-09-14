@@ -22,14 +22,11 @@ BEGIN_EVENT_TABLE(ExtWizard, wxWizard)
 END_EVENT_TABLE()
 
 void
-ExtWizard::OnPageChanged(wxWizardEvent&) {
-	tqslTrace("ExtWizard::OnPageChanged");
+ExtWizard::OnPageChanged(wxWizardEvent& ev) {
+	tqslTrace("ExtWizard::OnPageChanged", "Direction=%d", ev.GetDirection());
 	GetCurrentPage()->refresh();
 	GetCurrentPage()->SetFocus();
-	wxWindow *but = FindWindow(wxID_FORWARD);
-	if (but == NULL)
-		return;
-	but->Enable(!GetCurrentPage()->validate());
+	GetCurrentPage()->validate();
 }
 
 void
@@ -55,9 +52,7 @@ END_EVENT_TABLE()
 void
 ExtWizard_Page::check_valid(TQ_WXTEXTEVENT&) {
 	tqslTrace("ExtWizard_Page::check_valid");
-	wxWindow *but = GetParent()->FindWindow(wxID_FORWARD);
-	if (but != NULL)
-		but->Enable(validate() == NULL);
+	validate();
 }
 
 void

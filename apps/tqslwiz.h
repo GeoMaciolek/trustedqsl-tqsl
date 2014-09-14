@@ -59,7 +59,6 @@ class TQSLWizard : public ExtWizard {
 	wxString GetLocationName() { return sl_name; }
 	wxString GetDefaultCallsign() {return sl_call; }
 	TQSLWizPage *GetFinalPage() { return (_pages.size() > 0) ? _pages[0] : 0; }
-	bool page_changing;
 	bool expired;
 
  private:
@@ -80,6 +79,8 @@ class TQSLWizPage : public ExtWizard_Page {
 	virtual TQSLWizard *GetParent() const { return reinterpret_cast<TQSLWizard *>(wxWindow::GetParent()); }
 
 	tQSL_Location loc;
+	bool initialized;
+	wxString valMsg;
 };
 
 class TQSLWizCertPage : public TQSLWizPage {
@@ -95,9 +96,10 @@ class TQSLWizCertPage : public TQSLWizPage {
 	virtual TQSLWizPage *GetPrev() const;
 	virtual TQSLWizPage *GetNext() const;
 	void OnSize(wxSizeEvent&);
-	const char *valMsg;
+	void OnPageChanging(wxWizardEvent &);
  private:
 	vector<void *> controls;
+	wxStaticText *errlbl;
 	wxCheckBox *okEmptyCB;
 	DECLARE_EVENT_TABLE()
 };
@@ -108,10 +110,12 @@ class TQSLWizFinalPage : public TQSLWizPage {
 	~TQSLWizFinalPage();
 	TQSLWizPage *GetPrev() const { return prev; }
 	TQSLWizPage *GetNext() const { return 0; }
+	void OnPageChanged(wxWizardEvent &);
 	TQSLWizPage *prev;
 	virtual bool TransferDataFromWindow();
 	void OnListbox(wxCommandEvent &);
 	virtual const char *validate();
+	void OnPageChanging(wxWizardEvent &);
  private:
 	wxListBox *namelist;
 	wxTextCtrl *newname;

@@ -29,6 +29,7 @@ END_EVENT_TABLE()
 BEGIN_EVENT_TABLE(TQSLWizCertPage, TQSLWizPage)
 	EVT_COMBOBOX(-1, TQSLWizCertPage::OnComboBoxEvent)
 	EVT_CHECKBOX(-1, TQSLWizCertPage::OnCheckBoxEvent)
+	EVT_WIZARD_PAGE_CHANGING(wxID_ANY, TQSLWizCertPage::OnPageChanging)
 #if wxMAJOR_VERSION < 3
 	EVT_SIZE(TQSLWizCertPage::OnSize)
 #endif
@@ -59,7 +60,6 @@ TQSLWizPage *
 TQSLWizard::GetPage(bool final) {
 	tqslTrace("TQSLWizard::GetPage", "final=%d", final);
 	int page_num;
-	page_changing = false;
 	if (final)
 		page_num = 0;
 	else if (tqsl_getStationLocationCapturePage(loc, &page_num))
@@ -91,14 +91,12 @@ TQSLWizPage *
 TQSLWizCertPage::GetPrev() const {
 	tqslTrace("TQSLWizCertPage::GetPrev");
 	int rval;
+
+	tqsl_setStationLocationCapturePage(loc, loc_page);
 	if (tqsl_hasPrevStationLocationCapture(loc, &rval) || !rval) {
-		GetParent()->page_changing = false;
 		return 0;
 	}
-	if (reinterpret_cast<TQSLWizard *>(GetParent())->page_changing) {
-		tqsl_prevStationLocationCapture(loc);
-		return GetParent()->GetPage();
-	}
+	tqsl_prevStationLocationCapture(loc);
 	return GetParent()->GetPage();
 }
 
@@ -107,13 +105,13 @@ TQSLWizCertPage::GetNext() const {
 	tqslTrace("TQSLWizCertPage::GetNext");
 	TQSLWizPage *newp;
 	bool final = false;
-	if (GetParent()->page_changing) {
-		int rval;
-		if (!tqsl_hasNextStationLocationCapture(loc, &rval) && rval) {
-			tqsl_nextStationLocationCapture(loc);
-		} else {
-			final = true;
-		}
+	int rval;
+
+	tqsl_setStationLocationCapturePage(loc, loc_page);
+	if (!tqsl_hasNextStationLocationCapture(loc, &rval) && rval) {
+		tqsl_nextStationLocationCapture(loc);
+	} else {
+		final = true;
 	}
 	newp = GetParent()->GetPage(final);
 	return newp;
@@ -124,32 +122,9 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 	tqslTrace("TQSLWizCertPage::UpdateFields", "noupdate_field=%d", noupdate_field);
 	wxSize text_size = getTextSize(this);
 
-	bool fwdok = true;
+	validate();
 	if (noupdate_field >= 0)
 		tqsl_updateStationLocationCapture(loc);
-	if (noupdate_field <= 0) {
-		int flags;
-		tqsl_getLocationFieldFlags(loc, 0, &flags);
-		if (flags == TQSL_LOCATION_FIELD_SELNXT) {
-			int index;
-			fwdok = false;
-			tqsl_getLocationFieldIndex(loc, 0, &index);
-			if (index >= 0)
-				fwdok = true;
-			if (okEmptyCB && okEmptyCB->IsChecked())
-				fwdok = true;
-			wxWindow *but = GetParent()->FindWindow(wxID_FORWARD);
-		        if (but) {
-        			but->Enable(fwdok);
-			}
-			if (okEmptyCB) {
-				if (index > 0)
-					okEmptyCB->Enable(false);
-				else
-					okEmptyCB->Enable(true);
-			}
-		}
-	}
 	for (int i = noupdate_field+1; i < static_cast<int>(controls.size()); i++) {
 		int changed;
 		int in_type;
@@ -221,15 +196,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(wxString::FromUTF8(buf));
 			}
 		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
-// Possible errors, here for harvesting
-#ifdef tqsltranslate
-	static const char* verrs[] = {
-		__("Invalid zone selections for state"),
-		__("Invalid zone selections for province"),
-		__("Invalid zone selections for oblast"),
-		__("Invalid zone selections for DXCC entity")
-};
-#endif
 			int len;
 			tqsl_getLocationFieldDataLength(loc, i, &len);
 			int w, h;
@@ -237,15 +203,11 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetSize((len+1)*text_size.GetWidth(), h);
 			char buf[256];
 			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
-			wxString tbuf = wxGetTranslation(wxString::FromUTF8(buf));
-			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(tbuf);
-			if (strlen(buf) == 0) {
-				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(fwdok);
-				if (valMsg)
-					(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(wxString::FromUTF8(valMsg));
-			} else {
-				this->GetParent()->FindWindow(wxID_FORWARD)->Enable(false);
-			}
+			if (strlen(buf) > 0)
+				valMsg = wxGetTranslation(wxString::FromUTF8(buf));
+			else
+				valMsg = wxT("");
+			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(valMsg);
 		}
 	}
 }
@@ -275,10 +237,12 @@ TQSLWizCertPage::OnCheckBoxEvent(wxCommandEvent& event) {
 TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	: TQSLWizPage(parent, locp) {
 	tqslTrace("TQSLWizCertPage::TQSLWizCertPage", "parent=0x%lx, locp=0x%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(locp));
+	initialized = false;
+	errlbl = NULL;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	int control_width = getTextSize(this).GetWidth() * 20;
 
-	valMsg = NULL;
+	valMsg = wxT("");
 	tqsl_getStationLocationCapturePage(loc, &loc_page);
 	wxScreenDC sdc;
 	int label_w = 0;
@@ -333,8 +297,9 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 				tqsl_getLocationFieldDataLength(loc, i, &tsize);
 				tsize /= 2;
 				sdc.GetTextExtent(wxString::FromUTF8("X"), &w, &h);
-				control_p = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
+				errlbl = new wxStaticText(this, -1, wxT(""), wxDefaultPosition,
 					wxSize(w*tsize, -1), wxALIGN_LEFT|wxST_NO_AUTORESIZE);
+				control_p = errlbl;
 				break;
 		}
 		controls.push_back(control_p);
@@ -357,6 +322,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	} else {
 		okEmptyCB = 0;
 	}
+	initialized = true;
 	UpdateFields();
 	AdjustPage(sizer, wxT("stnloc1.htm"));
 }
@@ -367,17 +333,35 @@ TQSLWizCertPage::~TQSLWizCertPage() {
 const char *
 TQSLWizCertPage::validate() {
 	tqslTrace("TQSLWizCertPage::validate");
-	static char errtxt[128];
-	wxString error;
-	error = wxT("");
+	
+	if (!initialized) return 0;
+	valMsg = wxT("");
 	tqsl_setStationLocationCapturePage(loc, loc_page);
 	for (int i = 0; i < static_cast<int>(controls.size()); i++) {
 		char gabbi_name[40];
+		int in_type;
+		int flags;
 		tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
-		if (strcmp(gabbi_name, "GRIDSQUARE") == 0) {
+		tqsl_getLocationFieldInputType(loc, i, &in_type);
+		tqsl_getLocationFieldFlags(loc, i, &flags);
+		if (flags == TQSL_LOCATION_FIELD_SELNXT) {
+			int index;
+			tqsl_getLocationFieldIndex(loc, i, &index);
+			if (index <= 0 && (okEmptyCB && !okEmptyCB->IsChecked())) {
+				char label[256];
+				tqsl_getLocationFieldDataLabel(loc, i, label, sizeof label);
+				valMsg = wxString::Format(_("You must select a %hs"), label);
+			}
+			if (okEmptyCB) {
+				if (index <= 0)
+					okEmptyCB->Enable(true);
+				else
+					okEmptyCB->Enable(false);
+			}
+		} else if (strcmp(gabbi_name, "GRIDSQUARE") == 0) {
 			wxString gridVal = (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue();
 			if (gridVal.size() == 0) {
-				return 0;
+				continue;
 			}
 			wxString editedGrids = wxT("");
 			wxStringTokenizer grids(gridVal, wxT(","));	// Comma-separated list of squares
@@ -385,29 +369,29 @@ TQSLWizCertPage::validate() {
 				wxString grid = grids.GetNextToken().Trim().Trim(false);
 				// Truncate to six character field
 				grid = grid.Left(6);
-				if (grid[0] <= 'z' && grid[1] >= 'a')
+				if (grid[0] <= 'z' && grid[0] >= 'a')
 					grid[0] = grid[0] - 'a' + 'A';	// Upper case first two
 				if (grid.size() > 1 && (grid[1] <= 'z' && grid[1] >= 'a'))
 					grid[1] = grid[1] - 'a' + 'A';
 				if (grid[0] < 'A' || grid[0] > 'R') {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
 				}
 				if (grid.size() > 1 && (grid[1] < 'A' || grid[1] > 'R')) {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square Field"), grid.c_str());
 				}
 				if (grid.size() > 2 && (grid[2] < '0' || grid[2] > '9')) {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (grid.size() < 4) {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (grid[3] < '0' || grid[3] > '9') {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 
 				if (grid.size() > 4 && (grid[4] <= 'Z' && grid[4] >= 'A'))
@@ -416,17 +400,17 @@ TQSLWizCertPage::validate() {
 					grid[5] = grid[5] - 'A' + 'a';
 
 				if (grid.size() > 4 && (grid[4] < 'a' || grid[4] > 'x')) {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
 				}
 				if (grid.size() > 5 && (grid[5] < 'a' || grid[5] > 'x')) {
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Subsquare"), grid.c_str());
 				}
 				if (grid.size() != 6 && grid.size() != 4) {
 					// Not long enough yet or too long.
-					if (error.IsEmpty())
-						error = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
+					if (valMsg.IsEmpty())
+						valMsg = wxString::Format(_("%s: Invalid Grid Square"), grid.c_str());
 				}
 				if (!editedGrids.IsEmpty())
 					editedGrids += wxT(",");
@@ -434,22 +418,31 @@ TQSLWizCertPage::validate() {
 				(reinterpret_cast<wxTextCtrl *>(controls[i]))->SetValue(editedGrids);
 				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().ToUTF8());
 			}
-			if (error.IsEmpty()) return 0;
-			strncpy(errtxt, error.ToUTF8(), sizeof errtxt);
-			return errtxt;
+		} else if (in_type == TQSL_LOCATION_FIELD_BADZONE) {
+// Possible errors, here for harvesting
+#ifdef tqsltranslate
+	static const char* verrs[] = {
+		__("Invalid zone selections for state"),
+		__("Invalid zone selections for province"),
+		__("Invalid zone selections for oblast"),
+		__("Invalid zone selections for DXCC entity")
+};
+#endif
+			char buf[256];
+			tqsl_getLocationFieldCharData(loc, i, buf, sizeof buf);
+			if (strlen(buf) > 0)
+				valMsg = wxGetTranslation(wxString::FromUTF8(buf));
+			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(valMsg);
 		}
 	}
+	if (errlbl) errlbl->SetLabel(valMsg);
 	return 0;
 }
 
 bool
 TQSLWizCertPage::TransferDataFromWindow() {
 	tqslTrace("TQSLWizCertPage::TransferDataFromWindow");
-	valMsg = validate();
-	if (!valMsg)
-		GetParent()->page_changing = true;
-	else
-		GetParent()->page_changing = false;
+
 	tqsl_setStationLocationCapturePage(loc, loc_page);
 	for (int i = 0; i < static_cast<int>(controls.size()); i++) {
 		int in_type;
@@ -463,13 +456,25 @@ TQSLWizCertPage::TransferDataFromWindow() {
 				break;
 		}
 	}
+	if (errlbl) errlbl->SetLabel(valMsg);
 	return true;
+}
+void
+TQSLWizCertPage::OnPageChanging(wxWizardEvent& ev) {
+	tqslTrace("TQSLWizCertPage::OnPageChanging", "Direction=", ev.GetDirection());
+
+	validate();
+	if (valMsg.Len() > 0 && ev.GetDirection()) {
+		ev.Veto();
+		wxMessageBox(valMsg, _("Error"));
+	}
 }
 
 BEGIN_EVENT_TABLE(TQSLWizFinalPage, TQSLWizPage)
 	EVT_LISTBOX(TQSL_ID_LOW, TQSLWizFinalPage::OnListbox)
 	EVT_LISTBOX_DCLICK(TQSL_ID_LOW, TQSLWizFinalPage::OnListbox)
 	EVT_TEXT(TQSL_ID_LOW+1, TQSLWizFinalPage::check_valid)
+	EVT_WIZARD_PAGE_CHANGING(wxID_ANY, TQSLWizFinalPage::OnPageChanging)
 END_EVENT_TABLE()
 
 void
@@ -485,7 +490,9 @@ TQSLWizFinalPage::OnListbox(wxCommandEvent &) {
 TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLWizPage *i_prev)
 	: TQSLWizPage(parent, locp), prev(i_prev) {
 	tqslTrace("TQSLWizFinalPage::TQSLWizFinalPage", "parent=0x%lx, locp=0x%lx, i_prev=0x%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(locp), reinterpret_cast<void *>(i_prev));
+	initialized = false;
 	errlbl = NULL;
+	valMsg = wxT("");
 	wxSize text_size = getTextSize(this);
 	int control_width = text_size.GetWidth()*30;
 
@@ -527,30 +534,43 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	errlbl = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(control_width, -1),
 				wxALIGN_LEFT/*|wxST_NO_AUTORESIZE*/);
 	sizer->Add(errlbl, 0, wxTOP);
+	initialized = true;
 	AdjustPage(sizer, wxT("stnloc2.htm"));
 }
 
 bool
 TQSLWizFinalPage::TransferDataFromWindow() {
 	tqslTrace("TQSLWizFinalPage::TransferDataFromWindow");
-	if (validate())	 // Must be a "back"
+	validate();
+	if (valMsg.Len() > 0) // Must be a "back"
 		return true;
 	wxString s = newname->GetValue().Trim(true).Trim(false);
 	(reinterpret_cast<TQSLWizard *>(GetParent()))->SetLocationName(s);
 	return true;
 }
 
+void
+TQSLWizFinalPage::OnPageChanging(wxWizardEvent& ev) {
+	tqslTrace("TQSLWizFinalPage::OnPageChanging", "Direction=", ev.GetDirection());
+
+	validate();
+	if (valMsg.Len() > 0 && ev.GetDirection()) {
+		ev.Veto();
+		wxMessageBox(valMsg, _("Error"));
+	}
+}
+
 const char *
 TQSLWizFinalPage::validate() {
 	tqslTrace("TQSLWizFinalPage::validate");
+	if (!initialized) return 0;
 	wxString val = newname->GetValue().Trim(true).Trim(false);
-	val.Trim().Trim(false);
+	valMsg = wxT("");
+
 	if (val == wxT("")) {
-		wxString err = wxGetTranslation(_("Station name must be provided"));
-		if (errlbl) errlbl->SetLabel(err);
-		return err.ToUTF8();
+		valMsg = wxGetTranslation(_("Station name must be provided"));
 	}
-	if (errlbl) errlbl->SetLabel(wxT(""));
+	if (errlbl) errlbl->SetLabel(valMsg);
 	return 0;
 }
 
