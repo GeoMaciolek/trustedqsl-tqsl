@@ -1146,7 +1146,10 @@ update_page(int page, TQSL_LOCATION *loc) {
 				free(certlist);
 				// Fill the call sign list
 				map<string, vector<string> >::iterator call_p;
-				field.idx = -1;
+				field.idx = 0;
+				TQSL_LOCATION_ITEM none;
+				none.text = "[None]";
+				field.items.push_back(none);
 				for (call_p = p.hash.begin(); call_p != p.hash.end(); call_p++) {
 					TQSL_LOCATION_ITEM item;
 					item.text = call_p->first;
@@ -1154,8 +1157,8 @@ update_page(int page, TQSL_LOCATION *loc) {
 						field.idx = static_cast<int>(field.items.size());
 					field.items.push_back(item);
 				}
-				if (field.idx == -1 && field.items.size() == 1) {
-					field.idx = 0;
+				if (field.idx == 0 && field.items.size() == 2) {
+					field.idx = 1;
 				}
 				if (field.idx >= 0) {
 					field.cdata = field.items[field.idx].text;
