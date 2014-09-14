@@ -31,6 +31,7 @@
 #include <wx/app.h>
 #include <wx/stdpaths.h>
 #include <wx/intl.h>
+#include <wx/cshelp.h>
 
 #ifdef __BORLANDC__
 	#pragma hdrstop
@@ -4304,6 +4305,9 @@ QSLApp::OnInit() {
 #endif
 
 	wxFileSystem::AddHandler(new tqslInternetFSHandler());
+	// Allow JAWS for windows to speak the context-sensitive help.
+	wxHelpProvider::Set(new wxSimpleHelpProvider());
+
 	//short circuit if no arguments
 
 	if (argc <= 1) {
@@ -5367,7 +5371,7 @@ class CertPropDial : public wxDialog {
 };
 
 BEGIN_EVENT_TABLE(CertPropDial, wxDialog)
-	EVT_BUTTON(tc_CertPropDialButton, CertPropDial::closeMe)
+	EVT_BUTTON(wxID_OK, CertPropDial::closeMe)
 END_EVENT_TABLE()
 
 CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
@@ -5498,10 +5502,9 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 
 	topsizer->Add(new wxStaticText(this, -1, blob));
 	topsizer->Add(
-		new wxButton(this, tc_CertPropDialButton, _("Close")),
+		new wxButton(this, wxID_OK, _("Close")),
 		0, wxALIGN_CENTER | wxALL, 10
 	);
-	SetAffirmativeId(tc_CertPropDialButton);
 	SetAutoLayout(TRUE);
 	SetSizer(topsizer);
 	topsizer->Fit(this);
@@ -5527,7 +5530,7 @@ class LocPropDial : public wxDialog {
 };
 
 BEGIN_EVENT_TABLE(LocPropDial, wxDialog)
-	EVT_BUTTON(tl_LocPropDialButton, LocPropDial::closeMe)
+	EVT_BUTTON(wxID_OK, LocPropDial::closeMe)
 END_EVENT_TABLE()
 
 LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
@@ -5594,10 +5597,9 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 
 	topsizer->Add(new wxStaticText(this, -1, blob));
 	topsizer->Add(
-		new wxButton(this, tl_LocPropDialButton, _("Close")),
+		new wxButton(this, wxID_OK, _("Close")),
 				0, wxALIGN_CENTER | wxALL, 10
 	);
-	SetAffirmativeId(tl_LocPropDialButton);
 	SetAutoLayout(TRUE);
 	SetSizer(topsizer);
 	topsizer->Fit(this);
