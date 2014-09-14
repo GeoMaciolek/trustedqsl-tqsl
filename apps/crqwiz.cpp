@@ -583,11 +583,10 @@ CRQ_IntroPage::validate() {
 	tqslTrace("CRQ_IntroPage::validate");
 	if (!initialized)
 		return 0;
+	valMsg = wxT("");
 	wxString val = tc_call->GetValue().MakeUpper();
 	bool ok = true;
 	int sel;
-	wxString msg(_("You must enter a valid call sign."));
-	static wxCharBuffer msg_buf(1);
 
 	if (val.Len() < 3)
 		ok = false;
@@ -614,15 +613,17 @@ CRQ_IntroPage::validate() {
 			ok = false;
 	}
 
-	if (!ok)
+	if (!ok) {
+		valMsg = _("You must enter a valid call sign.");
 		goto notok;
+	}
 
 	sel = tc_dxcc->GetSelection();
 	if (sel >= 0)
 		Parent()->dxcc = (long)(tc_dxcc->GetClientData(sel));
 
 	if (sel < 0 || Parent()->dxcc < 0) {
-		msg = _("You must select a DXCC entity.");
+		valMsg = _("You must select a DXCC entity.");
 		ok = false;
 		goto notok;
 	}
@@ -633,14 +634,14 @@ CRQ_IntroPage::validate() {
 	Parent()->qsonotafter.month = strtol(tc_qsoendm->GetStringSelection().ToUTF8(), NULL, 10);
 	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().ToUTF8(), NULL, 10);
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
-		msg = _("QSO begin date: You must choose proper values for Year, Month and Day.");
+		valMsg = _("QSO begin date: You must choose proper values for Year, Month and Day.");
 		ok = false;
 	} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
-		msg = _("QSO end date: You must either choose proper values for Year, Month and Day or leave all three blank.");
+		valMsg = _("QSO end date: You must either choose proper values for Year, Month and Day or leave all three blank.");
 		ok = false;
 	} else if (tqsl_isDateValid(&Parent()->qsonotafter)
 		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
-		msg = _("QSO end date cannot be before QSO begin date.");
+		valMsg = _("QSO end date cannot be before QSO begin date.");
 		ok = false;
 	}
 
@@ -682,8 +683,8 @@ CRQ_IntroPage::validate() {
 			if (ok == false) {
 				DXCC dxcc;
 				dxcc.getByEntity(Parent()->dxcc);
-				msg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
-				msg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
+				valMsg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
+				valMsg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
 			}
 		}
 		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
@@ -700,27 +701,28 @@ CRQ_IntroPage::validate() {
 					fmt += wxT("\n\n");
 					fmt += _("If you are sure that the earlier request is now invalid "
 						       "you should delete the pending callsign certificate for %s.");
-				msg = wxString::Format(fmt, val.c_str(), val.c_str());
+				valMsg = wxString::Format(fmt, val.c_str(), val.c_str());
 				ok = false;
 			}
 		}
 	}
  notok:
-	if (!ok) {
-		tc_status->SetLabel(msg);
-		tc_status->Wrap(em_w * 35);
-		msg_buf = msg.ToUTF8();
-		return (const char *)msg_buf;
-	}
-	tc_status->SetLabel(wxT(""));
+	tc_status->SetLabel(valMsg);
+	tc_status->Wrap(em_w * 35);
 	return 0;
 }
 
 bool
 CRQ_IntroPage::TransferDataFromWindow() {
 	tqslTrace("CRQ_IntroPage::TransferDataFromWindow");
-	if (validate())		// Should only happen when going Back
-		return true;
+	bool ok;
+        validate();
+        if (valMsg.Len() == 0) {
+                ok = true;
+        } else {
+                wxMessageBox(valMsg, _("Error"));
+                ok = false;
+        }
 	if (Parent()->dxcc == 0) {
 		wxString msg = _("You have selected DXCC Entity NONE");
 			msg += wxT("\n\n");
@@ -757,7 +759,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
 	Parent()->callsign = tc_call->GetValue();
 	Parent()->callsign.MakeUpper();
 	tc_call->SetValue(Parent()->callsign);
-	return true;
+	return ok;
 }
 
 static bool
@@ -776,20 +778,19 @@ CRQ_NamePage::validate() {
 	tqslTrace("CRQ_NamePage::validate()");
 	if (!initialized)
 		return 0;
+	valMsg = wxT("");
 	Parent()->name = tc_name->GetValue();
 	Parent()->addr1 = tc_addr1->GetValue();
 	Parent()->city = tc_city->GetValue();
 
-	const char *errmsg = 0;
-
 	if (cleanString(Parent()->name))
-		errmsg = __("You must enter your name");
-	if (!errmsg && cleanString(Parent()->addr1))
-		errmsg = __("You must enter your address");
-	if (!errmsg && cleanString(Parent()->city))
-		errmsg = __("You must enter your city");
-	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
-	return errmsg;
+		valMsg = _("You must enter your name");
+	if (valMsg.Len() == 0 && cleanString(Parent()->addr1))
+		valMsg = _("You must enter your address");
+	if (valMsg.Len() == 0 && cleanString(Parent()->city))
+		valMsg = _("You must enter your city");
+	tc_status->SetLabel(valMsg);
+	return 0;
 }
 
 bool
@@ -803,8 +804,14 @@ CRQ_NamePage::TransferDataFromWindow() {
 	Parent()->zip = tc_zip->GetValue();
 	Parent()->country = tc_country->GetValue();
 
-	if (validate())
-		return true;
+	bool ok;
+        validate();
+        if (valMsg.Len() == 0) {
+                ok = true;
+        } else {
+                wxMessageBox(valMsg, _("Error"));
+                ok = false;
+        }
 
 	cleanString(Parent()->name);
 	cleanString(Parent()->addr1);
@@ -828,82 +835,97 @@ CRQ_NamePage::TransferDataFromWindow() {
 	config->Write(wxT("State"), Parent()->state);
 	config->Write(wxT("ZIP"), Parent()->zip);
 	config->Write(wxT("Country"), Parent()->country);
-	return true;
+	return ok;
 }
 
 const char *
 CRQ_EmailPage::validate() {
 	tqslTrace("CRQ_EmailPage::validate()");
-	const char *errmsg = 0;
+
 	if (!initialized)
 		return 0;
+	valMsg = wxT("");
 	Parent()->email = tc_email->GetValue();
 	cleanString(Parent()->email);
 	int i = Parent()->email.First('@');
 	int j = Parent()->email.Last('.');
 	if (i < 1 || j < i+2 || j == static_cast<int>(Parent()->email.length())-1)
-		errmsg = __("You must enter a valid email address");
-	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
-	return errmsg;
+		valMsg = _("You must enter a valid email address");
+	tc_status->SetLabel(valMsg);
+	return 0;
 }
 
 bool
 CRQ_EmailPage::TransferDataFromWindow() {
 	tqslTrace("CRQ_EmailPage::TransferDataFromWindow");
-	if (validate())
-		return true;
+	bool ok;
+        validate();
+        if (valMsg.Len() == 0) {
+                ok = true;
+        } else {
+                wxMessageBox(valMsg, _("Error"));
+                ok = false;
+        }
+
 	Parent()->email = tc_email->GetValue();
 	cleanString(Parent()->email);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	config->Write(wxT("Email"), Parent()->email);
-	return true;
+	return ok;
 }
 
 const char *
 CRQ_PasswordPage::validate() {
 	tqslTrace("CRQ_PasswordPage::validate");
-	const char *errmsg = 0;
+	
 	if (!initialized)
 		return 0;
+	valMsg = wxT("");
 	wxString pw1 = tc_pw1->GetValue();
 	wxString pw2 = tc_pw2->GetValue();
 
 	if (pw1 != pw2)
-		errmsg = __("The two copies of the password do not match.");
-	tc_status->SetLabel(errmsg ? wxGetTranslation(wxString::FromUTF8(errmsg)) : wxT(""));
-	return errmsg;
+		valMsg = _("The two copies of the password do not match.");
+	tc_status->SetLabel(valMsg);
+	return 0;
 }
 
 bool
 CRQ_PasswordPage::TransferDataFromWindow() {
 	tqslTrace("CRQ_PasswordPage::TransferDataFromWindow");
-	if (validate())
-		return true;
+	bool ok;
+        validate();
+        if (valMsg.Len() == 0) {
+                ok = true;
+        } else {
+                wxMessageBox(valMsg, _("Error"));
+                ok = false;
+        }
 	Parent()->password = tc_pw1->GetValue();
-	return true;
+	return ok;
 }
 
 const char *
 CRQ_SignPage::validate() {
 	tqslTrace("CRQ_SignPage::validate");
-	bool error = 0;
-	wxString errmsg;
+	bool error = false;
 
 	if (!initialized)
 		return 0;
 
+	valMsg = wxT("");
 	wxString nextprompt = _("Click 'Finish' to complete this callsign certificate request.");
 
 	cert_tree->Enable(choice->GetSelection() == 0 ? false : true);
 
 	if (choice->GetSelection() == 0 && Parent()->dxcc == 0) {
-		error = 1;
-		errmsg = _("This request MUST be signed since DXCC Entity is set to NONE");
+		error = true;
+		valMsg = _("This request MUST be signed since DXCC Entity is set to NONE");
 	}
 	if (choice->GetSelection() == 1) {
 		if (!cert_tree->GetSelection().IsOk() || cert_tree->GetItemData(cert_tree->GetSelection()) == NULL) {
-			error = 1;
-			errmsg = _("Please select a callsign certificate to sign your request");
+			error = true;
+			valMsg = _("Please select a callsign certificate to sign your request");
 		} else {
 			char callsign[512];
 			tQSL_Cert cert = cert_tree->GetItemData(cert_tree->GetSelection())->getCert();
@@ -917,16 +939,23 @@ CRQ_SignPage::validate() {
 		}
 	}
 
-	tc_status->SetLabel(error ? errmsg : nextprompt);
+	tc_status->SetLabel(error ? valMsg : nextprompt);
 	tc_status->Wrap(em_w * 35);
-	return errmsg.ToUTF8();
+	return 0;
 }
 
 bool
 CRQ_SignPage::TransferDataFromWindow() {
 	tqslTrace("CRQ_SignPage::TransferDataFromWindow");
-	if (validate())
-		return true;
+	bool ok;
+        validate();
+        if (valMsg.Len() == 0) {
+                ok = true;
+        } else {
+                wxMessageBox(valMsg, _("Error"));
+                ok = false;
+        }
+
 	Parent()->cert = 0;
 	if (choice->GetSelection() == 0) {
 		if (cert_tree->GetNumCerts() > 0) {
@@ -948,5 +977,5 @@ CRQ_SignPage::TransferDataFromWindow() {
 		if (data)
 			Parent()->cert = data->getCert();
 	}
-	return true;
+	return ok;
 }

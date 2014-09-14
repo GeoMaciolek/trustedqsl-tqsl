@@ -70,8 +70,9 @@ class CRQWiz : public ExtWizard {
 
 class CRQ_Page : public ExtWizard_Page {
  public:
-	explicit CRQ_Page(CRQWiz* parent = NULL) : ExtWizard_Page(parent) {}
+	explicit CRQ_Page(CRQWiz* parent = NULL) : ExtWizard_Page(parent) {valMsg = wxT("");}
 	CRQWiz *Parent() { return reinterpret_cast<CRQWiz *>(_parent); }
+	wxString valMsg;
 };
 
 class CRQ_ProviderPage : public CRQ_Page {
