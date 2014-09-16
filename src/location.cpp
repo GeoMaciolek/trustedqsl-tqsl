@@ -1188,19 +1188,37 @@ update_page(int page, TQSL_LOCATION *loc) {
 					free(parse_dxcc);
 				}
 #endif
-				vector<string>::iterator ip;
-				for (ip = p.hash[call].begin(); ip != p.hash[call].end(); ip++) {
-					TQSL_LOCATION_ITEM item;
-					item.text = *ip;
-					item.ivalue = strtol(ip->c_str(), NULL, 10);
-					IntMap::iterator dxcc_it = DXCCMap.find(item.ivalue);
-					if (dxcc_it != DXCCMap.end()) {
-						item.label = dxcc_it->second;
+				if (call == "[None]") {
+					for (unsigned int i = 0; i < DXCCMap.size(); i++) {
+						TQSL_LOCATION_ITEM item;
+						item.ivalue = i;
+						char buf[10];
+						snprintf(buf, sizeof buf, "%d", item.ivalue);
+						item.text = buf;
+						item.label = DXCCMap[item.ivalue];
 						item.zonemap = DXCCZoneMap[item.ivalue];
+						if (item.ivalue == olddxcc)
+							field.idx = field.items.size();
+						field.items.push_back(item);
 					}
-					if (item.ivalue == olddxcc)
-						field.idx = field.items.size();
-					field.items.push_back(item);
+					field.idx = 0;
+				} else {
+					vector<string>::iterator ip;
+					// This iterator walks the list of DXCC entities associated
+					// with this callsign
+					for (ip = p.hash[call].begin(); ip != p.hash[call].end(); ip++) {
+						TQSL_LOCATION_ITEM item;
+						item.text = *ip;
+						item.ivalue = strtol(ip->c_str(), NULL, 10);
+						IntMap::iterator dxcc_it = DXCCMap.find(item.ivalue);
+						if (dxcc_it != DXCCMap.end()) {
+							item.label = dxcc_it->second;
+							item.zonemap = DXCCZoneMap[item.ivalue];
+						}
+						if (item.ivalue == olddxcc)
+							field.idx = field.items.size();
+						field.items.push_back(item);
+					}
 				}
 				if (field.items.size() > 0)
 					field.cdata = field.items[field.idx].text;
@@ -1353,7 +1371,7 @@ update_page(int page, TQSL_LOCATION *loc) {
 		}
 	}
 
-	if (state && state->items.size() > 0) {
+	if (state && state->idx >=0 && state->items.size() > 0) {
 		TQSL_LOCATION_FIELD *cqz = get_location_field(page, "CQZ", loc);
 		TQSL_LOCATION_FIELD *ituz = get_location_field(page, "ITUZ", loc);
 		string szm = state->items[state->idx].zonemap;
@@ -1541,7 +1559,7 @@ find_next_page(TQSL_LOCATION *loc) {
 			TQSL_LOCATION_FIELD *fp = get_location_field(0, dependsOn, loc);
 			//if (fp->idx>=fp->items.size()) { cerr<<"!! " __FILE__ "(" << __LINE__ << "): Was going to index out of fp->items"<<endl; }
 			//else {
-			if (static_cast<int>(fp->items.size()) > fp->idx && fp->items[fp->idx].text == dependency) {
+			if (static_cast<int>(fp->items.size()) > fp->idx && fp->idx >= 0 && fp->items[fp->idx].text == dependency) {
 				p.next = pit->first;
 				break;	// Found next page
 			//}
@@ -2308,7 +2326,8 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							else
 								strncpy(namebuf, "", bufsize);
 						} else {
-							strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
+						//	strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
+							strncpy(namebuf, field.items[field.idx].label.c_str(), bufsize);
 						}
 						break;
                                         case TQSL_LOCATION_FIELD_TEXT:
