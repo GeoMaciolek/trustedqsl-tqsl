@@ -877,7 +877,7 @@ CRQ_EmailPage::TransferDataFromWindow() {
 const char *
 CRQ_PasswordPage::validate() {
 	tqslTrace("CRQ_PasswordPage::validate");
-	
+
 	if (!initialized)
 		return 0;
 	valMsg = wxT("");

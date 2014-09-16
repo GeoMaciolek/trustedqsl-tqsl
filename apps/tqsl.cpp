@@ -2524,7 +2524,7 @@ static bool verify_cert(tQSL_Location loc, bool editing) {
 	if (editing)
 		flags = TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED;
 	tqsl_selectCertificates(&certlist, &ncerts, call, 0, 0, 0, flags);
-	if (ncerts == 0 && strcmp(call, "NONE")) {
+	if (ncerts == 0 && strcmp(call, "NONE") && strcmp(call, "[None]")) {
 		if (editing) {
 			wxMessageBox(wxString::Format(_("There are no callsign certificates for callsign %hs. This station location cannot be edited."), call), _("No Certificate"), wxOK|wxICON_EXCLAMATION);
 		} else {
@@ -5396,7 +5396,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	int label_width = 0;
 
 	wxStaticText* mst = new wxStaticText(this, -1, wxT("M"));
-	int char_width = mst->GetSize().GetWidth();	
+	int char_width = mst->GetSize().GetWidth();
 	// Measure the widest label
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		int em_w;
@@ -5585,8 +5585,10 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 				if (!strcmp(fields[i], "DXCC")) {
 					int dxcc = strtol(fieldbuf, NULL, 10);
 					const char *dxccname = NULL;
-					tqsl_getDXCCEntityName(dxcc, &dxccname);
-					strncpy(fieldbuf, dxccname, sizeof fieldbuf);
+					if (tqsl_getDXCCEntityName(dxcc, &dxccname))
+						strncpy(fieldbuf, "Unknown", sizeof fieldbuf);
+					else
+						strncpy(fieldbuf, dxccname, sizeof fieldbuf);
 				}
 				blob += wxString::FromUTF8(fieldbuf);
 				blob += wxT("\n");

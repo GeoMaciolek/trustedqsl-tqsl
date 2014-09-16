@@ -160,10 +160,16 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				char *p = strchr(item, '|');
 				if (p)
 					*p = '\0';
+				// Translate the first [None] entry if it exists
+#ifdef tqsltranslate
+				__("[None]");
+#endif
 				wxString item_text = wxString::FromUTF8(item);
-				(reinterpret_cast<wxComboBox *>(controls[i]))->Append(item_text);
 				if (item_text == old_sel)
 					new_sel = j;
+				if (j == 0)
+					item_text = wxGetTranslation(item_text);
+				(reinterpret_cast<wxComboBox *>(controls[i]))->Append(item_text);
 				wxCoord w, h;
 				(reinterpret_cast<wxComboBox *>(controls[i]))->GetTextExtent(item_text, &w, &h);
 				if (w > text_width)
@@ -333,7 +339,7 @@ TQSLWizCertPage::~TQSLWizCertPage() {
 const char *
 TQSLWizCertPage::validate() {
 	tqslTrace("TQSLWizCertPage::validate");
-	
+
 	if (!initialized) return 0;
 	valMsg = wxT("");
 	tqsl_setStationLocationCapturePage(loc, loc_page);
@@ -425,7 +431,7 @@ TQSLWizCertPage::validate() {
 		__("Invalid zone selections for state"),
 		__("Invalid zone selections for province"),
 		__("Invalid zone selections for oblast"),
-		__("Invalid zone selections for DXCC entity")
+		__("Invalid zone selections for DXCC entity");
 };
 #endif
 			char buf[256];
