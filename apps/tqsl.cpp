@@ -208,8 +208,8 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
-	wxString fmt = _("Enter the password to unlock the callsign certificate for ");
-		fmt += wxT("%hs -- %hs\n");
+	wxString fmt = _("Enter the password to unlock the callsign certificate for");
+		fmt += wxT(" %hs -- %hs\n");
 		fmt += _("(This is the password you made up when you installed the callsign certificate.)");
 	wxString message = wxString::Format(fmt, call, dx.name());
 
@@ -369,9 +369,9 @@ DateRangeDialog::DateRangeDialog(wxWindow *parent) : wxDialog(parent, -1, wxStri
 		  "date will not be signed or included in the output file.");
 		msgstr += wxT("\n\n");
 		msgstr += _("You may leave either date (or both dates) blank.");
-        wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-        int em_w = st->GetSize().GetWidth();
-	st->SetLabel(msgstr);
+	wxSize sz = getTextSize(this);
+        int em_w = sz.GetWidth();
+        wxStaticText *st = new wxStaticText(this, -1, msgstr);
 	st->Wrap(em_w * 30);
 	sizer->Add(st, 0, wxALL|wxALIGN_CENTER, 10);
 
@@ -1687,17 +1687,62 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 	get_certlist(callsign, dxcc, false, false, false);
 	if (ncerts == 0) {
+		// If the callsign for this location is set to "[None]", go look
+		// for a suitable callsign certificate
+		if (strcmp(callsign, "[None]") == 0) {
+			// Get all of the certificates for this location's DXCC entity
+			get_certlist("", dxcc, false, false, false);
+			if (ncerts == 1) {
+				tqsl_getCertificateCallSign(certlist[0], callsign, sizeof callsign);
+			} else if (ncerts > 1) {
+				wxString choices[ncerts];
+				// Get today's date
+				time_t t = time(0);
+				struct tm *tm = gmtime(&t);
+				tQSL_Date d;
+				d.year = tm->tm_year + 1900;
+				d.month = tm->tm_mon + 1;
+				d.day = tm->tm_mday;
+				tQSL_Date exp;
+				int def_index = 0;
+				int oldest = -1;
+				for (int i = 0; i < ncerts; i++) {
+					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
+					choices[i] = wxString::FromUTF8(callsign);
+					if (0 == tqsl_getCertificateNotAfterDate(certlist[i], &exp)) {
+						int days_left;
+						tqsl_subtractDates(&d, &exp, &days_left);
+						if (days_left > oldest) {
+							def_index = i;
+							oldest = days_left;
+						}
+					}
+				}
+				wxSingleChoiceDialog dialog(this, _("Please choose a callsign for this Station Location"), 
+							_("Select Callsign"), ncerts, choices);
+				dialog.SetSelection(def_index);
+				int idx;
+				if (dialog.ShowModal() == wxID_OK)
+					idx = dialog.GetSelection();
+				else
+					return TQSL_EXIT_CANCEL;
+				tqsl_getCertificateCallSign(certlist[idx], callsign, sizeof callsign);
+				get_certlist(callsign, dxcc, false, false, false);
+			}
+		}
+	}
+	if (ncerts == 0) {
 		wxString msg;
 		wxString fmt = _("There are no valid callsign certificates for callsign");
 		if (dxcc != 0) {
-			fmt += wxT("%hs ");
+			fmt += wxT(" %hs ");
 			fmt += _("in entity");
 			fmt += wxT(" %hs.\n");
 			fmt += _("Signing aborted.");
 			fmt + wxT("\n");
 			msg = wxString::Format(fmt, callsign, dx.name());
 		} else {
-			fmt += wxT("%hs.\n");
+			fmt += wxT(" %hs.\n");
 			fmt += _("Signing aborted.");
 			fmt + wxT("\n");
 			msg = wxString::Format(fmt, callsign);

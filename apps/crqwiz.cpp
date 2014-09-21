@@ -71,16 +71,16 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	tqslTrace("CRQ_ProviderPage::CRQ_ProviderPage", "parent=%lx, crq=%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(crq));
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-	int em_h = st->GetSize().GetHeight();
-	int em_w = st->GetSize().GetWidth();
-	st->SetSize(em_w * 30, em_h * 5);
+	wxSize sz = getTextSize(this);
+	int em_h = sz.GetHeight();
+	int em_w = sz.GetWidth();
 	wxString lbl = _("This will create a new callsign certificate request file.");
 		lbl += wxT("\n\n");
 		lbl += _("Once you supply the requested information and the "
 		"request file has been created, you must send the "
 		"request file to the certificate issuer.");
-	st->SetLabel(lbl);
+	wxStaticText *st = new wxStaticText(this, -1, lbl);
+	st->SetSize(em_w * 30, em_h * 5);
 	st->Wrap(em_w * 30);
 
 	sizer->Add(st, 0, wxALL, 10);
@@ -167,11 +167,11 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxStaticText *dst = new wxStaticText(this, -1, _("DXCC entity:"));
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"), wxDefaultPosition, wxDefaultSize,
+	wxSize sz = getTextSize(this);
+	int em_h = sz.GetHeight();
+	em_w = sz.GetWidth();
+	wxStaticText *st = new wxStaticText(this, -1, _("Call sign:"), wxDefaultPosition, wxDefaultSize,
 		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
-	int em_h = st->GetSize().GetHeight();
-	em_w = st->GetSize().GetWidth();
-	st->SetLabel(_("Call sign:"));
 	st->SetSize(dst->GetSize());
 
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
@@ -314,11 +314,11 @@ CRQ_NamePage::CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(paren
 
 	wxStaticText *zst = new wxStaticText(this, -1, _("Zip/Postal"));
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"), wxDefaultPosition, wxDefaultSize,
-		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
-	int em_w = st->GetSize().GetWidth();
+	wxSize sz = getTextSize(this);
+	int em_w = sz.GetWidth();
 	int def_w = em_w * 20;
-	st->SetLabel(_("Name"));
+	wxStaticText *st = new wxStaticText(this, -1, _("Name"), wxDefaultPosition, wxDefaultSize,
+		wxST_NO_AUTORESIZE|wxALIGN_RIGHT);
 	st->SetSize(zst->GetSize());
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
@@ -426,9 +426,9 @@ CRQ_EmailPage::CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	initialized = false;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(_("Your e-mail address"));
+	wxSize sz = getTextSize(this);
+	int em_w = sz.GetWidth();
+	wxStaticText *st = new wxStaticText(this, -1, _("Your e-mail address"));
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	wxString val;
@@ -463,9 +463,9 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-	int em_w = st->GetSize().GetWidth();
-	int em_h = st->GetSize().GetHeight();
+	wxSize sz = getTextSize(this);
+	int em_w = sz.GetWidth();
+	int em_h = sz.GetHeight();
 	wxString lbl = _("You may protect this callsign certificate using a password. "
 			"If you are using a computer system that is shared with "
 			"others, you should specify a password to protect this "
@@ -475,7 +475,7 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	lbl += _("Leave the password blank and click 'Finish' unless you want to use a password.");
 	lbl += wxT("\n\n");
 	lbl += _("Password:");
-	st->SetLabel(lbl);
+	wxStaticText *st = new wxStaticText(this, -1, lbl);
 	st->SetSize(em_w * 35, em_h * 5);
 	st->Wrap(em_w * 35);
 
@@ -527,10 +527,9 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 		 "QSL manager on behalf of another operator, select 'Unsigned'.");
 	introText = new wxStaticText(this, -1, itext);
 	sizer->Add(introText);
-	wxStaticText* text_sizer = new wxStaticText(this, -1, wxT("M"));
-	int em_h = text_sizer->GetSize().GetHeight();
-	em_w = text_sizer->GetSize().GetWidth();
-	text_sizer->Show(false);
+	wxSize sz = getTextSize(this);
+	int em_h = sz.GetHeight();
+	em_w = sz.GetWidth();
 	introText->Wrap(em_w * 35);
 	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*3));
 

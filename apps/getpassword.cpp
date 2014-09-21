@@ -14,6 +14,7 @@
 
 #include "getpassword.h"
 #include "tqsltrace.h"
+#include "wxutil.h"
 
 #define GPW_ID_LOW 6400
 
@@ -35,9 +36,9 @@ GetPasswordDialog::GetPasswordDialog(wxWindow *parent, const wxString& title,
 	tqslTrace("GetPassword::GetPasswordDialog", "parent=%lx, title=%s, message=%s", reinterpret_cast<void *>(parent), S(title), S(helpfile));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(message);
+	wxSize sz = getTextSize(this);
+	int em_w = sz.GetWidth();
+	wxStaticText *st = new wxStaticText(this, -1, message);
 	st->Wrap(em_w * 40);
 	sizer->Add(st, 1, wxALL|wxEXPAND, 10);
 	_pw = new wxTextCtrl(this, GPW_ID_PW1, wxT(""), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD);
@@ -102,9 +103,9 @@ GetNewPasswordDialog::GetNewPasswordDialog(wxWindow *parent, const wxString& tit
 	tqslTrace("GetNewPasswordDialog::GetNewPasswordDialog", "parent=%lx, title=%s, message=%s, blankok=%d", reinterpret_cast<void *>(parent), S(title), S(message));
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxStaticText *st = new wxStaticText(this, -1, wxT("M"));
-	int em_w = st->GetSize().GetWidth();
-	st->SetLabel(message);
+	wxSize sz = getTextSize(this);
+	int em_w = sz.GetWidth();
+	wxStaticText *st = new wxStaticText(this, -1, message);
 	st->Wrap(em_w * 40);
 	sizer->Add(st, 1, wxALL|wxEXPAND, 10);
 	sizer->Add(new wxStaticText(this, -1, _("New password:")), 0, wxLEFT|wxRIGHT, 10);

@@ -247,6 +247,15 @@ using tqsllib::tqsl_get_pem_serial;
 
 typedef map<int, string> IntMap;
 
+static int num_entities = 0;
+static bool _ent_init = false;
+
+static struct _dxcc_entity {
+	int number;
+	const char* name;
+	const char *zonemap;
+} *entity_list = 0;
+
 // config data
 
 static XMLElement tqsl_xml_config;
@@ -1088,6 +1097,11 @@ static bool inMap(int cqvalue, int ituvalue, bool cqz, bool ituz, const char *ma
 	return result;
 }
 
+static int
+_ent_cmp(const void *a, const void *b) {
+	return strcasecmp(((struct _dxcc_entity *)a)->name, ((struct _dxcc_entity *)b)->name);
+}
+
 static TQSL_LOCATION_FIELD *
 get_location_field(int page, const string& gabbi, TQSL_LOCATION *loc) {
 	if (page == 0)
@@ -1189,14 +1203,27 @@ update_page(int page, TQSL_LOCATION *loc) {
 				}
 #endif
 				if (call == "[None]") {
-					for (unsigned int i = 0; i < DXCCMap.size(); i++) {
+					int i;
+					if (!_ent_init) {
+						num_entities = DXCCMap.size();
+						entity_list = new struct _dxcc_entity[num_entities];
+						IntMap::const_iterator it;
+						for (it = DXCCMap.begin(), i = 0; it != DXCCMap.end(); it++, i++) {
+							entity_list[i].number = it->first;
+							entity_list[i].name = it->second.c_str();
+							entity_list[i].zonemap = DXCCZoneMap[it->first].c_str();
+						}
+						qsort(entity_list, num_entities, sizeof(struct _dxcc_entity), &_ent_cmp);
+						_ent_init = true;
+					}
+					for (i = 0; i < num_entities; i++) {
 						TQSL_LOCATION_ITEM item;
-						item.ivalue = i;
+						item.ivalue = entity_list[i].number;
 						char buf[10];
 						snprintf(buf, sizeof buf, "%d", item.ivalue);
 						item.text = buf;
-						item.label = DXCCMap[item.ivalue];
-						item.zonemap = DXCCZoneMap[item.ivalue];
+						item.label = entity_list[i].name;
+						item.zonemap = entity_list[i].zonemap;
 						if (item.ivalue == olddxcc)
 							field.idx = field.items.size();
 						field.items.push_back(item);
