@@ -1694,8 +1694,9 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			get_certlist("", dxcc, false, false, false);
 			if (ncerts == 1) {
 				tqsl_getCertificateCallSign(certlist[0], callsign, sizeof callsign);
+				tqsl_setLocationCallSign(loc, callsign);
 			} else if (ncerts > 1) {
-				wxString choices[ncerts];
+				wxString *choices = new wxString[ncerts];
 				// Get today's date
 				time_t t = time(0);
 				struct tm *tm = gmtime(&t);
@@ -1718,7 +1719,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 						}
 					}
 				}
-				wxSingleChoiceDialog dialog(this, _("Please choose a callsign for this Station Location"), 
+				wxSingleChoiceDialog dialog(this, _("Please choose a callsign for this Station Location"),
 							_("Select Callsign"), ncerts, choices);
 				dialog.SetSelection(def_index);
 				int idx;
@@ -1728,6 +1729,24 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					return TQSL_EXIT_CANCEL;
 				tqsl_getCertificateCallSign(certlist[idx], callsign, sizeof callsign);
 				get_certlist(callsign, dxcc, false, false, false);
+				tqsl_setLocationCallSign(loc, callsign);
+			}
+			wxString fmt = _("The file (%s) will be signed using:");
+				 fmt += wxT("\n");
+				 fmt += _("Station Location:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("Call sign:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("DXCC:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("Is this correct?");
+			char loc_name[128];
+			if (tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name)) {
+				strncpy(loc_name, "Unknown", sizeof loc_name);
+			}
+			if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
+				callsign, dx.name()), _("TQSL - Confirm signing"), wxYES_NO, this) != wxYES) {
+				return TQSL_EXIT_CANCEL;
 			}
 		}
 	}
@@ -3486,7 +3505,13 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 			return;
 		config->Write(wxT("ExportPath"), wxPathOnly(outfile));
 
-		tQSL_Location loc = SelectStationLocation(_("Select Station Location for Signing"));
+        	int n;
+        	tQSL_Location loc;
+        	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+        	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
+		if (n != 1) {
+			loc = SelectStationLocation(_("Select Station Location for Signing"));
+		}
 		if (loc == 0)
 			return;
 
@@ -3502,20 +3527,25 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
-		wxString fmt = _("The file (%s) will be signed using:");
-			fmt += wxT("\n");
-			fmt += _("Station Location:");
-			fmt += wxT(" %hs\n");
-			fmt += _("Call sign:");
-			fmt += wxT(" %hs\n");
-			fmt += _("DXCC:");
-			fmt += wxT(" %hs\n");
-			fmt += _("Is this correct?");
-		if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
-			callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+		if (strcmp(callsign, "[None]")) {
+			wxString fmt = _("The file (%s) will be signed using:");
+				 fmt += wxT("\n");
+				 fmt += _("Station Location:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("Call sign:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("DXCC:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("Is this correct?");
+			if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
+				callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES) {
+				ConvertLogFile(loc, infile, outfile, compressed);
+			} else {
+				wxLogMessage(_("Signing abandoned"));
+			}
+		} else {
 			ConvertLogFile(loc, infile, outfile, compressed);
-		else
-			wxLogMessage(_("Signing abandoned"));
+		}
 	}
 	catch(TQSLException& x) {
 		wxString s;
@@ -3593,7 +3623,13 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		config->Write(wxT("ImportExtension"), inExt);
 
 		// Get Station Location
-		tQSL_Location loc = SelectStationLocation(_("Select Station Location for Signing"));
+	        int n;
+        	tQSL_Location loc;
+        	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+        	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
+		if (n != 1) {
+			loc = SelectStationLocation(_("Select Station Location for Signing"));
+		}
 		if (loc == 0)
 			return;
 
@@ -4625,7 +4661,12 @@ QSLApp::OnInit() {
 	}
 	if (loc == 0) {
 		try {
-			loc = frame->SelectStationLocation(_("Select Station Location for Signing"));
+        		int n;
+        		tQSL_Location loc;
+        		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+        		check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
+			if (n != 1)
+				loc = frame->SelectStationLocation(_("Select Station Location for Signing"));
 		}
 		catch(TQSLException& x) {
 			wxLogError(wxT("%hs"), x.what());
@@ -5795,11 +5836,11 @@ lock_db(bool wait) {
 	ret = LockFileEx(hFile, locktype, 0, 0, 0x80000000, &ov);
 	if (!ret) {
 		switch (GetLastError()) {
-			case ERROR_SHARING_VIOLATION:
-			case ERROR_LOCK_VIOLATION:
-			case ERROR_IO_PENDING:
+                        case ERROR_SHARING_VIOLATION:
+                        case ERROR_LOCK_VIOLATION:
+                        case ERROR_IO_PENDING:
 				return -1;
-			default:
+                        default:
 				return 0;
 		}
 	}
