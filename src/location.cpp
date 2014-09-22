@@ -2828,6 +2828,33 @@ tqsl_getLocationCallSign(tQSL_Location locp, char *buf, int bufsiz) {
 }
 
 DLLEXPORT int CALLCONVENTION
+tqsl_setLocationCallSign(tQSL_Location locp, char *buf) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp, false)))
+		return 1;
+	if (buf == 0) {
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	TQSL_LOCATION_PAGE& p = loc->pagelist[0];
+	for (int i = 0; i < static_cast<int>(p.fieldlist.size()); i++) {
+		TQSL_LOCATION_FIELD f = p.fieldlist[i];
+		if (f.gabbi_name == "CALL") {
+			for (int j = 0; j < static_cast<int>(f.items.size()); j++) {
+				if (f.items[j].text == buf) {
+					loc->pagelist[0].fieldlist[i].idx = j;
+					loc->pagelist[0].fieldlist[i].cdata = buf;
+					break;
+				}
+			}
+			return 0;
+		}
+	}
+	tQSL_Error = TQSL_CALL_NOT_FOUND;
+	return 1;
+}
+
+DLLEXPORT int CALLCONVENTION
 tqsl_getLocationDXCCEntity(tQSL_Location locp, int *dxcc) {
 	TQSL_LOCATION *loc;
 	if (!(loc = check_loc(locp, false)))

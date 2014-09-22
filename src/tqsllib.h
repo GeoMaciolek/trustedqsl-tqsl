@@ -1101,6 +1101,9 @@ DLLEXPORT int CALLCONVENTION tqsl_getLocationFieldChanged(tQSL_Location loc, int
 /** Get the call sign from the station location. */
 DLLEXPORT int CALLCONVENTION tqsl_getLocationCallSign(tQSL_Location loc, char *buf, int bufsiz);
 
+/** Set the call sign for the station location. */
+DLLEXPORT int CALLCONVENTION tqsl_setLocationCallSign(tQSL_Location loc, char *buf);
+
 /** Get the DXCC entity from the station location. */
 DLLEXPORT int CALLCONVENTION tqsl_getLocationDXCCEntity(tQSL_Location loc, int *dxcc);
 
