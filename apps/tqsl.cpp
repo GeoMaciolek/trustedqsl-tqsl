@@ -3511,6 +3511,12 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
         	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
 		if (n != 1) {
 			loc = SelectStationLocation(_("Select Station Location for Signing"));
+		} else {
+			// There's only one station location. Use that and don't prompt.
+			char deflocn[512];
+			check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
+			tqsl_endStationLocationCapture(&loc);
+			check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
 		}
 		if (loc == 0)
 			return;
@@ -3629,6 +3635,12 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
         	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
 		if (n != 1) {
 			loc = SelectStationLocation(_("Select Station Location for Signing"));
+		} else {
+			// There's only one station location. Use that and don't prompt.
+			char deflocn[512];
+			check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
+			tqsl_endStationLocationCapture(&loc);
+			check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
 		}
 		if (loc == 0)
 			return;
@@ -4665,8 +4677,15 @@ QSLApp::OnInit() {
         		tQSL_Location loc;
         		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         		check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
-			if (n != 1)
+			if (n != 1) {
 				loc = frame->SelectStationLocation(_("Select Station Location for Signing"));
+			} else {
+				// There's only one station location. Use that and don't prompt.
+				char deflocn[512];
+				check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
+				tqsl_endStationLocationCapture(&loc);
+				check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
+			}
 		}
 		catch(TQSLException& x) {
 			wxLogError(wxT("%hs"), x.what());

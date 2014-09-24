@@ -3,6 +3,14 @@ TQSL changes
 
 2.1
 ----------
+Allow station locations to have callsign unspecified ('[None]').
+These locations can be used for signing a log by selecting the
+correct callsign certificate from a list, with the callsign
+certificate that expires the latest chosen by default.
+
+Further changes for accessibility improvements, including not using
+changing text fields on dialog boxes to indicate errors.
+
 Update TQSL to interact better with accessibility libraries. These
 changes have been tested with MacOS VoiceOver.
 

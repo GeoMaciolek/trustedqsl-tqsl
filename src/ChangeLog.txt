@@ -1,6 +1,12 @@
 TQSLLIB changes
 ===============
 
+2.5
+---
+Add API to allow the call sign for a station location to be temporarily
+specified. This allows locations with callsign='[None]' to be used
+by selecting a call when signing a log.
+
 2.4
 ---
 Fix defect that doesn't allow adding station locations if only a single
