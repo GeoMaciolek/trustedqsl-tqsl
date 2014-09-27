@@ -1469,6 +1469,27 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		LocTreeReset();
 		return;
 	}
+	// How many locations are there?
+       	int n;
+       	tQSL_Location loc;
+       	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+       	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
+	if (n == 1) {
+		// There's only one station location. Use that and don't prompt.
+		char deflocn[512];
+		check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
+		wxString locname = wxString::FromUTF8(deflocn);
+		tqsl_endStationLocationCapture(&loc);
+		check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
+		char loccall[512];
+		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+		run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, locname.c_str()), locname);
+		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+		loc_tree->Build();
+		LocTreeReset();
+		return;
+	}
+	// More than one location or not selected in the tree. Prompt for the location.
 	try {
 		SelectStationLocation(_("Edit Station Location"), _("Close"), true);
 		loc_tree->Build();
