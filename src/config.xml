@@ -1,4 +1,4 @@
-<tqslconfig majorversion="2" minorversion="7">
+<tqslconfig majorversion="2" minorversion="8">
      <adifmap>
        <adifmode mode="AMTOR">AMTORFEC</adifmode>
        <adifmode mode="RTTY">ASCI</adifmode>
@@ -776,7 +776,7 @@
            <enum value="VR" zonemap="29:16">VR Voronezh</enum>
          </enums>
          <enums dependency="61">
-           <enum value="AR" zonemap="19:16">AR Arkhangelsk</enum>
+           <enum value="AR" zonemap="75:40">AR Arkhangelsk</enum>
          </enums>
        </field>
        <field Id="US_COUNTY" dependsOn="US_STATE" flags="0" intype="2" label="County" len="30" type="C">
@@ -4242,6 +4242,7 @@
        <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
        <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
        <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
+       <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
        <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
        <satellite endDate="1979-02-01" name="RS-1" startDate="1978-10-26">Radio Sputnik 1</satellite>
        <satellite endDate="2000-11-01" name="RS-10" startDate="1987-06-23">Radio Sputnik 10</satellite>
