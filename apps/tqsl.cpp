@@ -4078,37 +4078,40 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				svalue = wxString::FromUTF8(atts[i+1]);
 			}
 		}
-		loader->config->SetPath(sgroup);
-		if (stype == wxT("String")) {
-			svalue.Replace(wxT("&lt;"), wxT("<"), true);
-			svalue.Replace(wxT("&gt;"), wxT(">"), true);
-			svalue.Replace(wxT("&amp;"), wxT("&"), true);
-			if (sname == wxT("BackupFolder") && !svalue.IsEmpty()) {
-				// If it's the backup directory, don't restore it if the
-				// referenced directory doesn't exist.
-				struct stat s;
+		// Don't restore wxHtmlWindow as these settings are OS-specific.
+		if (sgroup != wxT("wxHtmlWindow")) {
+			loader->config->SetPath(sgroup);
+			if (stype == wxT("String")) {
+				svalue.Replace(wxT("&lt;"), wxT("<"), true);
+				svalue.Replace(wxT("&gt;"), wxT(">"), true);
+				svalue.Replace(wxT("&amp;"), wxT("&"), true);
+				if (sname == wxT("BackupFolder") && !svalue.IsEmpty()) {
+					// If it's the backup directory, don't restore it if the
+					// referenced directory doesn't exist.
+					struct stat s;
 #ifdef _WIN32
 #define lstat stat
 #define S_ISDIR(mode)	(((mode) & S_IFMT) == _S_IFDIR)
 #endif
 
-				if (lstat(tqslName(svalue), &s) == 0) {		// Does it exist?
-					if (S_ISDIR(s.st_mode)) {		// And is it a directory?
-						loader->config->Write(sname, svalue); // OK to use it.
-					}
-                		}
-			} else {
-				loader->config->Write(sname, svalue);
+					if (lstat(tqslName(svalue), &s) == 0) {		// Does it exist?
+						if (S_ISDIR(s.st_mode)) {		// And is it a directory?
+							loader->config->Write(sname, svalue); // OK to use it.
+						}
+                			}
+				} else {
+					loader->config->Write(sname, svalue);
+				}
+			} else if (stype == wxT("Bool")) {
+				bool bsw = (svalue == wxT("true"));
+				loader->config->Write(sname, bsw);
+			} else if (stype == wxT("Int")) {
+				long lval = strtol(svalue.ToUTF8(), NULL, 10);
+				loader->config->Write(sname, lval);
+			} else if (stype == wxT("Float")) {
+				double dval = strtod(svalue.ToUTF8(), NULL);
+				loader->config->Write(sname, dval);
 			}
-		} else if (stype == wxT("Bool")) {
-			bool bsw = (svalue == wxT("true"));
-			loader->config->Write(sname, bsw);
-		} else if (stype == wxT("Int")) {
-			long lval = strtol(svalue.ToUTF8(), NULL, 10);
-			loader->config->Write(sname, lval);
-		} else if (stype == wxT("Float")) {
-			double dval = strtod(svalue.ToUTF8(), NULL);
-			loader->config->Write(sname, dval);
 		}
 	} else if (strcmp(name, "Locations") == 0) {
 		wxLogMessage(_("Restoring Station Locations"));
