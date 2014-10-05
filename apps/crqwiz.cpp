@@ -623,7 +623,6 @@ CRQ_IntroPage::validate() {
 
 	if (sel < 0 || Parent()->dxcc < 0) {
 		valMsg = _("You must select a DXCC entity.");
-		ok = false;
 		goto notok;
 	}
 	Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().ToUTF8(), NULL, 10);
@@ -701,7 +700,6 @@ CRQ_IntroPage::validate() {
 					fmt += _("If you are sure that the earlier request is now invalid "
 						       "you should delete the pending callsign certificate for %s.");
 				valMsg = wxString::Format(fmt, val.c_str(), val.c_str());
-				ok = false;
 			}
 		}
 	}

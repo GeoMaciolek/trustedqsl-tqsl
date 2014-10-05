@@ -459,7 +459,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				conv->dbenv->close(conv->dbenv, 0);
 				// Create a new environment to remove the dross
 				if (!(dbret = db_env_create(&conv->dbenv, 0))) {
-					dbret = conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+					conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
 				}
 				triedRemove = true;
 				if (conv->errfile)
