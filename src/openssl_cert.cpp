@@ -140,7 +140,7 @@
 #include <stdlib.h>
 #ifdef _WIN32
     #include <direct.h>
-	#define MKDIR(x, y) _mkdir(x)
+	#define MKDIR(x, y) _wmkdir(x)
 #else
 	#define MKDIR(x, y) mkdir(x, y)
 	#include <unistd.h>
@@ -468,12 +468,21 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	/* Try opening the output stream */
 
+#ifdef _WIN32
+	wchar_t* wfilename = utf8_to_wchar(filename);
+	if ((out = _wfopen(wfilename, L"wb")) == NULL) {
+		free(wfilename);
+#else
 	if ((out = fopen(filename, TQSL_OPEN_WRITE)) == NULL) {
+#endif
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto end;
 	}
+#ifdef _WIN32
+	free(wfilename);
+#endif
 	fputs("\ntQSL certificate request\n\n", out);
 	tqsl_write_adif_field(out, "eoh", 0, NULL, 0);
 	type = (req->signer != NULL) ? (req->renew ? "TQSL_CRQ_RENEWAL" : "TQSL_CRQ_ADDITIONAL") : "TQSL_CRQ_NEW";
@@ -564,12 +573,21 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 	if (!tqsl_make_key_path(req->callSign, path, sizeof path))
 		goto end;
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(path);
+	if ((out = _wfopen(wpath, L"ab")) == NULL) {
+		free(wpath);
+#else
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
+#endif
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto end;
 	}
+#ifdef _WIN32
+	free(wpath);
+#endif
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (unsigned char *)req->providerUnit, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_EMAIL", 0, (unsigned char *)req->emailAddress, -1);
@@ -2099,8 +2117,15 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
  p12_end:
 	if (out) {
 		BIO_free(out);
-		if (rval && !returnB64)
+		if (rval && !returnB64) {
+#ifdef _WIN32
+			wchar_t* wfilename = utf8_to_wchar(filename);
+			_wunlink(wfilename);
+			free(wfilename);
+#else
 			unlink(filename);
+#endif
+		}
 	}
 	if (chain)
 		sk_X509_free(chain);
@@ -2459,14 +2484,36 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 			strncpy(badpath, path, sizeof(badpath));
 			strncat(badpath, ".bad", sizeof(badpath)-strlen(badpath)-1);
 			badpath[sizeof(badpath)-1] = '\0';
+#ifdef _WIN32
+			wchar_t* wpath = utf8_to_wchar(path);
+			wchar_t* wbadpath = utf8_to_wchar(badpath);
+			wchar_t* wsavepath = NULL;
+			if (!_wrename(wpath, wbadpath)) {
+#else
 			if (!rename(path, badpath)) {
+#endif
 				strncpy(savepath, path, sizeof(savepath));
 				strncat(savepath, ".save", sizeof(savepath)-strlen(savepath)-1);
 				savepath[sizeof(savepath)-1] = '\0';
+#ifdef _WIN32
+				wsavepath = utf8_to_wchar(savepath);
+				if (_wrename(wsavepath, wpath))  // didn't work
+					_wrename(wbadpath, wpath);
+#else
 				if (rename(savepath, path))  // didn't work
 					rename(badpath, path);
+#endif
 				else
+#ifdef _WIN32
+			        {
+					_wunlink(wbadpath);
+					free(wpath);
+					free(wbadpath);
+					if (wsavepath) free(wsavepath);
+				}
+#else
 					unlink(badpath);
+#endif
 			}
 			goto imp_end;
 		}
@@ -2575,16 +2622,33 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 	bio = 0;
 
 	// Looks like the new file is okay, commit it
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(path);
+	if (_wunlink(wpath) && errno != ENOENT) {
+		free(wpath);
+#else
 	if (unlink(path) && errno != ENOENT) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto dc_end;
 	}
+#ifdef _WIN32
+	wchar_t* wnewpath = utf8_to_wchar(newpath);
+	if (_wrename(wnewpath, wpath)) {
+		free(wpath);
+		free(wnewpath);
+#else
 	if (rename(newpath, path)) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto dc_end;
 	}
+#ifdef _WIN32
+	free(wpath);
+	free(wnewpath);
+#endif
 
  dc_ok:
 	rval = 0;
@@ -2850,12 +2914,21 @@ tqsl_ssl_load_certs_from_file(const char *filename) {
 	STACK_OF(X509) *sk;
 	FILE *cfile;
 
+#ifdef _WIN32
+	wchar_t* wfilename = utf8_to_wchar(filename);
+	if ((cfile = _wfopen(wfilename, L"r")) == NULL) {
+		free(wfilename);
+#else
 	if ((cfile = fopen(filename, "r")) == NULL) {
+#endif
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return NULL;
 	}
+#ifdef _WIN32
+	free(wfilename);
+#endif
 	if ((in = BIO_new_fp(cfile, 0)) == NULL) {
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return NULL;
@@ -3251,15 +3324,19 @@ tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncpy(path, tQSL_BaseDir, size);
 #ifdef _WIN32
 	strncat(path, "\\certs", size - strlen(path));
+	wchar_t* wpath = utf8_to_wchar(path);
+	if (MKDIR(wpath, 0700) && errno != EEXIST) {
+		free(wpath);
 #else
 	strncat(path, "/certs", size - strlen(path));
-#endif
 	if (MKDIR(path, 0700) && errno != EEXIST) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return NULL;
 	}
 #ifdef _WIN32
+	free(wpath);
 	strncat(path, "\\", size - strlen(path));
 #else
 	strncat(path, "/", size - strlen(path));
@@ -3294,16 +3371,20 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 	strncpy(path, tQSL_BaseDir, size);
 #ifdef _WIN32
 	strncat(path, "\\keys", size - strlen(path));
+	wchar_t* wpath = utf8_to_wchar(path);
+	if (MKDIR(wpath, 0700) && errno != EEXIST) {
+		free(wpath);
 #else
 	strncat(path, "/keys", size - strlen(path));
-#endif
 	if (MKDIR(path, 0700) && errno != EEXIST) {
+#endif
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return 0;
 	}
 #ifdef _WIN32
+	free(wpath);
 	strncat(path, "\\", size - strlen(path));
 #else
 	strncat(path, "/", size - strlen(path));
@@ -3555,12 +3636,21 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 			return 1;
 		}
 	}
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(path);
+	if ((out = _wfopen(wpath, L"a")) == NULL) {
+		free(wpath);
+#else
 	if ((out = fopen(path, "a")) == NULL) {
+#endif
 		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return 1;
 	}
+#ifdef _WIN32
+	free(wpath);
+#endif
 	fwrite(pem, 1, strlen(pem), out);
 	if (fclose(out) == EOF) {
 		strncpy(tQSL_ErrorFile, certfile, sizeof tQSL_ErrorFile);
@@ -3712,11 +3802,20 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	strncat(newpath, ".new", sizeof newpath - strlen(newpath)-1);
 	strncpy(savepath, path, sizeof savepath);
 	strncat(savepath, ".save", sizeof savepath - strlen(savepath)-1);
+#ifdef _WIN32
+	wchar_t* wnewpath = utf8_to_wchar(newpath);
+	if ((out = _wfopen(wnewpath, L"wb")) == NULL) {
+		free(wnewpath);
+#else
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto trk_end;
 	}
+#ifdef _WIN32
+	free(wnewpath);
+#endif
 	for (it = records.begin(); it != records.end(); it++) {
 		map<string, string>::iterator mit;
 		for (mit = it->begin(); mit != it->end(); mit++) {
@@ -3733,21 +3832,47 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	out = 0;
 
 	/* Output file looks okay. Replace the old file with the new one. */
+#ifdef _WIN32
+	wchar_t* wsavepath = utf8_to_wchar(savepath);
+	if (_wunlink(wsavepath) && errno != ENOENT) {
+		free(wsavepath);
+#else
 	if (unlink(savepath) && errno != ENOENT) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto trk_end;
 	}
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(path);
+	if (_wrename(wpath, wsavepath) && errno != ENOENT) {
+		free(wpath);
+		free(wsavepath);
+#else
 	if (rename(path, savepath) && errno != ENOENT) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto trk_end;
 	}
+#ifdef _WIN32
+	if (_wrename(wnewpath, wpath)) {
+		free(wnewpath);
+		free(wpath);
+		free(wsavepath);
+#else
 	if (rename(newpath, path)) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto trk_end;
 	}
+#ifdef _WIN32
+	free(wnewpath);
+	free(wpath);
+	free(wsavepath);
+#endif
+
 	if (cb) {
 		string msg = string("Loaded private key for: ") + callsign;
 		(*cb)(TQSL_CERT_CB_RESULT + TQSL_CERT_CB_PKEY + TQSL_CERT_CB_LOADED, msg.c_str(), userdata);
@@ -3925,39 +4050,68 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 	string path = tQSL_BaseDir;
 #ifdef _WIN32
 	path += "\\keys";
+	wchar_t* wpath = utf8_to_wchar(path.c_str());
+	MKDIR(wpath, 0700);
 #else
 	path += "/keys";
-#endif
 	MKDIR(path.c_str(), 0700);
+#endif
 
+#ifdef _WIN32
+	WDIR *dir = wopendir(wpath);
+	free(wpath);
+#else
 	DIR *dir = opendir(path.c_str());
+#endif
 	if (dir == NULL) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		return 1;
 	}
+#ifdef _WIN32
+	struct wdirent *ent;
+#else
 	struct dirent *ent;
+#endif
 	int rval = 0;
 	int savedError = 0;
 	int savedErrno = 0;
 	char *savedFile = NULL;
 
+#ifdef _WIN32
+	while ((ent = wreaddir(dir)) != NULL) {
+		if (ent->d_name[0] == '.')
+			continue;
+		if (wcsstr(ent->d_name, L".save"))
+			continue;
+		char dname[TQSL_MAX_PATH_LEN];
+		wcstombs(dname, ent->d_name, TQSL_MAX_PATH_LEN);
+		string filename = path + "\\" + dname;
+#else
 	while ((ent = readdir(dir)) != NULL) {
-		char fixcall[256];
 		if (ent->d_name[0] == '.')
 			continue;
 		if (strstr(ent->d_name, ".save"))
 			continue;
-#ifdef _WIN32
-		string filename = path + "\\" + ent->d_name;
-#else
 		string filename = path + "/" + ent->d_name;
 #endif
+		char fixcall[256];
+#ifdef _WIN32
+		struct _stat32 s;
+		wchar_t* wfilename = utf8_to_wchar(filename.c_str());
+		if (_wstat32(wfilename, &s) == 0) {
+			if (S_ISDIR(s.st_mode)) {
+				free(wfilename);
+				continue;		// If it's a directory, skip it.
+			}
+		}
+#else
 		struct stat s;
 		if (stat(filename.c_str(), &s) == 0) {
 			if (S_ISDIR(s.st_mode))
 				continue;		// If it's a directory, skip it.
 		}
+#endif
 		if (!tqsl_open_key_file(filename.c_str())) {
 			map<string, string> fields;
 			while (!tqsl_read_key(fields)) {
@@ -3970,8 +4124,15 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 					savedFile = strdup(tQSL_ErrorFile);
 					continue;	// Keep looking for keys
 				}
-				if (strcasecmp(fixcall, ent->d_name))
+#ifdef _WIN32
+				wchar_t* wfixcall = utf8_to_wchar(fixcall);
+				if (wcscmp(wfixcall, ent->d_name)) {
+					free(wfixcall);
+#else
+				if (strcasecmp(fixcall, ent->d_name)) {
+#endif
 					continue;
+				}
 				keys.push_back(fields);
 			}
 			tqsl_close_key_file();
@@ -3984,7 +4145,11 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 			savedFile = strdup(tQSL_ErrorFile);
 		}
 	}
+#ifdef _WIN32
+	_wclosedir(dir);
+#else
 	closedir(dir);
+#endif
 	if (rval) {
 		tQSL_Error = savedError;
 		tQSL_Errno = savedErrno;
@@ -4146,7 +4311,13 @@ tqsl_dump_cert_status_data(XMLElement &xel) {
 
 	out.exceptions(std::ios::failbit | std::ios::eofbit | std::ios::badbit);
 	try {
+#ifdef _WIN32
+		wchar_t* wfn = utf8_to_wchar(fn.c_str());
+		out.open(wfn);
+		free(wfn);
+#else
 		out.open(fn.c_str());
+#endif
 		out << xel << endl;
 		out.close();
 	}

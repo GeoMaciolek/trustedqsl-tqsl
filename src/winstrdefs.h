@@ -8,6 +8,7 @@
   #define strncasecmp _strnicmp
   #define unlink _unlink
   #define strdup _strdup
+  #define fileno _fileno
 #endif
 
 #endif//WINSTRDEFS_H

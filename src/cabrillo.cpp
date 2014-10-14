@@ -411,11 +411,20 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 	}
 	cab->sentinel = 0x2449;
 	cab->field_idx = -1;
+#ifdef _WIN32
+	wchar_t * wfilename = utf8_to_wchar(filename);
+	if ((cab->fp = _wfopen(wfilename, L"r")) == NULL) {
+		free(wfilename);
+#else
 	if ((cab->fp = fopen(filename, "r")) == NULL) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		goto err;
 	}
+#ifdef _WIN32
+	free(wfilename);
+#endif
 	char *cp;
 	terrno = TQSL_CABRILLO_NO_START_RECORD;
 	while ((cp = fgets(cab->rec, sizeof cab->rec, cab->fp)) != 0) {

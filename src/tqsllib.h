@@ -1273,6 +1273,10 @@ DLLEXPORT const char* CALLCONVENTION tqsl_getGABBItCONTACTData(tQSL_Cert cert, t
 
 /** @} */
 
+#ifdef _WIN32
+DLLEXPORT wchar_t* CALLCONVENTION utf8_to_wchar(const char* str);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

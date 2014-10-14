@@ -1982,7 +1982,13 @@ tqsl_dump_station_data(XMLElement &xel) {
 
 	out.exceptions(ios::failbit | ios::eofbit | ios::badbit);
 	try {
+#ifdef _WIN32
+		wchar_t* wfn = utf8_to_wchar(fn.c_str());
+		out.open(wfn);
+		free(wfn);
+#else
 		out.open(fn.c_str());
+#endif
 		out << xel << endl;
 		out.close();
 	}
@@ -2069,7 +2075,16 @@ DLLEXPORT int CALLCONVENTION
 	tqsl_getStationDataEnc(tQSL_StationDataEnc *sdata) {
 	char *dbuf = NULL;
 	size_t dlen = 0;
-	gzFile in = gzopen(tqsl_station_data_filename().c_str(), "rb");
+	gzFile in = NULL;
+#ifdef _WIN32
+	wchar_t *fn = utf8_to_wchar(tqsl_station_data_filename().c_str());
+	FILE* f = _wfopen(fn, L"rb");
+	free(fn);
+	if (f != NULL)
+		in = gzdopen(fileno(f), "rb");
+#else
+	in = gzopen(tqsl_station_data_filename().c_str(), "rb");
+#endif
 
 	if (!in) {
 		if (errno == ENOENT) {
@@ -2966,15 +2981,21 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 				return 0;
 
 		// Save the configuration file
+		ofstream out;
 #ifdef _WIN32
 		string fn = string(tQSL_BaseDir) + "\\config.xml";
 #else
 		string fn = string(tQSL_BaseDir) + "/config.xml";
 #endif
-		ofstream out;
 		out.exceptions(ios::failbit | ios::eofbit | ios::badbit);
 		try {
+#ifdef _WIN32
+			wchar_t *wfn = utf8_to_wchar(fn.c_str());
+			out.open(wfn);
+			free(wfn);
+#else
 			out.open(fn.c_str());
+#endif
 			out << section << endl;
 			out.close();
 		}

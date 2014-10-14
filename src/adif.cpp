@@ -78,13 +78,22 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	}
 	adif->sentinel = 0x3345;
 	ADIF_ErrorField[0] = '\0';
+#ifdef _WIN32
+	wchar_t *wfilename = utf8_to_wchar(filename);
+	if ((adif->fp = _wfopen(wfilename, L"rb")) == NULL) {
+		free(wfilename);
+#else
 	if ((adif->fp = fopen(filename, "rb")) == NULL) {
+#endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
 		goto err;
 	}
+#ifdef _WIN32
+	free(wfilename);
+#endif
 	if ((adif->filename = strdup(filename)) == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;
 		goto err;

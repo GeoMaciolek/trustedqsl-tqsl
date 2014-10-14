@@ -370,19 +370,46 @@ tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Dat
 // Remove the dupes db files
 static void
 remove_db(const char *path)  {
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(path);
+	_WDIR *dir = _wopendir(wpath);
+	free(wpath);
+#else
 	DIR *dir = opendir(path);
+#endif
 	if (dir != NULL) {
-		struct dirent *ent;
+#ifdef _WIN32
+		struct _wdirent *ent = NULL;
+		while ((ent == _wreaddir(dir)) != NULL) {
+			if (!wcscmp(ent->d_name, L"duplicates.db") ||
+	    		!wcsncmp(ent->d_name, L"log.", 4) ||
+	    		!wcsncmp(ent->d_name, L"__db.", 5)) {
+#else
+		struct dirent *ent = NULL;
 		while ((ent = readdir(dir)) != NULL) {
 			if (!strcmp(ent->d_name, "duplicates.db") ||
 	    		!strncmp(ent->d_name, "log.", 4) ||
 	    		!strncmp(ent->d_name, "__db.", 5)) {
+#endif
 				string fname = path;
+#ifdef _WIN32
+				char dname[TQSL_MAX_PATH_LEN];
+				wcstombs(dname, ent->d_name, TQSL_MAX_PATH_LEN);
+				fname = fname + "/" + dname;
+				wchar_t* wfname = utf8_to_wchar(fname.c_str());
+				_wunlink(wfname);
+				free(wfname);
+#else
 				fname = fname + "/" + ent->d_name;
 				unlink(fname.c_str());
+#endif
 			}
 		}
+#ifdef _WIN32
+		_wclosedir(dir);
+#else
 		closedir(dir);
+#endif
 	}
 	return;
 }
@@ -419,7 +446,11 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			string fname = fixedpath + "/" + ent->d_name;
 			if (stat(fname.c_str(), &s)) {
 				if (errno == ELOOP) {
+#ifdef _WIN32
+					_wunlink(ConvertFromUtf8ToUtf16(fname.c_str()));
+#else
 					unlink(fname.c_str());
+#endif
 				}
 			}
 		}
@@ -427,7 +458,13 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	}
 #endif
 	string logpath = fixedpath + "/dberr.log";
+#ifdef _WIN32
+	wchar_t* wlogpath = utf8_to_wchar(logpath.c_str());
+	conv->errfile = _wfopen(wlogpath, L"wb");
+	free(wlogpath);
+#else
 	conv->errfile = fopen(logpath.c_str(), "wb");
+#endif
 
  reopen:
 
@@ -516,7 +553,13 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	if (type ==  DB_BTREE) {
 		// Have to convert the database.
 		string dumpfile = fixedpath + "/dupedump.txt";
+#ifdef _WIN32
+		wchar_t* wdumpfile = utf8_to_wchar(dumpfile.c_str());
+		FILE *dmp = _wfopen(wdumpfile, L"wb+");
+		free(wdumpfile);
+#else
 		FILE *dmp = fopen(dumpfile.c_str(), "wb+");
+#endif
 		if (!dmp) {
 			dbinit_cleanup = true;
 			goto dbinit_end;

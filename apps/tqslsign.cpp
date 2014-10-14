@@ -354,7 +354,11 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		tqsl_endConverter(&conv);
 		if (lineno)
 			msg += wxString::Format(wxT(" on line %d"), lineno).ToUTF8();
+#ifdef _WIN32
+		_wunlink(ConvertFromUtf8ToUtf16(outfile.ToUTF8()));
+#else
 		unlink(outfile.ToUTF8());
+#endif
 		cerr << "Signing aborted due to errors" << endl;
 		throw TQSLException(msg.c_str());
 	}
@@ -376,7 +380,11 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 	if (n > 0)
 		cout << outfile << " is ready to be emailed or uploaded" << endl;
 	else
+#ifdef _WIN32
+		_wunlink(ConvertFromUtf8ToUtf16(outfile.ToUTF8()));
+#else
 		unlink(outfile.ToUTF8());
+#endif
 	return 0;
 }
 

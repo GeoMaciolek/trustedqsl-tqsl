@@ -17,8 +17,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #ifdef _WIN32
-	#include <io.h>
-	#include <windows.h>
+    #include <io.h>
+    #include <windows.h>
     #include <direct.h>
 #endif
 #include <openssl/err.h>
@@ -30,7 +30,7 @@
 #include "winstrdefs.h"
 
 #ifdef _WIN32
-#define MKDIR(x, y) _mkdir((x))
+#define MKDIR(x, y) _wmkdir((x))
 #else
 #define MKDIR(x, y) mkdir((x), (y))
 #endif
@@ -127,8 +127,18 @@ static int pmkdir(const char *path, int perm) {
 			nleft--;
 			strncat(npath, cp, nleft);
 			nleft -= strlen(cp);
-			if (MKDIR(npath, perm) != 0 && errno != EEXIST)
+#ifdef _WIN32
+			wchar_t* wnpath = utf8_to_wchar(npath);
+			if (MKDIR(wnpath, perm) != 0 && errno != EEXIST) {
+				free(wnpath);
+#else
+			if (MKDIR(npath, perm) != 0 && errno != EEXIST) {
+#endif
 				return 1;
+			}
+#ifdef _WIN32
+			free(wnpath);
+#endif
 		} else {
 			strncat(npath, cp, nleft);
 			nleft -= strlen(cp);
@@ -149,7 +159,6 @@ tqsl_init() {
 	// freopen("CONIN$", "r", stdin);
 // freopen("CONOUT$", "w", stdout);
 // freopen("CONOUT$", "w", stderr);
-	static char shortPath[TQSL_MAX_PATH_LEN];
 	HKEY hkey;
 	DWORD dtype;
 	DWORD bsize = sizeof path;
@@ -189,16 +198,13 @@ tqsl_init() {
 		} else {
 #if defined(_WIN32)
 			if ((wval = RegOpenKeyEx(HKEY_CURRENT_USER,
-				"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-				0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
+									"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
+									0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
 				wval = RegQueryValueEx(hkey, "AppData", 0, &dtype, (LPBYTE)path, &bsize);
 				RegCloseKey(hkey);
 			}
 			if (wval != ERROR_SUCCESS)
 				strncpy(path, "C:", sizeof path);
-			wval = GetShortPathName(path, shortPath, TQSL_MAX_PATH_LEN);
-			if (wval != 0)
-				strncpy(path, shortPath, TQSL_MAX_PATH_LEN);
 			strncat(path, "\\TrustedQSL", sizeof path - strlen(path) - 1);
 #elif defined(LOTW_SERVER)
 			strncpy(path, "/var/lotw/tqsl", sizeof path);
@@ -742,3 +748,15 @@ tqsl_getVersion(int *major, int *minor) {
 		*minor = TQSLLIB_VERSION_MINOR;
 	return 0;
 }
+#ifdef _WIN32
+DLLEXPORT wchar_t* CALLCONVENTION
+utf8_to_wchar(const char* str) {
+	wchar_t* buffer;
+	int needed = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
+	buffer = static_cast<wchar_t *>(malloc(needed*sizeof(wchar_t) + 4));
+	if (!buffer)
+		return NULL;
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, &buffer[0], needed);
+	return buffer;
+}
+#endif

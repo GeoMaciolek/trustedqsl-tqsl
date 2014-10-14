@@ -9,6 +9,9 @@
  ***************************************************************************/
 
 #include "xml.h"
+#ifdef _WIN32
+#include "tqsllib.h"
+#endif
 #include <string.h>
 #include <zlib.h>
 #include <stack>
@@ -68,38 +71,6 @@ XMLElement::xml_text(void *data, const XML_Char *text, int len) {
 	el->_parsingStack.back()->second._text.append(text, len);
 }
 
-/*
-bool
-XMLElement::parseFile(const char *filename) {
-	ifstream in;
-
-	in.open(filename);
-	if (!in)
-		return false;	// Failed to open file
-	char buf[256];
-	XML_Parser xp = XML_ParserCreate(0);
-	XML_SetUserData(xp, (void *)this);
-	XML_SetStartElementHandler(xp, &XMLElement::xml_start);
-	XML_SetEndElementHandler(xp, &XMLElement::xml_end);
-	XML_SetCharacterDataHandler(xp, &XMLElement::xml_text);
-
-	_parsingStack.clear();	
-	while (in.get(buf, sizeof buf, 0).good()) {
-		// Process the XML
-		if (XML_Parse(xp, buf, strlen(buf), 0) == 0) {
-			XML_ParserFree(xp);
-			return false;
-		}
-	}
-
-	bool rval = !in.bad();
-	if (!rval)
-		rval = (XML_Parse(xp, "", 0, 1) != 0);
-	XML_ParserFree(xp);
-	return rval;
-}
-*/
-
 int
 XMLElement::parseString(const char *xmlstring) {
 	XML_Parser xp = XML_ParserCreate(0);
@@ -120,7 +91,16 @@ XMLElement::parseString(const char *xmlstring) {
 
 int
 XMLElement::parseFile(const char *filename) {
-	gzFile in = gzopen(filename, "rb");
+	gzFile in = NULL;
+#ifdef _WIN32
+	wchar_t* fn = utf8_to_wchar(filename);
+	FILE *f = _wfopen(fn, L"rb");
+	free(fn);
+	if (f != NULL)
+		in = gzdopen(_fileno(f), "rb");
+#else
+	in = gzopen(filename, "rb");
+#endif
 
 	if (!in)
 		return XML_PARSE_SYSTEM_ERROR;	// Failed to open file

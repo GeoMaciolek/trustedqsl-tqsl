@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Update TQSL to be more tolerant of non-english characters in
+file and directory names.
+
 Allow station locations to have callsign unspecified ('[None]').
 These locations can be used for signing a log by selecting the
 correct callsign certificate from a list, with the callsign

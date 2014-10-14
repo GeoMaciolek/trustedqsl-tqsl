@@ -253,7 +253,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 		if (ext.MakeLower() == wxT("tq6")) {
 			_first = _final;
 			_final->SetPrev(0);
-			if (tqsl_importTQSLFile(tqslName(filename), notifyImport, GetNotifyData())) {
+			if (tqsl_importTQSLFile(filename.ToUTF8(), notifyImport, GetNotifyData())) {
 				wxMessageBox(getLocalizedErrorString(), _("Error"));
 			} else {
 				if (tQSL_ImportCall[0] != '\0') {
@@ -267,11 +267,11 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 						pending = rest;
 					config->Write(wxT("RequestPending"), pending);
 				}
-				export_new_cert(this, tqslName(filename));
+				export_new_cert(this, filename.ToUTF8());
 			}
 		} else {
 			// First try with no password
-			if (!tqsl_importPKCS12File(tqslName(filename), "", 0, GetNewPassword, notifyImport, GetNotifyData())) {
+			if (!tqsl_importPKCS12File(filename.ToUTF8(), "", 0, GetNewPassword, notifyImport, GetNotifyData())) {
 				_first = _final;
 				_final->SetPrev(0);
 			} else {
@@ -332,13 +332,13 @@ LCW_P12PasswordPage::TransferDataFromWindow() {
 	wxString _pw = _pwin->GetValue();
 	pw_help = Parent()->GetHelp();
 	pw_helpfile = wxT("lcf2.htm");
-	if (tqsl_importPKCS12File(tqslName(_filename), _pw.ToUTF8(), 0, GetNewPassword, notifyImport,
+	if (tqsl_importPKCS12File(_filename.ToUTF8(), _pw.ToUTF8(), 0, GetNewPassword, notifyImport,
 		(reinterpret_cast<LoadCertWiz *>(_parent))->GetNotifyData())) {
 		if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 			// UTF-8 password didn't work - try converting to UCS-2.
 			char unipwd[64];
 			utf8_to_ucs2(_pw.ToUTF8(), unipwd, sizeof unipwd);
-			if (!tqsl_importPKCS12File(tqslName(_filename), unipwd, 0, GetNewPassword, notifyImport,
+			if (!tqsl_importPKCS12File(_filename.ToUTF8(), unipwd, 0, GetNewPassword, notifyImport,
 					(reinterpret_cast<LoadCertWiz *>(_parent))->GetNotifyData())) {
 				tc_status->SetLabel(wxT(""));
 				return true;
