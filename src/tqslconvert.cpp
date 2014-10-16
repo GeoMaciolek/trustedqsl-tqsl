@@ -184,6 +184,7 @@ static tqsl_adifFieldDefinitions adif_qso_record_fields[] = {
         { "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_CALLSIGN_MAX, 0, 0, NULL },
         { "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, NULL },
         { "MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
+        { "SUBMODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
         { "QSO_DATE", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
         { "TIME_ON", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
         { "FREQ", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, NULL },
@@ -746,6 +747,8 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					strncpy(conv->rec.band, reinterpret_cast<char *>(result.data), sizeof conv->rec.band);
 				} else if (!strcasecmp(result.name, "MODE") && result.data) {
 					strncpy(conv->rec.mode, reinterpret_cast<char *>(result.data), sizeof conv->rec.mode);
+				} else if (!strcasecmp(result.name, "SUBMODE") && result.data) {
+					strncpy(conv->rec.submode, reinterpret_cast<char *>(result.data), sizeof conv->rec.submode);
 				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
 					strncpy(conv->rec.freq, reinterpret_cast<char *>(result.data), sizeof conv->rec.freq);
 					if (atof(conv->rec.freq) == 0.0)
@@ -864,8 +867,17 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	tqsl_strtoupper(conv->rec.band);
 	tqsl_strtoupper(conv->rec.rxband);
 	tqsl_strtoupper(conv->rec.mode);
+	tqsl_strtoupper(conv->rec.submode);
 	char val[256] = "";
-	tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+	// Try the submode (if it's set), then the mode.
+	if (conv->rec.submode[0] != '\0') {
+		tqsl_getADIFMode(conv->rec.submode, val, sizeof val);
+		if (val[0] == '\0') {
+			tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+		}
+	} else {
+		tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+	}
 	if (val[0] != '\0')
 		strncpy(conv->rec.mode, val, sizeof conv->rec.mode);
 	// Check field validities

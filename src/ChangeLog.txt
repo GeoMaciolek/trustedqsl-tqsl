@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.5
 ---
+Use the ADIF 3.0.4 "SUBMODE" field when signing a log.
+
 Add API to allow the call sign for a station location to be temporarily
 specified. This allows locations with callsign='[None]' to be used
 by selecting a call when signing a log.
