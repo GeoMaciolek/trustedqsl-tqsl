@@ -143,6 +143,7 @@ static wxString origCommandLine = wxT("");
 static MyFrame *frame = 0;
 
 static char unipwd[64];
+bool quiet = false;
 
 static int lock_db(bool wait);
 static void unlock_db(void);
@@ -160,7 +161,8 @@ static void exitNow(int status, bool quiet) {
 				 __("Some QSOs suppressed"),
 				 __("Command Syntax Error"),
 				 __("LoTW Connection Failed"),
-				 __("Unknown")
+				 __("Unknown"),
+				 __("The duplicates database is locked")
 				};
 	int stat = status;
 	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN;
@@ -1826,6 +1828,9 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	init_contests();
 
 	if (lock_db(false) < 0) {
+		if (quiet) {			// If the database is locked, don't stall if in batch mode.
+			return TQSL_EXIT_BUSY;
+		}
 		wxSafeYield();
 		wxLogMessage(_("TQSL must wait for other running copies of TQSL to exit before signing..."));
 		wxSafeYield();
@@ -4457,7 +4462,6 @@ QSLApp::OnRun() {
 bool
 QSLApp::OnInit() {
 	frame = 0;
-	bool quiet = false;
 	long lng = -1;
 
 	int major, minor;
