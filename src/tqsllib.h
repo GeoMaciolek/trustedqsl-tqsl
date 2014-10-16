@@ -119,6 +119,7 @@ typedef struct {
 	char callsign[TQSL_CALLSIGN_MAX+1];	///< QSO callsign
 	char band[TQSL_BAND_MAX+1];		///< QSO band
 	char mode[TQSL_MODE_MAX+1];		///< QSO mode
+	char submode[TQSL_MODE_MAX+1];		///< QSO submode
 	tQSL_Date date;				///< QSO date
 	tQSL_Time time;				///< QSO time
 	char freq[TQSL_FREQ_MAX+1];		///< QSO frequency
