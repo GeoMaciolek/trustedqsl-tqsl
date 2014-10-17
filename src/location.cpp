@@ -286,15 +286,24 @@ string_toupper(const string& in) {
 	transform(out.begin(), out.end(), out.begin(), char_toupper);
 	return out;
 }
+// isspace() called on extended chars in UTF-8 raises asserts in 
+// the windows C++ libs. Don't call isspace() if out of range.
+//
+static inline int isspc(int c) {
+	if (c < 0 || c > 255)
+		return 0;
+	return isspace(c);
+}
+
 // trim from start
 static inline std::string &ltrim(std::string &s) {
-	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(std::isspace))));
+	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(isspc))));
         return s;
 }
 
 // trim from end
 static inline std::string &rtrim(std::string &s) {
-	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(std::isspace))).base(), s.end());
+	s.erase(std::find_if(s.rbegin(), s.rend(), std::not1(std::ptr_fun<int, int>(isspc))).base(), s.end());
 	return s;
 }
 
