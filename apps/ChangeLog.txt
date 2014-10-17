@@ -3,6 +3,13 @@ TQSL changes
 
 2.1
 ----------
+When signing a log from the command line in "batch" mode (with -x
+specified), don't stall waiting on other copies of TQSL to complete
+signing before processing the command-line log. Instead, report
+an error message stating that the database is busy. This corrects
+an issue where logging programs calling TQSL to sign a log could
+appear to be "hung".
+
 Update TQSL to be more tolerant of non-english characters in
 file and directory names.
 
