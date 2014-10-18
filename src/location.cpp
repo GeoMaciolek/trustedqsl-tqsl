@@ -1994,7 +1994,7 @@ tqsl_dump_station_data(XMLElement &xel) {
 #ifdef _WIN32
 		wchar_t* wfn = utf8_to_wchar(fn.c_str());
 		out.open(wfn);
-		free(wfn);
+		free_wchar(wfn);
 #else
 		out.open(fn.c_str());
 #endif
@@ -2088,7 +2088,7 @@ DLLEXPORT int CALLCONVENTION
 #ifdef _WIN32
 	wchar_t *fn = utf8_to_wchar(tqsl_station_data_filename().c_str());
 	FILE* f = _wfopen(fn, L"rb");
-	free(fn);
+	free_wchar(fn);
 	if (f != NULL)
 		in = gzdopen(fileno(f), "rb");
 #else
@@ -3001,7 +3001,7 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 #ifdef _WIN32
 			wchar_t *wfn = utf8_to_wchar(fn.c_str());
 			out.open(wfn);
-			free(wfn);
+			free_wchar(wfn);
 #else
 			out.open(fn.c_str());
 #endif

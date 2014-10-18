@@ -8,6 +8,8 @@
     revision             : $Id$
  ***************************************************************************/
 
+#define TQSLLIB_DEF
+
 #include "xml.h"
 #ifdef _WIN32
 #include "tqsllib.h"
@@ -95,7 +97,7 @@ XMLElement::parseFile(const char *filename) {
 #ifdef _WIN32
 	wchar_t* fn = utf8_to_wchar(filename);
 	FILE *f = _wfopen(fn, L"rb");
-	free(fn);
+	free_wchar(fn);
 	if (f != NULL)
 		in = gzdopen(_fileno(f), "rb");
 #else

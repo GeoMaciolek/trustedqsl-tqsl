@@ -471,7 +471,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 #ifdef _WIN32
 	wchar_t* wfilename = utf8_to_wchar(filename);
 	if ((out = _wfopen(wfilename, L"wb")) == NULL) {
-		free(wfilename);
+		free_wchar(wfilename);
 #else
 	if ((out = fopen(filename, TQSL_OPEN_WRITE)) == NULL) {
 #endif
@@ -576,7 +576,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
 	if ((out = _wfopen(wpath, L"ab")) == NULL) {
-		free(wpath);
+		free_wchar(wpath);
 #else
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
 #endif
@@ -2121,7 +2121,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 #ifdef _WIN32
 			wchar_t* wfilename = utf8_to_wchar(filename);
 			_wunlink(wfilename);
-			free(wfilename);
+			free_wchar(wfilename);
 #else
 			unlink(filename);
 #endif
@@ -2507,9 +2507,9 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 #ifdef _WIN32
 			        {
 					_wunlink(wbadpath);
-					free(wpath);
-					free(wbadpath);
-					if (wsavepath) free(wsavepath);
+					free_wchar(wpath);
+					free_wchar(wbadpath);
+					if (wsavepath) free_wchar(wsavepath);
 				}
 #else
 					unlink(badpath);
@@ -2625,7 +2625,7 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
 	if (_wunlink(wpath) && errno != ENOENT) {
-		free(wpath);
+		free_wchar(wpath);
 #else
 	if (unlink(path) && errno != ENOENT) {
 #endif
@@ -2636,8 +2636,8 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 #ifdef _WIN32
 	wchar_t* wnewpath = utf8_to_wchar(newpath);
 	if (_wrename(wnewpath, wpath)) {
-		free(wpath);
-		free(wnewpath);
+		free_wchar(wpath);
+		free_wchar(wnewpath);
 #else
 	if (rename(newpath, path)) {
 #endif
@@ -2917,7 +2917,7 @@ tqsl_ssl_load_certs_from_file(const char *filename) {
 #ifdef _WIN32
 	wchar_t* wfilename = utf8_to_wchar(filename);
 	if ((cfile = _wfopen(wfilename, L"r")) == NULL) {
-		free(wfilename);
+		free_wchar(wfilename);
 #else
 	if ((cfile = fopen(filename, "r")) == NULL) {
 #endif
@@ -3326,7 +3326,7 @@ tqsl_make_cert_path(const char *filename, char *path, int size) {
 	strncat(path, "\\certs", size - strlen(path));
 	wchar_t* wpath = utf8_to_wchar(path);
 	if (MKDIR(wpath, 0700) && errno != EEXIST) {
-		free(wpath);
+		free_wchar(wpath);
 #else
 	strncat(path, "/certs", size - strlen(path));
 	if (MKDIR(path, 0700) && errno != EEXIST) {
@@ -3373,7 +3373,7 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 	strncat(path, "\\keys", size - strlen(path));
 	wchar_t* wpath = utf8_to_wchar(path);
 	if (MKDIR(wpath, 0700) && errno != EEXIST) {
-		free(wpath);
+		free_wchar(wpath);
 #else
 	strncat(path, "/keys", size - strlen(path));
 	if (MKDIR(path, 0700) && errno != EEXIST) {
@@ -3639,7 +3639,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
 	if ((out = _wfopen(wpath, L"a")) == NULL) {
-		free(wpath);
+		free_wchar(wpath);
 #else
 	if ((out = fopen(path, "a")) == NULL) {
 #endif
@@ -3805,7 +3805,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 #ifdef _WIN32
 	wchar_t* wnewpath = utf8_to_wchar(newpath);
 	if ((out = _wfopen(wnewpath, L"wb")) == NULL) {
-		free(wnewpath);
+		free_wchar(wnewpath);
 #else
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
 #endif
@@ -3835,7 +3835,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 #ifdef _WIN32
 	wchar_t* wsavepath = utf8_to_wchar(savepath);
 	if (_wunlink(wsavepath) && errno != ENOENT) {
-		free(wsavepath);
+		free_wchar(wsavepath);
 #else
 	if (unlink(savepath) && errno != ENOENT) {
 #endif
@@ -3846,8 +3846,8 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
 	if (_wrename(wpath, wsavepath) && errno != ENOENT) {
-		free(wpath);
-		free(wsavepath);
+		free_wchar(wpath);
+		free_wchar(wsavepath);
 #else
 	if (rename(path, savepath) && errno != ENOENT) {
 #endif
@@ -4059,7 +4059,7 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 
 #ifdef _WIN32
 	WDIR *dir = wopendir(wpath);
-	free(wpath);
+	free_wchar(wpath);
 #else
 	DIR *dir = opendir(path.c_str());
 #endif
@@ -4101,7 +4101,7 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 		wchar_t* wfilename = utf8_to_wchar(filename.c_str());
 		if (_wstat32(wfilename, &s) == 0) {
 			if (S_ISDIR(s.st_mode)) {
-				free(wfilename);
+				free_wchar(wfilename);
 				continue;		// If it's a directory, skip it.
 			}
 		}
@@ -4127,7 +4127,7 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 #ifdef _WIN32
 				wchar_t* wfixcall = utf8_to_wchar(fixcall);
 				if (wcscmp(wfixcall, ent->d_name)) {
-					free(wfixcall);
+					free_wchar(wfixcall);
 #else
 				if (strcasecmp(fixcall, ent->d_name)) {
 #endif
@@ -4314,7 +4314,7 @@ tqsl_dump_cert_status_data(XMLElement &xel) {
 #ifdef _WIN32
 		wchar_t* wfn = utf8_to_wchar(fn.c_str());
 		out.open(wfn);
-		free(wfn);
+		free_wchar(wfn);
 #else
 		out.open(fn.c_str());
 #endif

@@ -81,7 +81,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 #ifdef _WIN32
 	wchar_t *wfilename = utf8_to_wchar(filename);
 	if ((adif->fp = _wfopen(wfilename, L"rb")) == NULL) {
-		free(wfilename);
+		free_wchar(wfilename);
 #else
 	if ((adif->fp = fopen(filename, "rb")) == NULL) {
 #endif

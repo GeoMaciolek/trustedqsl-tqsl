@@ -374,7 +374,7 @@ remove_db(const char *path)  {
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
 	_WDIR *dir = _wopendir(wpath);
-	free(wpath);
+	free_wchar(wpath);
 #else
 	DIR *dir = opendir(path);
 #endif
@@ -399,7 +399,7 @@ remove_db(const char *path)  {
 				fname = fname + "/" + dname;
 				wchar_t* wfname = utf8_to_wchar(fname.c_str());
 				_wunlink(wfname);
-				free(wfname);
+				free_wchar(wfname);
 #else
 				fname = fname + "/" + ent->d_name;
 				unlink(fname.c_str());
@@ -462,7 +462,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifdef _WIN32
 	wchar_t* wlogpath = utf8_to_wchar(logpath.c_str());
 	conv->errfile = _wfopen(wlogpath, L"wb");
-	free(wlogpath);
+	free_wchar(wlogpath);
 #else
 	conv->errfile = fopen(logpath.c_str(), "wb");
 #endif
@@ -557,7 +557,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifdef _WIN32
 		wchar_t* wdumpfile = utf8_to_wchar(dumpfile.c_str());
 		FILE *dmp = _wfopen(wdumpfile, L"wb+");
-		free(wdumpfile);
+		free_wchar(wdumpfile);
 #else
 		FILE *dmp = fopen(dumpfile.c_str(), "wb+");
 #endif

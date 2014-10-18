@@ -414,7 +414,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 #ifdef _WIN32
 	wchar_t * wfilename = utf8_to_wchar(filename);
 	if ((cab->fp = _wfopen(wfilename, L"r")) == NULL) {
-		free(wfilename);
+		free_wchar(wfilename);
 #else
 	if ((cab->fp = fopen(filename, "r")) == NULL) {
 #endif

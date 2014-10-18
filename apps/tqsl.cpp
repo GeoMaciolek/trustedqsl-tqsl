@@ -1394,7 +1394,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 #ifdef _WIN32
 	wchar_t* lfn = utf8_to_wchar(s_fname.ToUTF8());
 	diagFile = _wfopen(lfn, L"wb");
-	free(lfn);
+	free_wchar(lfn);
 #else
 	diagFile = fopen(s_fname.ToUTF8(), "wb");
 #endif
@@ -1539,7 +1539,7 @@ MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
 #ifdef _WIN32
 	wchar_t* lfn = utf8_to_wchar(s_fname.ToUTF8());
 	ofstream out(lfn, ios::out|ios::trunc|ios::binary);
-	free(lfn);
+	free_wchar(lfn);
 #else
 	ofstream out(s_fname.ToUTF8(), ios::out|ios::trunc|ios::binary);
 #endif
@@ -2145,7 +2145,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(outfile.ToUTF8());
 		FILE* f = _wfopen(lfn, L"wb");
-		free(lfn);
+		free_wchar(lfn);
 		if (f != NULL)
 			gout = gzdopen(fileno(f), "wb9");
 #else
@@ -2155,7 +2155,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(outfile.ToUTF8());
 		out.open(lfn, ios::out|ios::trunc|ios::binary);
-		free(lfn);
+		free_wchar(lfn);
 #else
 		out.open(outfile.ToUTF8(), ios::out|ios::trunc|ios::binary);
 #endif
@@ -2181,7 +2181,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(outfile.ToUTF8());
 		_wunlink(lfn);
-		free(lfn);
+		free_wchar(lfn);
 #else
 		unlink(outfile.ToUTF8());
 #endif
@@ -2407,7 +2407,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 #ifdef _WIN32
 		wchar_t*lfn = utf8_to_wchar(filename.ToUTF8());
 		*curlLogFile = _wfopen(lfn, newFile ? L"wb" : L"ab");
-		free(lfn);
+		free_wchar(lfn);
 #else
 		*curlLogFile = fopen(filename.ToUTF8(), newFile ? "wb" : "ab");
 #endif
@@ -2966,7 +2966,7 @@ void MyFrame::UpdateConfigFile() {
 		filename.Printf(wxT("%hs\\/config.tq6"), tQSL_BaseDir);
 		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
 		FILE *configFile = _wfopen(lfn, L"wb");
-		free(lfn);
+		free_wchar(lfn);
 #else
 		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
 		FILE *configFile = fopen(filename.ToUTF8(), "wb");
@@ -3897,7 +3897,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 #ifdef _WIN32
 		wchar_t* fn = utf8_to_wchar(filename.ToUTF8());
 		FILE *f = _wfopen(fn, L"wb");
-		free(fn);
+		free_wchar(fn);
 		if (f != NULL)
 			out = gzdopen(fileno(f), "wb9");
 #else
@@ -4166,7 +4166,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 					struct _stat32 s;
 					wchar_t* lfn = utf8_to_wchar(svalue.ToUTF8());
 					int ret = _wstat32(lfn, &s);
-					free(lfn);
+					free_wchar(lfn);
 					if (ret == 0) {
 #else
 					struct stat s;
@@ -4369,7 +4369,7 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 #ifdef _WIN32
 		wchar_t* fn = utf8_to_wchar(filename.ToUTF8());
 		FILE *f = _wfopen(fn, L"rb");
-		free(fn);
+		free_wchar(fn);
 		if (f != NULL)
 			in = gzdopen(fileno(f), "rb");
 #else
@@ -4599,7 +4599,7 @@ QSLApp::OnInit() {
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(diagfile.ToUTF8());
 		diagFile = _wfopen(lfn, L"wb");
-		free(lfn);
+		free_wchar(lfn);
 #else
 		diagFile = fopen(diagfile.ToUTF8(), "wb");
 #endif
@@ -5228,7 +5228,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 #ifdef _WIN32
 			wchar_t* wfile = utf8_to_wchar(file.ToUTF8());
 			ifstream in(wfile, ios::in | ios::binary);
-			free(wfile);
+			free_wchar(wfile);
 #else
 			ifstream in(file.ToUTF8(), ios::in | ios::binary);
 #endif
@@ -5968,7 +5968,7 @@ lock_db(bool wait) {
 #ifdef _WIN32
 		wchar_t* wlfname = utf8_to_wchar(lfname.ToUTF8());
 		lockfileFD = _wopen(wlfname, O_RDWR| O_CREAT, 0644);
-		free(wlfname);
+		free_wchar(wlfname);
 #else
 		lockfileFD = open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
 #endif

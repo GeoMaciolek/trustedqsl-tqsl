@@ -759,4 +759,8 @@ utf8_to_wchar(const char* str) {
 	MultiByteToWideChar(CP_UTF8, 0, str, -1, &buffer[0], needed);
 	return buffer;
 }
+DLLEXPORT void CALLCONVENTION
+free_wchar(wchar_t* ptr) {
+	free(ptr);
+}
 #endif
