@@ -29,7 +29,7 @@ Command Line Options
 The following summarizes the command line options and what they do:
 Usage: tqsl [-a <str>] [-b <date> ] [-e <date>] [-d] [-l <str>] [-s]
             [-o <str>] [-u] [-x] [-p <str>] [-q] [-n] [-v] [-h]
-            [-t <file>] [Input ADIF or Cabrillo log file to sign]
+            [-t <file>] [-c <call> ] [Input ADIF or Cabrillo log file to sign]
 
 
 The following command line options may be specified on the command line:
@@ -129,11 +129,17 @@ that will be used to sign the log file.
 These options allow the user to display the version number of tqsl or to
 obtain help on the command line usage.
 
-  -t <file>.    Open a diagnostic trace file at startup
+  -t <file>     Open a diagnostic trace file at startup
 
 When supplied, this option enables diagnostic tracing at startup, opening
 the supplied file to record TQSL operations details. This is useful for
 debugging purposes.
+
+  -c <call>     Use the given callsign when signing a log
+
+This option allows a logging program to specify what callsign to use for a 
+log signing operation. This will override the callsign associated with the
+selected station location, if any.
 
 Command Line Usage
 ------------------
@@ -166,6 +172,8 @@ provides information on success or failure using the following values:
             they were duplicates or out of date range (some QSOs written)
        10 - Command syntax error
        11 - LoTW network connnection failed (no network or LoTW is unreachable)
+       12 - Unknown error
+       13 - The TQSL duplicates database is locked.
 
 This exit status is also written to stderr in a format that can be parsed
 by the calling application. The last output from tqsl will be of the format
@@ -190,7 +198,7 @@ An example usage for signing a log would be
 
 tqsl -q -l "K1MU home" -p "Insecure" -a compliant -u -d k1mu.adi 2>temp.txt
 
-This indicates quiet mode (-a), selects a station location and a password,
+This indicates quiet mode (-q), selects a station location and a password,
 indicates that only compliant QSOs will be written (-a), uploads to LoTW (-u),
 suppresses date popups (-d), provides an input file (k1mu.adi), and finally
 writes log messages to temp.txt. The logging program would read and process
