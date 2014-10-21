@@ -92,7 +92,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 		goto err;
 	}
 #ifdef _WIN32
-	free(wfilename);
+	free_wchar(wfilename);
 #endif
 	if ((adif->filename = strdup(filename)) == NULL) {
 		tQSL_Error = TQSL_ALLOC_ERROR;

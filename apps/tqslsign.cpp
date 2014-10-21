@@ -355,7 +355,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		if (lineno)
 			msg += wxString::Format(wxT(" on line %d"), lineno).ToUTF8();
 #ifdef _WIN32
-		_wunlink(ConvertFromUtf8ToUtf16(outfile.ToUTF8()));
+		_wunlink(utf8_to_wchar(outfile.ToUTF8()));
 #else
 		unlink(outfile.ToUTF8());
 #endif
@@ -381,7 +381,7 @@ QSLApp::ConvertLogFile(tQSL_Location loc, wxString& infile, wxString& outfile,
 		cout << outfile << " is ready to be emailed or uploaded" << endl;
 	else
 #ifdef _WIN32
-		_wunlink(ConvertFromUtf8ToUtf16(outfile.ToUTF8()));
+		_wunlink(utf8_to_wchar(outfile.ToUTF8()));
 #else
 		unlink(outfile.ToUTF8());
 #endif
