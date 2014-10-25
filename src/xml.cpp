@@ -13,6 +13,7 @@
 #include "xml.h"
 #ifdef _WIN32
 #include "tqsllib.h"
+#include <fcntl.h>
 #endif
 #include <string.h>
 #include <zlib.h>
@@ -96,10 +97,10 @@ XMLElement::parseFile(const char *filename) {
 	gzFile in = NULL;
 #ifdef _WIN32
 	wchar_t* fn = utf8_to_wchar(filename);
-	FILE *f = _wfopen(fn, L"rb");
+	int fd = _wopen(fn, _O_RDONLY|_O_BINARY);
 	free_wchar(fn);
-	if (f != NULL)
-		in = gzdopen(_fileno(f), "rb");
+	if (fd != -1)
+		in = gzdopen(fd, "rb");
 #else
 	in = gzopen(filename, "rb");
 #endif

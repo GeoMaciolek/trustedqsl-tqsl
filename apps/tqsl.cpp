@@ -826,6 +826,7 @@ END_EVENT_TABLE()
 
 void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnExit", "exiting");
 	int x, y, w, h;
 	// Don't save window size/position if minimized or too small
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
@@ -849,15 +850,21 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 #else
 		bdir += wxT("/tqslconfig.tbk");
 #endif
+		tqslTrace("MyFrame::OnExit", "Auto Backup %s", S(bdir));
 		BackupConfig(bdir, true);
 	}
+	tqslTrace("MyFrame::OnExit", "GUI Destroy");
 	Destroy();		// close the window
+	tqslTrace("MyFrame::OnExit", "Done");
 }
 
 void
 MyFrame::DoExit(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::DoExit", "About to close");
 	Close();
+	tqslTrace("MyFrame::DoExit", "About to destroy GUI");
 	Destroy();
+	tqslTrace("MyFrame::DoExit", "Done");
 }
 
 static wxSemaphore *updateLocker;
@@ -2134,7 +2141,6 @@ int
 MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxString& outfile,
 	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password) {
 	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), S(outfile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void*>(enddate), action);
-
 	gzFile gout = 0;
 #ifdef _WIN32
 	int fd = -1;
@@ -2144,10 +2150,10 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 	if (compressed) {
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(outfile.ToUTF8());
-		FILE* f = _wfopen(lfn, L"wb");
+		fd = _wopen(lfn, _O_WRONLY |_O_CREAT|_O_BINARY, _S_IREAD|_S_IWRITE);
 		free_wchar(lfn);
-		if (f != NULL)
-			gout = gzdopen(fileno(f), "wb9");
+		if (fd != -1)
+			gout = gzdopen(fd, "wb9");
 #else
 		gout = gzopen(outfile.ToUTF8(), "wb9");
 #endif
@@ -2191,7 +2197,12 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 			return TQSL_EXIT_NO_QSOS;
 	} else {
 		if(compressed) {
-			if (0 >= gzwrite(gout, output.ToUTF8(), output.size()) || Z_OK != gzclose(gout)) {
+			if (gzwrite(gout, output.ToUTF8(), output.size()) <= 0) {
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				return TQSL_EXIT_LIB_ERROR;
+			}
+			if (gzflush(gout, Z_FINISH) != Z_OK) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
 				return TQSL_EXIT_LIB_ERROR;
@@ -3884,6 +3895,9 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", S(filename), quiet);
 	int i;
 	wxBusyCursor wait;
+#ifdef _WIN32
+	int fd = -1;
+#endif
 	if (lock_db(false) < 0) {
 		if (quiet)			// If there's an active signing thread,
 			return;			// then exit without taking a backup.
@@ -3895,11 +3909,11 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	try {
 		gzFile out = 0;
 #ifdef _WIN32
-		wchar_t* fn = utf8_to_wchar(filename.ToUTF8());
-		FILE *f = _wfopen(fn, L"wb");
-		free_wchar(fn);
-		if (f != NULL)
-			out = gzdopen(fileno(f), "wb9");
+		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
+		fd = _wopen(lfn, _O_WRONLY |_O_CREAT|_O_BINARY, _S_IREAD|_S_IWRITE);
+		free_wchar(lfn);
+		if (fd != -1)
+			out = gzdopen(fd, "wb9");
 #else
 		out = gzopen(filename.ToUTF8(), "wb9");
 #endif
@@ -4027,7 +4041,6 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		tqslTrace("MyFrame::BackupConfig", "Dupes db saved OK");
 
 		gzprintf(out, "</TQSL_Configuration>\n");
-
 		gzclose(out);
 		if (!quiet) {
 			wxLogMessage(_("Save operation complete."));
@@ -4319,7 +4332,6 @@ TQSLConfig::RestoreConfig(const gzFile& in) {
 			if (XML_Parse(xp, buf, rcount, 0) == 0) {
 				wxLogError(_("Error parsing saved configuration file: %hs"), XML_ErrorString(XML_GetErrorCode(xp)));
 				XML_ParserFree(xp);
-				gzclose(in);
 				return;
 			}
 		}
@@ -4357,6 +4369,9 @@ TQSLConfig::ParseLocations(gzFile* out, const tQSL_StationDataEnc loc) {
 
 void
 MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
+#ifdef _WIN32
+	int fd = -1;
+#endif
 	tqslTrace("MyFrame::OnLoadConfig");
 	wxString filename = wxFileSelector(_("Select saved configuration file"), wxT(""),
 					   wxT("tqslconfig.tbk"), wxT("tbk"), _("Saved configuration files (*.tbk)|*.tbk"),
@@ -4367,11 +4382,11 @@ MyFrame::OnLoadConfig(wxCommandEvent& WXUNUSED(event)) {
 	gzFile in = 0;
 	try {
 #ifdef _WIN32
-		wchar_t* fn = utf8_to_wchar(filename.ToUTF8());
-		FILE *f = _wfopen(fn, L"rb");
-		free_wchar(fn);
-		if (f != NULL)
-			in = gzdopen(fileno(f), "rb");
+		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
+		fd = _wopen(lfn, _O_RDONLY|_O_BINARY);
+		free_wchar(lfn);
+		if (fd != -1)
+			in = gzdopen(fd, "rb");
 #else
 		in = gzopen(filename.ToUTF8(), "rb");
 #endif
@@ -5573,9 +5588,11 @@ void MyFrame::OnLoginToLogbook(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
+    tqslTrace("MyFrame::OnChooseLanguage", "Language choice dialog");
 	long lng = wxGetSingleChoiceIndex(_("Please choose language:"),
 					 _("Language"),
 					WXSIZEOF(langNames), langNames);
+	tqslTrace("MyFrame::OnChooseLanguage", "Language chosen: %d", lng);
 	if (lng != -1) {
 		wxConfig::Get()->Write(wxT("Language"), langIds[lng]);
 		wxConfig::Get()->Flush();
@@ -5585,7 +5602,9 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 		wxLogError(wxT("This language is not supported by the system."));
 		locale.Init(wxLANGUAGE_DEFAULT);
 	}
+	tqslTrace("MyFrame::OnChooseLanguage","Destroying GUI");
 	Destroy();
+	tqslTrace("MyFrame::OnChooseLanguage","Recreating GUI");
 	(reinterpret_cast<QSLApp*>(wxTheApp))->OnInit();
 }
 
@@ -5924,13 +5943,7 @@ lock_db(bool wait) {
 	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("/dblock");
 
 	if (lockfileFD < 0) {
-#ifdef _WIN32
-		wchar_t* lfn = ucs8_to_wchar(lfname.ToUTF8());
-		lockfileFD = _wopen(lfn, O_RDWR | O_CREAT, 0644);
-		free(lfn);
-#else
 		lockfileFD = open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
-#endif
 		if (lockfileFD < 0)
 			return 1;
 	}
@@ -5965,13 +5978,9 @@ lock_db(bool wait) {
 	wxString lfname = wxString::FromUTF8(tQSL_BaseDir) + wxT("\\dblock");
 
 	if (lockfileFD < 0) {
-#ifdef _WIN32
 		wchar_t* wlfname = utf8_to_wchar(lfname.ToUTF8());
 		lockfileFD = _wopen(wlfname, O_RDWR| O_CREAT, 0644);
 		free_wchar(wlfname);
-#else
-		lockfileFD = open(lfname.ToUTF8(), O_RDWR| O_CREAT, 0644);
-#endif
 		if (lockfileFD < 0)
 			return 1;
 		ZeroMemory(&ov, sizeof(ov));

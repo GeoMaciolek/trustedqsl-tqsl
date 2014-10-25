@@ -37,6 +37,7 @@
 #include "openssl_cert.h"
 #ifdef _WIN32
 	#include "windows.h"
+	#include <fcntl.h>
 #endif
 
 #include "winstrdefs.h"
@@ -2087,10 +2088,10 @@ DLLEXPORT int CALLCONVENTION
 	gzFile in = NULL;
 #ifdef _WIN32
 	wchar_t *fn = utf8_to_wchar(tqsl_station_data_filename().c_str());
-	FILE* f = _wfopen(fn, L"rb");
+	int fd = _wopen(fn, _O_RDONLY|_O_BINARY);
 	free_wchar(fn);
-	if (f != NULL)
-		in = gzdopen(fileno(f), "rb");
+	if (fd != -1)
+		in = gzdopen(fd, "rb");
 #else
 	in = gzopen(tqsl_station_data_filename().c_str(), "rb");
 #endif
