@@ -1,101 +1,332 @@
-<HTML><HEAD><TITLE>Renewing a Callsign Certificate</TITLE></HEAD>
+<html>
+<head>
 
-<link rel="stylesheet" type="text/css" href="tqslstyle.css">
+  <title>Renewing a Callsign Certificate</title>
+  <link rel="stylesheet" type="text/css" href="tqslstyle.css">
+</head>
 
-<BODY>
-<H3>Renewing a Callsign Certificate</H3>
+<body>
+  <h3>Renewing a Callsign Certificate</h3>
 
-These instructions assume that  
-<UL>
-<LI>your <a href="glossary.htm#callsign_certificate">Callsign Certificates</a> reside in the folder <CODE>C:\MyLoTWCertificates</CODE> (if you've stored them in a different folder, adjust the instructions accordingly)</LI>
-<LI>you are renewing a Callsign Certificate <b><i>before it expires</i></b></LI>
-<LI>the Callsign Certificate to be renewed is named <code>YourCallsign.tq6</code>, e.g. <code>K1MU.tq6</code>
-</UL>
+  <p>Every Callsign Certificate expires after 3 years. A Callsign Certificate is easy to
+  renew before it expires; after a Callsign Certificate expires, your only recourse is to
+  <a href="certreq.htm">request a new Callsign
+  Certificate</a> .</p>
 
-<P>
-If your Callsign Certificate has already expired, you must <a href="certreq.htm#">request an initial Callsign Certificate</a>.
-<P>
+  <p>These instructions for renewing a Callsign Certificate assume that</p>
 
-To initiate the renewal of your unexpired Callsign Certificate, 
+  <div style="line-height:200%;">
+    <ul>
+      <li>your <a href="key-concepts.htm">Callsign
+      Certificates</a> reside in the folder <code>C:\\MyLoTWCertificates</code> (if
+      you've stored them in a different folder, adjust the instructions accordingly)</li>
 
-<table border="0" valign="top">
-	<tr><td>1.</td><td>Delete the <a href="files-icons.htm">Callsign Certificate Request</a> file <code>C:\MyLoTWCertificates\YourCallsign.tq5</code> if it's present; this original certificate request is no longer needed.</td></tr>
-	<tr><td>2.</td><td>Navigate to <code>C:\MyLoTWCertificates</code> and create a subfolder there named <code>Obsolete</code>, if this subfolder has not previously been created.</td></tr>
-	<tr><td>3.</td><td>Move the <a href="files-icons.htm">Callsign Certificate</a> file <code>YourCallsign.tq6</code> from the folder <code>C:\MyLoTWCertificates</code> to its subfolder <code>C:\MyLoTWCertificates\Obsolete</code>, replacing any existing file in that subfolder with the same name.</td></tr>
-	<tr><td>4.</td><td>Move the <a href="files-icons.htm">Certificate Container</a> file <code>YourCallsign.p12</code> from the folder <code>C:\MyLoTWCertificates</code> to its subfolder <code>C:\MyLoTWCertificates\Obsolete</code>, replacing any existing file in that subfolder with the same name.</td></tr>
-	<tr><td>5.</td><td>Start <b>TQSL</b> and select the <b>Callsign Certificates</b> tab, which lists your Callsign Certificates.</td></tr>
-	<tr><td>6.</td><td>In the <b>Callsign Certificates<b> tab, click on the certificate to be renewed:</td></tr>
-	<tr><td>&nbsp;</td><td><img src="renewing1.bmp" width=575 height=428></td></tr>
-	<tr><td>&nbsp;</td><td> and then click the <b>Renew the Callsign Certificate</b> button.</td></tr>
-	<tr><td>7.</td><td>The <b>Request a New Callsign Certificate</b> window will appear, showing that you are creating a new <a href="files-icons.htm">Callsign Certificate Request</a> file; click the <b>Next</b> button.</td></tr>
-	<tr><td>8.</td><td>The <b>Request a New Callsign Certificate</b> window will now show your Callsign and DXCC entity (both <i>grayed out</i> because they can't be changed):</td></tr>
-	<tr><td>&nbsp;</td><td><img src="renewing2.bmp" width=371 height=532></td></tr>
-</table>
+      <li>you are renewing a Callsign Certificate <b><i>before it expires</i></b></li>
 
-<table border="0" valign="top"></td></tr>
-	<col style="width:30px">
-	<col style="width:40px">
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>8.a</td><td>the <b>QSO begin date</b> should already be set to the begin date specified on your current certificate</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>8.b</td><td>for an active callsign, the <b>QSO end date</b> should be remain blank; for an inactive callsign, the <b>QSO end date</b> should already be set to the end date specified on your current certificate</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>8.c</td><td>click the <b>Next</b> button</td></tr>
-</table>
+      <li>the Callsign Certificate to be renewed is named <code>YourCallsign.tq6</code> ,
+      e.g. <code>K1MU.tq6</code></li>
+    </ul>
+  </div>
 
-<table border="0" valign="top">
-	<col style="width:30px">
-	<tr><td>9.</td><td>The <b>Request a New Callsign Certificate</b> window will now show your name and address; make any necessary corrections, and click the <b>Next</b> button.</td></tr>
-	<tr><td>10.</td><td>The <b>Request a New Callsign Certificate</b> window will now show your email address; make any necessary corrections, and click the <b>Next</b> button.</td></tr>
-	<tr><td>11.</td><td>The <b>Request a New Callsign Certificate</b> window will now prompt you to specify a password; leave both password boxes empty, and click the <b>Finish</b> button.</td></tr>
-	<tr><td>12.</td><td>A <b>Save request</b> window will appear, with the <b>File name</b> set to <code>YourCallsign.tq5</code>; navigate to <code>C:\MyLoTWCertificates</code>, and then click the <b>Save</b> button to save your new 
- <a href="files-icons.htm">Callsign Certificate Request</a> file.</td></tr>
-	<tr><td>13.</td><td>A window will appear displaying text that explains how to convey your new <a href="files-icons.htm">Callsign Certificate Request</a> file to the ARRL; click this window's <b>OK</b> button.</td></tr>
-	<tr><td>14.</td><td>TQSL's <b>Callsign Certificates</b> tab will display an entry for your new certificate request with a <i>pending</i> icon: <img src="Pending.bmp" width=15 height=15>&nbsp;</td></tr>
-	<tr><td>15.</td><td>Upload your certificate request to the ARRL via <b><code>https://p1k.arrl.org/lotw/upload</code></b> ; use the web page's <b>Choose File</b> button to navigate to the folder 
-	<code>C:\MyLoTWCertificates</code> and select the <code>YourCallsign.tq5</code> file you find there; then click the <b>Upload file</b> button.</td></tr>
-	<tr><td>16.</td><td>Retain the <code>YourCallsign.tq5</code> file; its presence in <code>C:\MyLoTWCertificates</code> will be required when you accept the certificate that the ARRL will send you, so <b>don't delete it!</b></td></tr>
-	<tr><td>17.</td><td>You can terminate <b>TQSL</b> by opening its <b>File</b> menu and selecting the <b>Exit</b> command (on <b>OS X</b>, by selecting the <b>Application</b> menu's <b>Quit tqsl</b> command).</td></tr>
-</table>
-<p>
-&nbsp;
-<p>
-When you receive email from the ARRL message with an attached file named <code>YourCallsign.tq6</code>,
+  <p>If your Callsign Certificate has already expired, you must <a href=
+  "certreq.htm">request an initial Callsign Certificate</a>
+  .</p>
 
-<table border="0" valign="top">
-	<col style="width:30px">
-	<tr><td>18.</td><td>Save the attached file into the folder <code>C:\MyLoTWCertificates</code>.</td></tr>
-	<tr><td>19.</td><td>Start <b>TQSL</b> and select the <b>Callsign Certificates</b> tab, which lists your Callsign Certificates;
-	in the <b>Alert</b> window that asks if you are ready to load your new certificate, click <b>Yes</b> button.</td></tr>
-</table>
+  <p>To initiate the renewal of your unexpired Callsign Certificate,</p>
 
-<table border="0" valign="top"></td></tr>
-	<col style="width:30px">
-	<col style="width:40px">
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>19.a</td><td>the <b>Load Certificate File</b> window will appear; in this window,  set the <b>type of certificate</b> to <code>TQSL (.tq6)</code>, and click the <b>Next</b> button; the <b>Select Certificate File</b> window will appear</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>19.b</td><td>in the <b>Select Certificate File</b> window, select the file <code>C:\MyLoTWCertificates\YourCallsign.tq6</code> and click the <b>Open</b> button; a small <b>Install Certificate</b> window will appear</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>19.c</td><td>in the <b>Install Certificate</b> window, click the <b>Finish</b> button</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>19.d</td><td>the <b>tQSL Certificates</b> tab will now show </td></tr>
-</table>
-	
-<table border="0" valign="top"></td></tr>
-	<col style="width:30px">
-	<col style="width:40px">
-	<col style="width:50px">
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>19.d.1.</td><td>an entry for your renewed Callsign Certificate with a yellow medal <i>valid</i> icon: <img src="TQSLCert.bmp" width=17 height=19>&nbsp;</td></tr>
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>&nbsp;&nbsp;&nbsp;&nbsp;</td><td>19.d.2.</td><td>an entry for your now obsolete Callsign Certificate with either a <i>replaced</i> icon <img src="replaced.bmp" width=16 height=16>&nbsp; or an <i>expired</i> icon <img src="expired.bmp" width=16 height=16>&nbsp;
-	either way, delete this obsolete Callsign Certificate by clicking it's entry and then selecting the <b>Callsign Certificate</b> menu's <b>Delete Callsign Certificate</b> command.</td></tr>
-</table>
+  <table border="0" valign="top">
+    <tbody>
+      <tr>
+        <td style="vertical-align: top;">1.</td>
 
-	
+        <td>Delete the <a href="files-icons.htm">Callsign
+        Certificate Request</a> file
+        <code>C:\\MyLoTWCertificates\\YourCallsign.tq5</code> if it's present; this
+        original certificate request is no longer needed.</td>
+      </tr>
 
-	<table border="0" valign="top"></td></tr>
-	<col style="width:30px">
-	<col style="width:40px">	
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>19.e</td><td>if you received more than one certificate file from the ARRL, then click the <b>Load a new Callsign Certificate</b> button and proceed to step 19a above; after all received certificate files have been processed, you can terminate <b>TQSL</b> by opening the <b>File</b> menu and selecting the <b>Exit</b> command (on <b>OS X</b>, by selecting the <b>Application</b> menu's <b>Quit tqsl</b> command).</td></tr>
-</table>
+      <tr>
+        <td>&nbsp;</td>
 
-<table border="0" valign="top">
-	<col style="width:30px">
-	<tr><td>20.</td><td>To protect your renewed Callsign Certificate(s), direct TQSL to create a <A HREF="backuprestore.htm#backup">Backup File</A>.</td></tr>
-</table>
+        <td>&nbsp;</td>
+      </tr>
 
-<P>
-</BODY>
+      <tr>
+        <td style="vertical-align: top;">2.</td>
+
+        <td>Start <b>TQSL</b> and select the <b>Callsign Certificates</b> tab, which
+        lists your Callsign Certificates.</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">3.</td>
+
+        <td>In the <b>Callsign Certificates</b> tab, click on the certificate to be
+        renewed:</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td><img src="renewing1.bmp" style=
+        "width: 575px; height: 428px;"></td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>and then click the <b>Renew the Callsign Certificate</b> button.</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">4.</td>
+
+        <td>The <b>Request a New Callsign Certificate</b> window will appear, showing
+        that you are creating a new <a href=
+        "files-icons.htm">Callsign Certificate Request</a>
+        file; click the <b>Next</b> button.</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">5.</td>
+
+        <td>The <b>Request a New Callsign Certificate</b> window will now show your
+        Callsign and DXCC entity (both <i>grayed out</i> because they can't be
+        changed):</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td><img src="renewing2.bmp" style=
+        "width: 371px; height: 532px;"></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table border="0" valign="top">
+    <colgroup>
+      <col style="width:30px">
+      <col style="width:40px">
+    </colgroup>
+
+    <tbody>
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+
+        <td style="vertical-align: top;">5.a</td>
+
+        <td>the <b>QSO begin date</b> should already be set to the begin date specified
+        on your current certificate</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+
+        <td style="vertical-align: top;">5.b</td>
+
+        <td>for an active callsign, the <b>QSO end date</b> should be remain blank; for
+        an inactive callsign, the <b>QSO end date</b> should already be set to the end
+        date specified on your current certificate</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;&nbsp;&nbsp;</td>
+
+        <td style="vertical-align: top;">5.c</td>
+
+        <td>click the <b>Next</b> button</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <table border="0" valign="top">
+    <colgroup>
+      <col style="width:30px">
+    </colgroup>
+
+    <tbody>
+      <tr>
+        <td style="vertical-align: top;">6.</td>
+
+        <td>The <b>Request a New Callsign Certificate</b> window will now show your name
+        and address; make any necessary corrections, and click the <b>Next</b>
+        button.</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">7.</td>
+
+        <td>The <b>Request a New Callsign Certificate</b> window will now show your email
+        address; make any necessary corrections, and click the <b>Next</b> button.</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">8.</td>
+
+        <td>The <b>Request a New Callsign Certificate</b> window will now prompt you to
+        specify a password; leave both password boxes empty, and click the <b>Finish</b>
+        button.</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">9.</td>
+
+        <td>An <b>Upload</b> &nbsp;window will appear, asking if you want to upload the
+        request to LoTW; click the <strong>Yes</strong> button:</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td><img alt="" src=
+        "renewupload.bmp" style=
+        "width: 439px; height: 171px;"></td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">10.</td>
+
+        <td>TQSL's <b>Callsign Certificates</b> tab will display an entry for your new
+        certificate request with a <i>pending</i> icon: <img src=
+        "pending.bmp" style=
+        "width: 15px; height: 15px;"> &nbsp;; you can terminate TQSL by opening its
+        <strong>File</strong> menu and selecting the <strong>Exit</strong> command (on
+        <strong>OS X</strong> , by selecting the Application menu's <strong>Quit
+        tqsl</strong> command).</td>
+
+        <td>&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>&nbsp;</p>
+
+  <p>When you receive email from the ARRL message with an attached file named
+  <code>YourCallsign.tq6</code> ,</p>
+
+  <table border="0" valign="top">
+    <colgroup>
+      <col style="width:30px">
+    </colgroup>
+
+    <tbody>
+      <tr>
+        <td style="vertical-align: top;">11.</td>
+
+        <td>Save the attached file into the folder <code>C:\\MyLoTWCertificates</code>
+        .</td>
+      </tr>
+
+      <tr>
+        <td>&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">12.</td>
+
+        <td style="vertical-align: top; text-align: left;">In the folder&nbsp;
+        <code>C:\\MyLoTWCertificates</code> , double-click the entry for
+        <code>YourCallsign.tq6</code> ; TQSL will start, and load your renewed Callsign
+        Certificate, showing the results in the <strong>Status Log</strong> on the lower
+        half of its window. If you select TQSL's&nbsp; <strong>Callsign
+        Certificates</strong> tab, the entry for your new Callsign Certificate will be
+        displayed with a yellow medal icon:</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">&nbsp;</td>
+
+        <td style="vertical-align: bottom; text-align: left;"><img alt="" src=
+        "tqslcert.bmp" style=
+        "width: 17px; height: 19px;"></td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">&nbsp;</td>
+
+        <td>&nbsp;</td>
+      </tr>
+
+      <tr>
+        <td style="vertical-align: top;">13.</td>
+
+        <td>To protect your renewed Callsign Certificate(s), direct TQSL to create a
+        <a href="backuprestore.htm">Backup File</a> .</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>&nbsp;</p>
+</body>
+</html>

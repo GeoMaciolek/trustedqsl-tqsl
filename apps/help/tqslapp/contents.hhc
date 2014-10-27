@@ -23,7 +23,7 @@
 			<param name="Local" value="certaccept.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Defining or Modifying a Station Location">
+			<param name="Name" value="Defining, Modifying, or Deleting a Station Location">
 			<param name="Local" value="stnloc.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -35,7 +35,7 @@
 			<param name="Local" value="signing.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Visiting the LoTW web site to View QSOs and QSLs">
+			<param name="Name" value="Logging in to your LoTW Web Account to View your QSOs and QSLs">
 			<param name="Local" value="login.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -67,6 +67,14 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Copying Callsign Certificates and Station Locations from One Computer to Another">
 			<param name="Local" value="moving.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Saving a Callsign Certificate to a File">
+			<param name="Local" value="save-certificate.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Loading a Callsign Certificate from a File">
+			<param name="Local" value="load-certificate.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Deleting a Callsign Certificate">
