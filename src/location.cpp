@@ -287,7 +287,7 @@ string_toupper(const string& in) {
 	transform(out.begin(), out.end(), out.begin(), char_toupper);
 	return out;
 }
-// isspace() called on extended chars in UTF-8 raises asserts in 
+// isspace() called on extended chars in UTF-8 raises asserts in
 // the windows C++ libs. Don't call isspace() if out of range.
 //
 static inline int isspc(int c) {
@@ -2853,7 +2853,7 @@ tqsl_getLocationCallSign(tQSL_Location locp, char *buf, int bufsiz) {
 }
 
 DLLEXPORT int CALLCONVENTION
-tqsl_setLocationCallSign(tQSL_Location locp, char *buf) {
+tqsl_setLocationCallSign(tQSL_Location locp, const char *buf) {
 	TQSL_LOCATION *loc;
 	if (!(loc = check_loc(locp, false)))
 		return 1;

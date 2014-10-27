@@ -1715,7 +1715,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 }
 
 int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password, const char* defcall) {
-	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d", reinterpret_cast<void *>(loc), S(infile), S(output), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
+	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d, defcall=%s", reinterpret_cast<void *>(loc), S(infile), S(output), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action, defcall ? defcall : "");
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -1727,35 +1727,28 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
-	check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
+	if (defcall) {
+		strncpy(callsign, defcall, sizeof callsign);
+		check_tqsl_error(tqsl_setLocationCallSign(loc, callsign));
+	} else {
+		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
+	}
 	tqsl_getLocationDXCCEntity(loc, &dxcc);
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
 	get_certlist(callsign, dxcc, false, false, false);
 	if (ncerts == 0) {
+		// No certificates for this callsign/dxcc pair.
 		// If the callsign for this location is set to "[None]", go look
 		// for a suitable callsign certificate
 		if (strcmp(callsign, "[None]") == 0) {
 			// Get all of the certificates for this location's DXCC entity
 			get_certlist("", dxcc, false, false, false);
+			// If only one callsign matches the dxcc entity, just use that
 			if (ncerts == 1) {
 				tqsl_getCertificateCallSign(certlist[0], callsign, sizeof callsign);
 				tqsl_setLocationCallSign(loc, callsign);
-			} else if (ncerts > 1 && defcall) {
-				bool found = false;
-				for (int i = 0; i < ncerts; i++) {
-					tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign);
-					if (strcmp(callsign, defcall) == 0) {
-						tqsl_setLocationCallSign(loc, callsign);
-						found = true;
-						break;
-					}
-				}
-				if (!found) {
-					free_certlist();
-					goto notfound;
-				}
 			} else if (ncerts > 1) {
 				wxString *choices = new wxString[ncerts];
 				// Get today's date
@@ -1810,8 +1803,14 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				return TQSL_EXIT_CANCEL;
 			}
 		}
+	} else {
+		// The defcall or callsign from the location has matching certificates
+		// for this DXCC location. If we used the default call, set that
+		// for the location
+		if (defcall) {
+			tqsl_setLocationCallSign(loc, defcall);
+		}
 	}
- notfound:
 	if (ncerts == 0) {
 		wxString msg;
 		wxString fmt = _("There are no valid callsign certificates for callsign");
@@ -2144,7 +2143,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 int
 MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxString& outfile,
-	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password) {
+	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password, const char *defcall) {
 	tqslTrace("MyFrame::ConvertLogFile", "loc=%lx, infile=%s, outfile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), S(outfile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void*>(enddate), action);
 	gzFile gout = 0;
 #ifdef _WIN32
@@ -2180,7 +2179,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 	wxString output;
 	int numrecs = 0;
 	tQSL_Converter conv = 0;
-	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, startdate, enddate, action, password);
+	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, startdate, enddate, action, password, defcall);
 
 	if (numrecs == 0) {
 		wxLogMessage(_("No records output"));
@@ -2347,13 +2346,13 @@ class UploadThread: public wxThread {
 	}
 };
 
-int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password) {
+int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password, const char *defcall) {
 	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx, enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
 	int numrecs = 0;
 	wxString signedOutput;
 	tQSL_Converter conv = 0;
 
-	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, startdate, enddate, action, password);
+	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, startdate, enddate, action, password, defcall);
 
 	if (numrecs == 0) {
 		wxLogMessage(_("No records to upload"));
@@ -4542,6 +4541,7 @@ QSLApp::OnInit() {
 	int action = TQSL_ACTION_UNSPEC;
 	bool upload = false;
 	char *password = NULL;
+	char *defcall = NULL;
 	wxString infile(wxT(""));
 	wxString outfile(wxT(""));
 	wxString importfile(wxT(""));
@@ -4715,6 +4715,14 @@ QSLApp::OnInit() {
 			}
 		}
 	}
+
+	wxString call;
+	if (parser.Found(wxT("c"), &call)) {
+		call.Trim(true);
+		call.Trim(false);
+		defcall = strdup(call.MakeUpper().ToUTF8());
+	}
+
 	wxString pwd;
 	if (parser.Found(wxT("p"), &pwd)) {
 		password = strdup(pwd.ToUTF8());
@@ -4845,7 +4853,7 @@ QSLApp::OnInit() {
 	}
 	if (upload) {
 		try {
-			int val = frame->UploadLogFile(loc, infile, true, suppressdate, startdate, enddate, action, password);
+			int val = frame->UploadLogFile(loc, infile, true, suppressdate, startdate, enddate, action, password, defcall);
 			if (quiet)
 				exitNow(val, quiet);
 			else
@@ -4866,7 +4874,7 @@ QSLApp::OnInit() {
 		}
 	} else {
 		try {
-			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, startdate, enddate, action, password);
+			int val = frame->ConvertLogFile(loc, infile, path, true, suppressdate, startdate, enddate, action, password, defcall);
 			if (quiet)
 				exitNow(val, quiet);
 			else
@@ -5607,9 +5615,9 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 		wxLogError(wxT("This language is not supported by the system."));
 		locale.Init(wxLANGUAGE_DEFAULT);
 	}
-	tqslTrace("MyFrame::OnChooseLanguage","Destroying GUI");
+	tqslTrace("MyFrame::OnChooseLanguage", "Destroying GUI");
 	Destroy();
-	tqslTrace("MyFrame::OnChooseLanguage","Recreating GUI");
+	tqslTrace("MyFrame::OnChooseLanguage", "Recreating GUI");
 	(reinterpret_cast<QSLApp*>(wxTheApp))->OnInit();
 }
 
