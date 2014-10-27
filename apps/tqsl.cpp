@@ -167,7 +167,8 @@ static void exitNow(int status, bool quiet) {
 	int stat = status;
 	if (stat > TQSL_EXIT_UNKNOWN || stat < 0) stat = TQSL_EXIT_UNKNOWN;
 	wxString msg = wxGetTranslation(wxString::FromUTF8(errors[stat]));
-	const char *emsg = msg.ToUTF8();
+	char emsg[512];
+	strncpy(emsg, msg.ToUTF8(), sizeof emsg);
 	if (quiet)
 		wxLogMessage(_("Final Status: %hs (%d)"), emsg, status);
 	else
@@ -525,8 +526,12 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 				  "strange (but harmless) behavior such as attempting to upload an empty file or marking all chosen QSOs as 'sent'");
 		}
 	}
-	sizer->Add(new wxStaticText(this, -1, message), 0, wxALL|wxALIGN_CENTER, 10);
+	wxStaticText* mtext = new wxStaticText(this, -1, message);
+	sizer->Add(mtext, 0, wxALL|wxALIGN_CENTER, 10);
 
+	wxSize sz = getTextSize(this);
+        int em_w = sz.GetWidth();
+	mtext->Wrap(em_w * 50);
 	wxBoxSizer *hsizer = new wxBoxSizer(wxHORIZONTAL);
 	if (qso_count != dupes)
 		hsizer->Add(new wxButton(this, TQSL_DP_OK, _("Exclude duplicates")), 0, wxRIGHT, 5);
