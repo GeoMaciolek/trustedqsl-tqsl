@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TQSLVER=`cat apps/tqslversion.ver`
+TQSLVER=`cat apps/tqslversion.ver|sed -e 's/\.0$//'`
 TQSLLIBPATH=`pwd`/src/libtqsllib.dylib
 WORKDIR=`mktemp -d /tmp/tqsl.XXXXX` || exit 1
 
