@@ -121,8 +121,11 @@
       <Component Id="cmpDE18DE6B3B7341F5AC1A969B7A149347" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil773F574325684FC36A2108BAA8EB9154" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\installation.htm" />
       </Component>
-      <Component Id="cmp34522829B92834A3EFCA1CB3C12B4915" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
-        <File Id="filB6202D5D1881227BCDCB2C66E43A1E26" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\loadcert.htm" />
+      <Component Id="cmp9E90D78642684b298CF793F64FFEF6DF" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="filBF1EDE60FFA3400e90FC5ED28F6DC0F3" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\key-concepts.htm" />
+      </Component>
+      <Component Id="cmp4D5808681A5242ad9EE55558D6F7D377" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil27E8C5DD721742dfABBCEBF9C6078F96" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\load-certificate.htm" />
       </Component>
       <Component Id="cmpFD7649E0EBB8FC85A85F3E669E0BDED1" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil5EB9A6F304618360B089840D8C6371A0" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\login.htm" />
@@ -202,11 +205,14 @@
       <Component Id="cmp40CDC1B2DC3310961040475B44EBCC97" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil2F177772F3B32E8E7B1C93568FFCAB9A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\renewing2.bmp" />
       </Component>
+      <Component Id="cmpE98C8FA02FEC4f9fACE38A9FFE92F489" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil01036D197B414a8dB998D20DC86027F8" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\RenewUpload.bmp" />
+      </Component>
       <Component Id="cmpE07EAD116E565817D54EAEAC302362D3" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil4A18C557E601270F050AB7DD1AAC5F7C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\replaced.bmp" />
       </Component>
-      <Component Id="cmp30F508E99503CAD14819FF9444545105" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
-        <File Id="fil80FE1467EA8CAFE6C58CE262A438521A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\save.htm" />
+      <Component Id="cmpBF7E0CB240984d4c8B605F44A203770E" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil5AFDCA825F2840c0A5E7E7FCFE8E8F92" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\save-certificate.htm" />
       </Component>
       <Component Id="cmpDB50289E06919556935C38AA13F873DC" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="filB72B0F17E3582F3D7E07F1C6ECD0E1A9" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\savestnl.bmp" />
