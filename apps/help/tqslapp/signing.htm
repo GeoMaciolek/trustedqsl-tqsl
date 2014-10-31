@@ -47,11 +47,23 @@ To <A HREF="glossary.htm#digital_signature">digitally sign</A> a <A HREF="glossa
 
 <table border="0" valign="top">
 	<tr><td>5.</td><td>In the <b>Select file to write to</b> dialog, navigate to the folder where you want the digitally signed log file created, specify the name of the file to be created, and click the <b>Save</b> button.</td></tr>	
-	<tr><td>6.</td><td>In the <b>Select Station Location for Signing</b> dialog, select the <A HREF="glossary.htm#station_location">Station Location</A> that specifies the Callsign and operating location used to make the log file's QSOs, and click the <b>Ok</b> button.</td></tr>
+	<tr><td>6.</td><td>If you've <A HREF="stnloc.htm">defined exactly one Station Location</A>, TQSL will automatically use that Station Location and display the <b>TQSL - Confirm signing</b> dialog (proceed to step 7). Otherwise, it will display the <b>Select Station Location for Signing</b> dialog so you can select the <A HREF="glossary.htm#station_location">Station Location</A> that specifies the operating location used to make the log file's QSOs, and then click the <b>Ok</b> button.</td></tr>
 </table>
 
 <table border="0" valign="top"></td></tr>
 	<tr><td>&nbsp;&nbsp;</td><td><img src="stnloc.bmp" width=484 height=282 border=2></td></tr>
+</table>
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>&nbsp;&nbsp;</td><td>If you select a <A HREF="stnloc.htm">Station Location that doesn't specify a Callsign Certificate</A> (its <b>Call Sign</b> is set to <CODE>[None]</CODE>),</td></tr>,
+</table>
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>&nbsp;&nbsp;</td><td>* </td><td>if you have exactly one Callsign Certificate whose DXCC entity matches the DXCC entity in the selected Station Location, TQSL will submit your QSOs with that Station Location and Callsign Certificate</td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td>* </td><td>if you have more than one Callsign Certificate whose DXCC entity matches the DXCC entity in the selected Station Location, TQSL will prompt you to select the Callsign Certificate with which to submit your QSOs:</td></tr>
+</table>
+<table border="0" valign="top"></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="promptforcall.bmp" width=416 height=433 border=2></td></tr>
 </table>
 <p>
 

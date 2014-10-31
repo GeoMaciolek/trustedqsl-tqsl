@@ -5,7 +5,18 @@
 <BODY>
 <H3>Defining, Modifying, or Deleting a Station Location</H3>
 <P>
-A <i>Station Location</i> specifies both a <A HREF="glossary.htm#callsign_certificate">Callsign Certificate</a> and an operating location.
+A <i>Station Location</i> specifies an operating location and, optionally, a <A HREF="glossary.htm#callsign_certificate">Callsign Certificate</a>.
+<p>
+If when submitting QSOs to LoTW you select a Station Location that specifies a Callsign Certificate, TQSL will submit your QSOs with that Station Location and Callsign Certificate.
+<p>
+If when submitting QSOs to LoTW you select a Station Location that doesn't specify a Callsign Certificate (it's <b>Call Sign</b> is set to <CODE>[None]</CODE>),
+
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>-&nbsp;</td><td>if you have exactly one Callsign Certificate whose DXCC entity matches the DXCC entity in the selected Station Location, TQSL will submit your QSOs with that Station Location and Callsign Certificate</td></tr>
+	<tr><td>-&nbsp;</td><td>if you have more than one Callsign Certificate whose DXCC entity matches the DXCC entity in the selected Station Location, TQSL will prompt you to select the Callsign Certificate with which to submit your QSOs</td></tr>
+</table>
+
 <P>
 
 <H5>Defining a New Station Location</H5>
@@ -13,17 +24,25 @@ A <i>Station Location</i> specifies both a <A HREF="glossary.htm#callsign_certif
 <table border="0" valign="top">
 	<col style="width:30px">
 	<tr><td>1.</td><td>In <b>TQSL</b>, select the <b>Station Locations</b> tab and click the <b>Create a new Station Location</b> button; the <b>Add Station Location</b> dialog will appear.</td></tr>
-	<tr><td>2.</td><td>In the <b>Add Station Location</b> dialog, specify your callsign, grid square, ITU zone, CQ zone, and IOTA Reference Number.</td></tr>
 </table>
 
 <table border="0" valign="top"></td></tr>
-	<tr><td>&nbsp;&nbsp;</td><td><img src="stnloc1.bmp" width=416 height=419 border=2></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="stnloc0.bmp" width=416 height=433 border=2></td></tr>
+</table>
+
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>2.</td><td>In the <b>Add Station Location</b> dialog,</td></tr>
+</table>
+
+<table border="0" valign="top"></td></tr>
+	<tr><td>&nbsp;&nbsp;</td><td><img src="stnloc1.bmp" width=416 height=433 border=2></td></tr>
 </table>
 
 <table border="0" valign="top"></td></tr>
 	<col style="width:30px">
 	<col style="width:40px">
-	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.a</td><td>select your callsign</td></tr>
+	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.a</td><td>either set the <b>Call Sign</b> box to the callsign to be associated with this Station Location, or leave the <b>Call Sign</b> box set to <CODE>[None]</CODE> and check the <b>Allow 'None' for Call Sign</b> box</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.b</td><td>specify the <b>Grid Square</b> in which your station is located (this is particularly important if you operate on VHF or UHF frequencies or via Satellites, as it provides Grid Square credit to your QSO partners pursuing VUCC awards)</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.c</td><td>specify the <b>ITU Zone</b> in which your station is located</td></tr>
 	<tr><td>&nbsp;&nbsp;&nbsp;</td><td>2.d</td><td>specify the <b>CQ Zone</b> in which your station is located</td></tr>

@@ -35,6 +35,10 @@ If no <code>-a</code> switch is specified and a duplicate or out-of-date-range Q
 
 <TR><TD><code>-b&nbsp;date</code><br /><code>-e&nbsp;date</code></TD>
 <TD>Specifies the beginning <code>(-b)</code>date of QSOs to be signed or the end date <code>(-e)</code> for QSOs to be signed. QSOs before the begin date or after the end date will not be signed. If these are used, <code>-d</code> should also be specified to suppress the <A HREF="daterng.htm">QSO date-range dialog</A>.</TD></TR>
+
+<TR><TD><code>-c&nbsp;Callsign</code></TD>
+<TD>If present, specifies the <a href="glossary.htm#callsign_certificate">Callsign Certificate</A> to be used when signing log files, overriding any Callsign Certificate specified in the <A HREF="glossary.htm#station_location">Station Location</A> selected by <code>-l</code>. If the specified Callsign Certificate's DXCC entity does not match the DXCC entity specified in the Station Location selected by <code>-l</code>, an error message will be displayed and no QSOs will be signed. </TD></TR>
+
 <TR><TD><code>-d</code></TD>
 <TD>Suppress the date-range dialog; if this switch is present, the <A HREF="daterng.htm">QSO date-range dialog</A> will <i>not</i>
 be displayed before signing a log.</TD></TR>
