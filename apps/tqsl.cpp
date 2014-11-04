@@ -5920,29 +5920,6 @@ flattenCallSign(const wxString& call) {
 	return flat;
 }
 
-#if 0
-void tqslTrace(const char *name, const char *format, ...) {
-	va_list ap;
-	if (!tQSL_DiagFile) return;
-
-	time_t t = time(0);
-	char timebuf[50];
-	strncpy(timebuf, ctime(&t), sizeof timebuf);
-	timebuf[strlen(timebuf) - 1] = '\0';		// Strip the newline
-	fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
-	if (!format) {
-		fprintf(tQSL_DiagFile, "\r\n");
-		fflush(tQSL_DiagFile);
-		return;
-	}
-	va_start(ap, format);
-	vfprintf(tQSL_DiagFile, format, ap);
-	va_end(ap);
-	fprintf(tQSL_DiagFile, "\r\n");
-	fflush(tQSL_DiagFile);
-}
-#endif
-
 static int lockfileFD = -1;
 
 #ifndef _WIN32

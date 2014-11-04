@@ -789,7 +789,8 @@ free_wchar(wchar_t* ptr) {
 }
 #endif
 
-void tqslTrace(const char *name, const char *format, ...) {
+DLLEXPORT void CALLCONVENTION
+tqslTrace(const char *name, const char *format, ...) {
 	va_list ap;
 	if (!tQSL_DiagFile) return;
 
@@ -797,11 +798,12 @@ void tqslTrace(const char *name, const char *format, ...) {
 	char timebuf[50];
 	strncpy(timebuf, ctime(&t), sizeof timebuf);
 	timebuf[strlen(timebuf) - 1] = '\0';		// Strip the newline
-	fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
 	if (!format) {
-		fprintf(tQSL_DiagFile, "\r\n");
+		fprintf(tQSL_DiagFile, "%s %s\r\n", timebuf, name);
 		fflush(tQSL_DiagFile);
 		return;
+	} else {
+		fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
 	}
 	va_start(ap, format);
 	vfprintf(tQSL_DiagFile, format, ap);

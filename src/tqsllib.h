@@ -1276,6 +1276,8 @@ DLLEXPORT const char* CALLCONVENTION tqsl_getGABBItCONTACTData(tQSL_Cert cert, t
 
 /** @} */
 
+DLLEXPORT void CALLCONVENTION tqslTrace(const char *name, const char *format = NULL, ...);
+
 #ifdef _WIN32
 DLLEXPORT wchar_t* CALLCONVENTION utf8_to_wchar(const char* str);
 DLLEXPORT void     CALLCONVENTION free_wchar(wchar_t* ptr);

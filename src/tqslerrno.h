@@ -52,7 +52,4 @@
 #define TQSL_FILE_SYSTEM_ERROR 42	///< There was a file system I/O error
 #define TQSL_FILE_SYNTAX_ERROR 43	///< The file format is invalid
 
-
-void tqslTrace(const char *name, const char *format = NULL, ...);
-
 #endif /* __TQSLERRNO_H */
