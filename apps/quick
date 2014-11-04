@@ -62,7 +62,9 @@ certificates. TQSL displays all Callsign Certificates on its main window's
 
 You should delete each "replaced" or "expired" Callsign Certificate by clicking 
 its entry on the "Callsign Certificates" tab, and then selecting the "Callsign 
-Certificate" menu's "Delete Callsign Certificate" command.
+Certificate" menu's "Delete Callsign Certificate" command. When a new Callsign
+Certificate is imported for a given callsign, TQSL will delete the expired and
+replaced certificates for that callsign.
 
 
 If you're installing TQSL for the first time
