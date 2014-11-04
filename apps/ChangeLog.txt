@@ -14,9 +14,19 @@ Update TQSL to be more tolerant of non-english characters in
 file and directory names.
 
 Allow station locations to have callsign unspecified ('[None]').
-These locations can be used for signing a log by selecting the
-correct callsign certificate from a list, with the callsign
-certificate that expires the latest chosen by default.
+When you use such a location for signing a log, TQSL will search
+for valid callsign certificates in that DXCC entity. If there is
+only one such callsign certificate, that will be chosen for
+signing the log. If there are multiple callsign certificates, TQSL
+will present a list of possible callsign certificates to use, with
+the  callsign certificate with the latest expiration date selected.
+
+Add a command line option "-c callsign" that allows a logging
+program to specify the callsign certificate to use when signing a log.
+This can be used with "Callsign='[None]' locations, or to override
+the callsign defined in a given station location. If the callsign
+is not valid for the DXCC entity for the selected station location,
+TQSL will issue an error and reject signing the log.
 
 Further changes for accessibility improvements, including not using
 changing text fields on dialog boxes to indicate errors.
