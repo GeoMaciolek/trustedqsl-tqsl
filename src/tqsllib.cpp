@@ -42,6 +42,7 @@ DLLEXPORTDATA const char *tQSL_BaseDir = 0;
 DLLEXPORTDATA char tQSL_ErrorFile[256];
 DLLEXPORTDATA char tQSL_CustomError[256];
 DLLEXPORTDATA char tQSL_ImportCall[256];
+DLLEXPORTDATA FILE* tQSL_DiagFile = 0;
 
 #define TQSL_OID_BASE "1.3.6.1.4.1.12348.1."
 #define TQSL_OID_CALLSIGN TQSL_OID_BASE "1"
@@ -113,6 +114,7 @@ static int pmkdir(const char *path, int perm) {
 	char npath[TQSL_MAX_PATH_LEN];
 	char *cp;
 
+	tqslTrace("pmkdir", "path=%s", path);
 	int nleft = sizeof npath - 1;
 	strncpy(dpath, path, sizeof dpath);
 	cp = strtok(dpath, "/\\");
@@ -134,6 +136,7 @@ static int pmkdir(const char *path, int perm) {
 #else
 			if (MKDIR(npath, perm) != 0 && errno != EEXIST) {
 #endif
+				tqslTrace("pmkdir", "Error creating %s: %s", npath, strerror(errno));
 				return 1;
 			}
 #ifdef _WIN32
@@ -176,6 +179,7 @@ tqsl_init() {
 	if (SSLmajor != TQSLmajor ||
 		(SSLminor != TQSLminor &&
 		(SSLmajor != 9 && SSLminor != 7 && TQSLminor == 6))) {
+		tqslTrace("tqsl_init", "version error - ssl %d.%d", SSLmajor, SSLminor);
 		tQSL_Error = TQSL_OPENSSL_VERSION_ERROR;
 		return 1;
 	}
@@ -187,6 +191,7 @@ tqsl_init() {
 	OpenSSL_add_all_algorithms();
 	for (i = 0; i < (sizeof custom_objects / sizeof custom_objects[0]); i++) {
 		if (OBJ_create(custom_objects[i][0], custom_objects[i][1], custom_objects[i][2]) == 0) {
+			tqslTrace("tqsl_init", "Error making custom objects: %d", ERR_get_error());
 			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
@@ -222,6 +227,7 @@ tqsl_init() {
 			strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
 			tQSL_Error = TQSL_SYSTEM_ERROR;
 			tQSL_Errno = errno;
+			tqslTrace("tqsl_init", "Error creating working path %s: %s", path, strerror(errno));
 			return 1;
 		}
 		tQSL_BaseDir = path;
@@ -364,19 +370,29 @@ tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outp
 
 	if (data == NULL || output == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		tqslTrace("tqsl_encodeBase64", "arg err data=0x%lx, output=0x%lx", data, output);
 		return rval;
 	}
-	if ((bio = BIO_new(BIO_s_mem())) == NULL)
+	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
+		tqslTrace("tqsl_encodeBase64", "BIO_new err %d", ERR_get_error());
 		goto err;
-	if ((bio64 = BIO_new(BIO_f_base64())) == NULL)
+	}
+	if ((bio64 = BIO_new(BIO_f_base64())) == NULL) {
+		tqslTrace("tqsl_encodeBase64", "BIO_new64 err %d", ERR_get_error());
 		goto err;
+	}
 	bio = BIO_push(bio64, bio);
-	if (BIO_write(bio, data, datalen) < 1)
+	if (BIO_write(bio, data, datalen) < 1) {
+		tqslTrace("tqsl_encodeBase64", "BIO_write err %d", ERR_get_error());
 		goto err;
-	if (BIO_flush(bio) != 1)
-		goto err;;
+	}
+	if (BIO_flush(bio) != 1) {
+		tqslTrace("tqsl_encodeBase64", "BIO_flush err %d", ERR_get_error());
+		goto err;
+	}
 	n = BIO_get_mem_data(bio, &memp);
 	if (n > outputlen-1) {
+		tqslTrace("tqsl_encodeBase64", "buffer has %d, avail %d", n, outputlen);
 		tQSL_Error = TQSL_BUFFER_ERROR;
 		goto end;
 	}
@@ -402,19 +418,27 @@ tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen) {
 	int rval = 1;
 
 	if (input == NULL || data == NULL || datalen == NULL) {
+		tqslTrace("tqsl_decodeBase64", "arg error input=0x%lx, data=0x%lx, datalen=0x%lx", input, data, datalen);
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return rval;
 	}
-	if ((bio = BIO_new_mem_buf(const_cast<char *>(input), strlen(input))) == NULL)
+	if ((bio = BIO_new_mem_buf(const_cast<char *>(input), strlen(input))) == NULL) {
+		tqslTrace("tqsl_decodeBase64", "BIO_new_mem_buf err %d", ERR_get_error());
 		goto err;
+	}
 	BIO_set_mem_eof_return(bio, 0);
-	if ((bio64 = BIO_new(BIO_f_base64())) == NULL)
+	if ((bio64 = BIO_new(BIO_f_base64())) == NULL) {
+		tqslTrace("tqsl_decodeBase64", "BIO_new err %d", ERR_get_error());
 		goto err;
+	}
 	bio = BIO_push(bio64, bio);
 	n = BIO_read(bio, data, *datalen);
-	if (n < 0)
+	if (n < 0) {
+		tqslTrace("tqsl_decodeBase64", "BIO_read error %d", ERR_get_error());
 		goto err;
+	}
 	if (BIO_ctrl_pending(bio) != 0) {
+		tqslTrace("tqsl_decodeBase64", "ctrl_pending err %d", ERR_get_error());
 		tQSL_Error = TQSL_BUFFER_ERROR;
 		goto end;
 	}
@@ -764,3 +788,24 @@ free_wchar(wchar_t* ptr) {
 	free(ptr);
 }
 #endif
+
+void tqslTrace(const char *name, const char *format, ...) {
+	va_list ap;
+	if (!tQSL_DiagFile) return;
+
+	time_t t = time(0);
+	char timebuf[50];
+	strncpy(timebuf, ctime(&t), sizeof timebuf);
+	timebuf[strlen(timebuf) - 1] = '\0';		// Strip the newline
+	fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
+	if (!format) {
+		fprintf(tQSL_DiagFile, "\r\n");
+		fflush(tQSL_DiagFile);
+		return;
+	}
+	va_start(ap, format);
+	vfprintf(tQSL_DiagFile, format, ap);
+	va_end(ap);
+	fprintf(tQSL_DiagFile, "\r\n");
+	fflush(tQSL_DiagFile);
+}

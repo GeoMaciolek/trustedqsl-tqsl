@@ -84,7 +84,6 @@ CertTree::~CertTree() {
 }
 
 CertTreeItemData::~CertTreeItemData() {
-	tqslTrace("CertTreeItemData::~CertTreeItemData");
 }
 
 typedef pair<wxString, int> certitem;

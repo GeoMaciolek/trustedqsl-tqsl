@@ -11,9 +11,9 @@
 #include "sysconfig.h"
 #endif
 
-extern FILE *diagFile;
-
+#ifndef __TQSLERRNO_H
 void tqslTrace(const char *name, const char *format = NULL, ...);
+#endif
 #define S(x) ((const char *) x.ToUTF8())
 
 #endif	// __tqslltrace_h

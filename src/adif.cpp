@@ -47,13 +47,16 @@ check_adif(tQSL_ADIF adif) {
 		return 0;
 	if (adif == 0)
 		return 0;
-	if (CAST_TQSL_ADIF(adif)->sentinel != 0x3345)
+	if (CAST_TQSL_ADIF(adif)->sentinel != 0x3345) {
+		tqslTrace("check_adif", "adif no valid sentinel");
 		return 0;
+	}
 	return CAST_TQSL_ADIF(adif);
 }
 
 static void
 free_adif(TQSL_ADIF *adif) {
+	tqslTrace("free_adif");
 	if (adif && adif->sentinel == 0x3345) {
 		adif->sentinel = 0;
 		if (adif->filename)
@@ -66,6 +69,7 @@ free_adif(TQSL_ADIF *adif) {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
+	tqslTrace("tqsl_beginADIF", "adifp=0x%lx, filename=%s", adifp, filename);
 	if (filename == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
@@ -78,6 +82,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 	}
 	adif->sentinel = 0x3345;
 	ADIF_ErrorField[0] = '\0';
+	tqslTrace("tqsl_beginADIF", "Preparing to open file");
 #ifdef _WIN32
 	wchar_t *wfilename = utf8_to_wchar(filename);
 	if ((adif->fp = _wfopen(wfilename, L"rb")) == NULL) {
@@ -89,6 +94,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 		tQSL_Errno = errno;
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
 		tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
+		tqslTrace("tqsl_beginADIF", "Error %d errno %d file %s", tQSL_Error, tQSL_Errno, filename);
 		goto err;
 	}
 #ifdef _WIN32
@@ -107,6 +113,7 @@ tqsl_beginADIF(tQSL_ADIF *adifp, const char *filename) {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_endADIF(tQSL_ADIF *adifp) {
+	tqslTrace("tqsl_endADIF", "adifp=0x%lx", adifp);
 	TQSL_ADIF *adif;
 	if (adifp == 0)
 		return 0;
@@ -142,7 +149,6 @@ DLLEXPORT const char* CALLCONVENTION
 tqsl_adifGetError(TQSL_ADIF_GET_FIELD_ERROR status) {
 	const char *fmt;
 	static char errorText[512];
-
 	switch( status ) {
                 case TQSL_ADIF_GET_FIELD_SUCCESS:
 			fmt = "ADIF success";
@@ -197,6 +203,7 @@ tqsl_adifGetError(TQSL_ADIF_GET_FIELD_ERROR status) {
 			break;
 	}
 	snprintf(errorText, sizeof errorText, fmt, ADIF_ErrorField);
+	tqslTrace("tqsl_getADIFError", "error=%s", errorText);
 	return( errorText );
 }
 

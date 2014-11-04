@@ -23,8 +23,8 @@
 
 wxString
 notifyData::Message() const {
-	if (diagFile) {
-		fprintf(diagFile, "%s\n"
+	if (tQSL_DiagFile) {
+		fprintf(tQSL_DiagFile, "%s\n"
 			"Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"Callsign Certificates:\tLoaded: %d  Duplicate: %d  Error: %d\n"

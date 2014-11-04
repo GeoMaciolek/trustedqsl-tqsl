@@ -398,6 +398,7 @@ tqsl_free_cab(struct TQSL_CABRILLO *cab) {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
+	tqslTrace("tqsl_beginCabrillo", "cabp=0x%lx, filename=%s", cabp, filename);
 	TQSL_CABRILLO_ERROR_TYPE terrno;
 	if (filename == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -420,6 +421,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 #endif
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
+		tqslTrace("tqsl_beginCabrillo", "open error, errno=%d, error=%s", errno, strerror(errno));
 		goto err;
 	}
 #ifdef _WIN32
@@ -461,6 +463,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 		if (ferror(cab->fp)) {
 			tQSL_Error = TQSL_SYSTEM_ERROR;
 			tQSL_Errno = errno;
+			tqslTrace("tqsl_beginCabrillo", "read error, errno=%d, error=%s", errno, strerror(errno));
 			goto err;
 		}
 		tQSL_Cabrillo_Error = terrno;
@@ -482,6 +485,7 @@ tqsl_beginCabrillo(tQSL_Cabrillo *cabp, const char *filename) {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_endCabrillo(tQSL_Cabrillo *cabp) {
+	tqslTrace("tqsl_endCabrillo", "cabp=0x%lx", cabp);
 	TQSL_CABRILLO *cab;
 	if (cabp == 0)
 		return 0;
@@ -528,6 +532,7 @@ tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
 				" (%s)", errmsgdata);
 		msg = errmsgbuf;
 	}
+	tqslTrace("tqsl_cabrilloGetError", "msg=%s", msg);
 	errmsgdata[0] = '\0';
 	return msg;
 }
