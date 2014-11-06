@@ -23,8 +23,7 @@
 
 wxString
 notifyData::Message() const {
-	if (tQSL_DiagFile) {
-		fprintf(tQSL_DiagFile, "%s\n"
+	tqslTrace(NULL, "%s\n"
 			"Root Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"CA Certificates:\t\tLoaded: %d  Duplicate: %d  Error: %d\n"
 			"Callsign Certificates:\tLoaded: %d  Duplicate: %d  Error: %d\n"
@@ -36,7 +35,6 @@ notifyData::Message() const {
 			user.loaded, user.duplicate, user.error,
 			pkey.loaded, pkey.duplicate, pkey.error,
 			config.loaded, config.duplicate, config.error);
-	}
 	if (status.IsEmpty()) {
 		wxString msg = wxT("\n");
 		msg += _("Import completed successfully");

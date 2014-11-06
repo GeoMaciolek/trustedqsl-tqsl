@@ -194,8 +194,7 @@ QSLApp::~QSLApp() {
 	wxConfigBase *c = wxConfigBase::Set(0);
 	if (c)
 		delete c;
-	if (tQSL_DiagFile)
-		fclose(tQSL_DiagFile);
+	tqsl_closeDiagFile();
 }
 
 IMPLEMENT_APP(QSLApp)
@@ -719,16 +718,8 @@ class LogList : public wxLog {
 
 void LogList::DoLogString(const wxChar *szString, time_t) {
 	wxTextCtrl *_logwin = 0;
-
-	if (tQSL_DiagFile)  {
-#ifdef _WIN32
-		fprintf(tQSL_DiagFile, "%hs\n", szString);
-#else
-//		const char *cstr = wxString(szString).ToUTF8();
-//		fprintf(tQSL_DiagFile, "%s\n", cstr);
-		fprintf(tQSL_DiagFile, "%ls\n", szString);
-#endif
-	}
+	const char *msg = wxString(szString).ToUTF8();
+	tqslTrace(NULL, "%s", msg);
 	if (wxString(szString).StartsWith(wxT("Debug:")))
 		return;
 	if (wxString(szString).StartsWith(wxT("Error: Unable to open requested HTML document:")))
@@ -754,15 +745,8 @@ class LogStderr : public wxLog {
 };
 
 void LogStderr::DoLogString(const wxChar *szString, time_t) {
-	if (tQSL_DiagFile) {
-#ifdef _WIN32
-		fprintf(tQSL_DiagFile, "%hs\n", szString);
-#else
-		fprintf(tQSL_DiagFile, "%ls\n", szString);
-//		const char *cstr = wxString(szString).ToUTF8();
-//		fprintf(tQSL_DiagFile, "%s\n", cstr);
-#endif
-	}
+	const char *msg = wxString(szString).ToUTF8();
+	tqslTrace(NULL, "%s", msg);
 	if (wxString(szString).StartsWith(wxT("Debug:")))
 		return;
 #ifdef _WIN32
@@ -1388,10 +1372,9 @@ void
 MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString s_fname;
 
-	if (tQSL_DiagFile) {
+	if (tqsl_diagFileOpen()) {
 		file_menu->Check(tm_f_diag, false);
-		fclose(tQSL_DiagFile);
-		tQSL_DiagFile = NULL;
+		tqsl_closeDiagFile();
 		wxMessageBox(wxT("Diagnostic log closed"), wxT("Diagnostics"), wxOK|wxCENTRE|wxICON_INFORMATION, this);
 		return;
 	}
@@ -1402,23 +1385,16 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 		file_menu->Check(tm_f_diag, false); //would be better to not check at all, but no, apparently that's a crazy thing to want
 		return;
 	}
-#ifdef _WIN32
-	wchar_t* lfn = utf8_to_wchar(s_fname.ToUTF8());
-	tQSL_DiagFile = _wfopen(lfn, L"wb");
-	free_wchar(lfn);
-#else
-	tQSL_DiagFile = fopen(s_fname.ToUTF8(), "wb");
-#endif
-	if (!tQSL_DiagFile) {
+	if (tqsl_openDiagFile(s_fname.ToUTF8())) {
 		wxString errmsg = wxString::Format(_("Error opening diagnostic log %s: %hs"), s_fname.c_str(), strerror(errno));
 		wxMessageBox(errmsg, _("Log File Error"), wxOK|wxICON_EXCLAMATION);
 		return;
 	}
 	file_menu->Check(tm_f_diag, true);
 	wxString about = getAbout();
-	fprintf(tQSL_DiagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
-	fprintf(tQSL_DiagFile, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
-	fprintf(tQSL_DiagFile, "Working Directory:%s\n", tQSL_BaseDir);
+	tqslTrace(NULL, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
+	tqslTrace(NULL, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
+	tqslTrace(NULL, "Working Directory:%s\n", tQSL_BaseDir);
 }
 
 static void
@@ -2407,29 +2383,23 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	if (!curlReq)
 		return NULL;
 
-	if (tQSL_DiagFile) {
+	wxString filename;
+#ifdef _WIN32
+	filename.Printf(wxT("%hs\\curl.log"), tQSL_BaseDir);
+#else
+	filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+#endif
+#ifdef _WIN32
+	wchar_t*lfn = utf8_to_wchar(filename.ToUTF8());
+	*curlLogFile = _wfopen(lfn, newFile ? L"wb" : L"ab");
+	free_wchar(lfn);
+#else
+	*curlLogFile = fopen(filename.ToUTF8(), newFile ? "wb" : "ab");
+#endif
+	if (*curlLogFile) {
 		curl_easy_setopt(curlReq, CURLOPT_VERBOSE, 1);
-		curl_easy_setopt(curlReq, CURLOPT_STDERR, tQSL_DiagFile);
-		fprintf(tQSL_DiagFile, "%s\n", logTitle);
-	} else {
-		wxString filename;
-#ifdef _WIN32
-		filename.Printf(wxT("%hs\\curl.log"), tQSL_BaseDir);
-#else
-		filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
-#endif
-#ifdef _WIN32
-		wchar_t*lfn = utf8_to_wchar(filename.ToUTF8());
-		*curlLogFile = _wfopen(lfn, newFile ? L"wb" : L"ab");
-		free_wchar(lfn);
-#else
-		*curlLogFile = fopen(filename.ToUTF8(), newFile ? "wb" : "ab");
-#endif
-		if (*curlLogFile) {
-			curl_easy_setopt(curlReq, CURLOPT_VERBOSE, 1);
-			curl_easy_setopt(curlReq, CURLOPT_STDERR, *curlLogFile);
-			fprintf(*curlLogFile, "%s:\n", logTitle);
-		}
+		curl_easy_setopt(curlReq, CURLOPT_STDERR, *curlLogFile);
+		fprintf(*curlLogFile, "%s:\n", logTitle);
 	}
 	//set up options
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
@@ -2625,9 +2595,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 		}
 
 	} else {
-		if (tQSL_DiagFile) {
-			fprintf(tQSL_DiagFile, "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
-		}
+		tqslTrace(NULL, "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
 			wxLogMessage(_("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable."), infile.c_str());
 			wxLogMessage(_("Please try uploading the %s later."), fileType.c_str());
@@ -3010,9 +2978,7 @@ void MyFrame::UpdateConfigFile() {
 			wxMessageBox(_("Configuration file successfully updated"), _("Update Completed"), wxOK|wxICON_INFORMATION, this);
 		}
 	} else {
-		if (tQSL_DiagFile) {
-			fprintf(tQSL_DiagFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
-		}
+		tqslTrace(NULL, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
@@ -3067,9 +3033,7 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 			ret = true;
 		}
 	} else {
-		if (tQSL_DiagFile) {
-			fprintf(tQSL_DiagFile, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
-		}
+		tqslTrace(NULL, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
@@ -3421,9 +3385,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 				ri->url = ourPlatURL;
 			}
 		} else {
-			if (tQSL_DiagFile) {
-				fprintf(tQSL_DiagFile, "cURL Error during config file version check: %d : %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
-			}
+			tqslTrace(NULL, "cURL Error during config file version check: %d : %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
 			if (curlLogFile) {
 				fprintf(curlLogFile, "cURL Error during config file version check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 			}
@@ -3454,9 +3416,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 			}
 		}
 	} else {
-		if (tQSL_DiagFile) {
-			fprintf(tQSL_DiagFile, "cURL Error during program revision check: %d: %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
-		}
+		tqslTrace(NULL, "cURL Error during program revision check: %d: %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during program revision check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
@@ -4615,21 +4575,14 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("t"), &diagfile)) {
-#ifdef _WIN32
-		wchar_t* lfn = utf8_to_wchar(diagfile.ToUTF8());
-		tQSL_DiagFile = _wfopen(lfn, L"wb");
-		free_wchar(lfn);
-#else
-		tQSL_DiagFile = fopen(diagfile.ToUTF8(), "wb");
-#endif
-		if (!tQSL_DiagFile) {
+		if (tqsl_openDiagFile(diagfile.ToUTF8())) {
 			cerr << "Error opening diagnostic log " << diagfile.ToUTF8() << ": " << strerror(errno) << endl;
 		} else {
 			wxString about = getAbout();
-			fprintf(tQSL_DiagFile, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
-			fprintf(tQSL_DiagFile, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
+			tqslTrace(NULL, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
+			tqslTrace(NULL, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
 			tqsl_init();
-			fprintf(tQSL_DiagFile, "Working Directory: %s\n", tQSL_BaseDir);
+			tqslTrace(NULL, "Working Directory: %s\n", tQSL_BaseDir);
 		}
 	}
 
@@ -4806,7 +4759,7 @@ QSLApp::OnInit() {
 	}
 	// We need a logfile, else there's nothing to do.
 	if (wxIsEmpty(infile)) {	// Nothing to sign
-		if (tQSL_DiagFile)		// Unless there's just a trace log
+		if (tqsl_diagFileOpen())// Unless there's just a trace log
 			return true;	// in which case we let it open.
 		wxLogError(_("No logfile to sign!"));
 		if (quiet)

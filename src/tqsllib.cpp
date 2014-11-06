@@ -109,6 +109,8 @@ static const char *error_strings[] = {
 	"The format of this file is incorrect.",		/* TQSL_FILE_SYNTAX_ERROR */
 };
 
+const char* tqsl_openssl_error(void);
+
 static int pmkdir(const char *path, int perm) {
 	char dpath[TQSL_MAX_PATH_LEN];
 	char npath[TQSL_MAX_PATH_LEN];
@@ -191,7 +193,7 @@ tqsl_init() {
 	OpenSSL_add_all_algorithms();
 	for (i = 0; i < (sizeof custom_objects / sizeof custom_objects[0]); i++) {
 		if (OBJ_create(custom_objects[i][0], custom_objects[i][1], custom_objects[i][2]) == 0) {
-			tqslTrace("tqsl_init", "Error making custom objects: %d", ERR_get_error());
+			tqslTrace("tqsl_init", "Error making custom objects: %s", tqsl_openssl_error());
 			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
@@ -374,20 +376,20 @@ tqsl_encodeBase64(const unsigned char *data, int datalen, char *output, int outp
 		return rval;
 	}
 	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-		tqslTrace("tqsl_encodeBase64", "BIO_new err %d", ERR_get_error());
+		tqslTrace("tqsl_encodeBase64", "BIO_new err %s", tqsl_openssl_error());
 		goto err;
 	}
 	if ((bio64 = BIO_new(BIO_f_base64())) == NULL) {
-		tqslTrace("tqsl_encodeBase64", "BIO_new64 err %d", ERR_get_error());
+		tqslTrace("tqsl_encodeBase64", "BIO_new64 err %s", tqsl_openssl_error());
 		goto err;
 	}
 	bio = BIO_push(bio64, bio);
 	if (BIO_write(bio, data, datalen) < 1) {
-		tqslTrace("tqsl_encodeBase64", "BIO_write err %d", ERR_get_error());
+		tqslTrace("tqsl_encodeBase64", "BIO_write err %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (BIO_flush(bio) != 1) {
-		tqslTrace("tqsl_encodeBase64", "BIO_flush err %d", ERR_get_error());
+		tqslTrace("tqsl_encodeBase64", "BIO_flush err %s", tqsl_openssl_error());
 		goto err;
 	}
 	n = BIO_get_mem_data(bio, &memp);
@@ -423,22 +425,22 @@ tqsl_decodeBase64(const char *input, unsigned char *data, int *datalen) {
 		return rval;
 	}
 	if ((bio = BIO_new_mem_buf(const_cast<char *>(input), strlen(input))) == NULL) {
-		tqslTrace("tqsl_decodeBase64", "BIO_new_mem_buf err %d", ERR_get_error());
+		tqslTrace("tqsl_decodeBase64", "BIO_new_mem_buf err %s", tqsl_openssl_error());
 		goto err;
 	}
 	BIO_set_mem_eof_return(bio, 0);
 	if ((bio64 = BIO_new(BIO_f_base64())) == NULL) {
-		tqslTrace("tqsl_decodeBase64", "BIO_new err %d", ERR_get_error());
+		tqslTrace("tqsl_decodeBase64", "BIO_new err %s", tqsl_openssl_error());
 		goto err;
 	}
 	bio = BIO_push(bio64, bio);
 	n = BIO_read(bio, data, *datalen);
 	if (n < 0) {
-		tqslTrace("tqsl_decodeBase64", "BIO_read error %d", ERR_get_error());
+		tqslTrace("tqsl_decodeBase64", "BIO_read error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (BIO_ctrl_pending(bio) != 0) {
-		tqslTrace("tqsl_decodeBase64", "ctrl_pending err %d", ERR_get_error());
+		tqslTrace("tqsl_decodeBase64", "ctrl_pending err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_BUFFER_ERROR;
 		goto end;
 	}
@@ -803,7 +805,9 @@ tqslTrace(const char *name, const char *format, ...) {
 		fflush(tQSL_DiagFile);
 		return;
 	} else {
-		fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
+		if (name) {
+			fprintf(tQSL_DiagFile, "%s %s: ", timebuf, name);
+		}
 	}
 	va_start(ap, format);
 	vfprintf(tQSL_DiagFile, format, ap);
@@ -811,3 +815,41 @@ tqslTrace(const char *name, const char *format, ...) {
 	fprintf(tQSL_DiagFile, "\r\n");
 	fflush(tQSL_DiagFile);
 }
+
+DLLEXPORT void CALLCONVENTION
+tqsl_closeDiagFile(void) {
+	if (tQSL_DiagFile)
+		fclose(tQSL_DiagFile);
+	tQSL_DiagFile = NULL;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_diagFileOpen(void) {
+	return tQSL_DiagFile != NULL;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_openDiagFile(const char *fname) {
+#ifdef _WIN32
+        wchar_t* lfn = utf8_to_wchar(fname);
+        tQSL_DiagFile = _wfopen(lfn, L"wb");
+        free_wchar(lfn);
+#else
+        tQSL_DiagFile = fopen(fname, "wb");
+#endif
+	return (tQSL_DiagFile == NULL);
+}
+
+const char*
+tqsl_openssl_error(void) {
+	static char buf[256];
+	int openssl_err;
+
+	openssl_err = ERR_peek_error();
+	if (openssl_err)
+		ERR_error_string_n(openssl_err, buf, sizeof buf);
+	else
+		strncpy(buf, "[error code not available]", sizeof buf);
+	return buf;
+}
+

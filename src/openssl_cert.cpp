@@ -261,6 +261,7 @@ static int tqsl_unlock_key(const char *pem, EVP_PKEY **keyp, const char *passwor
 static int tqsl_replace_key(const char *callsign, const char *path, map<string, string>& newfields, int (*cb)(int, const char *, void *), void *);
 static int tqsl_self_signed_is_ok(int ok, X509_STORE_CTX *ctx);
 static int tqsl_expired_is_ok(int ok, X509_STORE_CTX *ctx);
+extern const char* tqsl_openssl_error(void);
 
 /* Private data structures */
 
@@ -332,14 +333,14 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *, vo
 	tqslTrace("tqsl_import_cert");
 	bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(data)), strlen(data));
 	if (bio == NULL) {
-		tqslTrace("tqsl_import_cert", "BIO mem buf error %d", ERR_get_error());
+		tqslTrace("tqsl_import_cert", "BIO mem buf error %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
 	cert = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 	BIO_free(bio);
 	if (cert == NULL) {
-		tqslTrace("tqsl_import_cert", "BIO read error, err=%d", ERR_get_error());
+		tqslTrace("tqsl_import_cert", "BIO read error, err=%s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -383,14 +384,14 @@ tqsl_get_pem_serial(const char *pem, long *serial) {
 	}
 	bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(pem)), strlen(pem));
 	if (bio == NULL) {
-		tqslTrace("tqsl_get_pem_serial", "mem buf error %d", ERR_get_error());
+		tqslTrace("tqsl_get_pem_serial", "mem buf error %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
 	cert = PEM_read_bio_X509(bio, NULL, NULL, NULL);
 	BIO_free(bio);
 	if (cert == NULL) {
-		tqslTrace("tqsl_get_pem_serial", "cert read error %d", ERR_get_error());
+		tqslTrace("tqsl_get_pem_serial", "cert read error %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -560,11 +561,11 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	/* Make the X.509 certificate request */
 
 	if ((xr = X509_REQ_new()) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "req create error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "req create error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (!X509_REQ_set_version(xr, 0L)) {
-		tqslTrace("tqsl_createCertRequest", "version set error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "version set error %s", tqsl_openssl_error());
 		goto err;
 	}
 	subj = X509_REQ_get_subject_name(xr);
@@ -579,19 +580,19 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		X509_NAME_add_entry_by_NID(subj, nid, MBSTRING_ASC, (unsigned char *)req->emailAddress, -1, -1, 0);
 	X509_REQ_set_pubkey(xr, key);
 	if ((digest = EVP_md5()) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "evp_md5 error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "evp_md5 error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (!X509_REQ_sign(xr, key, digest)) {
-		tqslTrace("tqsl_createCertRequest", "req_sign error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "req_sign error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "bio_new error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "bio_new error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (!PEM_write_bio_X509_REQ(bio, xr)) {
-		tqslTrace("tqsl_createCertRequest", "write_bio error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "write_bio error %s", tqsl_openssl_error());
 		goto err;
 	}
 	len = static_cast<int>(BIO_get_mem_data(bio, &cp));
@@ -603,7 +604,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 		if ((b64 = tqsl_sign_base64_data(req->signer, cp)) == NULL) {
 			fclose(out);
-			tqslTrace("tqsl_createCertRequest", "tqsl_sign_base64 error %d", ERR_get_error());
+			tqslTrace("tqsl_createCertRequest", "tqsl_sign_base64 error %s", tqsl_openssl_error());
 			goto end;
 		}
 		tqsl_write_adif_field(out, "TQSL_CRQ_SIGNATURE", 0, (unsigned char *)b64, -1);
@@ -666,7 +667,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		tqsl_write_adif_field(out, "TQSL_CRQ_QSO_NOT_AFTER", 0, (unsigned char *)buf, -1);
 	}
 	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "bio_new error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "bio_new error %s", tqsl_openssl_error());
 		goto err;
 	}
 	password = const_cast<char *>(req->password);
@@ -689,19 +690,19 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		len = 0;
 	}
 	if (!PEM_write_bio_PrivateKey(bio, key, cipher, (unsigned char *)password, len, NULL, NULL)) {
-		tqslTrace("tqsl_createCertRequest", "write priv key error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "write priv key error %s", tqsl_openssl_error());
 		goto err;
 	}
 	len = static_cast<int>(BIO_get_mem_data(bio, &cp));
 	tqsl_write_adif_field(out, "PRIVATE_KEY", 0, (unsigned char *)cp, len);
 	BIO_free(bio);
 	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "bio_new error %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "bio_new error %s", tqsl_openssl_error());
 		goto err;
 	}
 	rsa = key->pkey.rsa;	/* Assume RSA */
 	if (!PEM_write_bio_RSA_PUBKEY(bio, rsa)) {
-		tqslTrace("tqsl_createCertRequest", "write pubkey %d", ERR_get_error());
+		tqslTrace("tqsl_createCertRequest", "write pubkey %s", tqsl_openssl_error());
 		goto err;
 	}
 	len = static_cast<int>(BIO_get_mem_data(bio, &cp));
@@ -946,11 +947,11 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 					/* Compare the keys */
 					string& keystr = (*it)["PUBLIC_KEY"];
 					if ((bio = BIO_new_mem_buf(static_cast<void *>(const_cast<char *>(keystr.c_str())), keystr.length())) == NULL) {
-						tqslTrace("tqsl_selectCertifcates", "bio_new error %d", ERR_get_error());
+						tqslTrace("tqsl_selectCertifcates", "bio_new error %s", tqsl_openssl_error());
 						goto err;
 					}
 					if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
-						tqslTrace("tqsl_selectCertificates", "pem_read_bio err %d", ERR_get_error());
+						tqslTrace("tqsl_selectCertificates", "pem_read_bio err %s", tqsl_openssl_error());
 						goto err;
 					}
 					BIO_free(bio);
@@ -996,7 +997,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 		for (i = 0; i < sk_X509_num(selcerts); i++) {
 			x = sk_X509_value(selcerts, i);
 			if ((cp = tqsl_cert_new()) == NULL) {
-				tqslTrace("tqsl_selectCertificates", "error making new cert - %d", ERR_get_error());
+				tqslTrace("tqsl_selectCertificates", "error making new cert - %s", tqsl_openssl_error());
 				goto end;
 			}
 			cp->cert = X509_dup(x);
@@ -1007,7 +1008,7 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	}
 	for (it = keylist.begin(); it != keylist.end(); it++) {
 		if ((cp = tqsl_cert_new()) == NULL) {
-			tqslTrace("tqsl_selectCertificates", "error making new cert - %d", ERR_get_error());
+			tqslTrace("tqsl_selectCertificates", "error making new cert - %s", tqsl_openssl_error());
 			goto end;
 		}
 		crq = reinterpret_cast<TQSL_CERT_REQ *>(tqsl_calloc(1, sizeof(TQSL_CERT_REQ)));
@@ -1110,7 +1111,7 @@ tqsl_selectCACertificates(tQSL_Cert **certlist, int *ncerts, const char *type) {
 		for (i = 0; i < sk_X509_num(cacerts); i++) {
 			x = sk_X509_value(cacerts, i);
 			if ((cp = tqsl_cert_new()) == NULL) {
-				tqslTrace("tqsl_selectCACertificates", "cert_new error %d", ERR_get_error());
+				tqslTrace("tqsl_selectCACertificates", "cert_new error %s", tqsl_openssl_error());
 				goto end;
 			}
 			cp->cert = X509_dup(x);
@@ -1154,11 +1155,11 @@ tqsl_getCertificateEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 		return 1;
 	}
 	if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-		tqslTrace("tqsl_getCertificateEncoded", "bio_new err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateEncoded", "bio_new err %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (!PEM_write_bio_X509(bio, TQSL_API_TO_CERT(cert)->cert)) {
-		tqslTrace("tqsl_getCertificateEncoded", "pem_write_bio err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateEncoded", "pem_write_bio err %s", tqsl_openssl_error());
 		goto err;
 	}
 	len = static_cast<int>(BIO_get_mem_data(bio, &cp));
@@ -1284,7 +1285,7 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 			tQSL_Error = TQSL_SYSTEM_ERROR;
 			strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
 			BIO_free_all(out);
-			tqslTrace("tqsl_getKeyEncoded", "BIO_flush error %d", ERR_get_error());
+			tqslTrace("tqsl_getKeyEncoded", "BIO_flush error %s", tqsl_openssl_error());
 			return 1;
 		}
 
@@ -1319,12 +1320,12 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 	for (it = keylist.begin(); it != keylist.end(); it++) {
 		string& keystr = (*it)["PUBLIC_KEY"];
 		if ((bio = BIO_new_mem_buf(static_cast<void *>(const_cast<char *>(keystr.c_str())), keystr.length())) == NULL) {
-			tqslTrace("tqsl_getKeyEncoded", "Error getting buffer %d", ERR_get_error());
+			tqslTrace("tqsl_getKeyEncoded", "Error getting buffer %s", tqsl_openssl_error());
 			return 1;
 		}
 		if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
 			BIO_free(bio);
-			tqslTrace("tqsl_getKeyEncoded", "Error reading PUBKEY %d", ERR_get_error());
+			tqslTrace("tqsl_getKeyEncoded", "Error reading PUBKEY %s", tqsl_openssl_error());
 			return 1;
 		}
 		BIO_free(bio);
@@ -1341,14 +1342,14 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 				for (mit = it->begin(); mit != it->end(); mit++) {
 					if (tqsl_bio_write_adif_field(out, mit->first.c_str(), 0, (const unsigned char *)mit->second.c_str(), -1)) {
 						tQSL_Error = TQSL_SYSTEM_ERROR;
-						tqslTrace("tqsl_getKeyEncoded", "Error writing field %d", ERR_get_error());
+						tqslTrace("tqsl_getKeyEncoded", "Error writing field %s", tqsl_openssl_error());
 						return 1;
 					}
 				}
 				tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
 				if (BIO_flush(out) != 1) {
 					tQSL_Error = TQSL_SYSTEM_ERROR;
-					tqslTrace("tqsl_getKeyEncoded", "Error flushing write %d", ERR_get_error());
+					tqslTrace("tqsl_getKeyEncoded", "Error flushing write %s", tqsl_openssl_error());
 					strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
 					BIO_free_all(out);
 					return 1;
@@ -1419,7 +1420,7 @@ tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *ke
 
 		in = BIO_new_mem_buf(static_cast<void *>(const_cast<char *>(keybuf)), strlen(keybuf));
 		if (in == NULL) {
-			tqslTrace("tqsl_importKeyPairEncoded", "new_mem_buf err %d", ERR_get_error());
+			tqslTrace("tqsl_importKeyPairEncoded", "new_mem_buf err %s", tqsl_openssl_error());
 			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
@@ -1448,14 +1449,14 @@ tqsl_importKeyPairEncoded(const char *callsign, const char *type, const char *ke
 	// Now process the certificate
 	in = BIO_new_mem_buf(static_cast<void *>(const_cast<char *>(certbuf)), strlen(certbuf));
 	if (in == NULL) {
-		tqslTrace("tqsl_importKeyPairEncoded", "cert new_mem_buf err %d", ERR_get_error());
+		tqslTrace("tqsl_importKeyPairEncoded", "cert new_mem_buf err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
 	cert = PEM_read_bio_X509(in, NULL, NULL, NULL);
 	BIO_free(in);
 	if (cert == NULL) {
-		tqslTrace("tqsl_importKeyPairEncoded", "read_bio_x509 err %d", ERR_get_error());
+		tqslTrace("tqsl_importKeyPairEncoded", "read_bio_x509 err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1602,7 +1603,7 @@ tqsl_getCertificateIssuer(tQSL_Cert cert, char *buf, int bufsiz) {
 	}
 	cp = X509_NAME_oneline(X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert), buf, bufsiz);
 	if (cp == NULL) {
-		tqslTrace("tqsl_getCertificateIssuer", "X509_NAME_oneline error %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateIssuer", "X509_NAME_oneline error %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 	}
 	return (cp == NULL);
@@ -1639,7 +1640,7 @@ tqsl_getCertificateIssuerOrganization(tQSL_Cert cert, char *buf, int bufsiz) {
 	item.value_buf = buf;
 	item.value_buf_size = bufsiz;
 	if ((iss = X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert)) == NULL) {
-		tqslTrace("tqsl_getCertificateIssuerOrganization", "get_issuer_name err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateIssuerOrganization", "get_issuer_name err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1677,7 +1678,7 @@ tqsl_getCertificateIssuerOrganizationalUnit(tQSL_Cert cert, char *buf, int bufsi
 	item.value_buf = buf;
 	item.value_buf_size = bufsiz;
 	if ((iss = X509_get_issuer_name(TQSL_API_TO_CERT(cert)->cert)) == NULL) {
-		tqslTrace("tqsl_getCertificateIssuerOrganizationalUnit", "get_issuer_name err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateIssuerOrganizationalUnit", "get_issuer_name err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1752,7 +1753,7 @@ tqsl_getCertificateNotBeforeDate(tQSL_Cert cert, tQSL_Date *date) {
 		return 1;
 	}
 	if ((tm = X509_get_notBefore(TQSL_API_TO_CERT(cert)->cert)) == NULL) {
-		tqslTrace("tqsl_getCertificateNotBeforeDate", "get_notBefore err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateNotBeforeDate", "get_notBefore err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1776,7 +1777,7 @@ tqsl_getCertificateNotAfterDate(tQSL_Cert cert, tQSL_Date *date) {
 		return 1;
 	}
 	if ((tm = X509_get_notAfter(TQSL_API_TO_CERT(cert)->cert)) == NULL) {
-		tqslTrace("tqsl_getCertificateNotAfterDate", "get_notAfter err %d", ERR_get_error());
+		tqslTrace("tqsl_getCertificateNotAfterDate", "get_notAfter err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1933,7 +1934,7 @@ tqsl_signDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, unsig
 	EVP_SignInit(&ctx, EVP_sha1());
 	EVP_SignUpdate(&ctx, data, datalen);
 	if (!EVP_SignFinal(&ctx, sig, &slen, TQSL_API_TO_CERT(cert)->key)) {
-		tqslTrace("tqsl_signDataBlock", "signing failed %d", ERR_get_error());
+		tqslTrace("tqsl_signDataBlock", "signing failed %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -1962,7 +1963,7 @@ tqsl_verifyDataBlock(tQSL_Cert cert, const unsigned char *data, int datalen, uns
 	EVP_VerifyInit(&ctx, EVP_sha1());
 	EVP_VerifyUpdate(&ctx, data, datalen);
 	if (EVP_VerifyFinal(&ctx, sig, slen, TQSL_API_TO_CERT(cert)->key) <= 0) {
-		tqslTrace("tqsl_verifyDataBlock", "verify fail %d", ERR_get_error());
+		tqslTrace("tqsl_verifyDataBlock", "verify fail %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
@@ -2073,7 +2074,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 	int nid;
 	nid = OBJ_txt2nid(const_cast<char *>(oidname));
 	if (nid == NID_undef) {
-		tqslTrace("tqsl_add_bag_attribute", "OBJ_txt2nid err %d", ERR_get_error());
+		tqslTrace("tqsl_add_bag_attribute", "OBJ_txt2nid err %s", tqsl_openssl_error());
 		return 1;
 	}
 	unsigned char *uni;
@@ -2117,7 +2118,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 							return 1;
 						}
 					} else {
-						tqslTrace("tqsl_add_bag_attribute", "attrib create err %d", ERR_get_error());
+						tqslTrace("tqsl_add_bag_attribute", "attrib create err %s", tqsl_openssl_error());
 						return 1;
 					}
 				} else {
@@ -2125,15 +2126,15 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 					return 1;
 				}
 			} else {
-				tqslTrace("tqsl_add_bag_attribute", "bmpstring new err %d", ERR_get_error());
+				tqslTrace("tqsl_add_bag_attribute", "bmpstring new err %s", tqsl_openssl_error());
 				return 1;
 			}
 		} else {
-			tqslTrace("tqsl_add_bag_attribute", "asn1 new err %d", ERR_get_error());
+			tqslTrace("tqsl_add_bag_attribute", "asn1 new err %s", tqsl_openssl_error());
 			return 1;
 		}
 	} else {  // asc2uni ok
-		tqslTrace("tqsl_add_bag_attribute", "asc2uni err %d", ERR_get_error());
+		tqslTrace("tqsl_add_bag_attribute", "asc2uni err %s", tqsl_openssl_error());
 		return 1;
 	}
 	return 0;
@@ -2309,7 +2310,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 		out = BIO_push(b64, out);
 	}
 	if (!out) {
-		tqslTrace("tqsl_exportPKCS12", "BIO_new err %d", ERR_get_error());
+		tqslTrace("tqsl_exportPKCS12", "BIO_new err %s", tqsl_openssl_error());
 		goto p12_end;
 	}
 
@@ -2326,7 +2327,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 			bag = PKCS12_x5092certbag(x);
 #endif
 			if (!bag) {
-				tqslTrace("tqsl_exportPKCS12", "Error creating bag: %d", ERR_get_error());
+				tqslTrace("tqsl_exportPKCS12", "Error creating bag: %s", tqsl_openssl_error());
 				goto p12_end;
 			}
 			if (x == TQSL_API_TO_CERT(cert)->cert) {
@@ -2339,7 +2340,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 		/* Convert stack of safebags into an authsafe */
 		authsafe = PKCS12_pack_p7encdata(cert_pbe, p12password, -1, 0, 0, PKCS12_DEFAULT_ITER, bags);
 		if (!authsafe) {
-			tqslTrace("tqsl_exportPKCS12", "Error creating authsafe: %d", ERR_get_error());
+			tqslTrace("tqsl_exportPKCS12", "Error creating authsafe: %s", tqsl_openssl_error());
 			goto p12_end;
 		}
 		sk_PKCS12_SAFEBAG_pop_free(bags, PKCS12_SAFEBAG_free);
@@ -2352,12 +2353,12 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	/* Make a shrouded key bag */
 	p8 = EVP_PKEY2PKCS8(TQSL_API_TO_CERT(cert)->key);
 	if (!p8) {
-		tqslTrace("tqsl_exportPKCS12", "Error creating p8 container: %d", ERR_get_error());
+		tqslTrace("tqsl_exportPKCS12", "Error creating p8 container: %s", tqsl_openssl_error());
 		goto p12_end;
 	}
 	bag = PKCS12_MAKE_SHKEYBAG(key_pbe, p12password, -1, 0, 0, PKCS12_DEFAULT_ITER, p8);
 	if (!bag) {
-		tqslTrace("tqsl_exportPKCS12", "Error creating p8 keybag: %d", ERR_get_error());
+		tqslTrace("tqsl_exportPKCS12", "Error creating p8 keybag: %s", tqsl_openssl_error());
 		goto p12_end;
 	}
 	PKCS8_PRIV_KEY_INFO_free(p8);
@@ -2384,7 +2385,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 
 	bags = sk_PKCS12_SAFEBAG_new_null();
 	if (!bags) {
-		tqslTrace("tqsl_exportPKCS12", "Error creating safebag: %d", ERR_get_error());
+		tqslTrace("tqsl_exportPKCS12", "Error creating safebag: %s", tqsl_openssl_error());
 		goto p12_end;
 	}
 	sk_PKCS12_SAFEBAG_push(bags, bag);
@@ -2416,7 +2417,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	i2d_PKCS12_bio(out, p12);
 	if (BIO_flush(out) != 1) {
 		rval = 1;
-		tqslTrace("tqsl_exportPKCS12", "Error writing pkcs12: %d", ERR_get_error());
+		tqslTrace("tqsl_exportPKCS12", "Error writing pkcs12: %s", tqsl_openssl_error());
 		goto p12_end;
 	}
 
@@ -2562,11 +2563,11 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 		in = BIO_new_file(filename, "rb");
 	}
 	if (in == 0) {
-		tqslTrace("tqsl_importPKCS12", "Couldn't create bio: %d", ERR_get_error());
+		tqslTrace("tqsl_importPKCS12", "Couldn't create bio: %s", tqsl_openssl_error());
 		goto imp_end;
 	}
 	if ((p12 = d2i_PKCS12_bio(in, 0)) == 0) {
-		tqslTrace("tqsl_importPKCS12", "Couldn't read pkcs12: %d", ERR_get_error());
+		tqslTrace("tqsl_importPKCS12", "Couldn't read pkcs12: %s", tqsl_openssl_error());
 		goto imp_end;
 	}
 	BIO_free(in);
@@ -2580,7 +2581,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 	}
 	/* Loop through the authsafes */
 	if ((safes = M_PKCS12_unpack_authsafes(p12)) == 0) {
-		tqslTrace("tqsl_importPKCS12", "Can't unpack authsafe: %d", ERR_get_error());
+		tqslTrace("tqsl_importPKCS12", "Can't unpack authsafe: %s", tqsl_openssl_error());
 		goto imp_end;
 	}
 	callobj = OBJ_txt2obj("AROcallsign", 0);
@@ -2597,7 +2598,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 		}
 		if (!bags) {
 			tQSL_Error = TQSL_PKCS12_ERROR;
-			tqslTrace("tqsl_importPKCS12", "bags empty: %d", ERR_get_error());
+			tqslTrace("tqsl_importPKCS12", "bags empty: %s", tqsl_openssl_error());
 			goto imp_end;
 		}
 		/* Loop through safebags */
@@ -2609,15 +2610,15 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 					if (M_PKCS12_cert_bag_type(bag) != NID_x509Certificate)
 						break;	// Can't handle anything else
 					if ((x = M_PKCS12_certbag2x509(bag)) == 0) {
-						tqslTrace("tqsl_importPKCS12", "bag2x509: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "bag2x509: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-						tqslTrace("tqsl_importPKCS12", "bio_new: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "bio_new: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					if (!PEM_write_bio_X509(bio, x)) {
-						tqslTrace("tqsl_importPKCS12", "write_bio: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "write_bio: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					len = static_cast<int>(BIO_get_mem_data(bio, &cp));
@@ -2757,7 +2758,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 						goto imp_end;
 					}
 					if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-						tqslTrace("tqsl_importPKCS12", "bio_new error %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "bio_new error %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					if (password == 0) {
@@ -2780,18 +2781,18 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 						len = 0;
 					}
 					if (!PEM_write_bio_PrivateKey(bio, pkey, cipher, (unsigned char *)password, len, 0, 0)) {
-						tqslTrace("tqsl_importPKCS12", "writing bio err: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "writing bio err: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					len = static_cast<int>(BIO_get_mem_data(bio, &cp));
 					private_key = string((const char *)cp, len);
 					BIO_free(bio);
 					if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-						tqslTrace("tqsl_importPKCS12", "new bio err: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "new bio err: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					if (!PEM_write_bio_RSA_PUBKEY(bio, pkey->pkey.rsa)) {
-						tqslTrace("tqsl_importPKCS12", "write pubkey bio err: %d", ERR_get_error());
+						tqslTrace("tqsl_importPKCS12", "write pubkey bio err: %s", tqsl_openssl_error());
 						goto imp_end;
 					}
 					len = static_cast<int>(BIO_get_mem_data(bio, &cp));
@@ -2977,15 +2978,15 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 	} else {
 		// Get public key from cert
 		if ((key = X509_get_pubkey(TQSL_API_TO_CERT(cert)->cert)) == 0) {
-			tqslTrace("tqsl_deleteCertificate", "no public key %d", ERR_get_error());
+			tqslTrace("tqsl_deleteCertificate", "no public key %s", tqsl_openssl_error());
 			goto dc_end;
 		}
 		if ((bio = BIO_new(BIO_s_mem())) == NULL) {
-			tqslTrace("tqsl_deleteCertificate", "bio err %d", ERR_get_error());
+			tqslTrace("tqsl_deleteCertificate", "bio err %s", tqsl_openssl_error());
 			goto dc_end;
 		}
 		if (!PEM_write_bio_RSA_PUBKEY(bio, key->pkey.rsa)) {
-			tqslTrace("tqsl_deleteCertificate", "bio write err %d", ERR_get_error());
+			tqslTrace("tqsl_deleteCertificate", "bio write err %s", tqsl_openssl_error());
 			goto dc_end;
 		}
 		char *cp;
@@ -3021,14 +3022,14 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 		}
 	}
 	if ((bio = BIO_new_file(newpath, "wb")) == 0) {
-		tqslTrace("tqsl_deleteCertificate", "bio_new_file %d", ERR_get_error());
+		tqslTrace("tqsl_deleteCertificate", "bio_new_file %s", tqsl_openssl_error());
 		goto dc_end;
 	}
 	X509 *x;
 	while ((x = sk_X509_shift(xcerts)) != 0) {
 		if (X509_issuer_and_serial_cmp(x, TQSL_API_TO_CERT(cert)->cert)) {
 			if (!PEM_write_bio_X509(bio, x)) {	// No match -- keep this one
-				tqslTrace("tqsl_deleteCertificate", "pem_write_bio %d", ERR_get_error());
+				tqslTrace("tqsl_deleteCertificate", "pem_write_bio %s", tqsl_openssl_error());
 				goto dc_end;
 			}
 		}
@@ -3230,7 +3231,7 @@ tqsl_filter_cert_list(STACK_OF(X509) *sk, const char *callsign, int dxcc,
 	if (tqsl_init())
 		return NULL;
 	if ((newsk = sk_X509_new_null()) == NULL) {
-		tqslTrace("tqsl_filter_cert_list", "sk_X509_new_null err %d", ERR_get_error());
+		tqslTrace("tqsl_filter_cert_list", "sk_X509_new_null err %s", tqsl_openssl_error());
 		return NULL;
 	}
 	tqsl_cert* cp = tqsl_cert_new();
@@ -3358,7 +3359,7 @@ tqsl_ssl_load_certs_from_file(const char *filename) {
 #endif
 	if ((in = BIO_new_fp(cfile, 0)) == NULL) {
 		tQSL_Error = TQSL_OPENSSL_ERROR;
-		tqslTrace("tqsl_ssl_load_certs_from_file", "bio_new_fp err %d", ERR_get_error());
+		tqslTrace("tqsl_ssl_load_certs_from_file", "bio_new_fp err %s", tqsl_openssl_error());
 		return NULL;
 	}
 	sk = tqsl_ssl_load_certs_from_BIO(in);
@@ -3381,13 +3382,13 @@ tqsl_ssl_load_certs_from_BIO(BIO *in) {
 	if (tqsl_init())
 		return NULL;
 	if (!(stack = sk_X509_new_null())) {
-		tqslTrace("tqsl_ssl_load_certs_from_BIO", "bio_new_fp err %d", ERR_get_error());
+		tqslTrace("tqsl_ssl_load_certs_from_BIO", "bio_new_fp err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return NULL;
 	}
 	if (!(sk = PEM_X509_INFO_read_bio(in, NULL, NULL, NULL))) {
 		sk_X509_free(stack);
-		tqslTrace("tqsl_ssl_load_certs_from_BIO", "PEM_X509_INFO_read_bio err %d", ERR_get_error());
+		tqslTrace("tqsl_ssl_load_certs_from_BIO", "PEM_X509_INFO_read_bio err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return NULL;
 	}
@@ -3491,7 +3492,7 @@ tqsl_get_name_stuff(X509_NAME_ENTRY *entry, TQSL_X509_NAME_ITEM *name_item) {
 	}
 	obj = X509_NAME_ENTRY_get_object(entry);
 	if (obj == NULL) {
-		tqslTrace("tqsl_get_name_stuff", "get_object err %d", ERR_get_error());
+		tqslTrace("tqsl_get_name_stuff", "get_object err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 0;
 	}
@@ -3571,7 +3572,7 @@ tqsl_init_random() {
 		RAND_load_file(fname, -1);
 	initialized = RAND_status();
 	if (!initialized) {
-		tqslTrace("tqsl_init_random", "init error %d", ERR_get_error());
+		tqslTrace("tqsl_init_random", "init error %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_RANDOM_ERROR;
 	}
 	return initialized;
@@ -3589,7 +3590,7 @@ tqsl_new_rsa_key(int nbits) {
 		return NULL;
 	}
 	if ((pkey = EVP_PKEY_new()) == NULL) {
-		tqslTrace("tqsl_new_rsa_key", "EVP_PKEY_new err %d", ERR_get_error());
+		tqslTrace("tqsl_new_rsa_key", "EVP_PKEY_new err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return NULL;
 	}
@@ -3597,7 +3598,7 @@ tqsl_new_rsa_key(int nbits) {
 		return NULL;
 	if (!EVP_PKEY_assign_RSA(pkey, RSA_generate_key(nbits, 0x10001, NULL, NULL))) {
 		EVP_PKEY_free(pkey);
-		tqslTrace("tqsl_new_rsa_key", "EVP_PKEY_assign_RSA err %d", ERR_get_error());
+		tqslTrace("tqsl_new_rsa_key", "EVP_PKEY_assign_RSA err %s", tqsl_openssl_error());
 		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return NULL;
 	}
@@ -3828,7 +3829,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	 */
 	if (!tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
 		if (tQSL_Error != TQSL_PASSWORD_ERROR) {
-			tqslTrace("tqsl_handle_user_cert", "match error %d", ERR_get_error());
+			tqslTrace("tqsl_handle_user_cert", "match error %s", tqsl_openssl_error());
 			return 1;
 		}
 		tQSL_Error = TQSL_NO_ERROR;	/* clear error */
@@ -3838,7 +3839,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	tqsl_make_cert_path("root", rootpath, sizeof rootpath);
 	if ((root_sk = tqsl_ssl_load_certs_from_file(rootpath)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
-			tqslTrace("tqsl_handle_user_cert", "Error loading certs %d", ERR_get_error());
+			tqslTrace("tqsl_handle_user_cert", "Error loading certs %s", tqsl_openssl_error());
 			return 1;
 		}
 	}
@@ -3846,7 +3847,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	if ((ca_sk = tqsl_ssl_load_certs_from_file(capath)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
 			sk_X509_free(root_sk);
-			tqslTrace("tqsl_handle_user_cert", "Error loading authorities %d", ERR_get_error());
+			tqslTrace("tqsl_handle_user_cert", "Error loading authorities %s", tqsl_openssl_error());
 			return 1;
 		}
 	}
@@ -3934,7 +3935,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	/* Check for dupes */
 	if ((sk = tqsl_ssl_load_certs_from_file(path)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
-			tqslTrace("tqsl_store_cert", "unexpected openssl err %d", ERR_get_error());
+			tqslTrace("tqsl_store_cert", "unexpected openssl err %s", tqsl_openssl_error());
 			return 1;	/* Unexpected OpenSSL error */
 		}
 	}
@@ -4161,11 +4162,11 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 
 	if ((bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(newfields["PUBLIC_KEY"].c_str())),
 				   newfields["PUBLIC_KEY"].length())) == NULL) {
-		tqslTrace("tqsl_replace_key", "BIO_new_mem_buf err %d", ERR_get_error());
+		tqslTrace("tqsl_replace_key", "BIO_new_mem_buf err %s", tqsl_openssl_error());
 		goto trk_end;
 	}
 	if ((new_rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
-		tqslTrace("tqsl_replace_key", "PEM_read_bio_RSA_PUBKEY err %d", ERR_get_error());
+		tqslTrace("tqsl_replace_key", "PEM_read_bio_RSA_PUBKEY err %s", tqsl_openssl_error());
 		goto trk_end;
 	}
 	BIO_free(bio);
@@ -4180,11 +4181,11 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	while (tqsl_read_key(fields) == 0) {
 		if ((bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(fields["PUBLIC_KEY"].c_str())),
 					   fields["PUBLIC_KEY"].length())) == NULL) {
-			tqslTrace("tqsl_replace_key", "BIO_new_mem_buf error %d", ERR_get_error());
+			tqslTrace("tqsl_replace_key", "BIO_new_mem_buf error %s", tqsl_openssl_error());
 			goto trk_end;
 		}
 		if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
-			tqslTrace("tqsl_replace_key", "Pem_read_bio_rsa_pubkey error %d", ERR_get_error());
+			tqslTrace("tqsl_replace_key", "Pem_read_bio_rsa_pubkey error %s", tqsl_openssl_error());
 			goto trk_end;
 		}
 		BIO_free(bio);
@@ -4312,7 +4313,7 @@ tqsl_unlock_key(const char *pem, EVP_PKEY **keyp, const char *password, int (*cb
 	int rval = 1;
 
 	if ((bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(pem)), strlen(pem))) == NULL) {
-		tqslTrace("tqsl_unlock_key", "BIO_new_mem_buf err %d", ERR_get_error());
+		tqslTrace("tqsl_unlock_key", "BIO_new_mem_buf err %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (password != NULL) {
@@ -4324,7 +4325,7 @@ tqsl_unlock_key(const char *pem, EVP_PKEY **keyp, const char *password, int (*cb
 		cb_user = reinterpret_cast<void *>(cb);
 	}
 	if ((prsa = PEM_read_bio_RSAPrivateKey(bio, NULL, ssl_cb, cb_user)) == NULL) {
-		tqslTrace("tqsl_unlock_key", "PEM_rad_bio_RSAPrivateKey err %d", ERR_get_error());
+		tqslTrace("tqsl_unlock_key", "PEM_read_bio_RSAPrivateKey err %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (keyp != NULL) {
@@ -4395,7 +4396,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		return rval;
 	}
 	if ((cert_key = X509_get_pubkey(cert)) == NULL) {
-		tqslTrace("tqsl_find_matching_key", "error getting public key %d", ERR_get_error());
+		tqslTrace("tqsl_find_matching_key", "error getting public key %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (crq != NULL) {
@@ -4407,11 +4408,11 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		/* Compare the keys */
 		if ((bio = BIO_new_mem_buf(reinterpret_cast<void *>(const_cast<char *>(fields["PUBLIC_KEY"].c_str())),
 					   fields["PUBLIC_KEY"].length())) == NULL) {
-			tqslTrace("tqsl_find_matching_key", "BIO_new_mem_buf err %d", ERR_get_error());
+			tqslTrace("tqsl_find_matching_key", "BIO_new_mem_buf err %s", tqsl_openssl_error());
 			goto err;
 		}
 		if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
-			tqslTrace("tqsl_find_matching_key", "PEM_read_bio_RSA_PUBKEY err %d", ERR_get_error());
+			tqslTrace("tqsl_find_matching_key", "PEM_read_bio_RSA_PUBKEY err %s", tqsl_openssl_error());
 			goto err;
 		}
 		BIO_free(bio);
@@ -4609,7 +4610,7 @@ tqsl_get_cert_ext(X509 *cert, const char *ext, unsigned char *userbuf, int *bufl
 	for (i = 0; i < n; i++) {
 		xe = X509_get_ext(cert, i);
 		if (xe == NULL) {
-			tqslTrace("tqsl_get_cert_ext", "X509_get_ext error %d", ERR_get_error());
+			tqslTrace("tqsl_get_cert_ext", "X509_get_ext error %s", tqsl_openssl_error());
 			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}

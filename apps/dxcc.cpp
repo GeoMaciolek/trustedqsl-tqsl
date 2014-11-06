@@ -60,10 +60,11 @@ DXCC::getFirst() {
 
 bool
 DXCC::getNext() {
-	tqslTrace("DXCC::getNext");
 	int newidx = _index+1;
-	if (newidx < 0 || newidx >= num_entities)
+	if (newidx < 0 || newidx >= num_entities) {
+		tqslTrace("DXCC::getNext", "index error, newidx=%d, n=%d", newidx, num_entities);
 		return false;
+	}
 	_index = newidx;
 	_number = entity_list[newidx].number;
 	_name = entity_list[newidx].name;
