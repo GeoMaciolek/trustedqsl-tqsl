@@ -190,6 +190,9 @@
       <Component Id="cmpFF2080F37ECBCB2C27C520C013D7DFBD" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil91B904A4C43DC2CD5778C51E29F3F90C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\primary.htm" />
       </Component>
+      <Component Id="cmpAE162A95BDCBD0C87CA109B41AF7D610" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="filCF31FC369A7D97BC46D92B1C61C99A50" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\promptforcall.bmp" />
+      </Component>
       <Component Id="cmp6F34DA1774026AE9424A91630CE32D22" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil94B80D842D3E953546D150606EF18935" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\qsodata.bmp" />
       </Component>
@@ -243,6 +246,9 @@
       </Component>
       <Component Id="cmpCF87F93F1A5479E99E509C22614A1186" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil9FFD23C2B6FD73167A704005B9C9E586" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc.htm" />
+      </Component>
+      <Component Id="cmp40AB544C2599E5EC60C49B3E8B0839FF" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil194B304405CBBBB1E7D5CD2F0C01CFBC" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc0.bmp" />
       </Component>
       <Component Id="cmpE752F55397A44D897B26C6BAC935498E" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil0940FD4A3A695186A98BCA838CD23C5B" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc1.bmp" />
