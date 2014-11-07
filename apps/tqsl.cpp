@@ -3705,6 +3705,9 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		if (loc == 0)
 			return;
 
+		if (!verify_cert(loc, false))
+			return;
+
 		char callsign[40];
 		char loc_name[256];
 		int dxccnum;
@@ -3715,18 +3718,23 @@ MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 		dxcc.getByEntity(dxccnum);
 		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
-		wxString fmt = _("The file (%s) will be signed and uploaded using:");
-			fmt += wxT("\n");
-			fmt += _("Station Location:");
-			fmt += wxT(" %hs\n");
-			fmt += _("Call sign:");
-			fmt += wxT(" %hs\nDXCC: %hs\n");
-			fmt += _("Is this correct?");
-		if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
-			callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES)
+		if (strcmp(callsign, "[None]")) {
+			wxString fmt = _("The file (%s) will be signed and uploaded using:");
+				 fmt += wxT("\n");
+				 fmt += _("Station Location:");
+				 fmt += wxT(" %hs\n");
+				 fmt += _("Call sign:");
+				 fmt += wxT(" %hs\nDXCC: %hs\n");
+				 fmt += _("Is this correct?");
+			if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
+				callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES) {
+				UploadLogFile(loc, infile);
+			} else {
+				wxLogMessage(_("Signing abandoned"));
+			}
+		} else {
 			UploadLogFile(loc, infile);
-		else
-			wxLogMessage(_("Signing abandoned"));
+		}
 	}
 	catch(TQSLException& x) {
 		wxString s;
