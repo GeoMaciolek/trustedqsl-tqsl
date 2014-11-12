@@ -3487,10 +3487,12 @@ wx_tokens(const wxString& str, vector<wxString> &toks) {
 		toks.push_back(str.Mid(idx));
 }
 
+// Common method for sign and (save, upload) a log
 void
-MyFrame::ImportQSODataFile(wxCommandEvent& event) {
-	tqslTrace("MyFrame::ImportQSODataFile");
+MyFrame::ProcessQSODataFile(bool upload, bool compressed) {
+	tqslTrace("MyFrame::ProcessQSODataFile", "upload=%d, compressed=%d", upload, compressed);
 	wxString infile;
+	wxString outfile;
 
 	// Does the user have any certificates?
 	get_certlist("", 0, false, false, true);
@@ -3505,14 +3507,12 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 	}
 	free_certlist();
 	try {
-		bool compressed = (event.GetId() == tm_f_import_compress || event.GetId() == tl_Save);
-
 		wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 		// Get input file
-
 		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
 		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
 		bool defFound = false;
+
 		// Construct filter string for file-open dialog
 		wxString filter = wxT("All files (*.*)|*.*");
 		vector<wxString> exts;
@@ -3550,21 +3550,24 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		inExt.Lower();
 		config->Write(wxT("ImportPath"), inPath);
 		config->Write(wxT("ImportExtension"), inExt);
-		// Get output file
-		wxString basename;
-		wxFileName::SplitPath(infile.c_str(), 0, &basename, 0);
-		path = wxConfig::Get()->Read(wxT("ExportPath"), wxString(wxT("")));
-		wxString deftype = compressed ? wxT("tq8") : wxT("tq7");
-		filter = compressed ? _("TQSL compressed data files (*.tq8)|*.tq8")
-			: _("TQSL data files (*.tq7)|*.tq7");
-		basename += wxT(".") + deftype;
-		wxString outfile = wxFileSelector(_("Select file to write to"),
-			path, basename, deftype, filter + _("|All files (*.*)|*.*"),
-			wxFD_SAVE|wxFD_OVERWRITE_PROMPT, this);
-		if (outfile == wxT(""))
-			return;
-		config->Write(wxT("ExportPath"), wxPathOnly(outfile));
+		if (!upload) {
+			// Get output file
+			wxString basename;
+			wxFileName::SplitPath(infile.c_str(), 0, &basename, 0);
+			path = wxConfig::Get()->Read(wxT("ExportPath"), wxString(wxT("")));
+			wxString deftype = compressed ? wxT("tq8") : wxT("tq7");
+			filter = compressed ? _("TQSL compressed data files (*.tq8)|*.tq8")
+				: _("TQSL data files (*.tq7)|*.tq7");
+			basename += wxT(".") + deftype;
+			outfile = wxFileSelector(_("Select file to write to"),
+				path, basename, deftype, filter + _("|All files (*.*)|*.*"),
+				wxFD_SAVE|wxFD_OVERWRITE_PROMPT, this);
+			if (outfile == wxT(""))
+				return;
+			config->Write(wxT("ExportPath"), wxPathOnly(outfile));
+		}
 
+		// Get Station Location
         	int n;
         	tQSL_Location loc;
         	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
@@ -3591,7 +3594,7 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
 		DXCC dxcc;
 		dxcc.getByEntity(dxccnum);
-		tqslTrace("MyFrame::ImportQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
+		tqslTrace("MyFrame::ProcessQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
 				S(infile), loc_name, callsign, dxcc.name());
 		if (strcmp(callsign, "[None]")) {
 			wxString fmt = _("The file (%s) will be signed using:");
@@ -3605,12 +3608,20 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 				 fmt += _("Is this correct?");
 			if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
 				callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES) {
-				ConvertLogFile(loc, infile, outfile, compressed);
+				if (upload) {
+					UploadLogFile(loc, infile);
+				} else {
+					ConvertLogFile(loc, infile, outfile, compressed);
+				}
 			} else {
 				wxLogMessage(_("Signing abandoned"));
 			}
 		} else {
-			ConvertLogFile(loc, infile, outfile, compressed);
+			if (upload) {
+				UploadLogFile(loc, infile);
+			} else {
+				ConvertLogFile(loc, infile, outfile, compressed);
+			}
 		}
 	}
 	catch(TQSLException& x) {
@@ -3628,125 +3639,19 @@ MyFrame::ImportQSODataFile(wxCommandEvent& event) {
 }
 
 void
+MyFrame::ImportQSODataFile(wxCommandEvent& event) {
+	tqslTrace("MyFrame::ImportQSODataFile");
+
+	bool compressed = (event.GetId() == tm_f_import_compress || event.GetId() == tl_Save);
+	ProcessQSODataFile(false, compressed);
+	return;
+}
+
+void
 MyFrame::UploadQSODataFile(wxCommandEvent& event) {
 	tqslTrace("MyFrame::UploadQSODataFile");
-	wxString infile;
-	// Does the user have any certificates?
-	get_certlist("", 0, false, false, true);
-	if (ncerts == 0) {
-		wxString msg = _("You have no callsign certificates to use to sign a log file.");
-			msg += wxT("\n");
-			msg += _("Please install a callsign certificate then try again.");
-		wxMessageBox(msg, _("No Callsign Certificates"),
-			   wxOK|wxICON_EXCLAMATION, this);
-		free_certlist();
-		return;
-	}
-	free_certlist();
-	try {
-		wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
-		// Get input file
-		wxString path = config->Read(wxT("ImportPath"), wxString(wxT("")));
-		wxString defext = config->Read(wxT("ImportExtension"), wxString(wxT("adi"))).Lower();
-		bool defFound = false;
-
-		// Construct filter string for file-open dialog
-		wxString filter = _("All files (*.*)|*.*");
-		vector<wxString> exts;
-		wxString file_exts = config->Read(wxT("ADIFFiles"), wxString(DEFAULT_ADIF_FILES));
-		wx_tokens(file_exts, exts);
-		wxString extList;
-		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			extList += wxT("*.") + exts[i] + wxT(";");
-			if (exts[i] == defext)
-				defFound = true;
-		}
-		extList.RemoveLast();		// Remove the trailing semicolon
-		filter += _("|ADIF files (") + extList + wxT(")|") + extList;
-
-		exts.clear();
-		extList.Clear();
-		file_exts = config->Read(wxT("CabrilloFiles"), wxString(DEFAULT_CABRILLO_FILES));
-		wx_tokens(file_exts, exts);
-		for (int i = 0; i < static_cast<int>(exts.size()); i++) {
-			extList += wxT("*.") + exts[i] + wxT(";");
-			if (exts[i] == defext)
-				defFound = true;
-		}
-		extList.RemoveLast();
-		filter += _("|Cabrillo files (") + extList + wxT(")|") + extList;
-		if (defext.IsEmpty() || !defFound)
-			defext = wxString(wxT("adi"));
-		infile = wxFileSelector(_("Select file to Sign"), path, wxT(""), defext, filter,
-			wxFD_OPEN|wxFD_FILE_MUST_EXIST, this);
-		if (infile == wxT(""))
-			return;
-		wxString inPath;
-		wxString inExt;
-		wxFileName::SplitPath(infile.c_str(), &inPath, NULL, &inExt);
-		inExt.Lower();
-		config->Write(wxT("ImportPath"), inPath);
-		config->Write(wxT("ImportExtension"), inExt);
-
-		// Get Station Location
-	        int n;
-        	tQSL_Location loc;
-        	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-        	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
-		if (n != 1) {
-			loc = SelectStationLocation(_("Select Station Location for Signing"));
-		} else {
-			// There's only one station location. Use that and don't prompt.
-			char deflocn[512];
-			check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
-			tqsl_endStationLocationCapture(&loc);
-			check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
-		}
-		if (loc == 0)
-			return;
-
-		if (!verify_cert(loc, false))
-			return;
-
-		char callsign[40];
-		char loc_name[256];
-		int dxccnum;
-		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
-		check_tqsl_error(tqsl_getLocationDXCCEntity(loc, &dxccnum));
-		check_tqsl_error(tqsl_getStationLocationCaptureName(loc, loc_name, sizeof loc_name));
-		DXCC dxcc;
-		dxcc.getByEntity(dxccnum);
-		tqslTrace("MyFrame::UploadQSODataFile", "file=%s location %hs, call %hs dxcc %hs",
-				S(infile), loc_name, callsign, dxcc.name());
-		if (strcmp(callsign, "[None]")) {
-			wxString fmt = _("The file (%s) will be signed and uploaded using:");
-				 fmt += wxT("\n");
-				 fmt += _("Station Location:");
-				 fmt += wxT(" %hs\n");
-				 fmt += _("Call sign:");
-				 fmt += wxT(" %hs\nDXCC: %hs\n");
-				 fmt += _("Is this correct?");
-			if (wxMessageBox(wxString::Format(fmt, infile.c_str(), loc_name,
-				callsign, dxcc.name()), _("TQSL - Confirm signing"), wxYES_NO, this) == wxYES) {
-				UploadLogFile(loc, infile);
-			} else {
-				wxLogMessage(_("Signing abandoned"));
-			}
-		} else {
-			UploadLogFile(loc, infile);
-		}
-	}
-	catch(TQSLException& x) {
-		wxString s;
-		wxString err = wxString::FromUTF8(x.what());
-		if (err.Find(infile) == wxNOT_FOUND) {
-			if (infile != wxT(""))
-				s = infile + wxT(": ");
-		}
-		s += err;
-		wxLogError(wxT("%s"), (const char *)s.c_str());
-	}
-	free_certlist();
+	ProcessQSODataFile(true, true);
+	return;
 }
 
 void MyFrame::OnPreferences(wxCommandEvent& WXUNUSED(event)) {

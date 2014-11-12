@@ -92,6 +92,7 @@ class MyFrame : public wxFrame {
 	void EditStationLocation(wxCommandEvent& event);
 	void EnterQSOData(wxCommandEvent& event);
 	void EditQSOData(wxCommandEvent& event);
+	void ProcessQSODataFile(bool upload, bool compressed);
 	void ImportQSODataFile(wxCommandEvent& event);
 	void UploadQSODataFile(wxCommandEvent& event);
 	void OnExit(TQ_WXCLOSEEVENT& event);
