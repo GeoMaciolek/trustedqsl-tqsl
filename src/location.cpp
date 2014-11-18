@@ -2488,6 +2488,7 @@ tqsl_getStationLocationErrors(tQSL_Location locp, char *buf, int bufsiz) {
 	if (buf == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		tqslTrace("tqsl_getStationLocation", "buf = NULL");
+		return 1;
 	}
 	strncpy(buf, loc->data_errors, bufsiz);
 	buf[bufsiz-1] = 0;
