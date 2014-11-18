@@ -4151,6 +4151,9 @@ static int
 tqsl_replace_key(const char *callsign, const char *path, map<string, string>& newfields, int (*cb)(int, const char *, void *), void *userdata) {
 	char newpath[300];
 	char savepath[300];
+#ifdef _WIN32
+	wchar_t* wnewpath = NULL;
+#endif
 	map<string, string> fields;
 	vector< map<string, string> > records;
 	vector< map<string, string> >::iterator it;
@@ -4189,7 +4192,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 			goto trk_end;
 		}
 		BIO_free(bio);
-		bio = 0;
+		bio = NULL;
 		if (BN_cmp(rsa->n, new_rsa->n) == 0)
 			if (BN_cmp(rsa->e, new_rsa->e) == 0)
 				continue;	// Skip record with matching public key
@@ -4205,7 +4208,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	strncpy(savepath, path, sizeof savepath);
 	strncat(savepath, ".save", sizeof savepath - strlen(savepath)-1);
 #ifdef _WIN32
-	wchar_t* wnewpath = utf8_to_wchar(newpath);
+	wnewpath = utf8_to_wchar(newpath);
 	if ((out = _wfopen(wnewpath, L"wb")) == NULL) {
 		free_wchar(wnewpath);
 #else
@@ -4216,14 +4219,14 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 		tqslTrace("tqsl_replace_key", "open file %s: %s", newpath, strerror(tQSL_Errno));
 		goto trk_end;
 	}
-#ifdef _WIN32
-	free(wnewpath);
-#endif
 	for (it = records.begin(); it != records.end(); it++) {
 		map<string, string>::iterator mit;
 		for (mit = it->begin(); mit != it->end(); mit++) {
 			if (tqsl_write_adif_field(out, mit->first.c_str(), 0, (const unsigned char *)mit->second.c_str(), -1)) {
 				tqslTrace("tqsl_replace_key", "error writing %s", strerror(tQSL_Errno));
+#ifdef _WIN32
+				free_wchar(wnewpath);
+#endif
 				goto trk_end;
 			}
 		}
@@ -4233,6 +4236,9 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		tqslTrace("tqsl_replace_key", "error closing %s", strerror(tQSL_Errno));
+#ifdef _WIN32
+		free_wchar(wnewpath);
+#endif
 		goto trk_end;
 	}
 	out = 0;
@@ -4242,6 +4248,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	wchar_t* wsavepath = utf8_to_wchar(savepath);
 	if (_wunlink(wsavepath) && errno != ENOENT) {
 		free_wchar(wsavepath);
+		free_wchar(wnewpath);
 #else
 	if (unlink(savepath) && errno != ENOENT) {
 #endif
@@ -4255,6 +4262,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	if (_wrename(wpath, wsavepath) && errno != ENOENT) {
 		free_wchar(wpath);
 		free_wchar(wsavepath);
+		free_wchar(wnewpath);
 #else
 	if (rename(path, savepath) && errno != ENOENT) {
 #endif
@@ -4265,9 +4273,9 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	}
 #ifdef _WIN32
 	if (_wrename(wnewpath, wpath)) {
-		free(wnewpath);
-		free(wpath);
-		free(wsavepath);
+		free_wchar(wnewpath);
+		free_wchar(wpath);
+		free_wchar(wsavepath);
 #else
 	if (rename(newpath, path)) {
 #endif
@@ -4277,9 +4285,9 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 		goto trk_end;
 	}
 #ifdef _WIN32
-	free(wnewpath);
-	free(wpath);
-	free(wsavepath);
+	free_wchar(wnewpath);
+	free_wchar(wpath);
+	free_wchar(wsavepath);
 #endif
 
 	tqslTrace("tqsl_replace_key", "loaded private key for: %s", callsign);
