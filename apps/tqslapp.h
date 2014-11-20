@@ -85,7 +85,7 @@ enum {
 
 class MyFrame : public wxFrame {
  public:
-	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale& locale);
+	MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale* locale);
 
 	bool IsQuiet(void) { return _quiet; }
 	void AddStationLocation(wxCommandEvent& event);
@@ -157,7 +157,7 @@ class MyFrame : public wxFrame {
 
 	DECLARE_EVENT_TABLE()
 
-	wxLocale& locale;
+	wxLocale* locale;
 
  private:
 	wxBitmapButton* loc_add_button;

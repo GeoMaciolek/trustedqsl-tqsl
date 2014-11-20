@@ -187,7 +187,7 @@ class QSLApp : public wxApp {
 //	virtual wxLog *CreateLogTarget();
  protected:
 	wxLanguage lang;		// Language specified by user
-	wxLocale locale;		// Locale we're using
+	wxLocale* locale;		// Locale we're using
 };
 
 QSLApp::~QSLApp() {
@@ -907,7 +907,7 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	}
 }
 
-MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale& loca)
+MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUpdates, bool quiet, wxLocale* loca)
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)), locale(loca) {
 	_quiet = quiet;
 
@@ -1005,15 +1005,17 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	//topSizer->Add(new wxStaticText(topPanel, -1, wxT("")), 0, wxEXPAND | wxALL, 1);
 	topSizer->AddSpacer(10);
 
-	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxDefaultSize, wxNB_TOP /* | wxNB_FIXEDWIDTH*/, _("Log Operations"));
+	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxSize(400, 300), wxNB_TOP /* | wxNB_FIXEDWIDTH*/, _("Log Operations"));
 
-	topSizer->Add(notebook, 50, wxEXPAND | wxALL, 1);
+	notebook->SetBackgroundColour(wxColour(255, 255, 255));
+	//topSizer->Add(notebook, 50, wxEXPAND | wxALL, 1);
+	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
 
 	topSizer->Add(new wxStaticText(topPanel, -1, _("Status Log")), 0, wxEXPAND | wxALL, 1);
 
-	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 200),
+	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 300),
 		wxTE_MULTILINE|wxTE_READONLY);
-	topSizer->Add(logwin, 50, wxEXPAND | wxALL, 1);
+	topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
 
 	wxPanel* buttons = new wxPanel(notebook, -1);
 	buttons->SetBackgroundColour(wxColour(255, 255, 255));
@@ -2794,9 +2796,9 @@ class revLevel {
 	}
 	wxString Value(void) {
 		if (patch > 0)
-			return wxString::Format(wxT("%d.%d.%d"), major, minor, patch);
+			return wxString::Format(wxT("%ld.%ld.%ld"), major, minor, patch);
 		else
-			return wxString::Format(wxT("%d.%d"), major, minor);
+			return wxString::Format(wxT("%ld.%ld"), major, minor);
 	}
 	long major;
 	long minor;
@@ -4373,17 +4375,19 @@ QSLApp::OnInit() {
 			break;
 	}
 
-	if (!locale.Init(lang, wxLOCALE_CONV_ENCODING)) {
+	if (wxLocale::IsAvailable(lang)) {
+		locale = new wxLocale(lang);
+	} else {
 		wxLogError(wxT("This language is not supported by the system."));
-		locale.Init(wxLANGUAGE_DEFAULT);
+		locale = new wxLocale(wxLANGUAGE_DEFAULT);
 	}
 
 	// Add a subdirectory for language files
-	wxLocale::AddCatalogLookupPathPrefix(wxT("lang"));
+	locale->AddCatalogLookupPathPrefix(wxT("lang"));
 
 	// Initialize the catalogs we'll be using
-	locale.AddCatalog(wxT("tqslapp"));
-	locale.AddCatalog(wxT("wxstd"));
+	locale->AddCatalog(wxT("tqslapp"));
+	locale->AddCatalog(wxT("wxstd"));
 
 	// this catalog is installed in standard location on Linux systems and
 	// shows that you may make use of the standard message catalogs as well
@@ -4392,7 +4396,7 @@ QSLApp::OnInit() {
 #ifdef __LINUX__
         {
 		wxLogNull nolog;
-		locale.AddCatalog(wxT("fileutils"));
+		locale->AddCatalog(wxT("fileutils"));
 	}
 #endif
 
@@ -4455,7 +4459,7 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
+		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
@@ -5472,14 +5476,33 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 					WXSIZEOF(langNames), langNames);
 	tqslTrace("MyFrame::OnChooseLanguage", "Language chosen: %d", lng);
 	if (lng != -1) {
-		wxConfig::Get()->Write(wxT("Language"), langIds[lng]);
+		wxConfig::Get()->Write(wxT("Language"), static_cast<int>(langIds[lng]));
 		wxConfig::Get()->Flush();
 	}
 
-	if (!locale.Init(langIds[lng], wxLOCALE_CONV_ENCODING)) {
+	if (wxLocale::IsAvailable(lng)) {
+		locale = new wxLocale(lng);
+	} else {
 		wxLogError(wxT("This language is not supported by the system."));
-		locale.Init(wxLANGUAGE_DEFAULT);
+		locale = new wxLocale(wxLANGUAGE_DEFAULT);
 	}
+	// Add a subdirectory for language files
+	locale->AddCatalogLookupPathPrefix(wxT("lang"));
+
+	// Initialize the catalogs we'll be using
+	locale->AddCatalog(wxT("tqslapp"));
+	locale->AddCatalog(wxT("wxstd"));
+
+	// this catalog is installed in standard location on Linux systems and
+	// shows that you may make use of the standard message catalogs as well
+	//
+	// If it's not installed on your system, it is just silently ignored
+#ifdef __LINUX__
+        {
+		wxLogNull nolog;
+		locale->AddCatalog(wxT("fileutils"));
+	}
+#endif
 	tqslTrace("MyFrame::OnChooseLanguage", "Destroying GUI");
 	Destroy();
 	tqslTrace("MyFrame::OnChooseLanguage", "Recreating GUI");
@@ -5489,7 +5512,7 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 class CertPropDial : public wxDialog {
  public:
 	CertPropDial(tQSL_Cert cert, wxWindow *parent = 0);
-	void closeMe(wxCommandEvent&) { wxWindow::Close(TRUE); }
+	void closeMe(wxCommandEvent&) { EndModal(wxID_OK); }
 	DECLARE_EVENT_TABLE()
 };
 
@@ -5648,7 +5671,7 @@ displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
 class LocPropDial : public wxDialog {
  public:
 	LocPropDial(wxString locname, wxWindow *parent = 0);
-	void closeMe(wxCommandEvent&) { wxWindow::Close(TRUE); }
+	void closeMe(wxCommandEvent&) { EndModal(wxID_OK); }
 	DECLARE_EVENT_TABLE()
 };
 
