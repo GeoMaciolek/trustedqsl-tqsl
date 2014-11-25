@@ -3,6 +3,17 @@ TQSL changes
 
 2.1
 ----------
+Support wxWidgets 2.9 and 3.0. TQSL is targeted for wxWidgets
+2.8, but some Unix variants provide 2.9 (unstable) or 3.0.
+TQSL will be updated to use wxWidgets 3.0 for the next release.
+
+Allow QSO start/end dates to be for the next year when creating
+a callsign certificate request. This allows requests for future
+special event operations.
+
+When creating a callsign certificate request, verify that the QSO
+start date is before the QSO end date.
+
 When signing a log from the command line in "batch" mode (with -x
 specified), don't stall waiting on other copies of TQSL to complete
 signing before processing the command-line log. Instead, report
