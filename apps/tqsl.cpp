@@ -893,6 +893,9 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	wxSafeYield();
 	while (updateLocker->TryWait() == wxSEMA_BUSY) {
 		wxSafeYield();
+#if (wxMAJOR_VERSION == 2 && wxMINOR_VERSION == 9)
+		wxGetApp().DoIdle();
+#endif
 		wxMilliSleep(300);
 	}
 	delete updateLocker;
@@ -2788,7 +2791,7 @@ class revLevel {
 		} else {
 			minor = -1;
 		}
-		if (patchVer.IsNumber()) {
+		if (patchVer != wxT("") && patchVer.IsNumber()) {
 			patchVer.ToLong(&patch);
 		} else {
 			patch = 0;
@@ -3082,12 +3085,13 @@ report_error(expInfo **eip) {
 	ei->error = true;
 	ei->errorText = getLocalizedErrorString();
 	// Send the result back to the main thread
-	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
-	event.SetClientData(ei);
-	wxPostEvent(frame, event);
+	wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
+	event->SetClientData(ei);
+	wxPostEvent(frame, *event);
 	ei->condition->Wait();		// stalls here until the main thread resumes the thread
 	ei->mutex->Unlock();
 	delete ei;
+	delete event;
 	*eip = new expInfo;
 }
 
@@ -3159,12 +3163,13 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 				ei->callsign = strdup(callsign);
 				ei->index = i;
 				// Send the result back to the main thread
-				wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
-				event.SetClientData(ei);
-				wxPostEvent(frame, event);
+				wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
+				event->SetClientData(ei);
+				wxPostEvent(frame, *event);
 				ei->condition->Wait();
 				ei->mutex->Unlock();
 				delete ei;
+				delete event;
 				ei = new expInfo;
 				ei->noGUI = noGUI;
 			}
@@ -3449,12 +3454,13 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 	}
 
 	// Send the result back to the main thread
-	wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, bg_updateCheck);
-	event.SetClientData(ri);
-	wxPostEvent(frame, event);
+	wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, bg_updateCheck);
+	event->SetClientData(ri);
+	wxPostEvent(frame, *event);
 	ri->condition->Wait();
 	ri->mutex->Unlock();
 	delete ri;
+	delete event;
 	if (curlReq) curl_easy_cleanup(curlReq);
 	if (curlLogFile) fclose(curlLogFile);
 	curlReq = NULL;
@@ -4425,7 +4431,7 @@ QSLApp::OnInit() {
 
 	wxCmdLineParser parser;
 
-#if wxMAJOR_VERSION > 2
+#if wxMAJOR_VERSION > 2 || (wxMAJOR_VERSION == 2 && wxMINOR_VERSION == 9)
 #define arg(x) (x)
 #define i18narg(x) (x)
 #else
@@ -4886,6 +4892,7 @@ void MyFrame::FirstTime(void) {
 	}
 	// Find and report conflicting mode maps
 	init_modes();
+	// Run automatic check for updates - except for wx 2.9, which breaks threading.
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	if (config->Read(wxT("AutoUpdateCheck"), true)) {
 		DoUpdateCheck(true, false);

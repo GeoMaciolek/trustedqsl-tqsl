@@ -181,7 +181,6 @@ class MyFrame : public wxFrame {
 	int renew;
 	TQSL_CERT_REQ *req;
 	bool _quiet;
-	wxTimer* _timer;
 };
 
 // language data

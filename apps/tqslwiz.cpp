@@ -81,10 +81,8 @@ TQSLWizard::GetPage(bool final) {
 }
 
 void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
-#if wxMAJOR_VERSION < 3
-	TQSLWizPage::OnSize(ev); //fix this
+	GetParent()->OnSize(ev);
 	UpdateFields();
-#endif
 }
 
 TQSLWizPage *
