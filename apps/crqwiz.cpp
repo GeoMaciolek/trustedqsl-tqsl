@@ -215,7 +215,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 	        { {&tc_qsobeginy, ID_CRQ_QBYEAR}, {&tc_qsobeginm, ID_CRQ_QBMONTH}, {&tc_qsobegind, ID_CRQ_QBDAY} },
 	        { {&tc_qsoendy, ID_CRQ_QEYEAR}, {&tc_qsoendm, ID_CRQ_QEMONTH}, {&tc_qsoendd, ID_CRQ_QEDAY} }
 	};
-	int year = wxDateTime::GetCurrentYear();
+	int year = wxDateTime::GetCurrentYear() + 1;
 
 	int sels[2][3];
 	int dates[2][3];
@@ -634,10 +634,12 @@ CRQ_IntroPage::validate() {
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
 		valMsg = _("QSO begin date: You must choose proper values for Year, Month and Day.");
 		ok = false;
-	} else if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
+	}
+	if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
 		valMsg = _("QSO end date: You must either choose proper values for Year, Month and Day or leave all three blank.");
 		ok = false;
-	} else if (tqsl_isDateValid(&Parent()->qsonotafter)
+	}
+	if (tqsl_isDateValid(&Parent()->qsonotbefore) && tqsl_isDateValid(&Parent()->qsonotafter)
 		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
 		valMsg = _("QSO end date cannot be before QSO begin date.");
 		ok = false;
@@ -720,7 +722,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
                 wxMessageBox(valMsg, _("Error"));
                 ok = false;
         }
-	if (Parent()->dxcc == 0) {
+	if (ok && Parent()->dxcc == 0) {
 		wxString msg = _("You have selected DXCC Entity NONE");
 			msg += wxT("\n\n");
 			msg += _("QSO records signed using the certificate will not "
@@ -733,7 +735,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			"page after clicking \"OK\"");
 		wxMessageBox(msg, _("TQSL Warning"));
 	}
-	if (!tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
+	if (ok && !tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
 		wxString msg = _("You have chosen a QSO end date for this Callsign Certificate. "
 			"The 'QSO end date' should ONLY be set if that date is the date when that callsign's license "
 			"expired or the license was replaced by a new callsign.");
