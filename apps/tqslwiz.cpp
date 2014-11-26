@@ -30,7 +30,7 @@ BEGIN_EVENT_TABLE(TQSLWizCertPage, TQSLWizPage)
 	EVT_COMBOBOX(-1, TQSLWizCertPage::OnComboBoxEvent)
 	EVT_CHECKBOX(-1, TQSLWizCertPage::OnCheckBoxEvent)
 	EVT_WIZARD_PAGE_CHANGING(wxID_ANY, TQSLWizCertPage::OnPageChanging)
-#if wxMAJOR_VERSION < 3
+#if wxMAJOR_VERSION < 3 && (wxMAJOR_VERSION != 2 && wxMINOR_VERSION != 9)
 	EVT_SIZE(TQSLWizCertPage::OnSize)
 #endif
 END_EVENT_TABLE()
@@ -81,7 +81,9 @@ TQSLWizard::GetPage(bool final) {
 }
 
 void TQSLWizCertPage::OnSize(wxSizeEvent& ev) {
-	GetParent()->OnSize(ev);
+#if wxMAJOR_VERSION < 3 && (wxMAJOR_VERSION != 2 && wxMINOR_VERSION != 9)
+	TQSLWizPage::OnSize(ev);
+#endif
 	UpdateFields();
 }
 
