@@ -683,7 +683,9 @@ CRQ_IntroPage::validate() {
 			if (ok == false) {
 				DXCC dxcc;
 				dxcc.getByEntity(Parent()->dxcc);
+				// TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 				valMsg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
+				// TRANSLATORS: here "to" separates two dates in a date range
 				valMsg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
 			}
 		}

@@ -76,7 +76,7 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 	//don't let the user play with these
 #if defined(ENABLE_ONLINE_PREFS)
 	onlinePrefs = new OnlinePrefs(notebook);
-	notebook->AddPage(onlinePrefs, _("Server Setup"));
+	notebook->AddPage(onlinePrefs, wxT("Server Setup"));
 #endif
 
 #ifdef __WXMAC__
@@ -448,53 +448,53 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-	useDefaults = new wxCheckBox(this, ID_PREF_ONLINE_DEFAULT, _("Use Defaults"));
+	useDefaults = new wxCheckBox(this, ID_PREF_ONLINE_DEFAULT, wxT("Use Defaults"));
 	useDefaults->SetValue(defaults);
 	sizer->Add(useDefaults, 0, wxTop|wxCENTER|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Upload URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Upload URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 
 	uploadURL = new wxTextCtrl(this, ID_PREF_ONLINE_URL, uplURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(uploadURL, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("HTTP POST Field:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("HTTP POST Field:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 
 	postField = new wxTextCtrl(this, ID_PREF_ONLINE_FIELD, uplPOST, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(postField, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Status RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Status RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	statusRegex = new wxTextCtrl(this, ID_PREF_ONLINE_STATUSRE, uplStatusRE, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(statusRegex, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Successful Status Message:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Successful Status Message:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	statusSuccess = new wxTextCtrl(this, ID_PREF_ONLINE_STATUSOK, uplStatOK, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(statusSuccess, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Message RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Message RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	messageRegex= new wxTextCtrl(this, ID_PREF_ONLINE_MESSAGERE, uplMsgRE, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(messageRegex, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Config File Version URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Config File Version URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	updConfigURL = new wxTextCtrl(this, ID_PREF_ONLINE_UPD_CONFIGURL, cfgUpdURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(updConfigURL, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("New Config File URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("New Config File URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	configFileURL = new wxTextCtrl(this, ID_PREF_ONLINE_UPD_CONFIGFILE, cfgFileUpdURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(configFileURL, 0, wxLEFT|wxRIGHT, 10);
 
-	sizer->Add(new wxStaticText(this, -1, _("Certificate Status Check URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
+	sizer->Add(new wxStaticText(this, -1, wxT("Certificate Status Check URL:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 	certCheckURL = new wxTextCtrl(this, ID_PREF_ONLINE_CERT_CHECK, certCheckUpdURL, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(certCheckURL, 0, wxLEFT|wxRIGHT, 10);
 
-	verifyCA = new wxCheckBox(this, ID_PREF_ONLINE_VERIFYCA, _("Verify server certificate"));
+	verifyCA = new wxCheckBox(this, ID_PREF_ONLINE_VERIFYCA, wxT("Verify server certificate"));
 	verifyCA->SetValue(uplVerifyCA);
 	sizer->Add(verifyCA, 0, wxLEFT|wxRIGHT|wxTOP|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
 

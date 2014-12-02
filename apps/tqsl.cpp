@@ -209,6 +209,7 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	DXCC dx;
 	dx.getByEntity(dxcc);
 
+	// TRANSLATORS: this is followed by the callsign and entity name
 	wxString fmt = _("Enter the password to unlock the callsign certificate for");
 		fmt += wxT(" %hs -- %hs\n");
 		fmt += _("(This is the password you made up when you installed the callsign certificate.)");
@@ -1458,6 +1459,7 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 		if (strlen(errbuf) > 0) {
 			wxString fmt = wxT("%hs\n");
+			// TRANSLATORS: uncommon error - error in a station location, followed by the ignore message that follows.
 			fmt += _("The invalid data was ignored.");
 			wxMessageBox(wxString::Format(fmt, errbuf), _("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 		}
@@ -1765,6 +1767,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				get_certlist(callsign, dxcc, false, false, false);
 				tqsl_setLocationCallSign(loc, callsign);
 			}
+			// TRANSLATORS: filename being signed, station location and callsign added later.
 			wxString fmt = _("The file (%s) will be signed using:");
 				 fmt += wxT("\n");
 				 fmt += _("Station Location:");
