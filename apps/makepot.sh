@@ -4,4 +4,8 @@
 # That template is then merged into existing translation-specific .po
 # files, removing obsolete and adding new messages to those .po files.
 #
-xgettext -C -d tqslapp -o tqslapp.pot  -k_  -k__ -ki18narg -E  *.cpp *.h
+xgettext --c++ --default-domain=tqslapp --output=tqslapp.pot \
+	 --keyword=_  --keyword=__ --keyword=i18narg \
+	 --escape --copyright-holder="The TrustedQSL Developers" \
+	 --package-name="TQSL" --package-version="v2.1" \
+	 --add-comments="TRANSLATORS:" *.cpp *.h
