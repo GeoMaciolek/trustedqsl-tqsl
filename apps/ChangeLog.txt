@@ -3,6 +3,12 @@ TQSL changes
 
 2.1
 ----------
+When displaying the properties of a pending callsign certificate, state that
+it's pending ARRL action and suppress the fields that are always "N/A", such
+as start/end date.
+
+Remove redundant "You do not need an account" message on certificate renwals.`
+
 Support wxWidgets 2.9 and 3.0. TQSL is targeted for wxWidgets
 2.8, but some Unix variants provide 2.9 (unstable) or 3.0.
 TQSL will be updated to use wxWidgets 3.0 for the next release.

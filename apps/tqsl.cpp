@@ -2566,7 +2566,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Trim(true).Trim(false) == uplStatusSuccess) { //success
 				if (uplMessageRE.Matches(uplresult)) { //and a message
 					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
-					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n")), 0);
+					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n ")), 0);
 					if (fileType == wxT("Log")) {
 						wxLogMessage(_("%s: Log uploaded successfully with result \"%s\"!"),
 							infile.c_str(), lotwmessage.c_str());
@@ -5059,8 +5059,10 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		wxString file = flattenCallSign(wiz.callsign) + wxT(".") + wxT(TQSL_CRQ_FILE_EXT);
 		bool upload = false;
 		wxString msg = _("Do you want to upload this certificate request to LoTW now?");
+		if (!renew) {
 			msg += wxT("\n");
 			msg += _("You do not need an account on LoTW to do this.");
+		}
 		if (wxMessageBox(msg, _("Upload"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 			upload = true;
 			// Save it in the working directory
@@ -5544,7 +5546,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 		__("DXCC Entity: "),
 		__("QSO Start Date: "),
 		__("QSO End Date: "),
-		__("Key: ")
+		__("Password: ")
 	};
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
@@ -5562,6 +5564,8 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 		if (em_w > label_width) label_width = em_w;
 	}
 
+	int keyonly;
+	tqsl_getCertificateKeyOnly(cert, &keyonly);
 	wxString blob = wxT("");
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
 		wxString lbl = wxGetTranslation(wxString::FromUTF8(labels[i]));
@@ -5572,24 +5576,20 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 			if (delta < char_width) break;
 			lbl += wxT(" ");
 		}
-		blob += lbl;
-		blob += wxT("\t");
 
 		char buf[128] = "";
 		tQSL_Date date;
-		int dxcc, keyonly;
 		DXCC DXCC;
+		int dxcc;
 		long serial;
 		switch (i) {
                         case 0:
-				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
 					strncpy(buf, "N/A", sizeof buf);
 				else if (!tqsl_getCertificateNotBeforeDate(cert, &date))
 					tqsl_convertDateToText(&date, buf, sizeof buf);
 				break;
                         case 1:
-				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
 					strncpy(buf, "N/A", sizeof buf);
 				else if (!tqsl_getCertificateNotAfterDate(cert, &date))
@@ -5602,7 +5602,6 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				tqsl_getCertificateIssuerOrganizationalUnit(cert, buf, sizeof buf);
 				break;
                         case 4:
-				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly) {
 					strncpy(buf, "N/A", sizeof buf);
 				} else {
@@ -5611,7 +5610,6 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				}
 				break;
                         case 5:
-				tqsl_getCertificateKeyOnly(cert, &keyonly);
 				if (keyonly)
 					strncpy(buf, "N/A", sizeof buf);
 				else
@@ -5643,7 +5641,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 						strncpy(buf, __("None"), sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_UNENC:
-						strncpy(buf, __("Unencrypted"), sizeof buf);
+						strncpy(buf, __("None"), sizeof buf);
 						break;
                                         case TQSL_PK_TYPE_ENC:
 						strncpy(buf, __("Password protected"), sizeof buf);
@@ -5651,8 +5649,18 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				}
 				break;
 		}
-		blob += wxGetTranslation(wxString::FromUTF8(buf));
-		blob += wxT("\n");
+		if (keyonly && i == 0) {
+			blob += _("Certificate Request:");
+			blob += wxT("\t");
+			blob += _("Awaiting response from ARRL");
+			blob += wxT("\n");
+		}
+		if (!keyonly || i > 1) {
+			blob += lbl;
+			blob += wxT("\t");
+			blob += wxGetTranslation(wxString::FromUTF8(buf));
+			blob += wxT("\n");
+		}
 	}
 	delete mst;
 
