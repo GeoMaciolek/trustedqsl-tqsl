@@ -1347,24 +1347,24 @@ MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 // Return the "About" string
 //
 static wxString getAbout() {
-	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2014\nAmerican Radio Relay League\n\n");
+	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2014\nAmerican Radio Relay League\r\n\r\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
 		wxLogError(getLocalizedErrorString());
 	else
-		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
+		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\r\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
 		wxLogError(getLocalizedErrorString());
 	else
-		msg += wxString::Format(wxT("\nConfiguration data V%d.%d\n\n"), major, minor);
+		msg += wxString::Format(wxT("\r\nConfiguration data V%d.%d\r\n\r\n"), major, minor);
 	msg += wxVERSION_STRING;
 #ifdef wxUSE_UNICODE
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
-	msg+=wxString::Format(wxT("\nlibcurl V%hs\n"), LIBCURL_VERSION);
-	msg+=wxString::Format(wxT("%hs\n"), OPENSSL_VERSION_TEXT);
-	msg+=wxString::Format(wxT("zlib V%hs\n"), ZLIB_VERSION);
+	msg+=wxString::Format(wxT("\r\nlibcurl V%hs\r\n"), LIBCURL_VERSION);
+	msg+=wxString::Format(wxT("%hs\r\n"), OPENSSL_VERSION_TEXT);
+	msg+=wxString::Format(wxT("zlib V%hs\r\n"), ZLIB_VERSION);
 	msg+=wxString::Format(wxT("%hs"), DB_VERSION_STRING);
 	return msg;
 }
@@ -1398,9 +1398,9 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	}
 	file_menu->Check(tm_f_diag, true);
 	wxString about = getAbout();
-	tqslTrace(NULL, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
-	tqslTrace(NULL, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
-	tqslTrace(NULL, "Working Directory:%s\n", tQSL_BaseDir);
+	tqslTrace(NULL, "TQSL Diagnostics\r\n%s\r\n\r\n", (const char *)about.ToUTF8());
+	tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());
+	tqslTrace(NULL, "Working Directory:%s\r\n", tQSL_BaseDir);
 }
 
 static void
@@ -5349,9 +5349,11 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	warn += wxT("\n");
 	warn += _("You will NOT be able to recover it by loading a .TQ6 file.");
 	warn += wxT("\n");
-	warn += _("You WILL be able to recover it from a container (.p12) file only if you have");
+	warn += _("You WILL be able to recover it from a container (.p12) file only");
 	warn += wxT("\n");
-	warn += _("created one via the Callsign Certificate menu's 'Save Callsign Certificate' command.");
+	warn += _("if you have created one via the Callsign Certificate menu's");
+	warn += wxt("\n");
+	warn += _("'Save Callsign Certificate' command.");
 	warn += wxT("\n\n");
 	warn += _("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?");
 	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {

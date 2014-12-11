@@ -409,17 +409,23 @@ remove_db(const char *path)  {
 	    		!strncmp(ent->d_name, "__db.", 5)) {
 #endif
 				string fname = path;
+				int rstat;
 #ifdef _WIN32
 				char dname[TQSL_MAX_PATH_LEN];
 				wcstombs(dname, ent->d_name, TQSL_MAX_PATH_LEN);
 				fname = fname + "/" + dname;
 				wchar_t* wfname = utf8_to_wchar(fname.c_str());
-				_wunlink(wfname);
+				tqslTrace("remove_db", "unlinking %s", fname.c_str());
+				rstat = _wunlink(wfname);
 				free_wchar(wfname);
 #else
 				fname = fname + "/" + ent->d_name;
-				unlink(fname.c_str());
+				tqslTrace("remove_db", "unlinking %s", fname.c_str());
+				rstat = unlink(fname.c_str());
 #endif
+				if (rstat < 0) {
+					tqslTrace("remove_db", "can't unlink %s: %s", fname.c_str(), strerror(errno));
+				}
 			}
 		}
 #ifdef _WIN32
