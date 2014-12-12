@@ -2630,6 +2630,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 	curl_formfree(post);
 	curl_easy_cleanup(curlReq);
+	curlReq = NULL;
 
 	// If there's a GUI and we didn't successfully upload and weren't cancelled,
 	// ask the user if we should retry the upload.
@@ -3104,7 +3105,8 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	expInfo *ei = new expInfo;
 	ei->noGUI = noGUI;
 
-	curl_easy_cleanup(curlReq);
+	if (curlReq)
+		curl_easy_cleanup(curlReq);
 	curlReq = tqsl_curl_init("Certificate Check Log", "https://lotw.arrl.org", &curlLogFile, false);
 	get_certlist("", 0, false, false, false);
 	if (ncerts == 0) return;
@@ -3182,6 +3184,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	delete ei;
 	free_certlist();
 	curl_easy_cleanup(curlReq);
+	curlReq = NULL;
 	if (curlLogFile) {
 		fclose(curlLogFile);
 		curlLogFile = NULL;
@@ -4557,12 +4560,22 @@ QSLApp::OnInit() {
 			if (tQSL_ImportCall[0] != '\0') {
 				get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
-					int sup;
-					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {
-						if (sup) {
-							tqsl_deleteCertificate(certlist[i]);	// and delete them.
+					long serial = 0;
+					int keyonly = false;
+					tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+					if (keyonly) {
+						if (tQSL_ImportSerial != 0) {	// A full cert for this callsign was imported
+							tqsl_deleteCertificate(certlist[i]);	// so delete this key-only
 						}
+						continue;
 					}
+					if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+						continue;
+					}
+					if (serial == tQSL_ImportSerial)
+						continue;
+
+					tqsl_deleteCertificate(certlist[i]);	// not the one we just imported, so delete it
 				}
 			}
 			frame->cert_tree->Build(CERTLIST_FLAGS);
@@ -4949,12 +4962,22 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
 		get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
-			int sup;
-			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0) {
-				if (sup) {
-					tqsl_deleteCertificate(certlist[i]);	// and delete them.
+			long serial = 0;
+			int keyonly = false;
+			tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+			if (keyonly) {
+				if (tQSL_ImportSerial != 0) {	// A full cert for this callsign was imported
+					tqsl_deleteCertificate(certlist[i]);	// so delete this key-only
 				}
+				continue;
 			}
+			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+				continue;
+			}
+			if (serial == tQSL_ImportSerial)
+				continue;
+
+			tqsl_deleteCertificate(certlist[i]);	// not the one we just imported, so delete it
 		}
 	}
 	cert_tree->Build(CERTLIST_FLAGS);
@@ -5352,7 +5375,7 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	warn += _("You WILL be able to recover it from a container (.p12) file only");
 	warn += wxT("\n");
 	warn += _("if you have created one via the Callsign Certificate menu's");
-	warn += wxt("\n");
+	warn += wxT("\n");
 	warn += _("'Save Callsign Certificate' command.");
 	warn += wxT("\n\n");
 	warn += _("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?");
