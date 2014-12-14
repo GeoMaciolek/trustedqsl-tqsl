@@ -4519,7 +4519,7 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 	while ((ent = wreaddir(dir)) != NULL) {
 		if (ent->d_name[0] == '.')
 			continue;
-		if (wcsstr(ent->d_name, L".save"))
+		if (wcsstr(ent->d_name, L".save") || wcsstr(ent->d_name, L".new"))
 			continue;
 		char dname[TQSL_MAX_PATH_LEN];
 		wcstombs(dname, ent->d_name, TQSL_MAX_PATH_LEN);
@@ -4528,7 +4528,7 @@ tqsl_make_key_list(vector< map<string, string> > & keys) {
 	while ((ent = readdir(dir)) != NULL) {
 		if (ent->d_name[0] == '.')
 			continue;
-		if (strstr(ent->d_name, ".save"))
+		if (strstr(ent->d_name, ".save") || strstr(ent->d_name, ".new"))
 			continue;
 		string filename = path + "/" + ent->d_name;
 #endif
