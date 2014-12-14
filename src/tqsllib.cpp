@@ -42,7 +42,6 @@ DLLEXPORTDATA const char *tQSL_BaseDir = 0;
 DLLEXPORTDATA char tQSL_ErrorFile[256];
 DLLEXPORTDATA char tQSL_CustomError[256];
 DLLEXPORTDATA char tQSL_ImportCall[256];
-DLLEXPORTDATA long tQSL_ImportSerial = 0;
 DLLEXPORTDATA FILE* tQSL_DiagFile = 0;
 
 #define TQSL_OID_BASE "1.3.6.1.4.1.12348.1."

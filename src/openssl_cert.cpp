@@ -349,7 +349,6 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *, vo
 	 * the callback says so.
 	 */
 	tQSL_ImportCall[0] = '\0';
-	tQSL_ImportSerial = 0;
 	stat = (*(handler->func))(data, cert, cb, userdata);
 	X509_free(cert);
 	if (stat) {
@@ -3903,7 +3902,6 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 		// Subject contains a call sign (probably a user cert)
 		callsign = value;
 		strncpy(tQSL_ImportCall, callsign.c_str(), sizeof(tQSL_ImportCall));
-		tQSL_ImportSerial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 		subjid = string("  ") + value;
 		tm = X509_get_notAfter(cert);
 		if (tm) {
@@ -4385,7 +4383,6 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		return rval;
 	}
 	strncpy(tQSL_ImportCall, aro, sizeof tQSL_ImportCall);
-	tQSL_ImportSerial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 	if (!tqsl_make_key_path(aro, path, sizeof path)) {
 		tqslTrace("tqsl_find_matching_key", "key path err %d", tQSL_Error);
 		goto end_nokey;

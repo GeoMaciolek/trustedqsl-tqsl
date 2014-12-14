@@ -4560,22 +4560,11 @@ QSLApp::OnInit() {
 			if (tQSL_ImportCall[0] != '\0') {
 				get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
-					long serial = 0;
-					int keyonly = false;
-					tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
-					if (keyonly) {
-						if (tQSL_ImportSerial != 0) {	// A full cert for this callsign was imported
-							tqsl_deleteCertificate(certlist[i]);	// so delete this key-only
-						}
-						continue;
-					}
-					if (tqsl_getCertificateSerial(certlist[i], &serial)) {
-						continue;
-					}
-					if (serial == tQSL_ImportSerial)
-						continue;
-
-					tqsl_deleteCertificate(certlist[i]);	// not the one we just imported, so delete it
+					int sup, exp;
+					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
+						tqsl_deleteCertificate(certlist[i]);
+					else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
+						tqsl_deleteCertificate(certlist[i]);
 				}
 			}
 			frame->cert_tree->Build(CERTLIST_FLAGS);
@@ -4962,22 +4951,11 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
 		get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
-			long serial = 0;
-			int keyonly = false;
-			tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
-			if (keyonly) {
-				if (tQSL_ImportSerial != 0) {	// A full cert for this callsign was imported
-					tqsl_deleteCertificate(certlist[i]);	// so delete this key-only
-				}
-				continue;
-			}
-			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
-				continue;
-			}
-			if (serial == tQSL_ImportSerial)
-				continue;
-
-			tqsl_deleteCertificate(certlist[i]);	// not the one we just imported, so delete it
+			int sup, exp;
+			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
+				tqsl_deleteCertificate(certlist[i]);
+			else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
+				tqsl_deleteCertificate(certlist[i]);
 		}
 	}
 	cert_tree->Build(CERTLIST_FLAGS);
