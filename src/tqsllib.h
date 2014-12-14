@@ -156,6 +156,8 @@ DLLEXPORTDATA extern char tQSL_CustomError[256];
 DLLEXPORTDATA extern int tQSL_Errno;
 /// Callsign used in import - used for missing public key error
 DLLEXPORTDATA extern char tQSL_ImportCall[256];
+/// Serial number of recent certificate import
+DLLEXPORTDATA extern long tQSL_ImportSerial;
 // Diagnostic log file
 DLLEXPORTDATA extern FILE* tQSL_DiagFile;
 

@@ -4560,6 +4560,19 @@ QSLApp::OnInit() {
 			if (tQSL_ImportCall[0] != '\0') {
 				get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
+					long serial = 0;
+					int keyonly = false;
+					tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+					if (keyonly) {
+						if (tQSL_ImportSerial != 0) {		// A full cert for this was imported
+							tqsl_deleteCertificate(certlist[i]);
+						}
+						continue;
+					}
+					if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+						continue;
+					}
+					// This is not the one we just imported
 					int sup, exp;
 					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
 						tqsl_deleteCertificate(certlist[i]);
@@ -4951,6 +4964,19 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
 		get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
+			long serial = 0;
+			int keyonly = false;
+			tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+			if (keyonly) {
+				if (tQSL_ImportSerial != 0) {		// A full cert for this was imported
+					tqsl_deleteCertificate(certlist[i]);
+				}
+				continue;
+			}
+			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+				continue;
+			}
+			// This is not the one we just imported
 			int sup, exp;
 			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
 				tqsl_deleteCertificate(certlist[i]);
@@ -5370,6 +5396,13 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 				pending = rest;
 			wxConfig::Get()->Write(wxT("RequestPending"), pending);
 		}
+		int keyonly, sup, exp;
+		long serial;
+		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
+		tqsl_getCertificateSerial(data->getCert(), &serial);
+		tqsl_isCertificateExpired(data->getCert(), &exp);
+		tqsl_isCertificateSuperceded(data->getCert(), &sup);
+		tqslTrace("MyFrame::OnCertDelete", "About to delete cert for callsign %s, serial %ld, keyonly %d, superceded %d, expired %d", buf, serial, keyonly, sup, exp);
 		if (tqsl_deleteCertificate(data->getCert()))
 			wxLogError(getLocalizedErrorString());
 		cert_tree->Build(CERTLIST_FLAGS);

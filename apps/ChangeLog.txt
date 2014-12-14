@@ -4,7 +4,7 @@ TQSL changes
 2.1
 ----------
 When importing a new callsign certificate, delete any existing pending
-callsign certificate requests, as well as any other callsign certificates
+callsign certificate requests, as well as any expired callsign certificates
 for that call sign.
 
 When displaying the properties of a pending callsign certificate, state that
