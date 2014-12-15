@@ -757,10 +757,16 @@ tqsl_isCertificateExpired(tQSL_Cert cert, int *status) {
 	tqslTrace("tqsl_isCertificateExpired");
 	if (tqsl_init())
 		return 1;
-	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), true)) {
+	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), false)) {
 		tqslTrace("tqsl_isCertificateExpired", "arg error cert=0x%lx status=0x%lx", cert, status);
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
+	}
+
+	int keyonly;
+	if (tqsl_getCertificateKeyOnly(cert, &keyonly) == 0 && keyonly) {
+		*status = false;
+		return 0;
 	}
 
 	long serial = 0;
@@ -809,10 +815,16 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 	tqslTrace("tqsl_isCertificateSuperceded");
 	if (tqsl_init())
 		return 1;
-	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), true)) {
+	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), false)) {
 		tqslTrace("tqsl_isCertificateSuperceded", "arg error cert=0x%lx, status=0x%lx", cert, status);
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
+	}
+
+	int keyonly;
+	if (tqsl_getCertificateKeyOnly(cert, &keyonly) == 0 && keyonly) {
+		*status = false;
+		return 0;
 	}
 
 	long serial = 0;

@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+Update tqsl_isCertificateExpired and tqsl_isCertificateSuperceded to
+work properly with key-only certificates.
+
 Add tqsllib tracing information to the diagnostic log, making that
 information more detailed and more likely to be useful for debugging
 TQSL errors.
