@@ -681,7 +681,12 @@ check_tqsl_error(int rval) {
 	tqslTrace("check_tqsl_error", "rval=%d", rval);
 	strncpy(msg, getLocalizedErrorString().ToUTF8(), sizeof msg);
 	tqslTrace("check_tqsl_error", "msg=%s", msg);
-	throw TQSLException(msg);
+	try {
+		throw TQSLException(msg);
+	} 
+	catch(TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
+	}
 }
 
 static tQSL_Cert *certlist = 0;
