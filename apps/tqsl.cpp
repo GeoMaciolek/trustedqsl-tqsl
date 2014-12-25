@@ -677,16 +677,11 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	char msg[500];
 	tqslTrace("check_tqsl_error", "rval=%d", rval);
+	char msg[500];
 	strncpy(msg, getLocalizedErrorString().ToUTF8(), sizeof msg);
-	tqslTrace("check_tqsl_error", "msg=%s", msg);
-	try {
-		throw TQSLException(msg);
-	} 
-	catch(TQSLException& x) {
-		wxLogError(wxT("%hs"), x.what());
-	}
+        tqslTrace("check_tqsl_error", "msg=%s", msg);
+	wxLogError(wxT("%hs"), msg);
 }
 
 static tQSL_Cert *certlist = 0;
@@ -2573,20 +2568,20 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
 					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n ")), 0);
 					if (fileType == wxT("Log")) {
-						wxLogMessage(_("%s: Log uploaded successfully with result \"%s\"!"),
+						wxLogMessage(_("%s: Log uploaded successfully with result:\n\n%s"),
 							infile.c_str(), lotwmessage.c_str());
 						wxLogMessage(_("After reading this message, you may close this program."));
 
 					} else {
-						wxLogMessage(_("%s uploaded with result \"%s\"!"),
+						wxLogMessage(_("%s uploaded with result:\n\n%s"),
 							fileType.c_str(), lotwmessage.c_str());
 					}
 				} else { // no message we could find
 					if (fileType == wxT("Log")) {
-						wxLogMessage(_("%s: Log uploaded successfully!"), infile.c_str());
+						wxLogMessage(_("%s: Log uploaded successfully"), infile.c_str());
 						wxLogMessage(_("After reading this message, you may close this program."));
 					} else {
-						wxLogMessage(_("%s uploaded successfully!"), fileType.c_str());
+						wxLogMessage(_("%s uploaded successfully"), fileType.c_str());
 					}
 				}
 
@@ -2597,7 +2592,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 						infile.c_str(), fileType.c_str(), uplMessageRE.GetMatch(uplresult, 1).c_str());
 
 				} else { // no message we could find
-					wxLogMessage(_("%s: %s upload was rejected!"), infile.c_str(), fileType.c_str());
+					wxLogMessage(_("%s: %s upload was rejected"), infile.c_str(), fileType.c_str());
 				}
 
 				retval = TQSL_EXIT_REJECTED;
@@ -3272,7 +3267,7 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 
 	if (!ri->newProgram && !ri->newConfig) {
 		if (!ri->silent && !ri->noGUI) {
-			wxString fmt = _("Your system is up to date!");
+			wxString fmt = _("Your system is up to date");
 			fmt += wxT("\n");
 			fmt += _("TQSL Version %hs and Configuration Version %s");
 			fmt += wxT("\n");

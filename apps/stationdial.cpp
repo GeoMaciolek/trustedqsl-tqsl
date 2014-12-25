@@ -82,9 +82,8 @@ static void
 check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
-	char err[256];
-	strncpy(err, getLocalizedErrorString().ToUTF8(), sizeof err);
-	throw TQSLException(err);
+	wxString serr = getLocalizedErrorString();
+        wxLogError(serr);
 }
 
 static bool
