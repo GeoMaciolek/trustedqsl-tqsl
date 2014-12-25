@@ -271,11 +271,11 @@ needed.
  
  Download and extract to C:\ (will make a new folder):
 	http://curl.haxx.se/download.html
-	"curl-7.31.0.tar.gz"
+	"curl-7.39.0.tar.gz"
 	
  The below comes from winbuild\BUILD.WINDOWS
  
-	In your developer command prompt, 'cd \curl-7.31.0\winbuild'
+	In your developer command prompt, 'cd \curl-7.39.0\winbuild'
 	'nmake -f Makefile.vc mode=static ENABLE_WINSSL=yes'
 	
 	Verify that a folder called

@@ -3,6 +3,8 @@ TQSL changes
 
 2.1
 ----------
+Clean up certificate upload messages.
+
 When importing a new callsign certificate, delete any existing pending
 callsign certificate requests, as well as any expired callsign certificates
 for that call sign.

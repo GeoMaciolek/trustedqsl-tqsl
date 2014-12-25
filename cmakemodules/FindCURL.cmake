@@ -24,6 +24,7 @@
 FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
 	#for windows, there has to be a better way
 	"C:\\curl\\include\\"
+	"C:\\curl-7.39.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi\\include"
 	"C:\\curl-7.38.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi\\include"
 	"C:\\curl-7.31.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi-spnego\\include"
 	"C:\\curl-7.29.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi-spnego\\include"
@@ -44,6 +45,7 @@ FIND_LIBRARY(CURL_LIBRARY NAMES
     libcurl_imp
     curllib_static
 	PATHS
+	"C:\\curl-7.39.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi\\lib"
 	"C:\\curl-7.38.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi\\lib"
 	"C:\\curl-7.31.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi-spnego\\lib"
 	"C:\\curl-7.29.0\\builds\\libcurl-vc-x86-release-static-ssl-static-ipv6-sspi-spnego\\lib"
