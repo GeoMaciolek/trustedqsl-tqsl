@@ -3,6 +3,8 @@ TQSL changes
 
 2.1
 ----------
+Fix duplicated message text when duplicates are detected.
+
 Clean up certificate upload messages.
 
 When importing a new callsign certificate, delete any existing pending

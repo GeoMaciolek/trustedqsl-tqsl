@@ -485,12 +485,12 @@ DupesDialog::DupesDialog(wxWindow *parent, int qso_count, int dupes, int action)
 		wxString fmt1 = _("This log contains %d QSO(s) which appear "
 			"to have already been signed for upload to LoTW, and "
 			"one QSO which is new.");
-			fmt += wxT("\n\n");
-		  	fmt += _("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).");
-			fmt += wxT("\n");
-		    	fmt += _("Click 'Cancel' to abandon processing this log file.");
-			fmt += wxT("\n");
-		    	fmt += _("Click 'Allow duplicates' to re-process this log "
+			fmt1 += wxT("\n\n");
+		  	fmt1 += _("Click 'Exclude duplicates' to sign normally, without the duplicate QSOs (Recommended).");
+			fmt1 += wxT("\n");
+		    	fmt1 += _("Click 'Cancel' to abandon processing this log file.");
+			fmt1 += wxT("\n");
+		    	fmt1 += _("Click 'Allow duplicates' to re-process this log "
 		    	"while allowing duplicate QSOs.");
 		if (newq == 1) {
 			message = wxString::Format(fmt1, dupes);
@@ -681,7 +681,7 @@ check_tqsl_error(int rval) {
 	char msg[500];
 	strncpy(msg, getLocalizedErrorString().ToUTF8(), sizeof msg);
         tqslTrace("check_tqsl_error", "msg=%s", msg);
-	wxLogError(wxT("%hs"), msg);
+	throw TQSLException(msg);
 }
 
 static tQSL_Cert *certlist = 0;
@@ -1446,59 +1446,66 @@ void
 MyFrame::EditStationLocation(wxCommandEvent& event) {
 	tqslTrace("MyFrame::EditStationLocation");
 	if (event.GetId() == tl_EditLoc) {
-		LocTreeItemData *data = reinterpret_cast<LocTreeItemData *>(loc_tree->GetItemData(loc_tree->GetSelection()));
-		tQSL_Location loc;
-		wxString selname;
-		char errbuf[512];
+		try {
+			LocTreeItemData *data = reinterpret_cast<LocTreeItemData *>(loc_tree->GetItemData(loc_tree->GetSelection()));
+			tQSL_Location loc;
+			wxString selname;
+			char errbuf[512];
 
-		if (data == NULL) return;
+			if (data == NULL) return;
 
-		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
-		if (!verify_cert(loc, true))	// Check if there is a certificate before editing
+			check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
+			if (!verify_cert(loc, true))	// Check if there is a certificate before editing
+				return;
+			check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+			if (strlen(errbuf) > 0) {
+				wxString fmt = wxT("%hs\n");
+				// TRANSLATORS: uncommon error - error in a station location, followed by the ignore message that follows.
+				fmt += _("The invalid data was ignored.");
+				wxMessageBox(wxString::Format(fmt, errbuf), _("Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			}
+			char loccall[512];
+			check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+			selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()), data->getLocname());
+			check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+			loc_tree->Build();
+			LocTreeReset();
 			return;
-		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
-		if (strlen(errbuf) > 0) {
-			wxString fmt = wxT("%hs\n");
-			// TRANSLATORS: uncommon error - error in a station location, followed by the ignore message that follows.
-			fmt += _("The invalid data was ignored.");
-			wxMessageBox(wxString::Format(fmt, errbuf), _("Location data error"), wxOK|wxICON_EXCLAMATION, this);
 		}
-		char loccall[512];
-		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-		selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()), data->getLocname());
-		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
-		loc_tree->Build();
-		LocTreeReset();
-		return;
+		catch(TQSLException& x) {
+			wxLogError(wxT("%hs"), x.what());
+			return;
+		}
 	}
 	// How many locations are there?
-       	int n;
-       	tQSL_Location loc;
-       	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-       	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
-	if (n == 1) {
-		// There's only one station location. Use that and don't prompt.
-		char deflocn[512];
-		check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
-		wxString locname = wxString::FromUTF8(deflocn);
-		tqsl_endStationLocationCapture(&loc);
-		check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
-		char loccall[512];
-		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-		run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, locname.c_str()), locname);
-		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
-		loc_tree->Build();
-		LocTreeReset();
-		return;
-	}
-	// More than one location or not selected in the tree. Prompt for the location.
 	try {
+       		int n;
+       		tQSL_Location loc;
+       		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+       		check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
+		if (n == 1) {
+			// There's only one station location. Use that and don't prompt.
+			char deflocn[512];
+			check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
+			wxString locname = wxString::FromUTF8(deflocn);
+			tqsl_endStationLocationCapture(&loc);
+			check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
+			char loccall[512];
+			check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+			run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, locname.c_str()), locname);
+			check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+			loc_tree->Build();
+			LocTreeReset();
+			return;
+		}
+		// More than one location or not selected in the tree. Prompt for the location.
 		SelectStationLocation(_("Edit Station Location"), _("Close"), true);
 		loc_tree->Build();
 		LocTreeReset();
 	}
 	catch(TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
+		return;
 	}
 }
 
@@ -1709,11 +1716,16 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
-	if (defcall) {
-		strncpy(callsign, defcall, sizeof callsign);
-		check_tqsl_error(tqsl_setLocationCallSign(loc, callsign));
-	} else {
-		check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
+	try {
+		if (defcall) {
+			strncpy(callsign, defcall, sizeof callsign);
+			check_tqsl_error(tqsl_setLocationCallSign(loc, callsign));
+		} else {
+			check_tqsl_error(tqsl_getLocationCallSign(loc, callsign, sizeof callsign));
+		}
+	} catch(TQSLException &x) {
+		wxLogError(wxT("%hs"), x.what());
+		return TQSL_EXIT_LIB_ERROR;
 	}
 	tqsl_getLocationDXCCEntity(loc, &dxcc);
 	DXCC dx;
@@ -2690,35 +2702,53 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 			case wxID_CANCEL:	// User hit Close
 				return 0;
 			case wxID_APPLY:	// User hit New
-				check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-				selname = run_station_wizard(this, loc, help, false);
-				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
-				frame->loc_tree->Build();
-				break;
+				try {
+					check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+					selname = run_station_wizard(this, loc, help, false);
+					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+					frame->loc_tree->Build();
+					break;
+				}
+				catch(TQSLException& x) {
+					wxLogError(wxT("%s"), x.what());
+					return 0;
+				}
 			case wxID_MORE:		// User hit Edit
-		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
-				if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
+				try {
+		   			check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
+					if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
+						check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+						if (strlen(errbuf) > 0) {
+							wxString fmt = wxT("%hs\n");
+							fmt += _("The invalid data was ignored.");
+							wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+						}
+						char loccall[512];
+						check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+						selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
+						check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+					}
+					break;
+				} 
+				catch(TQSLException& x) {
+					wxLogError(wxT("%hs"), x.what());
+					return 0;
+				}
+			case wxID_OK:		// User hit OK
+				try {
+		   			check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
 					check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
 					if (strlen(errbuf) > 0) {
 						wxString fmt = wxT("%hs\n");
-						fmt += _("The invalid data was ignored.");
+						fmt += _("This should be corrected before signing a log file.");
 						wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
-					char loccall[512];
-					check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-					selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, station_dial.Selected().c_str()), station_dial.Selected());
-					check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+					break;
+				} 
+				catch(TQSLException& x) {
+					wxLogError(wxT("%hs"), x.what());
+					return 0;
 				}
-				break;
-			case wxID_OK:		// User hit OK
-		   		check_tqsl_error(tqsl_getStationLocation(&loc, station_dial.Selected().ToUTF8()));
-				check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
-				if (strlen(errbuf) > 0) {
-					wxString fmt = wxT("%hs\n");
-					fmt += _("This should be corrected before signing a log file.");
-					wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
-				}
-				break;
 		}
 	} while (rval != wxID_OK);
 	return loc;
@@ -5492,18 +5522,23 @@ void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {
 	wxString selname;
 	char errbuf[512];
 
-	check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
-	if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
-		check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
-		if (strlen(errbuf) > 0) {
-			wxString fmt = wxT("%hs\n");
-			fmt += _("The invalid data was ignored.");
-			wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+	try {
+		check_tqsl_error(tqsl_getStationLocation(&loc, data->getLocname().ToUTF8()));
+		if (verify_cert(loc, true)) {	// Check if there is a certificate before editing
+			check_tqsl_error(tqsl_getStationLocationErrors(loc, errbuf, sizeof(errbuf)));
+			if (strlen(errbuf) > 0) {
+				wxString fmt = wxT("%hs\n");
+				fmt += _("The invalid data was ignored.");
+				wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
+			}
+			char loccall[512];
+			check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
+			selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()));
+			check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 		}
-		char loccall[512];
-		check_tqsl_error(tqsl_getLocationCallSign(loc, loccall, sizeof loccall));
-		selname = run_station_wizard(this, loc, help, true, wxString::Format(_("Edit Station Location : %hs - %s"), loccall, data->getLocname().c_str()));
-		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+	}
+	catch(TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
 	}
 	loc_tree->Build();
 	LocTreeReset();
@@ -5751,7 +5786,13 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 				 "AU_STATE", __("State: ") };
 
 	tQSL_Location loc;
-	check_tqsl_error(tqsl_getStationLocation(&loc, locname.ToUTF8()));
+	try {
+		check_tqsl_error(tqsl_getStationLocation(&loc, locname.ToUTF8()));
+	}
+	catch(TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
+		return;
+	}
 
 	wxBoxSizer *topsizer = new wxBoxSizer(wxVERTICAL);
 
