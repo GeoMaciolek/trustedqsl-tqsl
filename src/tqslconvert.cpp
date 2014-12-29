@@ -17,6 +17,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <signal.h>
 #include "tqslerrno.h"
 #include <cstring>
 #include <string>
@@ -436,7 +437,21 @@ remove_db(const char *path)  {
 	}
 	return;
 }
-//
+// Callback method for the dbenv->failchk() call
+// Used to determine if the given pid/tid is
+// alive.
+static int isalive(DB_ENV *env, pid_t pid, db_threadid_t tid, uint32_t flags) {
+	int alive = 0;
+
+	if (pid == getpid()) {
+		alive = 1;
+	} else if (kill(pid, 0) == 0) {
+		alive = 1;
+	} else if (errno == EPERM) {
+		alive = 1;
+	}
+	return alive;
+}
 // Open the duplicates database
 
 static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
@@ -492,38 +507,53 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 
  reopen:
 
+	// Try to open the database
 	while (true) {
-		// Create the database environment handle
-		if ((dbret = db_env_create(&conv->dbenv, 0))) {
-			// can't make env handle
-			tqslTrace("open_db", "db_env_create error %s", db_strerror(dbret));
-			dbinit_cleanup = true;
-			goto dbinit_end;
-		}
-		if (conv->errfile) {
-			conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
+		if (!conv->dbenv) {
+			// Create the database environment handle
+			if ((dbret = db_env_create(&conv->dbenv, 0))) {
+				// can't make env handle
+				tqslTrace("open_db", "db_env_create error %s", db_strerror(dbret));
+				dbinit_cleanup = true;
+				goto dbinit_end;
+			}
+			if (conv->errfile) {
+				conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
+				conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
+			}
+			// Enable stale lock removal
+			conv->dbenv->set_thread_count(conv->dbenv, 8);
+			conv->dbenv->set_isalive(conv->dbenv, isalive);
+
 			conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
+
+			// Log files default to 10 Mb each. We don't need nearly that much.
+			if (conv->dbenv->set_lg_max)
+				conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
+			// Allocate additional locking resources - some have run out with
+			// the default 1000 locks
+			if (conv->dbenv->set_lk_max_locks)
+				conv->dbenv->set_lk_max_locks(conv->dbenv, 20000);
+			if (conv->dbenv->set_lk_max_objects)
+				conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
 		}
-		// Log files default to 10 Mb each. We don't need nearly that much.
-		if (conv->dbenv->set_lg_max)
-			conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
-		// Allocate additional locking resources - some have run out with
-		// the default 1000 locks
-		if (conv->dbenv->set_lk_max_locks)
-			conv->dbenv->set_lk_max_locks(conv->dbenv, 20000);
-		if (conv->dbenv->set_lk_max_objects)
-			conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
+		// Now open the database
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
 			tqslTrace("open_db", "dbenv->open %s error %s", conv->dbpath, db_strerror(dbret));
 			if (conv->errfile)
 				fprintf(conv->errfile, "opening DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
+			// Can't open the database - maybe try private?
+			if ((dbret == EACCES || dbret == EROFS) || (dbret == EINVAL && errno == dbret)) {
+				if (!(envflags && DB_PRIVATE)) {
+					envflags |= DB_PRIVATE;
+					continue;
+				}
+			}
 			// can't open environment - try to delete it and try again.
 			if (!triedRemove) {
-				conv->dbenv->close(conv->dbenv, 0);
-				// Create a new environment to remove the dross
-				if (!(dbret = db_env_create(&conv->dbenv, 0))) {
-					conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
-				}
+				// Remove the dross
+				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
+				conv->dbenv = NULL;
 				triedRemove = true;
 				if (conv->errfile)
 					fprintf(conv->errfile, "About to retry after removing the environment\n");
@@ -534,9 +564,11 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			if (conv->errfile) {
 				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
 			}
-			if (errno == EINVAL) {  // Something really wrong with the DB
+			if (dbret == EINVAL || errno == EINVAL) {  // Something really wrong with the DB
 						// Remove it and try again.
 				tqslTrace("open_db", "EINVAL. Removing db");
+				conv->dbenv->close(conv->dbenv, 0);
+				conv->dbenv = NULL;
 				remove_db(fixedpath.c_str());
 				continue;
 			}
@@ -546,9 +578,16 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			conv->dbenv = NULL;	// this can't be recovered
 			dbinit_cleanup = true;
 			tqslTrace("open_db", "can't fix. abandoning.");
+			remove_db(fixedpath.c_str());
 			goto dbinit_end;
 		}
 		break;		// Opened OK.
+	}
+
+	// Stale lock removal
+	dbret = conv->dbenv->failchk(conv->dbenv, 0);
+	if (dbret) {
+		fprintf(conv->errfile, "lock removal for DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 	}
 
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {

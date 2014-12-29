@@ -3,6 +3,10 @@ TQSLLIB changes
 
 2.5
 ---
+Improve duplicates database open error handling. More cases should
+be automatically corrected when the database is improperly formatted
+or corrupted.
+
 Update tqsl_isCertificateExpired and tqsl_isCertificateSuperceded to
 work properly with key-only certificates.
 
