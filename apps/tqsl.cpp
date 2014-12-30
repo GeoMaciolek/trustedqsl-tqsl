@@ -2729,7 +2729,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 						check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 					}
 					break;
-				} 
+				}
 				catch(TQSLException& x) {
 					wxLogError(wxT("%hs"), x.what());
 					return 0;
@@ -2744,7 +2744,7 @@ MyFrame::SelectStationLocation(const wxString& title, const wxString& okLabel, b
 						wxMessageBox(wxString::Format(fmt, errbuf), _("Station Location data error"), wxOK|wxICON_EXCLAMATION, this);
 					}
 					break;
-				} 
+				}
 				catch(TQSLException& x) {
 					wxLogError(wxT("%hs"), x.what());
 					return 0;

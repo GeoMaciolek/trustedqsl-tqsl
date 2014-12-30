@@ -437,6 +437,7 @@ remove_db(const char *path)  {
 	}
 	return;
 }
+#ifndef _WIN32
 // Callback method for the dbenv->failchk() call
 // Used to determine if the given pid/tid is
 // alive.
@@ -452,6 +453,8 @@ static int isalive(DB_ENV *env, pid_t pid, db_threadid_t tid, uint32_t flags) {
 	}
 	return alive;
 }
+#endif // _WIN32
+
 // Open the duplicates database
 
 static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
@@ -523,8 +526,9 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			}
 			// Enable stale lock removal
 			conv->dbenv->set_thread_count(conv->dbenv, 8);
+#ifndef _WIN32
 			conv->dbenv->set_isalive(conv->dbenv, isalive);
-
+#endif
 			conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
 
 			// Log files default to 10 Mb each. We don't need nearly that much.
