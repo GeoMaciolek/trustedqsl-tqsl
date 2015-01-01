@@ -2571,22 +2571,35 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 		wxRegEx uplStatusRE(uplStatus);
 		wxRegEx uplMessageRE(uplMessage);
-		wxRegEx stripSpacesRE(wxT("\\n +"));
+		wxRegEx stripSpacesRE(wxT("\\n +"), wxRE_ADVANCED);
+		wxRegEx certUploadRE(wxT("(Started processing.*For QSOs not after: [0-9\\-: <none>]*)\\n(.*Your certificate request contains error.*)"), wxRE_ADVANCED);
 
 		if (uplStatusRE.Matches(uplresult)) { //we can make sense of the error
 			//sometimes has leading/trailing spaces
 			if (uplStatusRE.GetMatch(uplresult, 1).Lower().Trim(true).Trim(false) == uplStatusSuccess) { //success
 				if (uplMessageRE.Matches(uplresult)) { //and a message
 					wxString lotwmessage = uplMessageRE.GetMatch(uplresult, 1).Trim(true).Trim(false);
-					stripSpacesRE.Replace(&lotwmessage, wxString(wxT("\\n ")), 0);
+					stripSpacesRE.ReplaceAll(&lotwmessage, wxString(wxT("\n")));
 					if (fileType == wxT("Log")) {
 						wxLogMessage(_("%s: Log uploaded successfully with result:\n\n%s"),
 							infile.c_str(), lotwmessage.c_str());
 						wxLogMessage(_("After reading this message, you may close this program."));
 
+						retval = TQSL_EXIT_SUCCESS;
 					} else {
-						wxLogMessage(_("%s uploaded with result:\n\n%s"),
-							fileType.c_str(), lotwmessage.c_str());
+						// Split the log message when there is an error detected
+						if (certUploadRE.Matches(lotwmessage)) {
+							wxString log = certUploadRE.GetMatch(lotwmessage, 1).Trim(true).Trim(false);
+							wxString err = certUploadRE.GetMatch(lotwmessage, 2).Trim(true).Trim(false);
+							wxLogMessage(_("%s uploaded with result:\n\n%s"),
+								fileType.c_str(), log.c_str());
+							wxMessageBox(wxString::Format(_("%s Uploaded with result:\n\n%s"), fileType.c_str(), err.c_str()), _("Error"), wxOK|wxICON_EXCLAMATION);
+							retval = TQSL_EXIT_REJECTED;
+						} else {
+							wxLogMessage(_("%s uploaded with result:\n\n%s"),
+								fileType.c_str(), lotwmessage.c_str());
+							retval = TQSL_EXIT_SUCCESS;
+						}
 					}
 				} else { // no message we could find
 					if (fileType == wxT("Log")) {
@@ -2595,9 +2608,9 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 					} else {
 						wxLogMessage(_("%s uploaded successfully"), fileType.c_str());
 					}
+					retval = TQSL_EXIT_SUCCESS;
 				}
 
-				retval = TQSL_EXIT_SUCCESS;
 			} else { // failure, but site is working
 				if (uplMessageRE.Matches(uplresult)) { //and a message
 					wxLogMessage(_("%s: %s upload was rejected with result \"%s\""),
@@ -5078,6 +5091,22 @@ void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
 	req = 0;
 }
 
+// Delete an abandoned/failed cert request
+static void deleteRequest(const char *callsign, int dxccEntity) {
+	free_certlist();
+	tqsl_selectCertificates(&certlist, &ncerts, callsign, dxccEntity, 0, 0, TQSL_SELECT_CERT_WITHKEYS);
+	int ko;
+	for (int i = 0; i < ncerts; i ++) {
+		if (!tqsl_getCertificateKeyOnly(certlist[i], &ko) && ko) {
+			if (tqsl_deleteCertificate(certlist[i])) {
+				wxLogError(getLocalizedErrorString());
+			}
+			return;
+		}
+	}
+	return;
+}
+
 void MyFrame::CRQWizard(wxCommandEvent& event) {
 	tqslTrace("MyFrame::CRQWizard");
 	char renew = (req != 0) ? 1 : 0;
@@ -5137,6 +5166,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 			if (file.IsEmpty()) {
 				wxLogMessage(_("Request cancelled"));
+				deleteRequest(wiz.callsign.ToUTF8(), wiz.dxcc);
 				return;
 			}
 		}
@@ -5168,13 +5198,16 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 					wxLogError(getLocalizedErrorString());
+					deleteRequest(req.callSign, req.dxccEntity);
 					return;
 				}
 				if (tqsl_beginSigning(req.signer, unipwd, NULL, call)) {
+					deleteRequest(req.callSign, req.dxccEntity);
 					break;
 				}
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 					wxLogError(getLocalizedErrorString());
+					deleteRequest(req.callSign, req.dxccEntity);
 					return;
 				}
 			}
@@ -5188,6 +5221,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 			char m[500];
 			strncpy(m, msg.ToUTF8(), sizeof m);
 			wxMessageBox(wxString::Format(_("Error creating callsign certificate request: %hs"), m), _("Error creating Callsign Certificate Request"), wxOK|wxICON_EXCLAMATION);
+			deleteRequest(req.callSign, req.dxccEntity);
 			return;
 		}
 		if (upload) {
@@ -5200,6 +5234,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 #endif
 			if (!in) {
 				wxLogError(_("Error opening certificate request file %s: %hs"), file.c_str(), strerror(errno));
+				deleteRequest(req.callSign, req.dxccEntity);
 			} else {
 				string contents;
 				in.seekg(0, ios::end);
@@ -5214,6 +5249,7 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				if (retval != 0) {
 					wxLogError(_("Your certificate request did not upload properly"));
 					wxLogError(_("Please try again."));
+					deleteRequest(req.callSign, req.dxccEntity);
 				}
 			}
 		} else {

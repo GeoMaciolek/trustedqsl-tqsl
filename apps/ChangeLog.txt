@@ -3,6 +3,10 @@ TQSL changes
 
 2.1
 ----------
+When a certificate upload fails, pop up an error dialog with the details and
+delete the pending certificate request. Also delete the pending certificate
+request when the user cancels the creation.
+
 Fix duplicated message text when duplicates are detected.
 
 Clean up certificate upload messages.
