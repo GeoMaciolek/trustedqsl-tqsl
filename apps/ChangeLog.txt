@@ -3,6 +3,10 @@ TQSL changes
 
 2.1
 ----------
+When unable to create a callsign certificate request, TQSL would be unable to
+report the reason, displaying "NO ERROR". Provide the appropriate error
+message under this circumstance.
+
 When a certificate upload fails, pop up an error dialog with the details and
 delete the pending certificate request. Also delete the pending certificate
 request when the user cancels the creation.

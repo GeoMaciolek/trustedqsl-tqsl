@@ -5214,9 +5214,9 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 		}
 		req.renew = renew ? 1 : 0;
 		if (tqsl_createCertRequest(file.ToUTF8(), &req, 0, 0)) {
+			wxString msg = getLocalizedErrorString();
 			if (req.signer)
 				tqsl_endSigning(req.signer);
-			wxString msg = getLocalizedErrorString();
 			wxLogError(msg);
 			char m[500];
 			strncpy(m, msg.ToUTF8(), sizeof m);
