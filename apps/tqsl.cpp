@@ -3112,7 +3112,7 @@ class expInfo {
 	}
 	bool noGUI;
 	int days;
-	int index;
+	tQSL_Cert cert;
 	char* callsign;
 	bool error;
 	wxString errorText;
@@ -3145,14 +3145,18 @@ report_error(expInfo **eip) {
 // Check for certificates expiring in the next nn (default 60) days
 void
 MyFrame::DoCheckExpiringCerts(bool noGUI) {
+	tQSL_Cert *clist;
+	int nc;
+
+	tqsl_selectCertificates(&clist, &nc, 0, 0, 0, 0, 0);
+	if (nc == 0) return;
+
 	expInfo *ei = new expInfo;
 	ei->noGUI = noGUI;
 
 	if (curlReq)
 		curl_easy_cleanup(curlReq);
 	curlReq = tqsl_curl_init("Certificate Check Log", "https://lotw.arrl.org", &curlLogFile, false);
-	get_certlist("", 0, false, false, false);
-	if (ncerts == 0) return;
 
 	long expireDays = DEFAULT_CERT_WARNING;
 	wxConfig::Get()->Read(wxT("CertWarnDays"), &expireDays);
@@ -3165,22 +3169,23 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	d.day = tm->tm_mday;
 	tQSL_Date exp;
 
-	for (int i = 0; i < ncerts; i ++) {
+	for (int i = 0; i < nc; i ++) {
+		ei->cert = clist[i];
 		char callsign[64];
-		if (tqsl_getCertificateCallSign(certlist[i], callsign, sizeof callsign)) {
+		if (tqsl_getCertificateCallSign(clist[i], callsign, sizeof callsign)) {
 			report_error(&ei);
 			continue;
 		}
 		int keyonly, pending;
 		keyonly = pending = 0;
-		if (tqsl_getCertificateKeyOnly(certlist[i], &keyonly)) {
+		if (tqsl_getCertificateKeyOnly(clist[i], &keyonly)) {
 			report_error(&ei);
 			continue;
 		}
 		long serial = 0;
 		wxString status = wxString(wxT("KeyOnly"));
 		if (!keyonly) {
-			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+			if (tqsl_getCertificateSerial(clist[i], &serial)) {
 				report_error(&ei);
 				continue;
 			}
@@ -3203,13 +3208,13 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 		if (keyonly || pending)
 			continue;
 
-		if (0 == tqsl_getCertificateNotAfterDate(certlist[i], &exp)) {
+		if (0 == tqsl_getCertificateNotAfterDate(clist[i], &exp)) {
 			int days_left;
 			tqsl_subtractDates(&d, &exp, &days_left);
 			if (days_left < expireDays) {
 				ei->days = days_left;
 				ei->callsign = strdup(callsign);
-				ei->index = i;
+				ei->cert = clist[i];
 				// Send the result back to the main thread
 				wxCommandEvent* event = new wxCommandEvent(wxEVT_COMMAND_MENU_SELECTED, bg_expiring);
 				event->SetClientData(ei);
@@ -3225,7 +3230,9 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 	}
 	ei->mutex->Unlock();
 	delete ei;
-	free_certlist();
+	if (clist) {
+		tqsl_freeCertificateList(clist, nc);
+	}
 	curl_easy_cleanup(curlReq);
 	curlReq = NULL;
 	if (curlLogFile) {
@@ -3255,7 +3262,7 @@ MyFrame::OnExpiredCertFound(wxCommandEvent& event) {
 		if (wxMessageBox(wxString::Format(fmt, ei->callsign, ei->days),
 					_("Certificate Expiring"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 				// Select the certificate in the tree
-				cert_tree->SelectCert(certlist[ei->index]);
+				cert_tree->SelectCert(ei->cert);
 				// Then start the renewal
 				wxCommandEvent dummy;
 				CRQWizardRenew(dummy);

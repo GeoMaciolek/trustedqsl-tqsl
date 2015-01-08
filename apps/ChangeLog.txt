@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Correct defect that could cause TQSL to crash when a user issues a callsign
+certificate renewal request at startup.
+
 When unable to create a callsign certificate request, TQSL would be unable to
 report the reason, displaying "NO ERROR". Provide the appropriate error
 message under this circumstance.
