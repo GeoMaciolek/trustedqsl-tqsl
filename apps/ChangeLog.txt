@@ -3,6 +3,12 @@ TQSL changes
 
 2.1
 ----------
+Close TQ8 file when signing a log file. This fixes a defect that would cause
+the file to remain open until TQSL exited.
+
+Attempt to recover from "Self-Signed" certificate errors caused by some
+misguided "anti-virus" products.
+
 Correct defect that could cause TQSL to crash when a user issues a callsign
 certificate renewal request at startup.
 

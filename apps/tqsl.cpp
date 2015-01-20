@@ -142,7 +142,8 @@ static wxString origCommandLine = wxT("");
 static MyFrame *frame = 0;
 
 static char unipwd[64];
-bool quiet = false;
+static bool quiet = false;
+static bool verifyCA = true;
 
 static int lock_db(bool wait);
 static void unlock_db(void);
@@ -902,7 +903,7 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	delete updateLocker;
 	if (!noGUI) {
 		wxString val = logwin->GetValue();
-		val.Replace(_("Checking for TQSL updates..."), wxT(""));
+		val.Replace(_("Checking for TQSL updates...\n"), wxT(""));
 		logwin->SetValue(val);		// Clear the checking message
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
@@ -2199,9 +2200,16 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 			if (gzwrite(gout, output.ToUTF8(), output.size()) <= 0) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
+				gzclose(gout);
 				return TQSL_EXIT_LIB_ERROR;
 			}
 			if (gzflush(gout, Z_FINISH) != Z_OK) {
+				tqsl_converterRollBack(conv);
+				tqsl_endConverter(&conv);
+				gzclose(gout);
+				return TQSL_EXIT_LIB_ERROR;
+			}
+			if (gzclose(gout) != Z_OK) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
 				return TQSL_EXIT_LIB_ERROR;
@@ -2211,6 +2219,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 			if (out.fail()) {
 				tqsl_converterRollBack(conv);
 				tqsl_endConverter(&conv);
+				out.close();
 				return TQSL_EXIT_LIB_ERROR;
 			}
 			out.close();
@@ -2467,6 +2476,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	} else if (pType == wxT("Socks5")) {
 		curl_easy_setopt(curlReq, CURLOPT_PROXYTYPE, CURLPROXY_SOCKS5);
 	}
+	curl_easy_setopt(curlReq, CURLOPT_SSL_VERIFYPEER, verifyCA);
 	return curlReq;
 }
 
@@ -2628,7 +2638,12 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 		}
 
 	} else {
-		tqslTrace(NULL, "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		tqslTrace("MyFrame::UploadFile", "cURL Error: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		if (retval == CURLE_SSL_CACERT && verifyCA) {
+			tqslTrace("MyFrame::UploadFile", "cURL SSL Certificate error - disabling verify and retry");
+			verifyCA = false;
+			goto retry_upload;
+		}
 		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
 			wxLogMessage(_("%s: Unable to upload - either your Internet connection is down or LoTW is unreachable."), infile.c_str());
 			wxLogMessage(_("Please try uploading the %s later."), fileType.c_str());
@@ -2981,6 +2996,7 @@ void MyFrame::UpdateConfigFile() {
 	tqslTrace("MyFrame::UpdateConfigFile()");
 	wxConfig* config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	wxString newConfigURL = config->Read(wxT("NewConfigURL"), DEFAULT_CONFIG_FILE_URL);
+ retry:
 	curlReq = tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.ToUTF8(), &curlLogFile, false);
 
 	ConfigFileDownloadHandler handler(40000);
@@ -3030,7 +3046,12 @@ void MyFrame::UpdateConfigFile() {
 			wxMessageBox(_("Configuration file successfully updated"), _("Update Completed"), wxOK|wxICON_INFORMATION, this);
 		}
 	} else {
-		tqslTrace(NULL, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		tqslTrace("MyFrame::UpdateConfigFile", "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		if (retval == CURLE_SSL_CACERT && verifyCA) {
+			tqslTrace("MyFrame::UpdateConfigFile", "cURL SSL Certificate error - disabling verify and retry");
+			verifyCA = false;
+			goto retry;
+		}
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during config file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
@@ -3085,15 +3106,12 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 			ret = true;
 		}
 	} else {
-		tqslTrace(NULL, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		tqslTrace("MyFrame::CheckCertStatus", "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during cert status check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
-		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT ||
-		    retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR ||
-		    retval == CURLE_SSL_CONNECT_ERROR) {
-			// Network is down, unknown status
-			return ret;
+		if (retval == CURLE_SSL_CACERT && verifyCA) {
+			verifyCA = false;
 		}
 	}
 	return ret;
@@ -3156,6 +3174,7 @@ MyFrame::DoCheckExpiringCerts(bool noGUI) {
 
 	if (curlReq)
 		curl_easy_cleanup(curlReq);
+
 	curlReq = tqsl_curl_init("Certificate Check Log", "https://lotw.arrl.org", &curlLogFile, false);
 
 	long expireDays = DEFAULT_CERT_WARNING;
@@ -3368,6 +3387,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 
 	wxString updateURL = config->Read(wxT("UpdateURL"), DEFAULT_UPD_URL);
 
+ retry:
 	curlReq = tqsl_curl_init("Version Check Log", (const char*)updateURL.ToUTF8(), &curlLogFile, true);
 
 	//the following allow us to analyze our file
@@ -3448,7 +3468,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 				ri->url = ourPlatURL;
 			}
 		} else {
-			tqslTrace(NULL, "cURL Error during config file version check: %d : %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
+			tqslTrace("MyFrame::DoCheckForUpdates", "cURL Error during config file version check: %d : %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
 			if (curlLogFile) {
 				fprintf(curlLogFile, "cURL Error during config file version check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 			}
@@ -3479,7 +3499,12 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 			}
 		}
 	} else {
-		tqslTrace(NULL, "cURL Error during program revision check: %d: %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
+		tqslTrace("MyFrame::DoCheckForUpdates", "cURL Error during program revision check: %d: %s (%s)\n", retval, curl_easy_strerror((CURLcode)retval), errorbuf);
+		if (retval == CURLE_SSL_CACERT && verifyCA) {
+			tqslTrace("MyFrame::DoCheckForUpdates", "cURL SSL Certificate error - disabling verify and retry");
+			verifyCA = false;
+			goto retry;
+		}
 		if (curlLogFile) {
 			fprintf(curlLogFile, "cURL Error during program revision check: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
 		}
@@ -3788,6 +3813,7 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
 
 	for (unsigned i = 0; i < groupNames.GetCount(); i++) {
 		tqslTrace("TQSLConfig::SaveSettings", "Group %d setting path %s", i, S(groupNames[i]));
+		int err;
 		config->SetPath(groupNames[i]);
 		more = config->GetFirstEntry(name, context);
 		while (more) {
@@ -3796,29 +3822,41 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
 				more = config->GetNextEntry(name, context);
 				continue;
 			}
-			gzprintf(*out, "<Setting name=\"%s\" group=\"%s\" ", (const char *)name.ToUTF8(), (const char *)groupNames[i].ToUTF8());
+			if (gzprintf(*out, "<Setting name=\"%s\" group=\"%s\" ",
+					(const char *)name.ToUTF8(), (const char *)groupNames[i].ToUTF8()) < 0) {
+				throw TQSLException(gzerror(*out, &err));
+			}
 			wxConfigBase::EntryType etype = config->GetEntryType(name);
 			switch (etype) {
                                 case wxConfigBase::Type_Unknown:
                                 case wxConfigBase::Type_String:
 					config->Read(name, &svalue);
 					urlEncode(svalue);
-					gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n", (const char *)svalue.ToUTF8());
+					if (gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n",
+							(const char *)svalue.ToUTF8()) < 0) {
+						throw TQSLException(gzerror(*out, &err));
+					}
 					break;
                                 case wxConfigBase::Type_Boolean:
 					config->Read(name, &bvalue);
-					if (bvalue)
-						gzprintf(*out, "Type=\"Bool\" Value=\"true\"/>\n");
-					else
-						gzprintf(*out, "Type=\"Bool\" Value=\"false\"/>\n");
-					break;
+					if (bvalue) {
+						if (gzprintf(*out, "Type=\"Bool\" Value=\"true\"/>\n") < 0) {
+							throw TQSLException(gzerror(*out, &err));
+						}
+					} else {
+						if (gzprintf(*out, "Type=\"Bool\" Value=\"false\"/>\n") < 0) {
+							throw TQSLException(gzerror(*out, &err));
+						}
+					} break;
                                 case wxConfigBase::Type_Integer:
 					config->Read(name, &lvalue);
-					gzprintf(*out, "Type=\"Int\" Value=\"%d\"/>\n", lvalue);
+					if (gzprintf(*out, "Type=\"Int\" Value=\"%d\"/>\n", lvalue) < 0)
+						throw TQSLException(gzerror(*out, &err));
 					break;
                                 case wxConfigBase::Type_Float:
 					config->Read(name, &dvalue);
-					gzprintf(*out, "Type=\"Float\" Value=\"%f\"/>\n", dvalue);
+					if (gzprintf(*out, "Type=\"Float\" Value=\"%f\"/>\n", dvalue) < 0)
+						throw TQSLException(gzerror(*out, &err));
 					break;
 			}
 			more = config->GetNextEntry(name, context);
@@ -3834,6 +3872,8 @@ void
 MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 	tqslTrace("MyFrame::BackupConfig", "filename=%s, quiet=%d", S(filename), quiet);
 	int i;
+	gzFile out = 0;
+	int err;
 	wxBusyCursor wait;
 #ifdef _WIN32
 	int fd = -1;
@@ -3847,7 +3887,6 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		lock_db(true);
 	}
 	try {
-		gzFile out = 0;
 #ifdef _WIN32
 		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
 		fd = _wopen(lfn, _O_WRONLY |_O_CREAT|_O_BINARY, _S_IREAD|_S_IWRITE);
@@ -3863,10 +3902,14 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		}
 		TQSLConfig* conf = new TQSLConfig();
 
-		gzprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TQSL_Configuration>\n");
-		gzprintf(out, "<!-- Warning! If you directly edit this file, you are responsible for its content.\n");
-		gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you. -->\n");
-		gzprintf(out, "<Certificates>\n");
+		if (gzprintf(out, "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<TQSL_Configuration>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
+		if (gzprintf(out, "<!-- Warning! If you directly edit this file, you are responsible for its content.\n") < 0)
+			throw TQSLException(gzerror(out, &err));
+		if (gzprintf(out, "The ARRL's LoTW Help Desk will be unable to assist you. -->\n") < 0)
+			throw TQSLException(gzerror(out, &err));
+		if (gzprintf(out, "<Certificates>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 
 		if (!quiet) {
 			wxLogMessage(_("Saving callsign certificates"));
@@ -3879,19 +3922,25 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		// Save root certificates
 		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "root"));
 		for (i = 0; i < ncerts; i++) {
-			gzprintf(out, "<RootCert>\n");
+			if (gzprintf(out, "<RootCert>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
-			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "</RootCert>\n");
+			if (gzwrite(out, buf, strlen(buf)) < 0)
+				throw TQSLException(gzerror(out, &err));
+			if (gzprintf(out, "</RootCert>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 		}
 		tqsl_freeCertificateList(certlist, ncerts);
 		// Save CA certificates
 		check_tqsl_error(tqsl_selectCACertificates(&certlist, &ncerts, "authorities"));
 		for (i = 0; i < ncerts; i++) {
-			gzprintf(out, "<CACert>\n");
+			if (gzprintf(out, "<CACert>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 			check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
-			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "</CACert>\n");
+			if (gzwrite(out, buf, strlen(buf)) < 0)
+				throw TQSLException(gzerror(out, &err));
+			if (gzprintf(out, "</CACert>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 		}
 		tqsl_freeCertificateList(certlist, ncerts);
 		tqsl_selectCertificates(&certlist, &ncerts, 0, 0, 0, 0, TQSL_SELECT_CERT_WITHKEYS | TQSL_SELECT_CERT_EXPIRED | TQSL_SELECT_CERT_SUPERCEDED);
@@ -3909,21 +3958,30 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			if (!quiet) {
 				wxLogMessage(_("\tSaving callsign certificate for %hs"), callsign);
 			}
-			gzprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%d\">\n", callsign, dxcc, serial);
+			if (gzprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%d\">\n", callsign, dxcc, serial) < 0)
+				throw TQSLException(gzerror(out, &err));
 			if (!keyonly) {
-				gzprintf(out, "<SignedCert>\n");
+				if (gzprintf(out, "<SignedCert>\n") < 0)
+					throw TQSLException(gzerror(out, &err));
 				check_tqsl_error(tqsl_getCertificateEncoded(certlist[i], buf, sizeof buf));
-				gzwrite(out, buf, strlen(buf));
-				gzprintf(out, "</SignedCert>\n");
+				if (gzwrite(out, buf, strlen(buf)) < 0)
+					throw TQSLException(gzerror(out, &err));
+				if (gzprintf(out, "</SignedCert>\n") < 0)
+					throw TQSLException(gzerror(out, &err));
 			}
-			gzprintf(out, "<PrivateKey>\n");
+			if (gzprintf(out, "<PrivateKey>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
-			gzwrite(out, buf, strlen(buf));
-			gzprintf(out, "</PrivateKey>\n</UserCert>\n");
+			if (gzwrite(out, buf, strlen(buf)) < 0)
+				throw TQSLException(gzerror(out, &err));
+			if (gzprintf(out, "</PrivateKey>\n</UserCert>\n") < 0)
+				throw TQSLException(gzerror(out, &err));
 		}
 		tqsl_freeCertificateList(certlist, ncerts);
-		gzprintf(out, "</Certificates>\n");
-		gzprintf(out, "<Locations>\n");
+		if (gzprintf(out, "</Certificates>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
+		if (gzprintf(out, "<Locations>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 		if (!quiet) {
 			wxLogMessage(_("Saving Station Locations"));
 		} else {
@@ -3936,7 +3994,8 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		if (sdbuf)
 			parser->ParseLocations(&out, sdbuf);
 		check_tqsl_error(tqsl_freeStationDataEnc(sdbuf));
-		gzprintf(out, "</Locations>\n");
+		if (gzprintf(out, "</Locations>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 
 		if (!quiet) {
 			wxLogMessage(_("Saving TQSL Preferences"));
@@ -3944,10 +4003,12 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			tqslTrace("MyFrame::BackupConfig", "Saving TQSL Preferences - out=0x%lx", reinterpret_cast<void *>(out));
 		}
 		wxSafeYield(frame);
-		gzprintf(out, "<TQSLSettings>\n");
+		if (gzprintf(out, "<TQSLSettings>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 		conf->SaveSettings(&out, wxT("tqslapp"));
 		tqslTrace("MyFrame::BackupConfig", "Done with settings. out=0x%lx", reinterpret_cast<void *>(out));
-		gzprintf(out, "</TQSLSettings>\n");
+		if (gzprintf(out, "</TQSLSettings>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 
 		if (!quiet) {
 			wxLogMessage(wxT("Saving QSOs"));
@@ -3959,7 +4020,8 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		tQSL_Converter conv = 0;
 		check_tqsl_error(tqsl_beginConverter(&conv));
 		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
-		gzprintf(out, "<DupeDb>\n");
+		if (gzprintf(out, "<DupeDb>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 
 		char dupekey[256];
 		char dupedata[10];
@@ -3969,19 +4031,23 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			if (status == -1)		// End of file
 				break;
 			check_tqsl_error(status);
-			gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey);
+			if (gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey) < 0)
+				throw TQSLException(gzerror(out, &err));
 			if ((count++ % 100000) == 0) {
 				wxSafeYield(frame);
 			}
 		}
-		gzprintf(out, "</DupeDb>\n");
+		if (gzprintf(out, "</DupeDb>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
 		tqsl_converterCommit(conv);
 		tqsl_endConverter(&conv);
 		unlock_db();
 		tqslTrace("MyFrame::BackupConfig", "Dupes db saved OK");
 
-		gzprintf(out, "</TQSL_Configuration>\n");
-		gzclose(out);
+		if (gzprintf(out, "</TQSL_Configuration>\n") < 0)
+			throw TQSLException(gzerror(out, &err));
+		if (gzclose(out) != Z_OK)
+			throw TQSLException(gzerror(out, &err));
 		if (!quiet) {
 			wxLogMessage(_("Save operation complete."));
 		} else {
@@ -3989,6 +4055,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		}
 	}
 	catch(TQSLException& x) {
+		if (out) gzclose(out);
 		if (quiet) {
 			wxString errmsg = wxString::Format(_("Error performing automatic backup: %hs"), x.what());
 			wxMessageBox(errmsg, _("Backup Error"), wxOK|wxICON_EXCLAMATION);
@@ -4217,29 +4284,34 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 void
 TQSLConfig::xml_location_start(void *data, const XML_Char *name, const XML_Char **atts) {
 	TQSLConfig* parser = reinterpret_cast<TQSLConfig *> (data);
+	int err;
 
 	if (strcmp(name, "StationDataFile") == 0)
 		return;
 	if (strcmp(name, "StationData") == 0) {
 		wxString locname = wxString::FromUTF8(atts[1]);
 		urlEncode(locname);
-		gzprintf(*parser->outstr, "<Location name=\"%s\"", (const char *)locname.ToUTF8());
+		if (gzprintf(*parser->outstr, "<Location name=\"%s\"", (const char *)locname.ToUTF8()) < 0)
+			throw TQSLException(gzerror(*parser->outstr, &err));
 	}
 }
 void
 TQSLConfig::xml_location_end(void *data, const XML_Char *name) {
 	TQSLConfig* parser = reinterpret_cast<TQSLConfig *> (data);
+	int err;
 	if (strcmp(name, "StationDataFile") == 0)
 		return;
 	if (strcmp(name, "StationData") == 0) {
-		gzprintf(*parser->outstr , " />\n");
+		if (gzprintf(*parser->outstr , " />\n") < 0)
+			throw TQSLException(gzerror(*parser->outstr, &err));
 		return;
 	}
 	// Anything else is a station attribute. Add it to the definition.
 	parser->elementBody.Trim(false);
 	parser->elementBody.Trim(true);
 	urlEncode(parser->elementBody);
-	gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.ToUTF8());
+	if (gzprintf(*parser->outstr,  " %s=\"%s\"", name, (const char *)parser->elementBody.ToUTF8()) < 0)
+		throw TQSLException(gzerror(*parser->outstr, &err));
 	parser->elementBody = wxT("");
 }
 
@@ -4558,10 +4630,10 @@ QSLApp::OnInit() {
 			cerr << "Error opening diagnostic log " << diagfile.ToUTF8() << ": " << strerror(errno) << endl;
 		} else {
 			wxString about = getAbout();
-			tqslTrace(NULL, "TQSL Diagnostics\n%s\n\n", (const char *)about.ToUTF8());
-			tqslTrace(NULL, "Command Line: %s\n", (const char *)origCommandLine.ToUTF8());
+			tqslTrace(NULL, "TQSL Diagnostics\r\n%s\n\n", (const char *)about.ToUTF8());
+			tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());
 			tqsl_init();
-			tqslTrace(NULL, "Working Directory: %s\n", tQSL_BaseDir);
+			tqslTrace(NULL, "Working Directory: %s\r\n", tQSL_BaseDir);
 		}
 	}
 
