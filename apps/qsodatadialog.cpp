@@ -358,6 +358,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxHtmlHelpController *help, QSORe
 	topsizer->Fit(this);
 	topsizer->SetSizeHints(this);
 
+	SetFocus();
 	CentreOnParent();
 }
 

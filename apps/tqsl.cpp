@@ -4461,6 +4461,8 @@ QSLApp::GUIinit(bool checkUpdates, bool quiet) {
 	if (checkUpdates)
 		frame->FirstTime();
 	frame->Show(!quiet);
+	if (checkUpdates && !quiet)
+		frame->SetFocus();
 	SetTopWindow(frame);
 
 	return frame;

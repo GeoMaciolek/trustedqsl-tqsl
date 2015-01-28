@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Ensure that TQSL windows gain focus when they are initially displayed. This
+eliminates a usability issue with accessibility tools.
+
 Close TQ8 file when signing a log file. This fixes a defect that would cause
 the file to remain open until TQSL exited.
 
