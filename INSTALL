@@ -27,12 +27,12 @@ should build and install that library and its prerequisites.
 
 The TrustedQSL library depends on several other libraries:
 
-OpenSSL (http://www.openssl.org/) - OpenSSL 1.0.1e was used for TQSL 1.14.
+OpenSSL (http://www.openssl.org/) - OpenSSL 1.0.1j was used for TQSL 1.14.
 expat 1.x XML parser library (http://expat.sourceforge.net/) - expat 2.1.0
-zlib (http://zlib.net/) zlib 1.2.7
-Berkeley DB (http://www.oracle.com/technetwork/products/berkeleydb/downloads/index.html) - BDb 5.3.21
+zlib (http://zlib.net/) zlib 1.2.8
+Berkeley DB (http://www.oracle.com/technetwork/products/berkeleydb/downloads/index.html) - BDB 6.1.19
 wxWidgets (http://wxwidgets.org/downloads) - wxWidgets 2.8.12.
-curl - (http://curl.haxx.se/download.html) - curl 7.29.0
+curl - (http://curl.haxx.se/download.html) - curl 7.39.0
 
 Most Unix and unix-like workstations will have these available. For
 those systems that do not, the packages are easily built. Instructions
