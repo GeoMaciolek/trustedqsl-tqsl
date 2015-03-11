@@ -586,9 +586,10 @@ tqsl_getCabrilloField(tQSL_Cabrillo cabp, tqsl_cabrilloField *field, TQSL_CABRIL
 	fp = cab->contest->fields + cab->field_idx;
 	strncpy(field->name, fp->name, sizeof field->name);
 	if (fp->loc < 0) {  // New contest
+		// try to guess which field has the 'call-worked'
 		for (int i = 6; i < TQSL_CABRILLO_MAX_FIELDS && cab->fields[i]; i++) {
 			char *p = cab->fields[i];
-			// Simple parse: a callsign is at least 3 chars long
+			// Simple parse: a callsign is at least 4 chars long
 			// and has at least one digit and at least one letter
 			// Nothing but alphnumeric and '/' allowed.
 

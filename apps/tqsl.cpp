@@ -211,9 +211,8 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	dx.getByEntity(dxcc);
 
 	// TRANSLATORS: this is followed by the callsign and entity name
-	wxString fmt = _("Enter the password to unlock the callsign certificate for");
-		fmt += wxT(" %hs -- %hs\n");
-		fmt += _("(This is the password you made up when you installed the callsign certificate.)");
+	wxString fmt = _("Enter the password to unlock the callsign certificate for %hs -- %hs\n"
+		"(This is the password you made up when you installed the callsign certificate.)");
 	wxString message = wxString::Format(fmt, call, dx.name());
 
 	wxWindow* top = wxGetApp().GetTopWindow();
@@ -3956,7 +3955,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			}
 			check_tqsl_error(tqsl_getCertificateDXCCEntity(certlist[i], &dxcc));
 			if (!quiet) {
-				wxLogMessage(_("\tSaving callsign certificate for %hs"), callsign);
+				wxLogMessage(wxString(wxT("\t")) + _("Saving callsign certificate for %hs"), callsign);
 			}
 			if (gzprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%d\">\n", callsign, dxcc, serial) < 0)
 				throw TQSLException(gzerror(out, &err));
@@ -4110,7 +4109,7 @@ restore_user_cert(TQSLConfig* loader) {
 	}
 
 	// There is no certificate matching this callsign/entity/serial.
-	wxLogMessage(_("\tRestoring callsign certificate for %hs"), loader->callSign.c_str());
+	wxLogMessage(wxString(wxT("\t")) + _("Restoring callsign certificate for %hs"), loader->callSign.c_str());
 	wxSafeYield(frame);
 	check_tqsl_error(tqsl_importKeyPairEncoded(loader->callSign.c_str(), "user", loader->privateKey.ToUTF8(), loader->signedCert.ToUTF8()));
 }
@@ -4269,7 +4268,7 @@ TQSLConfig::xml_restore_end(void *data, const XML_Char *name) {
 		if (tqsl_mergeStationLocations(loader->locstring.ToUTF8()) != 0) {
 			char buf[500];
 			strncpy(buf, getLocalizedErrorString().ToUTF8(), sizeof buf);
-			wxLogError(wxString::Format(_("\tError importing station locations: %hs"), buf));
+			wxLogError(wxString::Format(wxString(wxT("\t")) + _("Error importing station locations: %hs"), buf));
 		}
 		tqslTrace("TQSLConfig::xml_restore_end", "Completed merging station locations");
 	} else if (strcmp(name, "TQSLSettings") == 0) {
@@ -5982,7 +5981,7 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 	wxString prompt(_("Enter the password to unlock the callsign certificate"));
 
 	if (callsign)
-	    prompt = prompt + wxT(" ") + _("for") + wxT(" ") + wxString::FromUTF8((const char *)callsign);
+	    prompt = wxString::Format(_T("Enter the password for your active %hs Callsign Certificate"), callsign);
 
 	tqslTrace("getPassword", "Probing for top window");
 	wxWindow* top = wxGetApp().GetTopWindow();
