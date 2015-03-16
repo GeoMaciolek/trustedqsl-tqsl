@@ -3262,19 +3262,22 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		bool cstat = section.getFirstElement("rootcert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata)) 
+				return 1;
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("cacert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata)) 
+				return 1;
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("usercert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata))
+				return 1;
 			cstat = section.getNextElement(cert);
 		}
 	}
