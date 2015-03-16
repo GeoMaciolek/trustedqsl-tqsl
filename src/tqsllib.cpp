@@ -171,6 +171,12 @@ tqsl_init() {
 	int wval;
 #endif
 
+#if !defined(_WIN32) && !defined(__APPLE__)
+// Work around ill-considered decision by Fedora to stop allowing
+// certificates with MD5 signatures
+	setenv("OPENSSL_ENABLE_MD5_VERIFY", "1", 0);
+#endif
+
 	/* OpenSSL API tends to change between minor version numbers, so make sure
 	 * we're using the right version */
 	long SSLver = SSLeay();
