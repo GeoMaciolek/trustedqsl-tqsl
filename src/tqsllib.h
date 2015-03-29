@@ -127,6 +127,11 @@ typedef struct {
 	char rxband[TQSL_BAND_MAX+1];		///< QSO RX band
 	char propmode[TQSL_PROPMODE_MAX+1];	///< QSO prop mode
 	char satname[TQSL_SATNAME_MAX+1];	///< QSO satellite name
+	bool callsign_set;			///< QSO specifies a call worked
+	bool mode_set;				///< QSO specifies a mode
+	bool band_set;				///< QSO specifies a band or frequency
+	bool date_set;				///< QSO specifies a date
+	bool time_set;				///< QSO specifies a time
 } TQSL_QSO_RECORD;
 
 /// Base directory for tQSL library working files.

@@ -2961,11 +2961,11 @@ DLLEXPORT const char* CALLCONVENTION
 tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *qso, int stationuid, char* signdata, int sdlen) {
 	TQSL_LOCATION *loc;
 	if (!(loc = check_loc(locp, false))) {
-		tqslTrace("tqsl_getGABBItCONTACTDaa", "loc error %d", tQSL_Error);
+		tqslTrace("tqsl_getGABBItCONTACTData", "loc error %d", tQSL_Error);
 		return 0;
 	}
 	if (make_sign_data(loc)) {
-		tqslTrace("tqsl_getGABBItCONTACTDaa", "make_sign_data error %d", tQSL_Error);
+		tqslTrace("tqsl_getGABBItCONTACTData", "make_sign_data error %d", tQSL_Error);
 		return 0;
 	}
 	XMLElement specfield;
@@ -3002,7 +3002,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 				"Unknown field in signing specification: %s", elname);
-			tqslTrace("tqsl_getGABBItCONTACTDaa", "field err %s", tQSL_CustomError);
+			tqslTrace("tqsl_getGABBItCONTACTData", "field err %s", tQSL_CustomError);
 			return 0;
 		}
 		if (value == 0 || value[0] == 0) {
@@ -3011,7 +3011,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 				string err = specfield.getElementName() + " field required by signature specification not found";
 				tQSL_Error = TQSL_CUSTOM_ERROR;
 				strncpy(tQSL_CustomError, err.c_str(), sizeof tQSL_CustomError);
-				tqslTrace("tqsl_getGABBItCONTACTDaa", "field err %s", tQSL_CustomError);
+				tqslTrace("tqsl_getGABBItCONTACTData", "field err %s", tQSL_CustomError);
 				return 0;
 			}
 		} else {
@@ -3262,14 +3262,14 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		bool cstat = section.getFirstElement("rootcert", cert);
 		while (cstat) {
 			foundcerts = true;
-			if (tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata)) 
+			if (tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata))
 				return 1;
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("cacert", cert);
 		while (cstat) {
 			foundcerts = true;
-			if (tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata)) 
+			if (tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata))
 				return 1;
 			cstat = section.getNextElement(cert);
 		}

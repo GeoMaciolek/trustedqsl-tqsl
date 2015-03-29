@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+When processing an ADIF QSO, check that mode, band, date, and time
+are all provided. Reject QSOs which do not have the required data.
+
 Improve duplicates database open error handling. More cases should
 be automatically corrected when the database is improperly formatted
 or corrupted.

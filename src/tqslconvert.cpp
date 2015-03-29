@@ -828,14 +828,18 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				if (!strcasecmp(result.name, "eor"))
 					break;
 				if (!strcasecmp(result.name, "CALL") && result.data) {
+					conv->rec.callsign_set = true;
 					strncpy(conv->rec.callsign, reinterpret_cast<char *>(result.data), sizeof conv->rec.callsign);
 				} else if (!strcasecmp(result.name, "BAND") && result.data) {
-					strncpy(conv->rec.band, reinterpret_cast<char *>(result.data), sizeof conv->rec.band);
+					conv->rec.band_set = true;
+				  	strncpy(conv->rec.band, reinterpret_cast<char *>(result.data), sizeof conv->rec.band);
 				} else if (!strcasecmp(result.name, "MODE") && result.data) {
+					conv->rec.mode_set = true;
 					strncpy(conv->rec.mode, reinterpret_cast<char *>(result.data), sizeof conv->rec.mode);
 				} else if (!strcasecmp(result.name, "SUBMODE") && result.data) {
 					strncpy(conv->rec.submode, reinterpret_cast<char *>(result.data), sizeof conv->rec.submode);
 				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
+					conv->rec.band_set = true;
 					strncpy(conv->rec.freq, reinterpret_cast<char *>(result.data), sizeof conv->rec.freq);
 					if (atof(conv->rec.freq) == 0.0)
 						conv->rec.freq[0] = '\0';
@@ -850,10 +854,12 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				} else if (!strcasecmp(result.name, "PROP_MODE") && result.data) {
 					strncpy(conv->rec.propmode, reinterpret_cast<char *>(result.data), sizeof conv->rec.propmode);
 				} else if (!strcasecmp(result.name, "QSO_DATE") && result.data) {
+					conv->rec.date_set = true;
 					cstat = tqsl_initDate(&(conv->rec.date), (const char *)result.data);
 					if (cstat)
 						saveErr = tQSL_Error;
 				} else if (!strcasecmp(result.name, "TIME_ON") && result.data) {
+					conv->rec.time_set = true;
 					cstat = tqsl_initTime(&(conv->rec.time), (const char *)result.data);
 					if (cstat)
 						saveErr = tQSL_Error;
@@ -893,18 +899,24 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				if (stat == TQSL_CABRILLO_NO_ERROR || stat == TQSL_CABRILLO_EOR) {
 					// Field found
 					if (!strcasecmp(field.name, "CALL")) {
+						conv->rec.callsign_set = true;
 						strncpy(conv->rec.callsign, field.value, sizeof conv->rec.callsign);
 					} else if (!strcasecmp(field.name, "BAND")) {
+						conv->rec.band_set = true;
 						strncpy(conv->rec.band, field.value, sizeof conv->rec.band);
 					} else if (!strcasecmp(field.name, "MODE")) {
+						conv->rec.mode_set = true;
 						strncpy(conv->rec.mode, field.value, sizeof conv->rec.mode);
 					} else if (!strcasecmp(field.name, "FREQ")) {
+						conv->rec.band_set = true;
 						strncpy(conv->rec.freq, field.value, sizeof conv->rec.freq);
 					} else if (!strcasecmp(field.name, "QSO_DATE")) {
+						conv->rec.date_set = true;
 						cstat = tqsl_initDate(&(conv->rec.date), field.value);
 						if (cstat)
 							saveErr = tQSL_Error;
 					} else if (!strcasecmp(field.name, "TIME_ON")) {
+						conv->rec.time_set = true;
 						cstat = tqsl_initTime(&(conv->rec.time), field.value);
 						if (cstat)
 							saveErr = tQSL_Error;
@@ -927,6 +939,38 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 			return 0;
 		}
 	}
+	// Does the QSO have the basic required elements?
+	if (!conv->rec.callsign_set) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid contact - QSO does not specify a Callsign");
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (!conv->rec.band_set) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid contact - QSO does not specify a band or frequency");
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (!conv->rec.mode_set) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid contact - QSO does not specify a mode");
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (!conv->rec.date_set) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid contact - QSO does not specify a date");
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+	if (!conv->rec.time_set) {
+		conv->rec_done = true;
+		snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Invalid contact - QSO does not specify a time");
+		tQSL_Error = TQSL_CUSTOM_ERROR;
+		return 0;
+	}
+
 	// Check QSO date against user-specified date range.
 	if (tqsl_isDateValid(&(conv->rec.date))) {
 		if (tqsl_isDateValid(&(conv->start)) && tqsl_compareDates(&(conv->rec.date), &(conv->start)) < 0) {
