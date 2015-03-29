@@ -915,7 +915,11 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	: wxFrame(0, -1, title, wxPoint(x, y), wxSize(w, h)), locale(loca) {
 	_quiet = quiet;
 
+#ifdef __WXMAC__
 	DocPaths docpaths(wxT("tqslapp"));
+#else
+	DocPaths docpaths(wxT("tqsl.app"));
+#endif
 	wxBitmap savebm(save_xpm);
 	wxBitmap uploadbm(upload_xpm);
 	wxBitmap upload_disbm(upload_dis_xpm);
@@ -2444,7 +2448,11 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	//set up options
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
 
+#ifdef __WXMAC__
 	DocPaths docpaths(wxT("tqslapp"));
+#else
+	DocPaths docpaths(wxT("tqsl.app"));
+#endif
 	docpaths.Add(wxString::FromUTF8(tQSL_BaseDir));
 #ifdef CONFDIR
 	docpaths.Add(wxT(CONFDIR));
@@ -2460,6 +2468,8 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 		char caBundle[256];
 		strncpy(caBundle, caBundlePath.ToUTF8(), sizeof caBundle);
 		curl_easy_setopt(curlReq, CURLOPT_CAINFO, caBundle);
+	} else {
+		tqslTrace("tqsl_curl_init", "Can't find ca-bundle.crt in the docpaths!");
 	}
 	// Get the proxy configuration and pass it to cURL
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
