@@ -155,20 +155,10 @@ getLocalizedErrorString_v(int err) {
 		return buf;
 	}
 	if (err == TQSL_OPENSSL_ERROR) {
-		// No visibility into the tqsllib openssl context
+		// Get error details from tqsllib as we have
+		// no visibility into the tqsllib openssl context
 		const char *msg = tqsl_getErrorString();
 		return wxString::FromUTF8(msg);
-		// Otherwise
-#ifdef tqsltranslate
-		unsigned long openssl_err;
-		openssl_err = ERR_get_error();
-
-		strncpy(buf, "OpenSSL error: ", sizeof buf);
-		if (openssl_err)
-			return wxString::Format(_("OpenSSL error: %s"), ERR_error_string(openssl_err);
-		else
-			return wxString::Format("(OpenSSL error: [error code not available]");
-#endif
 	}
 	if (err == TQSL_ADIF_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
