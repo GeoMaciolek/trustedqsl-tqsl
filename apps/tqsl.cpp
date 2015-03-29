@@ -2136,6 +2136,18 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	return TQSL_EXIT_SUCCESS;
 }
 
+// Errors from tqsllib that indicate bad QSO data.
+// Add here so they're picked up for translation.
+#ifdef tqslconvert
+static const char* qsoerrs[] = {
+	__("Invalid contact - QSO does not specify a Callsign"),
+	__("Invalid contact - QSO does not specify a band or frequency"),
+	__("Invalid contact - QSO does not specify a mode"),
+	__("Invalid contact - QSO does not specify a date"),
+	__("Invalid contact - QSO does not specify a time")
+}
+#endif
+
 int
 MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxString& outfile,
 	bool compressed, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char *password, const char *defcall) {
@@ -4594,7 +4606,7 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
+		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
