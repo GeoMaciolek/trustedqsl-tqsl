@@ -67,7 +67,7 @@ class QSODataDialog : public wxDialog  {
 	bool SetMode(const wxString&);
 	bool WriteQSOFile(QSORecordList& recs, const char *fname);
 	QSORecord rec;
-	
+
 	virtual bool TransferDataToWindow();
 	virtual bool TransferDataFromWindow();
 
@@ -99,7 +99,7 @@ class QSODataDialog : public wxDialog  {
 	bool _isend;
 	wxString _filename;
 	wxHtmlHelpController *_help;
- 	int _newrec;
+	int _newrec;
 };
 
 #endif

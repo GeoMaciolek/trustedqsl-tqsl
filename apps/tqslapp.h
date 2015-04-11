@@ -113,7 +113,6 @@ class MyFrame : public wxFrame {
 	int ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& converter, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password = NULL, const char* defcall = NULL);
 	int UploadLogFile(tQSL_Location loc, const wxString& infile, bool compress = false, bool suppressdate = false, tQSL_Date* startdate = NULL, tQSL_Date* enddate = NULL, int action = TQSL_ACTION_ASK, const char* password = NULL, const char *defcall = NULL);
 	int UploadFile(const wxString& infile, const char* filename, int numrecs, void *content, size_t clen, const wxString& fileType);
-	void WriteQSOFile(QSORecordList& recs, const char *fname = 0, bool force = false);
 
 	void CheckForUpdates(wxCommandEvent&);
 	void DoCheckForUpdates(bool quiet = false, bool noGUI = false);

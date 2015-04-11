@@ -1513,85 +1513,6 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 	}
 }
 
-void
-MyFrame::WriteQSOFile(QSORecordList& recs, const char *fname, bool force) {
-	tqslTrace("MyFrame::writeQSOFile", "fname=%s, force=%d", fname, force);
-	if (recs.empty()) {
-		wxLogWarning(_("No QSO records"));
-		return;
-	}
-	wxString s_fname;
-	if (fname)
-		s_fname = wxString::FromUTF8(fname);
-	if (s_fname == wxT("") || !force) {
-		wxString path, basename, type;
-		wxFileName::SplitPath(s_fname, &path, &basename, &type);
-		if (type != wxT(""))
-			basename += wxT(".") + type;
-		if (path == wxT(""))
-			path = wxConfig::Get()->Read(wxT("QSODataPath"), wxT(""));
-		s_fname = wxFileSelector(_("Save File"), path, basename, wxT("adi"),
-#if !defined(__APPLE__) && !defined(_WIN32)
-			_("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
-#else
-			_("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
-#endif
-			wxFD_SAVE|wxFD_OVERWRITE_PROMPT, this);
-		if (s_fname == wxT(""))
-			return;
-		wxConfig::Get()->Write(wxT("QSODataPath"), wxPathOnly(s_fname));
-	}
-#ifdef _WIN32
-	wchar_t* lfn = utf8_to_wchar(s_fname.ToUTF8());
-	ofstream out(lfn, ios::out|ios::trunc|ios::binary);
-	free_wchar(lfn);
-#else
-	ofstream out(s_fname.ToUTF8(), ios::out|ios::trunc|ios::binary);
-#endif
-	if (!out.is_open())
-		return;
-	unsigned char buf[256];
-	QSORecordList::iterator it;
-	for (it = recs.begin(); it != recs.end(); it++) {
-		wxString dtstr;
-		tqsl_adifMakeField("CALL", 0, (const unsigned char*)(const char *)it->_call.ToUTF8(), -1, buf, sizeof buf);
-		out << buf << endl;
-		tqsl_adifMakeField("BAND", 0, (const unsigned char*)(const char *)it->_band.ToUTF8(), -1, buf, sizeof buf);
-		out << "   " << buf << endl;
-		tqsl_adifMakeField("MODE", 0, (const unsigned char*)(const char *)it->_mode.ToUTF8(), -1, buf, sizeof buf);
-		out << "   " << buf << endl;
-		dtstr.Printf(wxT("%04d%02d%02d"), it->_date.year, it->_date.month, it->_date.day);
-		tqsl_adifMakeField("QSO_DATE", 0, (const unsigned char*)(const char *)dtstr.ToUTF8(), -1, buf, sizeof buf);
-		out << "   " << buf << endl;
-		dtstr.Printf(wxT("%02d%02d%02d"), it->_time.hour, it->_time.minute, it->_time.second);
-		tqsl_adifMakeField("TIME_ON", 0, (const unsigned char*)(const char *)dtstr.ToUTF8(), -1, buf, sizeof buf);
-		out << "   " << buf << endl;
-		if (it->_freq != wxT("")) {
-			tqsl_adifMakeField("FREQ", 0, (const unsigned char*)(const char *)it->_freq.ToUTF8(), -1, buf, sizeof buf);
-			out << "   " << buf << endl;
-		}
-		if (it->_rxband != wxT("")) {
-			tqsl_adifMakeField("BAND_RX", 0, (const unsigned char*)(const char *)it->_rxband.ToUTF8(), -1, buf, sizeof buf);
-			out << "   " << buf << endl;
-		}
-		if (it->_rxfreq != wxT("")) {
-			tqsl_adifMakeField("FREQ_RX", 0, (const unsigned char*)(const char *)it->_rxfreq.ToUTF8(), -1, buf, sizeof buf);
-			out << "   " << buf << endl;
-		}
-		if (it->_propmode != wxT("")) {
-			tqsl_adifMakeField("PROP_MODE", 0, (const unsigned char*)(const char *)it->_propmode.ToUTF8(), -1, buf, sizeof buf);
-			out << "   " << buf << endl;
-		}
-		if (it->_satellite != wxT("")) {
-			tqsl_adifMakeField("SAT_NAME", 0, (const unsigned char*)(const char *)it->_satellite.ToUTF8(), -1, buf, sizeof buf);
-			out << "   " << buf << endl;
-		}
-		out << "<EOR>" << endl;
-	}
-	out.close();
-	wxLogMessage(_("Wrote %d QSO records to %s"), static_cast<int>(recs.size()), s_fname.c_str());
-}
-
 static tqsl_adifFieldDefinitions fielddefs[] = {
         { "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_CALLSIGN_MAX, 0, 0, 0, 0 },
         { "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, 0, 0 },
@@ -1614,19 +1535,8 @@ adif_alloc(size_t n) {
 	return new unsigned char[n];
 }
 
-void
-MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("MyFrame::EditQSOData");
-	QSORecordList recs;
-	wxString file = wxFileSelector(_("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
-#if !defined(__APPLE__) && !defined(_WIN32)
-			_("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
-#else
-			_("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
-#endif
-			wxFD_OPEN|wxFD_FILE_MUST_EXIST, this);
-	if (file == wxT(""))
-		return;
+static void
+loadQSOfile(wxString& file, QSORecordList& recs) {
 	init_modes();
 	tqsl_adifFieldResults field;
 	TQSL_ADIF_GET_FIELD_ERROR stat;
@@ -1685,10 +1595,27 @@ MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
 		}
 	} while (stat == TQSL_ADIF_GET_FIELD_SUCCESS || stat == TQSL_ADIF_GET_FIELD_NO_NAME_MATCH);
 	tqsl_endADIF(&adif);
+	return;
+}
+
+void
+MyFrame::EditQSOData(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::EditQSOData");
+	QSORecordList recs;
+	wxString file = wxFileSelector(_("Open File"), wxConfig::Get()->Read(wxT("QSODataPath"), wxT("")), wxT(""), wxT("adi"),
+#if !defined(__APPLE__) && !defined(_WIN32)
+			_("ADIF files (*.adi;*.adif;*.ADI;*.ADIF)|*.adi;*.adif;*.ADI;*.ADIF|All files (*.*)|*.*"),
+#else
+			_("ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"),
+#endif
+			wxFD_OPEN|wxFD_FILE_MUST_EXIST, this);
+	if (file == wxT(""))
+		return;
+	loadQSOfile(file, recs);
+	wxMessageBox(_("Warning: The TQSL ADIF editor only processes a limited number of ADIF fields.\n\nUsing the editor on an ADIF file can cause QSO details to be lost!"), _("Warning"), wxOK | wxICON_EXCLAMATION, frame);
 	try {
-		QSODataDialog dial(this, help, &recs);
-		if (dial.ShowModal() == wxID_OK)
-			WriteQSOFile(recs, file.ToUTF8());
+		QSODataDialog dial(this, file, help, &recs);
+		dial.ShowModal();
 	} catch(TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
 	}
@@ -1698,10 +1625,10 @@ void
 MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::EnterQSOData");
 	QSORecordList recs;
+	wxString file = wxT("tqsl.adif");
 	try {
-		QSODataDialog dial(this, help, &recs);
-		if (dial.ShowModal() == wxID_OK)
-			WriteQSOFile(recs);
+		QSODataDialog dial(this, file, help, &recs);
+		dial.ShowModal();
 	} catch(TQSLException& x) {
 		wxLogError(wxT("%hs"), x.what());
 	}
@@ -1985,7 +1912,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					check_tqsl_error(1);
 				} catch(TQSLException& x) {
 					tqsl_getConverterLine(conv, &lineno);
-					wxString msg = wxString::FromUTF8(x.what());
+					wxString msg = wxGetTranslation(wxString::FromUTF8(x.what()));
 					if (lineno)
 						msg += wxT(" ") + wxString::Format(_("on line %d"), lineno);
 					const char *bad_text = tqsl_getConverterRecordText(conv);
@@ -4621,6 +4548,8 @@ QSLApp::OnInit() {
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
 
+	bool fileOnly = true;		// Set if the command line is just an input file
+
 	parser.SetCmdLine(argc, argv);
 	parser.SetDesc(cmdLineDesc);
 	// only allow "-" for options, otherwise "/path/something.adif"
@@ -4644,6 +4573,7 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
+		fileOnly = false;
 		quiet = true;
 		wxLog::SetActiveTarget(new LogStderr());
 	}
@@ -4677,6 +4607,7 @@ QSLApp::OnInit() {
 
 	// Request to check for new versions of tqsl/config/certs
 	if (parser.Found(wxT("n"))) {
+		fileOnly = false;
 		if (parser.Found(wxT("i")) || parser.Found(wxT("o")) ||
 		    parser.Found(wxT("s")) || parser.Found(wxT("u"))) {
 			cerr << "Option -n cannot be combined with any other options" << endl;
@@ -4695,10 +4626,133 @@ QSLApp::OnInit() {
 		wxLog::SetActiveTarget(new LogStderr());
 		frame->Show(false);
 	}
-	if (parser.Found(wxT("i"), &importfile)) {
-		importfile.Trim(true).Trim(false);
+
+	if (parser.Found(wxT("l"), &locname)) {
+		fileOnly = false;
+		locname.Trim(true);			// clean up whitespace
+		locname.Trim(false);
+		tqsl_endStationLocationCapture(&loc);
+		if (tqsl_getStationLocation(&loc, locname.ToUTF8())) {
+			if (quiet) {
+				wxLogError(getLocalizedErrorString());
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			} else {
+				wxMessageBox(getLocalizedErrorString(), ErrorTitle, wxOK|wxCENTRE, frame);
+				return false;
+			}
+		}
+	}
+
+	wxString call;
+	if (parser.Found(wxT("c"), &call)) {
+		fileOnly = false;
+		call.Trim(true);
+		call.Trim(false);
+		defcall = strdup(call.MakeUpper().ToUTF8());
+	}
+
+	wxString pwd;
+	if (parser.Found(wxT("p"), &pwd)) {
+		fileOnly = false;
+		password = strdup(pwd.ToUTF8());
+		utf8_to_ucs2(password, unipwd, sizeof unipwd);
+	}
+	if (parser.Found(wxT("o"), &outfile)) {
+		fileOnly = false;
+	}
+
+	if (parser.Found(wxT("d"))) {
+		fileOnly = false;
+		suppressdate = true;
+	}
+	wxString start = wxT("");
+	wxString end = wxT("");
+	tQSL_Date* startdate = NULL;
+	tQSL_Date* enddate = NULL;
+	tQSL_Date s, e;
+	if (parser.Found(wxT("b"), &start)) {
+		fileOnly = false;
+		if (start.Trim() == wxT(""))
+			startdate = NULL;
+		else if (tqsl_initDate(&s, start.ToUTF8()) || !tqsl_isDateValid(&s)) {
+			if (quiet) {
+				wxLogError(_("Start date of %s is invalid"), start.c_str());
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			} else {
+				wxMessageBox(wxString::Format(_("Start date of %s is invalid"), start.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
+				return false;
+			}
+		}
+		startdate = &s;
+	}
+	if (parser.Found(wxT("e"), &end)) {
+		fileOnly = false;
+		if (end.Trim() == wxT(""))
+			enddate = NULL;
+		else if (tqsl_initDate(&e, end.ToUTF8()) || !tqsl_isDateValid(&e)) {
+			if (quiet) {
+				wxLogError(_("End date of %s is invalid"), end.c_str());
+				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+			} else {
+				wxMessageBox(wxString::Format(_("End date of %s is invalid"), end.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
+				return false;
+			}
+		}
+		enddate = &e;
+	}
+
+	wxString act;
+	if (parser.Found(wxT("a"), &act)) {
+		fileOnly = false;
+		if (!act.CmpNoCase(wxT("abort"))) {
+			action = TQSL_ACTION_ABORT;
+		} else if (!act.CmpNoCase(wxT("compliant"))) {
+			action = TQSL_ACTION_NEW;
+		} else if (!act.CmpNoCase(wxT("all"))) {
+			action = TQSL_ACTION_ALL;
+		} else if (!act.CmpNoCase(wxT("ask"))) {
+			action = TQSL_ACTION_ASK;
+		} else {
+			char tmp[100];
+			strncpy(tmp, (const char *)act.ToUTF8(), sizeof tmp);
+			tmp[sizeof tmp -1] = '\0';
+			if (quiet)
+				wxLogMessage(_("The -a parameter %hs is not recognized"), tmp);
+			else
+				cerr << "The action parameter " << tmp << " is not recognized" << endl;
+			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
+		}
+	}
+	if (parser.Found(wxT("u"))) {
+		fileOnly = false;
+		upload = true;
+	}
+	if (parser.Found(wxT("s"))) {
+		fileOnly = false;
+		// Add/Edit station location
+		if (loc == 0) {
+			if (tqsl_initStationLocationCapture(&loc)) {
+				wxLogError(getLocalizedErrorString());
+			}
+			AddEditStationLocation(loc, true);
+		} else {
+			AddEditStationLocation(loc, false, _("Edit Station Location"));
+		}
+		return false;
+	}
+	if (parser.GetParamCount() > 0) {
+		infile = parser.GetParam(0);
+	}
+
+	wxString path, name, ext;
+	wxFileName::SplitPath(infile, &path, &name, &ext);
+
+	// Handle "-i" (import cert), or bare cert file on command line
+
+	if (parser.Found(wxT("i"), &infile) || (fileOnly && (ext.CmpNoCase(wxT("tq6")) || ext.CmpNoCase(wxT("p12"))))) {
+		infile.Trim(true).Trim(false);
 		notifyData nd;
-		if (tqsl_importTQSLFile(importfile.ToUTF8(), notifyImport, &nd)) {
+		if (tqsl_importTQSLFile(infile.ToUTF8(), notifyImport, &nd)) {
 			wxLogError(getLocalizedErrorString());
 		} else {
 			wxLogMessage(nd.Message());
@@ -4739,110 +4793,6 @@ QSLApp::OnInit() {
 		return(true);
 	}
 
-	if (parser.Found(wxT("l"), &locname)) {
-		locname.Trim(true);			// clean up whitespace
-		locname.Trim(false);
-		tqsl_endStationLocationCapture(&loc);
-		if (tqsl_getStationLocation(&loc, locname.ToUTF8())) {
-			if (quiet) {
-				wxLogError(getLocalizedErrorString());
-				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
-			} else {
-				wxMessageBox(getLocalizedErrorString(), ErrorTitle, wxOK|wxCENTRE, frame);
-				return false;
-			}
-		}
-	}
-
-	wxString call;
-	if (parser.Found(wxT("c"), &call)) {
-		call.Trim(true);
-		call.Trim(false);
-		defcall = strdup(call.MakeUpper().ToUTF8());
-	}
-
-	wxString pwd;
-	if (parser.Found(wxT("p"), &pwd)) {
-		password = strdup(pwd.ToUTF8());
-		utf8_to_ucs2(password, unipwd, sizeof unipwd);
-	}
-	parser.Found(wxT("o"), &outfile);
-	if (parser.Found(wxT("d"))) {
-		suppressdate = true;
-	}
-	wxString start = wxT("");
-	wxString end = wxT("");
-	tQSL_Date* startdate = NULL;
-	tQSL_Date* enddate = NULL;
-	tQSL_Date s, e;
-	if (parser.Found(wxT("b"), &start)) {
-		if (start.Trim() == wxT(""))
-			startdate = NULL;
-		else if (tqsl_initDate(&s, start.ToUTF8()) || !tqsl_isDateValid(&s)) {
-			if (quiet) {
-				wxLogError(_("Start date of %s is invalid"), start.c_str());
-				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
-			} else {
-				wxMessageBox(wxString::Format(_("Start date of %s is invalid"), start.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
-				return false;
-			}
-		}
-		startdate = &s;
-	}
-	if (parser.Found(wxT("e"), &end)) {
-		if (end.Trim() == wxT(""))
-			enddate = NULL;
-		else if (tqsl_initDate(&e, end.ToUTF8()) || !tqsl_isDateValid(&e)) {
-			if (quiet) {
-				wxLogError(_("End date of %s is invalid"), end.c_str());
-				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
-			} else {
-				wxMessageBox(wxString::Format(_("End date of %s is invalid"), end.c_str()), ErrorTitle, wxOK|wxCENTRE, frame);
-				return false;
-			}
-		}
-		enddate = &e;
-	}
-
-	wxString act;
-	if (parser.Found(wxT("a"), &act)) {
-		if (!act.CmpNoCase(wxT("abort"))) {
-			action = TQSL_ACTION_ABORT;
-		} else if (!act.CmpNoCase(wxT("compliant"))) {
-			action = TQSL_ACTION_NEW;
-		} else if (!act.CmpNoCase(wxT("all"))) {
-			action = TQSL_ACTION_ALL;
-		} else if (!act.CmpNoCase(wxT("ask"))) {
-			action = TQSL_ACTION_ASK;
-		} else {
-			char tmp[100];
-			strncpy(tmp, (const char *)act.ToUTF8(), sizeof tmp);
-			tmp[sizeof tmp -1] = '\0';
-			if (quiet)
-				wxLogMessage(_("The -a parameter %hs is not recognized"), tmp);
-			else
-				cerr << "The action parameter " << tmp << " is not recognized" << endl;
-			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
-		}
-	}
-	if (parser.Found(wxT("u"))) {
-		upload = true;
-	}
-	if (parser.Found(wxT("s"))) {
-		// Add/Edit station location
-		if (loc == 0) {
-			if (tqsl_initStationLocationCapture(&loc)) {
-				wxLogError(getLocalizedErrorString());
-			}
-			AddEditStationLocation(loc, true);
-		} else {
-			AddEditStationLocation(loc, false, _("Edit Station Location"));
-		}
-		return false;
-	}
-	if (parser.GetParamCount() > 0) {
-		infile = parser.GetParam(0);
-	}
 	// We need a logfile, else there's nothing to do.
 	if (wxIsEmpty(infile)) {	// Nothing to sign
 		if (tqsl_diagFileOpen())// Unless there's just a trace log
@@ -4852,6 +4802,23 @@ QSLApp::OnInit() {
 			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
 		return false;
 	}
+
+	// If it's an ADIF file, invoke the editor if that's the only argument
+	// unless we're running in batch mode
+	if (fileOnly && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
+		QSORecordList recs;
+		loadQSOfile(infile, recs);
+		wxMessageBox(_("Warning: The TQSL ADIF editor only processes a limited number of ADIF fields.\n\nUsing the editor on an ADIF file can cause QSO details to be lost!"), _("Warning"), wxOK | wxICON_EXCLAMATION, frame);
+		try {
+			QSODataDialog dial(frame, infile, frame->help, &recs);
+			dial.ShowModal();
+		} catch(TQSLException& x) {
+			wxLogError(wxT("%hs"), x.what());
+		}
+		exitNow(TQSL_EXIT_SUCCESS, quiet);
+	}
+
+	// Assume that it's a log to sign
 	if (loc == 0) {
 		try {
         		int n;
@@ -4880,11 +4847,9 @@ QSLApp::OnInit() {
 			exitNow(TQSL_EXIT_CANCEL, quiet);
 		return false;
 	}
-	wxString path, name, ext;
 	if (!wxIsEmpty(outfile)) {
 		path = outfile;
 	} else {
-		wxFileName::SplitPath(infile, &path, &name, &ext);
 		if (!wxIsEmpty(path))
 			path += wxT("/");
 		path += name + wxT(".tq8");
