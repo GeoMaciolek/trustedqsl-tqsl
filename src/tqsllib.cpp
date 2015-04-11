@@ -731,11 +731,13 @@ tqsl_initTime(tQSL_Time *time, const char *str) {
 	int parts[3];
 	int i;
 
-	if (time == NULL || str == NULL) {
+	if (time == NULL) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
 	time->hour = time->minute = time->second = 0;
+	if (str == NULL)
+		return 0;
 	if (strlen(str) < 3) {
 		tQSL_Error = TQSL_INVALID_TIME;
 		return 1;
