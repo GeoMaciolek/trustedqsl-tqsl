@@ -398,7 +398,7 @@ remove_db(const char *path)  {
 	if (dir != NULL) {
 #ifdef _WIN32
 		struct _wdirent *ent = NULL;
-		while ((ent == _wreaddir(dir)) != NULL) {
+		while ((ent = _wreaddir(dir)) != NULL) {
 			if (!wcscmp(ent->d_name, L"duplicates.db") ||
 	    		!wcsncmp(ent->d_name, L"log.", 4) ||
 	    		!wcsncmp(ent->d_name, L"__db.", 5)) {

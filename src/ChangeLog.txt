@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+Correct typo that would cause duplicates database removall to fail
+on Windows systems.
+
 When processing an ADIF QSO, check that mode, band, date, and time
 are all provided. Reject QSOs which do not have the required data.
 
