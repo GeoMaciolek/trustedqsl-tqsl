@@ -814,6 +814,107 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 END_EVENT_TABLE()
 
 void
+MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, const wxString& ext) {
+#ifdef _WIN32
+	wxString bfile = directory + wxT("\\") + filename + wxT(".") + ext;
+	struct _stat32 s;
+	wchar_t* lfn = utf8_to_wchar(bfile.ToUTF8());
+	int ret = _wstat32(lfn, &s);
+	free_wchar(lfn);
+	if (ret != 0) {					// Does it exist?
+#else
+	wxString bfile = directory + wxT("/") + filename + wxT(".") + ext;
+	struct stat s;
+	if (lstat(bfile.ToUTF8(), &s) != 0) {		// Does it exist?
+#endif
+		return;					// No. No need to back it up.
+	}
+
+	// There's a file with that name already.
+	// Rename it for backup purposes
+
+	struct tm *t;
+	t = gmtime(&s.st_mtime);
+
+#ifdef _WIN32
+	wxString newName = directory + wxT("\\") + filename +
+#else
+	wxString newName = directory + wxT("/") + filename +
+#endif
+		wxString::Format(wxT("-%4.4d-%2.2d-%2.2d-%2.2d-%2.2d."),
+					t->tm_year+1900, t->tm_mon+1, t->tm_mday,
+					t->tm_hour, t->tm_min) + ext;
+#ifdef _WIN32
+	wchar_t* lfn = utf8_to_wchar(bfile.ToUTF8());
+	wchar_t* newlfn = utf8_to_wchar(newName.ToUTF8());
+	int ret = _wrename(lfn, newlfn);
+	free_wchar(lfn);
+	free_wchar(newlfn);
+#else
+	int ret = rename(bfile.ToUTF8(), newName.ToUTF8());
+#endif
+	if (ret) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		tqslTrace("MyFrame::SaveOldBackups", "Error renaming: %s", strerror(errno));
+		wxLogError(_("Error renaming backup file %s: %hs"), bfile.c_str(), strerror(errno));
+		return;
+	}
+
+	// Find any backups and delete older ones
+
+	wxArrayString bfiles;
+
+#ifdef _WIN32
+	wchar_t* wpath = utf8_to_wchar(directory);
+	_WDIR *dir = _opendir(wpath);
+	free_wchar(wpaath);
+#else
+	DIR *dir = opendir(directory.ToUTF8());
+#endif
+
+	if (dir != NULL) {
+#ifdef _WIN32
+		struct _wdirent *ent = NULL;
+		while ((ent = _wreaddir(dir)) != NULL) {
+			if (wcsstr(ent->d_name, L"tqslconfig-") == ent->d_name && wcsstr(ent->d_name, L".tbk")) {
+				bfiles.Add(wxString(ent->d_name));
+			}
+		}
+#else
+		struct dirent *ent = NULL;
+		while ((ent = readdir(dir)) != NULL) {
+			if (strstr(ent->d_name, "tqslconfig-") == ent->d_name && strstr(ent->d_name, ".tbk")) {
+				bfiles.Add(wxString::FromUTF8(ent->d_name));
+			}
+		}
+#endif
+	}
+	bfiles.Sort();
+	int vlimit;
+	wxConfig::Get()->Read(wxT("BackupVersions"), &vlimit, DEFAULT_BACKUP_VERSIONS);
+
+	if (vlimit <= 0)
+		vlimit = DEFAULT_BACKUP_VERSIONS;
+	int toRemove = bfiles.GetCount() - vlimit;
+	if (toRemove <= 0)
+		return;			// Nothing to remove
+
+	// Remove, starting from the oldest
+	for (int i = 0; i < toRemove; i++) {
+#ifdef _WIN32
+		wxString removeIt = directory + wxT("\\") + bfiles[i];
+		wchar_t* wfname = utf8_to_wchar(removeIt.ToUTF8());
+		_wunlink(wfname);
+		free_wchar(wfname);
+#else
+		wxString removeIt = directory + wxT("/") + bfiles[i];
+		unlink(removeIt.ToUTF8());
+#endif
+	}
+}
+
+void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnExit", "exiting");
 	int x, y, w, h;
@@ -834,6 +935,7 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
 		wxString bdir = config->Read(wxT("BackupFolder"), wxString::FromUTF8(tQSL_BaseDir));
+		SaveOldBackups(bdir, wxT("tqslconfig"), wxT("tbk"));
 #ifdef _WIN32
 		bdir += wxT("\\tqslconfig.tbk");
 #else

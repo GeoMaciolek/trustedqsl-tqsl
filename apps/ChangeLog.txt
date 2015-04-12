@@ -3,6 +3,15 @@ TQSL changes
 
 2.1
 ----------
+When creating automatic backups upon exit, save multiple generations (default
+10 versions) with a timestamp. This makes it more likely that mistakenly
+deleted callsign certificates and/or station locations can be successfully
+recovered.
+
+Update the UI for the ADIF editor to eliminate confusing behavior. Add
+accessibility labels to the editor. Warn the user that editing an arbitrary
+ADIF file within TQSL will cause fields to be lost.
+
 Ensure that TQSL windows gain focus when they are initially displayed. This
 eliminates a usability issue with accessibility tools.
 

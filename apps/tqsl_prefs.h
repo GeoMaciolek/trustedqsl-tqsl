@@ -50,6 +50,7 @@ using std::pair;
 #define DEFAULT_ADIF_FILES wxT("adi adif")
 #endif
 #define DEFAULT_AUTO_BACKUP true
+#define DEFAULT_BACKUP_VERSIONS 10
 #define DEFAULT_CERT_WARNING 60
 //online
 //#define ENABLE_ONLINE_PREFS
@@ -77,6 +78,7 @@ enum {		// Window IDs
 	ID_PREF_FILE_ADIF,
 	ID_PREF_FILE_AUTO_BACKUP,
 	ID_PREF_FILE_BACKUP,
+	ID_PREF_FILE_BACKUP_VERSIONS,
 	ID_PREF_FILE_BADCALLS,
 	ID_PREF_FILE_DATERANGE,
 	ID_PREF_MODE_MAP,
@@ -120,7 +122,7 @@ class FilePrefs : public PrefsPanel {
 	void OnShowHide(wxCommandEvent&) { ShowHide(); }
 	void ShowHide();
  private:
-	wxTextCtrl *cabrillo, *adif;
+	wxTextCtrl *cabrillo, *adif, *versions;
 	wxCheckBox *autobackup, *badcalls, *daterange;
 #if !defined(__APPLE__) && !defined(_WIN32)
 	wxTextCtrl *dirPick;

@@ -354,6 +354,15 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	dirPick->Enable(ab);
 	sizer->Add(dirPick, 0, wxEXPAND|wxLEFT|wxRIGHT, 10);
 
+	sizer->Add(new wxStaticText(this, -1, _("Number of Backups to retain:")), 0, wxTOP|wxLEFT|wxRIGHT, 10);
+
+	int bver;
+	config->Read(wxT("BackupVersions"), &bver, DEFAULT_BACKUP_VERSIONS);
+
+	versions = new wxTextCtrl(this, ID_PREF_FILE_BACKUP_VERSIONS, wxString::Format(wxT("%d"), bver),
+		wxDefaultPosition, wxSize(char_width / (FILE_TEXT_WIDTH / 3), HEIGHT_ADJ(char_height)));
+	sizer->Add(versions, 0, wxLEFT|wxRIGHT|wxBOTTOM, 10);
+
 	badcalls = new wxCheckBox(this, ID_PREF_FILE_BADCALLS, _("Allow nonamateur call signs"));
 	bool allow = false;
 	config->Read(wxT("BadCalls"), &allow);
@@ -405,6 +414,7 @@ bool FilePrefs::TransferDataFromWindow() {
 #else
 	config->Write(wxT("BackupFolder"), dirPick->GetPath());
 #endif
+	config->Write(wxT("BackupVersions"), versions->GetValue());
 	return true;
 }
 
