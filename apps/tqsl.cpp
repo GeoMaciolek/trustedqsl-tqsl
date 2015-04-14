@@ -853,9 +853,9 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 					t->tm_year+1900, t->tm_mon+1, t->tm_mday,
 					t->tm_hour, t->tm_min) + ext;
 #ifdef _WIN32
-	wchar_t* lfn = utf8_to_wchar(bfile.ToUTF8());
+	lfn = utf8_to_wchar(bfile.ToUTF8());
 	wchar_t* newlfn = utf8_to_wchar(newName.ToUTF8());
-	int ret = _wrename(lfn, newlfn);
+	ret = _wrename(lfn, newlfn);
 	free_wchar(lfn);
 	free_wchar(newlfn);
 #else
@@ -4240,7 +4240,6 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 					// If it's the backup directory, don't restore it if the
 					// referenced directory doesn't exist.
 #ifdef _WIN32
-#define S_ISDIR(mode)	(((mode) & S_IFMT) == _S_IFDIR)
 					struct _stat32 s;
 					wchar_t* lfn = utf8_to_wchar(svalue.ToUTF8());
 					int ret = _wstat32(lfn, &s);
