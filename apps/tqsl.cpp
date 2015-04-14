@@ -17,6 +17,14 @@
 #include <expat.h>
 #include <sys/stat.h>
 
+#ifndef _WIN32
+    #include <unistd.h>
+    #include <dirent.h>
+#else
+    #include <direct.h>
+    #include "windirent.h"
+#endif
+
 #include <wx/wxprec.h>
 #include <wx/object.h>
 #include <wx/wxchar.h>
@@ -834,7 +842,7 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 	// Rename it for backup purposes
 
 	struct tm *t;
-	t = gmtime(&s.st_mtime);
+	t = gmtime(reinterpret_cast<const time_t*>(&s.st_mtime));
 
 #ifdef _WIN32
 	wxString newName = directory + wxT("\\") + filename +
@@ -868,7 +876,7 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(directory);
 	_WDIR *dir = _opendir(wpath);
-	free_wchar(wpaath);
+	free_wchar(wpath);
 #else
 	DIR *dir = opendir(directory.ToUTF8());
 #endif
@@ -4709,7 +4717,6 @@ QSLApp::OnInit() {
 
 	// Request to check for new versions of tqsl/config/certs
 	if (parser.Found(wxT("n"))) {
-		fileOnly = false;
 		if (parser.Found(wxT("i")) || parser.Found(wxT("o")) ||
 		    parser.Found(wxT("s")) || parser.Found(wxT("u"))) {
 			cerr << "Option -n cannot be combined with any other options" << endl;
@@ -4830,7 +4837,6 @@ QSLApp::OnInit() {
 		upload = true;
 	}
 	if (parser.Found(wxT("s"))) {
-		fileOnly = false;
 		// Add/Edit station location
 		if (loc == 0) {
 			if (tqsl_initStationLocationCapture(&loc)) {
