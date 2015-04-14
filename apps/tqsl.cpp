@@ -842,11 +842,12 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 	// Rename it for backup purposes
 
 	struct tm *t;
-	t = gmtime(reinterpret_cast<const time_t*>(&s.st_mtime));
 
 #ifdef _WIN32
+	t = _gmtime32(&s.st_mtime);
 	wxString newName = directory + wxT("\\") + filename +
 #else
+	t = gmtime(&s.st_mtime);
 	wxString newName = directory + wxT("/") + filename +
 #endif
 		wxString::Format(wxT("-%4.4d-%2.2d-%2.2d-%2.2d-%2.2d."),
