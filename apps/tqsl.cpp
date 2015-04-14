@@ -875,7 +875,7 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(directory);
-	_WDIR *dir = _opendir(wpath);
+	_WDIR *dir = _wopendir(wpath);
 	free_wchar(wpath);
 #else
 	DIR *dir = opendir(directory.ToUTF8());
