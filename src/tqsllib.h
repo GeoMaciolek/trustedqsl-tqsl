@@ -741,6 +741,15 @@ DLLEXPORT int CALLCONVENTION tqsl_importPKCS12File(const char *filename, const c
 DLLEXPORT int CALLCONVENTION tqsl_importPKCS12Base64(const char *base64, const char *p12password, const char *password,
 	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
 
+/** Get the list of restorable station locations. */
+DLLEXPORT int CALLCONVENTION tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall);
+
+/** Free the list of restorable Callsign Certificates. */
+DLLEXPORT void CALLCONVENTION tqsl_freeDeletedCertificateList(char **list, int nloc);
+
+/** Restore a deleted callsign certificate by callsign. */
+DLLEXPORT int CALLCONVENTION tqsl_restoreCallsignCertificate(const char *callsign);
+
 /** Delete a certificate and private key
   */
 DLLEXPORT int CALLCONVENTION tqsl_deleteCertificate(tQSL_Cert cert);
@@ -1021,6 +1030,35 @@ DLLEXPORT int CALLCONVENTION tqsl_mergeStationLocations(const char *locdata);
 /** Remove the stored station location by name. */
 DLLEXPORT int CALLCONVENTION tqsl_deleteStationLocation(const char *name);
 
+/** Restore the deleted station location by name. */
+DLLEXPORT int CALLCONVENTION tqsl_restoreStationLocation(const char *name);
+
+/** Get the list of restorable station locations. */
+DLLEXPORT int CALLCONVENTION tqsl_getDeletedStationLocations(char ***locp, int *nloc);
+
+/** Free the list of restorable station locations. */
+DLLEXPORT void CALLCONVENTION tqsl_freeDeletedLocationList(char **list, int nloc);
+
+/** Get the number of fields on the current station location page */
+DLLEXPORT int CALLCONVENTION tqsl_getNumLocationField(tQSL_Location loc, int *numf);
+
+/** Get the number of characters in the label for the specified field */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationFieldDataLabelSize(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the label for the specified field */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationFieldDataLabel(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+
+/** Get the size of the GABBI name of the specified field */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationFieldDataGABBISize(tQSL_Location loc, int field_num, int *rval);
+
+/** Get the GABBI name of the specified field */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationFieldDataGABBI(tQSL_Location loc, int field_num, char *buf, int bufsiz);
+
+/** Get the input type of the input field.
+  *
+  * \c type will be one of TQSL_LOCATION_FIELD_TEXT, TQSL_LOCATION_FIELD_DDLIST
+  * or TQSL_LOCATION_FIELD_LIST
+  */
 /** Get the number of fields on the current station location page */
 DLLEXPORT int CALLCONVENTION tqsl_getNumLocationField(tQSL_Location loc, int *numf);
 

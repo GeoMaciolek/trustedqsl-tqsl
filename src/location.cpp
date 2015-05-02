@@ -2143,7 +2143,13 @@ tqsl_getLocationFieldListItem(tQSL_Location locp, int field_num, int item_idx, c
 }
 
 static string
-tqsl_station_data_filename(const char *f = "station_data") {
+tqsl_station_data_filename(bool deleted = false) {
+	const char *f;
+	if (deleted)
+		f = "station_data_trash";
+	else
+		f = "station_data";
+
 	string s = tQSL_BaseDir;
 #ifdef _WIN32
 	s += "\\";
@@ -2155,15 +2161,15 @@ tqsl_station_data_filename(const char *f = "station_data") {
 }
 
 static int
-tqsl_load_station_data(XMLElement &xel) {
-	int status = xel.parseFile(tqsl_station_data_filename().c_str());
-	tqslTrace("tqsl_load_station_data", "file %s parse status %d", tqsl_station_data_filename().c_str(), status);
+tqsl_load_station_data(XMLElement &xel, bool deleted = false) {
+	int status = xel.parseFile(tqsl_station_data_filename(deleted).c_str());
+	tqslTrace("tqsl_load_station_data", "file %s parse status %d", tqsl_station_data_filename(deleted).c_str(), status);
 	if (status) {
 		if (errno == ENOENT) {		// If there's no file, no error.
 			tqslTrace("tqsl_load_station_data", "File does not exist");
 			return 0;
 		}
-		strncpy(tQSL_ErrorFile, tqsl_station_data_filename().c_str(), sizeof tQSL_ErrorFile);
+		strncpy(tQSL_ErrorFile, tqsl_station_data_filename(deleted).c_str(), sizeof tQSL_ErrorFile);
 		if (status == XML_PARSE_SYSTEM_ERROR) {
 			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
 			tQSL_Errno = errno;
@@ -2178,9 +2184,9 @@ tqsl_load_station_data(XMLElement &xel) {
 }
 
 static int
-tqsl_dump_station_data(XMLElement &xel) {
+tqsl_dump_station_data(XMLElement &xel, bool deleted = false) {
 	ofstream out;
-	string fn = tqsl_station_data_filename();
+	string fn = tqsl_station_data_filename(deleted);
 
 	out.exceptions(ios::failbit | ios::eofbit | ios::badbit);
 	try {
@@ -2408,32 +2414,90 @@ tqsl_mergeStationLocations(const char *locdata) {
 	return tqsl_dump_station_data(old_data);
 }
 
+// Move a station location to or from the trash
+static int
+tqsl_move_station_location(const char *name, bool fromtrash) {
+	tqslTrace("tqsl_move_station_location", "name=%s, fromtrash=%d", name, fromtrash);
+	XMLElement from_top_el;
+	XMLElement to_top_el;
+
+	if (tqsl_load_station_data(from_top_el, fromtrash)) {
+		tqslTrace("tqsl_move_station_location", "error %d loading data", tQSL_Error);
+		return 1;
+	}
+
+	if (tqsl_load_station_data(to_top_el, !fromtrash)) {
+		tqslTrace("tqsl_move_station_location", "error %d loading data", tQSL_Error);
+		return 1;
+	}
+
+	XMLElement from_sfile;
+	XMLElement to_sfile;
+	if (!from_top_el.getFirstElement(from_sfile))
+		from_sfile.setElementName("StationDataFile");
+
+	if (!to_top_el.getFirstElement(to_sfile))
+		to_sfile.setElementName("StationDataFile");
+
+	XMLElementList& from_ellist = from_sfile.getElementList();
+	XMLElementList::iterator from_ep;
+	for (from_ep = from_ellist.find("StationData"); from_ep != from_ellist.end(); from_ep++) {
+		if (from_ep->first != "StationData")
+			break;
+		pair<string, bool> from_rval = from_ep->second.getAttribute("name");
+		if (from_rval.second && !strcasecmp(from_rval.first.c_str(), name)) {
+			// Match, move it.
+			// First, delete any old backup for this station location
+			XMLElementList& to_ellist = to_sfile.getElementList();
+			XMLElementList::iterator to_ep;
+			for (to_ep = to_ellist.find("StationData"); to_ep != to_ellist.end(); to_ep++) {
+				if (to_ep->first != "StationData")
+					break;
+				pair<string, bool> to_rval = to_ep->second.getAttribute("name");
+				if (to_rval.second && !strcasecmp(to_rval.first.c_str(), name)) {
+					to_ellist.erase(to_ep);
+					break;
+				}
+			}
+			// Now add it to the target
+			XMLElement newtop("StationData");
+			newtop.setPretext("\n  ");
+			newtop.setAttribute("name", from_rval.first);
+			newtop.setText("\n  ");
+			XMLElement sub;
+			sub.setPretext(newtop.getPretext() + "  ");
+			XMLElement el;
+			bool elok = from_ep->second.getFirstElement(el);
+			while (elok) {
+				sub.setElementName(el.getElementName());
+				sub.setText(el.getText());
+				newtop.addElement(sub);
+				elok = from_ep->second.getNextElement(el);
+			}
+			to_sfile.addElement(newtop);
+			to_sfile.setText("\n");
+			tqsl_dump_station_data(to_sfile, !fromtrash);
+			from_ellist.erase(from_ep);
+			return tqsl_dump_station_data(from_sfile, fromtrash);
+		}
+	}
+	tqslTrace("tqsl_move_station_location", "location not found");
+	tQSL_Error = TQSL_LOCATION_NOT_FOUND;
+	return 1;
+}
+
 DLLEXPORT int CALLCONVENTION
 tqsl_deleteStationLocation(const char *name) {
 	tqslTrace("tqsl_deleteStationLocation", "name=%s", name);
-	XMLElement top_el;
-	if (tqsl_load_station_data(top_el)) {
-		tqslTrace("tqsl_deleteStationLocation", "error %d loading data", tQSL_Error);
-		return 1;
-	}
-	XMLElement sfile;
-	if (!top_el.getFirstElement(sfile))
-		sfile.setElementName("StationDataFile");
 
-	XMLElementList& ellist = sfile.getElementList();
-	XMLElementList::iterator ep;
-	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
-		if (ep->first != "StationData")
-			break;
-		pair<string, bool> rval = ep->second.getAttribute("name");
-		if (rval.second && !strcasecmp(rval.first.c_str(), name)) {
-			ellist.erase(ep);
-			return tqsl_dump_station_data(sfile);
-		}
-	}
-	tqslTrace("tqsl_deleteStationLocation", "location not found");
-	tQSL_Error = TQSL_LOCATION_NOT_FOUND;
-	return 1;
+	return tqsl_move_station_location(name, false);
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_restoreStationLocation(const char *name) {
+	tqslTrace("tqsl_restoreStationLocation", "name=%s", name);
+
+	return tqsl_move_station_location(name, true);
 }
 
 DLLEXPORT int CALLCONVENTION
@@ -3414,4 +3478,56 @@ tqsl_getSerialFromTQSLFile(const char *file, long *serial) {
 	}
 	tqslTrace("tqsl_getSerialFromTQSLFile", "no usercert in file %s", file);
 	return 1;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getDeletedStationLocations(char ***locp, int *nloc) {
+	if (locp == NULL) {
+		tqslTrace("tqsl_getDeletedStationLocations", "arg error locp=NULL");
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (nloc == NULL) {
+		tqslTrace("tqsl_getDeletedStationLocations", "arg error nloc=NULL");
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	*locp = NULL;
+	*nloc = 0;
+
+	vector<string> namelist;
+
+	XMLElement top_el;
+	if (tqsl_load_station_data(top_el, true)) {
+		tqslTrace("tqsl_getDeletedStationLocations", "error %d loading station data", tQSL_Error);
+		return 1;
+	}
+	XMLElement sfile;
+	if (top_el.getFirstElement(sfile)) {
+		XMLElement sd;
+		bool ok = sfile.getFirstElement("StationData", sd);
+		while (ok && sd.getElementName() == "StationData") {
+			pair<string, bool> name = sd.getAttribute("name");
+			if (name.second) {
+				namelist.push_back(name.first);
+			}
+			ok = sfile.getNextElement(sd);
+		}
+	}
+	*nloc = namelist.size();
+	*locp = reinterpret_cast<char **>(calloc(*nloc, sizeof(*locp)));
+	vector<string>::iterator it;
+	char **p = *locp;
+	for (it = namelist.begin(); it != namelist.end(); it++) {
+		*p++ = strdup((*it).c_str());
+	}
+	return 0;
+}
+
+DLLEXPORT void CALLCONVENTION
+tqsl_freeDeletedLocationList(char** list, int nloc) {
+	if (!list) return;
+	for (int i = 0; i < nloc; i++)
+		if (list[i]) free(list[i]);
+	if (list) free(list);
 }

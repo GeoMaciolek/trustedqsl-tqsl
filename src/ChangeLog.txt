@@ -3,7 +3,15 @@ TQSLLIB changes
 
 2.5
 ---
-Correct typo that would cause duplicates database removall to fail
+When deleting Callsign Certificates, store a copy so that certificate
+can be recovered. Add the ability to list callsign certificates available
+for restoration and a function that allows undeletion.
+
+When deleting Station Locations, store a copy so that location can
+be recovered. Add the ability to list station locations available
+for restoration and a function that allows undeletion.
+
+Correct typo that would cause duplicates database removal to fail
 on Windows systems.
 
 When processing an ADIF QSO, check that mode, band, date, and time
