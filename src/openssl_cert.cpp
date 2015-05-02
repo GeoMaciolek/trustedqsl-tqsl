@@ -135,6 +135,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include <zlib.h>
 #include <errno.h>
 #include <ctype.h>
 #include <stdlib.h>
@@ -249,6 +250,7 @@ static char *tqsl_make_key_path(const char *callsign, char *path, int size);
 static int tqsl_make_key_list(vector< map<string, string> > & keys);
 static int tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const char *password, int (*cb)(char *, int, void *), void *);
 static char *tqsl_make_cert_path(const char *filename, char *path, int size);
+static char *tqsl_make_backup_path(const char *filename, char *path, int size);
 static int tqsl_get_cert_ext(X509 *cert, const char *ext, unsigned char *userbuf, int *buflen, int *crit);
 CLIENT_STATIC int tqsl_get_asn1_date(ASN1_TIME *tm, tQSL_Date *date);
 static char *tqsl_sign_base64_data(tQSL_Cert cert, char *b64data);
@@ -580,8 +582,8 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	if (nid != NID_undef)
 		X509_NAME_add_entry_by_NID(subj, nid, MBSTRING_ASC, (unsigned char *)req->emailAddress, -1, -1, 0);
 	X509_REQ_set_pubkey(xr, key);
-	if ((digest = EVP_md5()) == NULL) {
-		tqslTrace("tqsl_createCertRequest", "evp_md5 error %s", tqsl_openssl_error());
+	if ((digest = EVP_sha256()) == NULL) {
+		tqslTrace("tqsl_createCertRequest", "evp_sha256 error %s", tqsl_openssl_error());
 		goto err;
 	}
 	if (!X509_REQ_sign(xr, key, digest)) {
@@ -2961,6 +2963,146 @@ tqsl_importPKCS12Base64(const char *base64, const char *p12password, const char 
 	return tqsl_importPKCS12(true, NULL, base64, p12password, password, pwcb, cb, userdata);
 }
 
+static int
+tqsl_backup_cert(tQSL_Cert cert) {
+	char callsign[64];
+	long serial = 0;
+	int dxcc = 0;
+	int keyonly;
+	tqsl_getCertificateKeyOnly(cert, &keyonly);
+	tqsl_getCertificateCallSign(cert, callsign, sizeof callsign);
+	if (!keyonly)
+		tqsl_getCertificateSerial(cert, &serial);
+	tqsl_getCertificateDXCCEntity(cert, &dxcc);
+
+	char backupPath[PATH_MAX];
+	tqsl_make_backup_path(callsign, backupPath, sizeof backupPath);
+
+	FILE* out = NULL;
+#ifdef _WIN31
+	wchar_t* wpath = utf8_to_wchar(backupPath);
+	_wunlink(wpath);
+	fd =  _wfopen(lfn, L"wb");
+	free_wchar(wpath);
+#else
+	unlink(backupPath);
+	out = fopen(backupPath, "wb");
+#endif
+	if (!out) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		strncpy(tQSL_ErrorFile, backupPath, sizeof tQSL_ErrorFile);
+                tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
+                tqslTrace("tqsl_backup_cert", "Error %d errno %d file %s", tQSL_Error, tQSL_Errno, backupPath);
+		return 1;
+	}
+	char buf[8192];
+	fprintf(out, "<UserCert CallSign=\"%s\" dxcc=\"%d\" serial=\"%ld\">\n", callsign, dxcc, serial);
+	if (!keyonly) {
+		fprintf(out, "<SignedCert>\n");
+		tqsl_getCertificateEncoded(cert, buf, sizeof buf);
+		fprintf(out, "%s", buf);
+		fprintf(out, "</SignedCert>\n");
+	}
+	fprintf(out, "<PrivateKey>\n");
+	tqsl_getKeyEncoded(cert, buf, sizeof buf);
+	fprintf(out, "%s", buf);
+	fprintf(out, "</PrivateKey>\n</UserCert>\n");
+	fclose(out);
+	return 0;
+}
+
+static int
+tqsl_make_backup_list(vector<string>& keys) {
+	keys.clear();
+
+	string path = tQSL_BaseDir;
+#ifdef _WIN32
+	path += "\\certtrash";
+	wchar_t* wpath = utf8_to_wchar(path.c_str());
+	MKDIR(wpath, 0700);
+#else
+	path += "/certtrash";
+	MKDIR(path.c_str(), 0700);
+#endif
+
+#ifdef _WIN32
+	WDIR *dir = wopendir(wpath);
+	free_wchar(wpath);
+#else
+	DIR *dir = opendir(path.c_str());
+#endif
+	if (dir == NULL) {
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		tqslTrace("tqsl_make_backup_list", "Opendir %s error %s", path.c_str(), strerror(errno));
+		return 1;
+	}
+#ifdef _WIN32
+	struct wdirent *ent;
+#else
+	struct dirent *ent;
+#endif
+	int rval = 0;
+	int savedError = 0;
+	int savedErrno = 0;
+	char *savedFile = NULL;
+
+#ifdef _WIN32
+	while ((ent = wreaddir(dir)) != NULL) {
+		if (ent->d_name[0] == '.')
+			continue;
+		char dname[TQSL_MAX_PATH_LEN];
+		wcstombs(dname, ent->d_name, TQSL_MAX_PATH_LEN);
+		string filename = path + "\\" + dname;
+		struct _stat32 s;
+		wchar_t* wfilename = utf8_to_wchar(filename.c_str());
+		if (_wstat32(wfilename, &s) == 0) {
+			if (S_ISDIR(s.st_mode)) {
+				free_wchar(wfilename);
+				continue;		// If it's a directory, skip it.
+			}
+		}
+#else
+	while ((ent = readdir(dir)) != NULL) {
+		if (ent->d_name[0] == '.')
+			continue;
+		string filename = path + "/" + ent->d_name;
+		struct stat s;
+		if (stat(filename.c_str(), &s) == 0) {
+			if (S_ISDIR(s.st_mode))
+				continue;		// If it's a directory, skip it.
+		}
+#endif
+		XMLElement xel;
+		int status = xel.parseFile(filename.c_str());
+		if (status)
+			continue;			// Can't be parsed
+
+		XMLElement cert;
+		xel.getFirstElement(cert);
+		pair<string, bool> atrval = cert.getAttribute("CallSign");
+		if (atrval.second) {
+			keys.push_back(atrval.first);
+		}
+	}
+#ifdef _WIN32
+	_wclosedir(dir);
+#else
+	closedir(dir);
+#endif
+	if (rval) {
+		tQSL_Error = savedError;
+		tQSL_Errno = savedErrno;
+		if (savedFile) {
+			strncpy(tQSL_ErrorFile, savedFile, sizeof tQSL_ErrorFile);
+			free(savedFile);
+		}
+		tqslTrace("tqsl_make_backup_list", "error %s %s", tQSL_ErrorFile, strerror(tQSL_Errno));
+	}
+	return rval;
+}
+
 DLLEXPORT int CALLCONVENTION
 tqsl_deleteCertificate(tQSL_Cert cert) {
 	tqslTrace("tqsl_deleteCertificate");
@@ -2973,6 +3115,7 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 		return 1;
 	}
 
+	tqsl_backup_cert(cert);
 	char callsign[256], path[256], newpath[256];
 	if (tqsl_getCertificateCallSign(cert, callsign, sizeof callsign)) {
 		tqslTrace("tqsl_deleteCertificate", "no callsign %d", tQSL_Error);
@@ -3095,6 +3238,120 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 	if (bio)
 		BIO_free(bio);
 	return rval;
+}
+
+/** Get the list of restorable callsign certificates. */
+DLLEXPORT int CALLCONVENTION
+tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall) {
+	vector <string> callsigns;
+
+	if (tqsl_make_backup_list(callsigns)) {
+		return 1;
+	}
+	*ncall = callsigns.size();
+	*calls = reinterpret_cast<char **>(calloc(*ncall, sizeof(*calls)));
+	vector<string>::iterator it;
+	char **p = *calls;
+	for (it = callsigns.begin(); it != callsigns.end(); it++) {
+		*p++ = strdup((*it).c_str());
+	}
+	return 0;
+}
+
+DLLEXPORT void CALLCONVENTION
+tqsl_freeDeletedCertificateList(char **list, int nloc) {
+	if (!list) return;
+	for (int i = 0; i < nloc; i++)
+		if (list[i]) free(list[i]);
+	if (list) free(list);
+}
+
+/** Restore a deleted callsign certificate by callsign. */
+DLLEXPORT int CALLCONVENTION
+tqsl_restoreCallsignCertificate(const char *callsign) {
+	tqslTrace("tqsl_restoreCallsignCertificate", "callsign = %s", callsign);
+	char backupPath[PATH_MAX];
+	tqsl_make_backup_path(callsign, backupPath, sizeof backupPath);
+
+	XMLElement xel;
+	int status = xel.parseFile(backupPath);
+	if (status) {
+		if (errno == ENOENT) {		// No file is OK
+			tqslTrace("tqsl_restoreCallsignCertificate", "FNF");
+			return 0;
+		}
+		strncpy(tQSL_ErrorFile, backupPath, sizeof tQSL_ErrorFile);
+		if (status == XML_PARSE_SYSTEM_ERROR) {
+			tQSL_Error = TQSL_FILE_SYSTEM_ERROR;
+			tQSL_Errno = errno;
+			tqslTrace("tqsl_restoreCallsignCertificate", "open error %s: %s", backupPath, strerror(tQSL_Errno));
+		} else {
+			tqslTrace("tqsl_restoreCallsignCertificate", "syntax error %s", backupPath);
+			tQSL_Error = TQSL_FILE_SYNTAX_ERROR;
+		}
+		return 1;
+	}
+	XMLElement cert;
+	string call;
+	int dxcc = 0;
+	long serial = 0;
+	string privateKey;
+	string publicKey;
+	XMLElementList& ellist = xel.getElementList();
+	XMLElementList::iterator ep;
+	for (ep = ellist.find("UserCert"); ep != ellist.end(); ep++) {
+		if (ep->first != "UserCert")
+			break;
+		pair<string, bool> rval = ep->second.getAttribute("CallSign");
+		if (rval.second) call = rval.first;
+		rval = ep->second.getAttribute("serial");
+		if (rval.second) serial = strtol(rval.first.c_str(), NULL, 10);
+		rval = ep->second.getAttribute("dxcc");
+		if (rval.second) dxcc = strtol(rval.first.c_str(), NULL, 10);
+
+		XMLElement el;
+		if (ep->second.getFirstElement("SignedCert", el)) {
+			publicKey = el.getText();
+		}
+		if (ep->second.getFirstElement("PrivateKey", el)) {
+			privateKey = el.getText();
+		}
+	}
+
+	// See if this certificate exists
+	tQSL_Cert *certlist;
+	int ncerts;
+	tqsl_selectCertificates(&certlist, &ncerts, call.c_str(), dxcc, 0, 0, TQSL_SELECT_CERT_EXPIRED|TQSL_SELECT_CERT_SUPERCEDED|TQSL_SELECT_CERT_WITHKEYS);
+	for (int i = 0; i < ncerts; i++) {
+		long s = 0;
+		int keyonly = false;
+		tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+		if (keyonly) {
+			if (serial != 0) {		// A full cert for this was imported
+				continue;
+			}
+		}
+		if (tqsl_getCertificateSerial(certlist[i], &s)) {
+			continue;
+		}
+		if (s == serial) {			// Already imported
+			tqsl_freeCertificateList(certlist, ncerts);
+			return 1;
+		}
+	}
+	tqsl_freeCertificateList(certlist, ncerts);
+	int stat = tqsl_importKeyPairEncoded(call.c_str(), "user", privateKey.c_str(), publicKey.c_str());
+	if (!stat) {
+		// Remove the backup file
+#ifdef _WIN32
+		wchar_t* wbpath = utf8_to_wchar(backupPath);
+		_wunlink(wbpath);
+		free_wchar(wbpath);
+#else
+		unlink(backupPath);
+#endif
+	}
+	return stat;
 }
 
 /********** END OF PUBLIC API FUNCTIONS **********/
@@ -3768,6 +4025,37 @@ tqsl_make_key_path(const char *callsign, char *path, int size) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		tqslTrace("tqsl_make_key_path", "Making path %s failed with %s", path, strerror(errno));
+		return 0;
+	}
+#ifdef _WIN32
+	free(wpath);
+	strncat(path, "\\", size - strlen(path));
+#else
+	strncat(path, "/", size - strlen(path));
+#endif
+	strncat(path, fixcall, size - strlen(path));
+	return path;
+}
+
+static char *
+tqsl_make_backup_path(const char *callsign, char *path, int size) {
+	char fixcall[256];
+
+	tqsl_clean_call(callsign, fixcall, sizeof fixcall);
+	strncpy(path, tQSL_BaseDir, size);
+#ifdef _WIN32
+	strncat(path, "\\certtrash", size - strlen(path));
+	wchar_t* wpath = utf8_to_wchar(path);
+	if (MKDIR(wpath, 0700) && errno != EEXIST) {
+		free_wchar(wpath);
+#else
+	strncat(path, "/certtrash", size - strlen(path));
+	if (MKDIR(path, 0700) && errno != EEXIST) {
+#endif
+		strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		tqslTrace("tqsl_make_backup_path", "Making path %s failed with %s", path, strerror(errno));
 		return 0;
 	}
 #ifdef _WIN32
