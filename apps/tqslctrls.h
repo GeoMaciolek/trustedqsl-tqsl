@@ -23,6 +23,7 @@ enum {		// Menu items
 	tc_c_Load,
 	tc_c_Export,
 	tc_c_Delete,
+	tc_c_Undelete,
 	tc_c_New,
 	tc_f_Delete,
 	tc_h_Contents,

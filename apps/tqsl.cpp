@@ -800,6 +800,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_c_Export, MyFrame::OnCertExport)
 	EVT_BUTTON(tc_CertSave, MyFrame::OnCertExport)
 	EVT_MENU(tc_c_Delete, MyFrame::OnCertDelete)
+	EVT_MENU(tc_c_Undelete, MyFrame::OnCertUndelete)
 //	EVT_MENU(tc_c_Import, MyFrame::OnCertImport)
 //	EVT_MENU(tc_c_Sign, MyFrame::OnSign)
 	EVT_MENU(tc_c_Renew, MyFrame::CRQWizardRenew)
@@ -808,6 +809,7 @@ BEGIN_EVENT_TABLE(MyFrame, wxFrame)
 	EVT_MENU(tc_h_About, MyFrame::OnHelpAbout)
 	EVT_MENU(tl_c_Properties, MyFrame::OnLocProperties)
 	EVT_MENU(tm_s_Properties, MyFrame::OnLocProperties)
+	EVT_MENU(tm_s_undelete, MyFrame::OnLocUndelete)
 	EVT_BUTTON(tl_PropLoc, MyFrame::OnLocProperties)
 	EVT_MENU(tl_c_Delete, MyFrame::OnLocDelete)
 	EVT_BUTTON(tl_DeleteLoc, MyFrame::OnLocDelete)
@@ -1087,6 +1089,8 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	stn_menu->Enable(tm_s_Properties, false);
 	stn_menu->Append(tm_s_edit, _("&Edit Station Location"));
 	stn_menu->Append(tm_s_add, _("&Add Station Location"));
+	stn_menu->AppendSeparator();
+	stn_menu->Append(tm_s_undelete, _("&Restore a Deleted Station Location"));
 
 	// Help menu
 	help = new wxHtmlHelpController(wxHF_DEFAULT_STYLE | wxHF_OPEN_FILES);
@@ -5156,6 +5160,8 @@ makeCertificateMenu(bool enable, bool keyonly) {
 	}
 	c_menu->Append(tc_c_Delete, _("&Delete Callsign Certificate"));
 	c_menu->Enable(tc_c_Delete, enable);
+	c_menu->AppendSeparator();
+	c_menu->Append(tc_c_Undelete, _("Restore Deleted Callsign Certificate"));
 	return c_menu;
 }
 
@@ -5651,6 +5657,38 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
+void MyFrame::OnCertUndelete(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnCertUndelete");
+
+	int ncalls;
+	char **calls = NULL;
+
+	check_tqsl_error(tqsl_getDeletedCallsignCertificates(&calls, &ncalls));
+
+	if (ncalls <= 0) {
+		wxMessageBox(_("There are no deleted Callsign Certificates to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxArrayString choices;
+	choices.clear();
+	for (int i = 0; i < ncalls; i++) {
+		choices.Add(wxString::FromUTF8(calls[i]));
+	}
+	choices.Sort();
+
+	wxString selected = wxGetSingleChoice(_("Choose a Callsign Certificate to restore"),
+					 _("Callsign Certificates"),
+					choices);
+	if (selected.IsEmpty())
+		return;			// Cancelled
+
+	check_tqsl_error(tqsl_restoreCallsignCertificate(selected.ToUTF8()));
+	tqsl_freeDeletedCertificateList(calls, ncalls);
+	cert_tree->Build(CERTLIST_FLAGS);
+	CertTreeReset();
+}
+
 void
 MyFrame::LocTreeReset() {
 	if (!loc_edit_button) return;
@@ -5721,6 +5759,38 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 		loc_tree->Build();
 		LocTreeReset();
 	}
+}
+
+void MyFrame::OnLocUndelete(wxCommandEvent& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnLocUndelete");
+
+	int nloc;
+	char **locp = NULL;
+
+	check_tqsl_error(tqsl_getDeletedStationLocations(&locp, &nloc));
+
+	if (nloc <= 0) {
+		wxMessageBox(_("There are no deleted Station Locations to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
+		return;
+	}
+
+	wxArrayString choices;
+	choices.clear();
+	for (int i = 0; i < nloc; i++) {
+		choices.Add(wxString::FromUTF8(locp[i]));
+	}
+	choices.Sort();
+
+	wxString selected = wxGetSingleChoice(_("Choose a Station Location to restore"),
+					 _("Station Locations"),
+					choices);
+	if (selected.IsEmpty())
+		return;			// Cancelled
+
+	check_tqsl_error(tqsl_restoreStationLocation(selected.ToUTF8()));
+	tqsl_freeDeletedLocationList(locp, nloc);
+	loc_tree->Build();
+	LocTreeReset();
 }
 
 void MyFrame::OnLocEdit(wxCommandEvent& WXUNUSED(event)) {

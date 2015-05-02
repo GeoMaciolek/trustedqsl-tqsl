@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Add menu items to the Station Location and Callsign Certificate menu to permit
+undeleting of those items.
+
 When creating automatic backups upon exit, save multiple generations (default
 10 versions) with a timestamp. This makes it more likely that mistakenly
 deleted callsign certificates and/or station locations can be successfully

@@ -45,6 +45,7 @@ enum {
 	tm_f_lang,
 	tm_s_add,
 	tm_s_edit,
+	tm_s_undelete,
 	tm_h_contents,
 	tm_h_about,
 	tm_h_update,
@@ -130,11 +131,13 @@ class MyFrame : public wxFrame {
 	void OnCertProperties(wxCommandEvent& event);
 	void OnCertExport(wxCommandEvent& event);
 	void OnCertDelete(wxCommandEvent& event);
+	void OnCertUndelete(wxCommandEvent& event);
 //	void OnCertImport(wxCommandEvent& event);
 	void OnSign(wxCommandEvent& event);
 	void OnLoadCertificateFile(wxCommandEvent& event);
 	void OnLocProperties(wxCommandEvent& event);
 	void OnLocDelete(wxCommandEvent& event);
+	void OnLocUndelete(wxCommandEvent& event);
 	void OnLocEdit(wxCommandEvent& event);
 	void OnLocTreeSel(wxTreeEvent& event);
 	void OnLoginToLogbook(wxCommandEvent& event);
