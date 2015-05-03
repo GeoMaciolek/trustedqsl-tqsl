@@ -5617,19 +5617,17 @@ void MyFrame::OnCertDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	wxString warn = _("WARNING! BE SURE YOU REALLY WANT TO DO THIS!");
-	warn += wxT("\n\n");
-	warn += _("This will permanently remove the certificate from your system.");
+	wxString warn = _("This will remove the selected callsign certificate from your system.");
 	warn += wxT("\n");
 	warn += _("You will NOT be able to recover it by loading a .TQ6 file.");
 	warn += wxT("\n");
-	warn += _("You WILL be able to recover it from a container (.p12) file only");
+	warn += _("You WILL be able to recover it from a container (.p12) file,");
 	warn += wxT("\n");
 	warn += _("if you have created one via the Callsign Certificate menu's");
 	warn += wxT("\n");
 	warn += _("'Save Callsign Certificate' command.");
 	warn += wxT("\n\n");
-	warn += _("ARE YOU SURE YOU WANT TO DELETE THE CERTIFICATE?");
+	warn += _("Are you sure you want to delete the certificate?");
 	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		char buf[128];
 		if (!tqsl_getCertificateCallSign(data->getCert(), buf, sizeof buf)) {
@@ -5750,9 +5748,9 @@ void MyFrame::OnLocDelete(wxCommandEvent& WXUNUSED(event)) {
 	if (data == NULL)	// "Never happens"
 		return;
 
-	wxString warn = _("This will permanently remove this station location from your system.");
+	wxString warn = _("This will remove this station location from your system.");
 	warn += wxT("\n");
-	warn += _("ARE YOU SURE YOU WANT TO DELETE THIS LOCATION?");
+	warn += _("Are you sure you want to delete this station location?");
 	if (wxMessageBox(warn, _("Warning"), wxYES_NO|wxICON_QUESTION, this) == wxYES) {
 		if (tqsl_deleteStationLocation(data->getLocname().ToUTF8()))
 			wxLogError(getLocalizedErrorString());

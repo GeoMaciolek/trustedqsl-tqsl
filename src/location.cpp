@@ -3515,7 +3515,11 @@ tqsl_getDeletedStationLocations(char ***locp, int *nloc) {
 		}
 	}
 	*nloc = namelist.size();
-	*locp = reinterpret_cast<char **>(calloc(*nloc, sizeof(*locp)));
+	if (*nloc == 0) {
+		*locp = NULL;
+		return 0;
+	}
+	*locp = reinterpret_cast<char **>(calloc(*nloc, sizeof(**locp)));
 	vector<string>::iterator it;
 	char **p = *locp;
 	for (it = namelist.begin(); it != namelist.end(); it++) {

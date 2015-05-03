@@ -3249,7 +3249,11 @@ tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall) {
 		return 1;
 	}
 	*ncall = callsigns.size();
-	*calls = reinterpret_cast<char **>(calloc(*ncall, sizeof(*calls)));
+	if (*ncall == 0) {
+		*calls = NULL;
+		return 0;
+	}
+	*calls = reinterpret_cast<char **>(calloc(*ncall, sizeof(**calls)));
 	vector<string>::iterator it;
 	char **p = *calls;
 	for (it = callsigns.begin(); it != callsigns.end(); it++) {
