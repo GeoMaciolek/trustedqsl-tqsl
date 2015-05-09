@@ -5661,30 +5661,34 @@ void MyFrame::OnCertUndelete(wxCommandEvent& WXUNUSED(event)) {
 	int ncalls;
 	char **calls = NULL;
 
-	check_tqsl_error(tqsl_getDeletedCallsignCertificates(&calls, &ncalls));
+	try {
+		check_tqsl_error(tqsl_getDeletedCallsignCertificates(&calls, &ncalls));
 
-	if (ncalls <= 0) {
-		wxMessageBox(_("There are no deleted Callsign Certificates to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
-		return;
+		if (ncalls <= 0) {
+			wxMessageBox(_("There are no deleted Callsign Certificates to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
+			return;
+		}
+
+		wxArrayString choices;
+		choices.clear();
+		for (int i = 0; i < ncalls; i++) {
+			choices.Add(wxString::FromUTF8(calls[i]));
+		}
+		choices.Sort();
+
+		wxString selected = wxGetSingleChoice(_("Choose a Callsign Certificate to restore"),
+					 	_("Callsign Certificates"),
+						choices);
+		if (selected.IsEmpty())
+			return;			// Cancelled
+
+		check_tqsl_error(tqsl_restoreCallsignCertificate(selected.ToUTF8()));
+		tqsl_freeDeletedCertificateList(calls, ncalls);
+		cert_tree->Build(CERTLIST_FLAGS);
+		CertTreeReset();
+	} catch(TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
 	}
-
-	wxArrayString choices;
-	choices.clear();
-	for (int i = 0; i < ncalls; i++) {
-		choices.Add(wxString::FromUTF8(calls[i]));
-	}
-	choices.Sort();
-
-	wxString selected = wxGetSingleChoice(_("Choose a Callsign Certificate to restore"),
-					 _("Callsign Certificates"),
-					choices);
-	if (selected.IsEmpty())
-		return;			// Cancelled
-
-	check_tqsl_error(tqsl_restoreCallsignCertificate(selected.ToUTF8()));
-	tqsl_freeDeletedCertificateList(calls, ncalls);
-	cert_tree->Build(CERTLIST_FLAGS);
-	CertTreeReset();
 }
 
 void
@@ -5765,28 +5769,32 @@ void MyFrame::OnLocUndelete(wxCommandEvent& WXUNUSED(event)) {
 	int nloc;
 	char **locp = NULL;
 
-	check_tqsl_error(tqsl_getDeletedStationLocations(&locp, &nloc));
+	try {
+		check_tqsl_error(tqsl_getDeletedStationLocations(&locp, &nloc));
 
-	if (nloc <= 0) {
-		wxMessageBox(_("There are no deleted Station Locations to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
-		return;
+		if (nloc <= 0) {
+			wxMessageBox(_("There are no deleted Station Locations to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
+			return;
+		}
+
+		wxArrayString choices;
+		choices.clear();
+		for (int i = 0; i < nloc; i++) {
+			choices.Add(wxString::FromUTF8(locp[i]));
+		}
+		choices.Sort();
+
+		wxString selected = wxGetSingleChoice(_("Choose a Station Location to restore"),
+					 	_("Station Locations"),
+						choices);
+		if (selected.IsEmpty())
+			return;			// Cancelled
+
+		check_tqsl_error(tqsl_restoreStationLocation(selected.ToUTF8()));
+		tqsl_freeDeletedLocationList(locp, nloc);
+	} catch(TQSLException& x) {
+		wxLogError(wxT("%hs"), x.what());
 	}
-
-	wxArrayString choices;
-	choices.clear();
-	for (int i = 0; i < nloc; i++) {
-		choices.Add(wxString::FromUTF8(locp[i]));
-	}
-	choices.Sort();
-
-	wxString selected = wxGetSingleChoice(_("Choose a Station Location to restore"),
-					 _("Station Locations"),
-					choices);
-	if (selected.IsEmpty())
-		return;			// Cancelled
-
-	check_tqsl_error(tqsl_restoreStationLocation(selected.ToUTF8()));
-	tqsl_freeDeletedLocationList(locp, nloc);
 	loc_tree->Build();
 	LocTreeReset();
 }
