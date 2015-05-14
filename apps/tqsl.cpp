@@ -2184,13 +2184,15 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 
 // Errors from tqsllib that indicate bad QSO data.
 // Add here so they're picked up for translation.
-#ifdef tqslconvert
+#ifdef tqsltranslate
 static const char* qsoerrs[] = {
 	__("Invalid contact - QSO does not specify a Callsign"),
 	__("Invalid contact - QSO does not specify a band or frequency"),
 	__("Invalid contact - QSO does not specify a mode"),
 	__("Invalid contact - QSO does not specify a date"),
-	__("Invalid contact - QSO does not specify a time")
+	__("Invalid contact - QSO does not specify a time"),
+	// Piggy-back this error as well
+	__("This callsign certificate is already active and cannot be restored.")
 }
 #endif
 

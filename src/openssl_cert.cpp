@@ -3341,10 +3341,9 @@ tqsl_restoreCallsignCertificate(const char *callsign) {
 		if (s == serial) {			// Already imported
 			tqsl_freeCertificateList(certlist, ncerts);
 			tQSL_Error = TQSL_CUSTOM_ERROR;
-			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
-				"A callsign certificate for %s with serial %ld is already installed", callsign, serial);
+			strncpy(tQSL_CustomError, "This callsign certificate is already active and cannot be restored.",
+				sizeof tQSL_CustomError);
 			tqslTrace("tqsl_restoreCallsignCertificate", "certificate already exists");
-			//foo error setting
 			return 1;
 		}
 	}
