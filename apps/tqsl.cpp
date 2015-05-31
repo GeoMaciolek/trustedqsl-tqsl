@@ -1029,9 +1029,9 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	_quiet = quiet;
 
 #ifdef __WXMAC__
-	DocPaths docpaths(wxT("tqslapp"));
-#else
 	DocPaths docpaths(wxT("tqsl.app"));
+#else
+	DocPaths docpaths(wxT("tqslapp"));
 #endif
 	wxBitmap savebm(save_xpm);
 	wxBitmap uploadbm(upload_xpm);
@@ -2493,9 +2493,9 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	curl_easy_setopt(curlReq, CURLOPT_URL, url);
 
 #ifdef __WXMAC__
-	DocPaths docpaths(wxT("tqslapp"));
-#else
 	DocPaths docpaths(wxT("tqsl.app"));
+#else
+	DocPaths docpaths(wxT("tqslapp"));
 #endif
 	docpaths.Add(wxString::FromUTF8(tQSL_BaseDir));
 #ifdef CONFDIR
