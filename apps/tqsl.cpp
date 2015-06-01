@@ -3016,7 +3016,7 @@ class UpdateDialogMsgBox: public wxDialog {
 		if (newProg)
 			notice = wxString::Format(_("A new TQSL release (V%s) is available!"), newProgRev->Value().c_str());
 		else if (newConfig)
-			notice = wxString::Format(_("A new TrustedQSL configuration file (V%s) is available!"), newConfigRev->Value().c_str());
+			notice = wxString::Format(_("An updated TrustedQSL configuration file (V%s) is available!\nThe configuration file installs definitions for entities, modes, etc."), newConfigRev->Value().c_str());
 
 		overall->Add(new wxStaticText(this, wxID_ANY, notice), 0, wxALIGN_CENTER_HORIZONTAL);
 
