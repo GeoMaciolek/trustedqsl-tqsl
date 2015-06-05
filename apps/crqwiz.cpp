@@ -580,6 +580,8 @@ CRQ_ProviderPage::TransferDataFromWindow() {
 const char *
 CRQ_IntroPage::validate() {
 	tqslTrace("CRQ_IntroPage::validate");
+	tQSL_Cert *certlist = 0;
+	int ncert = 0;
 	if (!initialized)
 		return 0;
 	valMsg = wxT("");
@@ -651,62 +653,59 @@ CRQ_IntroPage::validate() {
 	// Data looks okay, now let's make sure this isn't a duplicate request
 	// (unless it's a renewal).
 
-	if (!Parent()->_crq) {
-		val.MakeUpper();
-		tQSL_Cert *certlist = 0;
-		int ncert = 0;
-		tqsl_selectCertificates(&certlist, &ncert, val.ToUTF8(), Parent()->dxcc, 0,
-			&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
-//cerr << "ncert: " << ncert << endl;
-		if (ncert > 0) {
-			char cert_before_buf[40], cert_after_buf[40];
-			for (int i = 0; i < ncert; i++) {
-				// See if this cert overlaps the user-specified date range
-				tQSL_Date cert_not_before, cert_not_after;
-				int cert_dxcc = 0;
-				tqsl_getCertificateQSONotBeforeDate(certlist[i], &cert_not_before);
-				tqsl_getCertificateQSONotAfterDate(certlist[i], &cert_not_after);
-				tqsl_getCertificateDXCCEntity(certlist[i], &cert_dxcc);
-//cerr << "dxcc: " << cert_dxcc << endl;
-				if (cert_dxcc == Parent()->dxcc
+	val.MakeUpper();
+	tqsl_selectCertificates(&certlist, &ncert, val.ToUTF8(), Parent()->dxcc, 0,
+				&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
+	if (ncert > 0) {
+		char cert_before_buf[40], cert_after_buf[40];
+		for (int i = 0; i < ncert; i++) {
+			// See if this cert overlaps the user-specified date range
+			tQSL_Date cert_not_before, cert_not_after;
+			int cert_dxcc = 0;
+			tqsl_getCertificateQSONotBeforeDate(certlist[i], &cert_not_before);
+			tqsl_getCertificateQSONotAfterDate(certlist[i], &cert_not_after);
+			tqsl_getCertificateDXCCEntity(certlist[i], &cert_dxcc);
+			if (cert_dxcc == Parent()->dxcc
 					&& ((tqsl_isDateValid(&Parent()->qsonotafter)
-						&& !(tqsl_compareDates(&Parent()->qsonotbefore, &cert_not_after) == 1
-						|| tqsl_compareDates(&Parent()->qsonotafter, &cert_not_before) == -1))
+					&& !(tqsl_compareDates(&Parent()->qsonotbefore, &cert_not_after) == 1
+					|| tqsl_compareDates(&Parent()->qsonotafter, &cert_not_before) == -1))
 					|| (!tqsl_isDateValid(&Parent()->qsonotafter)
-						&& !(tqsl_compareDates(&Parent()->qsonotbefore, &cert_not_after) == 1)))) {
-					ok = false;	// Overlap!
-					tqsl_convertDateToText(&cert_not_before, cert_before_buf, sizeof cert_before_buf);
-					tqsl_convertDateToText(&cert_not_after, cert_after_buf, sizeof cert_after_buf);
-				}
-			}
-			tqsl_freeCertificateList(certlist, ncert);
-			if (ok == false) {
-				DXCC dxcc;
-				dxcc.getByEntity(Parent()->dxcc);
-				// TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
-				valMsg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
-				// TRANSLATORS: here "to" separates two dates in a date range
-				valMsg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
+					&& !(tqsl_compareDates(&Parent()->qsonotbefore, &cert_not_after) == 1)))) {
+				ok = false;	// Overlap!
+				tqsl_convertDateToText(&cert_not_before, cert_before_buf, sizeof cert_before_buf);
+				tqsl_convertDateToText(&cert_not_after, cert_after_buf, sizeof cert_after_buf);
 			}
 		}
+		tqsl_freeCertificateList(certlist, ncert);
+		if (ok == false) {
+			DXCC dxcc;
+			dxcc.getByEntity(Parent()->dxcc);
+			// TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
+			valMsg = wxString::Format(_("You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "), val.c_str(), dxcc.name());
+			// TRANSLATORS: here "to" separates two dates in a date range
+			valMsg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
+		}
+	}
+	{
 		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
 		wxStringTokenizer tkz(pending, wxT(","));
 		while (tkz.HasMoreTokens()) {
 			wxString pend = tkz.GetNextToken();
 			if (pend == val) {
 				wxString fmt = _("You have already requested a callsign certificate for %s "
-						       "and can not request another until that request has been "
-						       "processed by LoTW Staff.");
+					       	"and can not request another until that request has been "
+					       	"processed by LoTW Staff.");
 					fmt += wxT("\n\n");
 					fmt += _("Please wait until you receive an e-mail bearing your "
-						       "requested callsign certificate.");
+					       	"requested callsign certificate.");
 					fmt += wxT("\n\n");
 					fmt += _("If you are sure that the earlier request is now invalid "
-						       "you should delete the pending callsign certificate for %s.");
+					       	"you should delete the pending callsign certificate for %s.");
 				valMsg = wxString::Format(fmt, val.c_str(), val.c_str());
 			}
 		}
 	}
+
  notok:
 	tc_status->SetLabel(valMsg);
 	tc_status->Wrap(em_w * 35);

@@ -3,6 +3,12 @@ TQSL changes
 
 2.1
 ----------
+Warn a user when they try to renew a callsign certificate when there's already
+an existing certificate request for that callsign.
+
+Describe the purpose of the TrustedQSL configuration file when a new version
+of the configuration file is available for download.
+
 Add menu items to the Station Location and Callsign Certificate menu to permit
 undeleting of those items.
 
