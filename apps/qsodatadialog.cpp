@@ -474,7 +474,7 @@ QSODataDialog::TransferDataFromWindow() {
 			return false;
 		}
 		if (rec._propmode == wxT("SAT") && rec._satellite == wxT("")) {
-			wxMessageBox(_("'Satellite' propagation mode selected, so a a Satellite must be chosen"), _("QSO Data Error"),
+			wxMessageBox(_("'Satellite' propagation mode selected, so a Satellite must be chosen"), _("QSO Data Error"),
 				wxOK | wxICON_EXCLAMATION, this);
 			return false;
 		}
