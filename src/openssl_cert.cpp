@@ -527,7 +527,13 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 #ifdef _WIN32
 	free(wfilename);
 #endif
-	fputs("\ntQSL certificate request\n\n", out);
+	if (fputs("\ntQSL certificate request\n\n", out) == EOF) {
+		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
+		tqslTrace("tqsl_createCertRequest", "Write request file - system error %s", strerror(errno));
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		goto end;
+	}
 	tqsl_write_adif_field(out, "eoh", 0, NULL, 0);
 	type = (req->signer != NULL) ? (req->renew ? "TQSL_CRQ_RENEWAL" : "TQSL_CRQ_ADDITIONAL") : "TQSL_CRQ_NEW";
 	int libmaj, libmin, configmaj, configmin;
@@ -4139,6 +4145,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	if (!tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
 		if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 			tqslTrace("tqsl_handle_user_cert", "match error %s", tqsl_openssl_error());
+			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 		tQSL_Error = TQSL_NO_ERROR;	/* clear error */
@@ -4149,6 +4156,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	if ((root_sk = tqsl_ssl_load_certs_from_file(rootpath)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
 			tqslTrace("tqsl_handle_user_cert", "Error loading certs %s", tqsl_openssl_error());
+			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 	}
@@ -4157,6 +4165,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 		if (!tqsl_ssl_error_is_nofile()) {
 			sk_X509_free(root_sk);
 			tqslTrace("tqsl_handle_user_cert", "Error loading authorities %s", tqsl_openssl_error());
+			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 	}
@@ -4167,6 +4176,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 		strncpy(tQSL_CustomError, cp, sizeof tQSL_CustomError);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		tqslTrace("tqsl_handle_user_cert", "verify error %s", cp);
+		tQSL_ImportCall[0] = '\0';
 		return 1;
 	}
 	return tqsl_store_cert(pem, x, "user", TQSL_CERT_CB_USER, false, cb, userdata);
@@ -4246,6 +4256,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	if ((sk = tqsl_ssl_load_certs_from_file(path)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
 			tqslTrace("tqsl_store_cert", "unexpected openssl err %s", tqsl_openssl_error());
+			tQSL_ImportCall[0] = '\0';
 			return 1;	/* Unexpected OpenSSL error */
 		}
 	}
@@ -4299,6 +4310,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 							tqslTrace("tqsl_load_cert", tQSL_CustomError);
 							BN_free(bserial);
 							sk_X509_free(sk);
+							tQSL_ImportCall[0] = '\0';
 							return 1;
 						}
 					}
@@ -4318,6 +4330,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 					strncpy(tQSL_CustomError, "Duplicate Callsign certificate",
 						sizeof tQSL_CustomError);
 					tqslTrace("tqsl_load_cert", tQSL_CustomError);
+					tQSL_ImportCall[0] = '\0';
 					return 1;
 				}
 			}
@@ -4333,6 +4346,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 		if (rval) {
 			tqslTrace("tqsl_load_cert", "operator aborted");
 			tQSL_Error = TQSL_OPERATOR_ABORT;
+			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 	}
@@ -4347,17 +4361,27 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		tqslTrace("tqsl_load_cert", "opening file err %s", strerror(errno));
+		tQSL_ImportCall[0] = '\0';
 		return 1;
 	}
 #ifdef _WIN32
 	free(wpath);
 #endif
-	fwrite(pem, 1, strlen(pem), out);
+	size_t pemlen = strlen(pem);
+	if (fwrite(pem, 1, pemlen, out) != pemlen) {
+		strncpy(tQSL_ErrorFile, certfile, sizeof tQSL_ErrorFile);
+		tQSL_Error = TQSL_SYSTEM_ERROR;
+		tQSL_Errno = errno;
+		tqslTrace("tqsl_load_cert", "writing file err %s", strerror(errno));
+		tQSL_ImportCall[0] = '\0';
+		return 1;
+	}
 	if (fclose(out) == EOF) {
 		strncpy(tQSL_ErrorFile, certfile, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		tqslTrace("tqsl_load_cert", "writing file err %s", strerror(errno));
+		tQSL_ImportCall[0] = '\0';
 		return 1;
 	}
 	msg = "Loaded: " + subjid;
@@ -4367,6 +4391,7 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 		rval = 0;
 	if (rval) {
 		tQSL_Error = TQSL_OPERATOR_ABORT;
+		tQSL_ImportCall[0] = '\0';
 		return 1;
 	}
 	return 0;
@@ -4692,12 +4717,12 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 		tqslTrace("tqsl_find_matching_key", "get subj name err %d", tQSL_Error);
 		return rval;
 	}
-	strncpy(tQSL_ImportCall, aro, sizeof tQSL_ImportCall);
 	tQSL_ImportSerial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 	if (!tqsl_make_key_path(aro, path, sizeof path)) {
 		tqslTrace("tqsl_find_matching_key", "key path err %d", tQSL_Error);
 		goto end_nokey;
 	}
+	strncpy(tQSL_ImportCall, aro, sizeof tQSL_ImportCall);
 	if (tqsl_open_key_file(path)) {
 		/* Friendly error for file not found */
 		if (tQSL_Error == TQSL_SYSTEM_ERROR) {
@@ -4712,6 +4737,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			tqslTrace("tqsl_find_matching_key", "opening file path err %s", tQSL_CustomError);
 		}
+		tQSL_ImportCall[0] = '\0';
 		return rval;
 	}
 	if ((cert_key = X509_get_pubkey(cert)) == NULL) {
@@ -4773,6 +4799,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 	tQSL_Error = TQSL_CERT_NOT_FOUND;
 	goto end;
  err:
+	tQSL_ImportCall[0] = '\0';
 	tQSL_Error = TQSL_OPENSSL_ERROR;
  end:
 	tqsl_close_key_file();
