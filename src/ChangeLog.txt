@@ -3,6 +3,16 @@ TQSLLIB changes
 
 2.5
 ---
+Display the serial number of the Callsign Certificate being processed
+along with the callsign for errors when installing Callsign Certificates.
+This allows errors to be specific when attempts to restore older
+Callsign Certificates fail.
+
+When installing multiple Callsign Certificates from a .tq6 file (such
+as that available on the LoTW website) don't quit if a certificate
+can't be installed due to a lack of a private key, as later callsign
+certificates may be able to installed.
+
 When deleting Callsign Certificates, store a copy so that certificate
 can be recovered. Add the ability to list callsign certificates available
 for restoration and a function that allows undeletion.

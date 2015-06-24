@@ -357,6 +357,9 @@ tqsl_import_cert(const char *data, certtype type, int(*cb)(int, const char *, vo
 	if (stat) {
 		if (cb != NULL) {
 			stat = (*cb)(handler->type | TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR, tqsl_getErrorString_v(tQSL_Error), userdata);
+			if (handler->type == tqsllib::USERCERT) {
+				tQSL_ImportCall[0] = '\0';
+			}
 			if (stat) {
 				tqslTrace("tqsl_import_cert", "import error %d", tQSL_Error);
 				return 1;
@@ -4145,7 +4148,6 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	if (!tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
 		if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 			tqslTrace("tqsl_handle_user_cert", "match error %s", tqsl_openssl_error());
-			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 		tQSL_Error = TQSL_NO_ERROR;	/* clear error */
@@ -4156,7 +4158,6 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	if ((root_sk = tqsl_ssl_load_certs_from_file(rootpath)) == NULL) {
 		if (!tqsl_ssl_error_is_nofile()) {
 			tqslTrace("tqsl_handle_user_cert", "Error loading certs %s", tqsl_openssl_error());
-			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 	}
@@ -4165,7 +4166,6 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 		if (!tqsl_ssl_error_is_nofile()) {
 			sk_X509_free(root_sk);
 			tqslTrace("tqsl_handle_user_cert", "Error loading authorities %s", tqsl_openssl_error());
-			tQSL_ImportCall[0] = '\0';
 			return 1;
 		}
 	}
@@ -4176,7 +4176,6 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 		strncpy(tQSL_CustomError, cp, sizeof tQSL_CustomError);
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		tqslTrace("tqsl_handle_user_cert", "verify error %s", cp);
-		tQSL_ImportCall[0] = '\0';
 		return 1;
 	}
 	return tqsl_store_cert(pem, x, "user", TQSL_CERT_CB_USER, false, cb, userdata);
