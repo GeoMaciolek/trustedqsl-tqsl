@@ -185,8 +185,8 @@ getLocalizedErrorString_v(int err) {
 		return wxString::FromUTF8(msg);
 	}
 	if (err == TQSL_CERT_NOT_FOUND && tQSL_ImportCall[0] != '\0') {
-		return wxString::Format(_("Callsign Certificate or Certificate Request not found for callsign %hs"),
-			tQSL_ImportCall);
+		return wxString::Format(_("Callsign Certificate or Certificate Request not found for callsign %hs serial %d"),
+			tQSL_ImportCall, tQSL_ImportSerial);
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;
 	if (adjusted_err < 0 ||
