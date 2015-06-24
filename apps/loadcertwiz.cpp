@@ -53,8 +53,7 @@ notifyImport(int type, const char *message, void *data) {
 		switch (TQSL_CERT_CB_CERT_TYPE(type)) {
                         case TQSL_CERT_CB_ROOT:
 				nametype = "Trusted root";
-				configkey = "NotifyRoot";
-				//default_prompt = true;
+				configkey = "NotifyNewRoot";
 				break;
                         case TQSL_CERT_CB_CA:
 				nametype = "Certificate Authority";
