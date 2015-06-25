@@ -10,6 +10,7 @@ FIND_PATH(BDB_INCLUDE_DIR db.h NO_DEFAULT_PATH PATHS
 else()
 FIND_PATH(BDB_INCLUDE_DIR db.h
   #windows dirs (to be determined)
+  "C:\\db-6.1.26.NC\\build_windows"
   "C:\\db-6.1.19.NC\\build_windows"
   "C:\\db-6.0.20\\build_windows"
   "C:\\db-6.0.20\\build_windows"
@@ -34,6 +35,7 @@ FIND_LIBRARY(BDB_LIBRARY NAMES
   libdb5-5.3
   libdb5-5.so
   PATHS
+  "C:\\db-6.1.26.NC\\build_windows\\Win32\\Static Release\\"
   "C:\\db-6.1.19.NC\\build_windows\\Win32\\Static Release\\"
   "C:\\db-6.0.20\\build_windows\\Win32\\Static Release\\"
   "C:\\db-6.0.20\\build_windows\\Win32\\Static_Release\\" #vc08 adds underscore
