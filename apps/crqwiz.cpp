@@ -588,6 +588,8 @@ CRQ_IntroPage::validate() {
 	wxString val = tc_call->GetValue().MakeUpper();
 	bool ok = true;
 	int sel;
+	wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
+	wxStringTokenizer tkz(pending, wxT(","));
 
 	if (val.Len() < 3)
 		ok = false;
@@ -686,23 +688,19 @@ CRQ_IntroPage::validate() {
 			valMsg += wxString::FromUTF8(cert_before_buf) + _(" to ") + wxString::FromUTF8(cert_after_buf);
 		}
 	}
-	{
-		wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
-		wxStringTokenizer tkz(pending, wxT(","));
-		while (tkz.HasMoreTokens()) {
-			wxString pend = tkz.GetNextToken();
-			if (pend == val) {
-				wxString fmt = _("You have already requested a callsign certificate for %s "
-					       	"and can not request another until that request has been "
-					       	"processed by LoTW Staff.");
-					fmt += wxT("\n\n");
-					fmt += _("Please wait until you receive an e-mail bearing your "
-					       	"requested callsign certificate.");
-					fmt += wxT("\n\n");
-					fmt += _("If you are sure that the earlier request is now invalid "
-					       	"you should delete the pending callsign certificate for %s.");
-				valMsg = wxString::Format(fmt, val.c_str(), val.c_str());
-			}
+	while (tkz.HasMoreTokens()) {
+		wxString pend = tkz.GetNextToken();
+		if (pend == val) {
+			wxString fmt = _("You have already requested a callsign certificate for %s "
+				       	"and can not request another until that request has been "
+				       	"processed by LoTW Staff.");
+				fmt += wxT("\n\n");
+				fmt += _("Please wait until you receive an e-mail bearing your "
+				       	"requested callsign certificate.");
+				fmt += wxT("\n\n");
+				fmt += _("If you are sure that the earlier request is now invalid "
+				       	"you should delete the pending callsign certificate for %s.");
+			valMsg = wxString::Format(fmt, val.c_str(), val.c_str());
 		}
 	}
 

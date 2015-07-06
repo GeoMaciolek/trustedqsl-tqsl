@@ -3048,10 +3048,14 @@ class UpdateDialogMsgBox: public wxDialog {
 			overall->Add(buttons, 0, wxALIGN_CENTER_HORIZONTAL);
 		}
 
+#if wxMAJOR_VERSION > 2 || (wxMAJOR_VERSION == 2 && wxMINOR_VERSION == 9)
+		SetSizerAndFit(overall);
+#else
 		wxSizer* padding = new wxBoxSizer(wxVERTICAL);
 		padding->Add(overall, 0, wxALL, 10);
 		SetSizer(padding);
 		Fit();
+#endif
 	}
 
  private:
@@ -4659,7 +4663,7 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
+		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
