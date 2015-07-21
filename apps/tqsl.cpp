@@ -1090,7 +1090,14 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	stn_menu->Append(tm_s_edit, _("&Edit Station Location"));
 	stn_menu->Append(tm_s_add, _("&Add Station Location"));
 	stn_menu->AppendSeparator();
+
+	int nloc = 0;
+	char **locp = NULL;
+	tqsl_getDeletedStationLocations(&locp, &nloc);
 	stn_menu->Append(tm_s_undelete, _("&Restore a Deleted Station Location"));
+	stn_menu->Enable(tm_s_undelete, nloc > 0);
+	if (nloc > 0)
+		tqsl_freeDeletedLocationList(locp, nloc);
 
 	// Help menu
 	help = new wxHtmlHelpController(wxHF_DEFAULT_STYLE | wxHF_OPEN_FILES);
@@ -3407,7 +3414,7 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 		if (!ri->silent && !ri->noGUI) {
 			wxString fmt = _("Your system is up to date");
 			fmt += wxT("\n");
-			fmt += _("TQSL Version %hs and Configuration Version %s");
+			fmt += _("TQSL Version %hs and Configuration Data Version %s");
 			fmt += wxT("\n");
 			fmt += _("are the newest available");
 			wxMessageBox(wxString::Format(fmt, VERSION, ri->configRev->Value().c_str()), _("No Updates"), wxOK|wxICON_INFORMATION, this);
@@ -5167,7 +5174,12 @@ makeCertificateMenu(bool enable, bool keyonly) {
 	c_menu->Append(tc_c_Delete, _("&Delete Callsign Certificate"));
 	c_menu->Enable(tc_c_Delete, enable);
 	c_menu->AppendSeparator();
+
+	int ncalls = 0;
+	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, NULL);
 	c_menu->Append(tc_c_Undelete, _("Restore Deleted Callsign Certificate"));
+	c_menu->Enable(tc_c_Undelete, ncalls > 0);
+
 	return c_menu;
 }
 
@@ -5499,12 +5511,14 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		int keyonly = 0;
 		int expired = 0;
 		int superseded = 0;
+		int deleted = 0;
 		char call[40];
 		tqsl_getCertificateCallSign(data->getCert(), call, sizeof call);
 		wxString callSign = wxString::FromUTF8(call);
 		tqsl_getCertificateKeyOnly(data->getCert(), &keyonly);
 		tqsl_isCertificateExpired(data->getCert(), &expired);
 		tqsl_isCertificateSuperceded(data->getCert(), &superseded);
+		tqsl_getDeletedCallsignCertificates(NULL, &deleted, call);
 		tqslTrace("MyFrame::OnCertTreeSel", "call=%s", call);
 
 		cert_select_label->SetLabel(wxT(""));
@@ -5512,6 +5526,7 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		cert_menu->Enable(tc_c_Export, true);
 		cert_menu->Enable(tc_c_Delete, true);
 		cert_menu->Enable(tc_c_Renew, true);
+		cert_menu->Enable(tc_c_Undelete, deleted);
 		cert_save_button->Enable(true);
 		cert_load_button->Enable(true);
 		cert_prop_button->Enable(true);
@@ -5534,6 +5549,7 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 			cert_renew_button->SetLabel(nl + _("Renew a Callsign Certificate"));
 		}
 		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
+		cert_menu->Enable(tc_c_Undelete, deleted);
 		cert_renew_button->Enable(!(keyonly || expired || superseded));
 	} else {
 		CertTreeReset();
@@ -5668,7 +5684,7 @@ void MyFrame::OnCertUndelete(wxCommandEvent& WXUNUSED(event)) {
 	char **calls = NULL;
 
 	try {
-		check_tqsl_error(tqsl_getDeletedCallsignCertificates(&calls, &ncalls));
+		check_tqsl_error(tqsl_getDeletedCallsignCertificates(&calls, &ncalls, NULL));
 
 		if (ncalls <= 0) {
 			wxMessageBox(_("There are no deleted Callsign Certificates to restore"), _("Undelete Error"), wxOK|wxICON_EXCLAMATION);
@@ -5793,8 +5809,10 @@ void MyFrame::OnLocUndelete(wxCommandEvent& WXUNUSED(event)) {
 		wxString selected = wxGetSingleChoice(_("Choose a Station Location to restore"),
 					 	_("Station Locations"),
 						choices);
-		if (selected.IsEmpty())
+		if (selected.IsEmpty()) {
+			tqsl_freeDeletedLocationList(locp, nloc);
 			return;			// Cancelled
+		}
 
 		check_tqsl_error(tqsl_restoreStationLocation(selected.ToUTF8()));
 		tqsl_freeDeletedLocationList(locp, nloc);

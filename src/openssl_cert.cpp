@@ -3022,7 +3022,7 @@ tqsl_backup_cert(tQSL_Cert cert) {
 }
 
 static int
-tqsl_make_backup_list(vector<string>& keys) {
+tqsl_make_backup_list(const char* filter, vector<string>& keys) {
 	keys.clear();
 
 	string path = tQSL_BaseDir;
@@ -3092,7 +3092,10 @@ tqsl_make_backup_list(vector<string>& keys) {
 		xel.getFirstElement(cert);
 		pair<string, bool> atrval = cert.getAttribute("CallSign");
 		if (atrval.second) {
-			keys.push_back(atrval.first);
+			// If the callsign matches, or if the filter is empty, add it.
+			if (filter == NULL || atrval.first == filter) {
+				keys.push_back(atrval.first);
+			}
 		}
 	}
 #ifdef _WIN32
@@ -3251,15 +3254,18 @@ tqsl_deleteCertificate(tQSL_Cert cert) {
 
 /** Get the list of restorable callsign certificates. */
 DLLEXPORT int CALLCONVENTION
-tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall) {
+tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall, const char *filter) {
 	vector <string> callsigns;
 
-	if (tqsl_make_backup_list(callsigns)) {
+	if (tqsl_make_backup_list(filter, callsigns)) {
 		return 1;
 	}
 	*ncall = callsigns.size();
 	if (*ncall == 0) {
 		*calls = NULL;
+		return 0;
+	}
+	if (calls == NULL) {
 		return 0;
 	}
 	*calls = reinterpret_cast<char **>(calloc(*ncall, sizeof(**calls)));

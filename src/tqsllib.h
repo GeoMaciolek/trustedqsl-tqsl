@@ -742,7 +742,7 @@ DLLEXPORT int CALLCONVENTION tqsl_importPKCS12Base64(const char *base64, const c
 	int (*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type , const char *message, void *userdata), void *user);
 
 /** Get the list of restorable station locations. */
-DLLEXPORT int CALLCONVENTION tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall);
+DLLEXPORT int CALLCONVENTION tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall, const char *filter);
 
 /** Free the list of restorable Callsign Certificates. */
 DLLEXPORT void CALLCONVENTION tqsl_freeDeletedCertificateList(char **list, int nloc);
