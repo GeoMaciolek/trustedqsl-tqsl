@@ -902,7 +902,7 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 #endif
 	}
 	bfiles.Sort();
-	int vlimit;
+	long vlimit = DEFAULT_BACKUP_VERSIONS;
 	wxConfig::Get()->Read(wxT("BackupVersions"), &vlimit, DEFAULT_BACKUP_VERSIONS);
 
 	if (vlimit <= 0)
@@ -5501,6 +5501,9 @@ MyFrame::CertTreeReset() {
 	cert_select_label->SetLabel(nl + _("Select a Callsign Certificate to process"));
 	cert_save_button->Enable(false);
 	cert_prop_button->Enable(false);
+	int ncalls = 0;
+	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, NULL);
+	cert_menu->Enable(tc_c_Undelete, ncalls > 0);
 }
 
 void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
