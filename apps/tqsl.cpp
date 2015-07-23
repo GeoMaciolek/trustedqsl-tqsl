@@ -5154,7 +5154,7 @@ void MyFrame::FirstTime(void) {
 }
 
 wxMenu *
-makeCertificateMenu(bool enable, bool keyonly) {
+makeCertificateMenu(bool enable, bool keyonly, const char *callsign) {
 	tqslTrace("makeCertificateMenu", "enable=%d, keyonly=%d", enable, keyonly);
 	wxMenu *c_menu = new wxMenu;
 	c_menu->Append(tc_c_Properties, _("Display Callsign Certificate &Properties"));
@@ -5176,7 +5176,7 @@ makeCertificateMenu(bool enable, bool keyonly) {
 	c_menu->AppendSeparator();
 
 	int ncalls = 0;
-	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, NULL);
+	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, callsign);
 	c_menu->Append(tc_c_Undelete, _("Restore Deleted Callsign Certificate"));
 	c_menu->Enable(tc_c_Undelete, ncalls > 0);
 
@@ -5529,7 +5529,7 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 		cert_menu->Enable(tc_c_Export, true);
 		cert_menu->Enable(tc_c_Delete, true);
 		cert_menu->Enable(tc_c_Renew, true);
-		cert_menu->Enable(tc_c_Undelete, deleted);
+		cert_menu->Enable(tc_c_Undelete, deleted != 0);
 		cert_save_button->Enable(true);
 		cert_load_button->Enable(true);
 		cert_prop_button->Enable(true);
@@ -5552,7 +5552,7 @@ void MyFrame::OnCertTreeSel(wxTreeEvent& event) {
 			cert_renew_button->SetLabel(nl + _("Renew a Callsign Certificate"));
 		}
 		cert_menu->Enable(tc_c_Renew, !(keyonly || expired || superseded));
-		cert_menu->Enable(tc_c_Undelete, deleted);
+		cert_menu->Enable(tc_c_Undelete, deleted != 0);
 		cert_renew_button->Enable(!(keyonly || expired || superseded));
 	} else {
 		CertTreeReset();

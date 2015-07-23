@@ -3262,7 +3262,9 @@ tqsl_getDeletedCallsignCertificates(char ***calls, int *ncall, const char *filte
 	}
 	*ncall = callsigns.size();
 	if (*ncall == 0) {
-		*calls = NULL;
+		if (calls) {
+			*calls = NULL;
+		}
 		return 0;
 	}
 	if (calls == NULL) {

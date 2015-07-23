@@ -225,9 +225,18 @@ CertTree::OnRightDown(wxMouseEvent& event) {
 		SelectItem(id);
 		tQSL_Cert cert = GetItemData(id)->getCert();
 		int keyonly = 1;
-		if (cert)
+		wxMenu *cm;
+		if (cert) {
 			tqsl_getCertificateKeyOnly(cert, &keyonly);
-		wxMenu *cm = makeCertificateMenu(true, (keyonly != 0));
+			char callsign[129];
+			if (tqsl_getCertificateCallSign(cert, callsign, sizeof callsign)) {
+				cm = makeCertificateMenu(true, (keyonly != 0), NULL);
+			} else {
+				cm = makeCertificateMenu(true, (keyonly != 0), callsign);
+			}
+		} else {
+			cm = makeCertificateMenu(true, (keyonly != 0), NULL);
+		}
 		PopupMenu(cm, event.GetPosition());
 		delete cm;
 	}
