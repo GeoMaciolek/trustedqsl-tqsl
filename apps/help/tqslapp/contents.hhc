@@ -23,7 +23,7 @@
 			<param name="Local" value="certaccept.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Defining, Modifying, or Deleting a Station Location">
+			<param name="Name" value="Defining a Station Location">
 			<param name="Local" value="stnloc.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -49,6 +49,10 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Viewing a Callsign Certificate's Properties">
+			<param name="Local" value="certificateproperties.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Determining When a Callsign Certificate Expires">
 			<param name="Local" value="expiration.htm">
 			</OBJECT>
@@ -57,15 +61,19 @@
 			<param name="Local" value="renewing.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Requesting an Additional Callsign Certificate">
-			<param name="Local" value="addcertreq.htm">
+			<param name="Name" value="Replacing a Callsign Certificate">
+			<param name="Local" value="certreplace.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Accepting an Additional Callsign Certificate">
-			<param name="Local" value="addcertaccept.htm">
+			<param name="Name" value="Determining if a Callsign Certificate is Valid">
+			<param name="Local" value="certificatevalidity.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Copying Callsign Certificates and Station Locations from One Computer to Another">
+			<param name="Name" value="Maintaining Callsign Certificate Security">
+			<param name="Local" value="certificatesecurity.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Copying Callsign Certificates from One Computer to Another">
 			<param name="Local" value="moving.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -77,8 +85,38 @@
 			<param name="Local" value="load-certificate.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Requesting an Additional Callsign Certificate">
+			<param name="Local" value="addcertreq.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Accepting an Additional Callsign Certificate">
+			<param name="Local" value="addcertaccept.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Deleting a Callsign Certificate">
 			<param name="Local" value="deletecert.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Restoring a Deleted Callsign Certificate">
+			<param name="Local" value="restoredeletedcert.htm">
+			</OBJECT>
+	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="Secondary Station Location Operations">
+		<param name="Local" value="secondarystnlocops.htm">
+		</OBJECT>
+	<UL>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Defining, Modifying, or Deleting a Station Location">
+			<param name="Local" value="stnloc.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Restoring a Deleted Station Location">
+			<param name="Local" value="restoredeletedstnloc.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Copying Station Locations from One Computer to Another">
+			<param name="Local" value="moving.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
@@ -87,16 +125,16 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Checking and Updating TQSL's Configuration Data">
+			<param name="Local" value="configxml.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Setting TQSL Options">
 			<param name="Local" value="pref-opt.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Setting a Date Range">
 			<param name="Local" value="daterng.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Checking and Updating TQSL's Configuration Data">
-			<param name="Local" value="configxml.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Adding and Deleting ADIF Mode Mappings">
@@ -109,6 +147,14 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Configuring a Network Proxy for Internet Access">
 			<param name="Local" value="netproxy.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Selecting the Language Used by TQSL">
+			<param name="Local" value="selectlanguage.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Localizing TQSL">
+			<param name="Local" value="localization.htm">
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">

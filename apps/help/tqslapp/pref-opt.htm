@@ -22,7 +22,7 @@ file types. The <a href="signupload.htm">Select File to Sign and Upload</a> and
 <a href="signupload.htm">Select File to Sign and Save</a> dialogs set their <b>Files of type</b>
 selectors based on the extensions specified on this tab:
 <p>
-<img src="pref-opt.bmp" width=469 height=316 border=0>
+<img src="pref-opt.bmp" width=469 height=373 border=0>
 <P>
 In the example shown above, files whose names end in <code>.log</code> or <code>.cab</code>
 will be treated as Cabrillo files, while those with names ending in <code>.adi</code> or
@@ -31,16 +31,25 @@ case in file names, the two ADIF entries shown in this example would be unnecces
 <P>
 <a name="backup"></a>
 <H5>Enable automatic Backup File creation on termination</H5>
-If you want TQSL to automatically create a <a href="backuprestore.htm#backup">Backup File</a> when it terminates, check the <b>Allow automatic configuration backup</b> box, click the <B>Browse</B> button to the right of the <B>Backup File Folder</B> textbox, and use the <B>Browse For Folder</B> dialog that 
-appears to select the folder in which <b>Backup Files</b> will automatically be created when terminating.
+If you want TQSL to automatically create a <a href="backuprestore.htm#backup">Backup File</a> when it terminates, check the <b>Allow automatic configuration backup</b> box, 
+click the <b>Browse</b> button to the right of the <b>Backup File Folder</b> textbox, and use the <b>Browse For Folder</b> dialog that appears to select the folder in which <b>Backup Files</b> will 
+automatically be created when terminating. The most recent <b>Backup File</b> created on TQSL termination will be named <code>tqslconfig.tbk</code>. TQSL will automatically retain the number of previous 
+<b>Backup Files</b> specified by the <b>Number of Backups to retain</b> setting, deleting the oldest <b>Backup Files</b> in excess of this setting. Retained <b>Backup Files</b> will include the date and time of their creation in their filename.
 
 <P>
 <a name="nonamateur"></a>
 <H5>Allow Nonamateur Callsigns</H5>
 The <B>Allow nonamateur call signs</b> checkbox lets you to choose whether TQSL
-should treat a nonamateur call-worked as an error. LoTW does not accept nonamateur 
-callsigns, so this option is disabled by default.
-
+should treat a nonamateur call-worked as an error. An amateur callsign must meet these requirements:
+<UL>
+<LI>contains only the letters A through Z, the digits 0 through 9, and the slash character</LI>
+<LI>contains at least one number and one letter</LI>
+<LI>is at least three characters in length</LI>
+<LI>does not begin or end with a slash character</LI>
+<LI>does not begin with 0, 4Y, or C7</LI>
+<LI>does not begin with 1 unless it begins with 1A, 1M, or 1S</LI>
+</UL>
+<P>LoTW will not accept a QSO whose callsign does not conform to the above requirements so you should leave TQSL's <b>Allow nonamateur call signs</b> box unchecked.</P>
 <P>
 <a name="daterange"></a>
 <H5>Prompt for QSO Date Range</H5>
