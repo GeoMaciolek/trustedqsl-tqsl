@@ -1297,16 +1297,18 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 		tqsl_convertDateToText(&(TQSL_API_TO_CERT(cert)->crq->qsoNotAfter), datebuf, sizeof datebuf);
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_QSO_NOT_AFTER", 0, (const unsigned char *)datebuf, -1)) {
 			tqslTrace("tqsl_getKeyEncoded", "write_adif_field error %d", tQSL_Error);
+			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
 		tqsl_convertDateToText(&(TQSL_API_TO_CERT(cert)->crq->qsoNotBefore), datebuf, sizeof datebuf);
 		if (tqsl_bio_write_adif_field(out, "TQSL_CRQ_QSO_NOT_BEFORE", 0, (const unsigned char *)datebuf, -1)) {
 			tqslTrace("tqsl_getKeyEncoded", "write_adif_field error %d", tQSL_Error);
+			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
 		tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
 		if (BIO_flush(out) != 1) {
-			tQSL_Error = TQSL_SYSTEM_ERROR;
+			tQSL_Error = TQSL_CUSTOM_ERROR;
 			strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
 			BIO_free_all(out);
 			tqslTrace("tqsl_getKeyEncoded", "BIO_flush error %s", tqsl_openssl_error());
@@ -1315,7 +1317,7 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 
 		len = BIO_get_mem_data(out, &cp);
 		if (len > bufsiz) {
-			tQSL_Error = TQSL_SYSTEM_ERROR;
+			tQSL_Error = TQSL_CUSTOM_ERROR;
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Private key buffer size %d is too small - %ld needed", bufsiz, len);
 			BIO_free_all(out);
 			tqslTrace("tqsl_getKeyEncoded", "buffer size err: %s", tQSL_CustomError);
@@ -1333,11 +1335,13 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 	}
 	if (tqsl_make_key_list(keylist)) {
 		tqslTrace("tqsl_getKeyEncoded", "Error making keylist %d", tQSL_Error);
+		tQSL_Error = TQSL_SYSTEM_ERROR;
 		return 1;
 	}
 
 	if ((pubkey = X509_get_pubkey(TQSL_API_TO_CERT(cert)->cert)) == 0) {
 		tqslTrace("tqsl_getKeyEncoded", "Error getting pubkey %d", tQSL_Error);
+		tQSL_Error = TQSL_OPENSSL_ERROR;
 		return 1;
 	}
 	// Find the matching private key
@@ -1345,11 +1349,13 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 		string& keystr = (*it)["PUBLIC_KEY"];
 		if ((bio = BIO_new_mem_buf(static_cast<void *>(const_cast<char *>(keystr.c_str())), keystr.length())) == NULL) {
 			tqslTrace("tqsl_getKeyEncoded", "Error getting buffer %s", tqsl_openssl_error());
+			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
 		if ((rsa = PEM_read_bio_RSA_PUBKEY(bio, NULL, NULL, NULL)) == NULL) {
 			BIO_free(bio);
 			tqslTrace("tqsl_getKeyEncoded", "Error reading PUBKEY %s", tqsl_openssl_error());
+			tQSL_Error = TQSL_OPENSSL_ERROR;
 			return 1;
 		}
 		BIO_free(bio);
@@ -1372,7 +1378,7 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 				}
 				tqsl_bio_write_adif_field(out, "eor", 0, NULL, 0);
 				if (BIO_flush(out) != 1) {
-					tQSL_Error = TQSL_SYSTEM_ERROR;
+					tQSL_Error = TQSL_CUSTOM_ERROR;
 					tqslTrace("tqsl_getKeyEncoded", "Error flushing write %s", tqsl_openssl_error());
 					strncpy(tQSL_CustomError, "Error encoding certificate", sizeof tQSL_CustomError);
 					BIO_free_all(out);
@@ -1381,7 +1387,7 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 
 				len = BIO_get_mem_data(out, &cp);
 				if (len > bufsiz) {
-					tQSL_Error = TQSL_SYSTEM_ERROR;
+					tQSL_Error = TQSL_CUSTOM_ERROR;
 					snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Private key buffer size %d is too small - %ld needed", bufsiz, len);
 					tqslTrace("tqsl_getKeyEncoded", "Buffer err %s", tQSL_CustomError);
 					BIO_free_all(out);
@@ -1398,6 +1404,8 @@ tqsl_getKeyEncoded(tQSL_Cert cert, char *buf, int bufsiz) {
 		}
 	}
 	tqslTrace("tqsl_getKeyEncoded", "private key not found");
+	tQSL_Error = TQSL_CUSTOM_ERROR;
+	snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "Private key not found for callsign %s", callsign);
 	return 1;	// Private key not found
 }
 

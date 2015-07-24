@@ -4045,13 +4045,19 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 				if (gzprintf(out, "</SignedCert>\n") < 0)
 					throw TQSLException(gzerror(out, &err));
 			}
-			if (gzprintf(out, "<PrivateKey>\n") < 0)
-				throw TQSLException(gzerror(out, &err));
-			check_tqsl_error(tqsl_getKeyEncoded(certlist[i], buf, sizeof buf));
-			if (gzwrite(out, buf, strlen(buf)) < 0)
-				throw TQSLException(gzerror(out, &err));
-			if (gzprintf(out, "</PrivateKey>\n</UserCert>\n") < 0)
-				throw TQSLException(gzerror(out, &err));
+			// Handle case where there's no private key
+			if (tqsl_getKeyEncoded(certlist[i], buf, sizeof buf) == 0) {
+				if (gzprintf(out, "<PrivateKey>\n") < 0)
+					throw TQSLException(gzerror(out, &err));
+				if (gzwrite(out, buf, strlen(buf)) < 0)
+					throw TQSLException(gzerror(out, &err));
+				if (gzprintf(out, "</PrivateKey>\n</UserCert>\n") < 0)
+					throw TQSLException(gzerror(out, &err));
+			} else {
+				// No private key.
+				if (gzprintf(out, "</UserCert>\n") < 0)
+					throw TQSLException(gzerror(out, &err));
+			}
 		}
 		tqsl_freeCertificateList(certlist, ncerts);
 		if (gzprintf(out, "</Certificates>\n") < 0)
@@ -5176,7 +5182,7 @@ makeCertificateMenu(bool enable, bool keyonly, const char *callsign) {
 	c_menu->AppendSeparator();
 
 	int ncalls = 0;
-	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, callsign);
+	tqsl_getDeletedCallsignCertificates(NULL, &ncalls, callsign);
 	c_menu->Append(tc_c_Undelete, _("Restore Deleted Callsign Certificate"));
 	c_menu->Enable(tc_c_Undelete, ncalls > 0);
 
@@ -5502,7 +5508,7 @@ MyFrame::CertTreeReset() {
 	cert_save_button->Enable(false);
 	cert_prop_button->Enable(false);
 	int ncalls = 0;
-	tqsl_getDeletedCallsignCertificates(NULL,&ncalls, NULL);
+	tqsl_getDeletedCallsignCertificates(NULL, &ncalls, NULL);
 	cert_menu->Enable(tc_c_Undelete, ncalls > 0);
 }
 
