@@ -347,7 +347,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxString& filename, wxHtmlHelpCon
 		_recdown_ctrl->SetLabel(_("Go to the previous QSO in this log"));
 		_recdown_ctrl->SetFont(f);
 		sizer->Add(_recdown_ctrl, 0, wxTOP|wxBOTTOM, 5);
-		_recno_ctrl = new wxTextCtrl(this, QD_RECNO, wxT("1"), wxDefaultPosition,
+		_recno_ctrl = new wxTextCtrl(this, QD_RECNO, wxT(""), wxDefaultPosition,
 			wxSize(4*TEXT_WIDTH, TEXT_HEIGHT));
 		_recno_ctrl->Enable(FALSE);
 		sizer->Add(_recno_ctrl, 0, wxALL, 5);
