@@ -3,6 +3,9 @@ TQSL changes
 
 2.1
 ----------
+Recognize <SUBMODE:n> tags in an ADIF file and map those to modes that LoTW
+supports.
+
 Warn a user when they try to renew a callsign certificate when there's already
 an existing certificate request for that callsign.
 
