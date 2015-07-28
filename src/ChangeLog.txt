@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.5
 ---
+Accept C7 and 4Y as valid prefixes.
+
 Display the serial number of the Callsign Certificate being processed
 along with the callsign for errors when installing Callsign Certificates.
 This allows errors to be specific when attempts to restore older
