@@ -414,7 +414,11 @@ bool FilePrefs::TransferDataFromWindow() {
 #else
 	config->Write(wxT("BackupFolder"), dirPick->GetPath());
 #endif
-	config->Write(wxT("BackupVersions"), versions->GetValue());
+	long vers = 0;
+	vers = strtol(versions->GetValue().ToUTF8(), NULL, 10);
+	if (vers <= 0)
+		vers = DEFAULT_BACKUP_VERSIONS;
+	config->Write(wxT("BackupVersions"), vers);
 	return true;
 }
 

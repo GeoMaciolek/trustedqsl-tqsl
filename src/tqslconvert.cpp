@@ -1325,13 +1325,15 @@ hasValidCallSignChars(const string& call) {
 	if (call.find_first_of("0123456789") == string::npos)
 		return false;
 	// Invalid callsign patterns
-	// Starting with 0, Q, C7, or 4Y
+	// Starting with 0, Q
 	// 1x other than 1A, 1M, 1S
 	string first = call.substr(0, 1);
 	string second = call.substr(1, 1);
 	if (first == "0" || first == "Q" ||
+#ifdef MARK_C7_4Y_INVALID
 	    (first == "C" && second == "7") ||
 	    (first == "4" && second == "Y") ||
+#endif
 	    (first == "1" && second != "A" && second != "M" && second != "S"))
 		return false;
 
