@@ -1757,7 +1757,7 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 }
 
 int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password, const char* defcall) {
-	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, output=%s n=%d conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d, defcall=%s", reinterpret_cast<void *>(loc), S(infile), S(output), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action, defcall ? defcall : "");
+	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d, defcall=%s", reinterpret_cast<void *>(loc), S(infile), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action, defcall ? defcall : "");
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
