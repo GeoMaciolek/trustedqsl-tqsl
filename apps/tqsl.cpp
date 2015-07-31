@@ -4676,7 +4676,7 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
+		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
