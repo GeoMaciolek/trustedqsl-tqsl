@@ -98,6 +98,73 @@ To <A HREF="glossary.htm#digital_signature">digitally sign</A> a <A HREF="glossa
 	<tr><td>&nbsp;&nbsp;</td><td><img src="sign1.bmp" width=575 height=428></td></tr>
 	</table>
 <p>
+
+<table border="0" valign="top">
+	<col style="width:30px">
+	<tr><td>&nbsp;&nbsp;</td>
+	</td><td>If TQSL detects any of the following errors in a QSO, it displays an <strong>Errors Detected</strong> window with the details:</p>
+	<ul>
+		<li>the QSO does not specify a valid amateur callsign and the <A HREF="pref-opt.htm#nonamateur">Allow nonamateur call signs</a> option is not enabled; a valid amateur callsign
+			<table>
+				<tbody>
+					<tr>
+						<td>&nbsp;&nbsp;</td>
+						<td>- contains only the letters A through Z, the digits 0 through 9, and the slash character</td>
+					</tr>
+					<tr>
+						<td>&nbsp;&nbsp;</td>
+						<td>- contains at least one number and one letter</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>-&nbsp;is at least three characters in length</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>-&nbsp;does not begin or end with a slash character</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>-&nbsp;does not begin with 0</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+						<td>-&nbsp;does not begin with 1 unless it begins with 1A, 1M, or 1S</td>
+					</tr>
+				</tbody>
+			</table>
+			Note: LoTW will not accept QSOs with callsigns that don't comply with the above requirements, so leaving TQSL's <A HREF="pref-opt.htm#nonamateur">Allow nonamateur call signs</a> option disabled is recommended.
+			<table>
+				<tbody>
+					<tr>
+					</tr>
+				</tbody>
+			</table>
+		</li>
+		<li>the QSO's callsign could not be identified within a Cabrillo record because the callsign is not at least 4 characters in length with at least one letter and one number: &nbsp;
+			<table>
+				<tbody>
+					<tr>
+						<td><span style="font-family:courier new,courier,monospace;">Unable to find a valid call-worked field</span></td>
+					</tr>
+					<tr>
+						<td>This error can be overcome by <A HREF="pref-cab.htm">specifying a Cabrillo Contest Definition</a> that identifies the position of the callsign within each record</td>
+					</tr>
+				</tbody>
+			</table>
+		</li>
+		<li>the QSO does not specify a valid band</li>
+		<li>the QSO does not specify a valid mode</li>
+		<li>the QSO does not specify a valid date and time</li>
+		<li>the QSO's date and time are inconsistent with the date range in the Callsign Certificate specified by the Station Location you selected when digitally signing the file containing the QSO</li>
+		<li>the QSO specifies am invalid Satellite name</li>
+		<li>the QSO specifies a Satellite name, but the QSO's propagation mode is not set to SAT</li>
+		<li>the Callsign Certificate (specified by the Station Location you selected when digitally signing the file containing the QSO) has expired or been superceded</li>
+		<li>the exact same QSO has already been submitted to LoTW (this is referred to as a <em>duplicate</em>)</li>
+	</ul>
+	</td></tr>
+</table>
+	
 <table border="0" valign="top">
 	<col style="width:30px">
 	<tr><td>12.</td><td>Submit the signed log file to LoTW.</td></tr>
