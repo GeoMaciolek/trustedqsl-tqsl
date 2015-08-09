@@ -1,4 +1,4 @@
-<tqslconfig majorversion="2" minorversion="8">
+<tqslconfig majorversion="2" minorversion="10">
      <adifmap>
        <adifmode mode="AMTOR">AMTORFEC</adifmode>
        <adifmode mode="RTTY">ASCI</adifmode>
@@ -81,7 +81,8 @@
        <band high="7300" low="7000" spectrum="HF">40M</band>
        <band high="71" low="70" spectrum="VHF">4M</band>
        <band high="81000" low="75500" spectrum="UHF">4MM</band>
-       <band high="5405" low="5250" spectrum="HF">60M</band>
+       <band high="5450" low="5250" spectrum="HF">60M</band>
+       <band high="479" low="472" spectrum="HF">630M</band>
        <band high="5925" low="5650" spectrum="UHF">6CM</band>
        <band high="54" low="50" spectrum="VHF">6M</band>
        <band high="47200" low="47000" spectrum="UHF">6MM</band>
@@ -266,7 +267,7 @@
        <entity arrlId="72" zonemap="11:08">DOMINICAN REPUBLIC</entity>
        <entity arrlId="74" zonemap="11:07">EL SALVADOR</entity>
        <entity arrlId="75" zonemap="29:21">GEORGIA</entity>
-       <entity arrlId="76" zonemap="12:07">GUATEMALA</entity>
+       <entity arrlId="76" zonemap="11:07">GUATEMALA</entity>
        <entity arrlId="77" zonemap="11:08">GRENADA</entity>
        <entity arrlId="78" zonemap="11:08">HAITI</entity>
        <entity arrlId="79" zonemap="11:08">GUADELOUPE</entity>
@@ -557,7 +558,7 @@
        <entity arrlId="460" zonemap="56:32">ROTUMA</entity>
        <entity arrlId="462" zonemap="57:38">REPUBLIC OF SOUTH AFRICA</entity>
        <entity arrlId="464" zonemap="57:38">NAMIBIA</entity>
-       <entity arrlId="466" zonemap="47:134,48:134">SUDAN</entity>
+       <entity arrlId="466" zonemap="47:34,48:34">SUDAN</entity>
        <entity arrlId="468" zonemap="57:38">SWAZILAND</entity>
        <entity arrlId="470" zonemap="53:37">TANZANIA</entity>
        <entity arrlId="474" zonemap="37:33">TUNISIA</entity>
@@ -614,7 +615,7 @@
            <enum value="BC" zonemap="02:03">British Columbia</enum>
            <enum value="MB" zonemap="03:04,04:04">Manitoba</enum>
            <enum value="NB" zonemap="09:05">New Brunswick</enum>
-           <enum value="NF" zonemap="09:05">Newfoundland</enum>
+           <enum value="NF" zonemap="09:05">Newfoundland and Labrador</enum>
            <enum value="NT" zonemap="03:01,04:01,75:01">Northwest Territories</enum>
            <enum value="NS" zonemap="09:05">Nova Scotia</enum>
            <enum value="NU" zonemap="02:01,03:01,03:02,04:02,09:02">Nunavut</enum>
@@ -678,105 +679,105 @@
        <field Id="ITUZ" flags="0" intype="2" label="ITU Zone" len="10" lower="1" type="I" upper="75" />
        <field Id="RU_OBLAST" dependsOn="DXCC" flags="0" intype="2" label="Oblast" len="2" type="C">
          <enums dependency="125">
-           <enum value="KA" zonemap="29:15">KA Kaliningrad</enum>
+           <enum value="KA" zonemap="29:15">Kaliningrad</enum>
          </enums>
          <enums dependency="15">
-           <enum value="AB" zonemap="33:18">AB Aginsky Buryatsky Autonomous Okrug</enum>
-           <enum value="AL" zonemap="31:18">AL Altaysky Kray</enum>
-           <enum value="AM" zonemap="33:19,34:19">AM Amursk</enum>
-           <enum value="BA" zonemap="30:16">BA Bashkortostan</enum>
-           <enum value="BU" zonemap="32:18,33:18">BU Republic of Buryatia</enum>
-           <enum value="CB" zonemap="30:17">CB Chelyabinsk</enum>
-           <enum value="CK" zonemap="25:19,26:19">CK Chukotka Autonomous Okrug</enum>
-           <enum value="CT" zonemap="32:18,33:18">CT Zabaykalsky (Trans-Baikal) Krai</enum>
-           <enum value="EA" zonemap="33:19">EA Yevreyskaya Autonomous Oblast</enum>
-           <enum value="EW" zonemap="22:18,32:18">EW Evenkiysky Autonomous Okrug</enum>
-           <enum value="GA" zonemap="31:18">GA Gorny Altay</enum>
-           <enum value="HA" zonemap="31:18,32:18">HA Republic of Khakassia</enum>
-           <enum value="HK" zonemap="24:19,33:19,34:19">HK Khabarovsk</enum>
-           <enum value="HM" zonemap="20:17,21:17,30:17,31:17">HM Khanty-Mansyisky Autonomous Okrug</enum>
-           <enum value="IR" zonemap="22:18,23:18,32:18,33:18">IR Irkutsk</enum>
-           <enum value="JN" zonemap="20:17,21:17">JN Yamalo-Nenetsky Autonomous Okrug</enum>
-           <enum value="KE" zonemap="31:18">KE Kemerovo</enum>
-           <enum value="KJ" zonemap="25:19,35:19">KJ Koryaksky Autonomous Okrug</enum>
-           <enum value="KK" zonemap="21:18,22:18,23:18,31:18,32:18">KK Krasnoyarsk</enum>
-           <enum value="KN" zonemap="30:17">KN Kurgan</enum>
-           <enum value="KT" zonemap="25:19,26:19,35:19">KT Kamchatka Krai</enum>
-           <enum value="MG" zonemap="24:19,25:19,34:19">MG Magadan</enum>
-           <enum value="NS" zonemap="31:18">NS Novosibirsk</enum>
-           <enum value="OB" zonemap="30:16">OB Orenburg</enum>
-           <enum value="OM" zonemap="30:17">OM Omsk</enum>
-           <enum value="PK" zonemap="33:19,34:19">PK Primorsk</enum>
-           <enum value="SL" zonemap="34:19">SL Sakhalin</enum>
-           <enum value="SV" zonemap="20:17,30:17">SV Sverdlovsk</enum>
-           <enum value="TM" zonemap="21:18,22:18">TM Taymyr Autonomous Okrug</enum>
-           <enum value="TN" zonemap="30:17">TN Tyumen</enum>
-           <enum value="TO" zonemap="21:18,31:18">TO Tomsk</enum>
-           <enum value="TU" zonemap="31:23,32:23">TU Republic of Tuva</enum>
-           <enum value="UO" zonemap="32:18">UO Ust-Ordynsky Autonomous Okrug</enum>
-           <enum value="YA" zonemap="22:19,23:19,24:19,25:19,32:19,33:19">YA Republic of Yakutia</enum>
+           <enum value="AB" zonemap="33:18">Aginsky Buryatsky Autonomous Okrug</enum>
+           <enum value="AL" zonemap="31:18">Altaysky Kray</enum>
+           <enum value="AM" zonemap="33:19,34:19">Amursk</enum>
+           <enum value="BA" zonemap="30:16">Bashkortostan</enum>
+           <enum value="BU" zonemap="32:18,33:18">Republic of Buryatia</enum>
+           <enum value="CB" zonemap="30:17">Chelyabinsk</enum>
+           <enum value="CK" zonemap="25:19,26:19">Chukotka Autonomous Okrug</enum>
+           <enum value="CT" zonemap="32:18,33:18">Zabaykalsky (Trans-Baikal) Krai</enum>
+           <enum value="EA" zonemap="33:19">Yevreyskaya Autonomous Oblast</enum>
+           <enum value="EW" zonemap="22:18,32:18">Evenkiysky Autonomous Okrug</enum>
+           <enum value="GA" zonemap="31:18">Gorny Altay</enum>
+           <enum value="HA" zonemap="31:18,32:18">Republic of Khakassia</enum>
+           <enum value="HK" zonemap="24:19,33:19,34:19">Khabarovsk</enum>
+           <enum value="HM" zonemap="20:17,21:17,30:17,31:17">Khanty-Mansyisky Autonomous Okrug</enum>
+           <enum value="IR" zonemap="22:18,23:18,32:18,33:18">Irkutsk</enum>
+           <enum value="JN" zonemap="20:17,21:17">Yamalo-Nenetsky Autonomous Okrug</enum>
+           <enum value="KE" zonemap="31:18">Kemerovo</enum>
+           <enum value="KJ" zonemap="25:19,35:19">Koryaksky Autonomous Okrug</enum>
+           <enum value="KK" zonemap="21:18,22:18,23:18,31:18,32:18">Krasnoyarsk</enum>
+           <enum value="KN" zonemap="30:17">Kurgan</enum>
+           <enum value="KT" zonemap="25:19,26:19,35:19">Kamchatka Krai</enum>
+           <enum value="MG" zonemap="24:19,25:19,34:19">Magadan</enum>
+           <enum value="NS" zonemap="31:18">Novosibirsk</enum>
+           <enum value="OB" zonemap="30:16">Orenburg</enum>
+           <enum value="OM" zonemap="30:17">Omsk</enum>
+           <enum value="PK" zonemap="33:19,34:19">Primorsk</enum>
+           <enum value="SL" zonemap="34:19">Sakhalin</enum>
+           <enum value="SV" zonemap="20:17,30:17">Sverdlovsk</enum>
+           <enum value="TM" zonemap="21:18,22:18">Taymyr Autonomous Okrug</enum>
+           <enum value="TN" zonemap="30:17">Tyumen</enum>
+           <enum value="TO" zonemap="21:18,31:18">Tomsk</enum>
+           <enum value="TU" zonemap="31:23,32:23">Republic of Tuva</enum>
+           <enum value="UO" zonemap="32:18">Ust-Ordynsky Autonomous Okrug</enum>
+           <enum value="YA" zonemap="22:19,23:19,24:19,25:19,32:19,33:19">Republic of Yakutia</enum>
          </enums>
          <enums dependency="151">
-           <enum value="LO" zonemap="29:16">LO Leningrad region</enum>
+           <enum value="LO" zonemap="29:16">Leningrad region</enum>
          </enums>
          <enums dependency="54">
-           <enum value="AD" zonemap="29:16">AD Republic of Adygeya</enum>
-           <enum value="AO" zonemap="29:16">AO Astrakhan</enum>
-           <enum value="AR" zonemap="19:16,20:16">AR Arkhangelsk</enum>
-           <enum value="BO" zonemap="29:16">BO Belgorod</enum>
-           <enum value="BR" zonemap="29:16">BR Bryansk</enum>
-           <enum value="CC" zonemap="29:16">CC Republic Chechnya</enum>
-           <enum value="CU" zonemap="29:16">CU Republic of Chuvashia</enum>
-           <enum value="DA" zonemap="29:16">DA Republic of Daghestan</enum>
-           <enum value="IN" zonemap="29:16">IN Republic of Ingushetia</enum>
-           <enum value="IV" zonemap="29:16">IV Ivanovo</enum>
-           <enum value="JA" zonemap="29:16">JA Yaroslavl</enum>
-           <enum value="KB" zonemap="29:16">KB Republic of Kabardino-Balkaria</enum>
-           <enum value="KC" zonemap="29:16">KC Republic of Karachaevo-Cherkessia</enum>
-           <enum value="KG" zonemap="29:16">KG Kaluga</enum>
-           <enum value="KI" zonemap="19:16,20:16,29:16,30:16">KI Kirov</enum>
-           <enum value="KL" zonemap="19:16">KL Republic of Karelia</enum>
-           <enum value="KM" zonemap="29:16">KM Republic of Kalmykia</enum>
-           <enum value="KO" zonemap="19:16,20:16,29:16,30:16">KO Komi</enum>
-           <enum value="KP" zonemap="20:17,30:17">KP Komi-Permyatsky Autonomous Okrug</enum>
-           <enum value="KR" zonemap="29:16">KR Krasnodar</enum>
-           <enum value="KS" zonemap="29:16">KS Kostroma</enum>
-           <enum value="KU" zonemap="29:16">KU Kursk</enum>
-           <enum value="LO" zonemap="19:16,29:16">LO Leningrad region</enum>
-           <enum value="LP" zonemap="29:16">LP Lipetsk</enum>
-           <enum value="MA" zonemap="29:16">MA Moscow</enum>
-           <enum value="MD" zonemap="29:16">MD Republic of Mordovia</enum>
-           <enum value="MO" zonemap="29:16">MO Moscow region</enum>
-           <enum value="MR" zonemap="29:16,30:16">MR Republic of Marij-El</enum>
-           <enum value="MU" zonemap="19:16">MU Murmansk</enum>
-           <enum value="NN" zonemap="29:16">NN Nizhny Novgorod</enum>
-           <enum value="NO" zonemap="19:16,20:16">NO Nenetsky Autonomous Okrug</enum>
-           <enum value="NV" zonemap="29:16">NV Novgorod</enum>
-           <enum value="OR" zonemap="29:16">OR Orel</enum>
-           <enum value="PE" zonemap="29:16">PE Penza</enum>
-           <enum value="PM" zonemap="20:17,30:17">PM Perm Krai</enum>
-           <enum value="PS" zonemap="29:16">PS Pskov</enum>
-           <enum value="RA" zonemap="29:16">RA Ryazan</enum>
-           <enum value="RO" zonemap="29:16">RO Rostov</enum>
-           <enum value="SA" zonemap="29:16,30:16">SA Saratov</enum>
-           <enum value="SM" zonemap="29:16">SM Smolensk</enum>
-           <enum value="SO" zonemap="29:16">SO Republic of Northern Ossetia</enum>
-           <enum value="SP" zonemap="29:16">SP St. Petersburg</enum>
-           <enum value="SR" zonemap="29:16,30:16">SR Samara</enum>
-           <enum value="ST" zonemap="29:16">ST Stavropol</enum>
-           <enum value="TA" zonemap="29:16,30:16">TA Republic of Tataria</enum>
-           <enum value="TB" zonemap="29:16">TB Tambov</enum>
-           <enum value="TL" zonemap="29:16">TL Tula</enum>
-           <enum value="TV" zonemap="29:16">TV Tver</enum>
-           <enum value="UD" zonemap="30:16">UD Republic of Udmurtia</enum>
-           <enum value="UL" zonemap="29:16,30:16">UL Ul&apos;anovsk</enum>
-           <enum value="VG" zonemap="29:16">VG Volgograd</enum>
-           <enum value="VL" zonemap="29:16">VL Vladimir</enum>
-           <enum value="VO" zonemap="19:16,29:16">VO Vologda</enum>
-           <enum value="VR" zonemap="29:16">VR Voronezh</enum>
+           <enum value="AD" zonemap="29:16">Republic of Adygeya</enum>
+           <enum value="AO" zonemap="29:16">Astrakhan</enum>
+           <enum value="AR" zonemap="19:16,20:16">Arkhangelsk</enum>
+           <enum value="BO" zonemap="29:16">Belgorod</enum>
+           <enum value="BR" zonemap="29:16">Bryansk</enum>
+           <enum value="CC" zonemap="29:16">Republic Chechnya</enum>
+           <enum value="CU" zonemap="29:16">Republic of Chuvashia</enum>
+           <enum value="DA" zonemap="29:16">Republic of Daghestan</enum>
+           <enum value="IN" zonemap="29:16">Republic of Ingushetia</enum>
+           <enum value="IV" zonemap="29:16">Ivanovo</enum>
+           <enum value="JA" zonemap="29:16">Yaroslavl</enum>
+           <enum value="KB" zonemap="29:16">Republic of Kabardino-Balkaria</enum>
+           <enum value="KC" zonemap="29:16">Republic of Karachaevo-Cherkessia</enum>
+           <enum value="KG" zonemap="29:16">Kaluga</enum>
+           <enum value="KI" zonemap="19:16,20:16,29:16,30:16">Kirov</enum>
+           <enum value="KL" zonemap="19:16">Republic of Karelia</enum>
+           <enum value="KM" zonemap="29:16">Republic of Kalmykia</enum>
+           <enum value="KO" zonemap="19:16,20:16,29:16,30:16">Komi</enum>
+           <enum value="KP" zonemap="20:17,30:17">Komi-Permyatsky Autonomous Okrug</enum>
+           <enum value="KR" zonemap="29:16">Krasnodar</enum>
+           <enum value="KS" zonemap="29:16">Kostroma</enum>
+           <enum value="KU" zonemap="29:16">Kursk</enum>
+           <enum value="LO" zonemap="19:16,29:16">Leningrad region</enum>
+           <enum value="LP" zonemap="29:16">Lipetsk</enum>
+           <enum value="MA" zonemap="29:16">Moscow</enum>
+           <enum value="MD" zonemap="29:16">Republic of Mordovia</enum>
+           <enum value="MO" zonemap="29:16">Moscow region</enum>
+           <enum value="MR" zonemap="29:16,30:16">Republic of Marij-El</enum>
+           <enum value="MU" zonemap="19:16">Murmansk</enum>
+           <enum value="NN" zonemap="29:16">Nizhny Novgorod</enum>
+           <enum value="NO" zonemap="19:16,20:16">Nenetsky Autonomous Okrug</enum>
+           <enum value="NV" zonemap="29:16">Novgorod</enum>
+           <enum value="OR" zonemap="29:16">Orel</enum>
+           <enum value="PE" zonemap="29:16">Penza</enum>
+           <enum value="PM" zonemap="20:17,30:17">Perm Krai</enum>
+           <enum value="PS" zonemap="29:16">Pskov</enum>
+           <enum value="RA" zonemap="29:16">Ryazan</enum>
+           <enum value="RO" zonemap="29:16">Rostov</enum>
+           <enum value="SA" zonemap="29:16,30:16">Saratov</enum>
+           <enum value="SM" zonemap="29:16">Smolensk</enum>
+           <enum value="SO" zonemap="29:16">Republic of Northern Ossetia</enum>
+           <enum value="SP" zonemap="29:16">Saint Petersburg</enum>
+           <enum value="SR" zonemap="29:16,30:16">Samara</enum>
+           <enum value="ST" zonemap="29:16">Stavropol</enum>
+           <enum value="TA" zonemap="29:16,30:16">Republic of Tataria</enum>
+           <enum value="TB" zonemap="29:16">Tambov</enum>
+           <enum value="TL" zonemap="29:16">Tula</enum>
+           <enum value="TV" zonemap="29:16">Tver</enum>
+           <enum value="UD" zonemap="30:16">Republic of Udmurtia</enum>
+           <enum value="UL" zonemap="29:16,30:16">Ul&apos;anovsk</enum>
+           <enum value="VG" zonemap="29:16">Volgograd</enum>
+           <enum value="VL" zonemap="29:16">Vladimir</enum>
+           <enum value="VO" zonemap="19:16,29:16">Vologda</enum>
+           <enum value="VR" zonemap="29:16">Voronezh</enum>
          </enums>
          <enums dependency="61">
-           <enum value="AR" zonemap="75:40">AR Arkhangelsk</enum>
+           <enum value="AR" zonemap="75:40">Arkhangelsk</enum>
          </enums>
        </field>
        <field Id="US_COUNTY" dependsOn="US_STATE" flags="0" intype="2" label="County" len="30" type="C">
@@ -4244,6 +4245,8 @@
        <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
        <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
        <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
+       <satellite name="NO-83" startDate="2015-05-20">BRICsat</satellite>
+       <satellite name="NO-84" startDate="2015-05-20">PSAT</satellite>
        <satellite endDate="1979-02-01" name="RS-1" startDate="1978-10-26">Radio Sputnik 1</satellite>
        <satellite endDate="2000-11-01" name="RS-10" startDate="1987-06-23">Radio Sputnik 10</satellite>
        <satellite endDate="2000-11-01" name="RS-11" startDate="1987-06-23">Radio Sputnik 11</satellite>

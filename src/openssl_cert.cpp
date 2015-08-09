@@ -1516,13 +1516,16 @@ tqsl_getCertificateCallSign(tQSL_Cert cert, char *buf, int bufsiz) {
 			return 1;
 		}
 		strncpy(buf, TQSL_API_TO_CERT(cert)->crq->callSign, bufsiz);
+		tqslTrace("tqsl_getCertificateCallSign", "KeyOnly, call=%s", buf);
 		return 0;
 	}
 	item.name_buf = nbuf;
 	item.name_buf_size = sizeof nbuf;
 	item.value_buf = buf;
 	item.value_buf_size = bufsiz;
-	return !tqsl_cert_get_subject_name_entry(TQSL_API_TO_CERT(cert)->cert, "AROcallsign", &item);
+	int ret = tqsl_cert_get_subject_name_entry(TQSL_API_TO_CERT(cert)->cert, "AROcallsign", &item);
+	tqslTrace("tqsl_getCertificateCallSign", "Result=%d, call=%s", ret, buf);
+	return !ret;
 }
 
 
@@ -5002,7 +5005,8 @@ tqsl_get_cert_ext(X509 *cert, const char *ext, unsigned char *userbuf, int *bufl
 	snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 		"Certificate Extension not found: %s", ext);
 	tQSL_Error = TQSL_CUSTOM_ERROR;
-	tqslTrace("tqsl_get_cert_ext", "Err %s", tQSL_CustomError);
+	if (strcmp(ext,  "supercededCertificate"))
+		tqslTrace("tqsl_get_cert_ext", "Err %s", tQSL_CustomError);
 	return 1;
 }
 
