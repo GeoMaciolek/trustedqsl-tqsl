@@ -822,11 +822,11 @@ tqsl_getVersion(int *major, int *minor) {
 DLLEXPORT wchar_t* CALLCONVENTION
 utf8_to_wchar(const char* str) {
 	wchar_t* buffer;
-	int needed = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
+	int needed = MultiByteToWideChar(CP_ACP, 0, str, -1, 0, 0);
 	buffer = static_cast<wchar_t *>(malloc(needed*sizeof(wchar_t) + 4));
 	if (!buffer)
 		return NULL;
-	MultiByteToWideChar(CP_UTF8, 0, str, -1, &buffer[0], needed);
+	MultiByteToWideChar(CP_ACP, 0, str, -1, &buffer[0], needed);
 	return buffer;
 }
 DLLEXPORT char* CALLCONVENTION
