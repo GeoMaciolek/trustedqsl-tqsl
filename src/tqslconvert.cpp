@@ -593,7 +593,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	// Stale lock removal
 	tqslTrace("open_db", "Removing stale locks");
 	dbret = conv->dbenv->failchk(conv->dbenv, 0);
-	if (dbret) {
+	if (dbret && conv->errfile) {
 		fprintf(conv->errfile, "lock removal for DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 	}
 
