@@ -520,6 +520,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				dbinit_cleanup = true;
 				goto dbinit_end;
 			}
+			tqslTrace("open_db", "dbenv=0x%lx", conv->dbenv);
 			if (conv->errfile) {
 				conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 				conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
@@ -529,8 +530,6 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifndef _WIN32
 			conv->dbenv->set_isalive(conv->dbenv, isalive);
 #endif
-			conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
-
 			// Log files default to 10 Mb each. We don't need nearly that much.
 			if (conv->dbenv->set_lg_max)
 				conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
@@ -542,6 +541,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
 		}
 		// Now open the database
+		tqslTrace("open_db", "Opening the database at %s", conv->dbpath);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
 			tqslTrace("open_db", "dbenv->open %s error %s", conv->dbpath, db_strerror(dbret));
 			if (conv->errfile)
@@ -554,8 +554,10 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				}
 			}
 			// can't open environment - try to delete it and try again.
+			tqslTrace("open_db", "Environment open fail, triedRemove=%d", triedRemove);
 			if (!triedRemove) {
 				// Remove the dross
+				tqslTrace("open_db", "Removing environment");
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
 				conv->dbenv = NULL;
 				triedRemove = true;
@@ -589,11 +591,13 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	}
 
 	// Stale lock removal
+	tqslTrace("open_db", "Removing stale locks");
 	dbret = conv->dbenv->failchk(conv->dbenv, 0);
 	if (dbret) {
 		fprintf(conv->errfile, "lock removal for DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 	}
 
+	tqslTrace("open_db", "calling db_create");
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
 		// can't create db
 		dbinit_cleanup = true;
@@ -604,6 +608,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifndef DB_TXN_BULK
 #define DB_TXN_BULK 0
 #endif
+	tqslTrace("open_db", "starting transaction, readonly=%d", readonly);
 	if (!readonly && (dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
 		// can't start a txn
 		tqslTrace("open_db", "can't create txn %s", db_strerror(dbret));
@@ -612,6 +617,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	}
 
 	// Probe the database type
+	tqslTrace("open_db", "opening database now");
 	if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_UNKNOWN, 0, 0600))) {
 		if (dbret == ENOENT) {
 			tqslTrace("open_db", "DB not found, making a new one");
@@ -627,6 +633,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 
 	DBTYPE type;
 	conv->seendb->get_type(conv->seendb, &type);
+	tqslTrace("open_db", "type=%d", type);
 	if (type ==  DB_BTREE) {
 		tqslTrace("open_db", "BTREE type. Converting.");
 		// Have to convert the database.

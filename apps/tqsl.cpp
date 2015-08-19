@@ -412,7 +412,7 @@ bool
 DateRangeDialog::TransferDataFromWindow() {
 	tqslTrace("DateRangeDialog::TransferDataFromWindow");
 	wxString text = start_tc->GetValue();
-	tqslTrace("DateRangeDialog::TransferDataFromWindow: start=%s", S(text));
+	tqslTrace("DateRangeDialog::TransferDataFromWindow", "start=%s", S(text));
 	if (text.Trim() == wxT(""))
 		start.year = start.month = start.day = 0;
 	else if (tqsl_initDate(&start, text.ToUTF8()) || !tqsl_isDateValid(&start)) {
@@ -420,7 +420,7 @@ DateRangeDialog::TransferDataFromWindow() {
 		return false;
 	}
 	text = end_tc->GetValue();
-	tqslTrace("DateRangeDialog::TransferDataFromWindow: end=%s", S(text));
+	tqslTrace("DateRangeDialog::TransferDataFromWindow", "end=%s", S(text));
 	if (text.Trim() == wxT(""))
 		end.year = end.month = end.day = 0;
 	else if (tqsl_initDate(&end, text.ToUTF8()) || !tqsl_isDateValid(&end)) {
