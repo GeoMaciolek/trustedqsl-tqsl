@@ -1328,7 +1328,7 @@ DLLEXPORT int  CALLCONVENTION tqsl_openDiagFile(const char* file);
 
 #ifdef _WIN32
 DLLEXPORT wchar_t* CALLCONVENTION utf8_to_wchar(const char* str);
-DLLEXPORT char*    CALLCONVENTION wchar_to_utf8(const wchar_t* str);
+DLLEXPORT char*    CALLCONVENTION wchar_to_utf8(const wchar_t* str, bool forceUTF8);
 DLLEXPORT void     CALLCONVENTION free_wchar(wchar_t* ptr);
 #endif
 

@@ -118,7 +118,7 @@ static int pmkdir(const wchar_t *path, int perm) {
 	wchar_t dpath[TQSL_MAX_PATH_LEN];
 	wchar_t npath[TQSL_MAX_PATH_LEN];
 	wchar_t *cp;
-	char *p = wchar_to_utf8(path);
+	char *p = wchar_to_utf8(path, true);
 	tqslTrace("pmkdir", "path=%s", p);
 	free(p);
 	int nleft = (sizeof npath / 2) - 1;
@@ -255,7 +255,7 @@ tqsl_init() {
 		}
 		if (pmkdir(path, 0700)) {
 #if defined(_WIN32)
-			char *p = wchar_to_utf8(path);
+			char *p = wchar_to_utf8(path, false);
 			strncpy(tQSL_ErrorFile, p, sizeof tQSL_ErrorFile);
 #else
 			strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
@@ -271,7 +271,7 @@ tqsl_init() {
 			return 1;
 		}
 #if defined(_WIN32)
-		tQSL_BaseDir = wchar_to_utf8(path);
+		tQSL_BaseDir = wchar_to_utf8(path, true);
 #else
 		tQSL_BaseDir = path;
 #endif
@@ -822,21 +822,22 @@ tqsl_getVersion(int *major, int *minor) {
 DLLEXPORT wchar_t* CALLCONVENTION
 utf8_to_wchar(const char* str) {
 	wchar_t* buffer;
-	int needed = MultiByteToWideChar(CP_ACP, 0, str, -1, 0, 0);
+	int needed = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
 	buffer = static_cast<wchar_t *>(malloc(needed*sizeof(wchar_t) + 4));
 	if (!buffer)
 		return NULL;
-	MultiByteToWideChar(CP_ACP, 0, str, -1, &buffer[0], needed);
+	MultiByteToWideChar(CP_UTF8, 0, str, -1, &buffer[0], needed);
 	return buffer;
 }
+
 DLLEXPORT char* CALLCONVENTION
-wchar_to_utf8(const wchar_t* str) {
+wchar_to_utf8(const wchar_t* str, bool forceUTF8) {
 	char* buffer;
-	int needed = WideCharToMultiByte(CP_ACP, 0, str, -1, 0, 0, NULL, NULL);
-	buffer = static_cast<char *>(malloc(needed*sizeof(char) + 2));
+	int needed = WideCharToMultiByte(forceUTF8 ? CP_UTF8 : CP_ACP, 0, str, -1, 0, 0, NULL, NULL);
+	buffer = static_cast<char *>(malloc(needed + 2));
 	if (!buffer)
 		return NULL;
-	WideCharToMultiByte(CP_ACP, 0, str, -1, &buffer[0], needed, NULL, NULL);
+	WideCharToMultiByte(forceUTF8 ? CP_UTF8 : CP_ACP, 0, str, -1, &buffer[0], needed, NULL, NULL);
 	return buffer;
 }
 
