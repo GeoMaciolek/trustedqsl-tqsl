@@ -3,6 +3,13 @@ TQSL changes
 
 2.1
 ----------
+Don't require selections for RX Freq, Propmode, or Satellite when entering
+a QSO into the ADIF editor. Suggest ".adi" as the file type for the editor
+when saving a new file, not ".adif".
+
+Correct support for localalized characters in Windows usernames. Thanks to
+Goran, SM4DHF for help with fixing this issue.
+
 Recognize <SUBMODE:n> tags in an ADIF file and map those to modes that LoTW
 supports.
 

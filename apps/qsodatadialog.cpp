@@ -429,11 +429,23 @@ QSODataDialog::TransferDataFromWindow() {
 	if (_band < 0 || _band >= static_cast<int>(valid_bands.size()))
 		return false;
 	rec._band = valid_bands[_band].value;
-	rec._rxband = valid_rxbands[_rxband].value;
+	if (_rxband < 0) {
+		rec._rxband = wxT("");
+	} else {
+		rec._rxband = valid_rxbands[_rxband].value;
+	}
 	rec._freq.Trim(FALSE).Trim(TRUE);
 	rec._rxfreq.Trim(FALSE).Trim(TRUE);
-	rec._propmode = valid_propmodes[_propmode].value;
-	rec._satellite = valid_satellites[_satellite].value;
+	if (_propmode < 0) {
+		rec._propmode = wxT("");
+	} else {
+		rec._propmode = valid_propmodes[_propmode].value;
+	}
+	if (_satellite < 0) {
+		rec._satellite = wxT("");
+	} else {
+		rec._satellite = valid_satellites[_satellite].value;
+	}
 
 	double freq;
 
@@ -522,7 +534,7 @@ QSODataDialog::WriteQSOFile(QSORecordList& recs, const char *fname) {
 	if (type != wxT(""))
 		basename += wxT(".") + type;
 	else
-		basename += wxT(".adif");
+		basename += wxT(".adi");
 	if (path == wxT(""))
 		path = wxConfig::Get()->Read(wxT("QSODataPath"), wxT(""));
 	s_fname = wxFileSelector(_("Save File"), path, basename, wxT("adi"),
