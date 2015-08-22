@@ -1747,7 +1747,7 @@ void
 MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::EnterQSOData");
 	QSORecordList recs;
-	wxString file = wxT("tqsl.adif");
+	wxString file = wxT("tqsl.adi");
 	try {
 		QSODataDialog dial(this, file, help, &recs);
 		dial.ShowModal();
