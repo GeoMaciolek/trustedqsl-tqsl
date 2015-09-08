@@ -3,6 +3,8 @@ TQSL changes
 
 2.1
 ----------
+Use German translations from Andreas, DF4WC.
+
 Don't require selections for RX Freq, Propmode, or Satellite when entering
 a QSO into the ADIF editor. Suggest ".adi" as the file type for the editor
 when saving a new file, not ".adif".
