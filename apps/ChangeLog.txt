@@ -1,6 +1,11 @@
 TQSL changes
 ============
 
+2.1.1
+----------
+Correct defect that generated a spurious error message on certificate
+renewals, which was entirely blocking renewals.
+
 2.1
 ----------
 Use German translations from Andreas, DF4WC.
