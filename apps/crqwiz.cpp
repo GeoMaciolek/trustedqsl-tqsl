@@ -610,8 +610,6 @@ CRQ_IntroPage::validate() {
 		string first = call.substr(0, 1);
 		string second = call.substr(1, 1);
 		if (first == "0" || first == "Q" ||
-		    (first == "C" && second == "7") ||
-		    (first == "4" && second == "Y") ||
 		    (first == "1" && second != "A" && second != "M" && second != "S"))
 			ok = false;
 	}
@@ -658,7 +656,7 @@ CRQ_IntroPage::validate() {
 	val.MakeUpper();
 	tqsl_selectCertificates(&certlist, &ncert, val.ToUTF8(), Parent()->dxcc, 0,
 				&(Parent()->provider), TQSL_SELECT_CERT_WITHKEYS);
-	if (ncert > 0) {
+	if (!Parent()->_crq && ncert > 0) {
 		char cert_before_buf[40], cert_after_buf[40];
 		for (int i = 0; i < ncert; i++) {
 			// See if this cert overlaps the user-specified date range
