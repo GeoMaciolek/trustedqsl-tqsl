@@ -1,6 +1,17 @@
 TQSL changes
 ============
 
+2.1.2
+----------
+Add Portuguese (Portugal) translations from Nuno, CT2IRY. (A separate
+Portuguese (Brazil) translation will eventually be needed.)
+
+Correct command line parsing defect that causes TQSL to quit without
+signing a log unless a station location is provided on the command line.
+
+Correct the TQSL editor to not use the language settings for decimal
+points as ADIF requires "." as the decimal separator.
+
 2.1.1
 ----------
 Correct defect that generated a spurious error message on certificate

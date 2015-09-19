@@ -4681,8 +4681,6 @@ QSLApp::OnInit() {
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
 
-	bool fileOnly = true;		// Set if the command line is just an input file
-
 	parser.SetCmdLine(argc, argv);
 	parser.SetDesc(cmdLineDesc);
 	// only allow "-" for options, otherwise "/path/something.adif"
@@ -4706,7 +4704,6 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("x")) || parser.Found(wxT("q"))) {
-		fileOnly = false;
 		quiet = true;
 		wxLog::SetActiveTarget(new LogStderr());
 	}
@@ -4760,7 +4757,6 @@ QSLApp::OnInit() {
 	}
 
 	if (parser.Found(wxT("l"), &locname)) {
-		fileOnly = false;
 		locname.Trim(true);			// clean up whitespace
 		locname.Trim(false);
 		tqsl_endStationLocationCapture(&loc);
@@ -4777,7 +4773,6 @@ QSLApp::OnInit() {
 
 	wxString call;
 	if (parser.Found(wxT("c"), &call)) {
-		fileOnly = false;
 		call.Trim(true);
 		call.Trim(false);
 		defcall = strdup(call.MakeUpper().ToUTF8());
@@ -4785,16 +4780,13 @@ QSLApp::OnInit() {
 
 	wxString pwd;
 	if (parser.Found(wxT("p"), &pwd)) {
-		fileOnly = false;
 		password = strdup(pwd.ToUTF8());
 		utf8_to_ucs2(password, unipwd, sizeof unipwd);
 	}
 	if (parser.Found(wxT("o"), &outfile)) {
-		fileOnly = false;
 	}
 
 	if (parser.Found(wxT("d"))) {
-		fileOnly = false;
 		suppressdate = true;
 	}
 	wxString start = wxT("");
@@ -4803,7 +4795,6 @@ QSLApp::OnInit() {
 	tQSL_Date* enddate = NULL;
 	tQSL_Date s, e;
 	if (parser.Found(wxT("b"), &start)) {
-		fileOnly = false;
 		if (start.Trim() == wxT(""))
 			startdate = NULL;
 		else if (tqsl_initDate(&s, start.ToUTF8()) || !tqsl_isDateValid(&s)) {
@@ -4818,7 +4809,6 @@ QSLApp::OnInit() {
 		startdate = &s;
 	}
 	if (parser.Found(wxT("e"), &end)) {
-		fileOnly = false;
 		if (end.Trim() == wxT(""))
 			enddate = NULL;
 		else if (tqsl_initDate(&e, end.ToUTF8()) || !tqsl_isDateValid(&e)) {
@@ -4835,7 +4825,6 @@ QSLApp::OnInit() {
 
 	wxString act;
 	if (parser.Found(wxT("a"), &act)) {
-		fileOnly = false;
 		if (!act.CmpNoCase(wxT("abort"))) {
 			action = TQSL_ACTION_ABORT;
 		} else if (!act.CmpNoCase(wxT("compliant"))) {
@@ -4856,7 +4845,6 @@ QSLApp::OnInit() {
 		}
 	}
 	if (parser.Found(wxT("u"))) {
-		fileOnly = false;
 		upload = true;
 	}
 	if (parser.Found(wxT("s"))) {
@@ -4880,7 +4868,16 @@ QSLApp::OnInit() {
 
 	// Handle "-i" (import cert), or bare cert file on command line
 
-	if (parser.Found(wxT("i"), &infile) || (fileOnly && (ext.CmpNoCase(wxT("tq6")) || ext.CmpNoCase(wxT("p12"))))) {
+	bool certFile = false;
+	if (!wxIsEmpty(infile)) {
+		if (ext.CmpNoCase(wxT("tq6")) == 0 || ext.CmpNoCase(wxT("p12")) == 0 ) {
+			certFile = true;
+		}
+	}
+	if (parser.Found(wxT("i"), &infile) && (!wxIsEmpty(infile))) {
+		certFile = true;
+	}
+	if (certFile) {
 		infile.Trim(true).Trim(false);
 		notifyData nd;
 		if (tqsl_importTQSLFile(infile.ToUTF8(), notifyImport, &nd)) {
@@ -4926,17 +4923,17 @@ QSLApp::OnInit() {
 
 	// We need a logfile, else there's nothing to do.
 	if (wxIsEmpty(infile)) {	// Nothing to sign
-		if (tqsl_diagFileOpen())// Unless there's just a trace log
-			return true;	// in which case we let it open.
-		wxLogError(_("No logfile to sign!"));
-		if (quiet)
+		if (quiet) {
+			wxLogError(_("No logfile to sign!"));
 			exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
-		return false;
+			return false;
+		}
+		return true;
 	}
 
 	// If it's an ADIF file, invoke the editor if that's the only argument
 	// unless we're running in batch mode
-	if (fileOnly && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
+	if (!wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
 		QSORecordList recs;
 		loadQSOfile(infile, recs);
 		wxMessageBox(_("Warning: The TQSL ADIF editor only processes a limited number of ADIF fields.\n\nUsing the editor on an ADIF file can cause QSO details to be lost!"), _("Warning"), wxOK | wxICON_EXCLAMATION, frame);
@@ -4953,7 +4950,6 @@ QSLApp::OnInit() {
 	if (loc == 0) {
 		try {
         		int n;
-        		tQSL_Location loc;
         		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         		check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
 			if (n != 1) {

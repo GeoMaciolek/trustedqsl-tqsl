@@ -543,6 +543,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		// Now open the database
 		tqslTrace("open_db", "Opening the database at %s", conv->dbpath);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
+			int db_errno = errno;
 			tqslTrace("open_db", "dbenv->open %s error %s", conv->dbpath, db_strerror(dbret));
 			if (conv->errfile)
 				fprintf(conv->errfile, "opening DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
@@ -570,7 +571,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			if (conv->errfile) {
 				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
 			}
-			if (dbret == EINVAL || errno == EINVAL) {  // Something really wrong with the DB
+			if (dbret == EINVAL || db_errno == EINVAL) {  // Something really wrong with the DB
 						// Remove it and try again.
 				tqslTrace("open_db", "EINVAL. Removing db");
 				conv->dbenv->close(conv->dbenv, 0);
