@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.5
 ---
+Fix defect that could cause saving of private keys to be suppressed.
+
 Accept C7 and 4Y as valid prefixes.
 
 Display the serial number of the Callsign Certificate being processed

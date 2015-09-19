@@ -228,9 +228,9 @@ using tqsllib::XMLElement;
 using tqsllib::XMLElementList;
 
 #ifdef _WIN32
-#define TQSL_OPEN_READ  "rb"
-#define TQSL_OPEN_WRITE  "wb"
-#define TQSL_OPEN_APPEND "ab"
+#define TQSL_OPEN_READ  L"rb"
+#define TQSL_OPEN_WRITE  L"wb"
+#define TQSL_OPEN_APPEND L"ab"
 #else
 #define TQSL_OPEN_READ  "r"
 #define TQSL_OPEN_WRITE  "w"
@@ -516,7 +516,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 
 #ifdef _WIN32
 	wchar_t* wfilename = utf8_to_wchar(filename);
-	if ((out = _wfopen(wfilename, L"wb")) == NULL) {
+	if ((out = _wfopen(wfilename, TQSL_OPEN_WRITE)) == NULL) {
 		free_wchar(wfilename);
 #else
 	if ((out = fopen(filename, TQSL_OPEN_WRITE)) == NULL) {
@@ -528,7 +528,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		goto end;
 	}
 #ifdef _WIN32
-	free(wfilename);
+	free_wchar(wfilename);
 #endif
 	if (fputs("\ntQSL certificate request\n\n", out) == EOF) {
 		strncpy(tQSL_ErrorFile, filename, sizeof tQSL_ErrorFile);
@@ -646,7 +646,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 	}
 #ifdef _WIN32
 	wchar_t* wpath = utf8_to_wchar(path);
-	if ((out = _wfopen(wpath, L"ab")) == NULL) {
+	if ((out = _wfopen(wpath, TQSL_OPEN_APPEND)) == NULL) {
 		free_wchar(wpath);
 #else
 	if ((out = fopen(path, TQSL_OPEN_APPEND)) == NULL) {
@@ -658,7 +658,7 @@ tqsl_createCertRequest(const char *filename, TQSL_CERT_REQ *userreq,
 		goto end;
 	}
 #ifdef _WIN32
-	free(wpath);
+	free_wchar(wpath);
 #endif
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER", 0, (unsigned char *)req->providerName, -1);
 	tqsl_write_adif_field(out, "TQSL_CRQ_PROVIDER_UNIT", 0, (unsigned char *)req->providerUnit, -1);
@@ -771,6 +771,7 @@ tqsl_isCertificateExpired(tQSL_Cert cert, int *status) {
 	if (cert == NULL || status == NULL || !tqsl_cert_check(TQSL_API_TO_CERT(cert), false)) {
 		tqslTrace("tqsl_isCertificateExpired", "arg error cert=0x%lx status=0x%lx", cert, status);
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		*status = false;
 		return 1;
 	}
 
@@ -4015,7 +4016,7 @@ tqsl_make_cert_path(const char *filename, char *path, int size) {
 		return NULL;
 	}
 #ifdef _WIN32
-	free(wpath);
+	free_wchar(wpath);
 	strncat(path, "\\", size - strlen(path));
 #else
 	strncat(path, "/", size - strlen(path));
@@ -4552,8 +4553,6 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 		records.push_back(fields);
 	}
 	tqsl_close_key_file();
-	if (tQSL_Error != TQSL_NO_ERROR)
-		goto trk_end;
 	if (newfields["PRIVATE_KEY"] != "")
 		records.push_back(newfields);
 	strncpy(newpath, path, sizeof newpath);
@@ -4562,7 +4561,7 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 	strncat(savepath, ".save", sizeof savepath - strlen(savepath)-1);
 #ifdef _WIN32
 	wnewpath = utf8_to_wchar(newpath);
-	if ((out = _wfopen(wnewpath, L"wb")) == NULL) {
+	if ((out = _wfopen(wnewpath, TQSL_OPEN_WRITE)) == NULL) {
 		free_wchar(wnewpath);
 #else
 	if ((out = fopen(newpath, TQSL_OPEN_WRITE)) == NULL) {
