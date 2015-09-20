@@ -4877,6 +4877,7 @@ QSLApp::OnInit() {
 	if (parser.Found(wxT("i"), &infile) && (!wxIsEmpty(infile))) {
 		certFile = true;
 	}
+
 	if (certFile) {
 		infile.Trim(true).Trim(false);
 		notifyData nd;
@@ -4933,7 +4934,7 @@ QSLApp::OnInit() {
 
 	// If it's an ADIF file, invoke the editor if that's the only argument
 	// unless we're running in batch mode
-	if (!wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
+	if (!quiet && !wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
 		QSORecordList recs;
 		loadQSOfile(infile, recs);
 		wxMessageBox(_("Warning: The TQSL ADIF editor only processes a limited number of ADIF fields.\n\nUsing the editor on an ADIF file can cause QSO details to be lost!"), _("Warning"), wxOK | wxICON_EXCLAMATION, frame);
