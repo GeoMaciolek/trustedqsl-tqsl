@@ -108,7 +108,7 @@ typedef vector<TQSL_LOCATION_PAGE> TQSL_LOCATION_PAGELIST;
 
 class TQSL_NAME {
  public:
-	TQSL_NAME(string n = "", string c = "") : name(n), call(c) {}
+	explicit TQSL_NAME(string n = "", string c = "") : name(n), call(c) {}
 	string name;
 	string call;
 };
@@ -2873,23 +2873,23 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 		const char *elname = eln.c_str();
 		const char *value = 0;
 		char buf[100];
-		if (!strcmp(elname, "CALL"))
+		if (!strcmp(elname, "CALL")) {
 			value = rec->callsign;
-		else if (!strcmp(elname, "BAND"))
+		} else if (!strcmp(elname, "BAND")) {
 			value = rec->band;
-		else if (!strcmp(elname, "BAND_RX"))
+		} else if (!strcmp(elname, "BAND_RX")) {
 			value = rec->rxband;
-		else if (!strcmp(elname, "MODE"))
+		} else if (!strcmp(elname, "MODE")) {
 			value = rec->mode;
-		else if (!strcmp(elname, "FREQ"))
+		} else if (!strcmp(elname, "FREQ")) {
 			value = rec->freq;
-		else if (!strcmp(elname, "FREQ_RX"))
+		} else if (!strcmp(elname, "FREQ_RX")) {
 			value = rec->rxfreq;
-		else if (!strcmp(elname, "PROP_MODE"))
+		} else if (!strcmp(elname, "PROP_MODE")) {
 			value = rec->propmode;
-		else if (!strcmp(elname, "SAT_NAME"))
+		} else if (!strcmp(elname, "SAT_NAME")) {
 			value = rec->satname;
-		else if (!strcmp(elname, "QSO_DATE")) {
+		} else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(rec->date)))
 				value = tqsl_convertDateToText(&(rec->date), buf, sizeof buf);
 		} else if (!strcmp(elname, "QSO_TIME")) {
@@ -3040,23 +3040,23 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 		const char *elname = en.c_str();
 		const char *value = 0;
 		char buf[100];
-		if (!strcmp(elname, "CALL"))
+		if (!strcmp(elname, "CALL")) {
 			value = qso->callsign;
-		else if (!strcmp(elname, "BAND"))
+		} else if (!strcmp(elname, "BAND")) {
 			value = qso->band;
-		else if (!strcmp(elname, "BAND_RX"))
+		} else if (!strcmp(elname, "BAND_RX")) {
 			value = qso->rxband;
-		else if (!strcmp(elname, "MODE"))
+		} else if (!strcmp(elname, "MODE")) {
 			value = qso->mode;
-		else if (!strcmp(elname, "FREQ"))
+		} else if (!strcmp(elname, "FREQ")) {
 			value = qso->freq;
-		else if (!strcmp(elname, "FREQ_RX"))
+		} else if (!strcmp(elname, "FREQ_RX")) {
 			value = qso->rxfreq;
-		else if (!strcmp(elname, "PROP_MODE"))
+		} else if (!strcmp(elname, "PROP_MODE")) {
 			value = qso->propmode;
-		else if (!strcmp(elname, "SAT_NAME"))
+		} else if (!strcmp(elname, "SAT_NAME")) {
 			value = qso->satname;
-		else if (!strcmp(elname, "QSO_DATE")) {
+		} else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(qso->date)))
 				value = tqsl_convertDateToText(&(qso->date), buf, sizeof buf);
 		} else if (!strcmp(elname, "QSO_TIME")) {
@@ -3365,7 +3365,11 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			return 1;
 		}
 		if (major == curmajor) {
-			if (minor <= curminor) {
+			if (minor == curminor) {		// Same rev as already installed
+				tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
+				return 0;
+			}
+			if (minor < curminor) {
 				if (foundcerts) {
 					tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
 					return 0;
