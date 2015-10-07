@@ -4218,11 +4218,11 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 	string stype = "Unknown";
 	ASN1_TIME *tm;
 
-	if (type == TQSL_CERT_CB_ROOT)
+	if (type == TQSL_CERT_CB_ROOT) {
 		stype = "Trusted Root Authority";
-	else if (type == TQSL_CERT_CB_CA)
+	} else if (type == TQSL_CERT_CB_CA) {
 		stype = "Certificate Authority";
-	else if (type == TQSL_CERT_CB_USER) {
+	} else if (type == TQSL_CERT_CB_USER) {
 		stype = "Callsign";
 		// Invalidate the cached user certs
 		if (xcerts != NULL) {

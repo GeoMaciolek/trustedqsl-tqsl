@@ -102,7 +102,7 @@ static void set_font(wxWindow *w, wxFont& font) {
 
 class choice {
  public:
-	choice(const wxString& _value, const wxString& _display = wxT(""), int _low = 0, int _high = 0) {
+	explicit choice(const wxString& _value, const wxString& _display = wxT(""), int _low = 0, int _high = 0) {
 		value = _value;
 		display = (_display == wxT("")) ? value : _display;
 		low = _low;
@@ -111,6 +111,7 @@ class choice {
 	wxString value, display;
 	int low, high;
 	bool operator ==(const choice& other) { return other.value == value; }
+	bool operator ==(const wxString& other) { return other == value; }
 };
 
 class valid_list : public vector<choice> {
@@ -449,20 +450,20 @@ QSODataDialog::TransferDataFromWindow() {
 
 	double freq;
 	// Set locale to "C" so the . is forced as a decimal point
-	char *oldloc = setlocale(LC_ALL,"C");
+	char *oldloc = setlocale(LC_ALL, "C");
 
 		if (!rec._freq.IsEmpty()) {
 			if (!rec._freq.ToDouble(&freq)) {
 				wxMessageBox(_("QSO Frequency is invalid"), _("QSO Data Error"),
 					wxOK | wxICON_EXCLAMATION, this);
-				setlocale(LC_ALL,oldloc);
+				setlocale(LC_ALL, oldloc);
 				return false;
 			}
 			freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
 			if (freq < valid_bands[_band].low || (valid_bands[_band].high > 0 && freq > valid_bands[_band].high)) {
 				wxMessageBox(_("QSO Frequency is out of range for the selected band"), _("QSO Data Error"),
 					wxOK | wxICON_EXCLAMATION, this);
-				setlocale(LC_ALL,oldloc);
+				setlocale(LC_ALL, oldloc);
 				return false;
 			}
 		}
@@ -470,19 +471,19 @@ QSODataDialog::TransferDataFromWindow() {
 			if (!rec._rxfreq.ToDouble(&freq)) {
 				wxMessageBox(_("QSO RX Frequency is invalid"), _("QSO Data Error"),
 					wxOK | wxICON_EXCLAMATION, this);
-				setlocale(LC_ALL,oldloc);
+				setlocale(LC_ALL, oldloc);
 				return false;
 			}
 			freq = freq * 1000.0;		// Freq is is MHz but the limits are in KHz
 			if (freq < valid_rxbands[_rxband].low || (valid_rxbands[_rxband].high > 0 && freq > valid_rxbands[_rxband].high)) {
 				wxMessageBox(_("QSO RX Frequency is out of range for the selected band"), _("QSO Data Error"),
 					wxOK | wxICON_EXCLAMATION, this);
-				setlocale(LC_ALL,oldloc);
+				setlocale(LC_ALL, oldloc);
 				return false;
 			}
 		}
 		// No other numeric conversions, revert to original locale
-		setlocale(LC_ALL,oldloc);
+		setlocale(LC_ALL, oldloc);
 		if (rec._freq.IsEmpty() && rec._band.IsEmpty()) {
 			wxMessageBox(_("You must select a band or enter a frequency"), _("QSO Data Error"),
 				wxOK | wxICON_EXCLAMATION, this);

@@ -449,7 +449,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	bool uplVerifyCA;
 	config->Read(wxT("VerifyCA"), &uplVerifyCA, DEFAULT_UPL_VERIFYCA);
 
-	defaults=(
+	defaults = (
 		(uplURL == DEFAULT_UPL_URL) &&
 		(uplPOST == DEFAULT_UPL_FIELD) &&
 		(uplStatusRE == DEFAULT_UPL_STATUSRE) &&
@@ -489,7 +489,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 	sizer->Add(statusSuccess, 0, wxLEFT|wxRIGHT, 10);
 
 	sizer->Add(new wxStaticText(this, -1, wxT("Message RegEx:")), 0, wxTOP|wxLEFT|wxRIGHT|wxRESERVE_SPACE_EVEN_IF_HIDDEN, 10);
-	messageRegex= new wxTextCtrl(this, ID_PREF_ONLINE_MESSAGERE, uplMsgRE, wxPoint(0, 0),
+	messageRegex = new wxTextCtrl(this, ID_PREF_ONLINE_MESSAGERE, uplMsgRE, wxPoint(0, 0),
 		wxSize(char_width, HEIGHT_ADJ(char_height)));
 	sizer->Add(messageRegex, 0, wxLEFT|wxRIGHT, 10);
 
@@ -594,7 +594,7 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 
 	st->Wrap(char_width * 60);
 
-	proxyEnabled =new wxCheckBox(this, ID_PREF_PROXY_ENABLED, _("Enable a Network Proxy"));
+	proxyEnabled = new wxCheckBox(this, ID_PREF_PROXY_ENABLED, _("Enable a Network Proxy"));
 	proxyEnabled->SetValue(enabled);
 	sizer->Add(proxyEnabled, 0, wxTop|wxCENTER|wxRIGHT, 10);
 

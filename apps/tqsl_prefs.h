@@ -108,7 +108,7 @@ enum {		// Window IDs
 
 class PrefsPanel : public wxPanel {
  public:
-	PrefsPanel(wxWindow *parent, const wxString& helpfile = wxT("prefs.htm"))
+	explicit PrefsPanel(wxWindow *parent, const wxString& helpfile = wxT("prefs.htm"))
 		: wxPanel(parent), _helpfile(helpfile) {}
 	wxString HelpFile() { return _helpfile; }
  private:
@@ -200,7 +200,7 @@ class ProxyPrefs : public PrefsPanel {
 typedef map <wxString, wxString> ModeSet;
 class Preferences : public wxFrame {
  public:
-	Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
+	explicit Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
 	void OnOK(wxCommandEvent &);
 	void OnCancel(wxCommandEvent &);
 	void OnHelp(wxCommandEvent &);

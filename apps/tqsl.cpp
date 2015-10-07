@@ -241,7 +241,7 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 
 class ConvertingDialog : public wxDialog {
  public:
-	ConvertingDialog(wxWindow *parent, const char *filename = "");
+	explicit ConvertingDialog(wxWindow *parent, const char *filename = "");
 	void OnCancel(wxCommandEvent&);
 	bool running;
 	wxStaticText *msg;
@@ -413,17 +413,17 @@ DateRangeDialog::TransferDataFromWindow() {
 	tqslTrace("DateRangeDialog::TransferDataFromWindow");
 	wxString text = start_tc->GetValue();
 	tqslTrace("DateRangeDialog::TransferDataFromWindow", "start=%s", S(text));
-	if (text.Trim() == wxT(""))
+	if (text.Trim() == wxT("")) {
 		start.year = start.month = start.day = 0;
-	else if (tqsl_initDate(&start, text.ToUTF8()) || !tqsl_isDateValid(&start)) {
+	} else if (tqsl_initDate(&start, text.ToUTF8()) || !tqsl_isDateValid(&start)) {
 		msg->SetLabel(_("Start date is invalid"));
 		return false;
 	}
 	text = end_tc->GetValue();
 	tqslTrace("DateRangeDialog::TransferDataFromWindow", "end=%s", S(text));
-	if (text.Trim() == wxT(""))
+	if (text.Trim() == wxT("")) {
 		end.year = end.month = end.day = 0;
-	else if (tqsl_initDate(&end, text.ToUTF8()) || !tqsl_isDateValid(&end)) {
+	} else if (tqsl_initDate(&end, text.ToUTF8()) || !tqsl_isDateValid(&end)) {
 		msg->SetLabel(_("End date is invalid"));
 		return false;
 	}
@@ -449,7 +449,7 @@ DateRangeDialog::OnCancel(wxCommandEvent&) {
 
 class DupesDialog : public wxDialog {
  public:
-	DupesDialog(wxWindow *parent = 0, int qso_count = 0, int dupes = 0, int action = TQSL_ACTION_ASK);
+	explicit DupesDialog(wxWindow *parent = 0, int qso_count = 0, int dupes = 0, int action = TQSL_ACTION_ASK);
  private:
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);
@@ -582,7 +582,7 @@ DupesDialog::OnAllow(wxCommandEvent&) {
 
 class ErrorsDialog : public wxDialog {
  public:
-	ErrorsDialog(wxWindow *parent = 0, wxString msg = wxT(""));
+	explicit ErrorsDialog(wxWindow *parent = 0, wxString msg = wxT(""));
  private:
 	void OnOk(wxCommandEvent&);
 	void OnCancel(wxCommandEvent&);
@@ -1243,7 +1243,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	locsizer->Add(locgrid, 50, wxEXPAND);
 
-	wxStaticLine *locsep =new wxStaticLine(loctab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
+	wxStaticLine *locsep = new wxStaticLine(loctab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
 	locsizer->Add(locsep, 0, wxEXPAND);
 
 	wxPanel* lbuttons = new wxPanel(loctab, -1);
@@ -1347,7 +1347,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	certsizer->Add(certgrid, 50, wxEXPAND);
 
-	wxStaticLine *certsep =new wxStaticLine(certtab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
+	wxStaticLine *certsep = new wxStaticLine(certtab, -1, wxDefaultPosition, wxSize(2, -1), wxLI_VERTICAL);
 	certsizer->Add(certsep, 0, wxEXPAND);
 
 	wxPanel* cbuttons = new wxPanel(certtab, -1);
@@ -1875,7 +1875,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			fmt + wxT("\n");
 			msg = wxString::Format(fmt, callsign);
 		}
-		throw TQSLException(msg.ToUTF8());
+		wxLogError(msg);
 		return TQSL_EXIT_TQSL_ERROR;
 	}
 
@@ -2643,7 +2643,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 		}
 
 		upload->ShowModal();
-		retval=((intptr_t)thread.Wait());
+		retval = ((intptr_t)thread.Wait());
 	} else { retval = curl_easy_perform(curlReq); }
 
 	if (retval == 0) { //success
@@ -2902,7 +2902,7 @@ wxString GetUpdatePlatformString() {
 // Class for encapsulating version information
 class revLevel {
  public:
-	revLevel(long _major = 0, long _minor = 0, long _patch = 0) {
+	explicit revLevel(long _major = 0, long _minor = 0, long _patch = 0) {
 		major = _major;
 		minor = _minor;
 		patch = _patch;
@@ -2964,7 +2964,7 @@ class revLevel {
 
 class revInfo {
  public:
-	revInfo(bool _noGUI = false, bool _silent = false) {
+	explicit revInfo(bool _noGUI = false, bool _silent = false) {
 		noGUI = _noGUI;
 		silent = _silent;
 		error = false;
@@ -3522,7 +3522,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 					if (sep == wxNOT_FOUND) continue; //malformed string
 					wxString plat = header.Left(sep);
 					wxString url = header.Right(header.size()-sep-1);
-					map[plat]=url;
+					map[plat] = url;
 				}
 			}
 #ifdef TQSL_TEST_BUILD
@@ -4750,7 +4750,7 @@ QSLApp::OnInit() {
 		return(false);
 	}
 
-	frame =GUIinit(!quiet, quiet);
+	frame = GUIinit(!quiet, quiet);
 	if (quiet) {
 		wxLog::SetActiveTarget(new LogStderr());
 		frame->Show(false);
@@ -4795,9 +4795,9 @@ QSLApp::OnInit() {
 	tQSL_Date* enddate = NULL;
 	tQSL_Date s, e;
 	if (parser.Found(wxT("b"), &start)) {
-		if (start.Trim() == wxT(""))
+		if (start.Trim() == wxT("")) {
 			startdate = NULL;
-		else if (tqsl_initDate(&s, start.ToUTF8()) || !tqsl_isDateValid(&s)) {
+		} else if (tqsl_initDate(&s, start.ToUTF8()) || !tqsl_isDateValid(&s)) {
 			if (quiet) {
 				wxLogError(_("Start date of %s is invalid"), start.c_str());
 				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
@@ -4809,9 +4809,9 @@ QSLApp::OnInit() {
 		startdate = &s;
 	}
 	if (parser.Found(wxT("e"), &end)) {
-		if (end.Trim() == wxT(""))
+		if (end.Trim() == wxT("")) {
 			enddate = NULL;
-		else if (tqsl_initDate(&e, end.ToUTF8()) || !tqsl_isDateValid(&e)) {
+		} else if (tqsl_initDate(&e, end.ToUTF8()) || !tqsl_isDateValid(&e)) {
 			if (quiet) {
 				wxLogError(_("End date of %s is invalid"), end.c_str());
 				exitNow(TQSL_EXIT_COMMAND_ERROR, quiet);
@@ -4870,7 +4870,7 @@ QSLApp::OnInit() {
 
 	bool certFile = false;
 	if (!wxIsEmpty(infile)) {
-		if (ext.CmpNoCase(wxT("tq6")) == 0 || ext.CmpNoCase(wxT("p12")) == 0 ) {
+		if (ext.CmpNoCase(wxT("tq6")) == 0 || ext.CmpNoCase(wxT("p12")) == 0) {
 			certFile = true;
 		}
 	}
@@ -5911,7 +5911,7 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 
 class CertPropDial : public wxDialog {
  public:
-	CertPropDial(tQSL_Cert cert, wxWindow *parent = 0);
+	explicit CertPropDial(tQSL_Cert cert, wxWindow *parent = 0);
 	void closeMe(wxCommandEvent&) { EndModal(wxID_OK); }
 	DECLARE_EVENT_TABLE()
 };
@@ -6076,7 +6076,7 @@ displayCertProperties(CertTreeItemData *item, wxWindow *parent) {
 
 class LocPropDial : public wxDialog {
  public:
-	LocPropDial(wxString locname, wxWindow *parent = 0);
+	explicit LocPropDial(wxString locname, wxWindow *parent = 0);
 	void closeMe(wxCommandEvent&) { EndModal(wxID_OK); }
 	DECLARE_EVENT_TABLE()
 };
