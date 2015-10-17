@@ -4932,6 +4932,7 @@ QSLApp::OnInit() {
 		return true;
 	}
 
+#if defined(EDIT_IF_NOT_BATCH)		// Disable this for now to go back to pre-2.1 behavior
 	// If it's an ADIF file, invoke the editor if that's the only argument
 	// unless we're running in batch mode
 	if (!quiet && !wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
@@ -4946,6 +4947,7 @@ QSLApp::OnInit() {
 		}
 		exitNow(TQSL_EXIT_SUCCESS, quiet);
 	}
+#endif // EDIT_IF_NOT_BATCH
 
 	// Assume that it's a log to sign
 	if (loc == 0) {
