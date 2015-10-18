@@ -1,38 +1,55 @@
-<tqslconfig majorversion="2" minorversion="10">
+<tqslconfig majorversion="4" minorversion="0">
      <adifmap>
-       <adifmode mode="AMTOR">AMTORFEC</adifmode>
-       <adifmode mode="RTTY">ASCI</adifmode>
-       <adifmode mode="PSK125">BPSK125</adifmode>
-       <adifmode mode="PSK31">BPSK31</adifmode>
-       <adifmode mode="PSK63">BPSK63</adifmode>
-       <adifmode mode="CHIP">CHIP128</adifmode>
-       <adifmode mode="CHIP">CHIP64</adifmode>
-       <adifmode mode="CLOVER">CLO</adifmode>
-       <adifmode mode="DOMINO">DOMINOF</adifmode>
-       <adifmode mode="HELL">FMHELL</adifmode>
-       <adifmode mode="HELL">HELL80</adifmode>
-       <adifmode mode="RTTY">HFSK</adifmode>
-       <adifmode mode="ISCAT">ISCAT-A</adifmode>
-       <adifmode mode="ISCAT">ISCAT-B</adifmode>
-       <adifmode mode="JT4">JT4A</adifmode>
-       <adifmode mode="JT4">JT4B</adifmode>
-       <adifmode mode="JT4">JT4C</adifmode>
-       <adifmode mode="JT4">JT4D</adifmode>
-       <adifmode mode="JT4">JT4E</adifmode>
-       <adifmode mode="JT4">JT4F</adifmode>
-       <adifmode mode="JT4">JT4G</adifmode>
-       <adifmode mode="JT65">JT65A</adifmode>
-       <adifmode mode="JT65">JT65B</adifmode>
-       <adifmode mode="JT65">JT65B2</adifmode>
-       <adifmode mode="JT65">JT65C</adifmode>
-       <adifmode mode="JT65">JT65C2</adifmode>
-       <adifmode mode="JT9">JT9-1</adifmode>
-       <adifmode mode="JT9">JT9-10</adifmode>
-       <adifmode mode="JT9">JT9-2</adifmode>
-       <adifmode mode="JT9">JT9-30</adifmode>
-       <adifmode mode="JT9">JT9-5</adifmode>
-       <adifmode mode="SSB">LSB</adifmode>
+       <adifmode adif-mode="TOR" adif-submode="AMTORFEC" mode="AMTOR">AMTORFEC</adifmode>
+       <adifmode adif-mode="RTTY" adif-submode="ASCI" mode="RTTY">ASCI</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="BPSK125" mode="PSK125">BPSK125</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="BPSK31" mode="PSK31">BPSK31</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="BPSK63" mode="PSK63">BPSK63</adifmode>
+       <adifmode adif-mode="CHIP" adif-submode="CHIP128" mode="CHIP">CHIP128</adifmode>
+       <adifmode adif-mode="CHIP" adif-submode="CHIP64" mode="CHIP">CHIP64</adifmode>
+       <adifmode adif-mode="CLO" mode="CLOVER">CLO</adifmode>
+       <adifmode adif-mode="DIGITALVOCIE" mode="PHONE">DIGITALVOICE</adifmode>
+       <adifmode adif-mode="DOMINO" adif-submode="DOMINOEX" mode="DOMINO">DOMINOEX</adifmode>
+       <adifmode adif-mode="DOMINO" adif-submode="DOMINOF" mode="DOMINO">DOMINOF</adifmode>
+       <adifmode adif-mode="DSTAR" mode="PHONE">DSTAR</adifmode>
+       <adifmode adif-mode="HELL" adif-submode="FMHELL" mode="HELL">FMHELL</adifmode>
+       <adifmode adif-mode="HELL" adif-submode="HELL80" mode="HELL">HELL80</adifmode>
+       <adifmode adif-mode="ISCAT" adif-submode="ISCAT-A" mode="ISCAT">ISCAT-A</adifmode>
+       <adifmode adif-mode="ISCAT" adif-submode="ISCAT-B" mode="ISCAT">ISCAT-B</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4A" mode="JT4">JT4A</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4B" mode="JT4">JT4B</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4C" mode="JT4">JT4C</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4D" mode="JT4">JT4D</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4E" mode="JT4">JT4E</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4F" mode="JT4">JT4F</adifmode>
+       <adifmode adif-mode="JT4" adif-submode="JT4G" mode="JT4">JT4G</adifmode>
+       <adifmode adif-mode="JT65" adif-submode="JT65A" mode="JT65">JT65A</adifmode>
+       <adifmode adif-mode="JT65" adif-submode="JT65B" mode="JT65">JT65B</adifmode>
+       <adifmode adif-mode="JT65" adif-submode="JT65B2" mode="JT65">JT65B2</adifmode>
+       <adifmode adif-mode="JT65" adif-submode="JT65C" mode="JT65">JT65C</adifmode>
+       <adifmode adif-mode="JT65" adif-submode="JT65C2" mode="JT65">JT65C2</adifmode>
+       <adifmode adif-mode="JT9" adif-submode="JT9-1" mode="JT9">JT9-1</adifmode>
+       <adifmode adif-mode="JT9" adif-submode="JT9-10" mode="JT9">JT9-10</adifmode>
+       <adifmode adif-mode="JT9" adif-submode="JT9-2" mode="JT9">JT9-2</adifmode>
+       <adifmode adif-mode="JT9" adif-submode="JT9-30" mode="JT9">JT9-30</adifmode>
+       <adifmode adif-mode="JT9" adif-submode="JT9-5" mode="JT9">JT9-5</adifmode>
+       <adifmode adif-mode="SSB" adif-submode="LSB" mode="SSB">LSB</adifmode>
+       <adifmode adif-mode="MFSK" mode="DATA">MFSK</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK11" mode="DATA">MFSK11</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK128" mode="DATA">MFSK128</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK22" mode="DATA">MFSK22</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK31" mode="DATA">MFSK31</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK32" mode="DATA">MFSK32</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK4" mode="DATA">MFSK4</adifmode>
+       <adifmode adif-mode="MFSK" adif-submode="MFSK64" mode="DATA">MFSK64</adifmode>
        <adifmode mode="MINIRTTY">MTTY</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 16/1000" mode="OLIVIA">OLIVIA 16/1000</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 16/500" mode="OLIVIA">OLIVIA 16/500</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 32/1000" mode="OLIVIA">OLIVIA 32/1000</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 4/125" mode="OLIVIA">OLIVIA 4/125</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 4/250" mode="OLIVIA">OLIVIA 4/250</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 8/250" mode="OLIVIA">OLIVIA 8/250</adifmode>
+       <adifmode adif-mode="OLIVIA" adif-submode="OLIVIA 8/500" mode="OLIVIA">OLIVIA 8/500</adifmode>
        <adifmode mode="OPERA">OP05</adifmode>
        <adifmode mode="OPERA">OP1</adifmode>
        <adifmode mode="OPERA">OP15</adifmode>
@@ -41,23 +58,36 @@
        <adifmode mode="OPERA">OP4</adifmode>
        <adifmode mode="OPERA">OP4H</adifmode>
        <adifmode mode="OPERA">OP8</adifmode>
-       <adifmode mode="PACTOR">PAC</adifmode>
-       <adifmode mode="PACTOR">PAC2</adifmode>
-       <adifmode mode="PACTOR">PAC3</adifmode>
-       <adifmode mode="PAX">PAX2</adifmode>
-       <adifmode mode="CW">PCW</adifmode>
-       <adifmode mode="PACKET">PKT</adifmode>
-       <adifmode mode="PSKAM">PSKAM10</adifmode>
-       <adifmode mode="PSKAM">PSKAM31</adifmode>
-       <adifmode mode="PSKAM">PSKAM50</adifmode>
-       <adifmode mode="HELL">PSKHELL</adifmode>
-       <adifmode mode="PSK125">QPSK125</adifmode>
-       <adifmode mode="PSK31">QPSK31</adifmode>
-       <adifmode mode="PSK63">QPSK63</adifmode>
-       <adifmode mode="THROB">THRB</adifmode>
-       <adifmode mode="THROB">THRBX</adifmode>
-       <adifmode mode="AMTOR">TOR</adifmode>
-       <adifmode mode="SSB">USB</adifmode>
+       <adifmode adif-mode="OPERA" adif-submode="OPERA-BEACON" mode="OPERA">OPERA-BEACON</adifmode>
+       <adifmode adif-mode="OPERA" adif-submode="OPERA-QSO" mode="OPERA">OPERA-QSO</adifmode>
+       <adifmode adif-mode="PAC" mode="PACTOR">PAC</adifmode>
+       <adifmode adif-mode="PAC" adif-submode="PAC2" mode="PACTOR">PAC2</adifmode>
+       <adifmode adif-mode="PAC" adif-submode="PAC3" mode="PACTOR">PAC3</adifmode>
+       <adifmode adif-mode="PAC" adif-submode="PAC4" mode="PACTOR">PAC4</adifmode>
+       <adifmode adif-mode="PAX" adif-submode="PAX2" mode="PAX">PAX2</adifmode>
+       <adifmode adif-mode="CW" adif-submode="PCW" mode="CW">PCW</adifmode>
+       <adifmode adif-mode="PKT" mode="PACKET">PKT</adifmode>
+       <adifmode adif-mode="PSK" mode="DATA">PSK</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSK1000" mode="DATA">PSK1000</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSK250" mode="DATA">PSK250</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSK500" mode="DATA">PSK500</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSKAM10" mode="PSKAM">PSKAM10</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSKAM31" mode="PSKAM">PSKAM31</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="PSKAM50" mode="PSKAM">PSKAM50</adifmode>
+       <adifmode adif-mode="HELL" adif-submode="PSKHELL" mode="HELL">PSKHELL</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="QPSK125" mode="PSK125">QPSK125</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="QPSK250" mode="DATA">QPSK250</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="QPSK31" mode="PSK31">QPSK31</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="QPSK500" mode="DATA">QPSK500</adifmode>
+       <adifmode adif-mode="PSK" adif-submode="QPSK63" mode="PSK63">QPSK63</adifmode>
+       <adifmode adif-mode="ROS" adif-submode="ROS-EME" mode="ROS">ROS-EME</adifmode>
+       <adifmode adif-mode="ROS" adif-submode="ROS-HF" mode="ROS">ROS-HF</adifmode>
+       <adifmode adif-mode="ROS" adif-submode="ROS-MF" mode="ROS">ROS-MF</adifmode>
+       <adifmode adif-mode="THRB" mode="THROB">THRB</adifmode>
+       <adifmode adif-mode="THRB" adif-submode="THRBX" mode="THROB">THRBX</adifmode>
+       <adifmode adif-mode="TOR" mode="AMTOR">TOR</adifmode>
+       <adifmode adif-mode="SSB" adif-submode="USB" mode="SSB">USB</adifmode>
+       <adifmode adif-mode="V4" mode="DATA">V4</adifmode>
      </adifmap>
      <bands>
        <band high="24250" low="24000" spectrum="UHF">1.25CM</band>
@@ -122,17 +152,22 @@
        <cabrillocontest field="8" type="HF">CQ-WW-CW</cabrillocontest>
        <cabrillocontest field="9" type="HF">CQ-WW-RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">CQ-WW-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CW-Ops</cabrillocontest>
+       <cabrillocontest field="8" type="HF">CWOPS-Open</cabrillocontest>
        <cabrillocontest field="8" type="HF">DARC-WAEDC-CW</cabrillocontest>
        <cabrillocontest field="8" type="HF">DARC-WAEDC-RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">DARC-WAEDC-SSB</cabrillocontest>
        <cabrillocontest field="8" type="HF">DE_QSO-PARTY</cabrillocontest>
        <cabrillocontest field="9" type="HF">EU Sprint</cabrillocontest>
+       <cabrillocontest field="8" type="HF">EU-HF</cabrillocontest>
        <cabrillocontest field="8" type="HF">EUHFC</cabrillocontest>
        <cabrillocontest field="8" type="HF">FCG-FQP</cabrillocontest>
+       <cabrillocontest field="8" type="HF">FL-QSO-PARTY</cabrillocontest>
        <cabrillocontest field="9" type="HF">HELVETIA</cabrillocontest>
        <cabrillocontest field="8" type="HF">IARU-HF</cabrillocontest>
        <cabrillocontest field="9" type="HF">IL QSO Party</cabrillocontest>
        <cabrillocontest field="8" type="HF">IN QSO Party</cabrillocontest>
+       <cabrillocontest field="8" type="HF">IN-QSO-PARTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">JARTS-WW_RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">JIDX-CW</cabrillocontest>
        <cabrillocontest field="8" type="HF">JIDX-SSB</cabrillocontest>
@@ -187,9 +222,11 @@
        <cabrillocontest field="8" type="HF">TMC-RTTY</cabrillocontest>
        <cabrillocontest field="9" type="HF">UBA-DX-CW</cabrillocontest>
        <cabrillocontest field="8" type="HF">UBA-DX-SSB</cabrillocontest>
+       <cabrillocontest field="8" type="HF">VA-QSO-PARTY</cabrillocontest>
        <cabrillocontest field="9" type="HF">VOLTA-RTTY</cabrillocontest>
        <cabrillocontest field="8" type="HF">Virginia QSO Party</cabrillocontest>
        <cabrillocontest field="8" type="HF">Wisconsin QSO Party</cabrillocontest>
+       <cabrillocontest field="8" type="HF">XE-RTTY</cabrillocontest>
      </cabrillomap>
      <dxcc>
        <entity arrlId="0">-NONE-</entity>
@@ -359,7 +396,7 @@
        <entity arrlId="170" zonemap="60:32">NEW ZEALAND</entity>
        <entity arrlId="171" zonemap="56:30">MELLISH REEF</entity>
        <entity arrlId="172" zonemap="63:32">PITCAIRN ISLAND</entity>
-       <entity arrlId="173" zonemap="65:27">MICRONESIA</entity>
+       <entity arrlId="173" zonemap="64:27,65:27">MICRONESIA</entity>
        <entity arrlId="174" zonemap="61:31">MIDWAY ISLAND</entity>
        <entity arrlId="175" zonemap="63:32">FRENCH POLYNESIA</entity>
        <entity arrlId="176" zonemap="56:32">FIJI ISLANDS</entity>
@@ -377,7 +414,7 @@
        <entity arrlId="188" zonemap="62:32">NIUE</entity>
        <entity arrlId="189" zonemap="60:32">NORFOLK ISLAND</entity>
        <entity arrlId="190" zonemap="62:32">SAMOA</entity>
-       <entity arrlId="191" zonemap="62:32">NORTH COOK ISLANDS</entity>
+       <entity arrlId="191" zonemap="62:32,63:32">NORTH COOK ISLANDS</entity>
        <entity arrlId="192" zonemap="45:27">OGASAWARA</entity>
        <entity arrlId="193" zonemap="45:25">OKINAWA (DELETED)</entity>
        <entity arrlId="194" zonemap="45:27">OKINO TORI-SHIMA (DELETED)</entity>
@@ -420,7 +457,7 @@
        <entity arrlId="231" zonemap="41:22">SIKKIM (DELETED)</entity>
        <entity arrlId="232" zonemap="48:37">SOMALIA</entity>
        <entity arrlId="233" zonemap="37:14">GIBRALTAR</entity>
-       <entity arrlId="234" zonemap="62:32">SOUTH COOK ISLANDS</entity>
+       <entity arrlId="234" zonemap="62:32,63:32">SOUTH COOK ISLANDS</entity>
        <entity arrlId="235" zonemap="73:13">SOUTH GEORGIA ISLAND</entity>
        <entity arrlId="236" zonemap="28:20">GREECE</entity>
        <entity arrlId="237" zonemap="5:40,75:40">GREENLAND</entity>
@@ -4145,57 +4182,57 @@
        </page>
      </locpages>
      <modes>
-       <mode group="PHONE">AM</mode>
-       <mode group="DATA">AMTOR</mode>
-       <mode group="IMAGE">ATV</mode>
-       <mode group="DATA">CHIP</mode>
-       <mode group="DATA">CLOVER</mode>
-       <mode group="DATA">CONTESTI</mode>
-       <mode group="CW">CW</mode>
+       <mode adif-mode="AM" group="PHONE">AM</mode>
+       <mode adif-mode="TOR" group="DATA">AMTOR</mode>
+       <mode adif-mode="ATV" group="IMAGE">ATV</mode>
+       <mode adif-mode="CHIP" group="DATA">CHIP</mode>
+       <mode adif-mode="CLO" group="DATA">CLOVER</mode>
+       <mode adif-mode="CONTESTI" group="DATA">CONTESTI</mode>
+       <mode adif-mode="CW" group="CW">CW</mode>
        <mode group="DATA">DATA</mode>
-       <mode group="DATA">DOMINO</mode>
-       <mode group="IMAGE">FAX</mode>
-       <mode group="PHONE">FM</mode>
-       <mode group="DATA">FSK31</mode>
-       <mode group="DATA">FSK441</mode>
-       <mode group="DATA">GTOR</mode>
-       <mode group="DATA">HELL</mode>
-       <mode group="DATA">HFSK</mode>
+       <mode adif-mode="DOMINO" group="DATA">DOMINO</mode>
+       <mode adif-mode="FAX" group="IMAGE">FAX</mode>
+       <mode adif-mode="FM" group="PHONE">FM</mode>
+       <mode adif-mode="PSK" adif-submode="FKS31" group="DATA">FSK31</mode>
+       <mode adif-mode="FSK441" group="DATA">FSK441</mode>
+       <mode adif-mode="TOR" adif-submode="GTOR" group="DATA">GTOR</mode>
+       <mode adif-mode="HELL" group="DATA">HELL</mode>
+       <mode adif-mode="HELL" adif-submode="HFSK" group="DATA">HFSK</mode>
        <mode group="IMAGE">IMAGE</mode>
-       <mode group="DATA">ISCAT</mode>
-       <mode group="DATA">JT4</mode>
-       <mode group="DATA">JT65</mode>
-       <mode group="DATA">JT6M</mode>
-       <mode group="DATA">JT9</mode>
-       <mode group="DATA">MFSK16</mode>
-       <mode group="DATA">MFSK8</mode>
+       <mode adif-mode="ISCAT" group="DATA">ISCAT</mode>
+       <mode adif-mode="JT4" group="DATA">JT4</mode>
+       <mode adif-mode="JT65" group="DATA">JT65</mode>
+       <mode adif-mode="JT6M" group="DATA">JT6M</mode>
+       <mode adif-mode="JT9" group="DATA">JT9</mode>
+       <mode adif-mode="MFSK" adif-submode="MFSK16" group="DATA">MFSK16</mode>
+       <mode adif-mode="MFSK" adif-submode="MFSK8" group="DATA">MFSK8</mode>
        <mode group="DATA">MINIRTTY</mode>
-       <mode group="DATA">MT63</mode>
-       <mode group="DATA">OLIVIA</mode>
-       <mode group="DATA">OPERA</mode>
-       <mode group="DATA">PACKET</mode>
-       <mode group="DATA">PACTOR</mode>
-       <mode group="DATA">PAX</mode>
+       <mode adif-mode="MT63" group="DATA">MT63</mode>
+       <mode adif-mode="OLIVIA" group="DATA">OLIVIA</mode>
+       <mode adif-mode="OPERA" group="DATA">OPERA</mode>
+       <mode adif-mode="PKT" group="DATA">PACKET</mode>
+       <mode adif-mode="PAC" group="DATA">PACTOR</mode>
+       <mode adif-mode="PAX" group="DATA">PAX</mode>
        <mode group="PHONE">PHONE</mode>
-       <mode group="DATA">PSK10</mode>
-       <mode group="DATA">PSK125</mode>
-       <mode group="DATA">PSK2K</mode>
-       <mode group="DATA">PSK31</mode>
-       <mode group="DATA">PSK63</mode>
-       <mode group="DATA">PSK63F</mode>
+       <mode adif-mode="PSK" adif-submode="PSK10" group="DATA">PSK10</mode>
+       <mode adif-mode="PSK" adif-submode="PSK125" group="DATA">PSK125</mode>
+       <mode adif-mode="PSK2K" adif-submode="PSK2K" group="DATA">PSK2K</mode>
+       <mode adif-mode="PSK" adif-submode="PSK31" group="DATA">PSK31</mode>
+       <mode adif-mode="PSK" adif-submode="PSK63" group="DATA">PSK63</mode>
+       <mode adif-mode="PSK" adif-submode="PSK63F" group="DATA">PSK63F</mode>
        <mode group="DATA">PSKAM</mode>
-       <mode group="DATA">PSKFEC31</mode>
-       <mode group="DATA">Q15</mode>
-       <mode group="DATA">ROS</mode>
-       <mode group="DATA">RTTY</mode>
-       <mode group="DATA">RTTYM</mode>
-       <mode group="PHONE">SSB</mode>
-       <mode group="IMAGE">SSTV</mode>
-       <mode group="DATA">THOR</mode>
-       <mode group="DATA">THROB</mode>
-       <mode group="DATA">VOI</mode>
-       <mode group="DATA">WINMOR</mode>
-       <mode group="DATA">WSPR</mode>
+       <mode adif-mode="PSK" adif-submode="PSKFEC31" group="DATA">PSKFEC31</mode>
+       <mode adif-mode="Q15" group="DATA">Q15</mode>
+       <mode adif-mode="ROS" group="DATA">ROS</mode>
+       <mode adif-mode="RTTY" group="DATA">RTTY</mode>
+       <mode adif-mode="RTTYM" group="DATA">RTTYM</mode>
+       <mode adif-mode="SSB" group="PHONE">SSB</mode>
+       <mode adif-mode="SSTV" group="IMAGE">SSTV</mode>
+       <mode adif-mode="THOR" group="DATA">THOR</mode>
+       <mode adif-mode="THRB" group="DATA">THROB</mode>
+       <mode adif-mode="VOI" group="DATA">VOI</mode>
+       <mode adif-mode="WINMOR" group="DATA">WINMOR</mode>
+       <mode adif-mode="WSPR" group="DATA">WSPR</mode>
      </modes>
      <propmodes>
        <propmode name="AUE">Aurora-E</propmode>
@@ -4225,7 +4262,7 @@
        <satellite name="AO-10" startDate="1983-06-16">AMSAT-OSCAR 10</satellite>
        <satellite endDate="1996-12-07" name="AO-13" startDate="1988-06-15">AMSAT-OSCAR 13</satellite>
        <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
-       <satellite endDate="1994-09-16" name="AO-21" startDate="1991-01-29">OSCAR 21/RS-14</satellite>
+       <satellite endDate="1994-09-16" name="AO-21" startDate="1991-01-29">AMSAT-OSCAR 21/RS-14</satellite>
        <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
        <satellite endDate="1965-03-27" name="AO-3" startDate="1965-03-18">AMSAT-OSCAR 3</satellite>
        <satellite endDate="1966-03-16" name="AO-4" startDate="1965-12-21">AMSAT-OSCAR 4</satellite>
@@ -4235,13 +4272,15 @@
        <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
        <satellite name="AO-73" startDate="2013-11-21">AMSAT-OSCAR 73</satellite>
        <satellite endDate="1983-06-24" name="AO-8" startDate="1978-03-15">AMSAT-OSCAR 8</satellite>
+       <satellite name="AO-85">AMSAT-OSCAR 85 (Fox-1A)</satellite>
        <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
-       <satellite endDate="1993-09-10" name="Arsene" startDate="1993-05-13">OSCAR 24</satellite>
-       <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
+       <satellite endDate="1993-09-10" name="AO-24" startDate="1993-05-13">Arsene-OSCAR 24</satellite>
+       <satellite name="CAS-3H" startDate="2015-09-18">LilacSat 2</satellite>
+       <satellite name="DO-64" startDate="2008-04-28">Delfi-OSCAR 64</satellite>
        <satellite endDate="1989-11-05" name="FO-12" startDate="1986-08-12">Fuji-OSCAR 12</satellite>
        <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
        <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
-       <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
+       <satellite name="HO-68" startDate="2009-12-15">Hope-OSCAR 68</satellite>
        <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
        <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
        <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
@@ -4261,9 +4300,15 @@
        <satellite endDate="2001-06-10" name="SO-35" startDate="1999-02-23">Sunsat-OSCAR 35</satellite>
        <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
        <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
-       <satellite name="SO-67" startDate="2009-09-17">Sumbandila Oscar 67</satellite>
+       <satellite name="SO-67" startDate="2009-09-17">Sumbandila-OSCAR 67</satellite>
        <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
        <satellite name="VO-52" startDate="2005-05-05">VUsat-OSCAR 52</satellite>
+       <satellite name="XW-2A" startDate="2015-09-18">Hope 2A</satellite>
+       <satellite name="XW-2B" startDate="2015-09-18">Hope 2B</satellite>
+       <satellite name="XW-2C" startDate="2015-09-18">Hope 2C</satellite>
+       <satellite name="XW-2D" startDate="2015-09-18">Hope 2D</satellite>
+       <satellite name="XW-2E" startDate="2015-09-18">Hope 2E</satellite>
+       <satellite name="XW-2F" startDate="2015-09-18">Hope 2F</satellite>
      </satellites>
      <sigspecs>
        <sigspec name="LOTW" version="1.0">
