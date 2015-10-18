@@ -652,6 +652,9 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			goto dbinit_end;
 		}
 		if (!conv->cursor) {
+#ifndef DB_CURSOR_BULK
+#define DB_CURSOR_BULK 0
+#endif
 			int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
 			if (err) {
 				strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
