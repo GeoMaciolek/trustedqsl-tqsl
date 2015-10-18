@@ -4886,7 +4886,7 @@ QSLApp::OnInit() {
 		} else {
 			wxLogMessage(nd.Message());
 			if (tQSL_ImportCall[0] != '\0') {
-				get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
+				get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any expired/superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
 					long serial = 0;
 					int keyonly = false;
@@ -4898,6 +4898,9 @@ QSLApp::OnInit() {
 						continue;
 					}
 					if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+						continue;
+					}
+					if (serial == tQSL_ImportSerial) {
 						continue;
 					}
 					// This is not the one we just imported
@@ -5208,8 +5211,8 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnLoadCertificateFile");
 	LoadCertWiz lcw(this, help, _("Load Certificate File"));
 	lcw.RunWizard();
-	if (tQSL_ImportCall[0] != '\0') {			// If a user cert was imported
-		get_certlist(tQSL_ImportCall, 0, false, true, true);	// Get any superceded ones for this call
+	if (tQSL_ImportCall[0] != '\0') {				// If a user cert was imported
+		get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any superceded ones for this call
 		for (int i = 0; i < ncerts; i++) {
 			long serial = 0;
 			int keyonly = false;
@@ -5221,6 +5224,9 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 				continue;
 			}
 			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+				continue;
+			}
+			if (serial == tQSL_ImportSerial) {	// Don't delete the one we just imported
 				continue;
 			}
 			// This is not the one we just imported

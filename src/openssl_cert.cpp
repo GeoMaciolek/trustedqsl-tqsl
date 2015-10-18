@@ -833,9 +833,9 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		return 1;
 	}
 
+	*status = false;
 	int keyonly;
 	if (tqsl_getCertificateKeyOnly(cert, &keyonly) == 0 && keyonly) {
-		*status = false;
 		return 0;
 	}
 
@@ -846,7 +846,6 @@ tqsl_isCertificateSuperceded(tQSL_Cert cert, int *status) {
 		tqslTrace("tqsl_isCertificateSuperceded", "returning true");
 		return 0;
 	}
-	*status = false;
 	/* Get the certs from the cert store */
 	tqsl_make_cert_path("user", path, sizeof path);
 	if (xcerts == NULL)
