@@ -1,6 +1,11 @@
 TQSL changes
 ============
 
+2.1.3
+----------
+Fix defect that could cause newly imported callsign certificates to
+be deleted after the import completed.
+
 2.1.2
 ----------
 Add Portuguese (Portugal) translations from Nuno, CT2IRY. (A separate

@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+Allow build for Linux/BSD systems running older versions of Berkeley
+DB by defining a potentially missing symbol.
+
 Fix defect that could cause saving of private keys to be suppressed.
 
 Accept C7 and 4Y as valid prefixes.
