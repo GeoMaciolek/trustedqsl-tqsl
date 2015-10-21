@@ -3294,6 +3294,10 @@ tqsl_getProvider(int idx, TQSL_PROVIDER *provider) {
 DLLEXPORT int CALLCONVENTION
 tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), void *userdata) {
 	bool foundcerts = false;
+	tQSL_ImportCall[0] = '\0';
+	tQSL_ImportSerial = 0;
+	int rval = 0;
+
 	if (file == NULL) {
 		tqslTrace("tqsl_importTQSLFile", "file=NULL");
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -3326,19 +3330,27 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		bool cstat = section.getFirstElement("rootcert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "duplicate root cert");
+			}
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("cacert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "duplicate ca cert");
+			}
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("usercert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "error importing user cert");
+				tQSL_Error = TQSL_CERT_ERROR;
+				rval = 1;
+			}
 			cstat = section.getNextElement(cert);
 		}
 	}
@@ -3350,12 +3362,18 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		int curmajor, curminor;
 		if (tqsl_getConfigVersion(&curmajor, &curminor)) {
 			tqslTrace("tqsl_importTQSLFile", "Get config ver error %d", tQSL_Error);
+			if (tQSL_Error == 0) {
+				tQSL_Error = TQSL_CERT_ERROR;
+			}
 			return 1;
+		}
+		if (rval && tQSL_Error == 0) {
+			tQSL_Error = TQSL_CERT_ERROR;
 		}
 		if (major < curmajor) {
 			if (foundcerts) {
 				tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
-				return 0;
+				return rval;
 			}
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
@@ -3367,19 +3385,19 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		if (major == curmajor) {
 			if (minor == curminor) {		// Same rev as already installed
 				tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
-				return 0;
+				return rval;
 			}
 			if (minor < curminor) {
 				if (foundcerts) {
 					tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
-					return 0;
+					return rval;
 				}
 				tQSL_Error = TQSL_CUSTOM_ERROR;
 				snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 					"This configuration file (V%d.%d) is older than the currently installed one (V%d.%d). It will not be installed.",
 							major, minor, curmajor, curminor);
 				tqslTrace("tqsl_importTQSLFile", "Config update error: %s", tQSL_CustomError);
-				return 1;
+				return rval;
 		 	}
 		}
 		// Save the configuration file
@@ -3410,6 +3428,9 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			if (cb)
 				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR | TQSL_CERT_CB_CONFIG,
 					fn.c_str(), userdata);
+			if (tQSL_Error == 0) {
+				tQSL_Error = TQSL_CERT_ERROR;
+			}
 			return 1;
 		}
 		// Clear stored config data to force re-reading new config
@@ -3424,11 +3445,21 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		tqsl_cabrillo_map.clear();
 		string version = "Configuration V" + section.getAttribute("majorversion").first + "."
 			+ section.getAttribute("minorversion").first + "\n" + fn;
-		if (cb)
-			return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_LOADED | TQSL_CERT_CB_CONFIG,
+		if (cb) {
+			int cbret = (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_LOADED | TQSL_CERT_CB_CONFIG,
 				version.c_str(), userdata);
+			if (cbret || rval) {
+				if (tQSL_Error == 0) {
+					tQSL_Error = TQSL_CERT_ERROR;
+				}
+				return 1;
+			}
+		}
 	}
-	return 0;
+	if (rval && tQSL_Error == 0) {
+		tQSL_Error = TQSL_CERT_ERROR;
+	}
+	return rval;
 }
 
 /*

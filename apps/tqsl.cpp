@@ -4199,12 +4199,16 @@ restore_user_cert(TQSLConfig* loader) {
 
 void
 restore_root_cert(TQSLConfig* loader) {
-	check_tqsl_error(tqsl_importKeyPairEncoded(NULL, "root", NULL, loader->signedCert.ToUTF8()));
+	int rval = tqsl_importKeyPairEncoded(NULL, "root", NULL, loader->signedCert.ToUTF8());
+	if (rval && tQSL_Error != TQSL_CERT_ERROR)
+		check_tqsl_error(rval);
 }
 
 void
 restore_ca_cert(TQSLConfig* loader) {
-	check_tqsl_error(tqsl_importKeyPairEncoded(NULL, "authorities", NULL, loader->signedCert.ToUTF8()));
+	int rval = tqsl_importKeyPairEncoded(NULL, "authorities", NULL, loader->signedCert.ToUTF8());
+	if (rval && tQSL_Error != TQSL_CERT_ERROR)
+		check_tqsl_error(rval);
 }
 
 void
@@ -4868,21 +4872,23 @@ QSLApp::OnInit() {
 
 	// Handle "-i" (import cert), or bare cert file on command line
 
-	bool certFile = false;
+	bool tq6File = false;
 	if (!wxIsEmpty(infile)) {
-		if (ext.CmpNoCase(wxT("tq6")) == 0 || ext.CmpNoCase(wxT("p12")) == 0) {
-			certFile = true;
+		if (ext.CmpNoCase(wxT("tq6")) == 0) {
+			tq6File = true;
 		}
 	}
 	if (parser.Found(wxT("i"), &infile) && (!wxIsEmpty(infile))) {
-		certFile = true;
+		tq6File = true;
 	}
 
-	if (certFile) {
+	if (tq6File) {
 		infile.Trim(true).Trim(false);
 		notifyData nd;
 		if (tqsl_importTQSLFile(infile.ToUTF8(), notifyImport, &nd)) {
-			wxLogError(getLocalizedErrorString());
+			if (tQSL_Error != TQSL_CERT_ERROR) {
+				wxLogError(getLocalizedErrorString());
+			}
 		} else {
 			wxLogMessage(nd.Message());
 			if (tQSL_ImportCall[0] != '\0') {
