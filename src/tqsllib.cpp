@@ -109,6 +109,7 @@ static const char *error_strings[] = {
 	"The TQSL configuration file cannot be parsed",		/* TQSL_CONFIG_SYNTAX_ERROR */
 	"This file can not be processed due to a system error",	/* TQSL_FILE_SYSTEM_ERROR */
 	"The format of this file is incorrect.",		/* TQSL_FILE_SYNTAX_ERROR */
+	"This Callsign Certificate could not be installed", 	/* TQSL_CERT_ERROR */
 };
 
 const char* tqsl_openssl_error(void);
