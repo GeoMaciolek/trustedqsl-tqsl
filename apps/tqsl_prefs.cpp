@@ -373,6 +373,16 @@ FilePrefs::FilePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"))
 	config->Read(wxT("DateRange"), &allow);
 	daterange->SetValue(allow);
 	sizer->Add(daterange, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	adifedit = new wxCheckBox(this, ID_PREF_FILE_EDIT_ADIF, _("Open ADIF files in ADIF editor"));
+	allow = false;
+	config->Read(wxT("AdifEdit"), &allow);
+	adifedit->SetValue(allow);
+	sizer->Add(adifedit, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	dispdupes = new wxCheckBox(this, ID_PREF_FILE_DISPLAY_DUPES, _("Display details of duplicate QSOs when signing a log"));
+	allow = false;
+	config->Read(wxT("DispDupes"), &allow);
+	dispdupes->SetValue(allow);
+	sizer->Add(dispdupes, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	SetSizer(sizer);
 	sizer->Fit(this);
 	sizer->SetSizeHints(this);
@@ -408,6 +418,8 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("ADIFFiles"), fix_ext_str(adif->GetValue()));
 	config->Write(wxT("BadCalls"), badcalls->GetValue());
 	config->Write(wxT("DateRange"), daterange->GetValue());
+	config->Write(wxT("AdifEdit"), adifedit->GetValue());
+	config->Write(wxT("DispDupes"), dispdupes->GetValue());
 	config->Write(wxT("AutoBackup"), autobackup->GetValue());
 #if !defined(__APPLE__) && !defined(_WIN32)
 	config->Write(wxT("BackupFolder"), dirPick->GetValue());

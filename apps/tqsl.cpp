@@ -1766,8 +1766,10 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	bool allow_dupes = false;
 	bool restarting = false;
 	bool ignore_err = false;
+	bool show_dupes = false;
 
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
+	config->Read(wxT("DispDupes"), &show_dupes, DEFAULT_DISP_DUPES);
 
 	try {
 		if (defcall) {
@@ -2022,14 +2024,18 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				continue;
 			}
 			if (tQSL_Error == TQSL_DUPLICATE_QSO) {
-				processed++;
 				duplicates++;
-				continue;
+				if (!show_dupes) {
+					processed++;
+					continue;
+				}
 			}
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
 				processed++;
-				errors++;
+				if (tQSL_Error != TQSL_DUPLICATE_QSO) {
+					errors++;
+				}
 				try {
 					check_tqsl_error(1);
 				} catch(TQSLException& x) {
@@ -4941,10 +4947,12 @@ QSLApp::OnInit() {
 		return true;
 	}
 
-#if defined(EDIT_IF_NOT_BATCH)		// Disable this for now to go back to pre-2.1 behavior
+	bool editAdif = DEFAULT_ADIF_EDIT;
+	wxConfig::Get()->Read(wxT("AdifEdit"), &editAdif, DEFAULT_ADIF_EDIT);
+
 	// If it's an ADIF file, invoke the editor if that's the only argument
 	// unless we're running in batch mode
-	if (!quiet && !wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
+	if (editAdif && !quiet && !wxIsEmpty(infile) && (ext.CmpNoCase(wxT("adi")) || ext.CmpNoCase(wxT("adif")))) {
 		QSORecordList recs;
 		loadQSOfile(infile, recs);
 		wxMessageBox(_("Warning: The TQSL ADIF editor only processes a limited number of ADIF fields.\n\nUsing the editor on an ADIF file can cause QSO details to be lost!"), _("Warning"), wxOK | wxICON_EXCLAMATION, frame);
@@ -4956,7 +4964,6 @@ QSLApp::OnInit() {
 		}
 		exitNow(TQSL_EXIT_SUCCESS, quiet);
 	}
-#endif // EDIT_IF_NOT_BATCH
 
 	// Assume that it's a log to sign
 	if (loc == 0) {
