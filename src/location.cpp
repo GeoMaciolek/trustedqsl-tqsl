@@ -1057,8 +1057,31 @@ init_adif_map() {
 	XMLElement adif_item;
 	bool ok = adif_map.getFirstElement("adifmode", adif_item);
 	while (ok) {
-		if (adif_item.getText() != "" && adif_item.getAttribute("mode").first != "")
-			tqsl_adif_map[adif_item.getText()] = adif_item.getAttribute("mode").first;
+		string adifmode = adif_item.getAttribute("adif-mode").first;
+		string submode = adif_item.getAttribute("adif-submode").first;
+		// Prefer the "mode=" attribute of the mode definition, else get the item value.
+		string gabbi = adif_item.getAttribute("mode").first;
+		string melem = adif_item.getText();
+
+		if (adifmode == "") { 		// Handle entries with just a mode element
+			adifmode = melem;
+		}
+		if (gabbi != "") {		// There should always be one
+			if (adifmode != "") {
+				tqsl_adif_map[adifmode] = gabbi;
+			}
+			// Map this gabbi mode from submode
+			if (submode != "" && submode != adifmode) {
+				tqsl_adif_map[submode] = gabbi;
+			}
+			if (melem != "" && melem != adifmode) {
+				tqsl_adif_map[melem] = gabbi;
+			}
+			// Add a mode%submode lookup too
+			if (adifmode != "" && submode != "") {
+				tqsl_adif_map[adifmode + "%" + submode] = gabbi;
+			}
+		}
 		ok = adif_map.getNextElement(adif_item);
 	}
 	return 0;
@@ -2978,13 +3001,7 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 				if (f.idx < 0 || f.idx >= static_cast<int>(f.items.size())) {
 					s = "";
 				} else {
-					/* Alaska counties are stored as 'pseudo-county|real-county'
-					 * so output just the real county name
-					 */
 					s = f.items[f.idx].text;
-					size_t pos = s.find("|");
-					if (pos != string::npos)
-						s = s.substr(++pos, string::npos);
 				}
 			} else if (f.data_type == TQSL_LOCATION_FIELD_INT) {
 				char buf[20];

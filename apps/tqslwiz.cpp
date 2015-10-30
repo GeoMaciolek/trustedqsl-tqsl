@@ -154,12 +154,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			for (int j = 0; j < nitems && j < 2000; j++) {
 				char item[80];
 				tqsl_getLocationFieldListItem(loc, i, j, item, sizeof(item));
-				/* For Alaska counties, it's pseudo-county name
-				 * followed by a '|' then the real county name.
-			 	 */
-				char *p = strchr(item, '|');
-				if (p)
-					*p = '\0';
 				// Translate the first [None] entry if it exists
 #ifdef tqsltranslate
 				__("[None]");

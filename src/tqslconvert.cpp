@@ -1011,13 +1011,21 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	tqsl_strtoupper(conv->rec.mode);
 	tqsl_strtoupper(conv->rec.submode);
 	char val[256] = "";
-	// Try the submode (if it's set), then the mode.
+	// Try to find the GABBI mode several ways.
+	val[0] = '\0';
 	if (conv->rec.submode[0] != '\0') {
-		tqsl_getADIFMode(conv->rec.submode, val, sizeof val);
-		if (val[0] == '\0') {
-			tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+		char modeSub[256];
+		strncpy(modeSub, conv->rec.mode, sizeof modeSub);
+		strncat(modeSub, "%", sizeof modeSub - strlen(modeSub));
+		strncat(modeSub, conv->rec.submode, sizeof modeSub - strlen(modeSub));
+		if (tqsl_getADIFMode(modeSub, val, sizeof val)) {	// mode%submode lookup failed
+			// Try just the submode, then the mode.
+			if (tqsl_getADIFMode(conv->rec.submode, val, sizeof val)) { // bare submode failed
+				tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+			}
 		}
 	} else {
+		// Just a mode, no submode. Look that up.
 		tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
 	}
 	if (val[0] != '\0')
