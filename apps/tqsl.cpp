@@ -4686,7 +4686,13 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		if (argv[i] && (argv[i][0] == wxT('-') || argv[i][0] == wxT('/')))
+		// clang loves the following.
+		// it will complain that arvg[i] may be a null pointer refererence for some versions.
+		// it will complain that argv[i] can't be converted to a boolean for others.
+		// Well, if it's a pointer and it might be null but it's also not a pointer
+		// and can't be null, then it's not possible to compile this without warning.
+		// Warnings ahoy!
+		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 				argv[i][1] = wxTolower(argv[i][1]);
 	}
