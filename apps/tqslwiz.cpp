@@ -171,6 +171,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			}
 			if (text_width > 0) {
 				int w, h;
+				if (text_width > 125)
+					text_width = 125;
 				(reinterpret_cast<wxComboBox *>(controls[i]))->GetSize(&w, &h);
 				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSize(text_width + text_size.GetWidth()*4, h);
 			}
@@ -179,8 +181,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			if (nitems > new_sel)
 				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSelection(new_sel);
 			tqsl_setLocationFieldIndex(loc, i, new_sel);
-			if (noupdate_field >= 0)
-				tqsl_updateStationLocationCapture(loc);
 			if (nitems > new_sel)
 				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSelection(new_sel);
 			(reinterpret_cast<wxComboBox *>(controls[i]))->Enable(nitems > 1);
@@ -210,6 +210,8 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			(reinterpret_cast<wxStaticText *>(controls[i]))->SetLabel(valMsg);
 		}
 	}
+	if (noupdate_field >= 0)
+		tqsl_updateStationLocationCapture(loc);
 }
 
 void

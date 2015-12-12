@@ -1,6 +1,13 @@
 TQSL changes
 ============
 
+2.2
+----------
+Updates to correct portability issues for some Unix-based systems.
+
+Correction for a defect that doesn't permit more than one field to appear on
+a station location page that has dependent values.
+
 2.1.3
 ----------
 Revert change in the behavior for command line applications. TQSL
