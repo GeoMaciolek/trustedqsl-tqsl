@@ -2441,7 +2441,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 		string compressed;
 		size_t compressedSize = compressToBuf(compressed, (const char*)signedOutput.ToUTF8());
 		//ofstream f; f.open("testzip.tq8", ios::binary); f<<compressed; f.close(); //test of compression routine
-		if (compressedSize < 0) {
+		if (compressedSize == 0) {
 			wxLogMessage(_("Error compressing before upload"));
 			return TQSL_EXIT_TQSL_ERROR;
 		}
@@ -3434,7 +3434,7 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 // The macro for declaring a hash map defines a couple of typedefs
 // that it never uses. Current GCC warns about those. The pragma
 // below suppresses those warnings for those.
-#if !defined(__APPLE__) && !defined(_WIN32)
+#if !defined(__APPLE__) && !defined(_WIN32) && !defined(__clang__)
 	#pragma GCC diagnostic ignored "-Wunused-local-typedefs"
 #endif
 void
@@ -3638,7 +3638,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 		DoCheckExpiringCerts(noGUI);
 	return;
 }
-#if !defined(__APPLE__) && !defined(_WIN32)
+#if !defined(__APPLE__) && !defined(_WIN32) && !defined(__clang__)
 	#pragma GCC diagnostic warning "-Wunused-local-typedefs"
 #endif
 

@@ -1027,8 +1027,10 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	if (conv->rec.submode[0] != '\0') {
 		char modeSub[256];
 		strncpy(modeSub, conv->rec.mode, sizeof modeSub);
-		strncat(modeSub, "%", sizeof modeSub - strlen(modeSub));
-		strncat(modeSub, conv->rec.submode, sizeof modeSub - strlen(modeSub));
+		size_t left = sizeof modeSub - strlen(modeSub);
+		strncat(modeSub, "%", left);
+		left = sizeof modeSub - strlen(modeSub);
+		strncat(modeSub, conv->rec.submode, left);
 		if (tqsl_getADIFMode(modeSub, val, sizeof val)) {	// mode%submode lookup failed
 			// Try just the submode, then the mode.
 			if (tqsl_getADIFMode(conv->rec.submode, val, sizeof val)) { // bare submode failed

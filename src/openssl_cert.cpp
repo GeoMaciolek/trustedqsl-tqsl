@@ -3353,18 +3353,18 @@ tqsl_restoreCallsignCertificate(const char *callsign) {
 	for (ep = ellist.find("UserCert"); ep != ellist.end(); ep++) {
 		if (ep->first != "UserCert")
 			break;
-		pair<string, bool> rval = ep->second.getAttribute("CallSign");
+		pair<string, bool> rval = ep->second->getAttribute("CallSign");
 		if (rval.second) call = rval.first;
-		rval = ep->second.getAttribute("serial");
+		rval = ep->second->getAttribute("serial");
 		if (rval.second) serial = strtol(rval.first.c_str(), NULL, 10);
-		rval = ep->second.getAttribute("dxcc");
+		rval = ep->second->getAttribute("dxcc");
 		if (rval.second) dxcc = strtol(rval.first.c_str(), NULL, 10);
 
 		XMLElement el;
-		if (ep->second.getFirstElement("SignedCert", el)) {
+		if (ep->second->getFirstElement("SignedCert", el)) {
 			publicKey = el.getText();
 		}
-		if (ep->second.getFirstElement("PrivateKey", el)) {
+		if (ep->second->getFirstElement("PrivateKey", el)) {
 			privateKey = el.getText();
 		}
 	}
@@ -5214,23 +5214,23 @@ tqsl_setCertificateStatus(long serial, const char *status) {
 	for (ep = ellist.find("Cert"); ep != ellist.end(); ep++) {
 		if (ep->first != "Cert")
 			break;
-		pair<string, bool> rval = ep->second.getAttribute("serial");
+		pair<string, bool> rval = ep->second->getAttribute("serial");
 		if (rval.second && strtol(rval.first.c_str(), NULL, 10) == serial) {
 			exists = true;
 			break;
 		}
 	}
 
-	XMLElement cs("Cert");
-	cs.setPretext("\n  ");
-	XMLElement se;
-	se.setPretext(cs.getPretext() + "  ");
-	se.setElementName("status");
-	se.setText(status);
-	cs.addElement(se);
+	XMLElement *cs = new XMLElement("Cert");
+	cs->setPretext("\n  ");
+	XMLElement *se = new XMLElement;
+	se->setPretext(cs->getPretext() + "  ");
+	se->setElementName("status");
+	se->setText(status);
+	cs->addElement(se);
 
-	cs.setAttribute("serial", sstr);
-	cs.setText("\n  ");
+	cs->setAttribute("serial", sstr);
+	cs->setText("\n  ");
 
 	if (exists)
 		ellist.erase(ep);
