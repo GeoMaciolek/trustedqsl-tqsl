@@ -4585,10 +4585,6 @@ tqsl_replace_key(const char *callsign, const char *path, map<string, string>& ne
 		tqslTrace("tqsl_replace_key", "open file %s: %s", newpath, strerror(tQSL_Errno));
 		goto trk_end;
 	}
-	if (records.size() == 0) {
-		tqslTrace("tqsl_replace_key", "No keys found in record list, not overwriting");
-		goto trk_end;
-	}
 	for (it = records.begin(); it != records.end(); it++) {
 		map<string, string>::iterator mit;
 		for (mit = it->begin(); mit != it->end(); mit++) {
@@ -4828,7 +4824,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 				tQSL_Error = 0;
 			}
 			rval = 1;
-			goto end;
+			break;
 		}
 	}
 	tqslTrace("tqsl_find_matching_key", "No matching private key found");
