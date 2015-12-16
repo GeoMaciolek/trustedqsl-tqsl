@@ -2703,8 +2703,11 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							else
 								strncpy(namebuf, "", bufsize);
 						} else {
-						//	strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
-							strncpy(namebuf, field.items[field.idx].label.c_str(), bufsize);
+							if (field.items[field.idx].label == "") {
+								strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
+							} else {
+								strncpy(namebuf, field.items[field.idx].label.c_str(), bufsize);
+							}
 						}
 						break;
                                         case TQSL_LOCATION_FIELD_TEXT:
