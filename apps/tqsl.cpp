@@ -6124,10 +6124,13 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 				 "IOTA", __("IOTA Locator: "),
 				 "US_STATE", __("State: "),
 				 "US_COUNTY", __("County: "),
+				 "US_PARK", __("Park: "),
 				 "CA_PROVINCE", __("Province: "),
+				 "CA_US_PARK", __("Park: "),
 				 "RU_OBLAST", __("Oblast: "),
 				 "CN_PROVINCE", __("Province: "),
-				 "AU_STATE", __("State: ") };
+				 "AU_STATE", __("State: "),
+				 "DX_US_PARK", __("Park: ") };
 
 	tQSL_Location loc;
 	try {
