@@ -5322,6 +5322,7 @@ void MyFrame::CRQWizardRenew(wxCommandEvent& event) {
 
 // Delete an abandoned/failed cert request
 static void deleteRequest(const char *callsign, int dxccEntity) {
+	int savedError = tQSL_Error;
 	free_certlist();
 	tqsl_selectCertificates(&certlist, &ncerts, callsign, dxccEntity, 0, 0, TQSL_SELECT_CERT_WITHKEYS);
 	int ko;
@@ -5330,9 +5331,11 @@ static void deleteRequest(const char *callsign, int dxccEntity) {
 			if (tqsl_deleteCertificate(certlist[i])) {
 				wxLogError(getLocalizedErrorString());
 			}
+			tQSL_Error = savedError;
 			return;
 		}
 	}
+	tQSL_Error = savedError;
 	return;
 }
 
@@ -5430,15 +5433,18 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 					deleteRequest(req.callSign, req.dxccEntity);
 					return;
 				}
-				if (tqsl_beginSigning(req.signer, unipwd, NULL, call)) {
-					deleteRequest(req.callSign, req.dxccEntity);
+				// Try signing with the unicode version of the password
+				if (tqsl_beginSigning(req.signer, unipwd, NULL, call) == 0) {
+					// If OK, signing is ready to go.
 					break;
 				}
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
-					wxLogError(getLocalizedErrorString());
 					deleteRequest(req.callSign, req.dxccEntity);
 					return;
+				} else {
+					wxLogError(getLocalizedErrorString());
 				}
+
 			}
 		}
 		req.renew = renew ? 1 : 0;

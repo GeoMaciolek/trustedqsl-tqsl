@@ -3,6 +3,11 @@ TQSL changes
 
 2.2
 ----------
+When renewing a password-protected callsign certificate, entering an incorrect
+password would display "Error: Invalid argument" versus the expected error
+relating to the incorrect password. TQSL now displays a "password not correct"
+error and allows the user to try again.
+
 Updates to correct portability issues for some Unix-based systems.
 
 Correction for a defect that doesn't permit more than one field to appear on
