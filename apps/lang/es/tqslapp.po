@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-12-15 22:33-0500\n"
-"PO-Revision-Date: 2015-07-20 19:30-0400\n"
+"PO-Revision-Date: 2015-12-19 14:15-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: es\n"
@@ -2879,14 +2879,14 @@ msgid "System error: %hs : %hs"
 msgstr "Error del sistema: %hs : %hs"
 
 #: wxutil.cpp:142
-#, fuzzy, c-format
+#, c-format
 msgid "System error: %hs"
-msgstr "Error del sistema: %s"
+msgstr "Error del sistema: %hs"
 
 #: wxutil.cpp:149
-#, fuzzy, c-format
+#, c-format
 msgid "File syntax error: %hs"
-msgstr "Archivo error de sintaxis:%s"
+msgstr "Archivo error de sintaxis: %hs"
 
 #: wxutil.cpp:153
 msgid "File syntax error"

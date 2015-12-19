@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-12-15 22:33-0500\n"
-"PO-Revision-Date: 2015-07-20 19:31-0400\n"
+"PO-Revision-Date: 2015-12-19 14:16-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: fr\n"
@@ -2597,7 +2597,7 @@ msgstr "Invite pour dates QSO lors de la signature"
 
 #: tqsl_prefs.cpp:376
 msgid "Open ADIF files in ADIF editor"
-msgstr ""
+msgstr "Ouvrir des fichiers  ADIF dans l'éditeur de l'ADIF"
 
 #: tqsl_prefs.cpp:381
 msgid "Display details of duplicate QSOs when signing a log"
@@ -2892,14 +2892,14 @@ msgid "System error: %hs : %hs"
 msgstr "Erreur système: %hs: %hs"
 
 #: wxutil.cpp:142
-#, fuzzy, c-format
+#, c-format
 msgid "System error: %hs"
-msgstr "Erreur du système: %s"
+msgstr "Erreur du système: %hs"
 
 #: wxutil.cpp:149
-#, fuzzy, c-format
+#, c-format
 msgid "File syntax error: %hs"
-msgstr "Erreur de syntaxe du fichier: %s"
+msgstr "Erreur de syntaxe du fichier: %hs"
 
 #: wxutil.cpp:153
 msgid "File syntax error"
