@@ -2420,11 +2420,11 @@ tqsl_mergeStationLocations(const char *locdata) {
 			newtop->setPretext("\n  ");
 			newtop->setAttribute("name", rval.first);
 			newtop->setText("\n  ");
-			XMLElement *sub = new XMLElement;
-			sub->setPretext(newtop->getPretext() + "  ");
 			XMLElement el;
 			bool elok = ep->second->getFirstElement(el);
 			while (elok) {
+				XMLElement *sub = new XMLElement;
+				sub->setPretext(newtop->getPretext() + "  ");
 				sub->setElementName(el.getElementName());
 				sub->setText(el.getText());
 				newtop->addElement(sub);
@@ -2487,11 +2487,11 @@ tqsl_move_station_location(const char *name, bool fromtrash) {
 			newtop->setPretext("\n  ");
 			newtop->setAttribute("name", from_rval.first);
 			newtop->setText("\n  ");
-			XMLElement *sub = new XMLElement;
-			sub->setPretext(newtop->getPretext() + "  ");
 			XMLElement el;
 			bool elok = from_ep->second->getFirstElement(el);
 			while (elok) {
+				XMLElement *sub = new XMLElement;
+				sub->setPretext(newtop->getPretext() + "  ");
 				sub->setElementName(el.getElementName());
 				sub->setText(el.getText());
 				newtop->addElement(sub);

@@ -4307,18 +4307,19 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		loader->locstring = wxT("<StationDataFile>\n");
 	} else if (strcmp(name, "Location") == 0) {
 		for (i = 0; atts[i]; i+=2) {
-			wxString attname = wxString::FromUTF8(atts[i+1]);
+			wxString attval = wxString::FromUTF8(atts[i+1]);
 			if (strcmp(atts[i], "name") == 0) {
 				tqslTrace("TQSLConfig::xml_restore_start", "Restoring location %s", atts[i+1]);
-				loader->locstring += wxT("<StationData name=\"") + urlEncode(attname) + wxT("\">\n");
+				loader->locstring += wxT("<StationData name=\"") + urlEncode(attval) + wxT("\">\n");
 				break;
 			}
 		}
 		for (i = 0; atts[i]; i+=2) {
-			wxString attname = wxString::FromUTF8(atts[i+1]);
+			wxString attname = wxString::FromUTF8(atts[i]);
+			wxString attval = wxString::FromUTF8(atts[i+1]);
 			if (strcmp(atts[i], "name") != 0) {
-				loader->locstring += wxT("<") + wxString::FromUTF8(atts[i]) + wxT(">") +
-					urlEncode(attname) + wxT("</") + wxString::FromUTF8(atts[i]) + wxT(">\n");
+				loader->locstring += wxT("<") + attname + wxT(">") +
+					urlEncode(attval) + wxT("</") + attname + wxT(">\n");
 			}
 		}
 	} else if (strcmp(name, "DupeDb") == 0) {
