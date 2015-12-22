@@ -15,6 +15,9 @@ FIND_PATH(BDB_INCLUDE_DIR db.h
   "C:\\db-6.0.20\\build_windows"
   "C:\\db-6.0.20\\build_windows"
   "C:\\db-5.3.21\\build_windows"
+  #*nix dirs
+  "${BDB_PREFIX}/include"
+  "${BDB_PREFIX}/include/db5"
 )
 endif()
 MARK_AS_ADVANCED(BDB_INCLUDE_DIR)
@@ -34,6 +37,7 @@ FIND_LIBRARY(BDB_LIBRARY NAMES
   libdb53s
   libdb5-5.3
   libdb5-5.so
+  libdb5
   PATHS
   "C:\\db-6.1.26.NC\\build_windows\\Win32\\Static Release\\"
   "C:\\db-6.1.19.NC\\build_windows\\Win32\\Static Release\\"
@@ -45,6 +49,7 @@ FIND_LIBRARY(BDB_LIBRARY NAMES
   "/usr/local/BerkeleyDB.6.0/lib"
   "/usr/local/BerkeleyDB.5.3/lib"
   "${BDB_PREFIX}/lib"
+  "${BDB_PREFIX}/lib/db5"
   "${BDB_PREFIX}"
 )
 MARK_AS_ADVANCED(BDB_LIBRARY)

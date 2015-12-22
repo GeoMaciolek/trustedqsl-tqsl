@@ -52,6 +52,8 @@ using std::pair;
 #define DEFAULT_AUTO_BACKUP true
 #define DEFAULT_BACKUP_VERSIONS 10
 #define DEFAULT_CERT_WARNING 60
+#define DEFAULT_ADIF_EDIT false
+#define DEFAULT_DISP_DUPES false
 //online
 //#define ENABLE_ONLINE_PREFS
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
@@ -81,6 +83,8 @@ enum {		// Window IDs
 	ID_PREF_FILE_BACKUP_VERSIONS,
 	ID_PREF_FILE_BADCALLS,
 	ID_PREF_FILE_DATERANGE,
+	ID_PREF_FILE_EDIT_ADIF,
+	ID_PREF_FILE_DISPLAY_DUPES,
 	ID_PREF_MODE_MAP,
 	ID_PREF_MODE_ADIF,
 	ID_PREF_MODE_DELETE,
@@ -108,7 +112,7 @@ enum {		// Window IDs
 
 class PrefsPanel : public wxPanel {
  public:
-	PrefsPanel(wxWindow *parent, const wxString& helpfile = wxT("prefs.htm"))
+	explicit PrefsPanel(wxWindow *parent, const wxString& helpfile = wxT("prefs.htm"))
 		: wxPanel(parent), _helpfile(helpfile) {}
 	wxString HelpFile() { return _helpfile; }
  private:
@@ -123,7 +127,7 @@ class FilePrefs : public PrefsPanel {
 	void ShowHide();
  private:
 	wxTextCtrl *cabrillo, *adif, *versions;
-	wxCheckBox *autobackup, *badcalls, *daterange;
+	wxCheckBox *autobackup, *badcalls, *daterange, *adifedit, *dispdupes;
 #if !defined(__APPLE__) && !defined(_WIN32)
 	wxTextCtrl *dirPick;
 #else
@@ -200,7 +204,7 @@ class ProxyPrefs : public PrefsPanel {
 typedef map <wxString, wxString> ModeSet;
 class Preferences : public wxFrame {
  public:
-	Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
+	explicit Preferences(wxWindow *parent, wxHtmlHelpController *help = 0);
 	void OnOK(wxCommandEvent &);
 	void OnCancel(wxCommandEvent &);
 	void OnHelp(wxCommandEvent &);

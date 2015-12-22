@@ -1,8 +1,56 @@
 TQSL changes
 ============
 
+2.2
+----------
+When renewing a password-protected callsign certificate, entering an incorrect
+password would display "Error: Invalid argument" versus the expected error
+relating to the incorrect password. TQSL now displays a "password not correct"
+error and allows the user to try again.
+
+Updates to correct portability issues for some Unix-based systems.
+
+Correction for a defect that doesn't permit more than one field to appear on
+a station location page that has dependent values.
+
+2.1.3
+----------
+Revert change in the behavior for command line applications. TQSL
+2.1 changed the behavior for ADIF files to open those with the
+TQSL ADIF editor versus signing them unless "-x" or "-q" were on
+the command line. This was an incompatible change that is not
+consistent with the documentation and was removed.
+
+Fix defect that could cause newly imported callsign certificates to
+be deleted after the import completed.
+
+2.1.2
+----------
+Add Portuguese (Portugal) translations from Nuno, CT2IRY. (A separate
+Portuguese (Brazil) translation will eventually be needed.)
+
+Correct command line parsing defect that causes TQSL to quit without
+signing a log unless a station location is provided on the command line.
+
+Correct the TQSL editor to not use the language settings for decimal
+points as ADIF requires "." as the decimal separator.
+
+2.1.1
+----------
+Correct defect that generated a spurious error message on certificate
+renewals, which was entirely blocking renewals.
+
 2.1
 ----------
+Use German translations from Andreas, DF4WC.
+
+Don't require selections for RX Freq, Propmode, or Satellite when entering
+a QSO into the ADIF editor. Suggest ".adi" as the file type for the editor
+when saving a new file, not ".adif".
+
+Correct support for localalized characters in Windows usernames. Thanks to
+Goran, SM4DHF for help with fixing this issue.
+
 Recognize <SUBMODE:n> tags in an ADIF file and map those to modes that LoTW
 supports.
 

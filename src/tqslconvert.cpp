@@ -461,6 +461,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	bool dbinit_cleanup = false;
 	int dbret;
 	bool triedRemove = false;
+	bool triedDelete = false;
 	int envflags = DB_INIT_TXN|DB_INIT_LOG|DB_INIT_MPOOL|DB_RECOVER|DB_REGISTER|DB_CREATE;
 	string fixedpath = tQSL_BaseDir; //must be first because of gotos
 	size_t found = fixedpath.find('\\');
@@ -520,6 +521,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				dbinit_cleanup = true;
 				goto dbinit_end;
 			}
+			tqslTrace("open_db", "dbenv=0x%lx", conv->dbenv);
 			if (conv->errfile) {
 				conv->dbenv->set_errfile(conv->dbenv, conv->errfile);
 				conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
@@ -529,8 +531,6 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifndef _WIN32
 			conv->dbenv->set_isalive(conv->dbenv, isalive);
 #endif
-			conv->dbenv->set_verbose(conv->dbenv, DB_VERB_RECOVERY, 1);
-
 			// Log files default to 10 Mb each. We don't need nearly that much.
 			if (conv->dbenv->set_lg_max)
 				conv->dbenv->set_lg_max(conv->dbenv, 256 * 1024);
@@ -542,20 +542,24 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 				conv->dbenv->set_lk_max_objects(conv->dbenv, 20000);
 		}
 		// Now open the database
+		tqslTrace("open_db", "Opening the database at %s", conv->dbpath);
 		if ((dbret = conv->dbenv->open(conv->dbenv, conv->dbpath, envflags, 0600))) {
+			int db_errno = errno;
 			tqslTrace("open_db", "dbenv->open %s error %s", conv->dbpath, db_strerror(dbret));
 			if (conv->errfile)
 				fprintf(conv->errfile, "opening DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 			// Can't open the database - maybe try private?
 			if ((dbret == EACCES || dbret == EROFS) || (dbret == EINVAL && errno == dbret)) {
-				if (!(envflags && DB_PRIVATE)) {
+				if (!(envflags & DB_PRIVATE)) {
 					envflags |= DB_PRIVATE;
 					continue;
 				}
 			}
 			// can't open environment - try to delete it and try again.
+			tqslTrace("open_db", "Environment open fail, triedRemove=%d", triedRemove);
 			if (!triedRemove) {
 				// Remove the dross
+				tqslTrace("open_db", "Removing environment");
 				conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
 				conv->dbenv = NULL;
 				triedRemove = true;
@@ -568,12 +572,14 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			if (conv->errfile) {
 				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
 			}
-			if (dbret == EINVAL || errno == EINVAL) {  // Something really wrong with the DB
-						// Remove it and try again.
+			// EINVAL means that the database is corrupted to the point
+			// where it can't be opened. Remove it and try again.
+			if ((dbret == EINVAL || db_errno == EINVAL) && !triedDelete) {
 				tqslTrace("open_db", "EINVAL. Removing db");
 				conv->dbenv->close(conv->dbenv, 0);
 				conv->dbenv = NULL;
 				remove_db(fixedpath.c_str());
+				triedDelete = true;
 				continue;
 			}
 
@@ -589,11 +595,13 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	}
 
 	// Stale lock removal
+	tqslTrace("open_db", "Removing stale locks");
 	dbret = conv->dbenv->failchk(conv->dbenv, 0);
-	if (dbret) {
+	if (dbret && conv->errfile) {
 		fprintf(conv->errfile, "lock removal for DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 	}
 
+	tqslTrace("open_db", "calling db_create");
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
 		// can't create db
 		dbinit_cleanup = true;
@@ -604,6 +612,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 #ifndef DB_TXN_BULK
 #define DB_TXN_BULK 0
 #endif
+	tqslTrace("open_db", "starting transaction, readonly=%d", readonly);
 	if (!readonly && (dbret = conv->dbenv->txn_begin(conv->dbenv, NULL, &conv->txn, DB_TXN_BULK))) {
 		// can't start a txn
 		tqslTrace("open_db", "can't create txn %s", db_strerror(dbret));
@@ -612,6 +621,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	}
 
 	// Probe the database type
+	tqslTrace("open_db", "opening database now");
 	if ((dbret = conv->seendb->open(conv->seendb, conv->txn, "duplicates.db", NULL, DB_UNKNOWN, 0, 0600))) {
 		if (dbret == ENOENT) {
 			tqslTrace("open_db", "DB not found, making a new one");
@@ -627,6 +637,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 
 	DBTYPE type;
 	conv->seendb->get_type(conv->seendb, &type);
+	tqslTrace("open_db", "type=%d", type);
 	if (type ==  DB_BTREE) {
 		tqslTrace("open_db", "BTREE type. Converting.");
 		// Have to convert the database.
@@ -644,6 +655,9 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 			goto dbinit_end;
 		}
 		if (!conv->cursor) {
+#ifndef DB_CURSOR_BULK
+#define DB_CURSOR_BULK 0
+#endif
 			int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
 			if (err) {
 				strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
@@ -746,6 +760,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 
  dbinit_end:
 	if (dbinit_cleanup) {
+		tqslTrace("open_db", "DB open failed, triedDelete=%d", triedDelete);
 		tQSL_Error = TQSL_DB_ERROR;
 		tQSL_Errno = errno;
 		strncpy(tQSL_CustomError, db_strerror(dbret), sizeof tQSL_CustomError);
@@ -767,6 +782,13 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		conv->cursor = NULL;
 		conv->seendb = NULL;
 		conv->errfile = NULL;
+		// Handle case where the database is just broken
+		if (dbret == EINVAL && !triedDelete) {
+			tqslTrace("open_db", "EINVAL. Removing db");
+			remove_db(fixedpath.c_str());
+			triedDelete = true;
+			goto reopen;
+		}
 		return false;
 	}
 	return true;
@@ -1000,13 +1022,23 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	tqsl_strtoupper(conv->rec.mode);
 	tqsl_strtoupper(conv->rec.submode);
 	char val[256] = "";
-	// Try the submode (if it's set), then the mode.
+	// Try to find the GABBI mode several ways.
+	val[0] = '\0';
 	if (conv->rec.submode[0] != '\0') {
-		tqsl_getADIFMode(conv->rec.submode, val, sizeof val);
-		if (val[0] == '\0') {
-			tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+		char modeSub[256];
+		strncpy(modeSub, conv->rec.mode, sizeof modeSub);
+		size_t left = sizeof modeSub - strlen(modeSub);
+		strncat(modeSub, "%", left);
+		left = sizeof modeSub - strlen(modeSub);
+		strncat(modeSub, conv->rec.submode, left);
+		if (tqsl_getADIFMode(modeSub, val, sizeof val)) {	// mode%submode lookup failed
+			// Try just the submode, then the mode.
+			if (tqsl_getADIFMode(conv->rec.submode, val, sizeof val)) { // bare submode failed
+				tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+			}
 		}
 	} else {
+		// Just a mode, no submode. Look that up.
 		tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
 	}
 	if (val[0] != '\0')

@@ -37,7 +37,7 @@ class ExtWizard_Page;
 
 class ExtWizard : public wxWizard {
  public:
-	ExtWizard(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
+	explicit ExtWizard(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString);
 	ExtWizard_Page *GetCurrentPage() { return reinterpret_cast<ExtWizard_Page *>(wxWizard::GetCurrentPage()); }
 	wxHtmlHelpController *GetHelp() { return _help; }
 	void DisplayHelp(const wxString& file) { if (_help) _help->Display(file); }

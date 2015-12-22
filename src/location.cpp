@@ -108,7 +108,7 @@ typedef vector<TQSL_LOCATION_PAGE> TQSL_LOCATION_PAGELIST;
 
 class TQSL_NAME {
  public:
-	TQSL_NAME(string n = "", string c = "") : name(n), call(c) {}
+	explicit TQSL_NAME(string n = "", string c = "") : name(n), call(c) {}
 	string name;
 	string call;
 };
@@ -1057,8 +1057,31 @@ init_adif_map() {
 	XMLElement adif_item;
 	bool ok = adif_map.getFirstElement("adifmode", adif_item);
 	while (ok) {
-		if (adif_item.getText() != "" && adif_item.getAttribute("mode").first != "")
-			tqsl_adif_map[adif_item.getText()] = adif_item.getAttribute("mode").first;
+		string adifmode = adif_item.getAttribute("adif-mode").first;
+		string submode = adif_item.getAttribute("adif-submode").first;
+		// Prefer the "mode=" attribute of the mode definition, else get the item value.
+		string gabbi = adif_item.getAttribute("mode").first;
+		string melem = adif_item.getText();
+
+		if (adifmode == "") { 		// Handle entries with just a mode element
+			adifmode = melem;
+		}
+		if (gabbi != "") {		// There should always be one
+			if (adifmode != "") {
+				tqsl_adif_map[adifmode] = gabbi;
+			}
+			// Map this gabbi mode from submode
+			if (submode != "" && submode != adifmode) {
+				tqsl_adif_map[submode] = gabbi;
+			}
+			if (melem != "" && melem != adifmode) {
+				tqsl_adif_map[melem] = gabbi;
+			}
+			// Add a mode%submode lookup too
+			if (adifmode != "" && submode != "") {
+				tqsl_adif_map[adifmode + "%" + submode] = gabbi;
+			}
+		}
 		ok = adif_map.getNextElement(adif_item);
 	}
 	return 0;
@@ -2226,7 +2249,7 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 			if (field.gabbi_name != "") {
 				// A field that may exist
 				XMLElement el;
-				if (ep->second.getFirstElement(field.gabbi_name, el)) {
+				if (ep->second->getFirstElement(field.gabbi_name, el)) {
 					field.cdata = el.getText();
 					switch (field.input_type) {
                                                 case TQSL_LOCATION_FIELD_DDLIST:
@@ -2368,7 +2391,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 	for (nameiter = namelist.find("StationData"); nameiter != namelist.end(); nameiter++) {
 		if (nameiter->first != "StationData")
 			break;
-		pair<string, bool> rval = nameiter->second.getAttribute("name");
+		pair<string, bool> rval = nameiter->second->getAttribute("name");
 		if (rval.second) {
 			locnames.push_back(rval.first);
 		}
@@ -2381,7 +2404,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
-		pair<string, bool> rval = ep->second.getAttribute("name");
+		pair<string, bool> rval = ep->second->getAttribute("name");
 		bool found = false;
 		if (rval.second) {
 			for (size_t j = 0; j < locnames.size(); j++) {
@@ -2393,19 +2416,19 @@ tqsl_mergeStationLocations(const char *locdata) {
 		}
 		if (!found) {
 			// Add this one to the station data file
-			XMLElement newtop("StationData");
-			newtop.setPretext("\n  ");
-			newtop.setAttribute("name", rval.first);
-			newtop.setText("\n  ");
-			XMLElement sub;
-			sub.setPretext(newtop.getPretext() + "  ");
+			XMLElement *newtop = new XMLElement("StationData");
+			newtop->setPretext("\n  ");
+			newtop->setAttribute("name", rval.first);
+			newtop->setText("\n  ");
 			XMLElement el;
-			bool elok = ep->second.getFirstElement(el);
+			bool elok = ep->second->getFirstElement(el);
 			while (elok) {
-				sub.setElementName(el.getElementName());
-				sub.setText(el.getText());
-				newtop.addElement(sub);
-				elok = ep->second.getNextElement(el);
+				XMLElement *sub = new XMLElement;
+				sub->setPretext(newtop->getPretext() + "  ");
+				sub->setElementName(el.getElementName());
+				sub->setText(el.getText());
+				newtop->addElement(sub);
+				elok = ep->second->getNextElement(el);
 			}
 			old_data.addElement(newtop);
 			old_data.setText("\n");
@@ -2444,7 +2467,7 @@ tqsl_move_station_location(const char *name, bool fromtrash) {
 	for (from_ep = from_ellist.find("StationData"); from_ep != from_ellist.end(); from_ep++) {
 		if (from_ep->first != "StationData")
 			break;
-		pair<string, bool> from_rval = from_ep->second.getAttribute("name");
+		pair<string, bool> from_rval = from_ep->second->getAttribute("name");
 		if (from_rval.second && !strcasecmp(from_rval.first.c_str(), name)) {
 			// Match, move it.
 			// First, delete any old backup for this station location
@@ -2453,26 +2476,26 @@ tqsl_move_station_location(const char *name, bool fromtrash) {
 			for (to_ep = to_ellist.find("StationData"); to_ep != to_ellist.end(); to_ep++) {
 				if (to_ep->first != "StationData")
 					break;
-				pair<string, bool> to_rval = to_ep->second.getAttribute("name");
+				pair<string, bool> to_rval = to_ep->second->getAttribute("name");
 				if (to_rval.second && !strcasecmp(to_rval.first.c_str(), name)) {
 					to_ellist.erase(to_ep);
 					break;
 				}
 			}
 			// Now add it to the target
-			XMLElement newtop("StationData");
-			newtop.setPretext("\n  ");
-			newtop.setAttribute("name", from_rval.first);
-			newtop.setText("\n  ");
-			XMLElement sub;
-			sub.setPretext(newtop.getPretext() + "  ");
+			XMLElement *newtop = new XMLElement("StationData");
+			newtop->setPretext("\n  ");
+			newtop->setAttribute("name", from_rval.first);
+			newtop->setText("\n  ");
 			XMLElement el;
-			bool elok = from_ep->second.getFirstElement(el);
+			bool elok = from_ep->second->getFirstElement(el);
 			while (elok) {
-				sub.setElementName(el.getElementName());
-				sub.setText(el.getText());
-				newtop.addElement(sub);
-				elok = from_ep->second.getNextElement(el);
+				XMLElement *sub = new XMLElement;
+				sub->setPretext(newtop->getPretext() + "  ");
+				sub->setElementName(el.getElementName());
+				sub->setText(el.getText());
+				newtop->addElement(sub);
+				elok = from_ep->second->getNextElement(el);
 			}
 			to_sfile.addElement(newtop);
 			to_sfile.setText("\n");
@@ -2528,7 +2551,7 @@ tqsl_getStationLocation(tQSL_Location *locp, const char *name) {
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
-		pair<string, bool> rval = ep->second.getAttribute("name");
+		pair<string, bool> rval = ep->second->getAttribute("name");
 		if (rval.second && !strcasecmp(trim(rval.first).c_str(), trim(loc->name).c_str())) {
 			exists = true;
 			break;
@@ -2680,8 +2703,11 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							else
 								strncpy(namebuf, "", bufsize);
 						} else {
-						//	strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
-							strncpy(namebuf, field.items[field.idx].label.c_str(), bufsize);
+							if (field.items[field.idx].label == "") {
+								strncpy(namebuf, field.items[field.idx].text.c_str(), bufsize);
+							} else {
+								strncpy(namebuf, field.items[field.idx].label.c_str(), bufsize);
+							}
 						}
 						break;
                                         case TQSL_LOCATION_FIELD_TEXT:
@@ -2724,33 +2750,33 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 		}
 		for (int i = 0; i < numf; i++) {
 			TQSL_LOCATION_FIELD& field = loc->pagelist[loc->page-1].fieldlist[i];
-			XMLElement fd;
-			fd.setPretext(sd.getPretext() + "  ");
-			fd.setElementName(field.gabbi_name);
+			XMLElement *fd = new XMLElement;
+			fd->setPretext(sd.getPretext() + "  ");
+			fd->setElementName(field.gabbi_name);
 			switch (field.input_type) {
                                 case TQSL_LOCATION_FIELD_DDLIST:
                                 case TQSL_LOCATION_FIELD_LIST:
 					if (field.idx < 0 || field.idx >= static_cast<int>(field.items.size())) {
-						fd.setText("");
+						fd->setText("");
 						if (field.gabbi_name == "CALL") {
-							fd.setText("NONE");
+							fd->setText("NONE");
 						}
 					} else if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 						char numbuf[20];
 						snprintf(numbuf, sizeof numbuf, "%d", field.items[field.idx].ivalue);
-						fd.setText(numbuf);
+						fd->setText(numbuf);
 					} else {
-						fd.setText(field.items[field.idx].text);
+						fd->setText(field.items[field.idx].text);
 					}
 					break;
                                 case TQSL_LOCATION_FIELD_TEXT:
 					field.cdata = trim(field.cdata);
 					if (field.flags & TQSL_LOCATION_FIELD_UPPER)
 						field.cdata = string_toupper(field.cdata);
-					fd.setText(field.cdata);
+					fd->setText(field.cdata);
 					break;
 			}
-			if (strcmp(fd.getText().c_str(), ""))
+			if (strcmp(fd->getText().c_str(), ""))
 				sd.addElement(fd);
 		}
 		int rval;
@@ -2824,7 +2850,7 @@ tqsl_saveStationLocationCapture(tQSL_Location locp, int overwrite) {
 	for (ep = ellist.find("StationData"); ep != ellist.end(); ep++) {
 		if (ep->first != "StationData")
 			break;
-		pair<string, bool> rval = ep->second.getAttribute("name");
+		pair<string, bool> rval = ep->second->getAttribute("name");
 		if (rval.second && !strcasecmp(rval.first.c_str(), loc->name.c_str())) {
 			exists = true;
 			break;
@@ -2835,14 +2861,14 @@ tqsl_saveStationLocationCapture(tQSL_Location locp, int overwrite) {
 		tQSL_Error = TQSL_NAME_EXISTS;
 		return 1;
 	}
-	XMLElement sd("StationData");
-	sd.setPretext("\n  ");
-	if (tqsl_location_to_xml(loc, sd)) {
+	XMLElement *sd = new XMLElement("StationData");
+	sd->setPretext("\n  ");
+	if (tqsl_location_to_xml(loc, *sd)) {
 		tqslTrace("tqsl_saveStationLocationCaptureName", "error in loc_to_xml %d", tQSL_Error);
 		return 1;
 	}
-	sd.setAttribute("name", loc->name);
-	sd.setText("\n  ");
+	sd->setAttribute("name", loc->name);
+	sd->setText("\n  ");
 
 	// If 'exists', ep points to the existing station record
 	if (exists)
@@ -2873,23 +2899,23 @@ tqsl_signQSORecord(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *rec, uns
 		const char *elname = eln.c_str();
 		const char *value = 0;
 		char buf[100];
-		if (!strcmp(elname, "CALL"))
+		if (!strcmp(elname, "CALL")) {
 			value = rec->callsign;
-		else if (!strcmp(elname, "BAND"))
+		} else if (!strcmp(elname, "BAND")) {
 			value = rec->band;
-		else if (!strcmp(elname, "BAND_RX"))
+		} else if (!strcmp(elname, "BAND_RX")) {
 			value = rec->rxband;
-		else if (!strcmp(elname, "MODE"))
+		} else if (!strcmp(elname, "MODE")) {
 			value = rec->mode;
-		else if (!strcmp(elname, "FREQ"))
+		} else if (!strcmp(elname, "FREQ")) {
 			value = rec->freq;
-		else if (!strcmp(elname, "FREQ_RX"))
+		} else if (!strcmp(elname, "FREQ_RX")) {
 			value = rec->rxfreq;
-		else if (!strcmp(elname, "PROP_MODE"))
+		} else if (!strcmp(elname, "PROP_MODE")) {
 			value = rec->propmode;
-		else if (!strcmp(elname, "SAT_NAME"))
+		} else if (!strcmp(elname, "SAT_NAME")) {
 			value = rec->satname;
-		else if (!strcmp(elname, "QSO_DATE")) {
+		} else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(rec->date)))
 				value = tqsl_convertDateToText(&(rec->date), buf, sizeof buf);
 		} else if (!strcmp(elname, "QSO_TIME")) {
@@ -2978,13 +3004,7 @@ tqsl_getGABBItSTATION(tQSL_Location locp, int uid, int certuid) {
 				if (f.idx < 0 || f.idx >= static_cast<int>(f.items.size())) {
 					s = "";
 				} else {
-					/* Alaska counties are stored as 'pseudo-county|real-county'
-					 * so output just the real county name
-					 */
 					s = f.items[f.idx].text;
-					size_t pos = s.find("|");
-					if (pos != string::npos)
-						s = s.substr(++pos, string::npos);
 				}
 			} else if (f.data_type == TQSL_LOCATION_FIELD_INT) {
 				char buf[20];
@@ -3040,23 +3060,23 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 		const char *elname = en.c_str();
 		const char *value = 0;
 		char buf[100];
-		if (!strcmp(elname, "CALL"))
+		if (!strcmp(elname, "CALL")) {
 			value = qso->callsign;
-		else if (!strcmp(elname, "BAND"))
+		} else if (!strcmp(elname, "BAND")) {
 			value = qso->band;
-		else if (!strcmp(elname, "BAND_RX"))
+		} else if (!strcmp(elname, "BAND_RX")) {
 			value = qso->rxband;
-		else if (!strcmp(elname, "MODE"))
+		} else if (!strcmp(elname, "MODE")) {
 			value = qso->mode;
-		else if (!strcmp(elname, "FREQ"))
+		} else if (!strcmp(elname, "FREQ")) {
 			value = qso->freq;
-		else if (!strcmp(elname, "FREQ_RX"))
+		} else if (!strcmp(elname, "FREQ_RX")) {
 			value = qso->rxfreq;
-		else if (!strcmp(elname, "PROP_MODE"))
+		} else if (!strcmp(elname, "PROP_MODE")) {
 			value = qso->propmode;
-		else if (!strcmp(elname, "SAT_NAME"))
+		} else if (!strcmp(elname, "SAT_NAME")) {
 			value = qso->satname;
-		else if (!strcmp(elname, "QSO_DATE")) {
+		} else if (!strcmp(elname, "QSO_DATE")) {
 			if (tqsl_isDateValid(&(qso->date)))
 				value = tqsl_convertDateToText(&(qso->date), buf, sizeof buf);
 		} else if (!strcmp(elname, "QSO_TIME")) {
@@ -3294,6 +3314,10 @@ tqsl_getProvider(int idx, TQSL_PROVIDER *provider) {
 DLLEXPORT int CALLCONVENTION
 tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), void *userdata) {
 	bool foundcerts = false;
+	tQSL_ImportCall[0] = '\0';
+	tQSL_ImportSerial = 0;
+	int rval = 0;
+
 	if (file == NULL) {
 		tqslTrace("tqsl_importTQSLFile", "file=NULL");
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
@@ -3326,19 +3350,27 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		bool cstat = section.getFirstElement("rootcert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), ROOTCERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "duplicate root cert");
+			}
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("cacert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), CACERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "duplicate ca cert");
+			}
 			cstat = section.getNextElement(cert);
 		}
 		cstat = section.getFirstElement("usercert", cert);
 		while (cstat) {
 			foundcerts = true;
-			tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata);
+			if (tqsl_import_cert(cert.getText().c_str(), USERCERT, cb, userdata)) {
+				tqslTrace("tqsl_importTQSLFile", "error importing user cert");
+				tQSL_Error = TQSL_CERT_ERROR;
+				rval = 1;
+			}
 			cstat = section.getNextElement(cert);
 		}
 	}
@@ -3350,12 +3382,18 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		int curmajor, curminor;
 		if (tqsl_getConfigVersion(&curmajor, &curminor)) {
 			tqslTrace("tqsl_importTQSLFile", "Get config ver error %d", tQSL_Error);
+			if (tQSL_Error == 0) {
+				tQSL_Error = TQSL_CERT_ERROR;
+			}
 			return 1;
+		}
+		if (rval && tQSL_Error == 0) {
+			tQSL_Error = TQSL_CERT_ERROR;
 		}
 		if (major < curmajor) {
 			if (foundcerts) {
 				tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
-				return 0;
+				return rval;
 			}
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
@@ -3365,17 +3403,21 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			return 1;
 		}
 		if (major == curmajor) {
-			if (minor <= curminor) {
+			if (minor == curminor) {		// Same rev as already installed
+				tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
+				return rval;
+			}
+			if (minor < curminor) {
 				if (foundcerts) {
 					tqslTrace("tqsl_importTQSLFile", "Suppressing update from V%d.%d to V%d.%d", curmajor, curminor, major, minor);
-					return 0;
+					return rval;
 				}
 				tQSL_Error = TQSL_CUSTOM_ERROR;
 				snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 					"This configuration file (V%d.%d) is older than the currently installed one (V%d.%d). It will not be installed.",
 							major, minor, curmajor, curminor);
 				tqslTrace("tqsl_importTQSLFile", "Config update error: %s", tQSL_CustomError);
-				return 1;
+				return rval;
 		 	}
 		}
 		// Save the configuration file
@@ -3406,6 +3448,9 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			if (cb)
 				return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_ERROR | TQSL_CERT_CB_CONFIG,
 					fn.c_str(), userdata);
+			if (tQSL_Error == 0) {
+				tQSL_Error = TQSL_CERT_ERROR;
+			}
 			return 1;
 		}
 		// Clear stored config data to force re-reading new config
@@ -3420,11 +3465,21 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		tqsl_cabrillo_map.clear();
 		string version = "Configuration V" + section.getAttribute("majorversion").first + "."
 			+ section.getAttribute("minorversion").first + "\n" + fn;
-		if (cb)
-			return (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_LOADED | TQSL_CERT_CB_CONFIG,
+		if (cb) {
+			int cbret = (*cb)(TQSL_CERT_CB_RESULT | TQSL_CERT_CB_LOADED | TQSL_CERT_CB_CONFIG,
 				version.c_str(), userdata);
+			if (cbret || rval) {
+				if (tQSL_Error == 0) {
+					tQSL_Error = TQSL_CERT_ERROR;
+				}
+				return 1;
+			}
+		}
 	}
-	return 0;
+	if (rval && tQSL_Error == 0) {
+		tQSL_Error = TQSL_CERT_ERROR;
+	}
+	return rval;
 }
 
 /*

@@ -77,7 +77,7 @@ class CRQ_Page : public ExtWizard_Page {
 
 class CRQ_ProviderPage : public CRQ_Page {
  public:
-	CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	explicit CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
  private:
 	void DoUpdateInfo();
@@ -91,7 +91,7 @@ class CRQ_ProviderPage : public CRQ_Page {
 
 class CRQ_IntroPage : public CRQ_Page {
  public:
-	CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	explicit CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
  private:
@@ -107,7 +107,7 @@ class CRQ_IntroPage : public CRQ_Page {
 
 class CRQ_NamePage : public CRQ_Page {
  public:
-	CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	explicit CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
  private:
@@ -121,7 +121,7 @@ class CRQ_NamePage : public CRQ_Page {
 
 class CRQ_EmailPage : public CRQ_Page {
  public:
-	CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
+	explicit CRQ_EmailPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
  private:

@@ -51,5 +51,6 @@
 #define TQSL_CONFIG_SYNTAX_ERROR 41	///< The config file has a syntax error
 #define TQSL_FILE_SYSTEM_ERROR 42	///< There was a file system I/O error
 #define TQSL_FILE_SYNTAX_ERROR 43	///< The file format is invalid
+#define TQSL_CERT_ERROR 44	///< Callsign certificate could not be installed
 
 #endif /* __TQSLERRNO_H */

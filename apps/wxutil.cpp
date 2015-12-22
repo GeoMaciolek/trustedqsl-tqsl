@@ -139,14 +139,14 @@ getLocalizedErrorString_v(int err) {
 				tQSL_ErrorFile, strerror(tQSL_Errno));
 			tQSL_ErrorFile[0] = '\0';
 		} else {
-			buf = wxString::Format(_("System error: %s"),
+			buf = wxString::Format(_("System error: %hs"),
 				strerror(tQSL_Errno));
 		}
 		return buf;
 	}
 	if (err == TQSL_FILE_SYNTAX_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
-			buf = wxString::Format(_("File syntax error: %s"),
+			buf = wxString::Format(_("File syntax error: %hs"),
 				tQSL_ErrorFile);
 			tQSL_ErrorFile[0] = '\0';
 		} else {
@@ -162,7 +162,7 @@ getLocalizedErrorString_v(int err) {
 	}
 	if (err == TQSL_ADIF_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
-			buf = wxString::Format(wxT("%s: %s"), tQSL_ErrorFile, tqsl_adifGetError(tQSL_ADIF_Error));
+			buf = wxString::Format(wxT("%hs: %hs"), tQSL_ErrorFile, tqsl_adifGetError(tQSL_ADIF_Error));
 			tQSL_ErrorFile[0] = '\0';
 		} else {
 			buf = wxString::FromUTF8(tqsl_adifGetError(tQSL_ADIF_Error));
@@ -171,7 +171,7 @@ getLocalizedErrorString_v(int err) {
 	}
 	if (err == TQSL_CABRILLO_ERROR) {
 		if (strlen(tQSL_ErrorFile) > 0) {
-			buf = wxString::Format(wxT("%s: %s"),
+			buf = wxString::Format(wxT("%hs: %hs"),
 				tQSL_ErrorFile, tqsl_cabrilloGetError(tQSL_Cabrillo_Error));
 			tQSL_ErrorFile[0] = '\0';
 		} else {

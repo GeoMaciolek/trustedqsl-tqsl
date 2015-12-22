@@ -22,7 +22,7 @@ class notifyData;
 
 class LoadCertWiz : public ExtWizard {
  public:
-	LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString, const wxString& ext = wxT("tq6"));
+	explicit LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help = 0, const wxString& title = wxEmptyString, const wxString& ext = wxT("tq6"));
 	~LoadCertWiz();
 	LCW_Page *GetCurrentPage() { return reinterpret_cast<LCW_Page *>(wxWizard::GetCurrentPage()); }
 	bool RunWizard();

@@ -251,7 +251,9 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 			_first = _final;
 			_final->SetPrev(0);
 			if (tqsl_importTQSLFile(filename.ToUTF8(), notifyImport, GetNotifyData())) {
-				wxMessageBox(getLocalizedErrorString(), _("Error"));
+				if (tQSL_Error != TQSL_CERT_ERROR) {  // if not already reported by the callback
+					wxMessageBox(getLocalizedErrorString(), _("Error"));
+				}
 			} else {
 				if (tQSL_ImportCall[0] != '\0') {
 					wxString call = wxString::FromUTF8(tQSL_ImportCall);
@@ -268,7 +270,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 			}
 		} else {
 			// First try with no password
-			if (!tqsl_importPKCS12File(filename.ToUTF8(), "", 0, GetNewPassword, notifyImport, GetNotifyData())) {
+			if (!tqsl_importPKCS12File(filename.ToUTF8(), "", 0, GetNewPassword, notifyImport, GetNotifyData()) || tQSL_Error == TQSL_CERT_ERROR) {
 				_first = _final;
 				_final->SetPrev(0);
 			} else {

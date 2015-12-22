@@ -20,6 +20,7 @@
     #include <io.h>
     #include <windows.h>
     #include <direct.h>
+    #include <Shlobj.h>
 #endif
 #include <openssl/err.h>
 #include <openssl/objects.h>
@@ -108,15 +109,47 @@ static const char *error_strings[] = {
 	"The TQSL configuration file cannot be parsed",		/* TQSL_CONFIG_SYNTAX_ERROR */
 	"This file can not be processed due to a system error",	/* TQSL_FILE_SYSTEM_ERROR */
 	"The format of this file is incorrect.",		/* TQSL_FILE_SYNTAX_ERROR */
+	"This Callsign Certificate could not be installed", 	/* TQSL_CERT_ERROR */
 };
 
 const char* tqsl_openssl_error(void);
 
+#if defined(_WIN32)
+static int pmkdir(const wchar_t *path, int perm) {
+	wchar_t dpath[TQSL_MAX_PATH_LEN];
+	wchar_t npath[TQSL_MAX_PATH_LEN];
+	wchar_t *cp;
+	char *p = wchar_to_utf8(path, true);
+	tqslTrace("pmkdir", "path=%s", p);
+	free(p);
+	int nleft = (sizeof npath / 2) - 1;
+	wcsncpy(dpath, path, (sizeof dpath / 2));
+	cp = wcstok(dpath, L"/\\");
+	npath[0] = 0;
+	while (cp) {
+		if (wcslen(cp) > 0 && cp[wcslen(cp)-1] != ':') {
+			wcsncat(npath, L"\\", nleft);
+			nleft--;
+			wcsncat(npath, cp, nleft);
+			nleft -= wcslen(cp);
+			if (MKDIR(npath, perm) != 0 && errno != EEXIST) {
+				tqslTrace("pmkdir", "Error creating %s: %s", npath, strerror(errno));
+				return 1;
+			}
+		} else {
+			wcsncat(npath, cp, nleft);
+			nleft -= wcslen(cp);
+		}
+		cp = wcstok(NULL, L"/\\");
+	}
+	return 0;
+}
+
+#else // defined(_WIN32)
 static int pmkdir(const char *path, int perm) {
 	char dpath[TQSL_MAX_PATH_LEN];
 	char npath[TQSL_MAX_PATH_LEN];
 	char *cp;
-
 	tqslTrace("pmkdir", "path=%s", path);
 	int nleft = sizeof npath - 1;
 	strncpy(dpath, path, sizeof dpath);
@@ -124,27 +157,14 @@ static int pmkdir(const char *path, int perm) {
 	npath[0] = 0;
 	while (cp) {
 		if (strlen(cp) > 0 && cp[strlen(cp)-1] != ':') {
-#ifdef _WIN32
-			strncat(npath, "\\", nleft);
-#else
 			strncat(npath, "/", nleft);
-#endif
 			nleft--;
 			strncat(npath, cp, nleft);
 			nleft -= strlen(cp);
-#ifdef _WIN32
-			wchar_t* wnpath = utf8_to_wchar(npath);
-			if (MKDIR(wnpath, perm) != 0 && errno != EEXIST) {
-				free(wnpath);
-#else
 			if (MKDIR(npath, perm) != 0 && errno != EEXIST) {
-#endif
 				tqslTrace("pmkdir", "Error creating %s: %s", npath, strerror(errno));
 				return 1;
 			}
-#ifdef _WIN32
-			free(wnpath);
-#endif
 		} else {
 			strncat(npath, cp, nleft);
 			nleft -= strlen(cp);
@@ -153,22 +173,23 @@ static int pmkdir(const char *path, int perm) {
 	}
 	return 0;
 }
+#endif // defined(_WIN32)
 
 DLLEXPORT int CALLCONVENTION
 tqsl_init() {
 	static char semaphore = 0;
 	unsigned int i;
-	static char path[TQSL_MAX_PATH_LEN];
 #ifdef _WIN32
+	static wchar_t path[TQSL_MAX_PATH_LEN * 2];
 	// lets cin/out/err work in windows
 	// AllocConsole();
 	// freopen("CONIN$", "r", stdin);
 // freopen("CONOUT$", "w", stdout);
 // freopen("CONOUT$", "w", stderr);
-	HKEY hkey;
-	DWORD dtype;
 	DWORD bsize = sizeof path;
 	int wval;
+#else
+	static char path[TQSL_MAX_PATH_LEN];
 #endif
 
 #if !defined(_WIN32) && !defined(__APPLE__)
@@ -206,20 +227,21 @@ tqsl_init() {
 		}
 	}
 	if (tQSL_BaseDir == NULL) {
+#if defined(_WIN32)
+		wchar_t *wcp;
+		if ((wcp = _wgetenv(L"TQSLDIR")) != NULL && *wcp != '\0') {
+			wcsncpy(path, wcp, sizeof path);
+#else
 		char *cp;
 		if ((cp = getenv("TQSLDIR")) != NULL && *cp != '\0') {
 			strncpy(path, cp, sizeof path);
+#endif
 		} else {
 #if defined(_WIN32)
-			if ((wval = RegOpenKeyEx(HKEY_CURRENT_USER,
-									"Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Shell Folders",
-									0, KEY_READ, &hkey)) == ERROR_SUCCESS) {
-				wval = RegQueryValueEx(hkey, "AppData", 0, &dtype, (LPBYTE)path, &bsize);
-				RegCloseKey(hkey);
-			}
+			wval = SHGetFolderPathW(NULL, CSIDL_APPDATA, NULL, 0, path);
 			if (wval != ERROR_SUCCESS)
-				strncpy(path, "C:", sizeof path);
-			strncat(path, "\\TrustedQSL", sizeof path - strlen(path) - 1);
+				wcsncpy(path, L"C:", sizeof path);
+			wcsncat(path, L"\\TrustedQSL", sizeof path - wcslen(path) - 1);
 #elif defined(LOTW_SERVER)
 			strncpy(path, "/var/lotw/tqsl", sizeof path);
 #else  // some unix flavor
@@ -233,13 +255,27 @@ tqsl_init() {
 #endif
 		}
 		if (pmkdir(path, 0700)) {
+#if defined(_WIN32)
+			char *p = wchar_to_utf8(path, false);
+			strncpy(tQSL_ErrorFile, p, sizeof tQSL_ErrorFile);
+#else
 			strncpy(tQSL_ErrorFile, path, sizeof tQSL_ErrorFile);
+#endif
 			tQSL_Error = TQSL_SYSTEM_ERROR;
 			tQSL_Errno = errno;
+#if defined(_WIN32)
+			tqslTrace("tqsl_init", "Error creating working path %s: %s", p, strerror(errno));
+			free(p);
+#else
 			tqslTrace("tqsl_init", "Error creating working path %s: %s", path, strerror(errno));
+#endif
 			return 1;
 		}
+#if defined(_WIN32)
+		tQSL_BaseDir = wchar_to_utf8(path, true);
+#else
 		tQSL_BaseDir = path;
+#endif
 	}
 	semaphore = 1;
 	return 0;
@@ -613,10 +649,11 @@ static int
 days_per_month(int year, int month) {
 	switch (month) {
                 case 2:
-			if ((((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0))
+			if ((((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0)) {
 				return 29;
-			else
+			} else {
 				return 28;
+			}
                 case 4:
                 case 6:
                 case 9:
@@ -794,6 +831,18 @@ utf8_to_wchar(const char* str) {
 	MultiByteToWideChar(CP_UTF8, 0, str, -1, &buffer[0], needed);
 	return buffer;
 }
+
+DLLEXPORT char* CALLCONVENTION
+wchar_to_utf8(const wchar_t* str, bool forceUTF8) {
+	char* buffer;
+	int needed = WideCharToMultiByte(forceUTF8 ? CP_UTF8 : CP_ACP, 0, str, -1, 0, 0, NULL, NULL);
+	buffer = static_cast<char *>(malloc(needed + 2));
+	if (!buffer)
+		return NULL;
+	WideCharToMultiByte(forceUTF8 ? CP_UTF8 : CP_ACP, 0, str, -1, &buffer[0], needed, NULL, NULL);
+	return buffer;
+}
+
 DLLEXPORT void CALLCONVENTION
 free_wchar(wchar_t* ptr) {
 	free(ptr);
