@@ -5445,7 +5445,6 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				} else {
 					wxLogError(getLocalizedErrorString());
 				}
-
 			}
 		}
 		req.renew = renew ? 1 : 0;
@@ -6166,7 +6165,7 @@ LocPropDial::LocPropDial(wxString locname, wxWindow *parent)
 	char fieldbuf[512];
 	for (int i = 0; i < static_cast<int>(sizeof fields / sizeof fields[0]); i+=2) {
 		if (tqsl_getStationLocationField(loc, fields[i], fieldbuf, sizeof fieldbuf) == 0) {
-			if (strlen(fieldbuf) > 0) {
+			if (strlen(fieldbuf) > 0 && strcmp(fieldbuf, "[None]") != 0) {
 				wxString lbl = wxGetTranslation(wxString::FromUTF8(fields[i+1]));
 				while(1) {
 					mst->SetLabel(lbl);
