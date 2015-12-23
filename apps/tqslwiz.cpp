@@ -242,7 +242,7 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 	initialized = false;
 	errlbl = NULL;
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	int control_width = getTextSize(this).GetWidth() * 20;
+	int control_width = getTextSize(this).GetWidth() * 30;
 
 	valMsg = wxT("");
 	tqsl_getStationLocationCapturePage(loc, &loc_page);
@@ -496,7 +496,7 @@ TQSLWizFinalPage::TQSLWizFinalPage(TQSLWizard *parent, tQSL_Location locp, TQSLW
 	errlbl = NULL;
 	valMsg = wxT("");
 	wxSize text_size = getTextSize(this);
-	int control_width = text_size.GetWidth()*30;
+	int control_width = text_size.GetWidth()*40;
 
 	int y = text_size.GetHeight();
 	sizer = new wxBoxSizer(wxVERTICAL);
