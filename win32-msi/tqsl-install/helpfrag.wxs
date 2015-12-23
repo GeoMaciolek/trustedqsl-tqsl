@@ -298,6 +298,7 @@
       <Component Id="cmp2A3798171C9C3B8C43F2E0F4DBCC7884" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil172306E408CE613517657C6166ADDAF8" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc2.htm" />
       </Component>
+      <Component Id="cmpE648D8D3E1494bf3A073B2716F65E296" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="cmp3C5FA78D521F401993D3CBCBDFAA8D8A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc2park.bmp" />
       </Component>
       <Component Id="cmp3A54FA087DD2930731A9105EEEF3D4FD" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
