@@ -3,6 +3,8 @@ TQSL changes
 
 2.2
 ----------
+widen fields for station location pages to accomodate long Park names.
+
 When renewing a password-protected callsign certificate, entering an incorrect
 password would display "Error: Invalid argument" versus the expected error
 relating to the incorrect password. TQSL now displays a "password not correct"
