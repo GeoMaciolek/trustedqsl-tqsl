@@ -135,7 +135,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			continue;
 		if (in_type == TQSL_LOCATION_FIELD_DDLIST || in_type == TQSL_LOCATION_FIELD_LIST) {
 			// Update this list
-			int text_width = 0;
 			char gabbi_name[40];
 			tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
 			int selected;
@@ -164,17 +163,6 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 				if (j == 0)
 					item_text = wxGetTranslation(item_text);
 				(reinterpret_cast<wxComboBox *>(controls[i]))->Append(item_text);
-				wxCoord w, h;
-				(reinterpret_cast<wxComboBox *>(controls[i]))->GetTextExtent(item_text, &w, &h);
-				if (w > text_width)
-					text_width = w;
-			}
-			if (text_width > 0) {
-				int w, h;
-				if (text_width > 125)
-					text_width = 125;
-				(reinterpret_cast<wxComboBox *>(controls[i]))->GetSize(&w, &h);
-				(reinterpret_cast<wxComboBox *>(controls[i]))->SetSize(text_width + text_size.GetWidth()*4, h);
 			}
 			if (noupdate_field < 0 && !defaulted)
 				new_sel = selected;
