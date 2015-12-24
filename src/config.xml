@@ -3,7 +3,7 @@
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
-      <emailAddress>lotw-help@arrl.org</emailAddress>
+      <emailAddress>lotw-logs@arrl.org</emailAddress>
       <url>https://www.arrl.org/lotw/</url>
     </provider>
   </providers>
@@ -17,6 +17,9 @@
         <ITUZ method="int"/>
         <US_STATE />
         <US_COUNTY />
+        <US_PARK />
+        <CA_US_PARK />
+        <DX_US_PARK />
       </tSTATION>
       <tCONTACT>
         <BAND required="1" />
@@ -754,6 +757,7 @@
     <satellite name="Arsene" startDate="1993-05-13" endDate="1993-09-10">OSCAR 24</satellite>
     <satellite name="CAS-3H" startDate="2015-09-18">LilacSat 2</satellite>
     <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
+    <satellite name="EO-79" startDate="2014-06-19">FUNcube-3</satellite>
     <satellite name="FO-12" startDate="1986-08-12" endDate="1989-11-05">Fuji-OSCAR 12</satellite>
     <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
     <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
@@ -4353,15 +4357,15 @@
         <enum value="NP34">Kenai Fjords</enum>
         <enum value="HP21">Klondike Gold Rush</enum>
         <enum value="NP36">Kobuk Valley</enum>
-        <enum value="NP37">Lake Clark</enum>
-        <enum value="PV11">Lake Clark</enum>
+        <enum value="NP37">Lake Clark National Park</enum>
         <enum value="NP37,PV11">Lake Clark National Park and Preserve</enum>
+        <enum value="PV11">Lake Clark National Preserve</enum>
         <enum value="PV14">Noatak</enum>
         <enum value="PV14,NP19">Noatak and Gates of the Arctic</enum>
         <enum value="HP43">Sitka</enum>
-        <enum value="PV17">Wrangell-St. Elias</enum>
-        <enum value="NP56">Wrangell-St. Elias</enum>
         <enum value="NP56,PV17">Wrangell-St. Elias Nat'l Park and Prsrv</enum>
+        <enum value="NP56">Wrangell-St. Elias National Park</enum>
+        <enum value="PV17">Wrangell-St. Elias National Preserve</enum>
         <enum value="PV18">Yukon-Charley Rivers</enum>
       </enums>
       <enums dependency="AL">
@@ -4414,6 +4418,8 @@
         <enum value="NS15">Eugene O'Neill</enum>
         <enum value="NS22">Fort Point</enum>
         <enum value="RC11">Golden Gate</enum>
+        <enum value="RC11,NS22">Golden Gate Rec Area and Fort Point NHS</enum>
+        <enum value="RC11,MN53">Golden Gate Rec Area and Muir Woods</enum>
         <enum value="NS42">John Muir</enum>
         <enum value="NP32">Joshua Tree</enum>
         <enum value="NP35">Kings Canyon</enum>
@@ -4580,6 +4586,7 @@
       </enums>
       <enums dependency="MD">
         <enum value="BF01">Antietam</enum>
+        <enum value="TR01">Appalachian National Scenic Trail</enum>
         <enum value="SS01">Assateague Island</enum>
         <enum value="DZ01">Catoctin Mountain Park</enum>
         <enum value="HP08">Chesapeake and Ohio Canal</enum>
@@ -4770,7 +4777,7 @@
         <enum value="TR01">Appalachian National Scenic Trail</enum>
         <enum value="TR01,WR03">Appalachian Trail and Delaware River</enum>
         <enum value="TR01,RC07">Appalachian Trail and Delaware Water Gap</enum>
-        <enum value="AA03">Benjamin Franklin National Memorial</enum>
+        <enum value="AA03,HP15">Benjamin Franklin National Memorial</enum>
         <enum value="WR03">Delaware National Scenic River</enum>
         <enum value="RC07">Delaware Water Gap</enum>
         <enum value="NS12">Edgar Allan Poe</enum>
@@ -4866,7 +4873,6 @@
         <enum value="NM02">Arlington House</enum>
         <enum value="SS01">Assateague Island</enum>
         <enum value="PK01">Blue Ridge Parkway</enum>
-        <enum value="PK01,NP51">Blue Ridge Pkwy and Shenandoah NP</enum>
         <enum value="MN07">Booker T. Washington</enum>
         <enum value="HP06">Cedar Creek and Belle Grove</enum>
         <enum value="HP09">Colonial</enum>
