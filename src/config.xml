@@ -11,15 +11,15 @@
     <sigspec name="LOTW" version="1.0">
       <tSTATION>
         <CA_PROVINCE />
+        <CA_US_PARK />
         <CQZ method="int"/>
+        <DX_US_PARK />
         <GRIDSQUARE />
         <IOTA />
         <ITUZ method="int"/>
-        <US_STATE />
         <US_COUNTY />
         <US_PARK />
-        <CA_US_PARK />
-        <DX_US_PARK />
+        <US_STATE />
       </tSTATION>
       <tCONTACT>
         <BAND required="1" />
