@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<tqslconfig majorversion="5" minorversion="0">
+<tqslconfig majorversion="5" minorversion="2">
   <providers>
     <provider organizationName="American Radio Relay League">
       <organizationalUnitName>Logbook of the World</organizationalUnitName>
-      <emailAddress>lotw-logs@arrl.org</emailAddress>
+      <emailAddress>lotw-help@arrl.org</emailAddress>
       <url>https://www.arrl.org/lotw/</url>
     </provider>
   </providers>
@@ -904,7 +904,7 @@
         <enum value="YT" zonemap="02:01">Yukon Territory</enum>
       </enums>
     </field>
-    <field Id="CA_US_PARK" type="C" len="17" label="Park" intype="2" flags="0" dependsOn="CA_PROVINCE">
+    <field Id="CA_US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="CA_PROVINCE">
       <enums dependency="MB">
         <enum value="AA12">International Peace Garden</enum>
       </enums>
@@ -960,7 +960,7 @@
     </field>
     <field Id="CQZ" type="I" len="10" lower="1" upper="40" label="CQ Zone" intype="2" flags="0" />
     <field Id="DXCC" type="I" len="10" label="DXCC Entity" intype="2" flags="0" />
-    <field Id="DX_US_PARK" type="C" len="17" label="Park" intype="2" flags="0" dependsOn="DXCC">
+    <field Id="DX_US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="DXCC">
       <enums dependency="103">
         <enum value="HP47">War in the Pacific</enum>
       </enums>
@@ -4331,48 +4331,78 @@
         <enum value="Weston" />
       </enums>
     </field>
-    <field Id="US_PARK" type="C" len="17" label="Park" intype="2" flags="0" dependsOn="US_STATE">
+    <field Id="US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="US_STATE">
       <enums dependency="AK">
-        <enum value="NP33,WR01">Alagnak River and Katmai National Park</enum>
+        <enum value="NP33,WR01">Alagnak River + Katmai National Park</enum>
         <enum value="WR01">Alagnak Wild River</enum>
+        <enum value="WR11">Alatna Wild River</enum>
         <enum value="AA01">Aleutian World War II National Historic Area</enum>
+        <enum value="WR12">Aniachak Wild River</enum>
         <enum value="MN04,PV01">Aniakchak Nat'l Preserve and Monument</enum>
         <enum value="MN04">Aniakchak National Monument</enum>
         <enum value="PV01">Aniakchak National Preserve</enum>
+        <enum value="WR12,MN04">Aniakchak Wild River + Aniakchak National Monument</enum>
+        <enum value="WR12,PV01">Aniakchak Wild River + Aniakchak National Preserve</enum>
         <enum value="PV02">Bering Land Bridge</enum>
         <enum value="MN11">Cape Krusenstern</enum>
+        <enum value="WR13">Charley Wild River</enum>
+        <enum value="WR14">Chilikadrotna Wild River</enum>
+        <enum value="WR14,PV11">Chilikadrotna Wild River + Lake Clark National Preserve</enum>
         <enum value="NP16">Denali National Park</enum>
-        <enum value="NP16,PV06">Denali National Park and Preserve</enum>
+        <enum value="NP16,PV06">Denali NP + Denali PV</enum>
         <enum value="PV06">Denali Preserve</enum>
-        <enum value="NP19,PV07">Gates of the Arctic Nat'l Park and Prsrv</enum>
         <enum value="NP19">Gates of the Arctic National Park</enum>
+        <enum value="NP19,PV07">Gates of the Arctic NP + Gates of the Arctic PV</enum>
+        <enum value="NP19,PV14">Gates of the Arctic NP + Noatak PV</enum>
         <enum value="PV07">Gates of the Arctic Preserve</enum>
         <enum value="NP20">Glacier Bay National Park</enum>
-        <enum value="NP20,PV08">Glacier Bay National Park and Preserve</enum>
         <enum value="PV08">Glacier Bay National Preserve</enum>
+        <enum value="NP20,PV08">Glacier Bay NP + Glacier Bay PV</enum>
         <enum value="AA13">Inupiat Heritage Center</enum>
+        <enum value="WR18">John Wild River</enum>
+        <enum value="WR18,NP19">John Wild River + Gates of The Arctic National Park</enum>
         <enum value="NP33">Katmai National Park</enum>
-        <enum value="NP33,PV10">Katmai National Park and Preserve</enum>
         <enum value="PV10">Katmai National Preserve</enum>
+        <enum value="NP33,PV10">Katmai NP + Katmai PV</enum>
         <enum value="NP34">Kenai Fjords</enum>
         <enum value="HP21">Klondike Gold Rush</enum>
         <enum value="NP36">Kobuk Valley</enum>
+        <enum value="WR21">Kobuk Wild River</enum>
+        <enum value="WR21,NP19">Kobuk Wild River + Gates of The Arctic National Park</enum>
+        <enum value="WR21,PV07">Kobuk Wild River + Gates of The Arctic National Preserve</enum>
+        <enum value="WR21,NP36">Kobuk Wild River + Kobuk Valley National Park</enum>
+        <enum value="WR22">Koyukuk Wild River (North Fork)</enum>
+        <enum value="WR22,NP19">Koyukuk Wild River (North Fork) + Gates of The Arctic National Park</enum>
         <enum value="NP37">Lake Clark National Park</enum>
-        <enum value="NP37,PV11">Lake Clark National Park and Preserve</enum>
         <enum value="PV11">Lake Clark National Preserve</enum>
+        <enum value="NP37,PV11">Lake Clark NP + Lake Clark PV</enum>
+        <enum value="WR27,NP37">Mulchanta River + Lake Clark National Park</enum>
+        <enum value="WR27,PV11">Mulchanta River + Lake Clark National Preserve</enum>
+        <enum value="WR27">Mulchatna Wild River</enum>
         <enum value="PV14">Noatak</enum>
-        <enum value="PV14,NP19">Noatak and Gates of the Arctic</enum>
+        <enum value="WR29,NP19">Noatak River + Gates of The Arctic National Park</enum>
+        <enum value="WR29,PV14">Noatak River + Noatak National Preserve</enum>
+        <enum value="WR29">Noatak Wild River</enum>
+        <enum value="WR30,NP36">Salmon River + kobuk Valley National Park</enum>
+        <enum value="WR30">Salmon Wild River</enum>
         <enum value="HP43">Sitka</enum>
-        <enum value="NP56,PV17">Wrangell-St. Elias Nat'l Park and Prsrv</enum>
+        <enum value="WR33">Tinayguk Wild River</enum>
+        <enum value="WR33,NP19">Tinayguk Wild River + Gates of The Arctic National Park</enum>
+        <enum value="WR34">Tlikakila Wild River</enum>
+        <enum value="WR34,NP37">Tlikakila Wild River + Lake Clark National Park</enum>
         <enum value="NP56">Wrangell-St. Elias National Park</enum>
         <enum value="PV17">Wrangell-St. Elias National Preserve</enum>
+        <enum value="NP56,PV17">Wrangell-St. Elias NP + Wrangell-St. Elias PV</enum>
         <enum value="PV18">Yukon-Charley Rivers</enum>
+        <enum value="WR13,PV18">Yukon-Charley Rivers Preserve + Charley Wild River</enum>
       </enums>
       <enums dependency="AL">
         <enum value="MP05">Horseshoe Bend</enum>
         <enum value="PV12">Little River Canyon</enum>
         <enum value="PK04">Natchez Trace Parkway</enum>
         <enum value="MN64">Russell Cave</enum>
+        <enum value="TR16">Selma to Montgomery National Historic Trail</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
         <enum value="NS71">Tuskegee Airmen</enum>
         <enum value="NS72">Tuskegee Institute</enum>
       </enums>
@@ -4384,6 +4414,10 @@
         <enum value="NS45">Little Rock Central High School</enum>
         <enum value="MP07">Pea Ridge</enum>
         <enum value="NS57">President William Jefferson Clinton Birthplace Home</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
+        <enum value="TR12,NM01">Trail of Tears NHT + Arkansas Post National Monument</enum>
+        <enum value="TR12,NS25">Trail of Tears NHT + Fort Smith NHS</enum>
+        <enum value="TR12,MP07">Trail of Tears NHT + Pea Ridge NMP</enum>
       </enums>
       <enums dependency="AZ">
         <enum value="MN10">Canyon de Chelly</enum>
@@ -4395,9 +4429,12 @@
         <enum value="NP22">Grand Canyon</enum>
         <enum value="MN45">Hohokam Pima</enum>
         <enum value="NS38">Hubbell Trading Post</enum>
+        <enum value="TR13">Juan Bautista de Anza National Historic Trail</enum>
+        <enum value="TR13,HP45">Juan Bautista de Anza NHT + Tumacacori NHP</enum>
         <enum value="RC13">Lake Mead</enum>
         <enum value="MN52">Montezuma Castle</enum>
         <enum value="MN55">Navajo</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
         <enum value="MN58">Organ Pipe Cactus</enum>
         <enum value="NP45">Petrified Forest</enum>
         <enum value="MN60">Pipe Spring</enum>
@@ -4411,6 +4448,9 @@
       </enums>
       <enums dependency="CA">
         <enum value="MN09">Cabrillo</enum>
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,RC11">California NHT + Golden Gate NRA</enum>
+        <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
         <enum value="MN17">Cesar E. Chavez</enum>
         <enum value="NP11">Channel Islands</enum>
         <enum value="NP15">Death Valley</enum>
@@ -4418,30 +4458,48 @@
         <enum value="NS15">Eugene O'Neill</enum>
         <enum value="NS22">Fort Point</enum>
         <enum value="RC11">Golden Gate</enum>
-        <enum value="RC11,NS22">Golden Gate Rec Area and Fort Point NHS</enum>
-        <enum value="RC11,MN53">Golden Gate Rec Area and Muir Woods</enum>
+        <enum value="RC11,NS22">Golden Gate Rec Area + Fort Point NHS</enum>
+        <enum value="RC11,MN53">Golden Gate Rec Area + Muir Woods</enum>
         <enum value="NS42">John Muir</enum>
         <enum value="NP32">Joshua Tree</enum>
+        <enum value="TR13">Juan Bautista de Anza National Historic Trail</enum>
+        <enum value="TR13,TR14">Juan Bautista de Anza NHT + California NHT</enum>
+        <enum value="TR13,RC11">Juan Bautista de Anza NHT + Golden Gate NRA</enum>
+        <enum value="TR13,RC17">Juan Bautista de Anza NHT + Lake Meredith NRA</enum>
+        <enum value="TR13,TR19">Juan Bautista de Anza NHT + Old Spanish NHT</enum>
+        <enum value="WR19">Kern River</enum>
+        <enum value="WR19,NP50">Kern River + Sequoia National Park</enum>
         <enum value="NP35">Kings Canyon</enum>
+        <enum value="WR20">Kings River</enum>
+        <enum value="WR20,NP35">Kings River + Kings Canyon National Park</enum>
         <enum value="NP38">Lassen Volcanic</enum>
         <enum value="MN50">Lava Beds</enum>
         <enum value="NS48">Manzanar</enum>
+        <enum value="WR25">Merced River</enum>
+        <enum value="WR25,NP58">Merced River + Yosemite National Park</enum>
         <enum value="PV13">Mojave</enum>
         <enum value="MN53">Muir Woods</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
+        <enum value="TR19,PV13">Old Spanish NHT + Mojave PV</enum>
         <enum value="NP46">Pinnacles</enum>
         <enum value="SS10">Point Reyes</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
+        <enum value="TR15,RC11">Pony Express NHT + Golden Gate NRA</enum>
         <enum value="NM21">Port Chicago Naval Magazine National Memorial</enum>
         <enum value="NP47">Redwood</enum>
         <enum value="HP37">Rosie the Riveter/World War II Home Front</enum>
         <enum value="HP40">San Francisco Maritime</enum>
         <enum value="RC17">Santa Monica Mountains</enum>
         <enum value="NP50">Sequoia</enum>
+        <enum value="WR35">Toulumne River</enum>
+        <enum value="WR35,NP58">Toulumne River + Yosemite National Park</enum>
         <enum value="RC18">Whiskeytown Unit</enum>
         <enum value="NP58">Yosemite</enum>
       </enums>
       <enums dependency="CO">
         <enum value="NS04">Bent's Old Fort</enum>
         <enum value="NP06">Black Canyon of the Gunnison</enum>
+        <enum value="TR14">California National Historic Trail</enum>
         <enum value="MN20">Colorado</enum>
         <enum value="RC06">Curecanti</enum>
         <enum value="MN24">Dinosaur</enum>
@@ -4450,15 +4508,29 @@
         <enum value="NP25">Great Sand Dunes NP and Preserve</enum>
         <enum value="MN47">Hovenweep</enum>
         <enum value="NP40">Mesa Verde</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
+        <enum value="TR19,MN20">Old Spanish NHT + Colorado MN</enum>
+        <enum value="TR19,RC06">Old Spanish NHT + Curecanti NRA</enum>
+        <enum value="TR19,NP25">Old Spanish NHT + Great Sand Dunes NP and Preserve</enum>
+        <enum value="TR19,PV09">Old Spanish NHT + Great Sand Dunes PV</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
         <enum value="NP48">Rocky Mountain</enum>
         <enum value="NS64">Sand Creek Massacre</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
+        <enum value="TR11,NS04">Santa Fe NHT + Bent's Old Fort NHS</enum>
         <enum value="MN77">Yucca House</enum>
       </enums>
       <enums dependency="CT">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
+        <enum value="WR15">Eightmile National Wild and Scenic River</enum>
+        <enum value="WR16">Farmington National Wild and Scenic River</enum>
+        <enum value="TR06">New England National Scenic Trail</enum>
+        <enum value="TR06,TR23">New England NST + Washington - Rochambeau Revolutionary Route NHT</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
         <enum value="NS76">Weir Farm</enum>
       </enums>
       <enums dependency="DC">
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
         <enum value="NS08">Carter G. Woodson Home</enum>
         <enum value="HP08">Chesapeake and Ohio Canal</enum>
         <enum value="DZ02,DZ06">Constitution Gardens</enum>
@@ -4477,16 +4549,21 @@
         <enum value="TR03">Potomac Heritage National Scenic Trail</enum>
         <enum value="DZ09">Rock Creek Park</enum>
         <enum value="AA22">Sewall-Belmont House National Historic Site</enum>
+        <enum value="TR22">Star-Spangled Banner National Historic Trail</enum>
         <enum value="NM24">Theodore Roosevelt Island</enum>
         <enum value="NM25,DZ06">Thomas Jefferson Memorial</enum>
         <enum value="NM26,DZ06">Vietnam Veterans Memorial</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
+        <enum value="TR23,PK02">Washington - Rochambeau Revolutionary Route NHT + George Washington Memorial Parkway</enum>
         <enum value="NM27,DZ06">Washington Monument</enum>
         <enum value="DZ10">White House</enum>
         <enum value="NM30">World War I Memorial</enum>
         <enum value="NM28,DZ06">World War II Memorial</enum>
       </enums>
       <enums dependency="DE">
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
         <enum value="HP12">First State</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
       </enums>
       <enums dependency="FL">
         <enum value="PV03">Big Cypress</enum>
@@ -4500,6 +4577,7 @@
         <enum value="MN30">Fort Matanzas</enum>
         <enum value="SS08">Gulf Islands</enum>
         <enum value="PV16">Timucuan Ecological and Historic</enum>
+        <enum value="WR37">Wekiva National Wild and Scenic River</enum>
       </enums>
       <enums dependency="GA">
         <enum value="NS02">Andersonville</enum>
@@ -4513,10 +4591,17 @@
         <enum value="BP01">Kennesaw Mountain</enum>
         <enum value="NS49">Martin Luther King, Jr.</enum>
         <enum value="MN56">Ocmulgee</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
+        <enum value="TR12,MP01">Trail of Tears NHT + Chickamauga and Chattanooga NMP</enum>
       </enums>
       <enums dependency="HI">
+        <enum value="TR18">Ala Kahakai National Historic Trail</enum>
+        <enum value="TR21,NP29">Ala Kahakai NHT + Hawaii Volcanoes NP</enum>
+        <enum value="TR19,HP19">Ala Kahakai NHT + Kaloko-Honokohau NHP</enum>
+        <enum value="TR20,HP36">Ala Kahakai NHT + Pu'uhonua o Honaunau NHP</enum>
+        <enum value="TR22,NS58">Ala Kahakai NHT + Puukohola Heiau NHS</enum>
         <enum value="NP28">Haleakala</enum>
-        <enum value="NP29">Hawai'i Volcanoes</enum>
+        <enum value="NP29">Hawaii Volcanoes</enum>
         <enum value="MN79">Honouliuli National Monument</enum>
         <enum value="HP18">Kalaupapa</enum>
         <enum value="HP19">Kaloko-Honokohau</enum>
@@ -4527,20 +4612,32 @@
       <enums dependency="IA">
         <enum value="MN25">Effigy Mounds</enum>
         <enum value="NS35">Herbert Hoover</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
+        <enum value="TR08,TR09">Mormon Pioneer NHT + Lewis and Clark NHT</enum>
       </enums>
       <enums dependency="ID">
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,RS01">California NHT + City of Rocks NR</enum>
         <enum value="RS01">City of Rocks</enum>
-        <enum value="MN21">Craters of the Moon</enum>
-        <enum value="PV05">Craters of the Moon</enum>
+        <enum value="MN21,PV05">Craters of the Moon National Monument and Preserve</enum>
         <enum value="MN43">Hagerman Fossil Beds</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,HP32">Lewis and Clark NHT + Nez Perce National Historical Park</enum>
         <enum value="NS52">Minidoka</enum>
         <enum value="HP32">Nez Perce</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR14">Oregon NHT + California NHT</enum>
+        <enum value="TR07,TR14,NM43">Oregon NHT + California NHT + Hagerman Fossil Beds NM</enum>
         <enum value="NP57">Yellowstone</enum>
       </enums>
       <enums dependency="IL">
         <enum value="AA04">Chicago Portage National Historic Site</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
         <enum value="NS44">Lincoln Home</enum>
+        <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
         <enum value="MN78">Pullman National Monument</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
       </enums>
       <enums dependency="IN">
         <enum value="HP13">George Rogers Clark</enum>
@@ -4549,9 +4646,21 @@
       </enums>
       <enums dependency="KS">
         <enum value="NS06">Brown v. Board of Education</enum>
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
         <enum value="NS21">Fort Larned</enum>
         <enum value="NS24">Fort Scott</enum>
+        <enum value="TR09,TR14,TR15">Lewis and Clark + California NHT+ Pony Express NHT</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,TR14">Lewis and Clark NHT+ California NHT</enum>
         <enum value="NS54">Nicodemus</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR14">Oregon NHT + California NHT</enum>
+        <enum value="TR07,TR11,TR14">Oregon NHT + Santa Fe NHT + California NHT</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
+        <enum value="TR11,TR14">Santa Fe NHT + California NHT</enum>
+        <enum value="TR11,NS21">Santa Fe NHT + Fort Larned NHS</enum>
         <enum value="PV15">Tallgrass Prairie</enum>
       </enums>
       <enums dependency="KY">
@@ -4559,9 +4668,11 @@
         <enum value="RV01">Big South Fork National River and Recreation Area</enum>
         <enum value="HP10">Cumberland Gap</enum>
         <enum value="NP39">Mammoth Cave</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
       </enums>
       <enums dependency="LA">
         <enum value="HP05">Cane River Creole NHP and Heritage Area</enum>
+        <enum value="TR20">El Camino Real de los Tejas National Historic Trail</enum>
         <enum value="HP17">Jean Lafitte NHP and Preserve</enum>
         <enum value="HP31">New Orleans Jazz</enum>
         <enum value="MN62">Poverty Point</enum>
@@ -4580,14 +4691,24 @@
         <enum value="HP24">Lowell</enum>
         <enum value="HP27">Minute Man</enum>
         <enum value="HP30">New Bedford Whaling</enum>
+        <enum value="TR06">New England National Scenic Trail</enum>
         <enum value="NS62">Salem Maritime</enum>
         <enum value="NS65">Saugus Iron Works</enum>
         <enum value="NS66">Springfield Armory</enum>
+        <enum value="WR31">Sudbury, Assabet and Concord National Wild and Scenic River</enum>
+        <enum value="WR32">Taunton National Wild and Scenic River</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
+        <enum value="TR23,RC03">Washington - Rochambeau Revolutionary Route NHT + Boston Harbor Islands NRA</enum>
+        <enum value="WR38">Westfield National Wild and Scenic River</enum>
       </enums>
       <enums dependency="MD">
         <enum value="BF01">Antietam</enum>
         <enum value="TR01">Appalachian National Scenic Trail</enum>
         <enum value="SS01">Assateague Island</enum>
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
+        <enum value="TR21,MN31">Captain John Smith Chesapeake NHT + Fort McHenry NM and Shrine</enum>
+        <enum value="TR21,DZ07">Captain John Smith Chesapeake NHT + Piscataway Park</enum>
+        <enum value="TR21,TR22">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT</enum>
         <enum value="DZ01">Catoctin Mountain Park</enum>
         <enum value="HP08">Chesapeake and Ohio Canal</enum>
         <enum value="NS11">Clara Barton</enum>
@@ -4601,7 +4722,11 @@
         <enum value="BF06">Monocacy</enum>
         <enum value="DZ07">Piscataway Park</enum>
         <enum value="TR03">Potomac Heritage National Scenic Trail</enum>
+        <enum value="TR22">Star-Spangled Banner National Historic Trail</enum>
         <enum value="NS70">Thomas Stone</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
+        <enum value="TR23,TR22">Washington - Rochambeau Revolutionary Route NHT + Star-Spangled Banner NHT</enum>
+        <enum value="TR23,TR22,MN31">Washington - Rochambeau Revolutionary Route NHT + Star-Spangled Banner NHT + Fort McHenry NM and Shrine</enum>
       </enums>
       <enums dependency="ME">
         <enum value="NP01">Acadia</enum>
@@ -4612,6 +4737,9 @@
         <enum value="AA07">Father Marquette National Memorial</enum>
         <enum value="NP31">Isle Royale</enum>
         <enum value="HP20">Keweenaw</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
+        <enum value="TR04,AA07">North Country NST + Father Marquette AA</enum>
+        <enum value="TR04,LK03">North Country NST + Pictured Rocks LK</enum>
         <enum value="LK03">Pictured Rocks</enum>
         <enum value="BP04">River Raisin</enum>
         <enum value="LK04">Sleeping Bear Dunes</enum>
@@ -4619,15 +4747,29 @@
       <enums dependency="MN">
         <enum value="MN42">Grand Portage</enum>
         <enum value="RV04">Mississippi National River and Recreation Areas</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
         <enum value="MN61">Pipestone</enum>
         <enum value="WR09">Saint Croix National Scenic Riverway</enum>
         <enum value="NP54">Voyageurs</enum>
       </enums>
       <enums dependency="MO">
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
         <enum value="MN39">George Washington Carver</enum>
         <enum value="NS34">Harry S Truman</enum>
         <enum value="NM12">Jefferson National Expansion Memorial</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,TR15">Lewis and Clark NHT + Pony Express NHT</enum>
+        <enum value="TR09,TR14">Lewis and Clark NHT+ California NHT</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR14">Oregon NHT + California NHT</enum>
+        <enum value="TR07,TR09">Oregon NHT + Lewis and Clark NHT</enum>
+        <enum value="TR07,TR11,TR14">Oregon NHT + Santa Fe NHT + California NHT</enum>
         <enum value="RV05">Ozark National Scenic Riverways</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
+        <enum value="TR11,TR14">Santa Fe NHT + California NHT</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
         <enum value="NS73">Ulysses S. Grant</enum>
         <enum value="BF11">Wilson's Creek</enum>
       </enums>
@@ -4644,9 +4786,15 @@
       <enums dependency="MT">
         <enum value="BF02">Big Hole</enum>
         <enum value="RC02">Bighorn Canyon</enum>
+        <enum value="WR17,NP21">Flathead River + Glacier National Park</enum>
+        <enum value="WR17">Flathead Wild and Scenic River</enum>
         <enum value="NS26">Fort Union Trading Post</enum>
         <enum value="NP21">Glacier National Park</enum>
         <enum value="NS32">Grant-Kohrs Ranch</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,BF02">Lewis and Clark NHT + Big Hole BF</enum>
+        <enum value="TR09,NS26">Lewis and Clark NHT + Fort Union Trading Post NHS</enum>
+        <enum value="TR09,HP32">Lewis and Clark NHT + Nez Perce National Historical Park</enum>
         <enum value="MN51">Little Bighorn Battlefield</enum>
         <enum value="HP32">Nez Perce</enum>
         <enum value="NP57">Yellowstone</enum>
@@ -4654,7 +4802,7 @@
       <enums dependency="NC">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
         <enum value="PK01">Blue Ridge Parkway</enum>
-        <enum value="PK01,NP26">Blue Ridge Pkwy and Great Smoky Mtn NP</enum>
+        <enum value="PK01,NP26">Blue Ridge Parkway + Great Smoky Mountain NP</enum>
         <enum value="SS04">Cape Hatteras</enum>
         <enum value="SS05">Cape Lookout</enum>
         <enum value="NS07">Carl Sandburg Home</enum>
@@ -4662,39 +4810,69 @@
         <enum value="NP26">Great Smoky Mountains</enum>
         <enum value="MP04">Guilford Courthouse</enum>
         <enum value="BF07">Moores Creek</enum>
+        <enum value="TR10">Overmountain Victory National Historic Trail</enum>
+        <enum value="TR10,PK01">Overmountain Victory NHT + Blue Ridge Parkway</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
         <enum value="NM29">Wright Brothers</enum>
       </enums>
       <enums dependency="ND">
         <enum value="NS26">Fort Union Trading Post</enum>
         <enum value="AA12">International Peace Garden</enum>
         <enum value="NS43">Knife River Indian Villages</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,NS26">Lewis and Clark NHT + Fort Union Trading Post NHS</enum>
+        <enum value="TR09,NS43">Lewis and Clark NHT + Knife River Indian Villages NHS</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
+        <enum value="TR04,TR09">North Country NHT + Lewis and Clark NHT</enum>
         <enum value="NP52">Theodore Roosevelt</enum>
       </enums>
       <enums dependency="NE">
         <enum value="MN02">Agate Fossil Beds</enum>
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,AA05">California NHT + Chimney Rock NHS</enum>
+        <enum value="TR14,MN66">California NHT + Scotts Bluff MN</enum>
         <enum value="AA05">Chimney Rock National Historic Site</enum>
         <enum value="MN46">Homestead NM of America</enum>
+        <enum value="TR09,TR14,TR15">Lewis and Clark + California NHT+ Pony Express NHT</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,TR14">Lewis and Clark NHT+ California NHT</enum>
         <enum value="WR05">Missouri National Recreational River</enum>
+        <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
+        <enum value="TR08,TR14">Mormon Pioneer NHT + California NHT</enum>
+        <enum value="TR08,TR09">Mormon Pioneer NHT + Lewis and Clark NHT</enum>
         <enum value="WR06">Niobrara National Scenic River</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR08,TR14,TR15">Oregon NHT + Mormon Pioneer NHT + California NHT + Pony Express NHT</enum>
+        <enum value="TR07,TR08,TR14,TR15,AA05">Oregon NHT + Mormon Pioneer NHT + California NHT + Pony Express NHT + Chimney Rock NHS</enum>
+        <enum value="TR07,TR08,TR14,TR15,MN66">Oregon NHT + Mormon Pioneer NHT + California NHT + Pony Express NHT + Scotts Bluff MN</enum>
+        <enum value="TR07,TR11,TR14">Oregon NHT + Santa Fe NHT + California NHT</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
+        <enum value="TR15,AA05">Pony Express NHT + Chimney Rock NHS</enum>
+        <enum value="TR15,MN66">Pony Express NHT + Scotts Bluff MN</enum>
         <enum value="MN66">Scotts Bluff</enum>
       </enums>
       <enums dependency="NH">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
+        <enum value="WR23">Lamprey Wild and Scenic River</enum>
         <enum value="NS60">Saint-Gaudens</enum>
       </enums>
       <enums dependency="NJ">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
-        <enum value="TR01,WR03">Appalachian Trail and Delaware River</enum>
-        <enum value="TR01,RC07">Appalachian Trail and Delaware Water Gap</enum>
+        <enum value="TR01,WR03">Appalachian Trail + Delaware River</enum>
+        <enum value="TR01,RC07">Appalachian Trail + Delaware Water Gap</enum>
         <enum value="WR03">Delaware National Scenic River</enum>
         <enum value="RC07">Delaware Water Gap</enum>
         <enum value="RC08">Gateway</enum>
         <enum value="WR04">Great Egg Harbor National Scenic and Recreational River</enum>
+        <enum value="WR24">Maurice Scenic and Recreational River</enum>
         <enum value="HP28">Morristown</enum>
+        <enum value="WR28">Musconetcong National Wild and Scenic River</enum>
         <enum value="AA17">New Jersey Coastal Heritage Trail Route</enum>
         <enum value="HP34">Paterson Great Falls</enum>
         <enum value="AA19">Pinelands National Reserve</enum>
         <enum value="HP44">Thomas Edison</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
+        <enum value="TR23,HP28">Washington - Rochambeau Revolutionary Route NHT + Morristown</enum>
       </enums>
       <enums dependency="NM">
         <enum value="MN05">Aztec Ruins</enum>
@@ -4702,26 +4880,37 @@
         <enum value="MN12">Capulin Volcano</enum>
         <enum value="NP10">Carlsbad Caverns</enum>
         <enum value="HP07">Chaco Culture</enum>
+        <enum value="TR17">El Camino Real de Tierra Adentro National Historic Trail</enum>
         <enum value="MN26">El Malpais</enum>
         <enum value="MN27">El Morro</enum>
         <enum value="MN36">Fort Union</enum>
         <enum value="MN40">Gila Cliff Dwellings</enum>
         <enum value="HP50">Manhattan Project</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
         <enum value="HP35">Pecos</enum>
         <enum value="MN59">Petroglyph</enum>
         <enum value="MN65">Salinas Pueblo Missions</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
+        <enum value="TR11,MN36">Santa Fe NHT + Fort Union MN</enum>
+        <enum value="TR11,HP35">Santa Fe NHT + Pecos NHP</enum>
         <enum value="PV19">Valles Caldera</enum>
         <enum value="MN74">White Sands</enum>
       </enums>
       <enums dependency="NV">
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
         <enum value="NP15">Death Valley</enum>
         <enum value="NP24">Great Basin</enum>
         <enum value="RC13">Lake Mead</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
+        <enum value="TR19,RC13">Old Spanish NHT + Lake Mead NRA</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
         <enum value="MN80">Tule Springs Fossil Beds</enum>
       </enums>
       <enums dependency="NY">
         <enum value="MN01">African Burial Ground</enum>
         <enum value="TR01">Appalachian National Scenic Trail</enum>
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
         <enum value="MN15">Castle Clinton</enum>
         <enum value="WR03">Delaware National Scenic River</enum>
         <enum value="NS14">Eleanor Roosevelt</enum>
@@ -4736,6 +4925,8 @@
         <enum value="AA15">Kate Mullany National Historic Site</enum>
         <enum value="AA16">Lower East Side Tenement National Historic Site</enum>
         <enum value="NS50">Martin Van Buren</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
+        <enum value="TR04,MN34">North Country NST + Fort Stanwix MN</enum>
         <enum value="NS59">Sagamore Hill</enum>
         <enum value="NS61">Saint Paul's Church</enum>
         <enum value="HP42">Saratoga</enum>
@@ -4745,6 +4936,7 @@
         <enum value="AA23">Thomas Cole National Historic Site</enum>
         <enum value="WR10">Upper Delaware Scenic and Recreation River</enum>
         <enum value="NS74">Vanderbilt Mansion</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
         <enum value="HP48">Women's Rights</enum>
       </enums>
       <enums dependency="OH">
@@ -4755,29 +4947,41 @@
         <enum value="NS16">First Ladies</enum>
         <enum value="HP15">Hopewell Culture</enum>
         <enum value="NS39">James A. Garfield</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
+        <enum value="TR04,HP11">North Country NST + Dayton Aviation Heritage NHP</enum>
         <enum value="NM20">Perry's Victory and International Peace Memorial</enum>
         <enum value="NS78">William Howard Taft</enum>
       </enums>
       <enums dependency="OK">
         <enum value="RC05">Chickasaw</enum>
-        <enum value="NS25">Fort Smith</enum>
         <enum value="AA18">Oklahoma City National Memorial</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
+        <enum value="TR12,NS25">Trail of Tears NHT + Fort Smith NHS</enum>
         <enum value="NS75">Washita Battlefield</enum>
       </enums>
       <enums dependency="OR">
+        <enum value="TR14">California National Historic Trail</enum>
         <enum value="NP13">Crater Lake</enum>
         <enum value="NS27">Fort Vancouver</enum>
         <enum value="MN49">John Day Fossil Beds</enum>
         <enum value="HP23">Lewis and Clark</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,HP23">Lewis and Clark NHT + Lewis and Clark NHP</enum>
+        <enum value="TR09,HP32">Lewis and Clark NHT + Nez Perce National Historical Park</enum>
         <enum value="HP32">Nez Perce</enum>
         <enum value="MN57">Oregon Caves</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR09">Oregon NHT + Lewis and Clark NHT</enum>
+        <enum value="TR07,TR09,NS27">Oregon NHT + Lewis and Clark NHT + Fort Vancouver NHS</enum>
       </enums>
       <enums dependency="PA">
         <enum value="NS01">Allegheny Portage Railroad</enum>
         <enum value="TR01">Appalachian National Scenic Trail</enum>
-        <enum value="TR01,WR03">Appalachian Trail and Delaware River</enum>
-        <enum value="TR01,RC07">Appalachian Trail and Delaware Water Gap</enum>
-        <enum value="AA03,HP15">Benjamin Franklin National Memorial</enum>
+        <enum value="TR01,WR03">Appalachian Trail + Delaware River</enum>
+        <enum value="TR01,RC07">Appalachian Trail + Delaware Water Gap</enum>
+        <enum value="AA03,HP16">Benjamin Franklin National Memorial</enum>
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
         <enum value="WR03">Delaware National Scenic River</enum>
         <enum value="RC07">Delaware Water Gap</enum>
         <enum value="NS12">Edgar Allan Poe</enum>
@@ -4790,16 +4994,20 @@
         <enum value="NS37">Hopewell Furnace</enum>
         <enum value="HP16">Independence</enum>
         <enum value="NM14">Johnstown Flood</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
         <enum value="TR03">Potomac Heritage National Scenic Trail</enum>
         <enum value="NS67">Steamtown</enum>
         <enum value="NM23">Thaddeus Kosciuszko</enum>
         <enum value="WR10">Upper Delaware Scenic and Recreation River</enum>
         <enum value="HP46">Valley Forge</enum>
+        <enum value="TR23,HP16">Washington - Rochambeau Revolutionary Route NHT + Independence HP</enum>
+        <enum value="WR39">White Clay Creek National Wild and Scenic River</enum>
       </enums>
       <enums dependency="RI">
         <enum value="HP49">Blackstone River Valley</enum>
         <enum value="NM22">Roger Williams</enum>
         <enum value="AA24">Touro Synagogue National Historic Site</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
       </enums>
       <enums dependency="SC">
         <enum value="NS09">Charles Pinckney</enum>
@@ -4809,10 +5017,14 @@
         <enum value="AA10">Historic Camden Revolutionary War Site</enum>
         <enum value="MP06">Kings Mountain</enum>
         <enum value="NS55">Ninety Six</enum>
+        <enum value="TR10">Overmountain Victory National Historic Trail</enum>
+        <enum value="TR10,BF03">Overmountain Victory NHT + Cowpens BF</enum>
+        <enum value="TR10,MP06">Overmountain Victory NHT + Kings Mountain MP</enum>
       </enums>
       <enums dependency="SD">
         <enum value="NP03">Badlands</enum>
         <enum value="MN48">Jewel Cave</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
         <enum value="NS53">Minuteman Missile</enum>
         <enum value="WR05">Missouri National Recreational River</enum>
         <enum value="NM19">Mount Rushmore</enum>
@@ -4821,7 +5033,7 @@
       <enums dependency="TN">
         <enum value="NS03">Andrew Johnson</enum>
         <enum value="TR01">Appalachian National Scenic Trail</enum>
-        <enum value="TR01,NP26">Appalachian Trail and Great Smoky Mtn</enum>
+        <enum value="TR01,NP26">Appalachian Trail + Great Smoky Mountains NP</enum>
         <enum value="RV01">Big South Fork National River and Recreation Area</enum>
         <enum value="MP01">Chickamauga and Chattanooga</enum>
         <enum value="HP10">Cumberland Gap</enum>
@@ -4831,8 +5043,12 @@
         <enum value="TR02">Natchez Trace National Scenic Trail</enum>
         <enum value="PK04">Natchez Trace Parkway</enum>
         <enum value="WR07">Obed Wild and Scenic River</enum>
+        <enum value="TR10">Overmountain Victory National Historic Trail</enum>
         <enum value="MP08">Shiloh</enum>
         <enum value="BF09">Stones River</enum>
+        <enum value="TR12">Trail of Tears National Historic Trail</enum>
+        <enum value="TR12,MP01">Trail of Tears NHT + Chickamauga and Chattanooga NMP</enum>
+        <enum value="TR12,BF09">Trail of Tears NHT + Stones River BF</enum>
       </enums>
       <enums dependency="TX">
         <enum value="MN03">Alibates Flint Quarries</enum>
@@ -4840,20 +5056,26 @@
         <enum value="NP04">Big Bend</enum>
         <enum value="PV04">Big Thicket</enum>
         <enum value="NM03">Chamizal</enum>
+        <enum value="TR20,HP39">El Camino Real de los Tejas + San Antonio Missions NHP</enum>
+        <enum value="TR20">El Camino Real de los Tejas National Historic Trail</enum>
+        <enum value="TR17">El Camino Real de Tierra Adentro National Historic Trail</enum>
+        <enum value="TR17,NM03">El Camino Real de Tierra Adentro NHT + Chamizal NM</enum>
         <enum value="NS19">Fort Davis</enum>
         <enum value="NP27">Guadalupe Mountains</enum>
         <enum value="RC14">Lake Meredith</enum>
         <enum value="HP25">Lyndon B. Johnson</enum>
         <enum value="SS09">Padre Island</enum>
         <enum value="HP33">Palo Alto Battlefield</enum>
-        <enum value="WR08,NP04">Rio Grande River and Big Bend Park</enum>
+        <enum value="WR08,NP04">Rio Grande River + Big Bend NP</enum>
         <enum value="WR08">Rio Grande Wild and Scenic River</enum>
         <enum value="HP39">San Antonio Missions</enum>
+        <enum value="TR11">Santa Fe National Historic Trail</enum>
         <enum value="MN81">Waco Mammoth</enum>
       </enums>
       <enums dependency="UT">
         <enum value="NP02">Arches</enum>
         <enum value="NP07">Bryce Canyon</enum>
+        <enum value="TR14">California National Historic Trail</enum>
         <enum value="NP08">Canyonlands</enum>
         <enum value="NP09">Capitol Reef</enum>
         <enum value="MN16">Cedar Breaks</enum>
@@ -4861,19 +5083,29 @@
         <enum value="RC10">Glen Canyon</enum>
         <enum value="NS31">Golden Spike</enum>
         <enum value="MN47">Hovenweep</enum>
+        <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
         <enum value="MN54">Natural Bridges</enum>
+        <enum value="TR19">Old Spanish National Historic Trail</enum>
+        <enum value="TR19,NP02">Old Spanish NHT + Arches NP</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
         <enum value="MN63">Rainbow Bridge</enum>
         <enum value="MN69">Timpanogos Cave</enum>
+        <enum value="WR36">Virgin Wild and Scenic River</enum>
+        <enum value="WR36,NP59">Virgin Wild and Scenic River + Zion National Park</enum>
         <enum value="NP59">Zion</enum>
       </enums>
       <enums dependency="VA">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
-        <enum value="TR01,NP51">Appalachian Trail and Shenandoah</enum>
+        <enum value="TR01,NP51">Appalachian Trail + Shenandoah NP</enum>
         <enum value="HP03">Appomattox Court House</enum>
         <enum value="NM02">Arlington House</enum>
         <enum value="SS01">Assateague Island</enum>
         <enum value="PK01">Blue Ridge Parkway</enum>
         <enum value="MN07">Booker T. Washington</enum>
+        <enum value="TR21">Captain John Smith Chesapeake National Historic Trail</enum>
+        <enum value="TR21,HP09">Captain John Smith Chesapeake NHT + Colonial NHP</enum>
+        <enum value="TR21,MN38">Captain John Smith Chesapeake NHT + George Washington Birthplace</enum>
+        <enum value="TR21,BP03">Captain John Smith Chesapeake NHT + Richmond NBP</enum>
         <enum value="HP06">Cedar Creek and Belle Grove</enum>
         <enum value="HP09">Colonial</enum>
         <enum value="HP10">Cumberland Gap</enum>
@@ -4883,49 +5115,63 @@
         <enum value="PK02">George Washington Memorial Parkway</enum>
         <enum value="AA09">Green Springs National Historic Landmark District</enum>
         <enum value="HP14">Harpers Ferry</enum>
-        <enum value="AA14,HP09">Jamestown and Colonial NHP</enum>
+        <enum value="AA14,HP09">Jamestown + Colonial NHP</enum>
         <enum value="AA14">Jamestown National Historic Site</enum>
         <enum value="NS47">Maggie L. Walker</enum>
         <enum value="BP02">Manassas</enum>
+        <enum value="TR10">Overmountain Victory National Historic Trail</enum>
         <enum value="BF08">Petersburg</enum>
         <enum value="TR03">Potomac Heritage National Scenic Trail</enum>
         <enum value="DZ08">Prince William Forest Park</enum>
         <enum value="AA20">Red Hill Patrick Henry National Memorial</enum>
         <enum value="BP03">Richmond</enum>
         <enum value="NP51">Shenandoah</enum>
+        <enum value="TR22">Star-Spangled Banner National Historic Trail</enum>
+        <enum value="TR23">Washington - Rochambeau Revolutionary Route National Historic Trail</enum>
+        <enum value="TR23,TR03">Washington - Rochambeau Revolutionary Route NHT + Potomac Heritage NST</enum>
+        <enum value="TR23,TR03,DZ08">Washington - Rochambeau Revolutionary Route NHT + Potomac Heritage NST + Prince William Forest Park</enum>
         <enum value="DZ11">Wolf Trap National Park for the Performing Arts</enum>
       </enums>
       <enums dependency="VT">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
         <enum value="HP26">Marsh-Billings-Rockefeller</enum>
+        <enum value="WR26">Missisquoi and Trout Wild and Scenic River</enum>
       </enums>
       <enums dependency="WA">
         <enum value="RS02">Ebey's Landing National Historical Reserve</enum>
         <enum value="NS27">Fort Vancouver</enum>
         <enum value="HP22">Klondike Gold Rush - Seattle Unit</enum>
         <enum value="RC12">Lake Chelan</enum>
-        <enum value="RC12,NP43">Lake Chelan and North Cascades</enum>
+        <enum value="RC12,NP43">Lake Chelan + North Cascades NP</enum>
         <enum value="RC15">Lake Roosevelt (formerly Coulee Dam)</enum>
         <enum value="HP23">Lewis and Clark</enum>
+        <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+        <enum value="TR09,HP23">Lewis and Clark NHT + Lewis and Clark NHP</enum>
         <enum value="HP50">Manhattan Project</enum>
         <enum value="NS52">Minidoka</enum>
         <enum value="NP41">Mount Rainier</enum>
         <enum value="NP43">North Cascades</enum>
         <enum value="NP44">Olympic</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
         <enum value="RC16">Ross Lake</enum>
-        <enum value="RC16,NP43">Ross Lake and North Cascades</enum>
+        <enum value="RC16,NP43">Ross Lake + North Cascades NP</enum>
         <enum value="HP41">San Juan Island</enum>
         <enum value="NS77">Whitman Mission</enum>
         <enum value="AA25">Wing Luke Museum of the Asian Pacific American Experience</enum>
       </enums>
       <enums dependency="WI">
         <enum value="LK01">Apostle Islands</enum>
+        <enum value="TR05">Ice Age National Scenic Trail</enum>
+        <enum value="TR05,AA11">Ice Age National Scenic Trail + Ice Age WR</enum>
+        <enum value="TR05,WR09">Ice Age National Scenic Trail + Saint Croix WR</enum>
         <enum value="AA11">Ice Age National Scientific Reserve</enum>
+        <enum value="TR04">North Country National Scenic Trail</enum>
+        <enum value="TR04,WR09">North Country NST + Saint Croix WR</enum>
         <enum value="WR09">Saint Croix National Scenic Riverway</enum>
       </enums>
       <enums dependency="WV">
         <enum value="TR01">Appalachian National Scenic Trail</enum>
-        <enum value="TR01,HP14">Appalachian Trail and Harpers Ferry</enum>
+        <enum value="TR01,HP14">Appalachian Trail + Harpers Ferry HP</enum>
         <enum value="WR02">Bluestone National Scenic River</enum>
         <enum value="HP08">Chesapeake and Ohio Canal</enum>
         <enum value="RC09">Gauley River</enum>
@@ -4934,11 +5180,23 @@
       </enums>
       <enums dependency="WY">
         <enum value="RC02">Bighorn Canyon</enum>
+        <enum value="TR14">California National Historic Trail</enum>
+        <enum value="TR14,NS20">California NHT + Fort Laramie NHS</enum>
+        <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
         <enum value="MN23">Devils Tower</enum>
         <enum value="NS20">Fort Laramie</enum>
         <enum value="MN37">Fossil Butte</enum>
         <enum value="NP23">Grand Teton</enum>
+        <enum value="PK03,NP23">John D. Rockefeller Parkway + Grand Teton NP</enum>
         <enum value="PK03">John D. Rockefeller, Jr. Memorial Parkway</enum>
+        <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
+        <enum value="TR07">Oregon National Historic Trail</enum>
+        <enum value="TR07,TR14">Oregon NHT + California NHT</enum>
+        <enum value="TR07,TR08,TR14,TR15">Oregon NHT + Mormon Pioneer NHT + California NHT + Pony Express NHT</enum>
+        <enum value="TR07,TR08,TR14,TR15,NS20">Oregon NHT + Mormon Pioneer NHT + California NHT + Pony Express NHT + Fort Laramie NHS</enum>
+        <enum value="TR07,TR11,TR14">Oregon NHT + Santa Fe NHT + California NHT</enum>
+        <enum value="TR15">Pony Express National Historic Trail</enum>
+        <enum value="TR15,NS20">Pony Express NHT + Fort Laramie NHS</enum>
         <enum value="NP57">Yellowstone</enum>
       </enums>
     </field>

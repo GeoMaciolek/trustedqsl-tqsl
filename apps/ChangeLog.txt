@@ -3,7 +3,8 @@ TQSL changes
 
 2.2
 ----------
-widen fields for station location pages to accomodate long Park names.
+widen fields for station location pages to accomodate long Park names. Permit
+long label names for station location fields.
 
 When renewing a password-protected callsign certificate, entering an incorrect
 password would display "Error: Invalid argument" versus the expected error
