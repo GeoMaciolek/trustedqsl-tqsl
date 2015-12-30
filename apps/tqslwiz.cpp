@@ -151,7 +151,7 @@ TQSLWizCertPage::UpdateFields(int noupdate_field) {
 			int nitems;
 			tqsl_getNumLocationFieldListItems(loc, i, &nitems);
 			for (int j = 0; j < nitems && j < 2000; j++) {
-				char item[80];
+				char item[200];
 				tqsl_getLocationFieldListItem(loc, i, j, item, sizeof(item));
 				// Translate the first [None] entry if it exists
 #ifdef tqsltranslate
