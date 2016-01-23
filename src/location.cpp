@@ -2162,6 +2162,7 @@ tqsl_getLocationFieldListItem(tQSL_Location locp, int field_num, int item_idx, c
 		? fl[field_num].items[item_idx].text
 		: fl[field_num].items[item_idx].label;
 	strncpy(buf, str.c_str(), bufsiz);
+	buf[bufsiz - 1] = '\0';
 	return 0;
 }
 
