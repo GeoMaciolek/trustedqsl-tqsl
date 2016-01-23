@@ -3375,6 +3375,11 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 			cstat = section.getNextElement(cert);
 		}
 	}
+	// If any of the user certificates failed import, return the error status.
+	if (rval) {
+		return rval;
+	}
+
 	stat = tqsldata.getFirstElement("tqslconfig", section);
 	if (stat) {
 		// Check to make sure we aren't overwriting newer version
@@ -3383,13 +3388,7 @@ tqsl_importTQSLFile(const char *file, int(*cb)(int type, const char *, void *), 
 		int curmajor, curminor;
 		if (tqsl_getConfigVersion(&curmajor, &curminor)) {
 			tqslTrace("tqsl_importTQSLFile", "Get config ver error %d", tQSL_Error);
-			if (tQSL_Error == 0) {
-				tQSL_Error = TQSL_CERT_ERROR;
-			}
 			return 1;
-		}
-		if (rval && tQSL_Error == 0) {
-			tQSL_Error = TQSL_CERT_ERROR;
 		}
 		if (major < curmajor) {
 			if (foundcerts) {
