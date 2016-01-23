@@ -1909,7 +1909,7 @@ tqsl_beginSigning(tQSL_Cert cert, char *password, int(*pwcb)(char *, int, void *
 		return tqsl_unlock_key(TQSL_API_TO_CERT(cert)->privkey, &(TQSL_API_TO_CERT(cert)->key),
 			password, pwcb, userdata);
 	}
-	return !tqsl_find_matching_key(TQSL_API_TO_CERT(cert)->cert, &(TQSL_API_TO_CERT(cert)->key),
+	return tqsl_find_matching_key(TQSL_API_TO_CERT(cert)->cert, &(TQSL_API_TO_CERT(cert)->key),
 		&(TQSL_API_TO_CERT(cert)->crq), password, pwcb, userdata);
 }
 
@@ -3423,7 +3423,7 @@ tqsl_check_crq_field(tQSL_Cert cert, char *buf, int bufsiz) {
 		return 1;
 	}
 	if (TQSL_API_TO_CERT(cert)->crq == NULL) {
-		if (!tqsl_find_matching_key(TQSL_API_TO_CERT(cert)->cert, NULL,
+		if (tqsl_find_matching_key(TQSL_API_TO_CERT(cert)->cert, NULL,
 			&(TQSL_API_TO_CERT(cert)->crq), "", NULL, NULL) && tQSL_Error != TQSL_PASSWORD_ERROR) {
 			tqslTrace("tqsl_check_crq_field", "can't find matching key err %d", tQSL_Error);
 			return 1;
@@ -4183,7 +4183,7 @@ tqsl_handle_user_cert(const char *cpem, X509 *x, int (*cb)(int, const char *, vo
 	/* Match the public key in the supplied certificate with a
 	 * private key in the key store.
 	 */
-	if (!tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
+	if (tqsl_find_matching_key(x, NULL, NULL, "", NULL, NULL)) {
 		if (tQSL_Error != TQSL_PASSWORD_ERROR) {
 			tqslTrace("tqsl_handle_user_cert", "match error %s", tqsl_openssl_error());
 			return 1;
@@ -4747,11 +4747,12 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 
 	if (!tqsl_cert_get_subject_name_entry(cert, "AROcallsign", &item)) {
 		tqslTrace("tqsl_find_matching_key", "get subj name err %d", tQSL_Error);
-		return rval;
+		return 1;
 	}
 	tQSL_ImportSerial = ASN1_INTEGER_get(X509_get_serialNumber(cert));
 	if (!tqsl_make_key_path(aro, path, sizeof path)) {
 		tqslTrace("tqsl_find_matching_key", "key path err %d", tQSL_Error);
+		rval = 1;
 		goto end_nokey;
 	}
 	strncpy(ImportCall, aro, sizeof ImportCall);
@@ -4769,7 +4770,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 			tQSL_Error = TQSL_CUSTOM_ERROR;
 			tqslTrace("tqsl_find_matching_key", "opening file path err %s", tQSL_CustomError);
 		}
-		return rval;
+		return 1;
 	}
 	if ((cert_key = X509_get_pubkey(cert)) == NULL) {
 		tqslTrace("tqsl_find_matching_key", "error getting public key %s", tqsl_openssl_error());
@@ -4824,14 +4825,19 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 					goto end;
 				tQSL_Error = 0;
 			}
-			rval = 1;
+			rval = 0;
 			break;
 		}
 	}
+	if (match)
+		goto end;
 	tqslTrace("tqsl_find_matching_key", "No matching private key found");
+	rval = 1;
 	tQSL_Error = TQSL_CERT_NOT_FOUND;
+	strncpy(tQSL_ImportCall, ImportCall, sizeof tQSL_ImportCall);
 	goto end;
  err:
+	rval = 1;
 	tQSL_Error = TQSL_OPENSSL_ERROR;
  end:
 	tqsl_close_key_file();

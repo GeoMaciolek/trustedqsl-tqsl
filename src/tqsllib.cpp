@@ -383,6 +383,7 @@ tqsl_getErrorString_v(int err) {
 		snprintf(buf, sizeof buf,
 			"Callsign Certificate or Certificate Request not found for callsign %s serial %ld",
 			tQSL_ImportCall, tQSL_ImportSerial);
+		tQSL_ImportCall[0] = '\0';
 		return buf;
 	}
 	adjusted_err = err - TQSL_ERROR_ENUM_BASE;
