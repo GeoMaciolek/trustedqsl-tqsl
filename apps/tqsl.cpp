@@ -1130,22 +1130,26 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
 	topPanel->SetSizer(topSizer);
 
+	bool logTab = DEFAULT_LOG_TAB;
+	wxConfig::Get()->Read(wxT("LogTab"), &logTab, DEFAULT_LOG_TAB);
+
 	// Log operations
 
-	//topSizer->Add(new wxStaticText(topPanel, -1, wxT("")), 0, wxEXPAND | wxALL, 1);
-	topSizer->AddSpacer(10);
+	topSizer->AddSpacer(2);
 
 	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxSize(400, 300), wxNB_TOP /* | wxNB_FIXEDWIDTH*/, _("Log Operations"));
 
 	notebook->SetBackgroundColour(wxColour(255, 255, 255));
-	//topSizer->Add(notebook, 50, wxEXPAND | wxALL, 1);
-	topSizer->Add(notebook, 0, wxEXPAND | wxALL, 1);
+	topSizer->Add(notebook, 1, wxEXPAND | wxALL, 1);
 
-	topSizer->Add(new wxStaticText(topPanel, -1, _("Status Log")), 0, wxEXPAND | wxALL, 1);
+	if (!logTab) {
+		topSizer->Add(new wxStaticText(topPanel, -1, _("Status Log")), 0, wxEXPAND | wxALL, 1);
 
-	logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 300),
-		wxTE_MULTILINE|wxTE_READONLY);
-	topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
+		logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 300),
+			wxTE_MULTILINE|wxTE_READONLY);
+		topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
+
+	}
 
 	wxPanel* buttons = new wxPanel(notebook, -1);
 	buttons->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1264,7 +1268,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	// Note - the doubling below is to size the label to allow the control to stretch later
 	loc_add_label = new wxStaticText(lb1Panel, -1, wxT("\nCreate a new Station LocationCreate a new Station\n"));
 	lb1sizer->Add(loc_add_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	lbsizer->Add(lb1Panel, 1, wxALL, 1);
+	lbsizer->Add(lb1Panel, 0, wxALL, 1);
 	int tw, th;
 	loc_add_label->GetSize(&tw, &th);
 	wxString lal = wxT("\n");
@@ -1286,7 +1290,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lel += _("Edit a Station Location");
 	loc_edit_label = new wxStaticText(lb2Panel, -1, lel, wxDefaultPosition, wxSize(tw, th));
 	lb2sizer->Add(loc_edit_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	lbsizer->Add(lb2Panel, 1, wxALL, 1);
+	lbsizer->Add(lb2Panel, 0, wxALL, 1);
 
 	wxPanel* lb3Panel = new wxPanel(lbuttons);
 	lb3Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1302,7 +1306,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	ldl += _("Delete a Station Location");
 	loc_delete_label = new wxStaticText(lb3Panel, -1, ldl, wxDefaultPosition, wxSize(tw, th));
 	lb3sizer->Add(loc_delete_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	lbsizer->Add(lb3Panel, 1, wxALL, 1);
+	lbsizer->Add(lb3Panel, 0, wxALL, 1);
 
 	wxPanel* lb4Panel = new wxPanel(lbuttons);
 	lb4Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1318,7 +1322,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	lpl += _("Display Station Location Properties");
 	loc_prop_label = new wxStaticText(lb4Panel, -1, lpl, wxDefaultPosition, wxSize(tw, th));
 	lb4sizer->Add(loc_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	lbsizer->Add(lb4Panel, 1, wxALL, 1);
+	lbsizer->Add(lb4Panel, 0, wxALL, 1);
 
 	notebook->AddPage(loctab, _("Station Locations"));
 
@@ -1371,7 +1375,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	cert_load_label = new wxStaticText(cb1Panel, -1, lcl, wxDefaultPosition, wxSize(tw, th));
 	cert_load_button->SetLabel(lcl);
 	cb1sizer->Add(cert_load_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	cbsizer->Add(cb1Panel, 1, wxALL, 1);
+	cbsizer->Add(cb1Panel, 0, wxALL, 1);
 
 	wxPanel* cb2Panel = new wxPanel(cbuttons);
 	cb2Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1387,7 +1391,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	csl += _("Save a Callsign Certificate");
 	cert_save_label = new wxStaticText(cb2Panel, -1, csl, wxDefaultPosition, wxSize(tw, th));
 	cb2sizer->Add(cert_save_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	cbsizer->Add(cb2Panel, 1, wxALL, 1);
+	cbsizer->Add(cb2Panel, 0, wxALL, 1);
 
 	wxPanel* cb3Panel = new wxPanel(cbuttons);
 	cb3Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1403,7 +1407,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	crl += _("Renew a Callsign Certificate");
 	cert_renew_label = new wxStaticText(cb3Panel, -1, crl, wxDefaultPosition, wxSize(tw, th));
 	cb3sizer->Add(cert_renew_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	cbsizer->Add(cb3Panel, 1, wxALL, 1);
+	cbsizer->Add(cb3Panel, 0, wxALL, 1);
 
 	wxPanel* cb4Panel = new wxPanel(cbuttons);
 	cb4Panel->SetBackgroundColour(wxColour(255, 255, 255));
@@ -1419,9 +1423,20 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	dcl += _("Display a Callsign Certificate's Properties");
 	cert_prop_label = new wxStaticText(cb4Panel, -1, dcl, wxDefaultPosition, wxSize(tw, th));
 	cb4sizer->Add(cert_prop_label, 1, wxFIXED_MINSIZE | wxALL, 1);
-	cbsizer->Add(cb4Panel, 1, wxALL, 1);
+	cbsizer->Add(cb4Panel, 0, wxALL, 1);
 
 	notebook->AddPage(certtab, _("Callsign Certificates"));
+
+	// Status Log tab (if enabled)
+	 if (logTab) {
+		wxPanel* logtab = new wxPanel(notebook, -1);
+		wxBoxSizer* ltsizer = new wxBoxSizer(wxHORIZONTAL);
+		logtab->SetSizer(ltsizer);
+		logwin = new wxTextCtrl(logtab, -1, wxT(""), wxDefaultPosition, wxSize(800, 600),
+			wxTE_MULTILINE|wxTE_READONLY);
+		ltsizer->Add(logwin, 1, wxEXPAND);
+		notebook->AddPage(logtab, _("Status Log"));
+	}
 
 	//app icon
 	SetIcon(wxIcon(key_xpm));
@@ -1526,7 +1541,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString about = getAbout();
 	tqslTrace(NULL, "TQSL Diagnostics\r\n%s\r\n\r\n", (const char *)about.ToUTF8());
 	tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());
-	tqslTrace(NULL, "Working Directory:%s\r\n", wxString::FromUTF8(tQSL_BaseDir));
+	tqslTrace(NULL, "Working Directory:%s\r\n", tQSL_BaseDir);
 }
 
 static void
@@ -2488,7 +2503,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 #ifdef _WIN32
 	filename.Printf(wxT("%hs\\curl.log"), wxString::FromUTF8(tQSL_BaseDir));
 #else
-	filename.Printf(wxT("%hs/curl.log"), wxString::FromUTF8(tQSL_BaseDir));
+	filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
 #endif
 #ifdef _WIN32
 	wchar_t*lfn = utf8_to_wchar(filename.ToUTF8());
@@ -3100,10 +3115,11 @@ void MyFrame::UpdateConfigFile() {
 		FILE *configFile = _wfopen(lfn, L"wb");
 		free_wchar(lfn);
 #else
-		filename.Printf(wxT("%hs/config.tq6"), wxString::FromUTF8(tQSL_BaseDir));
+		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
 		FILE *configFile = fopen(filename.ToUTF8(), "wb");
 #endif
 		if (!configFile) {
+			tqslTrace("UpdateConfigFile", "Can't open new file %s: %hs", filename.c_str(), strerror(errno));
 			wxMessageBox(wxString::Format(_("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			return;
 		}
@@ -3111,6 +3127,7 @@ void MyFrame::UpdateConfigFile() {
 		while (left > 0) {
 			size_t written = fwrite(newconfig, 1, left, configFile);
 			if (written == 0) {
+				tqslTrace("UpdateConfigFile", "Can't write new file %s: %hs", filename.c_str(), strerror(errno));
 				wxMessageBox(wxString::Format(_("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 				if (configFile) fclose(configFile);
 				return;
@@ -3118,6 +3135,7 @@ void MyFrame::UpdateConfigFile() {
 			left -= written;
 		}
 		if (fclose(configFile)) {
+			tqslTrace("UpdateConfigFile", "Error writing new file %s: %hs", filename.c_str(), strerror(errno));
 			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)));
 			return;
 		}
@@ -3125,6 +3143,7 @@ void MyFrame::UpdateConfigFile() {
 		if (tqsl_importTQSLFile(filename.ToUTF8(), notifyImport, &nd)) {
 			wxLogError(getLocalizedErrorString());
 		} else {
+			tqslTrace("UpdateConfigFile", "Config update success");
 			wxMessageBox(_("Configuration file successfully updated"), _("Update Completed"), wxOK|wxICON_INFORMATION, this);
 		}
 	} else {

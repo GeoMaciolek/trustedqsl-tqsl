@@ -54,6 +54,7 @@ using std::pair;
 #define DEFAULT_CERT_WARNING 60
 #define DEFAULT_ADIF_EDIT false
 #define DEFAULT_DISP_DUPES false
+#define DEFAULT_LOG_TAB false
 //online
 //#define ENABLE_ONLINE_PREFS
 #define DEFAULT_UPL_URL wxT("https://lotw.arrl.org/lotw/upload")
@@ -85,6 +86,7 @@ enum {		// Window IDs
 	ID_PREF_FILE_DATERANGE,
 	ID_PREF_FILE_EDIT_ADIF,
 	ID_PREF_FILE_DISPLAY_DUPES,
+	ID_PREF_FILE_LOG_TAB,
 	ID_PREF_MODE_MAP,
 	ID_PREF_MODE_ADIF,
 	ID_PREF_MODE_DELETE,
@@ -127,7 +129,7 @@ class FilePrefs : public PrefsPanel {
 	void ShowHide();
  private:
 	wxTextCtrl *cabrillo, *adif, *versions;
-	wxCheckBox *autobackup, *badcalls, *daterange, *adifedit, *dispdupes;
+	wxCheckBox *autobackup, *badcalls, *daterange, *adifedit, *dispdupes, *logtab;
 #if !defined(__APPLE__) && !defined(_WIN32)
 	wxTextCtrl *dirPick;
 #else
