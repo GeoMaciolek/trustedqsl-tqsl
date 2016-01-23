@@ -4713,7 +4713,8 @@ tqsl_unlock_key(const char *pem, EVP_PKEY **keyp, const char *password, int (*cb
  err:
 	e = ERR_peek_error();
 	if ((ERR_GET_LIB(e) == ERR_LIB_EVP && ERR_GET_REASON(e) == EVP_R_BAD_DECRYPT)
-		|| (ERR_GET_LIB(e) == ERR_LIB_PEM && ERR_GET_REASON(e) == PEM_R_BAD_PASSWORD_READ)) {
+		|| (ERR_GET_LIB(e) == ERR_LIB_PEM && ERR_GET_REASON(e) == PEM_R_BAD_PASSWORD_READ)
+		|| (ERR_GET_LIB(e) == ERR_LIB_PKCS12 && ERR_GET_REASON(e) == PKCS12_R_PKCS12_CIPHERFINAL_ERROR)) {
 		tqsl_getErrorString();	/* clear error */
 		tQSL_Error = pw_aborted ? TQSL_OPERATOR_ABORT : TQSL_PASSWORD_ERROR;
 		ERR_clear_error();
