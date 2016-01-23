@@ -1526,7 +1526,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	wxString about = getAbout();
 	tqslTrace(NULL, "TQSL Diagnostics\r\n%s\r\n\r\n", (const char *)about.ToUTF8());
 	tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());
-	tqslTrace(NULL, "Working Directory:%s\r\n", tQSL_BaseDir);
+	tqslTrace(NULL, "Working Directory:%s\r\n", wxString::FromUTF8(tQSL_BaseDir));
 }
 
 static void
@@ -2486,9 +2486,9 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 
 	wxString filename;
 #ifdef _WIN32
-	filename.Printf(wxT("%hs\\curl.log"), tQSL_BaseDir);
+	filename.Printf(wxT("%hs\\curl.log"), wxString::FromUTF8(tQSL_BaseDir));
 #else
-	filename.Printf(wxT("%hs/curl.log"), tQSL_BaseDir);
+	filename.Printf(wxT("%hs/curl.log"), wxString::FromUTF8(tQSL_BaseDir));
 #endif
 #ifdef _WIN32
 	wchar_t*lfn = utf8_to_wchar(filename.ToUTF8());
@@ -3095,12 +3095,12 @@ void MyFrame::UpdateConfigFile() {
 		char *newconfig = reinterpret_cast<char *>(handler.s);
 		wxString filename;
 #ifdef _WIN32
-		filename.Printf(wxT("%hs\\/config.tq6"), tQSL_BaseDir);
+		filename.Printf(wxT("%hs\\config.tq6"), wxString::FromUTF8(tQSL_BaseDir));
 		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
 		FILE *configFile = _wfopen(lfn, L"wb");
 		free_wchar(lfn);
 #else
-		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
+		filename.Printf(wxT("%hs/config.tq6"), wxString::FromUTF8(tQSL_BaseDir));
 		FILE *configFile = fopen(filename.ToUTF8(), "wb");
 #endif
 		if (!configFile) {
