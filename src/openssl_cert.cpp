@@ -4803,6 +4803,7 @@ tqsl_find_matching_key(X509 *cert, EVP_PKEY **keyp, TQSL_CERT_REQ **crq, const c
 			/* We have a winner */
 			if (tqsl_unlock_key(fields["PRIVATE_KEY"].c_str(), keyp, password, cb, userdata)) {
 				tqslTrace("tqsl_find_matching_key", "tqsl_unlock_key err %d", tQSL_Error);
+				rval = 1;
 				goto end;
 			}
 			if (crq != NULL) {
