@@ -745,6 +745,8 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	}
 	_logwin->AppendText(szString);
 	_logwin->AppendText(wxT("\n"));
+	// Select the log tab when there's some new message
+	_frame->notebook->SetSelection(TQSL_LOG_TAB);
 }
 
 class LogStderr : public wxLog {
@@ -1017,6 +1019,7 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 		wxString val = logwin->GetValue();
 		val.Replace(_("Checking for TQSL updates...\n"), wxT(""));
 		logwin->SetValue(val);		// Clear the checking message
+		notebook->SetSelection(0);	// rhm
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
@@ -1137,7 +1140,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 
 	topSizer->AddSpacer(2);
 
-	wxNotebook* notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxSize(400, 300), wxNB_TOP /* | wxNB_FIXEDWIDTH*/, _("Log Operations"));
+	notebook = new wxNotebook(topPanel, -1, wxDefaultPosition, wxSize(400, 300), wxNB_TOP /* | wxNB_FIXEDWIDTH*/, _("Log Operations"));
 
 	notebook->SetBackgroundColour(wxColour(255, 255, 255));
 	topSizer->Add(notebook, 1, wxEXPAND | wxALL, 1);

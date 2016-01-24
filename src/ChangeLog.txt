@@ -3,6 +3,12 @@ TQSLLIB changes
 
 2.5
 ---
+Correct defects that could cause callsign certificates to be improperly
+deleted when new certificates are installed.
+
+Fix handling of invalid callsign certificate passwords on OSX to display a
+useful error message and allow the user to retry entering the password.
+
 Allow build for Linux/BSD systems running older versions of Berkeley
 DB by defining a potentially missing symbol.
 

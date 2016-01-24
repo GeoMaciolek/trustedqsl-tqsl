@@ -1,6 +1,17 @@
 TQSL changes
 ============
 
+2.1.1
+----------
+Allow alternate UI layout that puts the status log on a separate tab. Use the
+"Display status messages in separate tab" preference setting to enable this.
+Changing this setting requires restarting TQSL for it to take effect. This
+change will make handling large number of callsign certificates or station
+locations easier.
+
+Fix error that would cause installation of a new configuration file to fail
+on systems with non-ASCII characters in the user's home directory name.
+
 2.2
 ----------
 widen fields for station location pages to accomodate long Park names. Permit

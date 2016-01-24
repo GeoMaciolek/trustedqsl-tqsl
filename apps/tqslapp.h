@@ -62,6 +62,8 @@ enum {
 	TQSL_ACTION_UNSPEC = 4
 };
 
+#define TQSL_LOG_TAB 3
+
 #define TQSL_CD_MSG TQSL_ID_LOW
 #define TQSL_CD_CANBUT TQSL_ID_LOW+1
 
@@ -151,6 +153,7 @@ class MyFrame : public wxFrame {
 	CertTree *cert_tree;
 	LocTree *loc_tree;
 	wxTextCtrl *logwin;
+	wxNotebook *notebook;
 	wxHtmlHelpController *help;
 	wxMenu* file_menu;
 	wxMenu *cert_menu;
