@@ -141,7 +141,7 @@ If you want to distribute the built application:
 
 ./osx_createdmg.sh
 
-will make tqsl-2.2.dmg, a Mac distributable disk image
+will make tqsl-2.2.1.dmg, a Mac distributable disk image
 containing the TrustedQSL applications folder and document files.
 
 ===================================================================
