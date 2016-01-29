@@ -3,6 +3,9 @@ TQSL changes
 
 2.1.1
 ----------
+Report old and new QTH details when a duplicate QSO is detected. Store and
+restore the QTH data when duplicates data is processed in a backup (tbk) file.
+
 Allow alternate UI layout that puts the status log on a separate tab. Use the
 "Display status messages in separate tab" preference setting to enable this.
 Changing this setting requires restarting TQSL for it to take effect. This

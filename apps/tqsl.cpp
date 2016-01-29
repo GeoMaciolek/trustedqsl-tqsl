@@ -746,7 +746,8 @@ void LogList::DoLogString(const wxChar *szString, time_t) {
 	_logwin->AppendText(szString);
 	_logwin->AppendText(wxT("\n"));
 	// Select the log tab when there's some new message
-	_frame->notebook->SetSelection(TQSL_LOG_TAB);
+	if (_frame->notebook->GetPageCount() > TQSL_LOG_TAB)
+		_frame->notebook->SetSelection(TQSL_LOG_TAB);
 }
 
 class LogStderr : public wxLog {
@@ -2041,7 +2042,11 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				out_of_range++;
 				continue;
 			}
-			if (tQSL_Error == TQSL_DUPLICATE_QSO) {
+			char dupeErrString[256];
+			dupeErrString[0] = '\0';
+			bool dupe_error = (tQSL_Error == TQSL_DUPLICATE_QSO);
+			if (dupe_error) {
+				strncpy(dupeErrString, tQSL_CustomError, sizeof dupeErrString);
 				duplicates++;
 				if (!show_dupes) {
 					processed++;
@@ -2051,7 +2056,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
 				processed++;
-				if (tQSL_Error != TQSL_DUPLICATE_QSO) {
+				if (dupe_error) {
 					errors++;
 				}
 				try {
@@ -2065,6 +2070,14 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					if (bad_text)
 						msg += wxString(wxT("\n")) + wxString::FromUTF8(bad_text);
 
+					if (dupeErrString[0] != '\0') {
+						wxStringTokenizer dupes(wxString::FromUTF8(dupeErrString), wxT("|"));
+						wxString olddupe = dupes.GetNextToken();
+						wxString newdupe = dupes.GetNextToken();
+						if (olddupe != newdupe) {
+							msg += wxT("\n") + wxString::Format(_("Your QTH Details changed for this QSO.\n\nOriginally these were: %s\nNow they are:%s\n\nPlease verify that you intended to change this QSO!\n"), olddupe.c_str(), newdupe.c_str());
+						}
+					}
 					wxLogError(wxT("%s"), msg.c_str());
 					if (frame->IsQuiet()) {
 						switch (action) {
@@ -4134,14 +4147,14 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			throw TQSLException(gzerror(out, &err));
 
 		char dupekey[256];
-		char dupedata[10];
+		char dupedata[256];
 		int count = 0;
 		while (true) {
-			int status = tqsl_getDuplicateRecords(conv, dupekey, dupedata, sizeof(dupekey));
+			int status = tqsl_getDuplicateRecordsV2(conv, dupekey, dupedata, sizeof(dupekey));
 			if (status == -1)		// End of file
 				break;
 			check_tqsl_error(status);
-			if (gzprintf(out, "<Dupe key=\"%s\" />\n", dupekey) < 0)
+			if (gzprintf(out, "<Dupe key=\"%s\" data=\"%s\" />\n", dupekey, dupedata) < 0)
 				throw TQSLException(gzerror(out, &err));
 			if ((count++ % 100000) == 0) {
 				wxSafeYield(frame);
@@ -4349,13 +4362,25 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		wxSafeYield(frame);
 		check_tqsl_error(tqsl_beginConverter(&loader->conv));
 	} else if (strcmp(name, "Dupe") == 0) {
+		const char *dupekey = NULL;
+		const char *dupedata = NULL;
 		for (i = 0; atts[i]; i+=2) {
 			if (strcmp(atts[i], "key") == 0) {
-				int status = tqsl_putDuplicateRecord(loader->conv,  atts[i+1], "D", strlen(atts[i+1]));
-				if (status >= 0) check_tqsl_error(status);
+				dupekey = atts[i+1];
 			}
-			if ((loader->dupes++ % 100000) == 0)
-				wxSafeYield(frame);
+			if (strcmp(atts[i], "data") == 0) {
+				dupedata = atts[i+1];
+			}
+		}
+		if (dupedata == NULL) {
+			dupedata = "D"; // Old school dupe record
+		}
+		int status = tqsl_putDuplicateRecord(loader->conv,  dupekey, dupedata, strlen(dupekey));
+		if (status > 0) {		// Error writing that record
+			check_tqsl_error(status);
+		}
+		if ((loader->dupes++ % 100000) == 0) {
+			wxSafeYield(frame);
 		}
 	}
 }
