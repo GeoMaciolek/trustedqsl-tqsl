@@ -119,6 +119,16 @@ DLLEXPORT int CALLCONVENTION tqsl_converterCommit(tQSL_Converter convp);
 DLLEXPORT int CALLCONVENTION
 tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen);
 
+/** Bulk read the duplicate DB records
+  *
+  * This is called to retrieve the QSO records from the dupe database.
+  * It returns the key/value pair upon each call. 
+  * Return -1 for end of file, 0 for success, 1 for errors.
+  * V2 expects a 256 byte buffer for the "data" string.
+  */
+DLLEXPORT int CALLCONVENTION
+tqsl_getDuplicateRecordsV2(tQSL_Converter convp, char *key, char *data, int keylen);
+
 /** Bulk write duplicate DB records
   *
   * This is called to store a QSO record into the dupe database.

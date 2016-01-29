@@ -1155,6 +1155,12 @@ DLLEXPORT int CALLCONVENTION tqsl_setLocationCallSign(tQSL_Location loc, const c
 /** Get the DXCC entity from the station location. */
 DLLEXPORT int CALLCONVENTION tqsl_getLocationDXCCEntity(tQSL_Location loc, int *dxcc);
 
+/** Get the QSO details in canonical form. */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationQSODetails(tQSL_Location locp, char *buf, int buflen);
+
+/** Get the station location details in canonical form. */
+DLLEXPORT int CALLCONVENTION tqsl_getLocationStationDetails(tQSL_Location locp, char *buf, int buflen);
+
 /** Get the number of DXCC entities in the master DXCC list.
   */
 DLLEXPORT int CALLCONVENTION tqsl_getNumDXCCEntity(int *number);

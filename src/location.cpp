@@ -125,6 +125,8 @@ class TQSL_LOCATION {
 	TQSL_LOCATION_PAGELIST pagelist;
 	vector<TQSL_NAME> names;
 	string signdata;
+	string loc_details;
+	string qso_details;
 	bool sign_clean;
 	string tSTATION;
 	string tCONTACT;
@@ -515,6 +517,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 	tqsl_setStationLocationCapturePage(loc, old_page);
 
 	loc->signdata = "";
+	loc->loc_details = "";
 	loc->sign_clean = false;
 	XMLElement sigspecs;
 	if (tqsl_get_xml_config_section("sigspecs", sigspecs)) {
@@ -590,6 +593,10 @@ make_sign_data(TQSL_LOCATION *loc) {
 			}
 		} else {
 			loc->signdata += value;
+			if (loc->loc_details != "") {
+				loc->loc_details += ", ";
+			}
+			loc->loc_details += specfield.getElementName() + ": " + value;
 		}
 		ok = tSTATION.getNextElement(specfield);
 	} while (ok);
@@ -3056,6 +3063,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 	XMLElement specfield;
 	bool ok = tCONTACT_sign.getFirstElement(specfield);
 	string rec_sign_data = loc->signdata;
+	loc->qso_details = "";
 	while(ok) {
 		string en = specfield.getElementName();
 		const char *elname = en.c_str();
@@ -3102,6 +3110,7 @@ tqsl_getGABBItCONTACTData(tQSL_Cert cert, tQSL_Location locp, TQSL_QSO_RECORD *q
 		} else {
 			string v(value);
 			rec_sign_data += trim(v);
+			loc->qso_details += trim(v);
 		}
 		ok = tCONTACT_sign.getNextElement(specfield);
 	}
@@ -3586,4 +3595,37 @@ tqsl_freeDeletedLocationList(char** list, int nloc) {
 	for (int i = 0; i < nloc; i++)
 		if (list[i]) free(list[i]);
 	if (list) free(list);
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getLocationQSODetails(tQSL_Location locp, char *buf, int buflen) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp, false))) {
+		tqslTrace("tqsl_getLocationDXCCEntity", "loc error %d", tQSL_Error);
+		return 1;
+	}
+	if (buf == NULL) {
+		tqslTrace("tqsl_getLocationQSODetails", "Argument error, buf = 0x%lx", buf);
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	strncpy(buf, loc->qso_details.c_str(), buflen);
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getLocationStationDetails(tQSL_Location locp, char *buf, int buflen) {
+	TQSL_LOCATION *loc;
+	if (!(loc = check_loc(locp, false))) {
+		tqslTrace("tqsl_getLocationDXCCEntity", "loc error %d", tQSL_Error);
+		return 1;
+	}
+	if (buf == NULL) {
+		tqslTrace("tqsl_getLocationStationDetails", "Argument error, buf = 0x%lx", buf);
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	strncpy(buf, loc->loc_details.c_str(), buflen);
+	return 0;
+
 }

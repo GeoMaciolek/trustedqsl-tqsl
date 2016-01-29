@@ -1,4 +1,4 @@
-/***************************************************************************
+ /***************************************************************************
                           tqslconvert.cpp  -  description
                              -------------------
     begin                : Sun Nov 17 2002
@@ -77,6 +77,7 @@ class TQSL_CONVERTER {
 	DBC* cursor;
 	FILE* errfile;
 	char serial[512];
+	char callsign[64];
 	bool allow_dupes;
 	bool need_ident_rec;
 	char *appName;
@@ -103,6 +104,7 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	cursor = NULL;
 	errfile = NULL;
 	memset(&serial, 0, sizeof serial);
+	memset(&callsign, 0, sizeof callsign);
 	appName = NULL;
 	need_ident_rec = true;
 	// Init the band data
@@ -823,7 +825,8 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		int uid = conv->cert_idx + conv->base_idx;
 		conv->need_station_rec = false;
 		const char *tStation = tqsl_getGABBItSTATION(conv->loc, uid, uid);
-		tqsl_getCertificateSerialExt(conv->certs[conv->cert_idx], conv->serial, sizeof(conv->serial));
+		tqsl_getCertificateSerialExt(conv->certs[conv->cert_idx], conv->serial, sizeof conv->serial);
+		tqsl_getCertificateCallSign(conv->certs[conv->cert_idx], conv->callsign, sizeof conv->callsign);
 		return tStation;
 	}
 	if (!conv->allow_dupes && !conv->seendb) {
@@ -1129,19 +1132,47 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 	if (grec) {
 		conv->rec_done = true;
 		if (!conv->allow_dupes) {
-			// Lookup uses signdata and cert serial number
+			char stnloc[128];
+			char qso[128];
+			if (tqsl_getLocationStationDetails(conv->loc, stnloc, sizeof stnloc)) {
+				stnloc[0] = '\0';
+			}
+			if (tqsl_getLocationQSODetails(conv->loc, qso, sizeof qso)) {
+				qso[0] = '\0';
+			}
+			// Old-style Lookup uses signdata and cert serial number
 			DBT dbkey, dbdata;
-			char temp[2];
 			memset(&dbkey, 0, sizeof dbkey);
 			memset(&dbdata, 0, sizeof dbdata);
 			// append signing key serial
 			strncat(signdata, conv->serial, sizeof(signdata) - strlen(signdata)-1);
+			// Updated dupe database entry. Key is formed from
+			// local callsign concatenated with the QSO details
+			char dupekey[128];
+			snprintf(dupekey, sizeof dupekey, "%s%s", conv->callsign, qso);
 			dbkey.size = strlen(signdata);
 			dbkey.data = signdata;
 			int dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
 			if (0 == dbget_err) {
-				//lookup was successful; thus duplicate
+				//lookup was successful; thus this is a duplicate.
 				tQSL_Error = TQSL_DUPLICATE_QSO;
+				tQSL_CustomError[0] = '\0';
+				// delete the old record
+				conv->seendb->del(conv->seendb, conv->txn, &dbkey, 0);
+				// Update this to the current format
+				memset(&dbkey, 0, sizeof dbkey);
+				dbkey.size = strlen(dupekey);
+				dbkey.data = dupekey;
+				memset(&dbdata, 0, sizeof dbdata);
+				dbdata.data = stnloc;
+				dbdata.size = strlen(stnloc);
+				int dbput_err;
+				dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+				if (0 != dbput_err) {
+					strncpy(tQSL_CustomError, db_strerror(dbput_err), sizeof tQSL_CustomError);
+					tQSL_Error = TQSL_DB_ERROR;
+					return 0;
+				}
 				return 0;
 			} else if (dbget_err != DB_NOTFOUND) {
 				//non-zero return, but not "not found" - thus error
@@ -1150,9 +1181,34 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				return 0;
 				// could be more specific but there's very little the user can do at this point anyway
 			}
-			temp[0] = 'D';
-			dbdata.data = temp;
-			dbdata.size = 1;
+			memset(&dbkey, 0, sizeof dbkey);
+			memset(&dbdata, 0, sizeof dbdata);
+
+			dbkey.size = strlen(dupekey);
+			dbkey.data = dupekey;
+			dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+			if (0 == dbget_err) {
+				//lookup was successful; thus this is a duplicate.
+				tQSL_Error = TQSL_DUPLICATE_QSO;
+				// Save the original and new station location details so those can be provided
+				// with an error by the caller
+				char *olddup = reinterpret_cast<char *> (malloc(dbdata.size + 2));
+				memcpy(olddup, dbdata.data, dbdata.size);
+				olddup[dbdata.size-1] = '\0';
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "%s|%s", reinterpret_cast<char *>(dbdata.data), stnloc);
+				free(olddup);
+				return 0;
+			} else if (dbget_err != DB_NOTFOUND) {
+				//non-zero return, but not "not found" - thus error
+				strncpy(tQSL_CustomError, db_strerror(dbget_err), sizeof tQSL_CustomError);
+				tQSL_Error = TQSL_DB_ERROR;
+				return 0;
+				// could be more specific but there's very little the user can do at this point anyway
+			}
+
+			memset(&dbdata, 0, sizeof dbdata);
+			dbdata.data = stnloc;
+			dbdata.size = strlen(stnloc);
 			int dbput_err;
 			dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
 			if (0 != dbput_err) {
@@ -1304,6 +1360,54 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 	}
 	memcpy(key, dbkey.data, dbkey.size);
 	key[dbkey.size] = '\0';
+	
+	if (dbdata.size > 9) dbdata.size = 9;
+	memcpy(data, dbdata.data, dbdata.size);
+	data[dbdata.size] = '\0';
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getDuplicateRecordsV2(tQSL_Converter convp, char *key, char *data, int keylen) {
+	TQSL_CONVERTER *conv;
+
+	if (!(conv = check_conv(convp)))
+		return 1;
+
+	if (!conv->seendb) {
+		if (!open_db(conv, true)) {	// If can't open dupes DB
+			return 1;
+		}
+	}
+#ifndef DB_CURSOR_BULK
+#define DB_CURSOR_BULK 0
+#endif
+	if (!conv->cursor) {
+		int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
+		if (err) {
+			strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
+			tQSL_Error = TQSL_DB_ERROR;
+			tQSL_Errno = errno;
+			return 1;
+		}
+	}
+
+	DBT dbkey, dbdata;
+	memset(&dbkey, 0, sizeof dbkey);
+	memset(&dbdata, 0, sizeof dbdata);
+	int status = conv->cursor->c_get(conv->cursor, &dbkey, &dbdata, DB_NEXT);
+	if (DB_NOTFOUND == status) {
+		return -1;	// No more records
+	}
+	if (status != 0) {
+		strncpy(tQSL_CustomError, db_strerror(status), sizeof tQSL_CustomError);
+		tQSL_Error = TQSL_DB_ERROR;
+		tQSL_Errno = errno;
+		return 1;
+	}
+	memcpy(key, dbkey.data, dbkey.size);
+	key[dbkey.size] = '\0';
+	if (dbdata.size > 255) dbdata.size = 255;
 	memcpy(data, dbdata.data, dbdata.size);
 	data[dbdata.size] = '\0';
 	return 0;
@@ -1327,7 +1431,7 @@ tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data,
 	dbkey.size = keylen;
 	dbkey.data = const_cast<char *>(key);
 
-	dbdata.size = 1;
+	dbdata.size = strlen(data);
 	dbdata.data = const_cast<char *>(data);
 
 	int status = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
