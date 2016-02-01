@@ -2,7 +2,7 @@
                                   tqsl.cpp
                              -------------------
     begin                : Mon Nov 4 2002
-    copyright            : (C) 2002-2015 by ARRL and the TrustedQSL Developers
+    copyright            : (C) 2002-2016 by ARRL and the TrustedQSL Developers
     author               : Jon Bloom
     email                : jbloom@arrl.org
  ***************************************************************************/
@@ -1152,7 +1152,6 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 		logwin = new wxTextCtrl(topPanel, -1, wxT(""), wxDefaultPosition, wxSize(400, 300),
 			wxTE_MULTILINE|wxTE_READONLY);
 		topSizer->Add(logwin, 1, wxEXPAND | wxALL, 1);
-
 	}
 
 	wxPanel* buttons = new wxPanel(notebook, -1);
@@ -1492,7 +1491,7 @@ MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 // Return the "About" string
 //
 static wxString getAbout() {
-	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2015 American Radio Relay League\r\n\r\n");
+	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2016 American Radio Relay League\r\n\r\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
 		wxLogError(getLocalizedErrorString());

@@ -21,7 +21,7 @@ BEGIN
       VALUE "FileDescription", "TrustedQSL\000"
       VALUE "FileVersion", "@TQSLVERSION@\000"
       VALUE "InternalName", "TQSL\000"
-      VALUE "LegalCopyright", "Copyright  2005-2015 American Radio Relay League.\000"
+      VALUE "LegalCopyright", "Copyright  2005-2016 American Radio Relay League.\000"
       VALUE "OriginalFilename", "tqsl.exe\000"
       VALUE "ProductName", "TQSL\000"
       VALUE "ProductVersion", "@TQSLVERSION@\000"
