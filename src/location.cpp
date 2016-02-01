@@ -3627,5 +3627,4 @@ tqsl_getLocationStationDetails(tQSL_Location locp, char *buf, int buflen) {
 	}
 	strncpy(buf, loc->loc_details.c_str(), buflen);
 	return 0;
-
 }

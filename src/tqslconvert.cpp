@@ -1360,7 +1360,7 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 	}
 	memcpy(key, dbkey.data, dbkey.size);
 	key[dbkey.size] = '\0';
-	
+
 	if (dbdata.size > 9) dbdata.size = 9;
 	memcpy(data, dbdata.data, dbdata.size);
 	data[dbdata.size] = '\0';

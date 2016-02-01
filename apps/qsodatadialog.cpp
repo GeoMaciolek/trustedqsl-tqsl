@@ -288,7 +288,7 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxString& filename, wxHtmlHelpCon
 	choices = valid_rxbands.GetChoices();
 	sizer->Add(new wxStaticText(this, -1, _("RX Band:"), wxDefaultPosition,
 		wxSize(LABEL_WIDTH, TEXT_HEIGHT), wxALIGN_RIGHT), 0, wxALL, QD_MARGIN);
-	sizer->Add(new wxChoice(this, QD_BAND, wxDefaultPosition, wxDefaultSize,
+	sizer->Add(new wxChoice(this, QD_RXBAND, wxDefaultPosition, wxDefaultSize,
 		valid_rxbands.size(), choices, 0, wxGenericValidator(&_rxband)), 0, wxALL, QD_MARGIN);
 	delete[] choices;
 	topsizer->Add(sizer, 0);
@@ -386,6 +386,9 @@ QSODataDialog::QSODataDialog(wxWindow *parent, wxString& filename, wxHtmlHelpCon
 
 	SetFocus();
 	CentreOnParent();
+	if (_reclist) rec = (*_reclist)[0];
+	_recno = 1;
+	TransferDataToWindow();
 }
 
 QSODataDialog::~QSODataDialog() {
@@ -407,7 +410,7 @@ QSODataDialog::OnFieldChanged(wxCommandEvent& event) {
 	// If there's an error in the data, can't Add.
 	if (!wxDialog::TransferDataFromWindow())
 		return;
-	if (_call_ctrl->GetValue() == wxT(""))	// No callsign
+	if (_call_ctrl->GetValue() == wxT("") || _call_ctrl->GetValue() == wxT("NONE"))	// No callsign
 		return;
 	if (_date_ctrl->GetValue() == wxT(""))	// No date
 		return;
@@ -568,9 +571,13 @@ QSODataDialog::WriteQSOFile(QSORecordList& recs, const char *fname) {
 	if (!out.is_open())
 		return false;
 	unsigned char buf[256];
+	int rec_cnt = 0;
 	QSORecordList::iterator it;
 	for (it = recs.begin(); it != recs.end(); it++) {
 		wxString dtstr;
+		if (it->_call == wxT("NONE"))		// Skipped back on added record
+			continue;
+		rec_cnt++;
 		tqsl_adifMakeField("CALL", 0, (const unsigned char*)(const char *)it->_call.ToUTF8(), -1, buf, sizeof buf);
 		out << buf << endl;
 		tqsl_adifMakeField("BAND", 0, (const unsigned char*)(const char *)it->_band.ToUTF8(), -1, buf, sizeof buf);
@@ -606,7 +613,7 @@ QSODataDialog::WriteQSOFile(QSORecordList& recs, const char *fname) {
 		out << "<EOR>" << endl;
 	}
 	out.close();
-	wxLogMessage(_("Wrote %d QSO records to %s"), static_cast<int>(recs.size()), s_fname.c_str());
+	wxLogMessage(_("Wrote %d QSO records to %s"), rec_cnt, s_fname.c_str());
 	return true;
 }
 
@@ -673,20 +680,12 @@ QSODataDialog::OnRecDown(wxCommandEvent&) {
 		return;
 	if (_recno == _newrec) { 		// Backing up from a record being added
 		if (rec._call == wxT("")) { 	// And the call is empty
-			_reclist->erase(_reclist->begin() + _recno - 1);
-			if (_reclist->empty())
-				_reclist->push_back(QSORecord());
-			if (_recno > static_cast<int>(_reclist->size()))
-				_recno = _reclist->size();
-			rec = (*_reclist)[_recno-1];
-			TransferDataToWindow();
-			SetRecno(_recno);
+			rec._call = wxT("NONE");
+			_call_ctrl->SetValue(wxT("NONE"));
 		}
-		_newrec = -1;
-		_recadd_ctrl->Enable(true);
-	} else {
-		SetRecno(_recno - 1);
 	}
+	if (_recno > 1)
+		SetRecno(_recno - 1);
 }
 
 void
@@ -702,16 +701,10 @@ QSODataDialog::OnRecBottom(wxCommandEvent&) {
 		return;
 	if (_recno == _newrec) { 		// Backing up from a record being added
 		if (rec._call == wxT("")) { 	// And the call is empty
+			rec._call = wxT("NONE");
+			_call_ctrl->SetValue(wxT("NONE"));
 			_reclist->erase(_reclist->begin() + _recno - 1);
-			if (_reclist->empty())
-				_reclist->push_back(QSORecord());
-			if (_recno > static_cast<int>(_reclist->size()))
-				_recno = _reclist->size();
-			rec = (*_reclist)[_recno-1];
-			TransferDataToWindow();
 		}
-		_newrec = -1;
-		_recadd_ctrl->Enable(true);
 	}
 	SetRecno(1);
 }
