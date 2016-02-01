@@ -40,7 +40,6 @@ dos2unix -q $TEMPDIR/$OUTNAME/README
 
 WD=`pwd`
 
-(cd $TEMPDIR && find . -name wxstd.mo -exec rm {} \;)
 (cd $TEMPDIR && tar zcf $WD/$OUTNAME.tar.gz $OUTNAME)
 
 rm -R $TEMPDIR
