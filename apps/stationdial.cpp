@@ -163,6 +163,7 @@ TQSLGetStationNameDialog::RefreshList() {
 	sort(item_data.begin(), item_data.end(), itemLess);
 	for (int i = 0; i < static_cast<int>(item_data.size()); i++)
 		namelist->Append(item_data[i].label, &(item_data[i].name));
+	check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 }
 
 TQSLGetStationNameDialog::TQSLGetStationNameDialog(wxWindow *parent, wxHtmlHelpController *help, const wxPoint& pos,

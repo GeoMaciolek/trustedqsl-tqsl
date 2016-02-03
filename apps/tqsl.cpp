@@ -1643,6 +1643,7 @@ MyFrame::EditStationLocation(wxCommandEvent& event) {
 			return;
 		}
 		// More than one location or not selected in the tree. Prompt for the location.
+		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 		SelectStationLocation(_("Edit Station Location"), _("Close"), true);
 		loc_tree->Build();
 		LocTreeReset();
@@ -3778,12 +3779,13 @@ MyFrame::ProcessQSODataFile(bool upload, bool compressed) {
         	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         	check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
 		if (n != 1) {
+			check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 			loc = SelectStationLocation(_("Select Station Location for Signing"));
 		} else {
 			// There's only one station location. Use that and don't prompt.
 			char deflocn[512];
 			check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
-			tqsl_endStationLocationCapture(&loc);
+			check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 			check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
 		}
 		if (loc == 0)
@@ -3828,6 +3830,7 @@ MyFrame::ProcessQSODataFile(bool upload, bool compressed) {
 				ConvertLogFile(loc, infile, outfile, compressed);
 			}
 		}
+ 		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	}
 	catch(TQSLException& x) {
 		wxString s;
@@ -4920,6 +4923,7 @@ QSLApp::OnInit() {
 		} else {
 			AddEditStationLocation(loc, false, _("Edit Station Location"));
 		}
+		tqsl_endStationLocationCapture(&loc);
 		return false;
 	}
 	if (parser.GetParamCount() > 0) {
@@ -5025,12 +5029,13 @@ QSLApp::OnInit() {
         		check_tqsl_error(tqsl_initStationLocationCapture(&loc));
         		check_tqsl_error(tqsl_getNumStationLocations(loc, &n));
 			if (n != 1) {
+				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				loc = frame->SelectStationLocation(_("Select Station Location for Signing"));
 			} else {
 				// There's only one station location. Use that and don't prompt.
 				char deflocn[512];
 				check_tqsl_error(tqsl_getStationLocationName(loc, 0, deflocn, sizeof deflocn));
-				tqsl_endStationLocationCapture(&loc);
+				check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 				check_tqsl_error(tqsl_getStationLocation(&loc, deflocn));
 			}
 		}
@@ -5096,6 +5101,7 @@ QSLApp::OnInit() {
 				return true;
 		}
 	}
+	check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	if (quiet)
 		exitNow(TQSL_EXIT_SUCCESS, quiet);
 	return true;

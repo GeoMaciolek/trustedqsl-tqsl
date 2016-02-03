@@ -108,6 +108,7 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 		Expand(id);
 	}
 	Expand(rootId);
+	check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	return _nloc;
 }
 

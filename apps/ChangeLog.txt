@@ -3,6 +3,8 @@ TQSL changes
 
 2.1.1
 ----------
+Correct memory leaks in station location handling.
+
 Report old and new QTH details when a duplicate QSO is detected. Store and
 restore the QTH data when duplicates data is processed in a backup (tbk) file.
 
