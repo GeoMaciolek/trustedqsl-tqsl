@@ -1035,9 +1035,11 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		left = sizeof modeSub - strlen(modeSub);
 		strncat(modeSub, conv->rec.submode, left);
 		if (tqsl_getADIFMode(modeSub, val, sizeof val)) {	// mode%submode lookup failed
-			// Try just the submode, then the mode.
+			// Try just the submode.
 			if (tqsl_getADIFMode(conv->rec.submode, val, sizeof val)) { // bare submode failed
-				tqsl_getADIFMode(conv->rec.mode, val, sizeof val);
+				if (tqsl_getADIFMode(conv->rec.mode, val, sizeof val)) {
+					val[0] = '\0';
+				}
 			}
 		}
 	} else {

@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+When an ADIF mode/submode pair doesn't match, try mapping the MODE field
+using the user-provided ADIF map.
+
 Update duplicates handling by using the QSO details (band, mode, date,
 time, etc.) as the key and the location details as the related data.
 Return the old and new location data when a duplicate is detected.

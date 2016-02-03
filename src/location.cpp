@@ -1136,8 +1136,13 @@ tqsl_getADIFMode(const char *adif_item, char *mode, int nmode) {
 	string orig = adif_item;
 	orig = string_toupper(orig);
 	string amode;
-	if (tqsl_adif_map.find(orig) != tqsl_adif_map.end())
+	if (tqsl_adif_map.find(orig) != tqsl_adif_map.end()) {
 		amode = tqsl_adif_map[orig];
+	} else {
+		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		return 1;
+	}
+
 	if (nmode < static_cast<int>(amode.length())+1) {
 		tqslTrace("tqsl_getAdifMode", "bufer error %s %s", nmode, amode.length());
 		tQSL_Error = TQSL_BUFFER_ERROR;
