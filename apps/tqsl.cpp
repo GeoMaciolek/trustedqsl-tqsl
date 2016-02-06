@@ -224,11 +224,11 @@ getCertPassword(char *buf, int bufsiz, tQSL_Cert cert) {
 	wxString message = wxString::Format(fmt, call, dx.name());
 
 	wxWindow* top = wxGetApp().GetTopWindow();
-	if (!frame->IsQuiet()) {
+	if (frame->IsQuiet()) {
 		frame->Show(true);
-		top->SetFocus();
-		top->Raise();
 	}
+	top->SetFocus();
+	top->Raise();
 
 	wxString pwd;
 	int ret = getPasswordFromUser(pwd, message, _("Enter password"), wxT(""), top);

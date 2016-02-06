@@ -3,6 +3,10 @@ TQSL changes
 
 2.1.1
 ----------
+Ensure that the callsign certificate password window always appears on the top
+of other windows. This will cause the main TQSL window to always appear when
+prompting for a password.
+
 Add enhancements to the ADIF editor. Select the proper band when a frequency
 is being entered. Default to 160M when adding a new qso, and don't lose
 changes when moving backwards from a record being added.
