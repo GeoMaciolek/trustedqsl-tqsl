@@ -89,6 +89,8 @@ class QSODataDialog : public wxDialog  {
 	wxTextCtrl *_call_ctrl;
 	wxTextCtrl *_date_ctrl;
 	wxTextCtrl *_time_ctrl;
+	wxChoice *_band_ctrl;
+	wxChoice *_rxband_ctrl;
 	wxStaticText *_recno_label_ctrl;
 	wxBitmapButton *_recdown_ctrl, *_recup_ctrl, *_recbottom_ctrl, *_rectop_ctrl;
 	wxButton *_recadd_ctrl;

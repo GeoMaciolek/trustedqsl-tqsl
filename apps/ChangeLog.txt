@@ -3,6 +3,10 @@ TQSL changes
 
 2.1.1
 ----------
+Add enhancements to the ADIF editor. Select the proper band when a frequency
+is being entered. Default to 160M when adding a new qso, and don't lose
+changes when moving backwards from a record being added.
+
 Correct memory leaks in station location handling.
 
 Report old and new QTH details when a duplicate QSO is detected. Store and
