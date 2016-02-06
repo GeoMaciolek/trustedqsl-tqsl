@@ -414,7 +414,7 @@ QSODataDialog::OnFieldChanged(wxCommandEvent& event) {
 		return;
 	// Update the band selections to match the frequencies
 	double freq, rxfreq;
-	bool freqOK=false, rxfreqOK=false;
+	bool freqOK = false, rxfreqOK = false;
 
 	char *oldloc = setlocale(LC_ALL, "C");
 	if (!rec._freq.IsEmpty()) {
@@ -552,7 +552,7 @@ bool
 QSODataDialog::TransferDataToWindow() {
 	tqslTrace("QSODataDialog::TransferDataToWindow");
 	valid_list::iterator it;
-	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end()) 
+	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
 	else
 		wxLogWarning(_("QSO Data: Invalid Mode ignored - %s"), (const char*) rec._mode.Upper().ToUTF8());

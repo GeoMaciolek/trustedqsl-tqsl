@@ -998,18 +998,18 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	//check for updates
 	if (!noGUI) {
 		wxBeginBusyCursor();
-		wxSafeYield();
+		wxTheApp->Yield(true);
 		wxLogMessage(_("Checking for TQSL updates..."));
-		wxSafeYield();
+		wxTheApp->Yield(true);
 	}
 	updateLocker = new wxSemaphore(0, 1);		// One waiter
 	UpdateThread* thread = new UpdateThread(this, silent, noGUI);
 	thread->Create();
-	wxSafeYield();
+	wxTheApp->Yield(true);
 	thread->Run();
-	wxSafeYield();
+	wxTheApp->Yield(true);
 	while (updateLocker->TryWait() == wxSEMA_BUSY) {
-		wxSafeYield();
+		wxTheApp->Yield(true);
 #if (wxMAJOR_VERSION == 2 && wxMINOR_VERSION == 9)
 		wxGetApp().DoIdle();
 #endif
@@ -3830,7 +3830,7 @@ MyFrame::ProcessQSODataFile(bool upload, bool compressed) {
 				ConvertLogFile(loc, infile, outfile, compressed);
 			}
 		}
- 		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
+		check_tqsl_error(tqsl_endStationLocationCapture(&loc));
 	}
 	catch(TQSLException& x) {
 		wxString s;
