@@ -337,8 +337,9 @@ static const char *notypes[] = { "D", "T", "M", "N", "C", "" };
 
 static const char *
 tqsl_infer_band(const char* infreq) {
-	setlocale(LC_NUMERIC, "C");
+	char *oldlocale = setlocale(LC_NUMERIC, "C");
 	double freq = atof(infreq);
+	setlocale(LC_NUMERIC, oldlocale);
 	double freq_khz = freq * 1000.0;
 	int nband = 0;
 	tqsl_getNumBand(&nband);
@@ -360,6 +361,8 @@ tqsl_infer_band(const char* infreq) {
 			}
 		} else {
 			if (freq >= low && freq <= high)
+				match = true;
+			if (freq >= low && high == 0)
 				match = true;
 		}
 		if (match)
