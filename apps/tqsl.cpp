@@ -1020,7 +1020,7 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 		wxString val = logwin->GetValue();
 		val.Replace(_("Checking for TQSL updates...\n"), wxT(""));
 		logwin->SetValue(val);		// Clear the checking message
-		notebook->SetSelection(0);	// rhm
+		notebook->SetSelection(0);
 		// Refresh the cert tree in case any new info on expires/supercedes
 		cert_tree->Build(CERTLIST_FLAGS);
 		CertTreeReset();
@@ -3950,10 +3950,17 @@ void TQSLConfig::SaveSettings(gzFile* out, wxString appname) {
                                 case wxConfigBase::Type_Unknown:
                                 case wxConfigBase::Type_String:
 					config->Read(name, &svalue);
-					urlEncode(svalue);
-					if (gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n",
-							(const char *)svalue.ToUTF8()) < 0) {
-						throw TQSLException(gzerror(*out, &err));
+					long testlong;
+					if (svalue.ToLong(&testlong)) {
+						if (gzprintf(*out, "Type=\"Int\" Value=\"%d\"/>\n", testlong) < 0) {
+							throw TQSLException(gzerror(*out, &err));
+						}
+					} else {
+						urlEncode(svalue);
+						if (gzprintf(*out, "Type=\"String\" Value=\"%s\"/>\n",
+								(const char *)svalue.ToUTF8()) < 0) {
+							throw TQSLException(gzerror(*out, &err));
+						}
 					}
 					break;
                                 case wxConfigBase::Type_Boolean:
