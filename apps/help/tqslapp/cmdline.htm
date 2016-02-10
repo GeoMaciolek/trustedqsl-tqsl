@@ -9,6 +9,7 @@ When starting TQSL, you may specify command line options that
 <UL>
 <LI>initiate the definition or editing of a <A HREF="glossary.htm#station_location">Station Location</A></LI>
 <LI>initiate the <A HREF="glossary.htm#signed_log_file">signing of a log file</A>
+<LI>initiate the <a HREF="qsodata.htm">display and editing</a> of an ADIF log file</A>
 <LI>direct that a signed log file be uploaded to LoTW via the internet</LI>
 </UL>
 Most command line options are single-letter switches, some of which require an argument; such arguments should be separated from the switch letter by one or more spaces. Arguments that
@@ -16,7 +17,7 @@ contain spaces or other shell-special characters should be quoted in a manner su
 operating system and shell that's being used. If more than one command line switch is specified, each switch must be 
 separated from the preceding switch by one or more spaces.
 <P>
-A filename not preceded by a switch is assumed to be the name of a log file whose QSOs are to be signed.
+A filename not preceded by a switch is assumed to be the name of a log file whose QSOs are to be signed <b><i>unless</i></b> the <A HREF="pref-opt.htm#adifedit">Open ADIF files in ADIF editor</a> box is checked, the named file has an <b>.ADI</b> extension, and the command line includes neither a <b>-q</b> or <b>-x</b> switch, in which case the named log file will be displayed in TQSL's <a HREF="qsodata.htm">ADIF Editor</a>.
 <P>
 After taking the actions specified by command line options, TQSL will enter its menu-driven mode of operation unless one of the <code>-q</code>, <code>-x</code>
 or <code>-n</code> switches are present, in which case it will terminate.
@@ -104,6 +105,9 @@ contains embedded spaces, it must be quoted in a manner suitable for the operati
 If <code>-u</code> is present, the resulting signed log file will be uploaded to LoTW via the internet. Otherwise, the resulting signed log file will be saved in the Filename specified by the <code>-o</code> switch; 
 if <code>-o</code> is not present, the resulting log file will be saved in the same directory as the log file using the <code>.tq8</code> extension, overwriting any
 existing <code>.tq8</code> file of the same name.
+<p>
+If the <A HREF="pref-opt.htm#adifedit">Open ADIF files in ADIF editor</a> box is checked, if the named file has an <b>.ADI</b> extension, and if the command line includes neither a <b>-q</b> or <b>-x</b> switch, then the named log file will be displayed in TQSL's <a HREF="qsodata.htm">ADIF Editor</a> rather than signed.
+</P>
 </TD></TR>
 
 </TABLE>
@@ -111,22 +115,28 @@ existing <code>.tq8</code> file of the same name.
 <H5>Invocation Examples:</H5>
 
 Without displaying the QSO date-range dialog and ignoring duplicate QSOs, digitally sign the &quot;<code>cqww log.adi</code>&quot; log file using the &quot;CQWW Portable&quot; Station Location, upload the digitally signed log file to LoTW, route <b>stderr</b> to the file <code>results.txt</code> and then terminate:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
+<P>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -d -u -a new -x -l "CQWW Portable" "cqww log.adi" 2>results.txt
 </CODE>
 <P>
 Edit the &quot;Home&quot; station location before beginning menu-driven operation:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
+<P>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -l Home -s
 </CODE>
 <P>
 Add a station location, and then terminate:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
+<P>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -s -x
 </CODE>
+<p>
+Display the &quot;<code>cqww log.adi</code>&quot; log file in TQSL's <a HREF="qsodata.htm">ADIF Editor</a>:
+<P>&nbsp;&nbsp;&nbsp;<CODE>
+  tqsl "cqww log.adi"
+</CODE>
+<UL><LI>Note that the <A HREF="pref-opt.htm#adifedit">Open ADIF files in ADIF editor</a> box must be checked; otherwise, the &quot;<code>cqww log.adi</code>&quot; log file will be digitally signed.</LI></UL>
 <P>
 Check for new versions and expiring or pending Callsign Certificates, and then terminate:
-<BR>&nbsp;&nbsp;&nbsp;<CODE>
+<P>&nbsp;&nbsp;&nbsp;<CODE>
   tqsl -n 2>news.txt
 </CODE>
 
