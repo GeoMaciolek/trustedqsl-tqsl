@@ -11,6 +11,9 @@ To inspect or change TQSL's options, select the <B>File</B> menu's <B>Display or
 <LI><a href="pref-opt.htm#backup">Enable automatic Backup File creation on termination</a></li>
 <LI><a href="pref-opt.htm#nonamateur">Allow Nonamateur Callsigns</a></li>
 <LI><a href="pref-opt.htm#daterange">Prompt for QSO Date Range</a></li>
+<LI><a href="pref-opt.htm#adifedit">Open ADIF files in ADIF editor</a></li>
+<LI><a href="pref-opt.htm#dupdetails">Display details of duplicate QSOs when signing a log</a></li>
+<LI><a href="pref-opt.htm#statustab">Display status messages in a separate tab</a></li>
 </UL>
 
 <P>
@@ -60,4 +63,29 @@ when <a href="signupload.htm">Submitting a Log File to LoTW via the Internet</a>
 The <b>QSO Date Range</b> dialog can be used to prevent QSOs already submitted to LoTW that haven't been subsequently modified from being submitted again,
 sparing LoTW from processing QSOs that have already been processed. 
 <P>
+
+<a name="adifedit"></a>
+<H5>Open ADIF files in ADIF editor</H5>
+If this box is checked and TQSL is started with a <a href="cmdline.htm">command line</a> that specifies a file with an <b>.ADI</b> extension but does not specify <b>-q</b> or <b>-x</b> switches, then TQSL will display the contents of the specified ADIF file in its <a HREF="qsodata.htm">ADIF Editor</a> instead of signing the contents of the ADIF file; if this box is not checked, then when started from a <a href="cmdline.htm">command line</a> that specifies an ADIF file, TQSL will always sign the files contents.
+<p>
+
+<a name="dupdetails"></a>
+<H5>Display details of duplicate QSOs when signing a log</H5>
+If, when <a href="signupload.htm">signing and uploading a file</a> or <a href="signupload.htm">signing and saving a file</a>, TQSL encounters QSOs that have already been submitted to LoTW, then if this box is checked the details of each <i>duplicate</i> QSO will be reported in the <b>Status Log</b>; if this box is not checked, no details will be reported.
+<p>
+
+<a name="statustab"></a>
+<H5>Display status messages in a separate tab</H5>
+With this box unchecked, TQSL displays status messages in a <b>Status Log</b> pane below the three <b>Log Operations</b>, <b>Station Locations</b>, and <b>Callsign Certificates</b> tabs:
+<p>
+<img src="MainNoStatusTab.bmp" width=575 height=629 border=0>
+<P>
+Enabling this option and then restarting this TQSL adds a fourth <b>Status Log</b> tab to the right of the other three. This enables more <b>Station Locations</b> and <b>Callsign Certificates</b> to be visible without scrolling:
+<p>
+<img src="MainWithStatusTab.bmp" width=1172 height=629 border=0>
+<P>
+Any change to the <b>Display status messages in a separate tab</b> option will take effect after TQSL is next restarted.
+<p>
+
+
 </BODY></HEAD>
