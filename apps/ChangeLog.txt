@@ -3,6 +3,9 @@ TQSL changes
 
 2.1.1
 ----------
+Save preferences in .tbk files in numeric form so on/off preferences can
+be transferred across operating systems (Windows/Mac/Unix) properly.
+
 Ensure that the callsign certificate password window always appears on the top
 of other windows. This will cause the main TQSL window to always appear when
 prompting for a password.

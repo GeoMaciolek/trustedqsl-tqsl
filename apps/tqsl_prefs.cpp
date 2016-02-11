@@ -593,7 +593,7 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 	wxCoord char_width, char_height;
 	dc.GetTextExtent(wxString(wxT('M'), FILE_TEXT_WIDTH), &char_width, &char_height);
 
-	config->Read(wxT("proxyEnabled"), &enabled, false);
+	config->Read(wxT("ProxyEnabled"), &enabled, false);
 	wxString pHost = config->Read(wxT("proxyHost"));
 	wxString pPort = config->Read(wxT("proxyPort"));
 	wxString pType = config->Read(wxT("proxyType"));

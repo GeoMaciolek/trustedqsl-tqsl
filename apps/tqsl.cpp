@@ -2564,7 +2564,7 @@ tqsl_curl_init(const char *logTitle, const char *url, FILE **curlLogFile, bool n
 	config->SetPath(wxT("/Proxy"));
 
 	bool enabled = false;
-	config->Read(wxT("proxyEnabled"), &enabled, false);
+	config->Read(wxT("ProxyEnabled"), &enabled, false);
 	wxString pHost = config->Read(wxT("proxyHost"), wxT(""));
 	wxString pPort = config->Read(wxT("proxyPort"), wxT(""));
 	wxString pType = config->Read(wxT("proxyType"), wxT(""));
@@ -4344,6 +4344,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 				double dval = strtod(svalue.ToUTF8(), NULL);
 				loader->config->Write(sname, dval);
 			}
+			loader->config->SetPath(wxT("/"));
 		}
 	} else if (strcmp(name, "Locations") == 0) {
 		wxLogMessage(_("Restoring Station Locations"));
