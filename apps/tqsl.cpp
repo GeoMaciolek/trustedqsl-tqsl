@@ -6145,6 +6145,18 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	}
 	delete mst;
 
+	int sup, exp;
+	if (tqsl_isCertificateSuperceded(cert, &sup) == 0 && sup) {
+		blob += wxT("\t\t\t\t");
+		blob += _("Replaced");
+		blob += wxT("\n");
+	}
+	if (tqsl_isCertificateExpired(cert, &exp) == 0 && exp) {
+		blob += wxT("\t\t\t\t");
+		blob += _("Expired");
+		blob += wxT("\n");
+	}
+
 	topsizer->Add(new wxStaticText(this, -1, blob));
 	topsizer->Add(
 		new wxButton(this, wxID_OK, _("Close")),

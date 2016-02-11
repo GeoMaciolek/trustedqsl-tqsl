@@ -3,6 +3,9 @@ TQSL changes
 
 2.1.1
 ----------
+Add "Replaced" and "Expired" indicators to callsign certificate properties
+display.
+
 Save preferences in .tbk files in numeric form so on/off preferences can
 be transferred across operating systems (Windows/Mac/Unix) properly.
 
