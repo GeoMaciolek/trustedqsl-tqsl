@@ -163,6 +163,12 @@
       <Component Id="cmpF9FA4DCDA71F641F16059FDE7A74A9C0" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil82044A4CBBE14930D442C0A787AA2C27" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\main.htm" />
       </Component>
+      <Component Id="cmp43EB61AD892D822D0E13AC11D4C747FF" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil4917BFB2FBFB45A904BDA63EE24B1B3F" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\MainNoStatusTab.bmp" />
+      </Component>
+      <Component Id="cmp892F428DDC4CAC6F132A9F2E9C644352" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="filFCEA096A09BE7B1F5BD31B50993A5E01" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\MainWithStatusTab.bmp" />
+      </Component>
       <Component Id="cmp9D7D0A19FD2CF57415612DFEB0224E4C" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil0CDC09A1F6F5B8709E251BCFE167274C" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\moving.htm" />
       </Component>
@@ -298,8 +304,8 @@
       <Component Id="cmp2A3798171C9C3B8C43F2E0F4DBCC7884" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil172306E408CE613517657C6166ADDAF8" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc2.htm" />
       </Component>
-      <Component Id="cmpE648D8D3E1494bf3A073B2716F65E296" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
-        <File Id="cmp3C5FA78D521F401993D3CBCBDFAA8D8A" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc2park.bmp" />
+      <Component Id="cmp6CCC8BEC97B4BE9AC4682076A8781289" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil707B889E60DA07A11D0AD6929181C6D2" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc2park.bmp" />
       </Component>
       <Component Id="cmp3A54FA087DD2930731A9105EEEF3D4FD" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil20880CE354FA690B2DCC4D45965E8939" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\stnloc3.bmp" />
