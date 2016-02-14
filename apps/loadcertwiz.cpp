@@ -73,7 +73,7 @@ notifyImport(int type, const char *message, void *data) {
 			return 0;
 		wxString s(_("OK to install "));
 		s = s + wxString::FromUTF8(nametype) + wxT(" ") + _("certificate?") + wxT("\n\n") + wxString::FromUTF8(message);
-		if (wxMessageBox(s, _("Install Certificate"), wxYES_NO) == wxYES)
+		if (wxMessageBox(s, _("Install Certificate"), wxYES_NO | wxICON_QUESTION) == wxYES)
 			return 0;
 		return 1;
 	} // end TQSL_CERT_CB_PROMPT
@@ -196,7 +196,7 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 							"back up your certificate on removable media for safe-keeping.");
 							msg += wxT("\n\n");
 							msg += _("Would you like to back up your callsign certificate now?");
-	    					if (wxMessageBox(msg, _("Warning"), wxYES_NO|wxICON_QUESTION, _parent) == wxNO) {
+	    					if (wxMessageBox(msg, _("Warning"), wxYES_NO | wxICON_QUESTION, _parent) == wxNO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);
@@ -252,7 +252,7 @@ LoadCertWiz::LoadCertWiz(wxWindow *parent, wxHtmlHelpController *help, const wxS
 			_final->SetPrev(0);
 			if (tqsl_importTQSLFile(filename.ToUTF8(), notifyImport, GetNotifyData())) {
 				if (tQSL_Error != TQSL_CERT_ERROR) {  // if not already reported by the callback
-					wxMessageBox(getLocalizedErrorString(), _("Error"));
+					wxMessageBox(getLocalizedErrorString(), _("Error"), wxOK | wxICON_ERROR, _parent);
 				}
 			} else {
 				if (tQSL_ImportCall[0] != '\0') {
@@ -347,7 +347,7 @@ LCW_P12PasswordPage::TransferDataFromWindow() {
 			tc_status->SetLabel(_("Password error"));
 			return false;
 		} else {
-			wxMessageBox(getLocalizedErrorString(), _("Error"));
+			wxMessageBox(getLocalizedErrorString(), _("Error"), wxOK | wxICON_ERROR, _parent);
 		}
 	}
 	tc_status->SetLabel(wxT(""));

@@ -94,7 +94,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	sizer->Add(tc_provider_info, 0, wxALL|wxEXPAND, 10);
 	int nprov = 0;
 	if (tqsl_getNumProviders(&nprov))
-		wxMessageBox(getLocalizedErrorString(), _("Error"));
+		wxMessageBox(getLocalizedErrorString(), _("Error"), wxOK | wxICON_ERROR, this);
 	for (int i = 0; i < nprov; i++) {
 		TQSL_PROVIDER prov;
 		if (!tqsl_getProvider(i, &prov))
@@ -716,7 +716,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
         if (valMsg.Len() == 0) {
                 ok = true;
         } else {
-                wxMessageBox(valMsg, _("Error"));
+                wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
                 ok = false;
         }
 	if (ok && Parent()->dxcc == 0) {
@@ -730,7 +730,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			"the correct selection. Otherwise, you probably "
 			"should use the \"Back\" button to return to the DXCC "
 			"page after clicking \"OK\"");
-		wxMessageBox(msg, _("TQSL Warning"));
+		wxMessageBox(msg, _("TQSL Warning"), wxOK | wxICON_WARNING, this);
 	}
 	if (ok && !tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_isDateValid(&Parent()->qsonotafter)) {
 		wxString msg = _("You have chosen a QSO end date for this Callsign Certificate. "
@@ -745,7 +745,7 @@ CRQ_IntroPage::TransferDataFromWindow() {
 			"callsign), you should not set a 'QSO end date'.");
 			msg += wxT("\n");
 			msg += _("Do you really want to keep this 'QSO end date'?");
-		if (wxMessageBox(msg, _("Warning"), wxYES_NO|wxICON_EXCLAMATION) == wxNO) {
+		if (wxMessageBox(msg, _("Warning"), wxYES_NO|wxICON_EXCLAMATION, this) == wxNO) {
 				tc_qsoendy->SetSelection(0);
 				tc_qsoendm->SetSelection(0);
 				tc_qsoendd->SetSelection(0);
@@ -805,7 +805,7 @@ CRQ_NamePage::TransferDataFromWindow() {
         if (valMsg.Len() == 0) {
                 ok = true;
         } else {
-                wxMessageBox(valMsg, _("Error"));
+                wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
                 ok = false;
         }
 
@@ -859,7 +859,7 @@ CRQ_EmailPage::TransferDataFromWindow() {
         if (valMsg.Len() == 0) {
                 ok = true;
         } else {
-                wxMessageBox(valMsg, _("Error"));
+                wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
                 ok = false;
         }
 
@@ -894,7 +894,7 @@ CRQ_PasswordPage::TransferDataFromWindow() {
         if (valMsg.Len() == 0) {
                 ok = true;
         } else {
-                wxMessageBox(valMsg, _("Error"));
+                wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
                 ok = false;
         }
 	Parent()->password = tc_pw1->GetValue();
@@ -948,7 +948,7 @@ CRQ_SignPage::TransferDataFromWindow() {
         if (valMsg.Len() == 0) {
                 ok = true;
         } else {
-                wxMessageBox(valMsg, _("Error"));
+                wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
                 ok = false;
         }
 

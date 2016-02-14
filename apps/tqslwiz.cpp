@@ -456,7 +456,7 @@ TQSLWizCertPage::OnPageChanging(wxWizardEvent& ev) {
 	validate();
 	if (valMsg.Len() > 0 && ev.GetDirection()) {
 		ev.Veto();
-		wxMessageBox(valMsg, _("Error"));
+		wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
 	}
 }
 
@@ -546,7 +546,7 @@ TQSLWizFinalPage::OnPageChanging(wxWizardEvent& ev) {
 	validate();
 	if (valMsg.Len() > 0 && ev.GetDirection()) {
 		ev.Veto();
-		wxMessageBox(valMsg, _("Error"));
+		wxMessageBox(valMsg, _("Error"), wxOK | wxICON_ERROR, this);
 	}
 }
 

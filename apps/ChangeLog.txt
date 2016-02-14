@@ -3,6 +3,11 @@ TQSL changes
 
 2.1.1
 ----------
+Don't delete/recreate the main window when language selection doesn't change
+the selected language.
+
+Display warning that changing the status log display will require a restart.
+
 Add "Replaced" and "Expired" indicators to callsign certificate properties
 display.
 

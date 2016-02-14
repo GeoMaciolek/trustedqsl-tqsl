@@ -283,7 +283,7 @@ TQSLGetStationNameDialog::OnDelete(wxCommandEvent&) {
 	wxString name = *reinterpret_cast<wxString *>(namelist->GetClientData(idx));
 	if (name == wxT(""))
 		return;
-	if (wxMessageBox(wxString(_("Delete \"")) + name + wxT("\"?"), _("TQSL Confirm"), wxYES_NO|wxCENTRE, this) == wxYES) {
+	if (wxMessageBox(wxString(_("Delete \"")) + name + wxT("\"?"), _("TQSL Confirm"), wxYES_NO | wxICON_QUESTION | wxCENTRE, this) == wxYES) {
 		check_tqsl_error(tqsl_deleteStationLocation(name.ToUTF8()));
 		if (!issave)
 			name_entry->Clear();
@@ -444,7 +444,7 @@ TQSLGetStationNameDialog::ShowModal() {
 			msg += _("You must define at least one Station Location to use for signing.");
 			msg += wxT("\n");
 			msg += _("Use the \"New\" Button of the dialog you're about to see to define a Station Location.");
-		wxMessageBox(msg, _("TQSL Warning"), wxOK, this);
+		wxMessageBox(msg, _("TQSL Warning"), wxOK | wxICON_WARNING, this);
 	}
 	return wxDialog::ShowModal();
 }

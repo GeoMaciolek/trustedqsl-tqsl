@@ -304,7 +304,7 @@ bool AddMode::TransferDataFromWindow() {
 	if (key.IsEmpty()) return true;
 	if (modelist->FindString(key) != wxNOT_FOUND) {	// This duplicates an existing mode
 		wxMessageBox(wxString::Format(_("This mode definition conflicts with a standard mode definition for %s"),
-				key.c_str()), _("Mode Conflict"), wxOK, this);
+				key.c_str()), _("Mode Conflict"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 	return true;
@@ -425,6 +425,11 @@ bool FilePrefs::TransferDataFromWindow() {
 	config->Write(wxT("DateRange"), daterange->GetValue());
 	config->Write(wxT("AdifEdit"), adifedit->GetValue());
 	config->Write(wxT("DispDupes"), dispdupes->GetValue());
+	bool oldLog;
+	config->Read(wxT("LogTab"), &oldLog);
+	if (logtab->GetValue() != oldLog) {
+		wxMessageBox(_("Changes to the status message configuration will take affect when TQSL is restarted"), _("Warning"), wxOK | wxICON_INFORMATION, this);
+	}
 	config->Write(wxT("LogTab"), logtab->GetValue());
 	config->Write(wxT("AutoBackup"), autobackup->GetValue());
 #if !defined(__APPLE__) && !defined(_WIN32)
@@ -906,14 +911,14 @@ bool EditContest::TransferDataFromWindow() {
 	contest.Trim(true);
 	contest.MakeUpper();
 	if (contest == wxT("")) {
-		wxMessageBox(_("Contest name cannot be blank"), _("Error"), wxOK, this);
+		wxMessageBox(_("Contest name cannot be blank"), _("Error"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 	contest_type = type->GetSelection();
 	callsign_field = strtol(fieldnum->GetValue().ToUTF8(), NULL, 10);
 	if (callsign_field < TQSL_MIN_CABRILLO_MAP_FIELD) {
 		wxMessageBox(wxString::Format(_("Call-worked field must be %d or greater"), TQSL_MIN_CABRILLO_MAP_FIELD),
-			_("Error"), wxOK, this);
+			_("Error"), wxOK | wxICON_ERROR, this);
 		return false;
 	}
 	return true;
