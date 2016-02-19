@@ -3,6 +3,21 @@ TQSL changes
 
 2.1.1
 ----------
+When running in batch mode (-x or -q on the command line, don't show the
+upload progress bar, just do the upload.
+
+When changing the selected language, ensure that the window position is
+retained.
+
+When TQSL is killed while in the process of signing/uploading a log, roll-
+back the duplicates database changes and cleanly close the database.
+
+When an old .TQ6 file is loaded into TQSL, and there was a valid private
+key for that certificate, TQSL could incorrectly delete a private key
+for a pending callsign certificate, causing installation of that certificate
+to fail. TQSL now verifies that the certificate being installed is active
+and will not delete certificates improperly.
+
 Don't delete/recreate the main window when language selection doesn't change
 the selected language.
 
