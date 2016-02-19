@@ -933,6 +933,11 @@ void
 MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	tqslTrace("MyFrame::OnExit", "exiting");
 	int x, y, w, h;
+	if (logConv) {
+		tqsl_converterRollBack(logConv);
+		tqsl_endConverter(&logConv);
+	}
+	unlock_db();
 	// Don't save window size/position if minimized or too small
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	if (!IsIconized()) {
@@ -1060,6 +1065,7 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	req = NULL;
 	curlReq = NULL;
 	curlLogFile = NULL;
+	logConv = NULL;
 
 	// File menu
 	file_menu = new wxMenu;
@@ -1776,8 +1782,8 @@ MyFrame::EnterQSOData(wxCommandEvent& WXUNUSED(event)) {
 	}
 }
 
-int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, tQSL_Converter& conv, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password, const char* defcall) {
-	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, conv=%lx, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d, defcall=%s", reinterpret_cast<void *>(loc), S(infile), reinterpret_cast<void *>(conv), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action, defcall ? defcall : "");
+int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxString& output, int& n, bool suppressdate, tQSL_Date* startdate, tQSL_Date* enddate, int action, const char* password, const char* defcall) {
+	tqslTrace("MyFrame::ConvertLogToString", "loc = %lx, infile=%s, suppressdate=%d, startdate=0x%lx, enddate=0x%lx, action=%d, defcall=%s", reinterpret_cast<void *>(loc), S(infile), suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action, defcall ? defcall : "");
 	static const char *iam = "TQSL V" VERSION;
 	const char *cp;
 	char callsign[40];
@@ -1930,11 +1936,11 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 	int processed = 0;
 	int errors = 0;
 	try {
-		if (tqsl_beginCabrilloConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc)) {
+		if (tqsl_beginCabrilloConverter(&logConv, infile.ToUTF8(), certlist, ncerts, loc)) {
 			if (tQSL_Error != TQSL_CABRILLO_ERROR || tQSL_Cabrillo_Error != TQSL_CABRILLO_NO_START_RECORD)
 				check_tqsl_error(1);	// A bad error
 			lineno = 0;
-	   		check_tqsl_error(tqsl_beginADIFConverter(&conv, infile.ToUTF8(), certlist, ncerts, loc));
+	   		check_tqsl_error(tqsl_beginADIFConverter(&logConv, infile.ToUTF8(), certlist, ncerts, loc));
 		}
 		bool range = true;
 		config->Read(wxT("DateRange"), &range);
@@ -1945,7 +1951,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				unlock_db();
 				return TQSL_EXIT_CANCEL;
 			}
-			tqsl_setADIFConverterDateFilter(conv, &dial.start, &dial.end);
+			tqsl_setADIFConverterDateFilter(logConv, &dial.start, &dial.end);
 			if (this->IsQuiet()) {
 				this->Show(false);
 				wxSafeYield(this);
@@ -1959,13 +1965,13 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					enddate ? enddate->year : 0,
 					enddate ? enddate->month : 0,
 					enddate ? enddate->day : 0);
-			tqsl_setADIFConverterDateFilter(conv, startdate, enddate);
+			tqsl_setADIFConverterDateFilter(logConv, startdate, enddate);
 		}
 		bool allow = false;
 		config->Read(wxT("BadCalls"), &allow);
-		tqsl_setConverterAllowBadCall(conv, allow);
-		tqsl_setConverterAllowDuplicates(conv, allow_dupes);
-		tqsl_setConverterAppName(conv, iam);
+		tqsl_setConverterAllowBadCall(logConv, allow);
+		tqsl_setConverterAllowDuplicates(logConv, allow_dupes);
+		tqsl_setConverterAppName(logConv, iam);
 
 		wxFileName::SplitPath(infile, 0, &name, &ext);
 		if (ext != wxT(""))
@@ -1979,7 +1985,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		output = wxT("");
 
 		do {
-	   		while ((cp = tqsl_getConverterGABBI(conv)) != 0) {
+	   		while ((cp = tqsl_getConverterGABBI(logConv)) != 0) {
 				if (!this->IsQuiet())
 					wxSafeYield(conv_dial);
 				if (!conv_dial->running)
@@ -2016,7 +2022,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			if (tQSL_Error == TQSL_SIGNINIT_ERROR) {
 				tQSL_Cert cert;
 				int rval;
-				check_tqsl_error(tqsl_getConverterCert(conv, &cert));
+				check_tqsl_error(tqsl_getConverterCert(logConv, &cert));
 				do {
 	   				if ((rval = tqsl_beginSigning(cert, const_cast<char *>(password), getCertPassword, cert)) == 0)
 						break;
@@ -2063,11 +2069,11 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 				try {
 					check_tqsl_error(1);
 				} catch(TQSLException& x) {
-					tqsl_getConverterLine(conv, &lineno);
+					tqsl_getConverterLine(logConv, &lineno);
 					wxString msg = wxGetTranslation(wxString::FromUTF8(x.what()));
 					if (lineno)
 						msg += wxT(" ") + wxString::Format(_("on line %d"), lineno);
-					const char *bad_text = tqsl_getConverterRecordText(conv);
+					const char *bad_text = tqsl_getConverterRecordText(logConv);
 					if (bad_text)
 						msg += wxString(wxT("\n")) + wxString::FromUTF8(bad_text);
 
@@ -2141,9 +2147,9 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		this->Enable(TRUE);
 		delete conv_dial;
 		string msg = x.what();
-		tqsl_getConverterLine(conv, &lineno);
-		tqsl_converterRollBack(conv);
-		tqsl_endConverter(&conv);
+		tqsl_getConverterLine(logConv, &lineno);
+		tqsl_converterRollBack(logConv);
+		tqsl_endConverter(&logConv);
 		unlock_db();
 		if (lineno) {
 			msg += " ";
@@ -2158,8 +2164,8 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			infile.c_str(), out_of_range);
 	if (duplicates > 0) {
 		if (cancelled) {
-			tqsl_converterRollBack(conv);
-			tqsl_endConverter(&conv);
+			tqsl_converterRollBack(logConv);
+			tqsl_endConverter(&logConv);
 			unlock_db();
 			return TQSL_EXIT_CANCEL;
 		}
@@ -2168,15 +2174,15 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			int choice = dial.ShowModal();
 			if (choice == TQSL_DP_CAN) {
 				wxLogMessage(_("Cancelled"));
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				unlock_db();
 				return TQSL_EXIT_CANCEL;
 			}
 			if (choice == TQSL_DP_ALLOW) {
 				allow_dupes = true;
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				restarting = true;
 				if (this->IsQuiet()) {
 					this->Show(false);
@@ -2187,23 +2193,23 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		} else if (action == TQSL_ACTION_ABORT) {
 				if (processed == duplicates) {
 					wxLogMessage(_("All QSOs are duplicates; aborted"));
-					tqsl_converterRollBack(conv);
-					tqsl_endConverter(&conv);
+					tqsl_converterRollBack(logConv);
+					tqsl_endConverter(&logConv);
 					unlock_db();
 					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				} else {
 					wxLogMessage(_("%d of %d QSOs are duplicates; aborted"), duplicates, processed);
-					tqsl_converterRollBack(conv);
-					tqsl_endConverter(&conv);
+					tqsl_converterRollBack(logConv);
+					tqsl_endConverter(&logConv);
 					unlock_db();
 					n = 0;
 					return TQSL_EXIT_NO_QSOS;
 				}
 		} else if (action == TQSL_ACTION_ALL) {
 			allow_dupes = true;
-			tqsl_converterRollBack(conv);
-			tqsl_endConverter(&conv);
+			tqsl_converterRollBack(logConv);
+			tqsl_endConverter(&logConv);
 			restarting = true;
 			goto restart;
 		}
@@ -2212,10 +2218,10 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 		wxLogMessage(_("%s: %d QSO records were duplicates"),
 			infile.c_str(), duplicates);
 	}
-	//if (!cancelled) tqsl_converterCommit(conv);
+	//if (!cancelled) tqsl_converterCommit(logConv);
 	if (cancelled || processed == 0) {
-		tqsl_converterRollBack(conv);
-		tqsl_endConverter(&conv);
+		tqsl_converterRollBack(logConv);
+		tqsl_endConverter(&logConv);
 	}
 	unlock_db();
 	if (cancelled)
@@ -2278,8 +2284,7 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 
 	wxString output;
 	int numrecs = 0;
-	tQSL_Converter conv = 0;
-	int status = this->ConvertLogToString(loc, infile, output, numrecs, conv, suppressdate, startdate, enddate, action, password, defcall);
+	int status = this->ConvertLogToString(loc, infile, output, numrecs, suppressdate, startdate, enddate, action, password, defcall);
 
 	if (numrecs == 0) {
 		wxLogMessage(_("No records output"));
@@ -2302,40 +2307,40 @@ MyFrame::ConvertLogFile(tQSL_Location loc, const wxString& infile, const wxStrin
 	} else {
 		if(compressed) {
 			if (gzwrite(gout, output.ToUTF8(), output.size()) <= 0) {
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				gzclose(gout);
 				return TQSL_EXIT_LIB_ERROR;
 			}
 			if (gzflush(gout, Z_FINISH) != Z_OK) {
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				gzclose(gout);
 				return TQSL_EXIT_LIB_ERROR;
 			}
 			if (gzclose(gout) != Z_OK) {
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				return TQSL_EXIT_LIB_ERROR;
 			}
 		} else {
 			out << output;
 			if (out.fail()) {
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				out.close();
 				return TQSL_EXIT_LIB_ERROR;
 			}
 			out.close();
 			if (out.fail()) {
-				tqsl_converterRollBack(conv);
-				tqsl_endConverter(&conv);
+				tqsl_converterRollBack(logConv);
+				tqsl_endConverter(&logConv);
 				return TQSL_EXIT_LIB_ERROR;
 			}
 		}
 
-		tqsl_converterCommit(conv);
-		tqsl_endConverter(&conv);
+		tqsl_converterCommit(logConv);
+		tqsl_endConverter(&logConv);
 
 		wxLogMessage(_("%s: wrote %d records to %s"), infile.c_str(), numrecs,
 			outfile.c_str());
@@ -2458,9 +2463,8 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 	tqslTrace("MyFrame::UploadLogFile", "loc=%lx, infile=%s, compressed=%d, suppressdate=%d, startdate=0x%lx, enddate=0x%lx action=%d", reinterpret_cast<void *>(loc), S(infile), compressed, suppressdate, reinterpret_cast<void *>(startdate), reinterpret_cast<void *>(enddate), action);
 	int numrecs = 0;
 	wxString signedOutput;
-	tQSL_Converter conv = 0;
 
-	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, conv, suppressdate, startdate, enddate, action, password, defcall);
+	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, suppressdate, startdate, enddate, action, password, defcall);
 
 	if (numrecs == 0) {
 		wxLogMessage(_("No records to upload"));
@@ -2500,11 +2504,11 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 					compressedSize, fileType);
 
 		if (retval == 0)
-			tqsl_converterCommit(conv);
+			tqsl_converterCommit(logConv);
 		else
-			tqsl_converterRollBack(conv);
+			tqsl_converterRollBack(logConv);
 
-		tqsl_endConverter(&conv);
+		tqsl_endConverter(&logConv);
 
 		return retval;
 	}
@@ -3198,7 +3202,6 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 	wxString certCheckURL = config->Read(wxT("CertCheckURL"), DEFAULT_CERT_CHECK_URL);
 	wxString certCheckRE = config->Read(wxT("StatusRegex"), DEFAULT_CERT_CHECK_RE);
 	certCheckURL = certCheckURL + wxString::Format(wxT("%ld"), serial);
-
 	bool needToCleanUp = false;
 
 	if (curlReq == NULL) {
@@ -4161,7 +4164,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 		}
 
 		wxSafeYield(frame);
-		tQSL_Converter conv = 0;
+		tQSL_Converter conv = NULL;
 		check_tqsl_error(tqsl_beginConverter(&conv));
 		tqslTrace("MyFrame::BackupConfig", "beginConverter call success");
 		if (gzprintf(out, "<DupeDb>\n") < 0)
