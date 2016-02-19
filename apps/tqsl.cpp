@@ -2658,7 +2658,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 	intptr_t retval;
 
-	UploadDialog* upload;
+	UploadDialog* upload = NULL;
 
 	if (numrecs > 0)
 		wxLogMessage(_("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
@@ -2785,7 +2785,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 			retval = TQSL_EXIT_TQSL_ERROR;
 		}
 	}
-	if (this) upload->Destroy();
+	if (this && upload) upload->Destroy();
 
 	curl_formfree(post);
 	curl_easy_cleanup(curlReq);
@@ -4405,7 +4405,7 @@ TQSLConfig::xml_restore_start(void *data, const XML_Char *name, const XML_Char *
 		if (dupedata == NULL) {
 			dupedata = "D"; // Old school dupe record
 		}
-		int status = tqsl_putDuplicateRecord(loader->conv,  dupekey, dupedata, strlen(dupekey));
+		int status = tqsl_putDuplicateRecord(loader->conv,  dupekey, dupedata, dupekey ? strlen(dupekey) : 0);
 		if (status > 0) {		// Error writing that record
 			check_tqsl_error(status);
 		}
@@ -4988,7 +4988,6 @@ QSLApp::OnInit() {
 				tqsl_setCertificateStatus(tQSL_ImportSerial, (const char *)status.ToUTF8());
 			}
 			if (tQSL_ImportCall[0] != '\0' && tQSL_ImportSerial != 0 && tqsl_getCertificateStatus(tQSL_ImportSerial) == TQSL_CERT_STATUS_OK) {
-				
 				get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any expired/superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
 					long serial = 0;
