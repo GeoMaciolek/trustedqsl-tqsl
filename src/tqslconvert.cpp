@@ -599,12 +599,14 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		break;		// Opened OK.
 	}
 
+#ifndef _WIN32		// isalive() method doesn't exist for WIN32.
 	// Stale lock removal
 	tqslTrace("open_db", "Removing stale locks");
 	dbret = conv->dbenv->failchk(conv->dbenv, 0);
 	if (dbret && conv->errfile) {
 		fprintf(conv->errfile, "lock removal for DB %s returns status %s\n", conv->dbpath, db_strerror(dbret));
 	}
+#endif
 
 	tqslTrace("open_db", "calling db_create");
 	if ((dbret = db_create(&conv->seendb, conv->dbenv, 0))) {
