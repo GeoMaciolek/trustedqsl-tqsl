@@ -6444,9 +6444,9 @@ lock_db(bool wait) {
 
 static void
 unlock_db(void) {
-	if (hFile) {
+	if (hFile)
 		UnlockFileEx(hFile, 0, 0, 0x80000000, &ov);
-	if (lockFileFD != -1)
+	if (lockfileFD != -1)
 		_close(lockfileFD);
 	lockfileFD = -1;
 	hFile = 0;
