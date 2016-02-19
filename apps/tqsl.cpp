@@ -6402,7 +6402,7 @@ unlock_db(void) {
 #else /* _WIN32 */
 
 static OVERLAPPED ov;
-static HANDLE hFile;
+static HANDLE hFile = 0;
 
 static int
 lock_db(bool wait) {
@@ -6444,8 +6444,11 @@ lock_db(bool wait) {
 
 static void
 unlock_db(void) {
-	UnlockFileEx(hFile, 0, 0, 0x80000000, &ov);
-	_close(lockfileFD);
+	if (hFile) {
+		UnlockFileEx(hFile, 0, 0, 0x80000000, &ov);
+	if (lockFileFD != -1)
+		_close(lockfileFD);
 	lockfileFD = -1;
+	hFile = 0;
 }
 #endif /* _WIN32 */
