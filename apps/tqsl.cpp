@@ -3199,7 +3199,14 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 	wxString certCheckRE = config->Read(wxT("StatusRegex"), DEFAULT_CERT_CHECK_RE);
 	certCheckURL = certCheckURL + wxString::Format(wxT("%ld"), serial);
 
-	curl_easy_setopt(curlReq, CURLOPT_URL, (const char *)certCheckURL.ToUTF8());
+	bool needToCleanUp = false;
+
+	if (curlReq == NULL) {
+		needToCleanUp = true;
+		curlReq = tqsl_curl_init("checkCert", certCheckURL.ToUTF8(), &curlLogFile, true);
+	} else {
+		curl_easy_setopt(curlReq, CURLOPT_URL, (const char *)certCheckURL.ToUTF8());
+	}
 
 	FileUploadHandler handler;
 
@@ -3231,6 +3238,10 @@ bool MyFrame::CheckCertStatus(long serial, wxString& result) {
 		if (retval == CURLE_SSL_CACERT && verifyCA) {
 			verifyCA = false;
 		}
+	}
+	if (needToCleanUp) {
+		curl_easy_cleanup(curlReq);
+		curlReq = NULL;
 	}
 	return ret;
 }
@@ -4963,7 +4974,13 @@ QSLApp::OnInit() {
 			}
 		} else {
 			wxLogMessage(nd.Message());
-			if (tQSL_ImportCall[0] != '\0') {
+			if (tQSL_ImportSerial != 0) {
+				wxString status;
+				frame->CheckCertStatus(tQSL_ImportSerial, status);		// Update from LoTW's "CRL"
+				tqsl_setCertificateStatus(tQSL_ImportSerial, (const char *)status.ToUTF8());
+			}
+			if (tQSL_ImportCall[0] != '\0' && tQSL_ImportSerial != 0 && tqsl_getCertificateStatus(tQSL_ImportSerial) == TQSL_CERT_STATUS_OK) {
+				
 				get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any expired/superceded ones for this call
 				for (int i = 0; i < ncerts; i++) {
 					long serial = 0;
@@ -5293,29 +5310,34 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 	LoadCertWiz lcw(this, help, _("Load Certificate File"));
 	lcw.RunWizard();
 	if (tQSL_ImportCall[0] != '\0') {				// If a user cert was imported
-		get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any superceded ones for this call
-		for (int i = 0; i < ncerts; i++) {
-			long serial = 0;
-			int keyonly = false;
-			tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
-			if (keyonly) {
-				if (tQSL_ImportSerial != 0) {		// A full cert for this was imported
+		if (tQSL_ImportSerial != 0) {
+			wxString status;
+			CheckCertStatus(tQSL_ImportSerial, status);		// Update from LoTW's "CRL"
+			tqsl_setCertificateStatus(tQSL_ImportSerial, (const char *)status.ToUTF8());
+		}
+		if (tQSL_ImportCall[0] != '\0' && tQSL_ImportSerial != 0 && tqsl_getCertificateStatus(tQSL_ImportSerial) == TQSL_CERT_STATUS_OK) {
+			get_certlist(tQSL_ImportCall, 0, true, true, true);	// Get any superceded ones for this call
+			for (int i = 0; i < ncerts; i++) {
+				long serial = 0;
+				int keyonly = false;
+				tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
+				if (keyonly) {
 					tqsl_deleteCertificate(certlist[i]);
+					continue;
 				}
-				continue;
+				if (tqsl_getCertificateSerial(certlist[i], &serial)) {
+					continue;
+				}
+				if (serial == tQSL_ImportSerial) {	// Don't delete the one we just imported
+					continue;
+				}
+				// This is not the one we just imported
+				int sup, exp;
+				if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
+					tqsl_deleteCertificate(certlist[i]);
+				else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
+					tqsl_deleteCertificate(certlist[i]);
 			}
-			if (tqsl_getCertificateSerial(certlist[i], &serial)) {
-				continue;
-			}
-			if (serial == tQSL_ImportSerial) {	// Don't delete the one we just imported
-				continue;
-			}
-			// This is not the one we just imported
-			int sup, exp;
-			if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
-				tqsl_deleteCertificate(certlist[i]);
-			else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
-				tqsl_deleteCertificate(certlist[i]);
 		}
 	}
 	cert_tree->Build(CERTLIST_FLAGS);
