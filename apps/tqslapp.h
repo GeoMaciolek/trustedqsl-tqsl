@@ -98,6 +98,7 @@ class MyFrame : public wxFrame {
 	void ProcessQSODataFile(bool upload, bool compressed);
 	void ImportQSODataFile(wxCommandEvent& event);
 	void UploadQSODataFile(wxCommandEvent& event);
+	void SaveWindowLayout(void);
 	void OnExit(TQ_WXCLOSEEVENT& event);
 	void DoExit(wxCommandEvent& event);
 	void DoUpdateCheck(bool silent, bool noGUI);

@@ -930,14 +930,8 @@ MyFrame::SaveOldBackups(const wxString& directory, const wxString& filename, con
 }
 
 void
-MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
-	tqslTrace("MyFrame::OnExit", "exiting");
+MyFrame::SaveWindowLayout() {
 	int x, y, w, h;
-	if (logConv) {
-		tqsl_converterRollBack(logConv);
-		tqsl_endConverter(&logConv);
-	}
-	unlock_db();
 	// Don't save window size/position if minimized or too small
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	if (!IsIconized()) {
@@ -951,6 +945,17 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 			config->Flush(false);
 		}
 	}
+}
+void
+MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
+	tqslTrace("MyFrame::OnExit", "exiting");
+	if (logConv) {
+		tqsl_converterRollBack(logConv);
+		tqsl_endConverter(&logConv);
+	}
+	SaveWindowLayout();
+	unlock_db();
+	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	bool ab;
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
@@ -6025,6 +6030,7 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 		locale->AddCatalog(wxT("fileutils"));
 	}
 #endif
+	SaveWindowLayout();
 	tqslTrace("MyFrame::OnChooseLanguage", "Destroying GUI");
 	Destroy();
 	tqslTrace("MyFrame::OnChooseLanguage", "Recreating GUI");
