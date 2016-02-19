@@ -2665,7 +2665,7 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 	else
 		wxLogMessage(_("Attempting to upload %s"), fileType.c_str());
 
-	if(this) {
+	if(this && !quiet) {
 		if (fileType == wxT("Log")) {
 			upload = new UploadDialog(this);
 		} else {
