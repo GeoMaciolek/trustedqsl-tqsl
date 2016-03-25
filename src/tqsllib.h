@@ -163,7 +163,7 @@ DLLEXPORTDATA extern int tQSL_Errno;
 DLLEXPORTDATA extern char tQSL_ImportCall[256];
 /// Serial number of recent certificate import
 DLLEXPORTDATA extern long tQSL_ImportSerial;
-// Diagnostic log file
+/// Diagnostic log file
 DLLEXPORTDATA extern FILE* tQSL_DiagFile;
 
 /** Initialize the tQSL library
@@ -1327,9 +1327,20 @@ DLLEXPORT const char* CALLCONVENTION tqsl_getGABBItCONTACTData(tQSL_Cert cert, t
 
 /** @} */
 
+/** Output to a diagnostic trace file (if one is opened.
+ *
+ * \li \c name is the name of the function being executed
+ */
 DLLEXPORT void CALLCONVENTION tqslTrace(const char *name, const char *format = NULL, ...);
+/** Close the diagnostic trace file (if it is open)
+ */
 DLLEXPORT void CALLCONVENTION tqsl_closeDiagFile(void);
+/** Close the diagnostic trace file (if it is open)
+ */
 DLLEXPORT int  CALLCONVENTION tqsl_diagFileOpen(void);
+/** Returns true if the log file is open
+ *
+ */
 DLLEXPORT int  CALLCONVENTION tqsl_openDiagFile(const char* file);
 
 #ifdef _WIN32

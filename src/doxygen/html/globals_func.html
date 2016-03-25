@@ -96,6 +96,9 @@
 <li>tqsl_clearCabrilloMap()
 : <a class="el" href="group__Data.html#gabc01393cd7b76051045789bdf7dd9567">tqsllib.h</a>
 </li>
+<li>tqsl_closeDiagFile()
+: <a class="el" href="tqsllib_8h.html#a5ee814d891a628253cb3453b85931813">tqsllib.h</a>
+</li>
 <li>tqsl_compareDates()
 : <a class="el" href="group__Util.html#ga4edcf6bc4d369db632e1f0f0063c4219">tqsllib.h</a>
 </li>
@@ -122,6 +125,9 @@
 </li>
 <li>tqsl_deleteStationLocation()
 : <a class="el" href="group__Data.html#gaa604a3152385ba6acd0dfac999c89061">tqsllib.h</a>
+</li>
+<li>tqsl_diagFileOpen()
+: <a class="el" href="tqsllib_8h.html#a80b5a43df55252b71ae401b31b18df61">tqsllib.h</a>
 </li>
 <li>tqsl_encodeBase64()
 : <a class="el" href="group__Util.html#ga9af2110f7a46a78a98938558f1e90101">tqsllib.h</a>
@@ -152,6 +158,12 @@
 </li>
 <li>tqsl_freeCertificateList()
 : <a class="el" href="group__CertStuff.html#gaac06d1305873160f18dbefec7f59520f">tqsllib.h</a>
+</li>
+<li>tqsl_freeDeletedCertificateList()
+: <a class="el" href="group__CertStuff.html#gaddcdd39eb1bdeffc027b0bd9763b1877">tqsllib.h</a>
+</li>
+<li>tqsl_freeDeletedLocationList()
+: <a class="el" href="group__Data.html#gaf7be73264f013279c39f2663a9e1ee4d">tqsllib.h</a>
 </li>
 <li>tqsl_freeStationDataEnc()
 : <a class="el" href="group__Data.html#ga3072afdbd5a6b827e4212e50122be66c">tqsllib.h</a>
@@ -273,8 +285,17 @@
 <li>tqsl_getConverterRecordText()
 : <a class="el" href="group__Convert.html#ga1ab568bcb86abf3f2c441fa7094c22b4">tqslconvert.h</a>
 </li>
+<li>tqsl_getDeletedCallsignCertificates()
+: <a class="el" href="group__CertStuff.html#gaf8746cbe1d0f1404a1694d06bd89b9f4">tqsllib.h</a>
+</li>
+<li>tqsl_getDeletedStationLocations()
+: <a class="el" href="group__Data.html#ga4801222f0a7b3dece85d26138bb54380">tqsllib.h</a>
+</li>
 <li>tqsl_getDuplicateRecords()
 : <a class="el" href="group__Convert.html#ga71c8b7cb300d1a3635018ca3978dc5a0">tqslconvert.h</a>
+</li>
+<li>tqsl_getDuplicateRecordsV2()
+: <a class="el" href="group__Convert.html#ga74e37bbffb9dde1fda64ccd532c6b296">tqslconvert.h</a>
 </li>
 <li>tqsl_getDXCCEntity()
 : <a class="el" href="group__Data.html#ga5ce28679cb027b4b100a4bc977387821">tqsllib.h</a>
@@ -350,6 +371,12 @@
 </li>
 <li>tqsl_getLocationFieldListItem()
 : <a class="el" href="group__Data.html#ga69886e0907687e80a20051853675ad21">tqsllib.h</a>
+</li>
+<li>tqsl_getLocationQSODetails()
+: <a class="el" href="group__Data.html#ga8469b68f7e93089a02f5e8d402730fe6">tqsllib.h</a>
+</li>
+<li>tqsl_getLocationStationDetails()
+: <a class="el" href="group__Data.html#ga702eefe61513a76886018580c9a3dc05">tqsllib.h</a>
 </li>
 <li>tqsl_getMaxSignatureSize()
 : <a class="el" href="group__Sign.html#ga3935bec1cfd00bbf2fe0ca32cb65de16">tqsllib.h</a>
@@ -480,11 +507,20 @@
 <li>tqsl_nextStationLocationCapture()
 : <a class="el" href="group__Data.html#ga96aec09f68f1bb438a1f51a2c598ffe9">tqsllib.h</a>
 </li>
+<li>tqsl_openDiagFile()
+: <a class="el" href="tqsllib_8h.html#a38d1db0b5dabe2fb11a4c98247061c23">tqsllib.h</a>
+</li>
 <li>tqsl_prevStationLocationCapture()
 : <a class="el" href="group__Data.html#ga6cea48e8178ff047bbfff075a36a83be">tqsllib.h</a>
 </li>
 <li>tqsl_putDuplicateRecord()
 : <a class="el" href="group__Convert.html#ga51c86d1246de425a5eef5ffa2007e578">tqslconvert.h</a>
+</li>
+<li>tqsl_restoreCallsignCertificate()
+: <a class="el" href="group__CertStuff.html#ga4b3524a6b74482d4bc24e8a0200ff545">tqsllib.h</a>
+</li>
+<li>tqsl_restoreStationLocation()
+: <a class="el" href="group__Data.html#ga8f3b29effb8aa471fb66635121d62acb">tqsllib.h</a>
 </li>
 <li>tqsl_saveStationLocationCapture()
 : <a class="el" href="group__Data.html#ga0ade0f56fa12f5f0ba972e4efdd8a24d">tqsllib.h</a>
@@ -554,6 +590,9 @@
 </li>
 <li>tqsl_verifyDataBlock()
 : <a class="el" href="group__Sign.html#ga02a359f9639df2c03facceeeab71ba9c">tqsllib.h</a>
+</li>
+<li>tqslTrace()
+: <a class="el" href="tqsllib_8h.html#a45519ccfdc657c7b1deeb351aad08da2">tqsllib.h</a>
 </li>
 </ul>
 </div><!-- contents -->

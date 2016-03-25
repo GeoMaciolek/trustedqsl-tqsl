@@ -71,6 +71,8 @@ Functions</h2></td></tr>
 <tr class="separator:ga088885084c39a262ae6b75e9d27ba932"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga71c8b7cb300d1a3635018ca3978dc5a0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga71c8b7cb300d1a3635018ca3978dc5a0">tqsl_getDuplicateRecords</a> (<a class="el" href="group__Convert.html#ga1595f8cfaf7a8d13780595f35c694adc">tQSL_Converter</a> convp, char *key, char *data, int keylen)</td></tr>
 <tr class="separator:ga71c8b7cb300d1a3635018ca3978dc5a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga74e37bbffb9dde1fda64ccd532c6b296"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga74e37bbffb9dde1fda64ccd532c6b296">tqsl_getDuplicateRecordsV2</a> (<a class="el" href="group__Convert.html#ga1595f8cfaf7a8d13780595f35c694adc">tQSL_Converter</a> convp, char *key, char *data, int keylen)</td></tr>
+<tr class="separator:ga74e37bbffb9dde1fda64ccd532c6b296"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga51c86d1246de425a5eef5ffa2007e578"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#ga51c86d1246de425a5eef5ffa2007e578">tqsl_putDuplicateRecord</a> (<a class="el" href="group__Convert.html#ga1595f8cfaf7a8d13780595f35c694adc">tQSL_Converter</a> convp, const char *key, const char *data, int keylen)</td></tr>
 <tr class="separator:ga51c86d1246de425a5eef5ffa2007e578"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:gab6d25b29f9326af5f20c8e5aed163001"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__Convert.html#gab6d25b29f9326af5f20c8e5aed163001">tqsl_setADIFConverterDateFilter</a> (<a class="el" href="group__Convert.html#ga1595f8cfaf7a8d13780595f35c694adc">tQSL_Converter</a> conv, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *start, <a class="el" href="structtQSL__Date.html">tQSL_Date</a> *end)</td></tr>
@@ -397,6 +399,46 @@ Functions</h2></td></tr>
 </div><div class="memdoc">
 <p>Bulk read the duplicate DB records</p>
 <p>This is called to retrieve the QSO records from the dupe database. It returns the key/value pair upon each call. Return -1 for end of file, 0 for success, 1 for errors. </p>
+
+</div>
+</div>
+<a class="anchor" id="ga74e37bbffb9dde1fda64ccd532c6b296"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a> tqsl_getDuplicateRecordsV2 </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="group__Convert.html#ga1595f8cfaf7a8d13780595f35c694adc">tQSL_Converter</a>&#160;</td>
+          <td class="paramname"><em>convp</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>key</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">char *&#160;</td>
+          <td class="paramname"><em>data</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>keylen</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Bulk read the duplicate DB records</p>
+<p>This is called to retrieve the QSO records from the dupe database. It returns the key/value pair upon each call. Return -1 for end of file, 0 for success, 1 for errors. V2 expects a 256 byte buffer for the "data" string. </p>
 
 </div>
 </div>

@@ -183,6 +183,12 @@ Functions</h2></td></tr>
 <tr class="separator:ga0957d97f7b6b480a965075b15a9f9c6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga6cc258a1c714d7018e526a678683f985"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga6cc258a1c714d7018e526a678683f985">tqsl_importPKCS12Base64</a> (const char *base64, const char *p12password, const char *password, int(*pwcb)(char *buf, int bufsiz, void *userdata), int(*cb)(int type, const char *message, void *userdata), void *user)</td></tr>
 <tr class="separator:ga6cc258a1c714d7018e526a678683f985"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaf8746cbe1d0f1404a1694d06bd89b9f4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gaf8746cbe1d0f1404a1694d06bd89b9f4">tqsl_getDeletedCallsignCertificates</a> (char ***calls, int *ncall, const char *filter)</td></tr>
+<tr class="separator:gaf8746cbe1d0f1404a1694d06bd89b9f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:gaddcdd39eb1bdeffc027b0bd9763b1877"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> void <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#gaddcdd39eb1bdeffc027b0bd9763b1877">tqsl_freeDeletedCertificateList</a> (char **list, int nloc)</td></tr>
+<tr class="separator:gaddcdd39eb1bdeffc027b0bd9763b1877"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ga4b3524a6b74482d4bc24e8a0200ff545"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga4b3524a6b74482d4bc24e8a0200ff545">tqsl_restoreCallsignCertificate</a> (const char *callsign)</td></tr>
+<tr class="separator:ga4b3524a6b74482d4bc24e8a0200ff545"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ga2a228c9d2762830e4b4a9ffc7bf3d2b2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="group__CertStuff.html#ga2a228c9d2762830e4b4a9ffc7bf3d2b2">tqsl_deleteCertificate</a> (<a class="el" href="tqsllib_8h.html#aaeaf281235f08de57f0151042a276582">tQSL_Cert</a> cert)</td></tr>
 <tr class="separator:ga2a228c9d2762830e4b4a9ffc7bf3d2b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -378,6 +384,33 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Free the memory used by a certificate list. The allocated list of tQSL_Certs are freed and the pointer array is freed. Once this function is called, the <code>list</code> or the <code>cert</code> should not be used again in any way. </p>
+
+</div>
+</div>
+<a class="anchor" id="gaddcdd39eb1bdeffc027b0bd9763b1877"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> void <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a> tqsl_freeDeletedCertificateList </td>
+          <td>(</td>
+          <td class="paramtype">char **&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>nloc</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Free the list of restorable Callsign Certificates. </p>
 
 </div>
 </div>
@@ -1201,6 +1234,39 @@ Functions</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="gaf8746cbe1d0f1404a1694d06bd89b9f4"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a> tqsl_getDeletedCallsignCertificates </td>
+          <td>(</td>
+          <td class="paramtype">char ***&#160;</td>
+          <td class="paramname"><em>calls</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int *&#160;</td>
+          <td class="paramname"><em>ncall</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>filter</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Get the list of restorable station locations. </p>
+
+</div>
+</div>
 <a class="anchor" id="gaade7cde06b439facb4c1068d73eb9e1a"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1578,6 +1644,23 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Find out if the "certificate" is superceded </p>
+
+</div>
+</div>
+<a class="anchor" id="ga4b3524a6b74482d4bc24e8a0200ff545"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="tqsllib_8h.html#a808e08638be3cba36e36759e5b150de0">DLLEXPORT</a> int <a class="el" href="tqsllib_8h.html#a0c2c4ff92a8b8396df7c47fbc62a18f8">CALLCONVENTION</a> tqsl_restoreCallsignCertificate </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>callsign</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Restore a deleted callsign certificate by callsign. </p>
 
 </div>
 </div>
