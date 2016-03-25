@@ -1,7 +1,7 @@
 TQSL changes
 ============
 
-2.1.1
+2.2.1
 ----------
 When running in batch mode (-x or -q on the command line, don't show the
 upload progress bar, just do the upload.
