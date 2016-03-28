@@ -1,6 +1,14 @@
 TQSL changes
 ============
 
+2.2.2
+----------
+Update compilation flags to avoid relocation error on x86_64.
+
+Correct compiler warning when building on Debian Jessie.
+
+Update copyright messages to 2016.
+
 2.2.1
 ----------
 When running in batch mode (-x or -q on the command line, don't show the

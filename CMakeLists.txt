@@ -2,6 +2,10 @@ cmake_minimum_required (VERSION 2.8 FATAL_ERROR)
 
 project(TrustedQSL)
 
+if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+  ADD_COMPILE_OPTIONS("-fPIC")
+endif( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
+
 if(WIN32)
   set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
   # just windows for now... unix knows how to find libraries better
