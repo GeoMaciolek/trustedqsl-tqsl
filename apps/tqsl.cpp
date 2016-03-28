@@ -3145,7 +3145,7 @@ void MyFrame::UpdateConfigFile() {
 		FILE *configFile = fopen(filename.ToUTF8(), "wb");
 #endif
 		if (!configFile) {
-			tqslTrace("UpdateConfigFile", "Can't open new file %s: %hs", filename.c_str(), strerror(errno));
+			tqslTrace("UpdateConfigFile", "Can't open new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
 			wxMessageBox(wxString::Format(_("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
 			return;
 		}
@@ -3153,7 +3153,7 @@ void MyFrame::UpdateConfigFile() {
 		while (left > 0) {
 			size_t written = fwrite(newconfig, 1, left, configFile);
 			if (written == 0) {
-				tqslTrace("UpdateConfigFile", "Can't write new file %s: %hs", filename.c_str(), strerror(errno));
+				tqslTrace("UpdateConfigFile", "Can't write new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
 				wxMessageBox(wxString::Format(_("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
 				if (configFile) fclose(configFile);
 				return;
@@ -3161,7 +3161,7 @@ void MyFrame::UpdateConfigFile() {
 			left -= written;
 		}
 		if (fclose(configFile)) {
-			tqslTrace("UpdateConfigFile", "Error writing new file %s: %hs", filename.c_str(), strerror(errno));
+			tqslTrace("UpdateConfigFile", "Error writing new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
 			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
 			return;
 		}
