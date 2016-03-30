@@ -4680,6 +4680,10 @@ QSLApp::OnInit() {
 			break;
 	}
 
+#ifdef __WXGTK__
+	// Add locale search path for where we install language files
+	locale->AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
+#endif
 	if (wxLocale::IsAvailable(lang)) {
 		locale = new wxLocale(lang);
 	} else {
@@ -6006,8 +6010,8 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 	wxConfig::Get()->Write(wxT("Language"), static_cast<int>(langIds[lng]));
 	wxConfig::Get()->Flush();
 
-	if (wxLocale::IsAvailable(lng)) {
-		locale = new wxLocale(lng);
+	if (wxLocale::IsAvailable(langIds[lng])) {
+		locale = new wxLocale(langIds[lng]);
 	} else {
 		wxLogError(wxT("This language is not supported by the system."));
 		locale = new wxLocale(wxLANGUAGE_DEFAULT);

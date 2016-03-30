@@ -3,6 +3,9 @@ TQSL changes
 
 2.2.2
 ----------
+Correct language switching on Linux systems to not display spurious
+error messages.
+
 Update compilation flags to avoid relocation error on x86_64.
 
 Correct compiler warning when building on Debian Jessie.
