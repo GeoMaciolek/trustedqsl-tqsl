@@ -1029,7 +1029,9 @@ MyFrame::DoUpdateCheck(bool silent, bool noGUI) {
 	delete updateLocker;
 	if (!noGUI) {
 		wxString val = logwin->GetValue();
-		val.Replace(_("Checking for TQSL updates...\n"), wxT(""));
+		wxString chk(_("Checking for TQSL updates..."));
+		val.Replace(chk + wxT("\n"), wxT(""));
+		val.Replace(chk, wxT(""));
 		logwin->SetValue(val);		// Clear the checking message
 		notebook->SetSelection(0);
 		// Refresh the cert tree in case any new info on expires/supercedes
