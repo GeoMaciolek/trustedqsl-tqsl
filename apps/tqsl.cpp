@@ -5754,7 +5754,13 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 			}
 			if (tQSL_Error == TQSL_OPERATOR_ABORT)
 				return;
+			// Unable to open the private key
+			if (tQSL_Error == TQSL_CUSTOM_ERROR && (tQSL_Errno == ENOENT || tQSL_Errno == EPERM)) {
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, 
+					"Can't open the private key file for %s: %s", call, strerror(tQSL_Errno));
+			}
 			wxLogError(getLocalizedErrorString());
+			return;
 		}
 	} while (terr);
 	// When setting the password, always use UTF8.
