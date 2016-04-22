@@ -9,6 +9,8 @@ message with details on the error and abort saving the certificate.
 
 Update Japanese translations with those supplied by Aki, JL3OXR.
 
+Update Italian translations with those supplied by Salvatore, I4FYV.
+
 Correct language switching on Linux systems to not display spurious
 error messages.
 
