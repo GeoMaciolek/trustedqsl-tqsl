@@ -2036,14 +2036,16 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 						if ((rval = tqsl_beginSigning(cert, const_cast<char *>(unipwd), NULL, cert)) == 0)
 							break;
-					}
-					if (tQSL_Error == TQSL_PASSWORD_ERROR) {
 						wxLogMessage(_("Password error"));
 						if (password)
 							free(reinterpret_cast<void *>(const_cast<char *>(password)));
 						password = NULL;
 					}
 				} while (tQSL_Error == TQSL_PASSWORD_ERROR);
+				if (tQSL_Error == TQSL_CUSTOM_ERROR && (tQSL_Errno == ENOENT || tQSL_Errno == EPERM)) {
+					snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+						"Can't open the private key file for %s: %s", callsign, strerror(tQSL_Errno));
+				}
 				check_tqsl_error(rval);
 				if (this->IsQuiet()) {
 					this->Show(false);
@@ -5526,6 +5528,10 @@ void MyFrame::CRQWizard(wxCommandEvent& event) {
 				call = &buf;
 			while (tqsl_beginSigning(req.signer, 0, getPassword, call)) {
 				if (tQSL_Error != TQSL_PASSWORD_ERROR) {
+					if (tQSL_Error == TQSL_CUSTOM_ERROR && (tQSL_Errno == ENOENT || tQSL_Errno == EPERM)) {
+						snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+							"Can't open the private key file for %s: %s", static_cast<char *>(call), strerror(tQSL_Errno));
+					}
 					wxLogError(getLocalizedErrorString());
 					deleteRequest(req.callSign, req.dxccEntity);
 					return;
@@ -5756,7 +5762,7 @@ void MyFrame::OnCertExport(wxCommandEvent& WXUNUSED(event)) {
 				return;
 			// Unable to open the private key
 			if (tQSL_Error == TQSL_CUSTOM_ERROR && (tQSL_Errno == ENOENT || tQSL_Errno == EPERM)) {
-				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, 
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
 					"Can't open the private key file for %s: %s", call, strerror(tQSL_Errno));
 			}
 			wxLogError(getLocalizedErrorString());
@@ -6092,6 +6098,8 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 	}
 
 	int keyonly;
+	char callsign[40];
+
 	tqsl_getCertificateKeyOnly(cert, &keyonly);
 	wxString blob = wxT("");
 	for (int i = 0; i < static_cast<int>(sizeof labels / sizeof labels[0]); i++) {
@@ -6144,6 +6152,7 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
 				break;
                         case 6:
 				tqsl_getCertificateCallSign(cert, buf, sizeof buf);
+				strncpy(callsign, buf, sizeof callsign);
 				break;
                         case 7:
 				tqsl_getCertificateDXCCEntity(cert, &dxcc);
@@ -6161,6 +6170,10 @@ CertPropDial::CertPropDial(tQSL_Cert cert, wxWindow *parent)
                         case 10:
 				switch (tqsl_getCertificatePrivateKeyType(cert)) {
                                         case TQSL_PK_TYPE_ERR:
+						if (tQSL_Error == TQSL_CUSTOM_ERROR && (tQSL_Errno == ENOENT || tQSL_Errno == EPERM)) {
+							snprintf(tQSL_CustomError, sizeof tQSL_CustomError,
+								"Can't open the private key file for %s: %s", callsign, strerror(tQSL_Errno));
+						}
 						wxMessageBox(getLocalizedErrorString(), _("Error"), wxOK | wxICON_WARNING, this);
 						strncpy(buf, __("<ERROR>"), sizeof buf);
 						break;

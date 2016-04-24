@@ -3,6 +3,11 @@ TQSL changes
 
 2.2.2
 ----------
+Provide a more informative error message when the private key for the
+selected callsign certificate can't be read when displaying certificate
+properties, signing a log, and using a certificate for signing another
+callsign certificate request.
+
 Fix TQSL infinite loop when attempting to export a callsign certificate
 when the private key cannot be read. Instead of hanging, emit an error
 message with details on the error and abort saving the certificate.
