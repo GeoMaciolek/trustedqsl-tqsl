@@ -144,7 +144,7 @@ static valid_list valid_satellites;
 
 static int
 init_valid_lists() {
-	tqslTrace("init_valid_lists");
+	tqslTrace("init_valid_lists", NULL);
 	if (valid_bands.size() > 0)
 		return 0;
 	if (tqsl_init())
@@ -457,7 +457,7 @@ QSODataDialog::OnFieldChanged(wxCommandEvent& event) {
 
 bool
 QSODataDialog::TransferDataFromWindow() {
-	tqslTrace("QSODataDialog::TransferDataFromWindow");
+	tqslTrace("QSODataDialog::TransferDataFromWindow", NULL);
 	rec._call.Trim(FALSE).Trim(TRUE);
 	if (!wxDialog::TransferDataFromWindow())
 		return false;
@@ -550,7 +550,7 @@ QSODataDialog::TransferDataFromWindow() {
 
 bool
 QSODataDialog::TransferDataToWindow() {
-	tqslTrace("QSODataDialog::TransferDataToWindow");
+	tqslTrace("QSODataDialog::TransferDataToWindow", NULL);
 	valid_list::iterator it;
 	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
 		_mode = distance(valid_modes.begin(), it);
@@ -659,7 +659,7 @@ QSODataDialog::WriteQSOFile(QSORecordList& recs, const char *fname) {
 
 void
 QSODataDialog::OnOk(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnOk");
+	tqslTrace("QSODataDialog::OnOk", NULL);
 	if (!Validate())
 		return;
 	_isend = true;
@@ -677,13 +677,13 @@ QSODataDialog::OnOk(wxCommandEvent&) {
 
 void
 QSODataDialog::OnCancel(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnCancel");
+	tqslTrace("QSODataDialog::OnCancel", NULL);
 	EndModal(wxID_CANCEL);
 }
 
 void
 QSODataDialog::OnHelp(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnHelp");
+	tqslTrace("QSODataDialog::OnHelp", NULL);
 	if (_help)
 		_help->Display(wxT("qsodata.htm"));
 }
@@ -715,7 +715,7 @@ QSODataDialog::SetRecno(int new_recno) {
 
 void
 QSODataDialog::OnRecDown(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecDown");
+	tqslTrace("QSODataDialog::OnRecDown", NULL);
 	if (_reclist == 0)
 		return;
 	if (_recno == _newrec) { 		// Backing up from a record being added
@@ -730,13 +730,13 @@ QSODataDialog::OnRecDown(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecUp(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecUp");
+	tqslTrace("QSODataDialog::OnRecUp", NULL);
 	SetRecno(_recno + 1);
 }
 
 void
 QSODataDialog::OnRecBottom(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecBottom");
+	tqslTrace("QSODataDialog::OnRecBottom", NULL);
 	if (_reclist == 0)
 		return;
 	if (_recno == _newrec) { 		// Backing up from a record being added
@@ -751,7 +751,7 @@ QSODataDialog::OnRecBottom(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecTop(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecTop");
+	tqslTrace("QSODataDialog::OnRecTop", NULL);
 	if (_reclist == 0)
 		return;
 	if (_recno == _newrec) { 		// Backing up from a record being added
@@ -771,7 +771,7 @@ QSODataDialog::OnRecTop(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecNew(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecNew");
+	tqslTrace("QSODataDialog::OnRecNew", NULL);
 	if (_reclist == 0)
 		return;
 	SetRecno(_reclist->size()+1);
@@ -779,7 +779,7 @@ QSODataDialog::OnRecNew(wxCommandEvent&) {
 
 void
 QSODataDialog::OnRecDelete(wxCommandEvent&) {
-	tqslTrace("QSODataDialog::OnRecDelete");
+	tqslTrace("QSODataDialog::OnRecDelete", NULL);
 	if (_reclist == 0)
 		return;
 	_reclist->erase(_reclist->begin() + _recno - 1);
@@ -794,7 +794,7 @@ QSODataDialog::OnRecDelete(wxCommandEvent&) {
 
 void
 QSODataDialog::UpdateControls() {
-	tqslTrace("QSODataDialog::UpdateControls");
+	tqslTrace("QSODataDialog::UpdateControls", NULL);
 	if (_reclist == 0)
 		return;
 	_recdown_ctrl->Enable(_recno > 1);

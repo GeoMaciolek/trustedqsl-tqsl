@@ -34,7 +34,7 @@ _ent_cmp(const void *a, const void *b) {
 
 bool
 DXCC::init() {
-	tqslTrace("DXCC::init");
+	tqslTrace("DXCC::init", NULL);
 //	if (!_init) {
 		if (tqsl_getNumDXCCEntity(&num_entities))
 			return false;
@@ -51,7 +51,7 @@ DXCC::init() {
 
 bool
 DXCC::getFirst() {
-	tqslTrace("DXCC::getFirst");
+	tqslTrace("DXCC::getFirst", NULL);
 	if (!init())
 		return false;
 	_index = -1;

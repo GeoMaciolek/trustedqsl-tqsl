@@ -51,13 +51,13 @@ END_EVENT_TABLE()
 
 void
 ExtWizard_Page::check_valid(TQ_WXTEXTEVENT&) {
-	tqslTrace("ExtWizard_Page::check_valid");
+	tqslTrace("ExtWizard_Page::check_valid", NULL);
 	validate();
 }
 
 void
 ExtWizard_Page::AdjustPage(wxBoxSizer *sizer, const wxString& helpfile) {
-	tqslTrace("ExtWizard_Page::AdjustPage");
+	tqslTrace("ExtWizard_Page::AdjustPage", NULL);
 	_helpfile = helpfile;
 
 	if (_helpfile != wxT("") && _parent->HaveHelp()) {

@@ -1331,7 +1331,7 @@ DLLEXPORT const char* CALLCONVENTION tqsl_getGABBItCONTACTData(tQSL_Cert cert, t
  *
  * \li \c name is the name of the function being executed
  */
-DLLEXPORT void CALLCONVENTION tqslTrace(const char *name, const char *format = NULL, ...);
+DLLEXPORT void CALLCONVENTION tqslTrace(const char *name, const char *format, ...);
 /** Close the diagnostic trace file (if it is open)
  */
 DLLEXPORT void CALLCONVENTION tqsl_closeDiagFile(void);

@@ -140,7 +140,7 @@ static wxString pw_helpfile;
 
 static int
 GetNewPassword(char *buf, int bufsiz, void *) {
-	tqslTrace("GetNewPassword");
+	tqslTrace("GetNewPassword", NULL);
 	wxString msg = _("Enter a password for this callsign certificate.");
 		msg += wxT("\n\n");
 		msg += _("If you are using a computer system that is "
@@ -302,7 +302,7 @@ LCW_FinalPage::LCW_FinalPage(LoadCertWiz *parent) : LCW_Page(parent) {
 
 void
 LCW_FinalPage::refresh() {
-	tqslTrace("LCW_FinalPage::refresh");
+	tqslTrace("LCW_FinalPage::refresh", NULL);
 	const notifyData *nd = (reinterpret_cast<LoadCertWiz *>(_parent))->GetNotifyData();
 	if (nd)
 		tc_status->SetValue(nd->Message());
@@ -327,7 +327,7 @@ LCW_P12PasswordPage::LCW_P12PasswordPage(LoadCertWiz *parent) : LCW_Page(parent)
 
 bool
 LCW_P12PasswordPage::TransferDataFromWindow() {
-	tqslTrace("LCW_P12PasswordPage::TransferDataFromWindow");
+	tqslTrace("LCW_P12PasswordPage::TransferDataFromWindow", NULL);
 	wxString _pw = _pwin->GetValue();
 	pw_help = Parent()->GetHelp();
 	pw_helpfile = wxT("lcf2.htm");

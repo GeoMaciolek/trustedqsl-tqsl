@@ -21,7 +21,7 @@ TQSLValidator::TQSLValidator(void *objp) {
 
 bool
 TQSLValidator::Copy(const TQSLValidator& val) {
-	tqslTrace("TQSLValidator::Copy");
+	tqslTrace("TQSLValidator::Copy", NULL);
 	wxValidator::Copy(val);
 	_objp = val._objp;
 	_type = val._type;
@@ -30,7 +30,7 @@ TQSLValidator::Copy(const TQSLValidator& val) {
 
 bool
 TQSLValidator::TransferFromWindow() {
-	tqslTrace("TQSLValidator::TransferFromWindow");
+	tqslTrace("TQSLValidator::TransferFromWindow", NULL);
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))
@@ -45,7 +45,7 @@ TQSLValidator::TransferFromWindow() {
 
 bool
 TQSLValidator::TransferToWindow() {
-	tqslTrace("TQSLValidator::TransferToWindow");
+	tqslTrace("TQSLValidator::TransferToWindow", NULL);
 	if (!m_validatorWindow)
 		return FALSE;
 	if (!m_validatorWindow->IsKindOf(CLASSINFO(wxTextCtrl)))

@@ -118,7 +118,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 
 void
 CRQ_ProviderPage::DoUpdateInfo() {
-	tqslTrace("CRQ_ProviderPage::DoUpdateInfo");
+	tqslTrace("CRQ_ProviderPage::DoUpdateInfo", NULL);
 	int sel = tc_provider->GetSelection();
 	if (sel >= 0) {
 		long idx = (long)(tc_provider->GetClientData(sel));
@@ -139,7 +139,7 @@ CRQ_ProviderPage::DoUpdateInfo() {
 
 void
 CRQ_ProviderPage::UpdateInfo(wxCommandEvent&) {
-	tqslTrace("CRQ_ProviderPage::UpdateInfo");
+	tqslTrace("CRQ_ProviderPage::UpdateInfo", NULL);
 	DoUpdateInfo();
 }
 
@@ -503,7 +503,7 @@ END_EVENT_TABLE()
 
 
 void CRQ_SignPage::CertSelChanged(wxTreeEvent& event) {
-	tqslTrace("CRQ_SignPage::CertSelChanged");
+	tqslTrace("CRQ_SignPage::CertSelChanged", NULL);
 	if (cert_tree->GetItemData(event.GetItem()))
 		choice->SetSelection(1);
 	wxCommandEvent dummy;
@@ -562,7 +562,7 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent)
 
 void
 CRQ_SignPage::refresh() {
-	tqslTrace("CRQ_SignPage::refresh");
+	tqslTrace("CRQ_SignPage::refresh", NULL);
 	if (cert_tree->Build(0, &(Parent()->provider)) > 0)
 		choice->SetSelection(1);
 	else
@@ -579,7 +579,7 @@ CRQ_ProviderPage::TransferDataFromWindow() {
 
 const char *
 CRQ_IntroPage::validate() {
-	tqslTrace("CRQ_IntroPage::validate");
+	tqslTrace("CRQ_IntroPage::validate", NULL);
 	tQSL_Cert *certlist = 0;
 	int ncert = 0;
 	if (!initialized)
@@ -710,7 +710,7 @@ CRQ_IntroPage::validate() {
 
 bool
 CRQ_IntroPage::TransferDataFromWindow() {
-	tqslTrace("CRQ_IntroPage::TransferDataFromWindow");
+	tqslTrace("CRQ_IntroPage::TransferDataFromWindow", NULL);
 	bool ok;
         validate();
         if (valMsg.Len() == 0) {
@@ -771,7 +771,7 @@ cleanString(wxString &str) {
 
 const char *
 CRQ_NamePage::validate() {
-	tqslTrace("CRQ_NamePage::validate()");
+	tqslTrace("CRQ_NamePage::validate", NULL);
 	if (!initialized)
 		return 0;
 	valMsg = wxT("");
@@ -791,7 +791,7 @@ CRQ_NamePage::validate() {
 
 bool
 CRQ_NamePage::TransferDataFromWindow() {
-	tqslTrace("CRQ_NamePage::TransferDataFromWindow");
+	tqslTrace("CRQ_NamePage::TransferDataFromWindow", NULL);
 	Parent()->name = tc_name->GetValue();
 	Parent()->addr1 = tc_addr1->GetValue();
 	Parent()->addr2 = tc_addr2->GetValue();
@@ -836,7 +836,7 @@ CRQ_NamePage::TransferDataFromWindow() {
 
 const char *
 CRQ_EmailPage::validate() {
-	tqslTrace("CRQ_EmailPage::validate()");
+	tqslTrace("CRQ_EmailPage::validate()", NULL);
 
 	if (!initialized)
 		return 0;
@@ -853,7 +853,7 @@ CRQ_EmailPage::validate() {
 
 bool
 CRQ_EmailPage::TransferDataFromWindow() {
-	tqslTrace("CRQ_EmailPage::TransferDataFromWindow");
+	tqslTrace("CRQ_EmailPage::TransferDataFromWindow", NULL);
 	bool ok;
         validate();
         if (valMsg.Len() == 0) {
@@ -872,7 +872,7 @@ CRQ_EmailPage::TransferDataFromWindow() {
 
 const char *
 CRQ_PasswordPage::validate() {
-	tqslTrace("CRQ_PasswordPage::validate");
+	tqslTrace("CRQ_PasswordPage::validate", NULL);
 
 	if (!initialized)
 		return 0;
@@ -888,7 +888,7 @@ CRQ_PasswordPage::validate() {
 
 bool
 CRQ_PasswordPage::TransferDataFromWindow() {
-	tqslTrace("CRQ_PasswordPage::TransferDataFromWindow");
+	tqslTrace("CRQ_PasswordPage::TransferDataFromWindow", NULL);
 	bool ok;
         validate();
         if (valMsg.Len() == 0) {
@@ -903,7 +903,7 @@ CRQ_PasswordPage::TransferDataFromWindow() {
 
 const char *
 CRQ_SignPage::validate() {
-	tqslTrace("CRQ_SignPage::validate");
+	tqslTrace("CRQ_SignPage::validate", NULL);
 	bool error = false;
 
 	if (!initialized)
@@ -942,7 +942,7 @@ CRQ_SignPage::validate() {
 
 bool
 CRQ_SignPage::TransferDataFromWindow() {
-	tqslTrace("CRQ_SignPage::TransferDataFromWindow");
+	tqslTrace("CRQ_SignPage::TransferDataFromWindow", NULL);
 	bool ok;
         validate();
         if (valMsg.Len() == 0) {

@@ -114,14 +114,14 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 void
 LocTree::OnItemActivated(wxTreeEvent& event) {
-	tqslTrace("LocTree::OnItemActivated");
+	tqslTrace("LocTree::OnItemActivated", NULL);
 	wxTreeItemId id = event.GetItem();
 	displayLocProperties(reinterpret_cast<LocTreeItemData *>(GetItemData(id)), this);
 }
 
 void
 LocTree::OnRightDown(wxMouseEvent& event) {
-	tqslTrace("LocTree::OnRightDown");
+	tqslTrace("LocTree::OnRightDown", NULL);
 	if (!useContextMenu)
 		return;
 	wxTreeItemId id = HitTest(event.GetPosition());

@@ -56,7 +56,7 @@ check_adif(tQSL_ADIF adif) {
 
 static void
 free_adif(TQSL_ADIF *adif) {
-	tqslTrace("free_adif");
+	tqslTrace("free_adif", NULL);
 	if (adif && adif->sentinel == 0x3345) {
 		adif->sentinel = 0;
 		if (adif->filename)

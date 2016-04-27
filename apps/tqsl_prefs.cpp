@@ -97,7 +97,7 @@ Preferences::Preferences(wxWindow *parent, wxHtmlHelpController *help)
 }
 
 void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("Preferences::OnOK");
+	tqslTrace("Preferences::OnOK", NULL);
 #if defined(ENABLE_ONLINE_PREFS)
 	if (!onlinePrefs->TransferDataFromWindow())
 		return;
@@ -111,21 +111,21 @@ void Preferences::OnOK(wxCommandEvent& WXUNUSED(event)) {
 }
 
 void Preferences::OnCancel(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("Preferences::OnOK");
+	tqslTrace("Preferences::OnOK", NULL);
 
 	(reinterpret_cast<MyFrame *>(GetParent()))->file_menu->Enable(tm_f_preferences, true);
 	Destroy();
 }
 
 void Preferences::OnClose(wxCloseEvent& WXUNUSED(event)) {
-	tqslTrace("Preferences::OnClose");
+	tqslTrace("Preferences::OnClose", NULL);
 
 	(reinterpret_cast<MyFrame *>(GetParent()))->file_menu->Enable(tm_f_preferences, true);
 	Destroy();
 }
 
 void Preferences::OnHelp(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("Preferences::OnHelp");
+	tqslTrace("Preferences::OnHelp", NULL);
 	if (_help) {
 		wxString file(wxT("pref.htm"));
 		int idx = notebook->GetSelection();
@@ -175,7 +175,7 @@ ModeMap::ModeMap(wxWindow *parent) : PrefsPanel(parent, wxT("pref-adi.htm")) {
 }
 
 void ModeMap::SetModeList() {
-	tqslTrace("ModeMap::SetModeList");
+	tqslTrace("ModeMap::SetModeList", NULL);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	wxString key, value;
 	long cookie;
@@ -199,7 +199,7 @@ void ModeMap::SetModeList() {
 }
 
 void ModeMap::OnDelete(wxCommandEvent &) {
-	tqslTrace("ModeMap::OnDelete");
+	tqslTrace("ModeMap::OnDelete", NULL);
 	int sel = map->GetSelection();
 	if (sel >= 0) {
 		wxString* keystr = reinterpret_cast<wxString*>(map->GetClientData(sel));
@@ -214,7 +214,7 @@ void ModeMap::OnDelete(wxCommandEvent &) {
 }
 
 void ModeMap::OnAdd(wxCommandEvent &) {
-	tqslTrace("ModeMap::OnAdd");
+	tqslTrace("ModeMap::OnAdd", NULL);
 	AddMode add_dial(this);
 	int val = add_dial.ShowModal();
 	if (val == ID_OK_BUT && add_dial.key != wxT("") && add_dial.value != wxT("")) {
@@ -227,7 +227,7 @@ void ModeMap::OnAdd(wxCommandEvent &) {
 }
 
 bool ModeMap::TransferDataFromWindow() {
-	tqslTrace("ModeMap::TransferDataFromWindow");
+	tqslTrace("ModeMap::TransferDataFromWindow", NULL);
 	return true;
 }
 
@@ -289,7 +289,7 @@ AddMode::AddMode(wxWindow *parent) : wxDialog(parent, -1, wxString(_("Add ADIF m
 }
 
 void AddMode::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("AddMode::OnOK");
+	tqslTrace("AddMode::OnOK", NULL);
 	if (!TransferDataFromWindow()) return;
 	key = adif->GetValue().Trim(true).Trim(false).MakeUpper();
 	int sel = modelist->GetSelection();
@@ -299,7 +299,7 @@ void AddMode::OnOK(wxCommandEvent& WXUNUSED(event)) {
 }
 
 bool AddMode::TransferDataFromWindow() {
-	tqslTrace("AddMode::TransferDataFromWindow");
+	tqslTrace("AddMode::TransferDataFromWindow", NULL);
 	key = adif->GetValue().Trim(true).Trim(false).MakeUpper();
 	if (key.IsEmpty()) return true;
 	if (modelist->FindString(key) != wxNOT_FOUND) {	// This duplicates an existing mode
@@ -416,7 +416,7 @@ fix_ext_str(const wxString& oldexts) {
 }
 
 bool FilePrefs::TransferDataFromWindow() {
-	tqslTrace("FilePrefs::TransferDataFromWindow");
+	tqslTrace("FilePrefs::TransferDataFromWindow", NULL);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	config->SetPath(wxT("/"));
 	config->Write(wxT("CabrilloFiles"), fix_ext_str(cabrillo->GetValue()));
@@ -545,7 +545,7 @@ OnlinePrefs::OnlinePrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.ht
 }
 
 void OnlinePrefs::ShowHide() {
-	tqslTrace("OnlinePrefs::ShowHide");
+	tqslTrace("OnlinePrefs::ShowHide", NULL);
 	defaults = useDefaults->GetValue();
 	for (int i = 1; i < 16; i++) GetSizer()->Show(i, !defaults); //16 items in sizer; hide all but checkbox
 
@@ -557,7 +557,7 @@ void OnlinePrefs::ShowHide() {
 }
 
 bool OnlinePrefs::TransferDataFromWindow() {
-	tqslTrace("OnlinePrefs::TransferDataFromWindow");
+	tqslTrace("OnlinePrefs::TransferDataFromWindow", NULL);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
 	if (defaults) {
@@ -655,7 +655,7 @@ ProxyPrefs::ProxyPrefs(wxWindow *parent) : PrefsPanel(parent, wxT("pref-opt.htm"
 }
 
 void ProxyPrefs::ShowHide() {
-	tqslTrace("ProxyPrefs::ShowHide");
+	tqslTrace("ProxyPrefs::ShowHide", NULL);
 
 	enabled = proxyEnabled->GetValue();
 	proxyHost->Enable(enabled);
@@ -671,7 +671,7 @@ void ProxyPrefs::ShowHide() {
 }
 
 bool ProxyPrefs::TransferDataFromWindow() {
-	tqslTrace("ProxyPrefs::TransferDataFromWindow");
+	tqslTrace("ProxyPrefs::TransferDataFromWindow", NULL);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 
 	config->SetPath(wxT("/Proxy"));
@@ -746,7 +746,7 @@ void ContestMap::Buttons() {
 }
 
 void ContestMap::SetContestList() {
-	tqslTrace("ContestMap::SetContestList");
+	tqslTrace("ContestMap::SetContestList", NULL);
 	wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
 	wxString key, value;
 	long cookie;
@@ -782,12 +782,12 @@ void ContestMap::SetContestList() {
 }
 
 bool ContestMap::TransferDataFromWindow() {
-	tqslTrace("ContestMap::TransferDataFromWindow");
+	tqslTrace("ContestMap::TransferDataFromWindow", NULL);
 	return true;
 }
 
 void ContestMap::OnDelete(wxCommandEvent &) {
-	tqslTrace("ContestMap::OnDelete");
+	tqslTrace("ContestMap::OnDelete", NULL);
 	int row = grid->GetCursorRow();
 	if (row >= 0) {
 		wxString contest = grid->GetCellValue(row, 0);
@@ -802,7 +802,7 @@ void ContestMap::OnDelete(wxCommandEvent &) {
 }
 
 void ContestMap::OnAdd(wxCommandEvent &) {
-	tqslTrace("ContestMap::OnAdd");
+	tqslTrace("ContestMap::OnAdd", NULL);
 	EditContest dial(this, wxT("Add"), wxT(""), 0, TQSL_DEF_CABRILLO_MAP_FIELD);
 	if (dial.ShowModal() == ID_OK_BUT) {
 		wxConfig *config = reinterpret_cast<wxConfig *>(wxConfig::Get());
@@ -814,7 +814,7 @@ void ContestMap::OnAdd(wxCommandEvent &) {
 }
 
 void ContestMap::OnEdit(wxCommandEvent &) {
-	tqslTrace("ContestMap::OnEdit");
+	tqslTrace("ContestMap::OnEdit", NULL);
 	wxString contest;
 	int contest_type = 0, callsign_field = TQSL_DEF_CABRILLO_MAP_FIELD;
 	int row = grid->GetCursorRow();
@@ -899,13 +899,13 @@ EditContest::EditContest(wxWindow *parent, wxString ctype, wxString _contest,
 }
 
 void EditContest::OnOK(wxCommandEvent& WXUNUSED(event)) {
-	tqslTrace("EditContest::OnOK");
+	tqslTrace("EditContest::OnOK", NULL);
 	if (TransferDataFromWindow())
 		EndModal(ID_OK_BUT);
 }
 
 bool EditContest::TransferDataFromWindow() {
-	tqslTrace("EditContest::TransferDataFromWindow");
+	tqslTrace("EditContest::TransferDataFromWindow", NULL);
 	contest = name->GetValue();
 	contest.Trim(false);
 	contest.Trim(true);

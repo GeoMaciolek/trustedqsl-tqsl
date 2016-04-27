@@ -335,7 +335,7 @@ tqsl_load_xml_config() {
 	XMLElement default_config;
 	XMLElement user_config;
 	string default_path;
-	tqslTrace("tqsl_load_xml_config");
+	tqslTrace("tqsl_load_xml_config", NULL);
 
 #ifdef _WIN32
 	HKEY hkey;
@@ -449,7 +449,7 @@ tqsl_load_provider_list(vector<TQSL_PROVIDER> &plist) {
 	XMLElement providers;
 	if (tqsl_get_xml_config_section("providers", providers))
 		return 1;
-	tqslTrace("tqsl_load_provider_list");
+	tqslTrace("tqsl_load_provider_list", NULL);
 	XMLElement provider;
 	bool gotit = providers.getFirstElement("provider", provider);
 	while (gotit) {
@@ -608,7 +608,7 @@ static int
 init_dxcc() {
 	if (DXCCMap.size() > 0)
 		return 0;
-	tqslTrace("init_dxcc");
+	tqslTrace("init_dxcc", NULL);
 	XMLElement dxcc;
 	if (tqsl_get_xml_config_section("dxcc", dxcc)) {
 		tqslTrace("init_dxcc", "Error %d getting dxcc config section", tQSL_Error);
@@ -635,7 +635,7 @@ static int
 init_band() {
 	if (BandList.size() > 0)
 		return 0;
-	tqslTrace("init_band");
+	tqslTrace("init_band", NULL);
 	XMLElement bands;
 	if (tqsl_get_xml_config_section("bands", bands)) {
 		tqslTrace("init_band", "Error %d getting bands", tQSL_Error);
@@ -678,7 +678,7 @@ tqsl_getNumBand(int *number) {
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
-	tqslTrace("tqsl_getNumBand");
+	tqslTrace("tqsl_getNumBand", NULL);
 	if (init_band()) {
 		tqslTrace("tqsl_getNumBand", "init_band error=%d", tQSL_Error);
 		return 1;
@@ -1011,7 +1011,7 @@ init_cabrillo_map() {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_clearCabrilloMap() {
-	tqslTrace("tqsl_clearCabrilloMap");
+	tqslTrace("tqsl_clearCabrilloMap", NULL);
 	tqsl_cabrillo_user_map.clear();
 	return 0;
 }
@@ -2254,7 +2254,7 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 	loc->data_errors[0] = '\0';
 	int bad_ituz = 0;
 	int bad_cqz = 0;
-	tqslTrace("tqsl_load_loc");
+	tqslTrace("tqsl_load_loc", NULL);
 	while(1) {
 		TQSL_LOCATION_PAGE& page = loc->pagelist[loc->page-1];
 		for (int fidx = 0; fidx < static_cast<int>(page.fieldlist.size()); fidx++) {
@@ -2382,7 +2382,7 @@ tqsl_mergeStationLocations(const char *locdata) {
 	XMLElement old_top_el;
 	vector<string> locnames;
 
-	tqslTrace("tqsl_mergeStationLocations");
+	tqslTrace("tqsl_mergeStationLocations", NULL);
 	// Load the current station data
 	if (tqsl_load_station_data(old_top_el)) {
 		tqslTrace("tqsl_mergeStationLocations", "error loading station data");

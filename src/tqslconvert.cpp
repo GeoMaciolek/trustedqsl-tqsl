@@ -200,7 +200,7 @@ static tqsl_adifFieldDefinitions adif_qso_record_fields[] = {
 
 DLLEXPORT int CALLCONVENTION
 tqsl_beginConverter(tQSL_Converter *convp) {
-	tqslTrace("tqsl_beginConverter");
+	tqslTrace("tqsl_beginConverter", NULL);
 	if (tqsl_init())
 		return 0;
 	if (!convp) {
@@ -216,7 +216,7 @@ tqsl_beginConverter(tQSL_Converter *convp) {
 DLLEXPORT int CALLCONVENTION
 tqsl_beginADIFConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *certs,
 	int ncerts, tQSL_Location loc) {
-	tqslTrace("tqsl_beginADIFConverter");
+	tqslTrace("tqsl_beginADIFConverter", NULL);
 	if (tqsl_init())
 		return 0;
 	if (!convp || !filename) {
@@ -246,7 +246,7 @@ tqsl_beginADIFConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *
 DLLEXPORT int CALLCONVENTION
 tqsl_beginCabrilloConverter(tQSL_Converter *convp, const char *filename, tQSL_Cert *certs,
 	int ncerts, tQSL_Location loc) {
-	tqslTrace("tqsl_beginCabrilloConverter");
+	tqslTrace("tqsl_beginCabrilloConverter", NULL);
 
 	if (tqsl_init())
 		return 0;
@@ -276,7 +276,7 @@ tqsl_beginCabrilloConverter(tQSL_Converter *convp, const char *filename, tQSL_Ce
 
 DLLEXPORT int CALLCONVENTION
 tqsl_endConverter(tQSL_Converter *convp) {
-	tqslTrace("tqsl_endConverter");
+	tqslTrace("tqsl_endConverter", NULL);
 
 	if (!convp || CAST_TQSL_CONVERTER(*convp) == 0)
 		return 0;
@@ -374,7 +374,7 @@ tqsl_infer_band(const char* infreq) {
 DLLEXPORT int CALLCONVENTION
 tqsl_setADIFConverterDateFilter(tQSL_Converter convp, tQSL_Date *start, tQSL_Date *end) {
 	TQSL_CONVERTER *conv;
-	tqslTrace("tqsl_setADIFConverterDateFilter");
+	tqslTrace("tqsl_setADIFConverterDateFilter", NULL);
 
 	if (!(conv = check_conv(convp)))
 		return 1;
@@ -1301,7 +1301,7 @@ DLLEXPORT int CALLCONVENTION
 tqsl_converterRollBack(tQSL_Converter convp) {
 	TQSL_CONVERTER *conv;
 
-	tqslTrace("tqsl_converterRollBack");
+	tqslTrace("tqsl_converterRollBack", NULL);
 	if (!(conv = check_conv(convp)))
 		return 1;
 	if (!conv->seendb)
@@ -1316,7 +1316,7 @@ DLLEXPORT int CALLCONVENTION
 tqsl_converterCommit(tQSL_Converter convp) {
 	TQSL_CONVERTER *conv;
 
-	tqslTrace("tqsl_converterCommit");
+	tqslTrace("tqsl_converterCommit", NULL);
 	if (!(conv = check_conv(convp)))
 		return 1;
 	if (!conv->seendb)

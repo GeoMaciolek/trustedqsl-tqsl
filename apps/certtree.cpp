@@ -57,7 +57,7 @@ END_EVENT_TABLE()
 CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 		const wxSize& size, long style)
 		: wxTreeCtrl(parent, id, pos, size, style), _ncerts(0) {
-	tqslTrace("CertTree::CertTree");
+	tqslTrace("CertTree::CertTree", NULL);
 	useContextMenu = true;
 	wxBitmap certbm(cert_xpm);
 	wxBitmap no_certbm(nocert_xpm);
@@ -77,7 +77,7 @@ CertTree::CertTree(wxWindow *parent, const wxWindowID id, const wxPoint& pos,
 
 
 CertTree::~CertTree() {
-	tqslTrace("CertTree::~CertTree");
+	tqslTrace("CertTree::~CertTree", NULL);
 	if (_ncerts >0)
 		tqsl_freeCertificateList(_certs, _ncerts);
 	_ncerts = 0;
@@ -210,14 +210,14 @@ CertTree::SelectCert(tQSL_Cert cert) {
 
 void
 CertTree::OnItemActivated(wxTreeEvent& event) {
-	tqslTrace("CertTree::OnItemActivated");
+	tqslTrace("CertTree::OnItemActivated", NULL);
 	wxTreeItemId id = event.GetItem();
 	displayCertProperties(reinterpret_cast<CertTreeItemData *>(GetItemData(id)), this);
 }
 
 void
 CertTree::OnRightDown(wxMouseEvent& event) {
-	tqslTrace("CertTree::OnRightDown");
+	tqslTrace("CertTree::OnRightDown", NULL);
 	if (!useContextMenu)
 		return;
 	wxTreeItemId id = HitTest(event.GetPosition());
