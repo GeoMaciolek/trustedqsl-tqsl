@@ -1,4 +1,4 @@
-<tqslconfig majorversion="7" minorversion="0">
+<tqslconfig majorversion="9" minorversion="0">
      <adifmap>
        <adifmode adif-mode="AM" mode="AM">AM</adifmode>
        <adifmode adif-mode="ATV" mode="ATV">ATV</adifmode>
@@ -390,7 +390,7 @@
        <entity arrlId="131" zonemap="68:39">KERGUELEN ISLAND</entity>
        <entity arrlId="132" zonemap="14:11">PARAGUAY</entity>
        <entity arrlId="133" zonemap="60:32">KERMADEC ISLAND</entity>
-       <entity arrlId="134" zonemap="61:31">KINGMAN REEF</entity>
+       <entity arrlId="134" zonemap="61:31">KINGMAN REEF (DELETED)</entity>
        <entity arrlId="135" zonemap="30:17,31:17">KYRGYZSTAN</entity>
        <entity arrlId="136" zonemap="12:10">PERU</entity>
        <entity arrlId="137" zonemap="44:25">REPUBLIC OF KOREA</entity>
@@ -4244,7 +4244,7 @@
            <enum value="TR14,RC11">California NHT + Golden Gate NRA</enum>
            <enum value="TR14,NP38">California NHT + Lassen Volcanic NP</enum>
            <enum value="TR14,TR15">California NHT + Pony Express NHT</enum>
-           <enum value="MN82">Castle Mountains Natioanl Monument National Monument</enum>
+           <enum value="MN82">Castle Mountains National Monument</enum>
            <enum value="MN17">Cesar E. Chavez National Monument</enum>
            <enum value="NP11">Channel Islands National Park</enum>
            <enum value="NP15">Death Valley National Park</enum>
@@ -4288,9 +4288,9 @@
            <enum value="HP40">San Francisco Maritime National Historical Park</enum>
            <enum value="RC17">Santa Monica Mountains National Recreation Area</enum>
            <enum value="NP50">Sequoia National Park</enum>
-           <enum value="WR35">Toulumne National Wild and Scenic River</enum>
-           <enum value="WR35,NP58">Toulumne River + Yosemite NP</enum>
            <enum value="NM31">Tule Lake Unit Internment Camp National Monument</enum>
+           <enum value="WR35">Tuolumne National Wild and Scenic River</enum>
+           <enum value="WR35,NP58">Tuolumne River + Yosemite NP</enum>
            <enum value="RC18">Whiskeytown Unit National Recreation Area</enum>
            <enum value="NP58">Yosemite National Park</enum>
          </enums>
@@ -4397,10 +4397,10 @@
          </enums>
          <enums dependency="HI">
            <enum value="TR18">Ala Kahakai National Historic Trail</enum>
-           <enum value="TR21,NP29">Ala Kahakai NHT + Hawaii Volcanoes NP</enum>
-           <enum value="TR19,HP19">Ala Kahakai NHT + Kaloko-Honokohau NHP</enum>
-           <enum value="TR20,HP36">Ala Kahakai NHT + Pu&apos;uhonua o Honaunau NHP</enum>
-           <enum value="TR22,NS58">Ala Kahakai NHT + Puukohola Heiau NHS</enum>
+           <enum value="TR18,NP29">Ala Kahakai NHT + Hawaii Volcanoes NP</enum>
+           <enum value="TR18,HP19">Ala Kahakai NHT + Kaloko-Honokohau NHP</enum>
+           <enum value="TR18,HP36">Ala Kahakai NHT + Pu&apos;uhonua o Honaunau NHP</enum>
+           <enum value="TR18,NS58">Ala Kahakai NHT + Puukohola Heiau NHS</enum>
            <enum value="NP28">Haleakala National Park</enum>
            <enum value="NP29">Hawaii Volcanoes National Park</enum>
            <enum value="MN79">Honouliuli National Monument</enum>
@@ -4421,7 +4421,9 @@
            <enum value="TR14">California National Historic Trail</enum>
            <enum value="TR14,RS01">California NHT + City of Rocks NR</enum>
            <enum value="RS01">City of Rocks National Reserve</enum>
+           <enum value="MN21">Craters Of The Moon National Monument</enum>
            <enum value="MN21,PV05">Craters of the Moon National Monument and Preserve</enum>
+           <enum value="PV05">Craters Of The Moon National Preserve</enum>
            <enum value="MN43">Hagerman Fossil Beds National Monument</enum>
            <enum value="TR09">Lewis and Clark National Historic Trail</enum>
            <enum value="TR09,HP32">Lewis and Clark NHT + Nez Perce NHP</enum>
@@ -4512,7 +4514,6 @@
            <enum value="TR21,MN31">Captain John Smith Chesapeake NHT + Fort McHenry NM and Shrine</enum>
            <enum value="TR21,DZ07">Captain John Smith Chesapeake NHT + Piscataway Park</enum>
            <enum value="TR21,TR22">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT</enum>
-           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="DZ01">Catoctin Mountain Park</enum>
            <enum value="HP08">Chesapeake and Ohio Canal National Historical Park</enum>
            <enum value="NS11">Clara Barton National Historic Site</enum>
@@ -4641,6 +4642,7 @@
            <enum value="MN46">Homestead NM of America National Monument</enum>
            <enum value="TR09,TR14,TR15">Lewis and Clark + California NHT+ Pony Express NHT</enum>
            <enum value="TR09">Lewis and Clark National Historic Trail</enum>
+           <enum value="TR09,WR05">Lewis and Clark NHT + Missouri National Recreational River</enum>
            <enum value="TR09,TR14">Lewis and Clark NHT+ California NHT</enum>
            <enum value="WR05">Missouri National Recreational River</enum>
            <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
@@ -4822,6 +4824,7 @@
            <enum value="TR23">Washington-Rochambeau Revolutionary Route National Historic Trail</enum>
          </enums>
          <enums dependency="SC">
+           <enum value="TR01,TR10">Appalachian Trail + Overmountain Men Victory Trail</enum>
            <enum value="NS09">Charles Pinckney National Historic Site</enum>
            <enum value="NP12">Congaree National Park</enum>
            <enum value="BF03">Cowpens National Battlefield</enum>
@@ -4847,6 +4850,7 @@
            <enum value="NS03">Andrew Johnson National Historic Site</enum>
            <enum value="TR01">Appalachian National Scenic Trail</enum>
            <enum value="TR01,NP26">Appalachian National ScenicTrail + Great Smoky Mountains NP</enum>
+           <enum value="TR01,TR10">Appalachian Trail + Overmountain Men Victory Trail</enum>
            <enum value="RV01">Big South Fork National River and Recreation Area</enum>
            <enum value="MP01">Chickamauga and Chattanooga National Military Park</enum>
            <enum value="HP10">Cumberland Gap National Historical Park</enum>
@@ -4923,6 +4927,7 @@
            <enum value="TR21,HP09">Captain John Smith Chesapeake NHT + Colonial NHP</enum>
            <enum value="TR21,MN38">Captain John Smith Chesapeake NHT + George Washington Birthplace</enum>
            <enum value="TR21,BP03">Captain John Smith Chesapeake NHT + Richmond NBP</enum>
+           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="HP06">Cedar Creek and Belle Grove National Historical Park</enum>
            <enum value="HP09">Colonial National Historical Park</enum>
            <enum value="HP10">Cumberland Gap National Historical Park</enum>
@@ -4955,7 +4960,7 @@
            <enum value="WR26">Missisquoi and Trout National Wild and Scenic River</enum>
          </enums>
          <enums dependency="WA">
-           <enum value="RS02">Ebey&apos;s Landing National Historical Reserve National Reserve</enum>
+           <enum value="RS02">Ebey&apos;s Landing National Historical Reserve</enum>
            <enum value="NS27">Fort Vancouver National Historic Site</enum>
            <enum value="HP22">Klondike Gold Rush - Seattle Unit National Historical Park</enum>
            <enum value="RC12">Lake Chelan National Recreation Area</enum>
@@ -4981,12 +4986,14 @@
          <enums dependency="WI">
            <enum value="LK01">Apostle Islands National Lakeshore</enum>
            <enum value="TR05">Ice Age National Scenic Trail</enum>
+           <enum value="TR05,WR09">Ice Age National Scenic Trail + Saint Croix WR</enum>
            <enum value="AA11">Ice Age National Scientific Reserve</enum>
            <enum value="TR05,AA11">Ice Age NST + Ice Age National Scientific Reserve</enum>
            <enum value="TR05,WR09,AA11">Ice Age NST + Saint Croix National Scenic Riverway + Ice Age National Scientific Reserve</enum>
            <enum value="TR04">North Country National Scenic Trail</enum>
            <enum value="TR04,WR09">North Country NST + Saint Croix National Scenic Riverway</enum>
            <enum value="WR09">Saint Croix National Scenic Riverway</enum>
+           <enum value="WR09,AA11">Saint Croix WR + Ice Age National Scientific Reserve</enum>
          </enums>
          <enums dependency="WV">
            <enum value="TR01">Appalachian National Scenic Trail</enum>
