@@ -687,10 +687,9 @@ check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
 	tqslTrace("check_tqsl_error", "rval=%d", rval);
-	char msg[500];
-	strncpy(msg, getLocalizedErrorString().ToUTF8(), sizeof msg);
-        tqslTrace("check_tqsl_error", "msg=%s", msg);
-	throw TQSLException(msg);
+	wxString msg = getLocalizedErrorString();
+        tqslTrace("check_tqsl_error", "msg=%s", S(msg));
+	throw TQSLException(S(msg));
 }
 
 static tQSL_Cert *certlist = 0;
@@ -2473,9 +2472,9 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 	int numrecs = 0;
 	wxString signedOutput;
 
-	tqslTrace("MyFrame::UploadLogFile","About to convert log to string");
+	tqslTrace("MyFrame::UploadLogFile", "About to convert log to string");
 	int status = this->ConvertLogToString(loc, infile, signedOutput, numrecs, suppressdate, startdate, enddate, action, password, defcall);
-	tqslTrace("MyFrame::UploadLogFile","Log converted, status = %d, numrecs=%d", status, numrecs);
+	tqslTrace("MyFrame::UploadLogFile", "Log converted, status = %d, numrecs=%d", status, numrecs);
 
 	if (numrecs == 0) {
 		wxLogMessage(_("No records to upload"));
@@ -2485,7 +2484,7 @@ int MyFrame::UploadLogFile(tQSL_Location loc, const wxString& infile, bool compr
 			return TQSL_EXIT_NO_QSOS;
 	} else {
 		//compress the upload
-		tqslTrace("MyFrame::UploadLogFile","Compressing");
+		tqslTrace("MyFrame::UploadLogFile", "Compressing");
 		string compressed;
 		size_t compressedSize = compressToBuf(compressed, (const char*)signedOutput.ToUTF8());
 		tqslTrace("MyFrame::UploadLogFile", "Compressed to %d bytes", compressedSize);

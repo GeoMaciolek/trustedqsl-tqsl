@@ -14,11 +14,7 @@ FIND_PATH(BDB_INCLUDE_DIR db.h NO_DEFAULT_PATH PATHS
 else()
 FIND_PATH(BDB_INCLUDE_DIR db.h
   #windows dirs (to be determined)
-  "C:\\db-6.1.26.NC\\build_windows"
-  "C:\\db-6.1.19.NC\\build_windows"
-  "C:\\db-6.0.20\\build_windows"
-  "C:\\db-6.0.20\\build_windows"
-  "C:\\db-5.3.21\\build_windows"
+  "C:\\db\\build_windows"
   #*nix dirs
   "${BDB_PREFIX}/include"
   "${BDB_PREFIX}/include/db6"
@@ -45,12 +41,8 @@ FIND_LIBRARY(BDB_LIBRARY NAMES
   libdb5-5.so
   libdb5
   PATHS
-  "C:\\db-6.1.26.NC\\build_windows\\Win32\\Static Release\\"
-  "C:\\db-6.1.19.NC\\build_windows\\Win32\\Static Release\\"
-  "C:\\db-6.0.20\\build_windows\\Win32\\Static Release\\"
-  "C:\\db-6.0.20\\build_windows\\Win32\\Static_Release\\" #vc08 adds underscore
-  "C:\\db-5.3.21\\build_windows\\Win32\\Static Release\\"
-  "C:\\db-5.3.21\\build_windows\\Win32\\Static_Release\\" #vc08 adds underscore
+  "C:\\db\\build_windows\\Win32\\Static Release\\"
+  "C:\\db\\build_windows\\Win32\\Static_Release\\"	#vc08 adds underscore
   #OSX (and probably other unix) src build
   "/usr/local/BerkeleyDB.6.0/lib"
   "/usr/local/BerkeleyDB.5.3/lib"
