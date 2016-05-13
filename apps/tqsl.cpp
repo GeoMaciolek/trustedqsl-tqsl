@@ -3060,9 +3060,9 @@ class UpdateDialogMsgBox: public wxDialog {
 		overall->Add(new wxStaticText(this, wxID_ANY, notice), 0, wxALIGN_CENTER_HORIZONTAL);
 
 		if (newProg) {
+#ifndef _WIN32
 			if (!platformURL.IsEmpty()) {
 				wxSizer* thisline = new wxBoxSizer(wxHORIZONTAL);
-#ifndef _WIN32
 				thisline->Add(new wxStaticText(this, wxID_ANY, _("Download from:")));
 				thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, platformURL, platformURL));
 
@@ -3105,8 +3105,18 @@ class UpdateDialogMsgBox: public wxDialog {
  private:
 };
 
-static size_t file_recv() {
-	return 0;
+static size_t file_recv(void *ptr, size_t size, size_t nmemb, void *stream)
+{
+	size_t left = nmemb * size;
+	size_t written;
+
+	while (left > 0) {
+  		written = fwrite(ptr, size, nmemb, (FILE *)stream);
+		if (written == 0)
+			return 0;
+		left -= (written * size);
+	}
+	return nmemb * size;
 }
 
 void MyFrame::UpdateConfigFile() {
@@ -3505,7 +3515,7 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 
 #ifdef _WIN32
 			if (msg.ShowModal() == wxID_OK) {
-				UpdateTQSL(ri->homepage);
+				UpdateTQSL(ri->url);
 			}
 #else
 			msg.ShowModal();
