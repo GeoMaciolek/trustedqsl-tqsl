@@ -2375,37 +2375,6 @@ class FileUploadHandler {
 	}
 };
 
-class ConfigFileDownloadHandler {
- public:
-	void *s;
-	size_t allocated;
-	size_t used;
-	explicit ConfigFileDownloadHandler(size_t _size): s() {
-		allocated = _size;
-		s = malloc(_size);
-		used = 0;
-	}
-	~ConfigFileDownloadHandler(void);
-	size_t internal_recv(char *ptr, size_t size, size_t nmemb) {
-		size_t newlen = used + (size * nmemb);
-		if (newlen > allocated) {
-			s = realloc(s, newlen + 2000);
-			allocated += newlen + 2000;
-		}
-		memcpy(reinterpret_cast<char *>(s)+used, ptr, size * nmemb);
-		used += size*nmemb;
-		return size*nmemb;
-	}
-
-	static size_t recv(char *ptr, size_t size, size_t nmemb, void *userdata) {
-		return (reinterpret_cast<ConfigFileDownloadHandler*>(userdata))->internal_recv(ptr, size, nmemb);
-	}
-};
-
-ConfigFileDownloadHandler::~ConfigFileDownloadHandler(void) {
-	if (s) free(s);
-}
-
 long compressToBuf(string& buf, const char* input) {
 	tqslTrace("compressToBuf", NULL);
 	const size_t TBUFSIZ = 128*1024;
@@ -3076,7 +3045,9 @@ class UpdateDialogMsgBox: public wxDialog {
 		tqslTrace("UpdateDialogMsgBox::UpdateDialogMsgBox", "parent=%lx, newProg=%d, newConfig=%d, currentProgRev %s, newProgRev %s, currentConfigRev %s, newConfigRev=%s, platformURL=%s, homepage=%s", reinterpret_cast<void *>(parent), newProg, newConfig, S(currentProgRev->Value()), S(newProgRev->Value()), S(currentConfigRev->Value()), S(newConfigRev->Value()), S(platformURL), S(homepage));
 		wxSizer* overall = new wxBoxSizer(wxVERTICAL);
 		long flags = wxOK;
+#ifndef _WIN32
 		if (newConfig)
+#endif
 			flags |= wxCANCEL;
 
 		wxSizer* buttons = CreateButtonSizer(flags);
@@ -3091,6 +3062,7 @@ class UpdateDialogMsgBox: public wxDialog {
 		if (newProg) {
 			if (!platformURL.IsEmpty()) {
 				wxSizer* thisline = new wxBoxSizer(wxHORIZONTAL);
+#ifndef _WIN32
 				thisline->Add(new wxStaticText(this, wxID_ANY, _("Download from:")));
 				thisline->Add(new wxHyperlinkCtrl(this, wxID_ANY, platformURL, platformURL));
 
@@ -3106,6 +3078,10 @@ class UpdateDialogMsgBox: public wxDialog {
 				overall->AddSpacer(10);
 				overall->Add(thisline);
 			}
+#else
+			overall->AddSpacer(10);
+			overall->Add(new wxStaticText(this, wxID_ANY, _("Click 'OK' to install the new version of TQSL, or Cancel to ignore it.")));
+#endif
 		}
 		if (newConfig) {
 			overall->AddSpacer(10);
@@ -3129,6 +3105,10 @@ class UpdateDialogMsgBox: public wxDialog {
  private:
 };
 
+static size_t file_recv() {
+	return 0;
+}
+
 void MyFrame::UpdateConfigFile() {
 	tqslTrace("MyFrame::UpdateConfigFile", NULL);
 	wxConfig* config = reinterpret_cast<wxConfig *>(wxConfig::Get());
@@ -3136,10 +3116,24 @@ void MyFrame::UpdateConfigFile() {
  retry:
 	curlReq = tqsl_curl_init("Config File Download Log", (const char *)newConfigURL.ToUTF8(), &curlLogFile, false);
 
-	ConfigFileDownloadHandler handler(40000);
+	wxString filename;
+#ifdef _WIN32
+	filename.Printf(wxT("%hs\\config.tq6"), wxString::FromUTF8(tQSL_BaseDir));
+	wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
+	FILE *configFile = _wfopen(lfn, L"wb");
+	free_wchar(lfn);
+#else
+	filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
+	FILE *configFile = fopen(filename.ToUTF8(), "wb");
+#endif
+	if (!configFile) {
+		tqslTrace("UpdateConfigFile", "Can't open new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
+		wxMessageBox(wxString::Format(_("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
+		return;
+	}
 
-	curl_easy_setopt(curlReq, CURLOPT_WRITEFUNCTION, &ConfigFileDownloadHandler::recv);
-	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, &handler);
+	curl_easy_setopt(curlReq, CURLOPT_WRITEFUNCTION, &file_recv);
+	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, configFile);
 
 	curl_easy_setopt(curlReq, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
 
@@ -3147,33 +3141,6 @@ void MyFrame::UpdateConfigFile() {
 	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
 	int retval = curl_easy_perform(curlReq);
 	if (retval == CURLE_OK) {
-		char *newconfig = reinterpret_cast<char *>(handler.s);
-		wxString filename;
-#ifdef _WIN32
-		filename.Printf(wxT("%hs\\config.tq6"), wxString::FromUTF8(tQSL_BaseDir));
-		wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
-		FILE *configFile = _wfopen(lfn, L"wb");
-		free_wchar(lfn);
-#else
-		filename.Printf(wxT("%hs/config.tq6"), tQSL_BaseDir);
-		FILE *configFile = fopen(filename.ToUTF8(), "wb");
-#endif
-		if (!configFile) {
-			tqslTrace("UpdateConfigFile", "Can't open new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
-			wxMessageBox(wxString::Format(_("Can't open new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
-			return;
-		}
-		size_t left = handler.used;
-		while (left > 0) {
-			size_t written = fwrite(newconfig, 1, left, configFile);
-			if (written == 0) {
-				tqslTrace("UpdateConfigFile", "Can't write new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
-				wxMessageBox(wxString::Format(_("Can't write new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
-				if (configFile) fclose(configFile);
-				return;
-			}
-			left -= written;
-		}
 		if (fclose(configFile)) {
 			tqslTrace("UpdateConfigFile", "Error writing new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
 			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
@@ -3212,6 +3179,73 @@ void MyFrame::UpdateConfigFile() {
 		}
 	}
 }
+
+#ifdef _WIN32
+void MyFrame::UpdateTQSL(wxString& url) {
+	tqslTrace("MyFrame::UpdateTQSL", "url=%s", S(url));
+ retry:
+	curlReq = tqsl_curl_init("TQSL Update Download Log", (const char *)url.ToUTF8(), &curlLogFile, false);
+
+	wxString filename;
+#ifdef _WIN32
+	filename.Printf(wxT("%hs\\tqslupdate.msi"), wxString::FromUTF8(tQSL_BaseDir));
+	wchar_t* lfn = utf8_to_wchar(filename.ToUTF8());
+	FILE *updateFile = _wfopen(lfn, L"wb");
+	free_wchar(lfn);
+#else
+	filename.Printf(wxT("%hs/tqslupdate.msi"), tQSL_BaseDir);
+	FILE *updateFile = fopen(filename.ToUTF8(), "wb");
+#endif
+	if (!updateFile) {
+		tqslTrace("UpdateTQSL", "Can't open new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
+		wxMessageBox(wxString::Format(_("Can't open TQSL update file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
+		return;
+	}
+
+	curl_easy_setopt(curlReq, CURLOPT_WRITEFUNCTION, &file_recv);
+	curl_easy_setopt(curlReq, CURLOPT_WRITEDATA, updateFile);
+
+	curl_easy_setopt(curlReq, CURLOPT_FAILONERROR, 1); //let us find out about a server issue
+
+	char errorbuf[CURL_ERROR_SIZE];
+	curl_easy_setopt(curlReq, CURLOPT_ERRORBUFFER, errorbuf);
+	int retval = curl_easy_perform(curlReq);
+	if (retval == CURLE_OK) {
+		if (fclose(updateFile)) {
+			tqslTrace("UpdateTQSL", "Error writing new file %s: %s", static_cast<const char *>(filename.ToUTF8()), strerror(errno));
+			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
+			return;
+		}
+		wxString cmdline = wxT("msiexec ") + filename;
+		wxExecute(cmdline, wxEXEC_ASYNC);
+		wxExit();
+	} else {
+		tqslTrace("MyFrame::UpdateTQSL", "cURL Error during file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		if (retval == CURLE_SSL_CACERT && verifyCA) {
+			tqslTrace("MyFrame::UpdateTQSL", "cURL SSL Certificate error - disabling verify and retry");
+			verifyCA = false;
+			goto retry;
+		}
+		if (curlLogFile) {
+			fprintf(curlLogFile, "cURL Error during file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
+		}
+		if (retval == CURLE_COULDNT_RESOLVE_HOST || retval == CURLE_COULDNT_CONNECT) {
+			wxLogMessage(_("Unable to update - either your Internet connection is down or LoTW is unreachable."));
+			wxLogMessage(_("Please try again later."));
+		} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
+			wxLogMessage(_("Unable to update. The nework is down or the LoTW site is too busy."));
+			wxLogMessage(_("Please try again later."));
+		} else if (retval == CURLE_SSL_CONNECT_ERROR) {
+			wxLogMessage(_("Unable to connect to the update site."));
+			wxLogMessage(_("Please try again later."));
+		} else { // some other error
+			wxString fmt = _("Error downloading new file:");
+			fmt += wxT("\n%hs");
+			wxMessageBox(wxString::Format(fmt, errorbuf), _("Update"), wxOK | wxICON_EXCLAMATION, this);
+		}
+	}
+}
+#endif /* _WIN32 */
 
 // Check if a certificate is still valid and current at LoTW
 bool MyFrame::CheckCertStatus(long serial, wxString& result) {
@@ -3469,7 +3503,13 @@ MyFrame::OnUpdateCheckDone(wxCommandEvent& event) {
 			UpdateDialogMsgBox msg(this, true, false, ri->programRev, ri->newProgramRev,
 					ri->configRev, ri->newConfigRev, ri->url, ri->homepage);
 
+#ifdef _WIN32
+			if (msg.ShowModal() == wxID_OK) {
+				UpdateTQSL(ri->homepage);
+			}
+#else
 			msg.ShowModal();
+#endif
 		}
 	}
 	if (ri->newConfig) {
@@ -4782,15 +4822,11 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		// clang loves the following.
-		// it will complain that arvg[i] may be a null pointer refererence for some versions.
-		// it will complain that argv[i] can't be converted to a boolean for others.
-		// Well, if it's a pointer and it might be null but it's also not a pointer
-		// and can't be null, then it's not possible to compile this without warning.
-		// Warnings ahoy!
-		if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
-			if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
-				argv[i][1] = wxTolower(argv[i][1]);
+		// Overly complex to keep clang quiet.
+		if (argv[i] != NULL) 
+			if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
+				if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
+					argv[i][1] = wxTolower(argv[i][1]);
 	}
 
 	parser.SetCmdLine(argc, argv);
@@ -5014,6 +5050,7 @@ QSLApp::OnInit() {
 					if (keyonly) {
 						if (tQSL_ImportSerial != 0) {		// A full cert for this was imported
 							tqsl_deleteCertificate(certlist[i]);
+							certlist[i] = NULL;
 						}
 						continue;
 					}
@@ -5025,10 +5062,13 @@ QSLApp::OnInit() {
 					}
 					// This is not the one we just imported
 					int sup, exp;
-					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
+					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup) {
 						tqsl_deleteCertificate(certlist[i]);
-					else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
+						certlist[i] = NULL;
+					} else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp) {
 						tqsl_deleteCertificate(certlist[i]);
+						certlist[i] = NULL;
+					}
 				}
 			}
 			frame->cert_tree->Build(CERTLIST_FLAGS);
@@ -5348,6 +5388,7 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 				tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
 				if (keyonly) {
 					tqsl_deleteCertificate(certlist[i]);
+					certlist[i] = NULL;
 					continue;
 				}
 				if (tqsl_getCertificateSerial(certlist[i], &serial)) {
@@ -5358,10 +5399,13 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 				}
 				// This is not the one we just imported
 				int sup, exp;
-				if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup)
+				if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup) {
 					tqsl_deleteCertificate(certlist[i]);
-				else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp)
+					certlist[i] = NULL;
+				} else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp) {
 					tqsl_deleteCertificate(certlist[i]);
+					certlist[i] = NULL;
+				}
 			}
 		}
 	}
@@ -5440,6 +5484,8 @@ static void deleteRequest(const char *callsign, int dxccEntity) {
 			if (tqsl_deleteCertificate(certlist[i])) {
 				wxLogError(getLocalizedErrorString());
 			}
+			certlist = NULL;		// Invalidated in deleteCertificate flow
+			ncerts = 0;
 			tQSL_Error = savedError;
 			return;
 		}

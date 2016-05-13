@@ -3,6 +3,9 @@ TQSL changes
 
 2.2.2
 ----------
+Correct a defect that causes TQSL to crash when renewing a callsign
+certificate and the user uses "Cancel" to exit the password prompt.
+
 Provide a more informative error message when the private key for the
 selected callsign certificate can't be read when displaying certificate
 properties, signing a log, and using a certificate for signing another
