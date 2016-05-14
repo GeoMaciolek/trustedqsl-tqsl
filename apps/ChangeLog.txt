@@ -3,6 +3,11 @@ TQSL changes
 
 2.2.2
 ----------
+When a new version of TQSL is available, install it rather than
+providing a link to download the installer.
+
+Add Chinese translations provided by Caros, BH4TXN.
+
 Correct a defect that causes TQSL to crash when renewing a callsign
 certificate and the user uses "Cancel" to exit the password prompt.
 

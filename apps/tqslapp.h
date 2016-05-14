@@ -200,8 +200,9 @@ static const wxLanguage langIds[] = {
     wxLANGUAGE_FRENCH,
     wxLANGUAGE_ITALIAN,
     wxLANGUAGE_GERMAN,
-    wxLANGUAGE_SPANISH,
     wxLANGUAGE_PORTUGUESE,
+    wxLANGUAGE_SPANISH,
+    wxLANGUAGE_CHINESE,    
     wxLANGUAGE_JAPANESE,
     wxLANGUAGE_ENGLISH
 };
@@ -213,8 +214,9 @@ const wxString langNames[] = {
     wxT("French"),
     wxT("Italian"),
     wxT("German"),
-    wxT("Spanish"),
     wxT("Portuguese"),
+    wxT("Spanish"),
+    wxT("Chinese"),
     wxT("Japanese"),
     wxT("English")
 };
