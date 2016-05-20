@@ -202,7 +202,7 @@ static const wxLanguage langIds[] = {
     wxLANGUAGE_GERMAN,
     wxLANGUAGE_PORTUGUESE,
     wxLANGUAGE_SPANISH,
-    wxLANGUAGE_CHINESE,    
+    wxLANGUAGE_CHINESE,
     wxLANGUAGE_JAPANESE,
     wxLANGUAGE_ENGLISH
 };

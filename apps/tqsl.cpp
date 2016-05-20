@@ -3105,13 +3105,12 @@ class UpdateDialogMsgBox: public wxDialog {
  private:
 };
 
-static size_t file_recv(void *ptr, size_t size, size_t nmemb, void *stream)
-{
+static size_t file_recv(void *ptr, size_t size, size_t nmemb, void *stream) {
 	size_t left = nmemb * size;
 	size_t written;
 
 	while (left > 0) {
-  		written = fwrite(ptr, size, nmemb, (FILE *)stream);
+  		written = fwrite(ptr, size, nmemb, reinterpret_cast <FILE *>(stream));
 		if (written == 0)
 			return 0;
 		left -= (written * size);
@@ -4832,7 +4831,7 @@ QSLApp::OnInit() {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
 		// Overly complex to keep clang quiet.
-		if (argv[i] != NULL) 
+		if (argv[i] != NULL)
 			if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 				if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 					argv[i][1] = wxTolower(argv[i][1]);
