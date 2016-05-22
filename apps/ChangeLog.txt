@@ -3,6 +3,10 @@ TQSL changes
 
 2.2.2
 ----------
+Correct a defect that could cause TQSL to crash when a user restored
+a callsign certificate from a .P12 file, created a .TBK backup, then tried
+to restore a second callsign certificate.
+
 When a new version of TQSL is available, install it rather than
 providing a link to download the installer.
 

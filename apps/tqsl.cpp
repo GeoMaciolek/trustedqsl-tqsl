@@ -4191,7 +4191,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 					throw TQSLException(gzerror(out, &err));
 			}
 		}
-		tqsl_freeCertificateList(certlist, ncerts);
+		free_certlist();
 		if (gzprintf(out, "</Certificates>\n") < 0)
 			throw TQSLException(gzerror(out, &err));
 		if (gzprintf(out, "<Locations>\n") < 0)
@@ -5058,7 +5058,6 @@ QSLApp::OnInit() {
 					if (keyonly) {
 						if (tQSL_ImportSerial != 0) {		// A full cert for this was imported
 							tqsl_deleteCertificate(certlist[i]);
-							certlist[i] = NULL;
 						}
 						continue;
 					}
@@ -5072,10 +5071,8 @@ QSLApp::OnInit() {
 					int sup, exp;
 					if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup) {
 						tqsl_deleteCertificate(certlist[i]);
-						certlist[i] = NULL;
 					} else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp) {
 						tqsl_deleteCertificate(certlist[i]);
-						certlist[i] = NULL;
 					}
 				}
 			}
@@ -5396,8 +5393,6 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 				tqsl_getCertificateKeyOnly(certlist[i], &keyonly);
 				if (keyonly) {
 					tqsl_deleteCertificate(certlist[i]);
-					certlist[i] = NULL;
-					continue;
 				}
 				if (tqsl_getCertificateSerial(certlist[i], &serial)) {
 					continue;
@@ -5409,10 +5404,8 @@ void MyFrame::OnLoadCertificateFile(wxCommandEvent& WXUNUSED(event)) {
 				int sup, exp;
 				if (tqsl_isCertificateSuperceded(certlist[i], &sup) == 0 && sup) {
 					tqsl_deleteCertificate(certlist[i]);
-					certlist[i] = NULL;
 				} else if (tqsl_isCertificateExpired(certlist[i], &exp) == 0 && exp) {
 					tqsl_deleteCertificate(certlist[i]);
-					certlist[i] = NULL;
 				}
 			}
 		}
