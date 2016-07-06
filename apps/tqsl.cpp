@@ -959,6 +959,8 @@ MyFrame::OnExit(TQ_WXCLOSEEVENT& WXUNUSED(event)) {
 	config->Read(wxT("AutoBackup"), &ab, DEFAULT_AUTO_BACKUP);
 	if (ab) {
 		wxString bdir = config->Read(wxT("BackupFolder"), wxString::FromUTF8(tQSL_BaseDir));
+		if (bdir.Trim(true).Trim(false) == wxT(""))
+			bdir = wxString::FromUTF8(tQSL_BaseDir);
 		SaveOldBackups(bdir, wxT("tqslconfig"), wxT("tbk"));
 #ifdef _WIN32
 		bdir += wxT("\\tqslconfig.tbk");
@@ -3225,7 +3227,7 @@ void MyFrame::UpdateTQSL(wxString& url) {
 			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
 			return;
 		}
-		wxExecute(filename, wxEXEC_ASYNC);
+		wxExecute(wxT("msiexec ") + filename, wxEXEC_ASYNC);
 		wxExit();
 	} else {
 		tqslTrace("MyFrame::UpdateTQSL", "cURL Error during file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
@@ -4831,7 +4833,7 @@ QSLApp::OnInit() {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
 		// Overly complex to keep clang quiet.
-		if (argv[i] != NULL)
+		if ((const wxChar *)argv[i])
 			if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 				if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 					argv[i][1] = wxTolower(argv[i][1]);
