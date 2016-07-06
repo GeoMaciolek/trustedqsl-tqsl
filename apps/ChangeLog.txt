@@ -1,6 +1,10 @@
 TQSL changes
 ============
 
+2.3
+----------
+Fix build error using gcc-5/gcc-6.
+
 2.2.2
 ----------
 Correct a defect that could cause TQSL to crash when a user restored

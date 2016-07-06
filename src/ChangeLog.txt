@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.5
 ---
+Update to permit build using OpenSSL 1.1 and later.
+
 Allow "Light" mode QSOs in the 300 GHz and above band. Previously, TQSL
 would reject these QSOs when either specified as a band in an Cabrillo
 file ("300G") or as a frequency value in an ADIF file.
