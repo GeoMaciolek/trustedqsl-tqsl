@@ -103,7 +103,7 @@ class XMLElement {
       * element only, not any text contained in elements on the
       * element list; they each have their own contained text.
       */
-	string getText() const { return _text; }
+	string getText() const;
 	void setPretext(const string& s) { _pretext = s; }
 	string getPretext() const { return _pretext; }
 
