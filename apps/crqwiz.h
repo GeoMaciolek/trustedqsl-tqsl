@@ -49,21 +49,34 @@ class CRQWiz : public ExtWizard {
 		const wxString& title = _("Request a new Callsign Certificate"));
 	CRQ_Page *GetCurrentPage() { return reinterpret_cast<CRQ_Page *>(wxWizard::GetCurrentPage()); }
 	bool RunWizard();
+	int ncerts;		// Number of valid certificates
+	int nprov;		// Number of providers
+	bool signIt;
+	tQSL_Cert _cert;
 	// ProviderPage data
+	CRQ_Page *providerPage;
 	TQSL_PROVIDER provider;
 	// IntroPage data
+	CRQ_Page *introPage;
 	wxString callsign;
 	tQSL_Date qsonotbefore, qsonotafter;
 	int dxcc;
 	// NamePage data
+	CRQ_Page *namePage;
 	wxString name, addr1, addr2, city, state, zip, country;
 	// EmailPage data
+	CRQ_Page *emailPage;
 	wxString email;
 	// PasswordPage data
+	CRQ_Page *pwPage;
 	wxString password;
 	// SignPage data
+	CRQ_Page *signPage;
 	tQSL_Cert cert;
 	TQSL_CERT_REQ *_crq;
+	// TypePage data
+	CRQ_Page *typePage;
+
  private:
 	CRQ_Page *_first;
 };
@@ -94,6 +107,8 @@ class CRQ_IntroPage : public CRQ_Page {
 	explicit CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
+	virtual CRQ_Page *GetPrev() const;
+	virtual CRQ_Page *GetNext() const;
  private:
 	wxTextCtrl *tc_call;
 	wxComboBox *tc_qsobeginy, *tc_qsobeginm, *tc_qsobegind, *tc_dxcc;
@@ -101,7 +116,7 @@ class CRQ_IntroPage : public CRQ_Page {
 	wxStaticText *tc_status;
 	bool initialized;		// Set true when validating makes sense
 	int em_w;
-
+	CRQWiz *_parent;
 	DECLARE_EVENT_TABLE()
 };
 
@@ -110,11 +125,14 @@ class CRQ_NamePage : public CRQ_Page {
 	explicit CRQ_NamePage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
+	virtual CRQ_Page *GetPrev() const;
+	virtual CRQ_Page *GetNext() const;
  private:
 	wxTextCtrl *tc_name, *tc_addr1, *tc_addr2, *tc_city, *tc_state,
 		*tc_zip, *tc_country;
 	wxStaticText *tc_status;
 	bool initialized;
+	CRQWiz *_parent;
 
 	DECLARE_EVENT_TABLE()
 };
@@ -137,28 +155,40 @@ class CRQ_PasswordPage : public CRQ_Page {
 	explicit CRQ_PasswordPage(CRQWiz *parent);
 	virtual bool TransferDataFromWindow();
 	virtual const char *validate();
+	virtual CRQ_Page *GetPrev() const;
+	virtual CRQ_Page *GetNext() const;
  private:
 	wxTextCtrl *tc_pw1, *tc_pw2;
 	wxStaticText *tc_status;
 	bool initialized;
+	CRQWiz *_parent;
 
+	DECLARE_EVENT_TABLE()
+};
+
+class CRQ_TypePage : public CRQ_Page {
+ public:
+	explicit CRQ_TypePage(CRQWiz *parent);
+	virtual bool TransferDataFromWindow();
+ private:
+	bool initialized;
+	wxRadioBox *certType;
 	DECLARE_EVENT_TABLE()
 };
 
 class CRQ_SignPage : public CRQ_Page {
  public:
-	explicit CRQ_SignPage(CRQWiz *parent);
+	explicit CRQ_SignPage(CRQWiz *parent, TQSL_CERT_REQ *crq = 0);
 	virtual bool TransferDataFromWindow();
 	void CertSelChanged(wxTreeEvent&);
 	virtual const char *validate();
 	virtual void refresh();
  private:
-	wxRadioBox *choice;
 	CertTree *cert_tree;
 	wxStaticText *tc_status;
 	bool initialized;
 	int em_w;
-
+        void OnPageChanging(wxWizardEvent &);
 	DECLARE_EVENT_TABLE()
 };
 

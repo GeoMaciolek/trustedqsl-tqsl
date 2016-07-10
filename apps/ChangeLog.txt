@@ -5,6 +5,9 @@ TQSL changes
 ----------
 Fix build error using gcc-5/gcc-6.
 
+Update Callsign Certificate request wizard to ask information to allow the
+wizard to determine if the request should be signed or not.
+
 2.2.2
 ----------
 Correct a defect that could cause TQSL to crash when a user restored
