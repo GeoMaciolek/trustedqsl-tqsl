@@ -19,6 +19,7 @@ cp -r apps/tqsl.app $WORKDIR/TrustedQSL
 for app in tqsl
 do
     cp $TQSLLIBPATH $WORKDIR/TrustedQSL/$app.app/Contents/MacOS
+    rm $WORKDIR/TrustedQSL/$app.app/Contents/Resources/Help/tqslapp.chm
     install_name_tool -change $TQSLLIBPATH @executable_path/libtqsllib.dylib $WORKDIR/TrustedQSL/$app.app/Contents/MacOS/$app
     cp src/config.xml $WORKDIR/TrustedQSL/$app.app/Contents/Resources
     cp apps/ca-bundle.crt $WORKDIR/TrustedQSL/$app.app/Contents/Resources
