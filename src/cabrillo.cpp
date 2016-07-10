@@ -226,14 +226,14 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	else if (!strcasecmp(fp->value, "47G") || !strcasecmp(fp->value, "47"))
 		band = "6MM";
 	else if (!strcasecmp(fp->value, "75G") || !strcasecmp(fp->value, "75") ||
-	         !strcasecmp(fp->value, "76G") || !strcasecmp(fp->value, "76"))
+		 !strcasecmp(fp->value, "76G") || !strcasecmp(fp->value, "76"))
 		band = "4MM";
 	else if (!strcasecmp(fp->value, "119G") || !strcasecmp(fp->value, "119"))
 		band = "2.5MM";
 	else if (!strcasecmp(fp->value, "142G") || !strcasecmp(fp->value, "142"))
 		band = "2MM";
 	else if (!strcasecmp(fp->value, "241G")  || !strcasecmp(fp->value, "241")||
-	         !strcasecmp(fp->value, "242G") || !strcasecmp(fp->value, "242"))
+		 !strcasecmp(fp->value, "242G") || !strcasecmp(fp->value, "242"))
 		band = "1MM";
 	else if (!strcasecmp(fp->value, "300G") || !strcasecmp(fp->value, "300"))
 		band = "SUBMM";
@@ -501,26 +501,26 @@ DLLEXPORT const char* CALLCONVENTION
 tqsl_cabrilloGetError(TQSL_CABRILLO_ERROR_TYPE err) {
 	const char *msg = 0;
 	switch (err) {
-                case TQSL_CABRILLO_NO_ERROR:
+		case TQSL_CABRILLO_NO_ERROR:
 			msg = "Cabrillo success";
 			break;
-                case TQSL_CABRILLO_EOF:
+		case TQSL_CABRILLO_EOF:
 			msg = "Cabrillo end-of-file";
 			break;
-                case TQSL_CABRILLO_EOR:
+		case TQSL_CABRILLO_EOR:
 			msg = "Cabrillo end-of-record";
 			break;
-                case TQSL_CABRILLO_NO_START_RECORD:
+		case TQSL_CABRILLO_NO_START_RECORD:
 			msg = "Cabrillo missing START-OF-LOG record";
 			break;
-                case TQSL_CABRILLO_NO_CONTEST_RECORD:
+		case TQSL_CABRILLO_NO_CONTEST_RECORD:
 			msg = "Cabrillo missing CONTEST record";
 			break;
-                case TQSL_CABRILLO_UNKNOWN_CONTEST:
+		case TQSL_CABRILLO_UNKNOWN_CONTEST:
 			snprintf(errmsgbuf, sizeof errmsgbuf, "Cabrillo unknown CONTEST: %s", errmsgdata);
 			msg = errmsgbuf;
 			break;
-                case TQSL_CABRILLO_BAD_FIELD_DATA:
+		case TQSL_CABRILLO_BAD_FIELD_DATA:
 			snprintf(errmsgbuf, sizeof errmsgbuf, "Cabrillo field data error in %s field", errmsgdata);
 			msg = errmsgbuf;
 			break;

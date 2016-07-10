@@ -83,7 +83,7 @@ check_tqsl_error(int rval) {
 	if (rval == 0)
 		return;
 	wxString serr = getLocalizedErrorString();
-        wxLogError(serr);
+	wxLogError(serr);
 }
 
 static bool

@@ -184,18 +184,18 @@ check_conv(tQSL_Converter conv) {
 }
 
 static tqsl_adifFieldDefinitions adif_qso_record_fields[] = {
-        { "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_CALLSIGN_MAX, 0, 0, NULL },
-        { "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, NULL },
-        { "MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
-        { "SUBMODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
-        { "QSO_DATE", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
-        { "TIME_ON", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
-        { "FREQ", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, NULL },
-        { "FREQ_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, NULL },
-        { "BAND_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, NULL },
-        { "SAT_NAME", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_SATNAME_MAX, 0, 0, NULL },
-        { "PROP_MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_PROPMODE_MAX, 0, 0, NULL },
-        { "eor", "", TQSL_ADIF_RANGE_TYPE_NONE, 0, 0, 0, NULL },
+	{ "CALL", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_CALLSIGN_MAX, 0, 0, NULL },
+	{ "BAND", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, NULL },
+	{ "MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
+	{ "SUBMODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_MODE_MAX, 0, 0, NULL },
+	{ "QSO_DATE", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
+	{ "TIME_ON", "", TQSL_ADIF_RANGE_TYPE_NONE, 10, 0, 0, NULL },
+	{ "FREQ", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, NULL },
+	{ "FREQ_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_FREQ_MAX, 0, 0, NULL },
+	{ "BAND_RX", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_BAND_MAX, 0, 0, NULL },
+	{ "SAT_NAME", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_SATNAME_MAX, 0, 0, NULL },
+	{ "PROP_MODE", "", TQSL_ADIF_RANGE_TYPE_NONE, TQSL_PROPMODE_MAX, 0, 0, NULL },
+	{ "eor", "", TQSL_ADIF_RANGE_TYPE_NONE, 0, 0, 0, NULL },
 };
 
 DLLEXPORT int CALLCONVENTION
@@ -405,14 +405,14 @@ remove_db(const char *path)  {
 		struct _wdirent *ent = NULL;
 		while ((ent = _wreaddir(dir)) != NULL) {
 			if (!wcscmp(ent->d_name, L"duplicates.db") ||
-	    		!wcsncmp(ent->d_name, L"log.", 4) ||
-	    		!wcsncmp(ent->d_name, L"__db.", 5)) {
+			!wcsncmp(ent->d_name, L"log.", 4) ||
+			!wcsncmp(ent->d_name, L"__db.", 5)) {
 #else
 		struct dirent *ent = NULL;
 		while ((ent = readdir(dir)) != NULL) {
 			if (!strcmp(ent->d_name, "duplicates.db") ||
-	    		!strncmp(ent->d_name, "log.", 4) ||
-	    		!strncmp(ent->d_name, "__db.", 5)) {
+			!strncmp(ent->d_name, "log.", 4) ||
+			!strncmp(ent->d_name, "__db.", 5)) {
 #endif
 				string fname = path;
 				int rstat;
@@ -816,8 +816,8 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		static char ident[512];
 		snprintf(temp, sizeof temp, "%s Lib: V%d.%d Config: V%d.%d AllowDupes: %s",
 			conv->appName ? conv->appName : "Unknown",
-                        major, minor, config_major, config_minor,
-                        conv->allow_dupes ? "true" : "false");
+			major, minor, config_major, config_minor,
+			conv->allow_dupes ? "true" : "false");
 		temp[sizeof temp - 1] = '\0';
 		int len = strlen(temp);
 		snprintf(ident, sizeof ident, "<TQSL_IDENT:%d>%s\n", len, temp);

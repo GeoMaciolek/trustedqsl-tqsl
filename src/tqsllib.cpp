@@ -63,21 +63,21 @@ DLLEXPORTDATA FILE* tQSL_DiagFile = 0;
 #define TQSL_OID_CRQ_COUNTRY TQSL_OID_BASE "14"
 
 static const char *custom_objects[][3] = {
-        { TQSL_OID_CALLSIGN, "AROcallsign", NULL },
-        { TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
-        { TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
-        { TQSL_OID_DXCC_ENTITY, "dxccEntity", NULL },
-        { TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL },
-        { TQSL_OID_CRQ_ISSUER_ORGANIZATION, "tqslCRQIssuerOrganization", NULL },
-        { TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT,
+	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
+	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
+	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
+	{ TQSL_OID_DXCC_ENTITY, "dxccEntity", NULL },
+	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL },
+	{ TQSL_OID_CRQ_ISSUER_ORGANIZATION, "tqslCRQIssuerOrganization", NULL },
+	{ TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT,
 			"tqslCRQIssuerOrganizationalUnit", NULL },
-        { TQSL_OID_CRQ_EMAIL, "tqslCRQEmail", NULL },
-        { TQSL_OID_CRQ_ADDRESS1, "tqslCRQAddress1", NULL },
-        { TQSL_OID_CRQ_ADDRESS2, "tqslCRQAddress2", NULL },
-        { TQSL_OID_CRQ_CITY, "tqslCRQCity", NULL },
-        { TQSL_OID_CRQ_STATE, "tqslCRQState", NULL },
-        { TQSL_OID_CRQ_POSTAL, "tqslCRQPostal", NULL },
-        { TQSL_OID_CRQ_COUNTRY, "tqslCRQCountry", NULL },
+	{ TQSL_OID_CRQ_EMAIL, "tqslCRQEmail", NULL },
+	{ TQSL_OID_CRQ_ADDRESS1, "tqslCRQAddress1", NULL },
+	{ TQSL_OID_CRQ_ADDRESS2, "tqslCRQAddress2", NULL },
+	{ TQSL_OID_CRQ_CITY, "tqslCRQCity", NULL },
+	{ TQSL_OID_CRQ_STATE, "tqslCRQState", NULL },
+	{ TQSL_OID_CRQ_POSTAL, "tqslCRQPostal", NULL },
+	{ TQSL_OID_CRQ_COUNTRY, "tqslCRQCountry", NULL },
 };
 
 static const char *error_strings[] = {
@@ -649,18 +649,18 @@ tqsl_compareDates(const tQSL_Date *a, const tQSL_Date *b) {
 static int
 days_per_month(int year, int month) {
 	switch (month) {
-                case 2:
+		case 2:
 			if ((((year % 4) == 0) && ((year % 100) != 0)) || ((year % 400) == 0)) {
 				return 29;
 			} else {
 				return 28;
 			}
-                case 4:
-                case 6:
-                case 9:
-                case 11:
+		case 4:
+		case 6:
+		case 9:
+		case 11:
 			return 30;
-                default:
+		default:
 			return 31;
 	}
 	return 0;
@@ -890,11 +890,11 @@ tqsl_diagFileOpen(void) {
 DLLEXPORT int CALLCONVENTION
 tqsl_openDiagFile(const char *fname) {
 #ifdef _WIN32
-        wchar_t* lfn = utf8_to_wchar(fname);
-        tQSL_DiagFile = _wfopen(lfn, L"wb");
-        free_wchar(lfn);
+	wchar_t* lfn = utf8_to_wchar(fname);
+	tQSL_DiagFile = _wfopen(lfn, L"wb");
+	free_wchar(lfn);
 #else
-        tQSL_DiagFile = fopen(fname, "wb");
+	tQSL_DiagFile = fopen(fname, "wb");
 #endif
 	return (tQSL_DiagFile == NULL);
 }

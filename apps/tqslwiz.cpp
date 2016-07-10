@@ -211,8 +211,8 @@ TQSLWizCertPage::OnComboBoxEvent(wxCommandEvent& event) {
 	int in_type;
 	tqsl_getLocationFieldInputType(loc, control_idx, &in_type);
 	switch (in_type) {
-                case TQSL_LOCATION_FIELD_DDLIST:
-                case TQSL_LOCATION_FIELD_LIST:
+		case TQSL_LOCATION_FIELD_DDLIST:
+		case TQSL_LOCATION_FIELD_LIST:
 			tqsl_setLocationFieldIndex(loc, control_idx, event.GetInt());
 			UpdateFields(control_idx);
 			break;
@@ -269,8 +269,8 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 		tqsl_getLocationFieldDataGABBI(loc, i, gabbi_name, sizeof gabbi_name);
 		tqsl_getLocationFieldFlags(loc, i, &flags);
 		switch(in_type) {
-                        case TQSL_LOCATION_FIELD_DDLIST:
-                        case TQSL_LOCATION_FIELD_LIST:
+			case TQSL_LOCATION_FIELD_DDLIST:
+			case TQSL_LOCATION_FIELD_LIST:
 				control_p = new wxComboBox(this, TQSL_ID_LOW+i, wxT(""), wxDefaultPosition, wxSize(control_width, -1),
 					0, 0, wxCB_DROPDOWN|wxCB_READONLY);
 				if (flags & TQSL_LOCATION_FIELD_SELNXT) {
@@ -278,10 +278,10 @@ TQSLWizCertPage::TQSLWizCertPage(TQSLWizard *parent, tQSL_Location locp)
 					cbLabel = lbl;
 				}
 				break;
-                        case TQSL_LOCATION_FIELD_TEXT:
+			case TQSL_LOCATION_FIELD_TEXT:
 				control_p = new wxTextCtrl(this, TQSL_ID_LOW+i, wxT(""), wxDefaultPosition, wxSize(control_width, -1));
 				break;
-                        case TQSL_LOCATION_FIELD_BADZONE:
+			case TQSL_LOCATION_FIELD_BADZONE:
 				wxCoord w, h;
 				int tsize;
 				tqsl_getLocationFieldDataLength(loc, i, &tsize);
@@ -438,10 +438,10 @@ TQSLWizCertPage::TransferDataFromWindow() {
 		int in_type;
 		tqsl_getLocationFieldInputType(loc, i, &in_type);
 		switch(in_type) {
-                        case TQSL_LOCATION_FIELD_DDLIST:
-                        case TQSL_LOCATION_FIELD_LIST:
+			case TQSL_LOCATION_FIELD_DDLIST:
+			case TQSL_LOCATION_FIELD_LIST:
 				break;
-                        case TQSL_LOCATION_FIELD_TEXT:
+			case TQSL_LOCATION_FIELD_TEXT:
 				tqsl_setLocationFieldCharData(loc, i, (reinterpret_cast<wxTextCtrl *>(controls[i]))->GetValue().ToUTF8());
 				break;
 		}
@@ -565,7 +565,7 @@ TQSLWizFinalPage::validate() {
 }
 
 TQSLWizFinalPage::~TQSLWizFinalPage() {
-        for (int i = 0; i < static_cast<int>(item_data.size()); i++) {
-               	free(item_data[i]);
+	for (int i = 0; i < static_cast<int>(item_data.size()); i++) {
+		free(item_data[i]);
 	}
 }

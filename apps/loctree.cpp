@@ -84,17 +84,17 @@ LocTree::Build(int flags, const TQSL_PROVIDER *provider) {
 
 	DeleteAllItems();
 	wxTreeItemId rootId = AddRoot(_("Station Locations"), FOLDER_ICON);
-        tQSL_Location loc;
-        check_tqsl_error(tqsl_initStationLocationCapture(&loc));
-        check_tqsl_error(tqsl_getNumStationLocations(loc, &_nloc));
-        for (int i = 0; i < _nloc && i < 2000; i++) {
-                char locname[256];
-                check_tqsl_error(tqsl_getStationLocationName(loc, i, locname, sizeof locname));
-                char callsign[256];
-                check_tqsl_error(tqsl_getStationLocationCallSign(loc, i, callsign, sizeof callsign));
+	tQSL_Location loc;
+	check_tqsl_error(tqsl_initStationLocationCapture(&loc));
+	check_tqsl_error(tqsl_getNumStationLocations(loc, &_nloc));
+	for (int i = 0; i < _nloc && i < 2000; i++) {
+		char locname[256];
+		check_tqsl_error(tqsl_getStationLocationName(loc, i, locname, sizeof locname));
+		char callsign[256];
+		check_tqsl_error(tqsl_getStationLocationCallSign(loc, i, callsign, sizeof callsign));
 		wxString locutf8 = wxString::FromUTF8(locname);
 		callsigns[wxString::FromUTF8(callsign)].push_back(make_pair(locutf8, i));
-        }
+	}
 	// Sort each callsign list and add items to tree
 	locmap::iterator loc_it;
 	for (loc_it = callsigns.begin(); loc_it != callsigns.end(); loc_it++) {

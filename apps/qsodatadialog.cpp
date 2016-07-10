@@ -44,12 +44,12 @@ using std::endl;
 	#define VSEP 3
 	#define GEOM1 4
 #elif defined(__APPLE__)
-        #define TEXT_HEIGHT 24
-        #define LABEL_HEIGHT 18
-        #define TEXT_WIDTH 8
-        #define TEXT_POINTS 10
-        #define VSEP 3
-        #define GEOM1 4
+	#define TEXT_HEIGHT 24
+	#define LABEL_HEIGHT 18
+	#define TEXT_WIDTH 8
+	#define TEXT_POINTS 10
+	#define VSEP 3
+	#define GEOM1 4
 #else
 	#define TEXT_HEIGHT 18
 	#define LABEL_HEIGHT TEXT_HEIGHT
@@ -187,7 +187,7 @@ init_valid_lists() {
 				high_s = _("UP");
 		}
 		wxString display = wxString::Format(wxT("%hs (%s-%s %hs)"), cp,
-                        low_s.c_str(), high_s.c_str(), hz);
+			low_s.c_str(), high_s.c_str(), hz);
 		valid_bands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
 		valid_rxbands.push_back(choice(wxString::FromUTF8(cp), display, low*scale, high*scale));
 	}

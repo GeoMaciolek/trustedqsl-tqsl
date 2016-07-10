@@ -150,55 +150,55 @@ tqsl_adifGetError(TQSL_ADIF_GET_FIELD_ERROR status) {
 	const char *fmt;
 	static char errorText[512];
 	switch( status ) {
-                case TQSL_ADIF_GET_FIELD_SUCCESS:
+		case TQSL_ADIF_GET_FIELD_SUCCESS:
 			fmt = "ADIF success";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NO_NAME_MATCH:
+		case TQSL_ADIF_GET_FIELD_NO_NAME_MATCH:
 			fmt = "ADIF field %s no name match";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH:
+		case TQSL_ADIF_GET_FIELD_NO_TYPE_MATCH:
 			fmt = "ADIF field %s no type match";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NO_RANGE_MATCH:
+		case TQSL_ADIF_GET_FIELD_NO_RANGE_MATCH:
 			fmt = "ADIF field %s no range match";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH:
+		case TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH:
 			fmt = "ADIF field %s no enumeration match";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NO_RESULT_ALLOCATION:
+		case TQSL_ADIF_GET_FIELD_NO_RESULT_ALLOCATION:
 			fmt = "ADIF field %s no result allocation";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_NAME_LENGTH_OVERFLOW:
+		case TQSL_ADIF_GET_FIELD_NAME_LENGTH_OVERFLOW:
 			fmt = "ADIF field %s name length overflow";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW:
+		case TQSL_ADIF_GET_FIELD_DATA_LENGTH_OVERFLOW:
 			fmt = "ADIF field %s data length overflow";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_SIZE_OVERFLOW:
+		case TQSL_ADIF_GET_FIELD_SIZE_OVERFLOW:
 			fmt = "ADIF field %s size overflow";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_TYPE_OVERFLOW:
+		case TQSL_ADIF_GET_FIELD_TYPE_OVERFLOW:
 			fmt = "ADIF field %s type overflow";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE:
+		case TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE:
 			fmt = "ADIF erroneously executing default state";
 			break;
 
-                case TQSL_ADIF_GET_FIELD_EOF:
+		case TQSL_ADIF_GET_FIELD_EOF:
 			fmt = "ADIF field %s reached End of File";
 			break;
 
-                default:
+		default:
 			fmt = "ADIF unknown error";
 			break;
 	}
@@ -243,7 +243,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 			if (currentCharacter == '\n')
 				(*line_no)++;
 			switch(adifState) {
-                                case TQSL_ADIF_STATE_BEGIN:
+				case TQSL_ADIF_STATE_BEGIN:
 					/* GET STARTED */
 					/* find the field opening "<", ignoring everything else */
 					if ('<' == currentCharacter) {
@@ -251,7 +251,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 					}
 					break;
 
-                                case TQSL_ADIF_STATE_GET_NAME:
+				case TQSL_ADIF_STATE_GET_NAME:
 					/* GET FIELD NAME */
 					/* add field name characters to buffer, until '>' or ':' found */
 					if (('>' == currentCharacter) || (':' == currentCharacter)) {
@@ -288,7 +288,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 					}
 					break;
 
-                                case TQSL_ADIF_STATE_GET_SIZE:
+				case TQSL_ADIF_STATE_GET_SIZE:
 					/* GET FIELD SIZE */
 					/* adding field size characters to buffer, until ':' or '>' found */
 					if ((':' == currentCharacter) || ('>' == currentCharacter)) {
@@ -340,7 +340,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 					}
 					break;
 
-                                case TQSL_ADIF_STATE_GET_TYPE:
+				case TQSL_ADIF_STATE_GET_TYPE:
 					/* GET FIELD TYPE */
 					/* get the number of characters in the value data */
 					if ('>' == currentCharacter) {
@@ -375,7 +375,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 					}
 					break;
 
-                                case TQSL_ADIF_STATE_GET_DATA:
+				case TQSL_ADIF_STATE_GET_DATA:
 					/* GET DATA */
 					/* read in the prescribed number of characters to form the value */
 					if (0 != dataLength--) {
@@ -392,9 +392,9 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 						}
 					break;
 
-                                case TQSL_ADIF_STATE_DONE:
+				case TQSL_ADIF_STATE_DONE:
 					/* DONE, should never get here */
-                                default:
+				default:
 					strncpy(ADIF_ErrorField, field->name, sizeof(ADIF_ErrorField));
 					status = TQSL_ADIF_GET_FIELD_ERRONEOUS_STATE;
 					adifState = TQSL_ADIF_STATE_DONE;
@@ -411,10 +411,10 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 		/* match enumeration */
 		signed long dataValue;
 		switch(adifFields[(field->adifNameIndex)].rangeType) {
-                        case TQSL_ADIF_RANGE_TYPE_NONE:
+			case TQSL_ADIF_RANGE_TYPE_NONE:
 				break;
 
-                        case TQSL_ADIF_RANGE_TYPE_MINMAX:
+			case TQSL_ADIF_RANGE_TYPE_MINMAX:
 				dataValue = strtol((const char *)field->data, NULL, 10);
 				if ((dataValue < adifFields[(field->adifNameIndex)].min_value) ||
 						(dataValue > adifFields[(field->adifNameIndex)].max_value)) {
@@ -423,7 +423,7 @@ tqsl_adifGetField(tqsl_adifFieldResults *field, FILE *filehandle,
 				}
 				break;
 
-                        case TQSL_ADIF_RANGE_TYPE_ENUMERATION:
+			case TQSL_ADIF_RANGE_TYPE_ENUMERATION:
 				strncpy(ADIF_ErrorField, field->name, sizeof(ADIF_ErrorField));
 				status = TQSL_ADIF_GET_FIELD_NO_ENUMERATION_MATCH;
 				for( iIndex = 0;

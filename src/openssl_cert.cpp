@@ -174,16 +174,16 @@
 extern "C" {
 #endif
 int i2d_ASN1_SET(void *a, unsigned char **pp,
-                 i2d_of_void *i2d, int ex_tag, int ex_class,
-                 int is_set);
+		 i2d_of_void *i2d, int ex_tag, int ex_class,
+		 int is_set);
 void *d2i_ASN1_SET(void *a, const unsigned char **pp,
-                   long length, d2i_of_void *d2i,
-                   void (*free_func)(void* p), int ex_tag,
-                   int ex_class);
+		   long length, d2i_of_void *d2i,
+		   void (*free_func)(void* p), int ex_tag,
+		   int ex_class);
 void *ASN1_seq_unpack(const unsigned char *buf, int len,
-                      d2i_of_void *d2i, void (*free_func)(void* dummy));
+		      d2i_of_void *d2i, void (*free_func)(void* dummy));
 unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
-                             unsigned char **buf, int *len);
+			     unsigned char **buf, int *len);
 #ifdef __cplusplus
 }
 #endif
@@ -940,13 +940,14 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 	tqslTrace("tqsl_selectCertificates", "callsign=%s, dxcc=%d, flags=%d", callsign ? callsign : "NULL", dxcc, flags);
 	if (tqsl_init())
 		return 1;
-	if (certlist == NULL || ncerts == NULL) {
-		tqslTrace("tqsl_selectCertificates", "arg error certlist=0x%lx, ncerts=0x%lx", certlist, ncerts);
+	if (ncerts == NULL) {
+		tqslTrace("tqsl_selectCertificates", "arg error ncerts=0x%lx", ncerts);
 		tQSL_Error = TQSL_ARGUMENT_ERROR;
 		return 1;
 	}
 	*ncerts = 0;
-	*certlist = NULL;
+	if (certlist)
+		*certlist = NULL;
 
 	/* Convert the dates to tQSL_Date objects */
 	if (date && !tqsl_isDateNull(date) && !tqsl_isDateValid(date)) {
@@ -1034,6 +1035,8 @@ tqsl_selectCertificates(tQSL_Cert **certlist, int *ncerts,
 
 	*ncerts = (selcerts ? sk_X509_num(selcerts) : 0) + keylist.size();
 	tqslTrace("tqsl_selectCertificates", "ncerts=%d", *ncerts);
+	if (certlist == NULL)		// Only want certificate count
+		goto end;
 	*certlist = reinterpret_cast<tQSL_Cert *>(tqsl_calloc(*ncerts, sizeof(tQSL_Cert)));
 	if (selcerts != NULL) {
 		for (i = 0; i < sk_X509_num(selcerts); i++) {
@@ -2155,7 +2158,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 	int unilen;
 	if (asc2uni(value.c_str(), value.length(), &uni, &unilen)) {
 		ASN1_TYPE *val;
- 		X509_ATTRIBUTE *attrib;
+		X509_ATTRIBUTE *attrib;
 		if (!uni[unilen - 1] && !uni[unilen - 2])
 			unilen -= 2;
 		if ((val = ASN1_TYPE_new()) != 0) {
@@ -2227,7 +2230,7 @@ tqsl_exportPKCS12(tQSL_Cert cert, bool returnB64, const char *filename, char *ba
 	string callSign, issuerOrganization, issuerOrganizationalUnit;
 	tQSL_Date date;
 	string QSONotBeforeDate, QSONotAfterDate, dxccEntity, Email,
-	       Address1, Address2, City, State, Postal, Country;
+		Address1, Address2, City, State, Postal, Country;
 	int dxcc = 0;
 	int rval = 1;
 
@@ -2618,9 +2621,9 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 
 	/* Read in the PKCS#12 file */
 	if (importB64) {
-                b64 = BIO_new(BIO_f_base64());
-                in = BIO_new_mem_buf(const_cast<char *>(base64), strlen(base64));
-                in = BIO_push(b64, in);
+		b64 = BIO_new(BIO_f_base64());
+		in = BIO_new_mem_buf(const_cast<char *>(base64), strlen(base64));
+		in = BIO_push(b64, in);
 	} else {
 		in = BIO_new_file(filename, "rb");
 	}
@@ -2668,7 +2671,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 			tqsl_imported_cert imported_cert;
 			bag = sk_PKCS12_SAFEBAG_value(bags, j);
 			switch (M_PKCS12_bag_type(bag)) {
-                                case NID_certBag:
+				case NID_certBag:
 					if (M_PKCS12_cert_bag_type(bag) != NID_x509Certificate)
 						break;	// Can't handle anything else
 					if ((x = M_PKCS12_certbag2x509(bag)) == 0) {
@@ -2726,7 +2729,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 					}
 					(*certlist).push_back(imported_cert);
 					break;
-                                case NID_pkcs8ShroudedKeyBag:
+				case NID_pkcs8ShroudedKeyBag:
 					if ((attr = PKCS12_get_attr(bag, NID_localKeyID)) != 0) {
 						if (attr->type != V_ASN1_OCTET_STRING) {
 							tQSL_Error = TQSL_CERT_TYPE_ERROR;
@@ -2866,7 +2869,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 					PKCS8_PRIV_KEY_INFO_free(p8);
 					p8 = 0;
 					break;
-                                case NID_keyBag:
+				case NID_keyBag:
 					tqslTrace("tqsl_importPKCS12", "cert type err: NID_keyBag");
 					tQSL_Error = TQSL_CERT_TYPE_ERROR;
 					goto imp_end;
@@ -2964,7 +2967,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 #endif
 				else
 #ifdef _WIN32
-			        {
+				{
 					_wunlink(wbadpath);
 					free_wchar(wpath);
 					free_wchar(wbadpath);
@@ -3051,8 +3054,8 @@ tqsl_backup_cert(tQSL_Cert cert) {
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
 		strncpy(tQSL_ErrorFile, backupPath, sizeof tQSL_ErrorFile);
-                tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
-                tqslTrace("tqsl_backup_cert", "Error %d errno %d file %s", tQSL_Error, tQSL_Errno, backupPath);
+		tQSL_ErrorFile[sizeof tQSL_ErrorFile-1] = 0;
+		tqslTrace("tqsl_backup_cert", "Error %d errno %d file %s", tQSL_Error, tQSL_Errno, backupPath);
 		return 1;
 	}
 	char buf[8192];
@@ -3538,7 +3541,7 @@ tqsl_trim(char *buf) {
 	}
 	/* Skip past leading whitespace */
 	for (cp = buf; isspace(*cp); cp++)
-	        {}
+		{}
 	/* Fold runs of white space into single space */
 	lastc = 0;
 	op = buf;

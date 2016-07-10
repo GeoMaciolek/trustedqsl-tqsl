@@ -301,7 +301,7 @@ static inline int isspc(int c) {
 // trim from start
 static inline std::string &ltrim(std::string &s) {
 	s.erase(s.begin(), std::find_if(s.begin(), s.end(), std::not1(std::ptr_fun<int, int>(isspc))));
-        return s;
+	return s;
 }
 
 // trim from end
@@ -2265,8 +2265,8 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 				if (ep->second->getFirstElement(field.gabbi_name, el)) {
 					field.cdata = el.getText();
 					switch (field.input_type) {
-                                                case TQSL_LOCATION_FIELD_DDLIST:
-                                                case TQSL_LOCATION_FIELD_LIST:
+						case TQSL_LOCATION_FIELD_DDLIST:
+						case TQSL_LOCATION_FIELD_LIST:
 							exists = false;
 							for (int i = 0; i < static_cast<int>(field.items.size()); i++) {
 								string cp = field.items[i].text;
@@ -2288,7 +2288,7 @@ tqsl_load_loc(TQSL_LOCATION *loc, XMLElementList::iterator ep, bool ignoreZones)
 									field.idx = -1;
 							}
 							break;
-                                                case TQSL_LOCATION_FIELD_TEXT:
+						case TQSL_LOCATION_FIELD_TEXT:
 							field.cdata = trim(field.cdata);
 							if (field.data_type == TQSL_LOCATION_FIELD_INT)
 								field.idata = strtol(field.cdata.c_str(), NULL, 10);
@@ -2697,8 +2697,8 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 			TQSL_LOCATION_FIELD& field = loc->pagelist[loc->page-1].fieldlist[i];
 			if (find == field.gabbi_name) {	// Found it
 				switch (field.input_type) {
-                                        case TQSL_LOCATION_FIELD_DDLIST:
-                                        case TQSL_LOCATION_FIELD_LIST:
+					case TQSL_LOCATION_FIELD_DDLIST:
+					case TQSL_LOCATION_FIELD_LIST:
 						if (field.data_type == TQSL_LOCATION_FIELD_INT) {
 							char numbuf[20];
 							if (static_cast<int>(field.items.size()) <= field.idx) {
@@ -2723,7 +2723,7 @@ tqsl_getStationLocationField(tQSL_Location locp, const char *name, char *namebuf
 							}
 						}
 						break;
-                                        case TQSL_LOCATION_FIELD_TEXT:
+					case TQSL_LOCATION_FIELD_TEXT:
 						field.cdata = trim(field.cdata);
 						if (field.flags & TQSL_LOCATION_FIELD_UPPER)
 							field.cdata = string_toupper(field.cdata);
@@ -2767,8 +2767,8 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 			fd->setPretext(sd.getPretext() + "  ");
 			fd->setElementName(field.gabbi_name);
 			switch (field.input_type) {
-                                case TQSL_LOCATION_FIELD_DDLIST:
-                                case TQSL_LOCATION_FIELD_LIST:
+				case TQSL_LOCATION_FIELD_DDLIST:
+				case TQSL_LOCATION_FIELD_LIST:
 					if (field.idx < 0 || field.idx >= static_cast<int>(field.items.size())) {
 						fd->setText("");
 						if (field.gabbi_name == "CALL") {
@@ -2782,7 +2782,7 @@ tqsl_location_to_xml(TQSL_LOCATION *loc, XMLElement& sd) {
 						fd->setText(field.items[field.idx].text);
 					}
 					break;
-                                case TQSL_LOCATION_FIELD_TEXT:
+				case TQSL_LOCATION_FIELD_TEXT:
 					field.cdata = trim(field.cdata);
 					if (field.flags & TQSL_LOCATION_FIELD_UPPER)
 						field.cdata = string_toupper(field.cdata);

@@ -46,7 +46,7 @@ static wxString StripProtocolAnchor(const wxString& location) {
 	if (!myloc.Left(2).IsSameAs(wxT("//"))) {
 		if (myloc.GetChar(0) != wxT('/'))
 			myloc = wxT("//") + myloc;
-        	else
+		else
 			myloc = wxT("/") + myloc;
 	}
 	if (myloc.Mid(2).Find(wxT('/')) == wxNOT_FOUND) myloc << wxT('/');
@@ -90,21 +90,21 @@ class tqslFileSystemInternetModule : public wxModule {
 
  public:
 	tqslFileSystemInternetModule()
-           : wxModule(), m_handler(NULL) {
-        }
+	    : wxModule(), m_handler(NULL) {
+	}
 
-        virtual bool OnInit() {
-            m_handler = new tqslInternetFSHandler;
-            wxFileSystem::AddHandler(m_handler);
-            return true;
-        }
+	virtual bool OnInit() {
+	    m_handler = new tqslInternetFSHandler;
+	    wxFileSystem::AddHandler(m_handler);
+	    return true;
+	}
 
-        virtual void OnExit() {
-            delete wxFileSystem::RemoveHandler(m_handler);
-        }
+	virtual void OnExit() {
+	    delete wxFileSystem::RemoveHandler(m_handler);
+	}
 
  private:
-        wxFileSystemHandler* m_handler;
+	wxFileSystemHandler* m_handler;
 };
 
 IMPLEMENT_DYNAMIC_CLASS(tqslFileSystemInternetModule, wxModule)

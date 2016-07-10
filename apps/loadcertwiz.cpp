@@ -51,15 +51,15 @@ notifyImport(int type, const char *message, void *data) {
 		const char *configkey = 0;
 		bool default_prompt = false;
 		switch (TQSL_CERT_CB_CERT_TYPE(type)) {
-                        case TQSL_CERT_CB_ROOT:
+			case TQSL_CERT_CB_ROOT:
 				nametype = "Trusted root";
 				configkey = "NotifyNewRoot";
 				break;
-                        case TQSL_CERT_CB_CA:
+			case TQSL_CERT_CB_CA:
 				nametype = "Certificate Authority";
 				configkey = "NotifyCA";
 				break;
-                        case TQSL_CERT_CB_USER:
+			case TQSL_CERT_CB_USER:
 				nametype = "Callsign";
 				configkey = "NotifyUser";
 				break;
@@ -82,25 +82,25 @@ notifyImport(int type, const char *message, void *data) {
 		notifyData *nd = reinterpret_cast<notifyData *>(data);
 		notifyData::counts *counts = 0;
 		switch (TQSL_CERT_CB_CERT_TYPE(type)) {
-                        case TQSL_CERT_CB_ROOT:
+			case TQSL_CERT_CB_ROOT:
 				counts = &(nd->root);
 				break;
-                        case TQSL_CERT_CB_CA:
+			case TQSL_CERT_CB_CA:
 				counts = &(nd->ca);
 				break;
-                        case TQSL_CERT_CB_USER:
+			case TQSL_CERT_CB_USER:
 				counts = &(nd->user);
 				break;
-                        case TQSL_CERT_CB_PKEY:
+			case TQSL_CERT_CB_PKEY:
 				counts = &(nd->pkey);
 				break;
-                        case TQSL_CERT_CB_CONFIG:
+			case TQSL_CERT_CB_CONFIG:
 				counts = &(nd->config);
 				break;
 		}
 		if (counts) {
 			switch (TQSL_CERT_CB_RESULT_TYPE(type)) {
-                                case TQSL_CERT_CB_DUPLICATE:
+				case TQSL_CERT_CB_DUPLICATE:
 					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER) {
 						if (message) {
 							nd->status = nd->status + wxString::FromUTF8(message) + wxT("\n");
@@ -110,13 +110,13 @@ notifyImport(int type, const char *message, void *data) {
 					}
 					counts->duplicate++;
 					break;
-                                case TQSL_CERT_CB_ERROR:
+				case TQSL_CERT_CB_ERROR:
 					if (message)
 						nd->status = nd->status + wxString::FromUTF8(message) + wxT("\n");
 					counts->error++;
 					// wxMessageBox(wxString::FromUTF8(message), _("Error"));
 					break;
-                                case TQSL_CERT_CB_LOADED:
+				case TQSL_CERT_CB_LOADED:
 					if (TQSL_CERT_CB_CERT_TYPE(type) == TQSL_CERT_CB_USER)
 						nd->status = nd->status + wxString::FromUTF8("Callsign Certificate ") +
 							wxString::FromUTF8(message) + wxT("\n");
@@ -196,7 +196,7 @@ export_new_cert(ExtWizard *_parent, const char *filename) {
 							"back up your certificate on removable media for safe-keeping.");
 							msg += wxT("\n\n");
 							msg += _("Would you like to back up your callsign certificate now?");
-	    					if (wxMessageBox(msg, _("Warning"), wxYES_NO | wxICON_QUESTION, _parent) == wxNO) {
+						if (wxMessageBox(msg, _("Warning"), wxYES_NO | wxICON_QUESTION, _parent) == wxNO) {
 							return;
 						}
 						frame->cert_tree->SelectItem(item);
