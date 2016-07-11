@@ -170,9 +170,12 @@ class CRQ_TypePage : public CRQ_Page {
  public:
 	explicit CRQ_TypePage(CRQWiz *parent);
 	virtual bool TransferDataFromWindow();
+	virtual CRQ_Page *GetPrev() const;
  private:
 	bool initialized;
 	wxRadioBox *certType;
+	CRQWiz *_parent;
+
 	DECLARE_EVENT_TABLE()
 };
 

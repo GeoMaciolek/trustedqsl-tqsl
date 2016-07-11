@@ -584,6 +584,8 @@ CRQ_TypePage::CRQ_TypePage(CRQWiz *parent)
 	tqslTrace("CRQ_TypePage::CRQ_TypePage", "parent=%lx", reinterpret_cast<void *>(parent));
 
 	initialized = false;
+	_parent = parent;
+
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 	wxSize sz = getTextSize(this);
 	int em_h = sz.GetHeight();
@@ -604,13 +606,6 @@ CRQ_TypePage::CRQ_TypePage(CRQWiz *parent)
 	certType = new wxRadioBox(this, ID_CRQ_TYPE, _("This Callsign Certificate is for:"), wxDefaultPosition,
 		wxSize(em_w*40, -1), sizeof callTypeChoices / sizeof callTypeChoices[0], callTypeChoices, 1, wxRA_SPECIFY_COLS);
 	sizer->Add(certType, 0, wxALL|wxEXPAND, 10);
-	if (Parent()->ncerts == 0) {
-		certType->Enable(1, false);		// Former personal
-		certType->Enable(3, false);		// Secondary club callsign
-		certType->Enable(5, false);		// Single op DXpedition
-		certType->Enable(6, false);		// 1x1
-		certType->Enable(8, false);		// Special event, single op
-	}
 }
 
 bool
@@ -634,6 +629,13 @@ CRQ_TypePage::TransferDataFromWindow() {
 	if (Parent()->dxcc == 0)
 		Parent()->signIt = true;
 	return true;
+}
+
+CRQ_Page *
+CRQ_TypePage::GetPrev() const {
+	tqslTrace("CRQ_TypePage::GetPrev", NULL);
+
+	return _parent->introPage;
 }
 
 CRQ_SignPage::CRQ_SignPage(CRQWiz *parent, TQSL_CERT_REQ *crq)
