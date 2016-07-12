@@ -312,17 +312,19 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 CRQ_Page *
 CRQ_IntroPage::GetNext() const {
 	tqslTrace("CRQ_IntroPage::GetNext", NULL);
-	CRQ_Page *newp;
-	if (_parent->ncerts == 0 || _parent->dxcc == 0) {
-		if (_parent->dxcc == 0) {
-			_parent->signIt = true;
-		} else {
-			_parent->signIt = false;
-		}
+	if (_parent->cert) {			// Renewal
+		_parent->signIt = false;
 		return _parent->namePage;
-	} else {
+	}
+	if (_parent->dxcc == 0) {		// NONE always requires signature
+		_parent->signIt = true;
 		return _parent->typePage;
 	}
+	if (_parent->ncerts == 0) {		// No certs, can't sign.
+		_parent->signIt = false;
+		return _parent->namePage;
+	}
+	return _parent->typePage;
 }
 
 CRQ_Page *
@@ -513,22 +515,24 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
 	wxSize sz = getTextSize(this);
-	int em_w = sz.GetWidth();
-	int em_h = sz.GetHeight();
+	em_w = sz.GetWidth();
+	em_h = sz.GetHeight();
 	wxString lbl = _("You may protect this callsign certificate using a password. "
 			"If you are using a computer system that is shared with "
 			"others, you should specify a password to protect this "
 			"callsign certificate. However, if you are using a computer "
 			"in a private residence, no password need be specified.");
-	lbl += wxT("\n\n");
-	lbl += _("Leave the password blank and click 'Finish' unless you want to use a password.");
-	lbl += wxT("\n\n");
-	lbl += _("Password:");
+	lbl += _("Leave the password blank and click 'Next' unless you want to use a password.");
 	wxStaticText *st = new wxStaticText(this, -1, lbl);
 	st->SetSize(em_w * 35, em_h * 5);
 	st->Wrap(em_w * 35);
-
 	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
+	fwdPrompt = new wxStaticText(this, -1, _("Leave the password blank and click 'Next' unless you want to use a password."));
+	fwdPrompt->SetSize(em_w * 35, em_h * 5);
+	fwdPrompt->Wrap(em_w * 35);
+	sizer->Add(fwdPrompt, 0, wxLEFT|wxRIGHT|wxTOP,10);
+	sizer->Add(new wxStaticText(this, -1, _("Password:")),
+		0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_pw1 = new wxTextCtrl(this, ID_CRQ_PW1, wxT(""), wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
 	sizer->Add(tc_pw1, 0, wxLEFT|wxRIGHT, 10);
 	sizer->Add(new wxStaticText(this, -1, _("Enter the password again for verification:")),
@@ -549,8 +553,14 @@ CRQ_Page *
 CRQ_PasswordPage::GetNext() const {
 	tqslTrace("CRQ_PasswordPage::GetNext", NULL);
 	if (_parent->signIt) {
+		fwdPrompt->SetLabel(_("Leave the password blank and click 'Next' unless you want to use a password."));
+		fwdPrompt->SetSize(em_w * 35, em_h * 5);
+		fwdPrompt->Wrap(em_w * 35);
 		return _parent->signPage;
 	} else {
+		fwdPrompt->SetLabel(_("Leave the password blank and click 'Finish' unless you want to use a password."));
+		fwdPrompt->SetSize(em_w * 35, em_h * 5);
+		fwdPrompt->Wrap(em_w * 35);
 		return NULL;
 	}
 }
@@ -593,18 +603,23 @@ CRQ_TypePage::CRQ_TypePage(CRQWiz *parent)
 
 	wxString callTypeChoices[] = {
 				 _("My current personal callsign"),
-				 _("My former personal callsign"),
+				 _("My former personal callsign or a portable modifier for my current callsign"),
 				 _("A primary club callsign"),
-				 _("A secondary club callsign"),
-				 _("A DXpedition callsign with multiple operators"),
-				 _("A DXpedition callsign where I am the only operator"),
+				 _("A secondary club callsign (my club already has a Callsign Certificate for it's primary callsign)"),
+				 _("A DXpedition, Portable, or holiday operation with multiple operators"),
+				 _("A DXpedition, Portable, or holiday operation where I am the only operator"),
+				 _("An operator that uses me as a QSL manager"),
 				 _("A special event (1x1) callsign"),
 				 _("A special event callsign with multiple operators"),
 				 _("A special event callsign where I am the only operator")
 				};
 
+	wxArrayString wrappedChoices;
+	for (int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
+		wrappedChoices.Add(wrapString(this,  callTypeChoices[i], em_w * 35));
+	}
 	certType = new wxRadioBox(this, ID_CRQ_TYPE, _("This Callsign Certificate is for:"), wxDefaultPosition,
-		wxSize(em_w*40, -1), sizeof callTypeChoices / sizeof callTypeChoices[0], callTypeChoices, 1, wxRA_SPECIFY_COLS);
+		wxSize(em_w*40, -1), wrappedChoices, 1, wxRA_SPECIFY_COLS);
 	sizer->Add(certType, 0, wxALL|wxEXPAND, 10);
 }
 
@@ -617,15 +632,35 @@ CRQ_TypePage::TransferDataFromWindow() {
 				true,	// Secondary club
 				false,	// dxpedition multi-op
 				true,	// dxpedition single-op
+				false,	// QSL Manager
 				true,	// 1x1 callsign
 				false,	// spec event multi-op
 				true	// spec event single-op
 				};
+	wxString signPrompts[] = {
+				wxT("sign error"),	// Current personal
+				_("Please select the Callsign Certificate for your current personal callsign to validate your request"),	// former personal
+				_("Please select a callsign certificate to validate your request"),	// Primary club
+				_("Please select your club's primary Callsign Certificate to validate your request"),	// Secondary club
+				wxT("sign error"),	// dxpedition multi-op
+				_("Please select the Callsign Certificate for your current personal callsign to validate your request"),	// dxpedition single op
+				wxT("sign error"),	// QSL Manager
+				_("Please select a callsign certificate to validate your request"),	// 1x1 callsign
+				wxT("sign error"),	// spec event multi-op
+				_("Please select a callsign certificate to validate your request")	// spec event single-op
+				};
+
 	tqslTrace("CRQ_TypePage::TransferDataFromWindow", NULL);
 	int selected = certType->GetSelection();
 	if (selected  == wxNOT_FOUND || selected > sizeof signThisType / sizeof signThisType[0])
 		return false;
 	Parent()->signIt = signThisType[selected];
+	if (signPrompts[selected]) {
+		Parent()->signPrompt = signPrompts[selected];
+	} else {
+		Parent()->signPrompt = _("Please select a callsign certificate to validate your request");
+	}
+
 	if (Parent()->dxcc == 0)
 		Parent()->signIt = true;
 	return true;
@@ -1040,7 +1075,7 @@ CRQ_SignPage::validate() {
 	if (Parent()->signIt) {
 		if (!cert_tree->GetSelection().IsOk() || cert_tree->GetItemData(cert_tree->GetSelection()) == NULL) {
 			error = true;
-			valMsg = _("Please select a callsign certificate to sign your request");
+			valMsg = Parent()->signPrompt;
 		} else {
 			char callsign[512];
 			tQSL_Cert cert = cert_tree->GetItemData(cert_tree->GetSelection())->getCert();

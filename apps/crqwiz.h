@@ -52,6 +52,7 @@ class CRQWiz : public ExtWizard {
 	int ncerts;		// Number of valid certificates
 	int nprov;		// Number of providers
 	bool signIt;
+	wxString signPrompt;
 	tQSL_Cert _cert;
 	// ProviderPage data
 	CRQ_Page *providerPage;
@@ -162,6 +163,9 @@ class CRQ_PasswordPage : public CRQ_Page {
 	wxStaticText *tc_status;
 	bool initialized;
 	CRQWiz *_parent;
+	wxStaticText *fwdPrompt;
+	int em_w;
+	int em_h;
 
 	DECLARE_EVENT_TABLE()
 };
