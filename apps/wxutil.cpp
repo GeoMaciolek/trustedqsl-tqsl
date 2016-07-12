@@ -27,6 +27,40 @@ getTextSize(wxWindow *win) {
 	return wxSize(char_width, char_height);
 }
 
+wxString
+wrapString(wxWindow *win, wxString in, int length) {
+	wxClientDC dc(win);
+	wxCoord textwidth, textheight;
+	wxString out = wxT("");
+	wxString str = in;
+	do {
+		dc.GetTextExtent(str, &textwidth, &textheight);
+		if (textwidth > length) {
+			int index = 0;
+				do {
+					str = str.Left(str.Length()-1);
+					index++;
+					dc.GetTextExtent(str, &textwidth, &textheight);
+
+					wxString c = wxString(str.Last());
+
+					if (textwidth < length && c == _(" "))
+						break;
+				} while (1);
+			if (out != wxT(""))
+				out += wxT("\n");
+			out += str;
+			str = in.Right(index);
+		} else {
+			break;
+		}
+	} while (1);
+	if (out != wxT(""))
+		out += wxT("\n");
+	out += str;
+	return out;
+}
+
 // Strip special characters from a string prior to writing to XML
 wxString
 urlEncode(wxString& str) {
