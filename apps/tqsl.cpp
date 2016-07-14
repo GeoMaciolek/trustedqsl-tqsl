@@ -4767,7 +4767,7 @@ QSLApp::OnInit() {
 	//
 	// If it's not installed on your system, it is just silently ignored
 #ifdef __LINUX__
-	{
+        {
 		wxLogNull nolog;
 		locale->AddCatalog(wxT("fileutils"));
 	}
@@ -6101,7 +6101,7 @@ void MyFrame::OnChooseLanguage(wxCommandEvent& WXUNUSED(event)) {
 	//
 	// If it's not installed on your system, it is just silently ignored
 #ifdef __LINUX__
-	{
+        {
 		wxLogNull nolog;
 		locale->AddCatalog(wxT("fileutils"));
 	}

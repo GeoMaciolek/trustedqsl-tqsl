@@ -27,6 +27,19 @@
 
 using std::string;
 
+static wxString callTypeChoices[] = {
+	 _("My current personal callsign"),
+	 _("My former personal callsign or a portable modifier for my current callsign"),
+	 _("A primary club callsign"),
+	 _("A secondary club callsign (I have a Callsign Certificate for the primary club callsign)"),
+	 _("A DXpedition, Portable, or holiday operation with multiple operators"),
+	 _("A DXpedition, Portable, or holiday operation where I am the only operator"),
+	 _("An operator that uses me as a QSL manager"),
+	 _("A special event (1x1) callsign"),
+	 _("A special event callsign with multiple operators"),
+	 _("A special event callsign where I am the only operator")
+};
+
 CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelpController *help,
 	const wxString& title)
 	: ExtWizard(parent, help, title), cert(xcert), _crq(crq)  {
@@ -78,6 +91,16 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	tqslTrace("CRQ_ProviderPage::CRQ_ProviderPage", "parent=%lx, crq=%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(crq));
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
+        wxClientDC dc(this);
+        wxCoord textwidth, textheight;
+        wxCoord maxwidth = 0;
+
+	// Find the width of the longest string
+	for (int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
+                dc.GetTextExtent(callTypeChoices[i], &textwidth, &textheight);
+		maxwidth = textwidth > maxwidth ? textwidth: maxwidth;
+	}
+
 	wxSize sz = getTextSize(this);
 	int em_h = sz.GetHeight();
 	int em_w = sz.GetWidth();
@@ -87,8 +110,8 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 		"request file has been created, you must send the "
 		"request file to the certificate issuer.");
 	wxStaticText *st = new wxStaticText(this, -1, lbl);
-	st->SetSize(em_w * 30, em_h * 5);
-	st->Wrap(em_w * 30);
+	st->SetSize(maxwidth + em_w * 2, em_h * 5);
+	st->Wrap(maxwidth + em_w * 3);
 
 	sizer->Add(st, 0, wxALL, 10);
 
@@ -530,7 +553,7 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 	fwdPrompt = new wxStaticText(this, -1, _("Leave the password blank and click 'Next' unless you want to use a password."));
 	fwdPrompt->SetSize(em_w * 35, em_h * 5);
 	fwdPrompt->Wrap(em_w * 35);
-	sizer->Add(fwdPrompt, 0, wxLEFT|wxRIGHT|wxTOP,10);
+	sizer->Add(fwdPrompt, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	sizer->Add(new wxStaticText(this, -1, _("Password:")),
 		0, wxLEFT|wxRIGHT|wxTOP, 10);
 	tc_pw1 = new wxTextCtrl(this, ID_CRQ_PW1, wxT(""), wxDefaultPosition, wxSize(em_w*20, -1), wxTE_PASSWORD);
@@ -597,29 +620,9 @@ CRQ_TypePage::CRQ_TypePage(CRQWiz *parent)
 	_parent = parent;
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
-	wxSize sz = getTextSize(this);
-	int em_h = sz.GetHeight();
-	int em_w = sz.GetWidth();
 
-	wxString callTypeChoices[] = {
-				 _("My current personal callsign"),
-				 _("My former personal callsign or a portable modifier for my current callsign"),
-				 _("A primary club callsign"),
-				 _("A secondary club callsign (my club already has a Callsign Certificate for it's primary callsign)"),
-				 _("A DXpedition, Portable, or holiday operation with multiple operators"),
-				 _("A DXpedition, Portable, or holiday operation where I am the only operator"),
-				 _("An operator that uses me as a QSL manager"),
-				 _("A special event (1x1) callsign"),
-				 _("A special event callsign with multiple operators"),
-				 _("A special event callsign where I am the only operator")
-				};
-
-	wxArrayString wrappedChoices;
-	for (int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
-		wrappedChoices.Add(wrapString(this,  callTypeChoices[i], em_w * 35));
-	}
 	certType = new wxRadioBox(this, ID_CRQ_TYPE, _("This Callsign Certificate is for:"), wxDefaultPosition,
-		wxSize(em_w*40, -1), wrappedChoices, 1, wxRA_SPECIFY_COLS);
+		wxDefaultSize, sizeof callTypeChoices / sizeof callTypeChoices[0], callTypeChoices, 1, wxRA_SPECIFY_COLS);
 	sizer->Add(certType, 0, wxALL|wxEXPAND, 10);
 }
 

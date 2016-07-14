@@ -2967,7 +2967,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 #endif
 				else
 #ifdef _WIN32
-				{
+			        {
 					_wunlink(wbadpath);
 					free_wchar(wpath);
 					free_wchar(wbadpath);
@@ -3541,7 +3541,7 @@ tqsl_trim(char *buf) {
 	}
 	/* Skip past leading whitespace */
 	for (cp = buf; isspace(*cp); cp++)
-		{}
+	    {}
 	/* Fold runs of white space into single space */
 	lastc = 0;
 	op = buf;
