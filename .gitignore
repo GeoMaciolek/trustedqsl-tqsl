@@ -23,6 +23,7 @@ ipch
 bin/
 lib/
 _UpgradeReport_Files/
+addlang.sh
 
 #linux-specific products
 Makefile

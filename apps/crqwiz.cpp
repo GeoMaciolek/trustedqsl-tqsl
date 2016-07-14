@@ -327,7 +327,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		tc_qsobeginm->SetSelection(10);		// November 1945
 		tc_qsobegind->SetSelection(0);
 	}
-	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*4));
+	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*50, em_h*4));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
 	AdjustPage(sizer, wxT("crq0.htm"));
 	initialized = true;
@@ -548,11 +548,11 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 			"in a private residence, no password need be specified.");
 	lbl += _("Leave the password blank and click 'Next' unless you want to use a password.");
 	wxStaticText *st = new wxStaticText(this, -1, lbl);
-	st->SetSize(em_w * 35, em_h * 5);
+	st->SetSize(em_w * 50, em_h * 5);
 	st->Wrap(em_w * 50);
 	sizer->Add(st, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	fwdPrompt = new wxStaticText(this, -1, _("Leave the password blank and click 'Next' unless you want to use a password."));
-	fwdPrompt->SetSize(em_w * 35, em_h * 5);
+	fwdPrompt->SetSize(em_w * 50, em_h * 5);
 	fwdPrompt->Wrap(em_w * 50);
 	sizer->Add(fwdPrompt, 0, wxLEFT|wxRIGHT|wxTOP, 10);
 	sizer->Add(new wxStaticText(this, -1, _("Password:")),
@@ -578,7 +578,7 @@ CRQ_PasswordPage::GetNext() const {
 	tqslTrace("CRQ_PasswordPage::GetNext", NULL);
 	if (_parent->signIt) {
 		fwdPrompt->SetLabel(_("Leave the password blank and click 'Next' unless you want to use a password."));
-		fwdPrompt->SetSize(em_w * 35, em_h * 5);
+		fwdPrompt->SetSize(em_w * 50, em_h * 5);
 		fwdPrompt->Wrap(em_w * 50);
 		return _parent->signPage;
 	} else {
@@ -686,7 +686,7 @@ CRQ_SignPage::CRQ_SignPage(CRQWiz *parent, TQSL_CERT_REQ *crq)
 	wxSize sz = getTextSize(this);
 	int em_h = sz.GetHeight();
 	em_w = sz.GetWidth();
-	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*35, em_h*3));
+	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(em_w*50, em_h*3));
 
 	cert_tree = new CertTree(this, ID_CRQ_CERT, wxDefaultPosition,
 		wxSize(em_w*30, em_h*10), wxTR_HAS_BUTTONS | wxSUNKEN_BORDER);
