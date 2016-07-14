@@ -91,19 +91,20 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 	tqslTrace("CRQ_ProviderPage::CRQ_ProviderPage", "parent=%lx, crq=%lx", reinterpret_cast<void *>(parent), reinterpret_cast<void *>(crq));
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
-        wxClientDC dc(this);
-        wxCoord textwidth, textheight;
-        wxCoord maxwidth = 0;
+	wxWindowDC dc(this);
+	dc.SetFont(this->GetFont());
+	wxCoord textwidth, textheight;
+	wxCoord maxwidth = 0;
 
 	// Find the width of the longest string
 	for (int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
-                dc.GetTextExtent(callTypeChoices[i], &textwidth, &textheight);
+	dc.GetTextExtent(callTypeChoices[i], &textwidth, &textheight);
 		maxwidth = textwidth > maxwidth ? textwidth: maxwidth;
 	}
 
-	wxSize sz = getTextSize(this);
-	int em_h = sz.GetHeight();
-	int em_w = sz.GetWidth();
+	wxCoord em_w, em_h;
+	dc.GetTextExtent(wxString(wxT("M")), &em_w, &em_h);
+
 	wxString lbl = _("This will create a new callsign certificate request file.");
 		lbl += wxT("\n\n");
 		lbl += _("Once you supply the requested information and the "
