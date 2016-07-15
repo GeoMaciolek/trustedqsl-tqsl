@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-14 20:05-0400\n"
-"PO-Revision-Date: 2016-02-13 18:59-0500\n"
+"PO-Revision-Date: 2016-07-14 20:19-0400\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: de\n"
@@ -39,47 +39,52 @@ msgstr "Fehler beim Analysieren des Zertifikates für das DXCC-Land"
 
 #: crqwiz.cpp:31
 msgid "My current personal callsign"
-msgstr ""
+msgstr "Meine aktuellen persönlichen Rufzeichen"
 
 #: crqwiz.cpp:32
 msgid ""
 "My former personal callsign or a portable modifier for my current callsign"
 msgstr ""
+"Meine ehemaligen persönlichen Rufzeichen oder einen tragbaren Modifikation "
+"für meine aktuelle Rufzeichen"
 
 #: crqwiz.cpp:33
 msgid "A primary club callsign"
-msgstr ""
+msgstr "Eine primäre Club Rufzeichen"
 
 #: crqwiz.cpp:34
 msgid ""
 "A secondary club callsign (I have a Callsign Certificate for the primary "
 "club callsign)"
 msgstr ""
+"Eine sekundäre Club Rufzeichen (Ich habe ein Rufzeichen-Zertifikat für das "
+"primäre Club Rufzeichen)"
 
 #: crqwiz.cpp:35
 msgid "A DXpedition, Portable, or holiday operation with multiple operators"
-msgstr ""
+msgstr "Ein Expedition, Portable oder Urlaub Betrieb mit mehreren Operatoren"
 
 #: crqwiz.cpp:36
 msgid ""
 "A DXpedition, Portable, or holiday operation where I am the only operator"
 msgstr ""
+"Ein Expedition, Portable oder Urlaub Betrieb wo ich der einzige Betreiber"
 
 #: crqwiz.cpp:37
 msgid "An operator that uses me as a QSL manager"
-msgstr ""
+msgstr "Ein Operator, der mich als QSL-Manager verwendet"
 
 #: crqwiz.cpp:38
 msgid "A special event (1x1) callsign"
-msgstr ""
+msgstr "Ein besonderes Ereignis (1 x 1) Rufzeichen"
 
 #: crqwiz.cpp:39
 msgid "A special event callsign with multiple operators"
-msgstr ""
+msgstr "Ein besonderes Ereignis Rufzeichen mit mehreren Operatoren"
 
 #: crqwiz.cpp:40
 msgid "A special event callsign where I am the only operator"
-msgstr ""
+msgstr "Ein besonderes Ereignis Rufzeichen wo ich der einzige Betreiber"
 
 #: crqwiz.cpp:108
 msgid "This will create a new callsign certificate request file."
@@ -181,11 +186,10 @@ msgstr ""
 "angegeben."
 
 #: crqwiz.cpp:549 crqwiz.cpp:554 crqwiz.cpp:580
-#, fuzzy
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
 msgstr ""
-"Lassen Sie das Kennwort leer und klicken Sie auf 'OK', wenn Sie kein "
+"Lassen Sie das Kennwort leer und klicken Sie auf 'Weiter', wenn Sie ein "
 "Kennwort verwenden möchten."
 
 #: crqwiz.cpp:558
@@ -213,28 +217,29 @@ msgstr ""
 "kein Kennwort verwenden möchten."
 
 #: crqwiz.cpp:625
-#, fuzzy
 msgid "This Callsign Certificate is for:"
-msgstr "Speichern Sie das Rufzeichen-Zertifikat für"
+msgstr "Dieses Rufzeichen-Zertifikat ist für:"
 
 #: crqwiz.cpp:646 crqwiz.cpp:650
-#, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
-msgstr "Bitte wählen Sie ein Rufzeichen-Zertifikat zum Signieren Ihrer Anfrage"
+msgstr ""
+"Bitte wählen Sie das Rufzeichen-Zertifikat für Ihre aktuelle persönliche "
+"Rufzeichen um Ihre Anfrage zu überprüfen"
 
 #: crqwiz.cpp:647 crqwiz.cpp:652 crqwiz.cpp:654 crqwiz.cpp:665
-#, fuzzy
 msgid "Please select a callsign certificate to validate your request."
-msgstr "Bitte wählen Sie ein Rufzeichen-Zertifikat zum Signieren Ihrer Anfrage"
+msgstr ""
+"Bitte wählen Sie ein Rufzeichen Zertifikat um Ihre Anfrage zu überprüfen"
 
 #: crqwiz.cpp:648
-#, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
-msgstr "Bitte wählen Sie ein Rufzeichen-Zertifikat zum Signieren Ihrer Anfrage"
+msgstr ""
+"Bitte wählen Sie Ihren Club primäre Rufzeichen Zertifikat um Ihre Anfrage zu "
+"überprüfen"
 
 #: crqwiz.cpp:762
 msgid "You must enter a valid call sign."
@@ -307,6 +312,9 @@ msgid ""
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
+"Sie können nicht DXCC Entity keine auswählen, müssen Sie jede Anfrage für "
+"Entität NONE unterzeichnen und Sie haben keine gültige Rufzeichen-"
+"Zertifikate, die Sie verwenden können, um diese Anforderung zu signieren."
 
 #: crqwiz.cpp:869 crqwiz.cpp:1061 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
@@ -1741,11 +1749,10 @@ msgid "More details at:"
 msgstr "Mehr Details unter:"
 
 #: tqsl.cpp:3085
-#, fuzzy
 msgid "Click 'OK' to install the new version of TQSL, or Cancel to ignore it."
 msgstr ""
-"Klicken Sie auf 'OK', um die neue Konfigurationsdatei zu installieren, oder "
-"Abbrechen zum ignorieren."
+"Klicken Sie auf 'OK', um die neue Version von TQSL, oder brechen Sie ab, um "
+"es zu ignorieren."
 
 #: tqsl.cpp:3090
 msgid ""
@@ -1805,14 +1812,13 @@ msgid "Update"
 msgstr "Aktualisierung"
 
 #: tqsl.cpp:3212
-#, fuzzy, c-format
+#, c-format
 msgid "Can't open TQSL update file %s: %hs"
-msgstr "Die neue Konfigurationsdatei %s: %hs kann nicht geöffnet werden"
+msgstr "TQSL Update Datei %s %hs kann nicht geöffnet werden."
 
 #: tqsl.cpp:3252
-#, fuzzy
 msgid "Error downloading new file:"
-msgstr "Fehler beim Herunterladen der neuen Konfigurationsdatei:"
+msgstr "Fehler beim Herunterladen der Datei."
 
 #: tqsl.cpp:3466
 msgid "Error checking for expired callsign certificates:"
