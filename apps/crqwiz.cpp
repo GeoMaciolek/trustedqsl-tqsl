@@ -549,7 +549,6 @@ CRQ_PasswordPage::CRQ_PasswordPage(CRQWiz *parent) :  CRQ_Page(parent) {
 			"others, you should specify a password to protect this "
 			"callsign certificate. However, if you are using a computer "
 			"in a private residence, no password need be specified.");
-	lbl += _("Leave the password blank and click 'Next' unless you want to use a password.");
 	wxStaticText *st = new wxStaticText(this, -1, lbl);
 	st->SetSize(Parent()->maxWidth, em_h * 5);
 	st->Wrap(Parent()->maxWidth);
