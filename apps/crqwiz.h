@@ -52,6 +52,7 @@ class CRQWiz : public ExtWizard {
 	int ncerts;		// Number of valid certificates
 	int nprov;		// Number of providers
 	bool signIt;
+	wxCoord maxWidth;	// Width of longest string
 	wxString signPrompt;
 	tQSL_Cert _cert;
 	// ProviderPage data
