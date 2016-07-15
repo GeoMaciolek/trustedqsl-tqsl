@@ -27,6 +27,15 @@ getTextSize(wxWindow *win) {
 	return wxSize(char_width, char_height);
 }
 
+// isspace() called on extended chars in UTF-8 raises asserts in
+// the windows C++ libs. Don't call isspace() if out of range.
+
+static inline int isspc(int c) {
+	if (c < 0 || c > 255)
+		return 0;
+	return isspace(c);
+}
+
 wxString
 wrapString(wxWindow *win, wxString in, int length) {
 	wxClientDC dc(win);
@@ -44,7 +53,7 @@ wrapString(wxWindow *win, wxString in, int length) {
 
 					wxString c = wxString(str.Last());
 
-					if (textwidth < length && c == _(" "))
+					if (textwidth < length && isspc(c[0]))
 						break;
 				} while (1);
 			if (out != wxT(""))
@@ -89,7 +98,7 @@ utf8_to_ucs2(const char *in, char *out, size_t buflen) {
 			len++;
 		} else if (((unsigned char)*in & 0xe0) == 0xe0) {  // Three-byte
 			unsigned short three =	((in[0] & 0x0f) << 12) |
-					        ((in[1] & 0x3f) << 6) |
+						 ((in[1] & 0x3f) << 6) |
 						 (in[2] & 0x3f);
 			*out++ = (three & 0xff00) >> 8;
 			len++;

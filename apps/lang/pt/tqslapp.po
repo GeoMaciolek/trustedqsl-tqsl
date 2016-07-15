@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-12 18:42-0400\n"
+"POT-Creation-Date: 2016-07-14 20:05-0400\n"
 "PO-Revision-Date: 2016-02-13 19:00-0500\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
@@ -37,12 +37,56 @@ msgstr "Erro de certificado de análise de sinal de chamada"
 msgid "Error parsing certificate for DXCC entity"
 msgstr "Erro de certificado de análise para a entidade DXCC"
 
-#: crqwiz.cpp:84
+#: crqwiz.cpp:31
+msgid "My current personal callsign"
+msgstr ""
+
+#: crqwiz.cpp:32
+msgid ""
+"My former personal callsign or a portable modifier for my current callsign"
+msgstr ""
+
+#: crqwiz.cpp:33
+msgid "A primary club callsign"
+msgstr ""
+
+#: crqwiz.cpp:34
+msgid ""
+"A secondary club callsign (I have a Callsign Certificate for the primary "
+"club callsign)"
+msgstr ""
+
+#: crqwiz.cpp:35
+msgid "A DXpedition, Portable, or holiday operation with multiple operators"
+msgstr ""
+
+#: crqwiz.cpp:36
+msgid ""
+"A DXpedition, Portable, or holiday operation where I am the only operator"
+msgstr ""
+
+#: crqwiz.cpp:37
+msgid "An operator that uses me as a QSL manager"
+msgstr ""
+
+#: crqwiz.cpp:38
+msgid "A special event (1x1) callsign"
+msgstr ""
+
+#: crqwiz.cpp:39
+msgid "A special event callsign with multiple operators"
+msgstr ""
+
+#: crqwiz.cpp:40
+msgid "A special event callsign where I am the only operator"
+msgstr ""
+
+#: crqwiz.cpp:108
 msgid "This will create a new callsign certificate request file."
 msgstr ""
 "Isto irá criar um novo arquivo de solicitação de certificado indicativo."
 
-#: crqwiz.cpp:86
+#: crqwiz.cpp:110
 msgid ""
 "Once you supply the requested information and the request file has been "
 "created, you must send the request file to the certificate issuer."
@@ -51,71 +95,71 @@ msgstr ""
 "foi criado, você deve enviar o arquivo de solicitação para o emissor do "
 "certificado."
 
-#: crqwiz.cpp:95
+#: crqwiz.cpp:119
 msgid "Certificate Issuer:"
 msgstr "Emissor do certificado:"
 
-#: crqwiz.cpp:104 crqwiz.cpp:859 crqwiz.cpp:954 crqwiz.cpp:1008
-#: crqwiz.cpp:1043 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
+#: crqwiz.cpp:128 crqwiz.cpp:863 crqwiz.cpp:958 crqwiz.cpp:1012
+#: crqwiz.cpp:1047 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
 #: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
 #: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
 #: tqslwiz.cpp:459 tqslwiz.cpp:549
 msgid "Error"
 msgstr "Erro "
 
-#: crqwiz.cpp:139
+#: crqwiz.cpp:163
 msgid "Email: "
 msgstr "Email "
 
-#: crqwiz.cpp:141
+#: crqwiz.cpp:165
 msgid "URL: "
 msgstr "URL: "
 
-#: crqwiz.cpp:177
+#: crqwiz.cpp:201
 msgid "DXCC entity:"
 msgstr "DXCC Entidade:"
 
-#: crqwiz.cpp:181 tqsl.cpp:1876 tqsl.cpp:3895
+#: crqwiz.cpp:205 tqsl.cpp:1876 tqsl.cpp:3895
 msgid "Call sign:"
 msgstr "Indicativo de chamada:"
 
-#: crqwiz.cpp:238
+#: crqwiz.cpp:262
 msgid "QSO begin date:"
 msgstr "QSO data de início:"
 
-#: crqwiz.cpp:284
+#: crqwiz.cpp:308
 msgid "QSO end date:"
 msgstr "QSO data final:"
 
-#: crqwiz.cpp:348
+#: crqwiz.cpp:372
 msgid "Zip/Postal"
 msgstr "Zip / Postal"
 
-#: crqwiz.cpp:353 stationdial.cpp:70
+#: crqwiz.cpp:377 stationdial.cpp:70
 msgid "Name"
 msgstr "Nome"
 
-#: crqwiz.cpp:377
+#: crqwiz.cpp:401
 msgid "Address"
 msgstr "Endereço"
 
-#: crqwiz.cpp:403
+#: crqwiz.cpp:427
 msgid "City"
 msgstr "Cidade "
 
-#: crqwiz.cpp:416 stationdial.cpp:351 stationdial.cpp:362
+#: crqwiz.cpp:440 stationdial.cpp:351 stationdial.cpp:362
 msgid "State"
 msgstr "Estado:"
 
-#: crqwiz.cpp:438 crqwiz.cpp:441
+#: crqwiz.cpp:462 crqwiz.cpp:465
 msgid "Country"
 msgstr "País  "
 
-#: crqwiz.cpp:481
+#: crqwiz.cpp:505
 msgid "Your e-mail address"
 msgstr "O seu endereço de e-mail"
 
-#: crqwiz.cpp:494
+#: crqwiz.cpp:518
 msgid ""
 "Note: The e-mail address you provide here is the address to which the issued "
 "certificate will be sent. Make sure it's the correct address!"
@@ -123,7 +167,7 @@ msgstr ""
 "Nota: O endereço de e-mail que você fornecer aqui é o endereço para o qual o "
 "certificado emitido será enviado. Certifique-se que o endereço correto!"
 
-#: crqwiz.cpp:520
+#: crqwiz.cpp:544
 msgid ""
 "You may protect this callsign certificate using a password. If you are using "
 "a computer system that is shared with others, you should specify a password "
@@ -136,7 +180,7 @@ msgstr ""
 "No entanto, se você estiver usando um computador em uma residência privada, "
 "precisa ser especificado sem senha."
 
-#: crqwiz.cpp:525 crqwiz.cpp:530 crqwiz.cpp:556
+#: crqwiz.cpp:549 crqwiz.cpp:554 crqwiz.cpp:580
 #, fuzzy
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
@@ -144,15 +188,15 @@ msgstr ""
 "Deixe a senha em branco e clique em 'OK', a menos que você quiser usar uma "
 "senha."
 
-#: crqwiz.cpp:534
+#: crqwiz.cpp:558
 msgid "Password:"
 msgstr "Senha:"
 
-#: crqwiz.cpp:538
+#: crqwiz.cpp:562
 msgid "Enter the password again for verification:"
 msgstr "Digite a senha novamente para verificação:"
 
-#: crqwiz.cpp:542
+#: crqwiz.cpp:566
 msgid ""
 "DO NOT lose the password you choose! You will be unable to use the "
 "certificate without this password!"
@@ -160,7 +204,7 @@ msgstr ""
 "Não perca a senha que você escolher! Você não será capaz de usar o "
 "certificado sem essa senha!"
 
-#: crqwiz.cpp:561
+#: crqwiz.cpp:585
 msgid ""
 "Leave the password blank and click 'Finish' unless you want to use a "
 "password."
@@ -168,89 +212,45 @@ msgstr ""
 "Deixe a senha em branco e clique em 'Finish', a menos que você quiser usar "
 "uma senha."
 
-#: crqwiz.cpp:605
-msgid "My current personal callsign"
-msgstr ""
-
-#: crqwiz.cpp:606
-msgid ""
-"My former personal callsign or a portable modifier for my current callsign"
-msgstr ""
-
-#: crqwiz.cpp:607
-msgid "A primary club callsign"
-msgstr ""
-
-#: crqwiz.cpp:608
-msgid ""
-"A secondary club callsign (my club already has a Callsign Certificate for "
-"it's primary callsign)"
-msgstr ""
-
-#: crqwiz.cpp:609
-msgid "A DXpedition, Portable, or holiday operation with multiple operators"
-msgstr ""
-
-#: crqwiz.cpp:610
-msgid ""
-"A DXpedition, Portable, or holiday operation where I am the only operator"
-msgstr ""
-
-#: crqwiz.cpp:611
-msgid "An operator that uses me as a QSL manager"
-msgstr ""
-
-#: crqwiz.cpp:612
-msgid "A special event (1x1) callsign"
-msgstr ""
-
-#: crqwiz.cpp:613
-msgid "A special event callsign with multiple operators"
-msgstr ""
-
-#: crqwiz.cpp:614
-msgid "A special event callsign where I am the only operator"
-msgstr ""
-
-#: crqwiz.cpp:621
+#: crqwiz.cpp:625
 #, fuzzy
 msgid "This Callsign Certificate is for:"
 msgstr "Salve o Certificado Indicativo para"
 
-#: crqwiz.cpp:642 crqwiz.cpp:646
+#: crqwiz.cpp:646 crqwiz.cpp:650
 #, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
-"validate your request"
+"validate your request."
 msgstr "Por favor, instale um certificado indicativo tente novamente."
 
-#: crqwiz.cpp:643 crqwiz.cpp:648 crqwiz.cpp:650 crqwiz.cpp:661
+#: crqwiz.cpp:647 crqwiz.cpp:652 crqwiz.cpp:654 crqwiz.cpp:665
 #, fuzzy
-msgid "Please select a callsign certificate to validate your request"
+msgid "Please select a callsign certificate to validate your request."
 msgstr "Por favor, instale um certificado indicativo tente novamente."
 
-#: crqwiz.cpp:644
+#: crqwiz.cpp:648
 #, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
-"request"
+"request."
 msgstr "Por favor, instale um certificado indicativo tente novamente."
 
-#: crqwiz.cpp:758
+#: crqwiz.cpp:762
 msgid "You must enter a valid call sign."
 msgstr "Você deve digitar um sinal de chamada válido."
 
-#: crqwiz.cpp:767
+#: crqwiz.cpp:771
 msgid "You must select a DXCC entity."
 msgstr "Você deve selecionar uma entidade DXCC."
 
-#: crqwiz.cpp:777
+#: crqwiz.cpp:781
 msgid "QSO begin date: You must choose proper values for Year, Month and Day."
 msgstr ""
 "QSO data começar: Você deve escolher valores apropriados para o ano, mês e "
 "dia."
 
-#: crqwiz.cpp:781
+#: crqwiz.cpp:785
 msgid ""
 "QSO end date: You must either choose proper values for Year, Month and Day "
 "or leave all three blank."
@@ -258,12 +258,12 @@ msgstr ""
 "QSO data de término: Você deve optar valores adequados para o ano, mês e dia "
 "ou deixar todos os três em branco."
 
-#: crqwiz.cpp:786
+#: crqwiz.cpp:790
 msgid "QSO end date cannot be before QSO begin date."
 msgstr "QSO data final não pode ser antes de começar QSO data."
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
-#: crqwiz.cpp:824
+#: crqwiz.cpp:828
 #, c-format
 msgid ""
 "You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "
@@ -272,11 +272,11 @@ msgstr ""
 "QSO: "
 
 #. TRANSLATORS: here "to" separates two dates in a date range
-#: crqwiz.cpp:826
+#: crqwiz.cpp:830
 msgid " to "
 msgstr " para "
 
-#: crqwiz.cpp:832
+#: crqwiz.cpp:836
 #, c-format
 msgid ""
 "You have already requested a callsign certificate for %s and can not request "
@@ -285,7 +285,7 @@ msgstr ""
 "Você já solicitado um certificado indicativo para %s e não pode pedir outro "
 "até que o pedido foi processado por LoTW Staff."
 
-#: crqwiz.cpp:836
+#: crqwiz.cpp:840
 msgid ""
 "Please wait until you receive an e-mail bearing your requested callsign "
 "certificate."
@@ -293,7 +293,7 @@ msgstr ""
 "Por favor, aguarde até receber um e-mail tendo o seu certificado indicativo "
 "solicitado."
 
-#: crqwiz.cpp:839
+#: crqwiz.cpp:843
 #, c-format
 msgid ""
 "If you are sure that the earlier request is now invalid you should delete "
@@ -302,22 +302,22 @@ msgstr ""
 "Se você tem certeza de que o pedido anterior agora é inválido, você deve "
 "excluir o certificado indicativo pendente para %s ."
 
-#: crqwiz.cpp:864
+#: crqwiz.cpp:868
 msgid ""
 "You cannot select DXCC Entity NONE as you must sign any request for entity "
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
 
-#: crqwiz.cpp:865 crqwiz.cpp:1057 tqsl.cpp:145 tqsl.cpp:164
+#: crqwiz.cpp:869 crqwiz.cpp:1061 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
 msgstr "TQSL erro"
 
-#: crqwiz.cpp:869
+#: crqwiz.cpp:873
 msgid "You have selected DXCC Entity NONE"
 msgstr "Você selecionou DXCC Entidade NONE"
 
-#: crqwiz.cpp:871
+#: crqwiz.cpp:875
 msgid ""
 "QSO records signed using the certificate will not be valid for DXCC award "
 "credit (but will be valid for other applicable awards). If the certificate "
@@ -333,11 +333,11 @@ msgstr ""
 "contrário, você provavelmente deve usar o \"Voltar \" para voltar à página "
 "de DXCC após clicar \"OK \""
 
-#: crqwiz.cpp:879 stationdial.cpp:447
+#: crqwiz.cpp:883 stationdial.cpp:447
 msgid "TQSL Warning"
 msgstr "TQSL Aviso"
 
-#: crqwiz.cpp:882
+#: crqwiz.cpp:886
 msgid ""
 "You have chosen a QSO end date for this Callsign Certificate. The 'QSO end "
 "date' should ONLY be set if that date is the date when that callsign's "
@@ -347,7 +347,7 @@ msgstr ""
 "data final' só deve ser definido se essa data é a data em que a licença do "
 "indicativo expirado ou a licença foi substituído por um novo indicativo."
 
-#: crqwiz.cpp:886
+#: crqwiz.cpp:890
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
 "even if the callsign certificate itself is still valid."
@@ -355,7 +355,7 @@ msgstr ""
 "Se você definir uma data final, você não será capaz de assinar QSOs passado "
 "nessa data, mesmo que o certificado indicativo ainda é válido."
 
-#: crqwiz.cpp:890
+#: crqwiz.cpp:894
 msgid ""
 "If you still hold this callsign (or if you plan to renew the license for the "
 "callsign), you should not set a 'QSO end date'."
@@ -363,41 +363,41 @@ msgstr ""
 "Se você ainda tem esse indicativo (ou se você pretende renovar a licença "
 "para o indicativo), você não deve definir um 'QSO data final'."
 
-#: crqwiz.cpp:893
+#: crqwiz.cpp:897
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Você quer realmente manter esta 'QSO data final'?"
 
-#: crqwiz.cpp:894 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
+#: crqwiz.cpp:898 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
 #: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Aviso"
 
-#: crqwiz.cpp:929
+#: crqwiz.cpp:933
 msgid "You must enter your name"
 msgstr "Você deve digitar o seu nome"
 
-#: crqwiz.cpp:931
+#: crqwiz.cpp:935
 msgid "You must enter your address"
 msgstr "Você deve digitar o seu endereço"
 
-#: crqwiz.cpp:933
+#: crqwiz.cpp:937
 msgid "You must enter your city"
 msgstr "Você deve digitar sua cidade"
 
-#: crqwiz.cpp:995
+#: crqwiz.cpp:999
 msgid "You must enter a valid email address"
 msgstr "Você deve digitar um endereço de email válido"
 
-#: crqwiz.cpp:1030
+#: crqwiz.cpp:1034
 msgid "The two copies of the password do not match."
 msgstr "As duas cópias da senha não correspondem."
 
-#: crqwiz.cpp:1071
+#: crqwiz.cpp:1075
 msgid "Click 'Finish' to complete this callsign certificate request."
 msgstr ""
 "Clique em 'Finish' para concluir esta solicitação de certificado indicativo."
 
-#: crqwiz.cpp:1084
+#: crqwiz.cpp:1088
 #, c-format
 msgid ""
 "You are saying that the requested certificate for %s belongs to the same "
@@ -2779,161 +2779,157 @@ msgstr "Localização da Estação Nome"
 msgid "Station name must be provided"
 msgstr "Nome da estação deve ser fornecida"
 
-#: wxutil.cpp:47
-msgid " "
-msgstr ""
-
-#: wxutil.cpp:122
+#: wxutil.cpp:131
 msgid "Memory allocation failure"
 msgstr "Falha na alocação de memória"
 
-#: wxutil.cpp:123
+#: wxutil.cpp:132
 msgid "Unable to initialize random number generator"
 msgstr "Não é possível inicializar o gerador de números aleatórios"
 
-#: wxutil.cpp:124
+#: wxutil.cpp:133
 msgid "Invalid argument"
 msgstr "Argumento de comando inválido"
 
-#: wxutil.cpp:125
+#: wxutil.cpp:134
 msgid "Operator aborted operation"
 msgstr "Operador operação anulada"
 
-#: wxutil.cpp:126
+#: wxutil.cpp:135
 msgid "No Certificate Request matches the selected Callsign Certificate"
 msgstr ""
 "Nenhuma solicitação de certificado corresponde ao certificado Indicativo "
 "selecionado"
 
-#: wxutil.cpp:127
+#: wxutil.cpp:136
 msgid "Buffer too small"
 msgstr "Buffer muito pequeno"
 
-#: wxutil.cpp:128
+#: wxutil.cpp:137
 msgid "Invalid date format"
 msgstr "Formato de data inválido"
 
-#: wxutil.cpp:129
+#: wxutil.cpp:138
 msgid "Certificate not initialized for signing"
 msgstr "O certificado não é inicializado para assinatura"
 
-#: wxutil.cpp:130
+#: wxutil.cpp:139
 msgid "Password not correct"
 msgstr "Senha não está correto"
 
-#: wxutil.cpp:131
+#: wxutil.cpp:140
 msgid "Expected name"
 msgstr "Espera-se um nome"
 
-#: wxutil.cpp:132
+#: wxutil.cpp:141
 msgid "Name exists"
 msgstr "Este nome existe"
 
-#: wxutil.cpp:133
+#: wxutil.cpp:142
 msgid "Data for this DXCC entity could not be found"
 msgstr "Os dados para esta entidade DXCC não pôde ser encontrado"
 
-#: wxutil.cpp:134
+#: wxutil.cpp:143
 msgid "Invalid time format"
 msgstr "Formato de hora inválido"
 
-#: wxutil.cpp:135
+#: wxutil.cpp:144
 msgid ""
 "QSO date is not within the date range specified on your Callsign Certificate"
 msgstr ""
 "Data QSO não está dentro do intervalo de datas especificado no Certificado "
 "Indicativo"
 
-#: wxutil.cpp:136
+#: wxutil.cpp:145
 msgid "Certificate provider not found"
 msgstr "Fornecedor certificado não foi encontrado"
 
-#: wxutil.cpp:137
+#: wxutil.cpp:146
 msgid "No callsign certificate for key"
 msgstr "Nenhum certificado indicativo para a chave"
 
-#: wxutil.cpp:138
+#: wxutil.cpp:147
 msgid "Configuration file cannot be opened"
 msgstr "O arquivo de configuração não pode ser aberto"
 
-#: wxutil.cpp:139
+#: wxutil.cpp:148
 msgid "Callsign Certificate or Certificate Request not found"
 msgstr ""
 "Indicativo certificado ou uma solicitação de certificado não encontrado"
 
-#: wxutil.cpp:140
+#: wxutil.cpp:149
 msgid "PKCS#12 file not TQSL compatible"
 msgstr "Arquivo PKCS # 12 não TQSL compatível"
 
-#: wxutil.cpp:141
+#: wxutil.cpp:150
 msgid "Callsign Certificate not TQSL compatible"
 msgstr "Indicativo certificado não TQSL compatível"
 
-#: wxutil.cpp:142
+#: wxutil.cpp:151
 msgid "Date out of range"
 msgstr "Data fora da faixa"
 
-#: wxutil.cpp:143
+#: wxutil.cpp:152
 msgid "Duplicate QSO suppressed"
 msgstr "Duplicate QSO suprimido"
 
-#: wxutil.cpp:144
+#: wxutil.cpp:153
 msgid "Database error"
 msgstr "Erro de banco de dados"
 
-#: wxutil.cpp:145
+#: wxutil.cpp:154
 msgid "The selected station location could not be found"
 msgstr "A localização da estação selecionada não pôde ser encontrado"
 
-#: wxutil.cpp:146
+#: wxutil.cpp:155
 msgid "The selected callsign could not be found"
 msgstr "O indicativo selecionado não pôde ser encontrado"
 
-#: wxutil.cpp:147
+#: wxutil.cpp:156
 msgid "The TQSL configuration file cannot be parsed"
 msgstr "O arquivo de configuração TQSL não pode ser analisado"
 
-#: wxutil.cpp:148
+#: wxutil.cpp:157
 msgid "This file can not be processed due to a system error"
 msgstr "Este arquivo não pode ser processado devido a um erro no sistema"
 
-#: wxutil.cpp:149
+#: wxutil.cpp:158
 msgid "The format of this file is incorrect."
 msgstr "O formato deste arquivo está incorreto."
 
-#: wxutil.cpp:158
+#: wxutil.cpp:167
 msgid "NO ERROR"
 msgstr "SEM ERRO"
 
-#: wxutil.cpp:161
+#: wxutil.cpp:170
 msgid "Unknown custom error"
 msgstr "Desconhecido de erro personalizada"
 
-#: wxutil.cpp:167
+#: wxutil.cpp:176
 #, c-format
 msgid "Database Error: %hs"
 msgstr "Erro de banco de dados: %hs"
 
-#: wxutil.cpp:172
+#: wxutil.cpp:181
 #, c-format
 msgid "System error: %hs : %hs"
 msgstr "Erro de sistema: %hs : %hs"
 
-#: wxutil.cpp:176
+#: wxutil.cpp:185
 #, c-format
 msgid "System error: %hs"
 msgstr "Erro de sistema: %hs"
 
-#: wxutil.cpp:183
+#: wxutil.cpp:192
 #, c-format
 msgid "File syntax error: %hs"
 msgstr "Arquivo erro de sintaxe: %hs"
 
-#: wxutil.cpp:187
+#: wxutil.cpp:196
 msgid "File syntax error"
 msgstr "Arquivo erro de sintaxe"
 
-#: wxutil.cpp:222
+#: wxutil.cpp:231
 #, c-format
 msgid ""
 "Callsign Certificate or Certificate Request not found for callsign %hs "
@@ -2942,7 +2938,7 @@ msgstr ""
 "Callsign certificado ou uma solicitação de certificado não foi encontrado "
 "para callsign %hs serial %ld"
 
-#: wxutil.cpp:229
+#: wxutil.cpp:238
 #, c-format
 msgid "Invalid error code: %d"
 msgstr "Código de erro inválido: %d"
