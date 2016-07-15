@@ -98,7 +98,7 @@ CRQ_ProviderPage::CRQ_ProviderPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Pa
 
 	// Find the width of the longest string
 	for (unsigned int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
-	dc.GetTextExtent(callTypeChoices[i], &textwidth, &textheight);
+	dc.GetTextExtent(wxGetTranslation(callTypeChoices[i]), &textwidth, &textheight);
 		maxwidth = textwidth > maxwidth ? textwidth: maxwidth;
 	}
 
@@ -622,8 +622,14 @@ CRQ_TypePage::CRQ_TypePage(CRQWiz *parent)
 
 	wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
 
+	wxArrayString ch;
+	for (unsigned int i = 0; i < sizeof callTypeChoices / sizeof callTypeChoices[0]; i++) {
+		wxString wtf = wxGetTranslation(callTypeChoices[i]);
+		ch.Add(wxGetTranslation(callTypeChoices[i]));
+	}
+
 	certType = new wxRadioBox(this, ID_CRQ_TYPE, _("This Callsign Certificate is for:"), wxDefaultPosition,
-		wxDefaultSize, sizeof callTypeChoices / sizeof callTypeChoices[0], callTypeChoices, 1, wxRA_SPECIFY_COLS);
+		wxDefaultSize, ch, 1, wxRA_SPECIFY_COLS);
 	sizer->Add(certType, 0, wxALL|wxEXPAND, 10);
 }
 
