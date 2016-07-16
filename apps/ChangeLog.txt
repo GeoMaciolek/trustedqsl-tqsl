@@ -5,8 +5,9 @@ TQSL changes
 ----------
 Fix build error using gcc-5/gcc-6.
 
-Update Callsign Certificate request wizard to ask information to allow the
-wizard to determine if the request should be signed or not.
+Update Callsign Certificate request wizard to request information so that it
+can determine if the request should be authenticated and, if so, suggest which
+Callsign Certificate to use for authentication.
 
 2.2.2
 ----------
