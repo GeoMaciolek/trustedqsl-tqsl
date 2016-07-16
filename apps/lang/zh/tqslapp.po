@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-14 20:05-0400\n"
+"POT-Creation-Date: 2016-07-16 08:34-0400\n"
 "PO-Revision-Date: 2016-05-13 02:22+0800\n"
 "Last-Translator: Caros Hsu <bh4txn@gmail.com>\n"
 "Language-Team: TQSL Developers\n"
@@ -76,220 +76,226 @@ msgstr ""
 msgid "A special event callsign where I am the only operator"
 msgstr ""
 
-#: crqwiz.cpp:108
-msgid "This will create a new callsign certificate request file."
+#: crqwiz.cpp:111
+#, fuzzy
+msgid "This will create a new Callsign Certificate request file."
 msgstr "这将创建一个新的呼唤走证书申请文件。"
 
-#: crqwiz.cpp:110
+#: crqwiz.cpp:113
 msgid ""
 "Once you supply the requested information and the request file has been "
 "created, you must send the request file to the certificate issuer."
 msgstr ""
 "一旦你提供可申请信息并且创建了申请文件，你应该发送申请文件给证书提供者。"
 
-#: crqwiz.cpp:119
+#: crqwiz.cpp:122
 msgid "Certificate Issuer:"
 msgstr "证书发行者："
 
-#: crqwiz.cpp:128 crqwiz.cpp:863 crqwiz.cpp:958 crqwiz.cpp:1012
-#: crqwiz.cpp:1047 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
+#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020
+#: crqwiz.cpp:1055 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
 #: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
 #: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
 #: tqslwiz.cpp:459 tqslwiz.cpp:549
 msgid "Error"
 msgstr "错误"
 
-#: crqwiz.cpp:163
+#: crqwiz.cpp:166
 msgid "Email: "
 msgstr "E-Mail："
 
-#: crqwiz.cpp:165
+#: crqwiz.cpp:168
 msgid "URL: "
 msgstr "URL："
 
-#: crqwiz.cpp:201
+#: crqwiz.cpp:204
 msgid "DXCC entity:"
 msgstr "DXCC实体："
 
-#: crqwiz.cpp:205 tqsl.cpp:1876 tqsl.cpp:3895
+#: crqwiz.cpp:208 tqsl.cpp:1876 tqsl.cpp:3895
 msgid "Call sign:"
 msgstr "呼号："
 
-#: crqwiz.cpp:262
+#: crqwiz.cpp:265
 msgid "QSO begin date:"
 msgstr "QSO 开始日期："
 
-#: crqwiz.cpp:308
+#: crqwiz.cpp:311
 msgid "QSO end date:"
 msgstr "QSO结束日期："
 
-#: crqwiz.cpp:372
+#: crqwiz.cpp:375
 msgid "Zip/Postal"
 msgstr "邮政编码："
 
-#: crqwiz.cpp:377 stationdial.cpp:70
+#: crqwiz.cpp:380 stationdial.cpp:70
 msgid "Name"
 msgstr "名字"
 
-#: crqwiz.cpp:401
+#: crqwiz.cpp:404
 msgid "Address"
 msgstr "地址"
 
-#: crqwiz.cpp:427
+#: crqwiz.cpp:430
 msgid "City"
 msgstr "城市"
 
-#: crqwiz.cpp:440 stationdial.cpp:351 stationdial.cpp:362
+#: crqwiz.cpp:443 stationdial.cpp:351 stationdial.cpp:362
 msgid "State"
 msgstr "州"
 
-#: crqwiz.cpp:462 crqwiz.cpp:465
+#: crqwiz.cpp:465 crqwiz.cpp:468
 msgid "Country"
 msgstr "国家"
 
-#: crqwiz.cpp:505
+#: crqwiz.cpp:508
 msgid "Your e-mail address"
 msgstr "你的E-Mail地址"
 
-#: crqwiz.cpp:518
+#: crqwiz.cpp:521
+#, fuzzy
 msgid ""
 "Note: The e-mail address you provide here is the address to which the issued "
-"certificate will be sent. Make sure it's the correct address!"
+"Certificate will be sent. Make sure it's the correct address!"
 msgstr "注意：这里提供的Email地址将用来接收发送的证书，确认此地址正确。"
 
-#: crqwiz.cpp:544
+#: crqwiz.cpp:547
+#, fuzzy
 msgid ""
-"You may protect this callsign certificate using a password. If you are using "
+"You may protect this Callsign Certificate using a password. If you are using "
 "a computer system that is shared with others, you should specify a password "
-"to protect this callsign certificate. However, if you are using a computer "
+"to protect this Callsign Certificate. However, if you are using a computer "
 "in a private residence, no password need be specified."
 msgstr ""
 "你可以用口令保护这份呼号证书。如果你在公用电脑上使用，你应该指定一个口令来保"
 "护呼号证书。当然，如果你在自己的私人电脑上使用， 不需要指定口令。"
 
-#: crqwiz.cpp:549 crqwiz.cpp:554 crqwiz.cpp:580
+#: crqwiz.cpp:556 crqwiz.cpp:582
 #, fuzzy
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
 msgstr "口令空白并点击“确定”，除非你想使用口令。"
 
-#: crqwiz.cpp:558
+#: crqwiz.cpp:560
 msgid "Password:"
 msgstr "口令："
 
-#: crqwiz.cpp:562
+#: crqwiz.cpp:564
 msgid "Enter the password again for verification:"
 msgstr "再输一遍口令用来校验："
 
-#: crqwiz.cpp:566
+#: crqwiz.cpp:568
+#, fuzzy
 msgid ""
 "DO NOT lose the password you choose! You will be unable to use the "
-"certificate without this password!"
+"Certificate without this password!"
 msgstr "不要弄丢你选择的密码！丢了你将不能使用此证书！！！"
 
-#: crqwiz.cpp:585
+#: crqwiz.cpp:587
 msgid ""
 "Leave the password blank and click 'Finish' unless you want to use a "
 "password."
 msgstr "口令空白并点击“完成”，除非你想使用口令。"
 
-#: crqwiz.cpp:625
+#: crqwiz.cpp:633
 #, fuzzy
 msgid "This Callsign Certificate is for:"
 msgstr "保存呼号证书为"
 
-#: crqwiz.cpp:646 crqwiz.cpp:650
+#: crqwiz.cpp:654 crqwiz.cpp:658
 #, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
 msgstr "请选择一份证书前面你的申请"
 
-#: crqwiz.cpp:647 crqwiz.cpp:652 crqwiz.cpp:654 crqwiz.cpp:665
+#: crqwiz.cpp:655 crqwiz.cpp:660 crqwiz.cpp:662 crqwiz.cpp:673
 #, fuzzy
-msgid "Please select a callsign certificate to validate your request."
+msgid "Please select a Callsign Certificate to validate your request."
 msgstr "请选择一份证书前面你的申请"
 
-#: crqwiz.cpp:648
+#: crqwiz.cpp:656
 #, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
 msgstr "请选择一份证书前面你的申请"
 
-#: crqwiz.cpp:762
+#: crqwiz.cpp:770
 msgid "You must enter a valid call sign."
 msgstr "你必须输入一个有效的呼号。"
 
-#: crqwiz.cpp:771
+#: crqwiz.cpp:779
 msgid "You must select a DXCC entity."
 msgstr "你必须选择一个DXCC实体。"
 
-#: crqwiz.cpp:781
+#: crqwiz.cpp:789
 msgid "QSO begin date: You must choose proper values for Year, Month and Day."
 msgstr "QSO开始日期：你必须选择正确的年月日。"
 
-#: crqwiz.cpp:785
+#: crqwiz.cpp:793
 msgid ""
 "QSO end date: You must either choose proper values for Year, Month and Day "
 "or leave all three blank."
 msgstr "QSO结束日期：你必须正确选择年月日或者全部留空。"
 
-#: crqwiz.cpp:790
+#: crqwiz.cpp:798
 msgid "QSO end date cannot be before QSO begin date."
 msgstr "QSO结束日期不能在开始日期前。"
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
-#: crqwiz.cpp:828
-#, c-format
+#: crqwiz.cpp:836
+#, fuzzy, c-format
 msgid ""
-"You have an overlapping certificate for %s (DXCC=%hs) having QSO dates: "
+"You have an overlapping Certificate for %s (DXCC=%hs) having QSO dates: "
 msgstr "你有一份呼号为 %s (DXCC=%hs)QSO日期交叠的证书："
 
 #. TRANSLATORS: here "to" separates two dates in a date range
-#: crqwiz.cpp:830
+#: crqwiz.cpp:838
 msgid " to "
 msgstr "到"
 
-#: crqwiz.cpp:836
-#, c-format
+#: crqwiz.cpp:844
+#, fuzzy, c-format
 msgid ""
-"You have already requested a callsign certificate for %s and can not request "
+"You have already requested a Callsign Certificate for %s and can not request "
 "another until that request has been processed by LoTW Staff."
 msgstr "你已经为 %s 申请了呼号证书，在LoTW 职员处理完以前不能再申请另一个。"
 
-#: crqwiz.cpp:840
+#: crqwiz.cpp:848
+#, fuzzy
 msgid ""
-"Please wait until you receive an e-mail bearing your requested callsign "
-"certificate."
+"Please wait until you receive an e-mail bearing your requested Callsign "
+"Certificate."
 msgstr "请等待直到你收到带有你申请的呼号证书的电子邮件。"
 
-#: crqwiz.cpp:843
-#, c-format
+#: crqwiz.cpp:851
+#, fuzzy, c-format
 msgid ""
 "If you are sure that the earlier request is now invalid you should delete "
-"the pending callsign certificate for %s."
+"the pending Callsign Certificate for %s."
 msgstr "如果您确信该较早的请求现在是无效的，你应该删除挂起的 %s 呼号证书。"
 
-#: crqwiz.cpp:868
+#: crqwiz.cpp:876
 msgid ""
 "You cannot select DXCC Entity NONE as you must sign any request for entity "
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
 
-#: crqwiz.cpp:869 crqwiz.cpp:1061 tqsl.cpp:145 tqsl.cpp:164
+#: crqwiz.cpp:877 crqwiz.cpp:1069 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
 msgstr "TQSL错误"
 
-#: crqwiz.cpp:873
+#: crqwiz.cpp:881
 msgid "You have selected DXCC Entity NONE"
 msgstr "你选择了无DXCC实体"
 
-#: crqwiz.cpp:875
+#: crqwiz.cpp:883
+#, fuzzy
 msgid ""
-"QSO records signed using the certificate will not be valid for DXCC award "
-"credit (but will be valid for other applicable awards). If the certificate "
+"QSO records signed using the Certificate will not be valid for DXCC award "
+"credit (but will be valid for other applicable awards). If the Certificate "
 "is to be used for signing QSOs from maritime/marine mobile, shipboard, or "
 "air mobile operations, that is the correct selection. Otherwise, you "
 "probably should use the \"Back\" button to return to the DXCC page after "
@@ -299,11 +305,11 @@ msgstr ""
 "动、轮船或飞机上的移动操作的QSO签名是正确的选择。否则，你应该使用在点击“确"
 "认”后，按“后退”按钮返回DXCC页面"
 
-#: crqwiz.cpp:883 stationdial.cpp:447
+#: crqwiz.cpp:891 stationdial.cpp:447
 msgid "TQSL Warning"
 msgstr "TQSL警告"
 
-#: crqwiz.cpp:886
+#: crqwiz.cpp:894
 msgid ""
 "You have chosen a QSO end date for this Callsign Certificate. The 'QSO end "
 "date' should ONLY be set if that date is the date when that callsign's "
@@ -312,15 +318,16 @@ msgstr ""
 "你为该呼号证书选择了一个结束日期。“结束日期”仅当该日期是该呼号执照到期日或被"
 "另一个呼号替代日期时设置。"
 
-#: crqwiz.cpp:890
+#: crqwiz.cpp:898
+#, fuzzy
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
-"even if the callsign certificate itself is still valid."
+"even if the Callsign Certificate itself is still valid."
 msgstr ""
 "如果你发送了结束日期，那么你将不能签名这个日期之后的QSO，即使你的呼号证书是有"
 "效的。"
 
-#: crqwiz.cpp:894
+#: crqwiz.cpp:902
 msgid ""
 "If you still hold this callsign (or if you plan to renew the license for the "
 "callsign), you should not set a 'QSO end date'."
@@ -328,44 +335,45 @@ msgstr ""
 "如果你仍然拥有这个呼号（或者你计划更新你的呼号执照），你应该不设置QSO结束日"
 "期。"
 
-#: crqwiz.cpp:897
+#: crqwiz.cpp:905
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "你确定要保留“QSO到期日期”吗？"
 
-#: crqwiz.cpp:898 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
+#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
 #: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "警告"
 
-#: crqwiz.cpp:933
+#: crqwiz.cpp:941
 msgid "You must enter your name"
 msgstr "你必须输入你的名字"
 
-#: crqwiz.cpp:935
+#: crqwiz.cpp:943
 msgid "You must enter your address"
 msgstr "你必须输入你的地址"
 
-#: crqwiz.cpp:937
+#: crqwiz.cpp:945
 msgid "You must enter your city"
 msgstr "你必须输入你的城市"
 
-#: crqwiz.cpp:999
+#: crqwiz.cpp:1007
 msgid "You must enter a valid email address"
 msgstr "你必须输入一个有效的Email地址"
 
-#: crqwiz.cpp:1034
+#: crqwiz.cpp:1042
 msgid "The two copies of the password do not match."
 msgstr "两份口令不相同。"
 
-#: crqwiz.cpp:1075
-msgid "Click 'Finish' to complete this callsign certificate request."
+#: crqwiz.cpp:1083
+#, fuzzy
+msgid "Click 'Finish' to complete this Callsign Certificate request."
 msgstr "要完成该证书申请，点击“完结”。"
 
-#: crqwiz.cpp:1088
-#, c-format
+#: crqwiz.cpp:1096
+#, fuzzy, c-format
 msgid ""
-"You are saying that the requested certificate for %s belongs to the same "
-"person as %hs and are using the selected certificate to prove %hs's identity."
+"You are saying that the requested Certificate for %s belongs to the same "
+"person as %hs and are using the selected Certificate to prove %hs's identity."
 msgstr ""
 "你是说 为呼号 %s 的证书申请属于呼号为 %hs 的同一个人，并使用选定的证书为呼号 "
 "%hs 提供证明。"
