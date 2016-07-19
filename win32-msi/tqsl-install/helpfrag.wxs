@@ -16,6 +16,12 @@
       <Component Id="cmp64E2CDF76FBC75DCEB7D414979C1BD50" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil15A23DC10BCA3D35D46F98F205EE40DD" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\addcert1.bmp" />
       </Component>
+      <Component Id="cmp6070D573673DFC41578942B80103DC27" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="fil539E1CC69CEBD1D3AB6EF2E92BAD2CD1" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\addcert2.bmp" />
+      </Component>
+      <Component Id="cmpA43337E6A3BB9579ED69BA496977EE6B" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
+        <File Id="filB5798F234BFDE719763E794D7C674864" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\addcert3.bmp" />
+      </Component>
       <Component Id="cmpC8E4619454DE30B3F0C615D6DB158263" Directory="dir6F17F3A9FB839342385010C1698DDB65" Guid="*">
         <File Id="fil4E09853B00CB6680AAEA5C6DBB5AA0B7" KeyPath="yes" Source="$(var.helpSrc)\tqslapp\addcertaccept.htm" />
       </Component>
