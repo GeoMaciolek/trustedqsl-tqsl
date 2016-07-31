@@ -667,11 +667,7 @@ CRQ_TypePage::TransferDataFromWindow() {
 	if (selected  == wxNOT_FOUND || selected > static_cast<int>(sizeof signThisType / sizeof signThisType[0]))
 		return false;
 	Parent()->signIt = signThisType[selected];
-	if (signPrompts[selected]) {
-		Parent()->signPrompt = signPrompts[selected];
-	} else {
-		Parent()->signPrompt = _("Please select a Callsign Certificate to validate your request.");
-	}
+	Parent()->signPrompt = signPrompts[selected];
 
 	if (Parent()->dxcc == 0)
 		Parent()->signIt = true;
