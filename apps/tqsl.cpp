@@ -4736,7 +4736,7 @@ QSLApp::OnInit() {
 	lang = (wxLanguage) lng;
 
 	if (lang == wxLANGUAGE_UNKNOWN) {
-		lang = wxLANGUAGE_ENGLISH;
+		lang = wxLANGUAGE_DEFAULT;
 	}
 
 	for (lng = 0; (unsigned) lng < sizeof (langNames); lng++) {
