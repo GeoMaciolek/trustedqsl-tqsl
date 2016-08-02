@@ -3,6 +3,10 @@ TQSL changes
 
 2.3
 ----------
+Correct defect that could cause a spurious "this language is not supported"
+error message on Linux systems without the English localization files not
+installed.
+
 Fix build error using gcc-5/gcc-6.
 
 Update Callsign Certificate request wizard to request information so that it
