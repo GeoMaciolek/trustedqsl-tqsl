@@ -3,14 +3,14 @@ msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-16 08:34-0400\n"
-"PO-Revision-Date: 2016-05-13 02:22+0800\n"
+"PO-Revision-Date: 2016-07-21 13:38+0800\n"
 "Last-Translator: Caros Hsu <bh4txn@gmail.com>\n"
 "Language-Team: TQSL Developers\n"
 "Language: cn\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.8.7\n"
 
 #: certtree.cpp:104
 msgid "tQSL Certificates"
@@ -34,52 +34,51 @@ msgstr "解析DXCC实体证书错误"
 
 #: crqwiz.cpp:31
 msgid "My current personal callsign"
-msgstr ""
+msgstr "我当前的个人呼号"
 
 #: crqwiz.cpp:32
 msgid ""
 "My former personal callsign or a portable modifier for my current callsign"
-msgstr ""
+msgstr "我以前的个人呼号或我当前呼号的移动式"
 
 #: crqwiz.cpp:33
 msgid "A primary club callsign"
-msgstr ""
+msgstr "主要的俱乐部呼号"
 
 #: crqwiz.cpp:34
 msgid ""
 "A secondary club callsign (I have a Callsign Certificate for the primary "
 "club callsign)"
-msgstr ""
+msgstr "第二俱乐部呼号（我已有主要俱乐部呼号证书）"
 
 #: crqwiz.cpp:35
 msgid "A DXpedition, Portable, or holiday operation with multiple operators"
-msgstr ""
+msgstr "多操作员的远征、移动或假期操作"
 
 #: crqwiz.cpp:36
 msgid ""
 "A DXpedition, Portable, or holiday operation where I am the only operator"
-msgstr ""
+msgstr "个人的远征，移动或假期操作"
 
 #: crqwiz.cpp:37
 msgid "An operator that uses me as a QSL manager"
-msgstr ""
+msgstr "由我做QSL管理员的操作员"
 
 #: crqwiz.cpp:38
 msgid "A special event (1x1) callsign"
-msgstr ""
+msgstr "特殊事件（1x1）呼号"
 
 #: crqwiz.cpp:39
 msgid "A special event callsign with multiple operators"
-msgstr ""
+msgstr "多人操作的特殊事件呼号"
 
 #: crqwiz.cpp:40
 msgid "A special event callsign where I am the only operator"
-msgstr ""
+msgstr "单人操作的特殊事件呼号"
 
 #: crqwiz.cpp:111
-#, fuzzy
 msgid "This will create a new Callsign Certificate request file."
-msgstr "这将创建一个新的呼唤走证书申请文件。"
+msgstr "这将创建一个新的呼号证书申请文件。"
 
 #: crqwiz.cpp:113
 msgid ""
@@ -92,11 +91,11 @@ msgstr ""
 msgid "Certificate Issuer:"
 msgstr "证书发行者："
 
-#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020
-#: crqwiz.cpp:1055 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
-#: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
-#: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
-#: tqslwiz.cpp:459 tqslwiz.cpp:549
+#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020 crqwiz.cpp:1055
+#: loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710 tqsl.cpp:3142
+#: tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731 tqsl.cpp:6236
+#: tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921 tqslwiz.cpp:459
+#: tqslwiz.cpp:549
 msgid "Error"
 msgstr "错误"
 
@@ -198,28 +197,24 @@ msgid ""
 msgstr "口令空白并点击“完成”，除非你想使用口令。"
 
 #: crqwiz.cpp:633
-#, fuzzy
 msgid "This Callsign Certificate is for:"
-msgstr "保存呼号证书为"
+msgstr "此呼号证书为: "
 
 #: crqwiz.cpp:654 crqwiz.cpp:658
-#, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
-msgstr "请选择一份证书前面你的申请"
+msgstr "请选择你当前的呼号证书来签名你的申请。"
 
 #: crqwiz.cpp:655 crqwiz.cpp:660 crqwiz.cpp:662 crqwiz.cpp:673
-#, fuzzy
 msgid "Please select a Callsign Certificate to validate your request."
-msgstr "请选择一份证书前面你的申请"
+msgstr "请选择一份呼号证书来签名你的申请。"
 
 #: crqwiz.cpp:656
-#, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
-msgstr "请选择一份证书前面你的申请"
+msgstr "请选择你俱乐部的主要呼号证书来签名你的申请。"
 
 #: crqwiz.cpp:770
 msgid "You must enter a valid call sign."
@@ -282,6 +277,8 @@ msgid ""
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
+"您不能选择DXCC实体为“无”，因为你必须签署实体为“无”的任何申请，而你没有有效的"
+"呼号证书来签名此申请。"
 
 #: crqwiz.cpp:877 crqwiz.cpp:1069 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
@@ -319,12 +316,11 @@ msgstr ""
 "另一个呼号替代日期时设置。"
 
 #: crqwiz.cpp:898
-#, fuzzy
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
 "even if the Callsign Certificate itself is still valid."
 msgstr ""
-"如果你发送了结束日期，那么你将不能签名这个日期之后的QSO，即使你的呼号证书是有"
+"如果你设置了结束日期，那么你将不能签名这个日期之后的QSO，即使你的呼号证书是有"
 "效的。"
 
 #: crqwiz.cpp:902
@@ -339,8 +335,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "你确定要保留“QSO到期日期”吗？"
 
-#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
-#: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
+#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113 tqsl.cpp:5859
+#: tqsl.cpp:5986 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "警告"
 
@@ -365,9 +361,8 @@ msgid "The two copies of the password do not match."
 msgstr "两份口令不相同。"
 
 #: crqwiz.cpp:1083
-#, fuzzy
 msgid "Click 'Finish' to complete this Callsign Certificate request."
-msgstr "要完成该证书申请，点击“完结”。"
+msgstr "要完成该证书申请，点击“完成”。"
 
 #: crqwiz.cpp:1096
 #, fuzzy, c-format
@@ -651,9 +646,9 @@ msgid "ADIF files (*.adi;*.adif)|*.adi;*.adif|All files (*.*)|*.*"
 msgstr "ADIF 文件 (*.adi;*.adif)|*.adi;*.adif|所有文件 (*.*)|*.*."
 
 #: qsodatadialog.cpp:656
-#, fuzzy, c-format
+#, c-format
 msgid "Wrote %d QSO records to %s"
-msgstr "写入 %s 共 %d QSO 记录"
+msgstr "写入 %s 共 %d 个QSO 记录"
 
 #: stationdial.cpp:56 tqsl.cpp:5368
 msgid "&Properties"
@@ -1636,9 +1631,8 @@ msgid "More details at:"
 msgstr "更多详情："
 
 #: tqsl.cpp:3085
-#, fuzzy
 msgid "Click 'OK' to install the new version of TQSL, or Cancel to ignore it."
-msgstr "点击“确定”装入新的设置文件，或者“取消”。"
+msgstr "点击“确定”安装新版的TQSL，或者“取消”。"
 
 #: tqsl.cpp:3090
 msgid ""
@@ -1692,14 +1686,13 @@ msgid "Update"
 msgstr "更新"
 
 #: tqsl.cpp:3212
-#, fuzzy, c-format
+#, c-format
 msgid "Can't open TQSL update file %s: %hs"
-msgstr "不能打开%hs的新设置文件 %s"
+msgstr "不能打开%hs的升级文件 %s"
 
 #: tqsl.cpp:3252
-#, fuzzy
 msgid "Error downloading new file:"
-msgstr "下载新设置文件错误："
+msgstr "下载新文件错误："
 
 #: tqsl.cpp:3466
 msgid "Error checking for expired callsign certificates:"

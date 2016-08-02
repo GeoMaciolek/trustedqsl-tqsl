@@ -27,6 +27,8 @@ foreach(flag_var
       string(REGEX REPLACE "/MD" "/MT" ${flag_var} "${${flag_var}}")
    endif(${flag_var} MATCHES "/MD")
 endforeach(flag_var)
+else()
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall")
 endif()
 
 add_subdirectory(src) #tqsllib

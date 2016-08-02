@@ -5,17 +5,17 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: V2.1\n"
+"Project-Id-Version: V2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-07-16 08:34-0400\n"
-"PO-Revision-Date: 2016-04-12 19:20+0200\n"
+"PO-Revision-Date: 2016-07-22 17:58+0200\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
-"Language-Team: TQSL Developers\n"
+"Language-Team: I4FYV Salvatore Besso <salvatore.besso@alice.it>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.8.7\n"
+"X-Generator: Poedit 1.8.8\n"
 
 #: certtree.cpp:104
 msgid "tQSL Certificates"
@@ -39,53 +39,59 @@ msgstr "Errore di analisi del certificato per l'entità DXCC"
 
 #: crqwiz.cpp:31
 msgid "My current personal callsign"
-msgstr ""
+msgstr "Il mio nominativo personale attuale"
 
 #: crqwiz.cpp:32
 msgid ""
 "My former personal callsign or a portable modifier for my current callsign"
 msgstr ""
+"Il mio nominativo personale precedente o un modificatore portatile per il "
+"mio nominativo attuale"
 
 #: crqwiz.cpp:33
 msgid "A primary club callsign"
-msgstr ""
+msgstr "Un nominativo primario di club"
 
 #: crqwiz.cpp:34
 msgid ""
 "A secondary club callsign (I have a Callsign Certificate for the primary "
 "club callsign)"
 msgstr ""
+"Un nominativo secondario di club (posseggo un certificato per il nominativo "
+"primario di club)"
 
 #: crqwiz.cpp:35
 msgid "A DXpedition, Portable, or holiday operation with multiple operators"
 msgstr ""
+"Una DXpedition, un portatile o un'operazione in vacanza con operatori "
+"multipli"
 
 #: crqwiz.cpp:36
 msgid ""
 "A DXpedition, Portable, or holiday operation where I am the only operator"
 msgstr ""
+"Una DXpedition, un portatile o un'operazione in vacanza dove sono l'unico "
+"operatore"
 
 #: crqwiz.cpp:37
 msgid "An operator that uses me as a QSL manager"
-msgstr ""
+msgstr "Un operatore che mi usa come QSL manager"
 
 #: crqwiz.cpp:38
 msgid "A special event (1x1) callsign"
-msgstr ""
+msgstr "Un nominativo di un evento speciale (1x1)"
 
 #: crqwiz.cpp:39
 msgid "A special event callsign with multiple operators"
-msgstr ""
+msgstr "Un nominativo di un evento speciale con operatori multipli"
 
 #: crqwiz.cpp:40
 msgid "A special event callsign where I am the only operator"
-msgstr ""
+msgstr "Un nominativo di un evento speciale dove sono l'unico operatore"
 
 #: crqwiz.cpp:111
-#, fuzzy
 msgid "This will create a new Callsign Certificate request file."
-msgstr ""
-"Questo creerà un nuovo file di richiesta di certificato del nominativo."
+msgstr "Verrà creato un nuovo file di richiesta di certificato del nominativo."
 
 #: crqwiz.cpp:113
 msgid ""
@@ -100,11 +106,11 @@ msgstr ""
 msgid "Certificate Issuer:"
 msgstr "Emittente del certificato:"
 
-#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020
-#: crqwiz.cpp:1055 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
-#: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
-#: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
-#: tqslwiz.cpp:459 tqslwiz.cpp:549
+#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020 crqwiz.cpp:1055
+#: loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710 tqsl.cpp:3142
+#: tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731 tqsl.cpp:6236
+#: tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921 tqslwiz.cpp:459
+#: tqslwiz.cpp:549
 msgid "Error"
 msgstr "Errore"
 
@@ -161,7 +167,6 @@ msgid "Your e-mail address"
 msgstr "Il tuo indirizzo e-mail"
 
 #: crqwiz.cpp:521
-#, fuzzy
 msgid ""
 "Note: The e-mail address you provide here is the address to which the issued "
 "Certificate will be sent. Make sure it's the correct address!"
@@ -170,7 +175,6 @@ msgstr ""
 "certificato emesso. Assicurati che sia l'indirizzo corretto!"
 
 #: crqwiz.cpp:547
-#, fuzzy
 msgid ""
 "You may protect this Callsign Certificate using a password. If you are using "
 "a computer system that is shared with others, you should specify a password "
@@ -184,12 +188,11 @@ msgstr ""
 "password."
 
 #: crqwiz.cpp:556 crqwiz.cpp:582
-#, fuzzy
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
 msgstr ""
-"Lascia la password vuota e fai clic su 'OK' a meno che non desideri usare "
-"una password."
+"Lascia la password vuota e fai clic su 'Successivo' a meno che tu non voglia "
+"usare una password."
 
 #: crqwiz.cpp:560
 msgid "Password:"
@@ -200,13 +203,12 @@ msgid "Enter the password again for verification:"
 msgstr "Immetti nuovamente la password per la verifica:"
 
 #: crqwiz.cpp:568
-#, fuzzy
 msgid ""
 "DO NOT lose the password you choose! You will be unable to use the "
 "Certificate without this password!"
 msgstr ""
-"NON perdere la password che hai scelto! Non sarà possibile utilizzare il "
-"certificato senza questa password!"
+"NON perdere la password che hai scelto! Non potrai usare il certificato "
+"senza questa password!"
 
 #: crqwiz.cpp:587
 msgid ""
@@ -217,34 +219,29 @@ msgstr ""
 "una password."
 
 #: crqwiz.cpp:633
-#, fuzzy
 msgid "This Callsign Certificate is for:"
-msgstr "Salva il certificato del nominativo per"
+msgstr "Questo certificato del nominativo è per:"
 
 #: crqwiz.cpp:654 crqwiz.cpp:658
-#, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
 msgstr ""
-"Per favore seleziona un certificato del nominativo per firmare la tua "
-"richiesta"
+"Seleziona un certificato del nominativo per il tuo nominativo personale "
+"attuale per convalidare la tua richiesta"
 
 #: crqwiz.cpp:655 crqwiz.cpp:660 crqwiz.cpp:662 crqwiz.cpp:673
-#, fuzzy
 msgid "Please select a Callsign Certificate to validate your request."
 msgstr ""
-"Per favore seleziona un certificato del nominativo per firmare la tua "
-"richiesta"
+"Seleziona un certificato del nominativo per convalidare la tua richiesta."
 
 #: crqwiz.cpp:656
-#, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
 msgstr ""
-"Per favore seleziona un certificato del nominativo per firmare la tua "
-"richiesta"
+"Seleziona il tuo certificato del nominativo primario di club per convalidare "
+"la tua richiesta."
 
 #: crqwiz.cpp:770
 msgid "You must enter a valid call sign."
@@ -274,7 +271,7 @@ msgstr "Data fine dei QSO non può essere anteriore alla data inizio dei QSO."
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:836
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You have an overlapping Certificate for %s (DXCC=%hs) having QSO dates: "
 msgstr "Hai un certificato sovrapposto per %s (DXCC=%hs) con date QSO: "
@@ -285,17 +282,16 @@ msgid " to "
 msgstr " a "
 
 #: crqwiz.cpp:844
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You have already requested a Callsign Certificate for %s and can not request "
 "another until that request has been processed by LoTW Staff."
 msgstr ""
 "Hai già richiesto un certificato del nominativo per %s e non puoi "
-"richiederne un altro finché la richiesta non sarà stata elaborata dallo "
-"staff di LoTW."
+"richiederne un altro finché la richiesta non sarà stata elaborata dal "
+"personale di LoTW."
 
 #: crqwiz.cpp:848
-#, fuzzy
 msgid ""
 "Please wait until you receive an e-mail bearing your requested Callsign "
 "Certificate."
@@ -304,13 +300,13 @@ msgstr ""
 "nominativo da te richiesto."
 
 #: crqwiz.cpp:851
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "If you are sure that the earlier request is now invalid you should delete "
 "the pending Callsign Certificate for %s."
 msgstr ""
 "Se sei sicuro che la richiesta precedente non è più valida dovresti "
-"cancellare il certificato del nominativo in sospeso per %s ."
+"cancellare il certificato del nominativo in sospeso per %s."
 
 #: crqwiz.cpp:876
 msgid ""
@@ -318,6 +314,9 @@ msgid ""
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
+"Non puoi selezionare NESSUNA come entità DXCC poiché devi firmare qualsiasi "
+"richiesta per l'entità NESSUNA e non hai un certificato del nominativo "
+"valido da poter usare per firmare questa richiesta."
 
 #: crqwiz.cpp:877 crqwiz.cpp:1069 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
@@ -328,7 +327,6 @@ msgid "You have selected DXCC Entity NONE"
 msgstr "Hai selezionato Entità DXCC NESSUNA"
 
 #: crqwiz.cpp:883
-#, fuzzy
 msgid ""
 "QSO records signed using the Certificate will not be valid for DXCC award "
 "credit (but will be valid for other applicable awards). If the Certificate "
@@ -339,10 +337,10 @@ msgid ""
 msgstr ""
 "Registrazioni di QSO firmate utilizzando il certificato non saranno valide "
 "per il credito dell'award DXCC (ma saranno valide per altri award "
-"applicabili). Se il certificato deve essere utilizzato per firmare QSO da "
-"barra mobile marittima, da bordo nave, od operazioni mobili aeree, questa è "
-"la selezione corretta. Altrimenti, dovresti probabilmente usare il pulsante "
-"\"Indietro\" per tornare alla pagina DXCC dopo aver fatto clic su \"OK\""
+"applicabili). Se il certificato deve essere usato per firmare QSO da mobile "
+"marittimo, bordo nave, od operazioni mobili aeree, questa è la selezione "
+"corretta. Altrimenti dovresti probabilmente usare il pulsante \"Indietro\" "
+"per tornare alla pagina DXCC dopo aver fatto clic su \"OK\""
 
 #: crqwiz.cpp:891 stationdial.cpp:447
 msgid "TQSL Warning"
@@ -360,7 +358,6 @@ msgstr ""
 "da un nuovo nominativo."
 
 #: crqwiz.cpp:898
-#, fuzzy
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
 "even if the Callsign Certificate itself is still valid."
@@ -381,8 +378,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Sei sicuro di voler mantenere questa 'data fine dei QSO'?"
 
-#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
-#: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
+#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113 tqsl.cpp:5859
+#: tqsl.cpp:5986 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Attenzione"
 
@@ -407,14 +404,13 @@ msgid "The two copies of the password do not match."
 msgstr "Le due copie della password non coincidono."
 
 #: crqwiz.cpp:1083
-#, fuzzy
 msgid "Click 'Finish' to complete this Callsign Certificate request."
 msgstr ""
 "Fai clic su 'Fine' per completare questa richiesta di certificato del "
 "nominativo."
 
 #: crqwiz.cpp:1096
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are saying that the requested Certificate for %s belongs to the same "
 "person as %hs and are using the selected Certificate to prove %hs's identity."
@@ -1760,11 +1756,10 @@ msgid "More details at:"
 msgstr "Maggiori dettagli su:"
 
 #: tqsl.cpp:3085
-#, fuzzy
 msgid "Click 'OK' to install the new version of TQSL, or Cancel to ignore it."
 msgstr ""
-"Fai clic su 'OK' per installare il nuovo file di configurazione, o Annulla "
-"per ignorarlo."
+"Fai clic su 'OK' per installare la nuova versione di TQSL, o Annulla per "
+"ignorarla."
 
 #: tqsl.cpp:3090
 msgid ""
@@ -1824,14 +1819,13 @@ msgid "Update"
 msgstr "Aggiornamento"
 
 #: tqsl.cpp:3212
-#, fuzzy, c-format
+#, c-format
 msgid "Can't open TQSL update file %s: %hs"
-msgstr "Impossibile aprire il nuovo file di configurazione %s: %hs"
+msgstr "Impossibile aprire il file di aggiornamento di TQSL %s: %hs"
 
 #: tqsl.cpp:3252
-#, fuzzy
 msgid "Error downloading new file:"
-msgstr "Errore durante lo scaricamento del nuovo file di configurazione:"
+msgstr "Errore durante lo scaricamento del nuovo file:"
 
 #: tqsl.cpp:3466
 msgid "Error checking for expired callsign certificates:"
@@ -1871,7 +1865,7 @@ msgstr "Un nuovo file di configurazione di TrustedQSL (V %s ) è disponibile."
 
 #: tqsl.cpp:3540
 msgid "Your system is up to date"
-msgstr "Il sistema è aggiornato!"
+msgstr "Il sistema è aggiornato"
 
 #: tqsl.cpp:3542
 #, c-format
@@ -1884,7 +1878,7 @@ msgstr "sono i più nuovi disponibili"
 
 #: tqsl.cpp:3545
 msgid "No Updates"
-msgstr "Nessun aggiornamento"
+msgstr "Non ci sono aggiornamenti"
 
 #: tqsl.cpp:3679 tqsl.cpp:3715
 msgid ""
