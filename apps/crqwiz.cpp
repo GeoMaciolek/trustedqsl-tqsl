@@ -325,10 +325,12 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 			tc_qsoendm->SetSelection(sels[1][1]);
 			tc_qsoendd->SetSelection(sels[1][2]);
 		}
+#if defined(DEFAULT_NOV_1945)
 	} else {
 		tc_qsobeginy->SetSelection(0);
 		tc_qsobeginm->SetSelection(10);		// November 1945
 		tc_qsobegind->SetSelection(0);
+#endif
 	}
 	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(Parent()->maxWidth, em_h*4));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
