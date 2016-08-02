@@ -39,50 +39,49 @@ msgstr "証明書のDXCCエンティティの解析でエラー"
 
 #: crqwiz.cpp:31
 msgid "My current personal callsign"
-msgstr ""
+msgstr "現行の個人局のコールサイン"
 
 #: crqwiz.cpp:32
 msgid ""
 "My former personal callsign or a portable modifier for my current callsign"
-msgstr ""
+msgstr "以前の個人局のコールサイン、または現行の個人局コールサインでの移動運用を示す符号の付加"
 
 #: crqwiz.cpp:33
 msgid "A primary club callsign"
-msgstr ""
+msgstr "主要なクラブ局のコールサイン"
 
 #: crqwiz.cpp:34
 msgid ""
 "A secondary club callsign (I have a Callsign Certificate for the primary "
 "club callsign)"
-msgstr ""
+msgstr "次に主要なクラブ局のコールサイン　（主要なクラブ局コールサインの証明書は取得済）"
 
 #: crqwiz.cpp:35
 msgid "A DXpedition, Portable, or holiday operation with multiple operators"
-msgstr ""
+msgstr "複数のオペレーターによる DX ペディション、移動運用、休暇中の運用"
 
 #: crqwiz.cpp:36
 msgid ""
 "A DXpedition, Portable, or holiday operation where I am the only operator"
-msgstr ""
+msgstr "自分ひとりがオペレーターである DX ペディション、移動運用、休暇中の運用"
 
 #: crqwiz.cpp:37
 msgid "An operator that uses me as a QSL manager"
-msgstr ""
+msgstr "私が QSL マネージャーであるオペレーター"
 
 #: crqwiz.cpp:38
 msgid "A special event (1x1) callsign"
-msgstr ""
+msgstr "特別局のコールサイン (1x1)"
 
 #: crqwiz.cpp:39
 msgid "A special event callsign with multiple operators"
-msgstr ""
+msgstr "複数のオペレーターによる特別局のコールサイン"
 
 #: crqwiz.cpp:40
 msgid "A special event callsign where I am the only operator"
-msgstr ""
+msgstr "自分ひとりがオペレーターである特別局のコールサイン"
 
 #: crqwiz.cpp:111
-#, fuzzy
 msgid "This will create a new Callsign Certificate request file."
 msgstr "新しいコールサインの証明書リクエストファイルを作成します。"
 
@@ -120,7 +119,7 @@ msgstr "DXCC エンティティ:"
 
 #: crqwiz.cpp:208 tqsl.cpp:1876 tqsl.cpp:3895
 msgid "Call sign:"
-msgstr "コー​​ルサイン："
+msgstr "コールサイン："
 
 #: crqwiz.cpp:265
 msgid "QSO begin date:"
@@ -159,7 +158,6 @@ msgid "Your e-mail address"
 msgstr "あなたのEメールアドレス"
 
 #: crqwiz.cpp:521
-#, fuzzy
 msgid ""
 "Note: The e-mail address you provide here is the address to which the issued "
 "Certificate will be sent. Make sure it's the correct address!"
@@ -168,7 +166,6 @@ msgstr ""
 "しいアドレスが入力されているか、確認してください！"
 
 #: crqwiz.cpp:547
-#, fuzzy
 msgid ""
 "You may protect this Callsign Certificate using a password. If you are using "
 "a computer system that is shared with others, you should specify a password "
@@ -181,11 +178,10 @@ msgstr ""
 "いる場合などは、パスワードを指定する必要はありません。"
 
 #: crqwiz.cpp:556 crqwiz.cpp:582
-#, fuzzy
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
 msgstr ""
-"パスワードを使用するのでなければ、パスワード欄は空欄のままにして「OK」をク"
+"パスワードを使用するのでなければ、パスワード欄は空欄のままにして「次へ」をク"
 "リックしてください。"
 
 #: crqwiz.cpp:560
@@ -197,7 +193,6 @@ msgid "Enter the password again for verification:"
 msgstr "確認のためにもう一度パスワードを入力してください:"
 
 #: crqwiz.cpp:568
-#, fuzzy
 msgid ""
 "DO NOT lose the password you choose! You will be unable to use the "
 "Certificate without this password!"
@@ -214,28 +209,24 @@ msgstr ""
 "さい。"
 
 #: crqwiz.cpp:633
-#, fuzzy
 msgid "This Callsign Certificate is for:"
 msgstr "次のコールサインのコールサイン証明書を保存"
 
 #: crqwiz.cpp:654 crqwiz.cpp:658
-#, fuzzy
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
-msgstr "リクエストに署名するためのコールサイン証明書を選んでください"
+msgstr "リクエストに署名するあなたの現行個人局のコールサイン証明書を選んでください"
 
 #: crqwiz.cpp:655 crqwiz.cpp:660 crqwiz.cpp:662 crqwiz.cpp:673
-#, fuzzy
 msgid "Please select a Callsign Certificate to validate your request."
 msgstr "リクエストに署名するためのコールサイン証明書を選んでください"
 
 #: crqwiz.cpp:656
-#, fuzzy
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
-msgstr "リクエストに署名するためのコールサイン証明書を選んでください"
+msgstr "リクエストに署名するあなたの主要なクラブ局のコールサイン証明書を選んでください"
 
 #: crqwiz.cpp:770
 msgid "You must enter a valid call sign."
@@ -263,7 +254,7 @@ msgstr "QSO 終了日を QSO 開始日より前の日付にすることはでき
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:836
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You have an overlapping Certificate for %s (DXCC=%hs) having QSO dates: "
 msgstr ""
@@ -275,7 +266,7 @@ msgid " to "
 msgstr "　より　"
 
 #: crqwiz.cpp:844
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You have already requested a Callsign Certificate for %s and can not request "
 "another until that request has been processed by LoTW Staff."
@@ -285,7 +276,6 @@ msgstr ""
 "ん。"
 
 #: crqwiz.cpp:848
-#, fuzzy
 msgid ""
 "Please wait until you receive an e-mail bearing your requested Callsign "
 "Certificate."
@@ -294,7 +284,7 @@ msgstr ""
 "ちください。"
 
 #: crqwiz.cpp:851
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "If you are sure that the earlier request is now invalid you should delete "
 "the pending Callsign Certificate for %s."
@@ -308,6 +298,9 @@ msgid ""
 "NONE and you have no valid Callsign Certificates that you can use to sign "
 "this request."
 msgstr ""
+"DXCC エンティティ NONE は選択できません。"
+"なぜなら DXCC エンティティ NONE についてのリクエストにはあなたのサインが必要であり、"
+"このリクエストに署名する有効なコールサイン証明書を持っていないためです。"
 
 #: crqwiz.cpp:877 crqwiz.cpp:1069 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
@@ -318,7 +311,6 @@ msgid "You have selected DXCC Entity NONE"
 msgstr "DXCC エンティティ NONE を選択しています"
 
 #: crqwiz.cpp:883
-#, fuzzy
 msgid ""
 "QSO records signed using the Certificate will not be valid for DXCC award "
 "credit (but will be valid for other applicable awards). If the Certificate "
@@ -330,8 +322,8 @@ msgstr ""
 "この証明書を使用して署名した QSO の記録は、DXCC アワードのクレジットとして有"
 "効ではありません（しかし、他の適用可能なアワードでは有効となります）。海上"
 "モービル、船舶、または航空機のモービル運用における QSO に署名するために、この"
-"証明書を使用するならば正しい選択です。そのようなケースでない場合は、\"OK\"を"
-"クリックした後、DXCC ページに戻るため「戻る」ボタンを使用した方がよいです。"
+"証明書を使用するならば正しい選択です。そのようなケースでない場合は、「OK」を"
+"クリックした後、DXCC ページに戻るため「戻る」ボタンを使用した方が無難です。"
 
 #: crqwiz.cpp:891 stationdial.cpp:447
 msgid "TQSL Warning"
@@ -348,7 +340,6 @@ msgstr ""
 "が置き換えられた日であるかの、いずれかの場合**のみ**に設定されるべきです。"
 
 #: crqwiz.cpp:898
-#, fuzzy
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
 "even if the Callsign Certificate itself is still valid."
@@ -394,14 +385,13 @@ msgid "The two copies of the password do not match."
 msgstr "2つのパスワード入力が一致しません。"
 
 #: crqwiz.cpp:1083
-#, fuzzy
 msgid "Click 'Finish' to complete this Callsign Certificate request."
 msgstr ""
 "このコールサイン証明書のリクエストを完了するために、「完了」をクリックしてく"
 "ださい。"
 
 #: crqwiz.cpp:1096
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You are saying that the requested Certificate for %s belongs to the same "
 "person as %hs and are using the selected Certificate to prove %hs's identity."
@@ -515,7 +505,7 @@ msgid ""
 "Callsign Certificate container files (*.p12;*.P12)|*.p12;*.P12|Certificate "
 "Request response files (*.tq6;*.TQ6)|*.tq6;*.TQ6"
 msgstr ""
-"コー​​ルサイン証明書のコンテナファイル (*.p12;*.P12)|*.p12;*.P12|証明書のリクエ"
+"コールサイン証明書のコンテナファイル (*.p12;*.P12)|*.p12;*.P12|証明書のリクエ"
 "ストに対する応答ファイル (*.tq6;*.TQ6)|*.tq6;*.TQ6"
 
 #: loadcertwiz.cpp:233
@@ -523,7 +513,7 @@ msgid ""
 "Callsign Certificate container files (*.p12)|*.p12|Certificate Request "
 "response files (*.tq6)|*.tq6"
 msgstr ""
-"コー​​ルサイン証明書のコンテナファイル (*.p12)|*.p12|証明書のリクエストに対する"
+"コールサイン証明書のコンテナファイル (*.p12)|*.p12|証明書のリクエストに対する"
 "応答ファイル (*.tq6)|*.tq6"
 
 #: loadcertwiz.cpp:235 tqsl.cpp:3853
@@ -564,7 +554,7 @@ msgstr "UP"
 
 #: qsodatadialog.cpp:246
 msgid "Call Sign:"
-msgstr "コー​​ルサイン："
+msgstr "コールサイン："
 
 #: qsodatadialog.cpp:254
 msgid "UTC Date (YYYY-MM-DD):"
@@ -655,7 +645,7 @@ msgstr "バンドを選択するか、周波数を入力する必要がありま
 
 #: qsodatadialog.cpp:532
 msgid "Call Sign cannot be empty"
-msgstr "コー​​ルサインを空欄にすることはできません"
+msgstr "コールサインを空欄にすることはできません"
 
 #: qsodatadialog.cpp:537
 msgid "'Satellite' propagation mode selected, so a Satellite must be chosen"
@@ -741,7 +731,7 @@ msgstr "TQSL　確認"
 
 #: stationdial.cpp:352
 msgid "Call Sign"
-msgstr "コー​​ルサイン"
+msgstr "コールサイン"
 
 #: stationdial.cpp:353
 msgid "Province"
@@ -1215,7 +1205,7 @@ msgstr "局の所在地(&S)"
 
 #: tqsl.cpp:1143
 msgid "Callsign &Certificate"
-msgstr "コー​​ルサイン証明書(&C)"
+msgstr "コールサイン証明書(&C)"
 
 #: tqsl.cpp:1144
 msgid "&Help"
@@ -1271,24 +1261,24 @@ msgstr "処理するコールサイン証明書を選択"
 
 #: tqsl.cpp:1392
 msgid "Load a Callsign Certificate"
-msgstr "コー​​ルサイン証明書を読込み"
+msgstr "コールサイン証明書を読込み"
 
 #: tqsl.cpp:1409 tqsl.cpp:5690 tqsl.cpp:5691
 msgid "Save a Callsign Certificate"
-msgstr "コー​​ルサイン証明書を保存"
+msgstr "コールサイン証明書を保存"
 
 #: tqsl.cpp:1425 tqsl.cpp:5504 tqsl.cpp:5692 tqsl.cpp:5693 tqsl.cpp:5748
 #: tqsl.cpp:5749
 msgid "Renew a Callsign Certificate"
-msgstr "コー​​ルサイン証明書を更新"
+msgstr "コールサイン証明書を更新"
 
 #: tqsl.cpp:1441
 msgid "Display a Callsign Certificate's Properties"
-msgstr "コー​​ルサイン証明書のプロパティを表示します。"
+msgstr "コールサイン証明書のプロパティを表示します。"
 
 #: tqsl.cpp:1446 tqsl.cpp:5908
 msgid "Callsign Certificates"
-msgstr "コー​​ルサイン証明書"
+msgstr "コールサイン証明書"
 
 #: tqsl.cpp:1470 tqsl.cpp:1566 tqsl.cpp:1596
 msgid "Add Station Location"
@@ -1385,7 +1375,7 @@ msgstr "TQSL  - 署名の確認"
 
 #: tqsl.cpp:1900
 msgid "There are no valid callsign certificates for callsign"
-msgstr "次のコー​​ルサインの有効なコールサイン証明書がありません"
+msgstr "次のコールサインの有効なコールサイン証明書がありません"
 
 #: tqsl.cpp:1903
 msgid "in entity"
@@ -1568,11 +1558,11 @@ msgstr "これより　%s のアップロード"
 
 #: tqsl.cpp:2657
 msgid "Uploading Callsign Certificate"
-msgstr "コー​​ルサイン証明書のアップロード中"
+msgstr "コールサイン証明書のアップロード中"
 
 #: tqsl.cpp:2657
 msgid "Uploading Callsign Certificate Request..."
-msgstr "コー​​ルサイン証明書のリクエストのアップロード中..."
+msgstr "コールサイン証明書のリクエストのアップロード中..."
 
 #: tqsl.cpp:2666
 msgid "Could not spawn upload thread!"
@@ -1742,7 +1732,6 @@ msgid "More details at:"
 msgstr "より詳細な情報："
 
 #: tqsl.cpp:3085
-#, fuzzy
 msgid "Click 'OK' to install the new version of TQSL, or Cancel to ignore it."
 msgstr ""
 "新しい設定ファイルをインストールするには「OK」をクリックしてください。、無視"
@@ -1806,12 +1795,11 @@ msgid "Update"
 msgstr "更新"
 
 #: tqsl.cpp:3212
-#, fuzzy, c-format
+#, c-format
 msgid "Can't open TQSL update file %s: %hs"
 msgstr "新しい設定ファイル　%s　を開くことができません：　%hs"
 
 #: tqsl.cpp:3252
-#, fuzzy
 msgid "Error downloading new file:"
 msgstr "新しい設定ファイルのダウンロードエラー："
 
@@ -1949,7 +1937,7 @@ msgstr "保存ファイル　%s　のオープンでエラー：　%hs"
 
 #: tqsl.cpp:4125
 msgid "Saving callsign certificates"
-msgstr "コー​​ルサイン証明書を保存"
+msgstr "コールサイン証明書を保存"
 
 #: tqsl.cpp:4169
 #, c-format
@@ -2014,7 +2002,7 @@ msgstr "局の所在のインポートでエラー: %hs"
 
 #: tqsl.cpp:4571
 msgid "Restoring Callsign Certificates"
-msgstr "コー​​ルサイン証明書の復元"
+msgstr "コールサイン証明書の復元"
 
 #: tqsl.cpp:4578 tqsl.cpp:4586 tqsl.cpp:4591
 #, c-format
@@ -2036,7 +2024,7 @@ msgstr "保存された設定ファイルの選択"
 
 #: tqsl.cpp:4622
 msgid "Saved configuration files (*.tbk)|*.tbk"
-msgstr "保存された​設定ファイル (*.tbk)|*.tbk"
+msgstr "保存された設定ファイル (*.tbk)|*.tbk"
 
 #: tqsl.cpp:4652
 #, c-format
@@ -2161,7 +2149,7 @@ msgstr "警告"
 
 #: tqsl.cpp:5338
 msgid "Display Callsign Certificate &Properties"
-msgstr "コー​​ルサイン証明書のプロパティを表示 (&P)"
+msgstr "コールサイン証明書のプロパティを表示 (&P)"
 
 #: tqsl.cpp:5341
 msgid "&Load Callsign Certificate from File"
@@ -2238,7 +2226,7 @@ msgstr "コールサイン証明書リクエストの作成でエラー：　%hs
 
 #: tqsl.cpp:5619
 msgid "Error creating Callsign Certificate Request"
-msgstr "コー​​ルサイン証明書リクエストの作成でエラー"
+msgstr "コールサイン証明書リクエストの作成でエラー"
 
 #: tqsl.cpp:5632
 #, c-format
@@ -2275,7 +2263,7 @@ msgstr "以下を参照してください:"
 
 #: tqsl.cpp:5694 tqsl.cpp:5695
 msgid "Display a Callsign Certificate"
-msgstr "コー​​ルサイン証明書を表示"
+msgstr "コールサイン証明書を表示"
 
 #: tqsl.cpp:5737 tqsl.cpp:5739
 msgid "Save the Callsign Certificate for"
@@ -2434,7 +2422,7 @@ msgstr "オペレーター：　"
 
 #: tqsl.cpp:6137 tqsl.cpp:6315
 msgid "Call sign: "
-msgstr "コー​​ルサイン：　"
+msgstr "コールサイン：　"
 
 #: tqsl.cpp:6138 tqsl.cpp:6316
 msgid "DXCC Entity: "
@@ -2522,7 +2510,7 @@ msgstr "Oblast：　"
 
 #: tqsl.cpp:6408
 msgid "Enter the password to unlock the callsign certificate"
-msgstr "コー​​ルサイン証明書のロックを解除するためのパスワード入力"
+msgstr "コールサイン証明書のロックを解除するためのパスワード入力"
 
 #: tqsl_prefs.cpp:44
 msgid "Preferences"
