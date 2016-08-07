@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+Add the ability to pull DXCC Entity valid date ranges to the TQSL
+configuration file.
+
 Fix handling of the TQSL configuration file so that extra spaces are removed.
 This corrects the defect that caused "NEW ZEALAND SUBANTARCTIC ISLANDS" to
 appear first in the list of DXCC entities with Configuration File v9.2.

@@ -45,6 +45,7 @@ CRQWiz::CRQWiz(TQSL_CERT_REQ *crq, tQSL_Cert xcert, wxWindow *parent, wxHtmlHelp
 	: ExtWizard(parent, help, title), cert(xcert), _crq(crq)  {
 	tqslTrace("CRQWiz::CRQWiz", "crq=%lx, xcert=%lx, title=%s", reinterpret_cast<void *>(cert), reinterpret_cast<void *>(xcert), S(title));
 
+	dxcc = -1;
 	ncerts = 0;
 	// Get count of valid certificates
 	tqsl_selectCertificates(NULL, &ncerts, NULL, 0, NULL, NULL, 0);
@@ -262,7 +263,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		dates[1][1] = crq->qsoNotAfter.month;
 		dates[1][2] = crq->qsoNotAfter.day;
 	}
-	wxString label = _("QSO begin date:");
+	wxString label = _("Date of the first QSO you made using this callsign:");
 	for (int i = 0; i < 2; i++) {
 		sels[i][0] = sels[i][1] = sels[i][2] = 0;
 		sizer->Add(new wxStaticText(this, -1, label), 0, wxBOTTOM, 5);
@@ -308,7 +309,9 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 			(*(boxes[i][2].cb))->Append(s);
 		}
 		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
-		label = _("QSO end date:");
+		if (i == 0)
+			sizer->Add(0, 40);
+		label = _("Date of the last QSO you made using this callsign:\n(Leave this date blank if this is still your valid callsign.)");
 	}
 	if (crq) {
 		tc_qsobeginy->SetSelection(sels[0][0]);
@@ -325,12 +328,10 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 			tc_qsoendm->SetSelection(sels[1][1]);
 			tc_qsoendd->SetSelection(sels[1][2]);
 		}
-#if defined(DEFAULT_NOV_1945)
 	} else {
 		tc_qsobeginy->SetSelection(0);
 		tc_qsobeginm->SetSelection(10);		// November 1945
-		tc_qsobegind->SetSelection(0);
-#endif
+		tc_qsobegind->SetSelection(14);
 	}
 	tc_status = new wxStaticText(this, -1, wxT(""), wxDefaultPosition, wxSize(Parent()->maxWidth, em_h*4));
 	sizer->Add(tc_status, 0, wxALL|wxEXPAND, 10);
@@ -738,6 +739,7 @@ CRQ_IntroPage::validate() {
 	wxString val = tc_call->GetValue().MakeUpper();
 	bool ok = true;
 	int sel;
+	const char *dxccname = NULL;
 	wxString pending = wxConfig::Get()->Read(wxT("RequestPending"));
 	wxStringTokenizer tkz(pending, wxT(","));
 
@@ -769,13 +771,46 @@ CRQ_IntroPage::validate() {
 		goto notok;
 	}
 
+	long old_dxcc;
+	old_dxcc = Parent()->dxcc;
+	
+	tQSL_Date oldStartDate;
+	tQSL_Date oldEndDate;
+	tQSL_Date startDate;
+	tQSL_Date endDate;
+	tqsl_getDXCCStartDate(old_dxcc, &oldStartDate);
+	tqsl_getDXCCEndDate(old_dxcc, &oldEndDate);
 	sel = tc_dxcc->GetSelection();
 	if (sel >= 0)
 		Parent()->dxcc = (long)(tc_dxcc->GetClientData(sel));
 
+	tqsl_getDXCCStartDate(Parent()->dxcc, &startDate);
+	tqsl_getDXCCEndDate(Parent()->dxcc, &endDate);
+
 	if (sel < 0 || Parent()->dxcc < 0) {
 		valMsg = _("You must select a DXCC entity.");
 		goto notok;
+	}
+	
+	if (Parent()->dxcc != old_dxcc) {
+		if (tqsl_isDateValid(&startDate) && !tqsl_isDateNull(&startDate) &&
+		    tqsl_compareDates(&Parent()->qsonotbefore, &oldStartDate) == 0) {
+			tc_qsobeginy->SetSelection(startDate.year - 1945);
+			tc_qsobeginm->SetSelection(startDate.month - 1);
+			tc_qsobegind->SetSelection(startDate.day - 1);
+		}
+		if ((tqsl_isDateValid(&endDate) || tqsl_isDateNull(&endDate)) &&
+		     tqsl_compareDates(&Parent()->qsonotafter, &oldEndDate) == 0) {
+			if (tqsl_isDateNull(&endDate)) {
+				tc_qsoendy->SetSelection(0);
+				tc_qsoendm->SetSelection(0);
+				tc_qsoendd->SetSelection(0);
+			} else {
+				tc_qsoendy->SetSelection(endDate.year - 1944);
+				tc_qsoendm->SetSelection(endDate.month);
+				tc_qsoendd->SetSelection(endDate.day);
+			}
+		}
 	}
 	Parent()->qsonotbefore.year = strtol(tc_qsobeginy->GetStringSelection().ToUTF8(), NULL, 10);
 	Parent()->qsonotbefore.month = strtol(tc_qsobeginm->GetStringSelection().ToUTF8(), NULL, 10);
@@ -785,20 +820,61 @@ CRQ_IntroPage::validate() {
 	Parent()->qsonotafter.day = strtol(tc_qsoendd->GetStringSelection().ToUTF8(), NULL, 10);
 	if (!tqsl_isDateValid(&Parent()->qsonotbefore)) {
 		valMsg = _("QSO begin date: You must choose proper values for Year, Month and Day.");
-		ok = false;
+		goto notok;
 	}
 	if (!tqsl_isDateNull(&Parent()->qsonotafter) && !tqsl_isDateValid(&Parent()->qsonotafter)) {
 		valMsg = _("QSO end date: You must either choose proper values for Year, Month and Day or leave all three blank.");
-		ok = false;
+		goto notok;
 	}
 	if (tqsl_isDateValid(&Parent()->qsonotbefore) && tqsl_isDateValid(&Parent()->qsonotafter)
 		&& tqsl_compareDates(&Parent()->qsonotbefore, &Parent()->qsonotafter) > 0) {
 		valMsg = _("QSO end date cannot be before QSO begin date.");
-		ok = false;
+		goto notok;
+	}
+	char startStr[50], endStr[50];
+	tqsl_convertDateToText(&endDate, endStr, sizeof endStr);
+	if (tqsl_getDXCCEntityName(Parent()->dxcc, &dxccname))
+		dxccname = "UNKNOWN";
+	if (!tqsl_isDateValid(&startDate)) {
+		startDate.year = 1945; startDate.month=11; startDate.day = 1;
+	}
+	tqsl_convertDateToText(&startDate, startStr, sizeof startStr);
+
+	if (tqsl_isDateValid(&endDate) && tqsl_isDateNull(&Parent()->qsonotafter)) {
+		Parent()->qsonotafter = endDate;
+		if (tqsl_isDateNull(&endDate)) {
+			tc_qsoendy->SetSelection(0);
+			tc_qsoendm->SetSelection(0);
+			tc_qsoendd->SetSelection(0);
+		} else {
+			tc_qsoendy->SetSelection(endDate.year - 1944);
+			tc_qsoendm->SetSelection(endDate.month);
+			tc_qsoendd->SetSelection(endDate.day);
+		}
 	}
 
-	if (!ok)
+	if (tqsl_isDateValid(&endDate)) {
+		tqsl_convertDateToText(&endDate, endStr, sizeof endStr);
+	} else {
+		endStr[0] = '\0';
+	}
+
+	if (tqsl_isDateValid(&startDate) && tqsl_compareDates(&Parent()->qsonotbefore, &startDate) < 0) {
+		valMsg = wxString::Format(_("The date of your first QSO is before the first valid date (%hs) of the selected DXCC Entity %hs"), startStr, dxccname);
 		goto notok;
+	}
+	if (tqsl_isDateValid(&endDate) && tqsl_compareDates(&Parent()->qsonotbefore, &endDate) > 0) {
+		valMsg = wxString::Format(_("The date of your first QSO is after the last valid date (%hs) of the selected DXCC Entity %hs"), endStr, dxccname);
+		goto notok;
+	}
+	if (tqsl_isDateValid(&startDate) && !tqsl_isDateNull(&Parent()->qsonotafter) && tqsl_compareDates(&Parent()->qsonotafter, &startDate) < 0) {
+		valMsg = wxString::Format(_("The date of your last QSO is before the first valid date (%hs) of the selected DXCC Entity %hs"), startStr, dxccname);
+		goto notok;
+	}
+	if (tqsl_isDateValid(&endDate) && tqsl_compareDates(&Parent()->qsonotafter, &endDate) > 0) {
+		valMsg = wxString::Format(_("The date of your last QSO is after the last valid date (%hs) of the selected DXCC Entity %hs"), endStr, dxccname);
+		goto notok;
+	}
 
 	// Data looks okay, now let's make sure this isn't a duplicate request
 	// (unless it's a renewal).

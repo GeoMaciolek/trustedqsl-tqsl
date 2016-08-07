@@ -3,10 +3,9 @@ TQSL changes
 
 2.3
 ----------
-Don't default the "QSO Start Date" on a callsign certificate request to
-November 1945. This causes certificate requests to fail when users ignore the
-start date and leave it at the default when the related DXCC entity did not
-exist in 1945.
+Set the start/end date for new callsign certificate requests to be within the
+valid range for the associated DXCC entity. Detect out of range dates and
+report these errors to the user for correction.
 
 Correct defect that could cause a spurious "this language is not supported"
 error message on Linux systems without the English localization files not

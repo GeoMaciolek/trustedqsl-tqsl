@@ -1177,6 +1177,14 @@ DLLEXPORT int CALLCONVENTION tqsl_getDXCCEntityName(int number, const char **nam
   */
 DLLEXPORT int CALLCONVENTION tqsl_getDXCCZoneMap(int number, const char **zonemap);
 
+/** Get the start date  of a DXCC Entity by its DXCC number.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_getDXCCStartDate(int number, tQSL_Date *d);
+
+/** Get the end date  of a DXCC Entity by its DXCC number.
+  */
+DLLEXPORT int CALLCONVENTION tqsl_getDXCCEndDate(int number, tQSL_Date *d);
+
 /** Get the number of Band entries in the Band list */
 DLLEXPORT int CALLCONVENTION tqsl_getNumBand(int *number);
 

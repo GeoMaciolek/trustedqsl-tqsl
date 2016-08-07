@@ -249,6 +249,7 @@ using tqsllib::tqsl_get_pem_serial;
 #define CAST_TQSL_LOCATION(x) (reinterpret_cast<TQSL_LOCATION *>((x)))
 
 typedef map<int, string> IntMap;
+typedef map<int, tQSL_Date> DateMap;
 
 static int num_entities = 0;
 static bool _ent_init = false;
@@ -257,6 +258,7 @@ static struct _dxcc_entity {
 	int number;
 	const char* name;
 	const char *zonemap;
+	tQSL_Date start, end;
 } *entity_list = 0;
 
 // config data
@@ -266,6 +268,8 @@ static int tqsl_xml_config_major = -1;
 static int tqsl_xml_config_minor = 0;
 static IntMap DXCCMap;
 static IntMap DXCCZoneMap;
+static DateMap DXCCStartMap;
+static DateMap DXCCEndMap;
 static vector< pair<int, string> > DXCCList;
 static vector<Band> BandList;
 static vector<Mode> ModeList;
@@ -619,11 +623,30 @@ init_dxcc() {
 	while (ok) {
 		pair<string, bool> rval = dxcc_entity.getAttribute("arrlId");
 		pair<string, bool> zval = dxcc_entity.getAttribute("zonemap");
+		pair<string, bool> strdate = dxcc_entity.getAttribute("valid");
+		pair<string, bool> enddate = dxcc_entity.getAttribute("invalid");
 		if (rval.second) {
 			int num = strtol(rval.first.c_str(), NULL, 10);
 			DXCCMap[num] = dxcc_entity.getText();
 			if (zval.second)
 				DXCCZoneMap[num] = zval.first;
+			tQSL_Date d;
+			d.year = 1945;
+			d.month = 11;
+			d.day = 15;
+			DXCCStartMap[num] = d;
+			if (strdate.second) {
+				if (!tqsl_initDate(&d, strdate.first.c_str()))
+					DXCCStartMap[num] = d;
+			}
+			d.year = 0;
+			d.month = 0;
+			d.day = 0;
+			DXCCEndMap[num] = d;
+			if (enddate.second) {
+				if (!tqsl_initDate(&d, enddate.first.c_str()))
+					DXCCEndMap[num] = d;
+			}
 			DXCCList.push_back(make_pair(num, dxcc_entity.getText()));
 		}
 		ok = dxcc.getNextElement(dxcc_entity);
@@ -902,6 +925,50 @@ tqsl_getDXCCZoneMap(int number, const char **zonemap) {
 		*zonemap = NULL;
 	else
 		*zonemap = map;
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getDXCCStartDate(int number, tQSL_Date *d) {
+	if (d == NULL) {
+		tqslTrace("tqsl_getDXCCStartDate", "date ptr null");
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_dxcc()) {
+		tqslTrace("tqsl_getDXCCStartDate", "init_dxcc error %d", tQSL_Error);
+		return 1;
+	}
+	DateMap::const_iterator it;
+	it = DXCCStartMap.find(number);
+	if (it == DXCCStartMap.end()) {
+		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		return 1;
+	}
+	tQSL_Date newdate = it->second;
+	*d = newdate;
+	return 0;
+}
+
+DLLEXPORT int CALLCONVENTION
+tqsl_getDXCCEndDate(int number, tQSL_Date *d) {
+	if (d == NULL) {
+		tqslTrace("tqsl_getDXCCEndDate", "date ptr null");
+		tQSL_Error = TQSL_ARGUMENT_ERROR;
+		return 1;
+	}
+	if (init_dxcc()) {
+		tqslTrace("tqsl_getDXCCEndDate", "init_dxcc error %d", tQSL_Error);
+		return 1;
+	}
+	DateMap::const_iterator it;
+	it = DXCCEndMap.find(number);
+	if (it == DXCCEndMap.end()) {
+		tQSL_Error = TQSL_NAME_NOT_FOUND;
+		return 1;
+	}
+	tQSL_Date newdate = it->second;
+	*d = newdate;
 	return 0;
 }
 
@@ -1349,6 +1416,8 @@ update_page(int page, TQSL_LOCATION *loc) {
 							entity_list[i].number = it->first;
 							entity_list[i].name = it->second.c_str();
 							entity_list[i].zonemap = DXCCZoneMap[it->first].c_str();
+							entity_list[i].start = DXCCStartMap[it->first];
+							entity_list[i].end = DXCCEndMap[it->first];
 						}
 						qsort(entity_list, num_entities, sizeof(struct _dxcc_entity), &_ent_cmp);
 						_ent_init = true;
