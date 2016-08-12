@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-07-16 08:34-0400\n"
+"POT-Creation-Date: 2016-08-12 11:20-0400\n"
 "PO-Revision-Date: 2016-07-16 08:55-0400\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
@@ -89,12 +89,12 @@ msgstr "Un événement spécial indicatif d’appel à plusieurs opérateurs"
 msgid "A special event callsign where I am the only operator"
 msgstr "Un événement spécial indicatif où je suis le seul opérateur"
 
-#: crqwiz.cpp:111
+#: crqwiz.cpp:112
 msgid "This will create a new Callsign Certificate request file."
 msgstr ""
 "Cela créera un nouveau fichier de demande de Certificat Indicatif d'appel."
 
-#: crqwiz.cpp:113
+#: crqwiz.cpp:114
 msgid ""
 "Once you supply the requested information and the request file has been "
 "created, you must send the request file to the certificate issuer."
@@ -103,71 +103,73 @@ msgstr ""
 "demande a été créé, vous devez envoyer le dossier de demande à l'émetteur du "
 "certificat."
 
-#: crqwiz.cpp:122
+#: crqwiz.cpp:123
 msgid "Certificate Issuer:"
 msgstr "Émetteur du certificat :"
 
-#: crqwiz.cpp:131 crqwiz.cpp:871 crqwiz.cpp:966 crqwiz.cpp:1020
-#: crqwiz.cpp:1055 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
+#: crqwiz.cpp:132 crqwiz.cpp:945 crqwiz.cpp:1040 crqwiz.cpp:1094
+#: crqwiz.cpp:1129 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
 #: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
 #: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
 #: tqslwiz.cpp:459 tqslwiz.cpp:549
 msgid "Error"
 msgstr "Erreur"
 
-#: crqwiz.cpp:166
+#: crqwiz.cpp:167
 msgid "Email: "
 msgstr "Courriel"
 
-#: crqwiz.cpp:168
+#: crqwiz.cpp:169
 msgid "URL: "
 msgstr "URL: "
 
-#: crqwiz.cpp:204
+#: crqwiz.cpp:205
 msgid "DXCC entity:"
 msgstr "Entité DXCC :"
 
-#: crqwiz.cpp:208 tqsl.cpp:1876 tqsl.cpp:3895
+#: crqwiz.cpp:209 tqsl.cpp:1876 tqsl.cpp:3895
 msgid "Call sign:"
 msgstr "Indicatif d'appel:"
 
-#: crqwiz.cpp:265
-msgid "QSO begin date:"
-msgstr "QSO date de début:"
+#: crqwiz.cpp:266
+msgid "Date of the first QSO you made or will make using this callsign:"
+msgstr ""
 
-#: crqwiz.cpp:311
-msgid "QSO end date:"
-msgstr "Date de fin QSO :"
+#: crqwiz.cpp:314
+msgid ""
+"Date of the last QSO you made or will make using this callsign:\n"
+"(Leave this date blank if this is still your valid callsign.)"
+msgstr ""
 
-#: crqwiz.cpp:375
+#: crqwiz.cpp:378
 msgid "Zip/Postal"
 msgstr "Code postal"
 
-#: crqwiz.cpp:380 stationdial.cpp:70
+#: crqwiz.cpp:383 stationdial.cpp:70
 msgid "Name"
 msgstr "Nom"
 
-#: crqwiz.cpp:404
+#: crqwiz.cpp:407
 msgid "Address"
 msgstr "Adresse "
 
-#: crqwiz.cpp:430
+#: crqwiz.cpp:433
 msgid "City"
 msgstr "Ville"
 
-#: crqwiz.cpp:443 stationdial.cpp:351 stationdial.cpp:362
+#: crqwiz.cpp:446 stationdial.cpp:351 stationdial.cpp:362
 msgid "State"
 msgstr "Etat"
 
-#: crqwiz.cpp:465 crqwiz.cpp:468
+#: crqwiz.cpp:468 crqwiz.cpp:471
 msgid "Country"
 msgstr "Pays"
 
-#: crqwiz.cpp:508
+#: crqwiz.cpp:511
 msgid "Your e-mail address"
 msgstr "Votre adresse e-mail"
 
-#: crqwiz.cpp:521
+#: crqwiz.cpp:524
 msgid ""
 "Note: The e-mail address you provide here is the address to which the issued "
 "Certificate will be sent. Make sure it's the correct address!"
@@ -175,7 +177,7 @@ msgstr ""
 "Remarque: L'adresse e-mail que vous fournissez ici est l'adresse à laquelle "
 "le Certificat délivré sera envoyé. Assurez-vous qu'il est la bonne adresse!"
 
-#: crqwiz.cpp:547
+#: crqwiz.cpp:550
 msgid ""
 "You may protect this Callsign Certificate using a password. If you are using "
 "a computer system that is shared with others, you should specify a password "
@@ -188,22 +190,22 @@ msgstr ""
 "Toutefois, si vous utilisez un ordinateur dans une résidence privée, aucun "
 "mot de passe doit être spécifié."
 
-#: crqwiz.cpp:556 crqwiz.cpp:582
+#: crqwiz.cpp:559 crqwiz.cpp:585
 msgid ""
 "Leave the password blank and click 'Next' unless you want to use a password."
 msgstr ""
 "Laissez le mot de passe vide et cliquez sur «Suivant» si vous souhaitez "
 "utiliser un mot de passe."
 
-#: crqwiz.cpp:560
+#: crqwiz.cpp:563
 msgid "Password:"
 msgstr "Mot de passe:"
 
-#: crqwiz.cpp:564
+#: crqwiz.cpp:567
 msgid "Enter the password again for verification:"
 msgstr "Entrez le mot de passe de nouveau pour la vérification:"
 
-#: crqwiz.cpp:568
+#: crqwiz.cpp:571
 msgid ""
 "DO NOT lose the password you choose! You will be unable to use the "
 "Certificate without this password!"
@@ -211,7 +213,7 @@ msgstr ""
 "Ne perdez pas le mot de passe que vous choisissez! Vous ne pourrez pas "
 "utiliser le Certificat sans ce mot de passe!"
 
-#: crqwiz.cpp:587
+#: crqwiz.cpp:590
 msgid ""
 "Leave the password blank and click 'Finish' unless you want to use a "
 "password."
@@ -219,11 +221,11 @@ msgstr ""
 "Ne renseignez pas le mot de passe et cliquez sur « Terminer » sauf si vous "
 "souhaitez utiliser un mot de passe."
 
-#: crqwiz.cpp:633
+#: crqwiz.cpp:636
 msgid "This Callsign Certificate is for:"
 msgstr "Ce certificat indicatif est déjà installé"
 
-#: crqwiz.cpp:654 crqwiz.cpp:658
+#: crqwiz.cpp:657 crqwiz.cpp:661
 msgid ""
 "Please select the Callsign Certificate for your current personal callsign to "
 "validate your request."
@@ -231,13 +233,13 @@ msgstr ""
 "Veuillez sélectionner le certificat d’indicatif d’appel pour votre cours "
 "indicatif personnel pour valider votre demande."
 
-#: crqwiz.cpp:655 crqwiz.cpp:660 crqwiz.cpp:662 crqwiz.cpp:673
+#: crqwiz.cpp:658 crqwiz.cpp:663 crqwiz.cpp:665
 msgid "Please select a Callsign Certificate to validate your request."
 msgstr ""
 "S'il vous plaît sélectionner un Certificat Callsign pour valider votre "
 "demande."
 
-#: crqwiz.cpp:656
+#: crqwiz.cpp:659
 msgid ""
 "Please select your club's primary Callsign Certificate to validate your "
 "request."
@@ -249,17 +251,17 @@ msgstr ""
 msgid "You must enter a valid call sign."
 msgstr "Vous devez entrer un indicatif d'appel valide."
 
-#: crqwiz.cpp:779
+#: crqwiz.cpp:791
 msgid "You must select a DXCC entity."
 msgstr "Vous devez sélectionner une entité DXCC."
 
-#: crqwiz.cpp:789
+#: crqwiz.cpp:822
 msgid "QSO begin date: You must choose proper values for Year, Month and Day."
 msgstr ""
 "QSO commencer date : vous devez choisir les valeurs appropriées pour "
 "l'année, mois et jour."
 
-#: crqwiz.cpp:793
+#: crqwiz.cpp:826
 msgid ""
 "QSO end date: You must either choose proper values for Year, Month and Day "
 "or leave all three blank."
@@ -267,12 +269,40 @@ msgstr ""
 "Date de fin QSO : vous devez choisir les valeurs appropriées pour Year, "
 "Month et Day ou laissez-les toutes trois vierges."
 
-#: crqwiz.cpp:798
+#: crqwiz.cpp:831
 msgid "QSO end date cannot be before QSO begin date."
 msgstr "Date de fin QSO ne peut pas être avant le début de QSO date."
 
+#: crqwiz.cpp:863
+#, c-format
+msgid ""
+"The date of your first QSO is before the first valid date (%hs) of the "
+"selected DXCC Entity %hs"
+msgstr ""
+
+#: crqwiz.cpp:867
+#, c-format
+msgid ""
+"The date of your first QSO is after the last valid date (%hs) of the "
+"selected DXCC Entity %hs"
+msgstr ""
+
+#: crqwiz.cpp:871
+#, c-format
+msgid ""
+"The date of your last QSO is before the first valid date (%hs) of the "
+"selected DXCC Entity %hs"
+msgstr ""
+
+#: crqwiz.cpp:875
+#, c-format
+msgid ""
+"The date of your last QSO is after the last valid date (%hs) of the selected "
+"DXCC Entity %hs"
+msgstr ""
+
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
-#: crqwiz.cpp:836
+#: crqwiz.cpp:910
 #, c-format
 msgid ""
 "You have an overlapping Certificate for %s (DXCC=%hs) having QSO dates: "
@@ -281,11 +311,11 @@ msgstr ""
 "de QSO:"
 
 #. TRANSLATORS: here "to" separates two dates in a date range
-#: crqwiz.cpp:838
+#: crqwiz.cpp:912
 msgid " to "
 msgstr " à "
 
-#: crqwiz.cpp:844
+#: crqwiz.cpp:918
 #, c-format
 msgid ""
 "You have already requested a Callsign Certificate for %s and can not request "
@@ -295,7 +325,7 @@ msgstr ""
 "demander à un autre jusqu'à ce que la demande a été traitée par LoTW "
 "personnel."
 
-#: crqwiz.cpp:848
+#: crqwiz.cpp:922
 msgid ""
 "Please wait until you receive an e-mail bearing your requested Callsign "
 "Certificate."
@@ -303,7 +333,7 @@ msgstr ""
 "Veuillez patienter jusqu'à ce que vous recevez un courriel portant votre "
 "Certificat demandé Indicatif d'appel."
 
-#: crqwiz.cpp:851
+#: crqwiz.cpp:925
 #, c-format
 msgid ""
 "If you are sure that the earlier request is now invalid you should delete "
@@ -312,7 +342,7 @@ msgstr ""
 "Si vous êtes sûr que la demande antérieure est maintenant invalide, vous "
 "devez supprimer le Certificat Callsign en attente pour %s."
 
-#: crqwiz.cpp:876
+#: crqwiz.cpp:950
 msgid ""
 "You cannot select DXCC Entity NONE as you must sign any request for entity "
 "NONE and you have no valid Callsign Certificates that you can use to sign "
@@ -322,15 +352,15 @@ msgstr ""
 "une demande par personne NONE et vous n’avez aucun indicatif d’appel des "
 "certificats valides que vous pouvez utiliser pour signer cette demande."
 
-#: crqwiz.cpp:877 crqwiz.cpp:1069 tqsl.cpp:145 tqsl.cpp:164
+#: crqwiz.cpp:951 crqwiz.cpp:1143 tqsl.cpp:145 tqsl.cpp:164
 msgid "TQSL Error"
 msgstr "Erreur TQSL"
 
-#: crqwiz.cpp:881
+#: crqwiz.cpp:955
 msgid "You have selected DXCC Entity NONE"
 msgstr "Vous avez sélectionné l'entité DXCC NONE"
 
-#: crqwiz.cpp:883
+#: crqwiz.cpp:957
 msgid ""
 "QSO records signed using the Certificate will not be valid for DXCC award "
 "credit (but will be valid for other applicable awards). If the Certificate "
@@ -347,11 +377,11 @@ msgstr ""
 "bouton \"Retour\" pour revenir à la page de DXCC après avoir cliqué sur \"OK"
 "\""
 
-#: crqwiz.cpp:891 stationdial.cpp:447
+#: crqwiz.cpp:965 stationdial.cpp:447
 msgid "TQSL Warning"
 msgstr "TQSL Avertissement"
 
-#: crqwiz.cpp:894
+#: crqwiz.cpp:968
 msgid ""
 "You have chosen a QSO end date for this Callsign Certificate. The 'QSO end "
 "date' should ONLY be set if that date is the date when that callsign's "
@@ -362,7 +392,7 @@ msgstr ""
 "date à laquelle licence de cet indicatif d'appel expiré ou la licence a été "
 "remplacée par un nouvel indicatif d'appel."
 
-#: crqwiz.cpp:898
+#: crqwiz.cpp:972
 msgid ""
 "If you set an end date, you will not be able to sign QSOs past that date, "
 "even if the Callsign Certificate itself is still valid."
@@ -371,7 +401,7 @@ msgstr ""
 "QSOs au-delà de cette date, même si le Certificat d'indicatif d'appel lui-"
 "même est toujours valide."
 
-#: crqwiz.cpp:902
+#: crqwiz.cpp:976
 msgid ""
 "If you still hold this callsign (or if you plan to renew the license for the "
 "callsign), you should not set a 'QSO end date'."
@@ -380,42 +410,42 @@ msgstr ""
 "de renouveler la licence pour l'indicatif d'appel), n'affectez pas à une « "
 "date de fin QSO »."
 
-#: crqwiz.cpp:905
+#: crqwiz.cpp:979
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Voulez-vous vraiment garder cette «QSO date de fin»?"
 
-#: crqwiz.cpp:906 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
 #: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Attention"
 
-#: crqwiz.cpp:941
+#: crqwiz.cpp:1015
 msgid "You must enter your name"
 msgstr "Vous devez entrer votre nom"
 
-#: crqwiz.cpp:943
+#: crqwiz.cpp:1017
 msgid "You must enter your address"
 msgstr "Vous devez saisir votre adresse"
 
-#: crqwiz.cpp:945
+#: crqwiz.cpp:1019
 msgid "You must enter your city"
 msgstr "Vous devez entrer votre ville"
 
-#: crqwiz.cpp:1007
+#: crqwiz.cpp:1081
 msgid "You must enter a valid email address"
 msgstr "Vous devez entrer une adresse email valide"
 
-#: crqwiz.cpp:1042
+#: crqwiz.cpp:1116
 msgid "The two copies of the password do not match."
 msgstr "Les deux copies du mot de passe ne correspondent pas."
 
-#: crqwiz.cpp:1083
+#: crqwiz.cpp:1157
 msgid "Click 'Finish' to complete this Callsign Certificate request."
 msgstr ""
 "Cliquez sur « Terminer » pour remplir cette demande de Certificat "
 "d'indicatif d'appel."
 
-#: crqwiz.cpp:1096
+#: crqwiz.cpp:1170
 #, c-format
 msgid ""
 "You are saying that the requested Certificate for %s belongs to the same "
@@ -2994,6 +3024,12 @@ msgstr "Date"
 #: tqslvalidator.h:69
 msgid "Time"
 msgstr "Heure"
+
+#~ msgid "QSO begin date:"
+#~ msgstr "QSO date de début:"
+
+#~ msgid "QSO end date:"
+#~ msgstr "Date de fin QSO :"
 
 #~ msgid ""
 #~ "If the requested certificate is for your personal callsign, then you "
