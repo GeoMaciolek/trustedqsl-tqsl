@@ -263,7 +263,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		dates[1][1] = crq->qsoNotAfter.month;
 		dates[1][2] = crq->qsoNotAfter.day;
 	}
-	wxString label = _("Date of the first QSO you made using this callsign:");
+	wxString label = _("Date of the first QSO you made or will make using this callsign:");
 	for (int i = 0; i < 2; i++) {
 		sels[i][0] = sels[i][1] = sels[i][2] = 0;
 		sizer->Add(new wxStaticText(this, -1, label), 0, wxBOTTOM, 5);
@@ -311,7 +311,7 @@ CRQ_IntroPage::CRQ_IntroPage(CRQWiz *parent, TQSL_CERT_REQ *crq) :  CRQ_Page(par
 		sizer->Add(hsizer, 0, wxLEFT|wxRIGHT, 10);
 		if (i == 0)
 			sizer->Add(0, 40);
-		label = _("Date of the last QSO you made using this callsign:\n(Leave this date blank if this is still your valid callsign.)");
+		label = _("Date of the last QSO you made or will make using this callsign:\n(Leave this date blank if this is still your valid callsign.)");
 	}
 	if (crq) {
 		tc_qsobeginy->SetSelection(sels[0][0]);
