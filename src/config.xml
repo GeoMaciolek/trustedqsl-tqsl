@@ -1,4 +1,528 @@
-<tqslconfig majorversion="9" minorversion="2">
+<tqslconfig majorversion="10" minorversion="0">
+     <providers>
+       <provider organizationName="American Radio Relay League">
+         <organizationalUnitName>Logbook of the World</organizationalUnitName>
+         <emailAddress>lotw-help@arrl.org</emailAddress>
+         <url>https://www.arrl.org/lotw/</url>
+       </provider>
+     </providers>
+     <sigspecs>
+       <sigspec name="LOTW" version="1.0">
+         <tSTATION>
+           <CA_PROVINCE />
+           <CA_US_PARK />
+           <CQZ method="int"/>
+           <DX_US_PARK />
+           <GRIDSQUARE />
+           <IOTA />
+           <ITUZ method="int"/>
+           <US_COUNTY />
+           <US_PARK />
+           <US_STATE />
+         </tSTATION>
+         <tCONTACT>
+           <BAND required="1" />
+   	<BAND_RX />
+           <CALL required="1" />
+           <FREQ />
+   	<FREQ_RX />
+           <MODE required="1" />
+   	<PROP_MODE />
+           <QSO_DATE required="1" />
+           <QSO_TIME required="1" />
+   	<SAT_NAME />
+         </tCONTACT>
+       </sigspec>
+     </sigspecs>
+     <dxcc>
+       <entity arrlId="0" valid="1912-12-13 00:00:00">-NONE-</entity>
+       <entity arrlId="1" valid="1945-11-15 00:00:00" zonemap="02:01,02:02,02:03,02:04,03:01,03:02,03:04,04:01,04:02,04:04,04:05,09:01,09:02,09:05,75:01">CANADA</entity>
+       <entity arrlId="2" valid="1945-11-15 00:00:00" invalid="1991-03-31 00:00:00" zonemap="39:21">ABU AIL ISLANDS (DELETED)</entity>
+       <entity arrlId="3" valid="1945-11-15 00:00:00" zonemap="40:21">AFGHANISTAN</entity>
+       <entity arrlId="4" valid="1945-11-15 00:00:00" zonemap="53:39">AGALEGA &amp; SAINT BRANDON ISLANDS</entity>
+       <entity arrlId="5" valid="1945-11-15 00:00:00" zonemap="18:15">ALAND ISLANDS</entity>
+       <entity arrlId="6" valid="1945-11-15 00:00:00" zonemap="1:1,2:1">ALASKA</entity>
+       <entity arrlId="7" valid="1945-11-15 00:00:00" zonemap="28:15">ALBANIA</entity>
+       <entity arrlId="8" valid="1945-11-15 00:00:00" invalid="1976-06-29 00:00:00" zonemap="53:39">ALDABRA (DELETED)</entity>
+       <entity arrlId="9" valid="1945-11-15 00:00:00" zonemap="62:32">AMERICAN SAMOA</entity>
+       <entity arrlId="10" valid="1945-11-15 00:00:00" zonemap="68:39">AMSTERDAM &amp; SAINT PAUL ISLANDS</entity>
+       <entity arrlId="11" valid="1945-11-15 00:00:00" zonemap="49:26">ANDAMAN &amp; NICOBAR ISLANDS</entity>
+       <entity arrlId="12" valid="1945-11-15 00:00:00" zonemap="11:08">ANGUILLA</entity>
+       <entity arrlId="13" valid="1945-11-15 00:00:00" zonemap="67:38,67:39,69:29,69:39,70:29,70:30,71:30,71:32,72:12,72:32,73:12,73:13,73:38,74:12,74:13,74:29,74:30,74:32,74:38,74:39">ANTARCTICA</entity>
+       <entity arrlId="14" valid="1945-11-15 00:00:00" zonemap="29:21">ARMENIA</entity>
+       <entity arrlId="15" valid="1945-11-15 00:00:00" zonemap="20:17,21:17,21:18,22:18,22:19,23:18,23:19,24:19,25:19,26:19,30:16,30:17,31:17,31:18,31:23,32:18,32:19,32:23,33:18,33:19,34:19,35:19,75:18">ASIATIC RUSSIA</entity>
+       <entity arrlId="16" valid="1945-11-15 00:00:00" zonemap="60:32"> NEW ZEALAND SUBANTARCTIC ISLANDS</entity>
+       <entity arrlId="17" valid="1945-11-15 00:00:00" zonemap="11:08">AVES ISLAND</entity>
+       <entity arrlId="18" valid="1945-11-15 00:00:00" zonemap="29:21">AZERBAIJAN</entity>
+       <entity arrlId="19" valid="1945-11-15 00:00:00" invalid="1981-09-17 00:00:00" zonemap="11:08">BAJO NUEVO (DELETED)</entity>
+       <entity arrlId="20" valid="1945-11-15 00:00:00" zonemap="61:31">BAKER &amp; HOWLAND ISLANDS</entity>
+       <entity arrlId="21" valid="1945-11-15 00:00:00" zonemap="37:14">BALEARIC ISLANDS</entity>
+       <entity arrlId="22" valid="1945-11-15 00:00:00" zonemap="64:27">PALAU</entity>
+       <entity arrlId="23" valid="1967-05-04 00:00:00" invalid="1975-07-01 00:00:00" zonemap="41:39">BLENHEIM REEF (DELETED)</entity>
+       <entity arrlId="24" valid="1945-11-15 00:00:00" zonemap="67:38">BOUVET ISLAND</entity>
+       <entity arrlId="25" valid="1945-11-15 00:00:00" invalid="1963-09-16 00:00:00" zonemap="54:28">BRITISH NORTH BORNEO (DELETED)</entity>
+       <entity arrlId="26" valid="1945-11-15 00:00:00" invalid="1960-07-01 00:00:00" zonemap="48:37">BRITISH SOMALILAND (DELETED)</entity>
+       <entity arrlId="27" valid="1945-11-15 00:00:00" zonemap="29:16">BELARUS</entity>
+       <entity arrlId="28" valid="1945-11-15 00:00:00" invalid="1979-10-01 00:00:00" zonemap="11:07">CANAL ZONE (DELETED)</entity>
+       <entity arrlId="29" valid="1945-11-15 00:00:00" zonemap="36:33">CANARY ISLANDS</entity>
+       <entity arrlId="30" valid="1945-11-15 00:00:00" invalid="1963-05-01 00:00:00" zonemap="54:28">CELEBES &amp; MOLUCCA ISLANDS (DELETED)</entity>
+       <entity arrlId="31" valid="1945-11-15 00:00:00" zonemap="62:31">CENTRAL KIRIBATI</entity>
+       <entity arrlId="32" valid="1945-11-15 00:00:00" zonemap="37:33">CEUTA &amp; MELILLA</entity>
+       <entity arrlId="33" valid="1945-11-15 00:00:00" zonemap="41:39">CHAGOS ISLANDS</entity>
+       <entity arrlId="34" valid="1945-11-15 00:00:00" zonemap="60:32">CHATHAM ISLAND</entity>
+       <entity arrlId="35" valid="1945-11-15 00:00:00" zonemap="54:29">CHRISTMAS ISLAND</entity>
+       <entity arrlId="36" valid="1945-11-15 00:00:00" zonemap="10:07">CLIPPERTON ISLAND</entity>
+       <entity arrlId="37" valid="1945-11-15 00:00:00" zonemap="12:07">COCOS ISLAND</entity>
+       <entity arrlId="38" valid="1945-11-15 00:00:00" zonemap="54:29">COCOS (KEELING) ISLANDS</entity>
+       <entity arrlId="39" valid="1945-11-15 00:00:00" invalid="1975-07-06 00:00:00" zonemap="53:39">COMORO ISLANDS (DELETED)</entity>
+       <entity arrlId="40" valid="1945-11-15 00:00:00" zonemap="28:20">CRETE</entity>
+       <entity arrlId="41" valid="1945-11-15 00:00:00" zonemap="68:39">CROZET ISLAND</entity>
+       <entity arrlId="42" valid="1945-11-15 00:00:00" invalid="1962-01-01 00:00:00" zonemap="41:22">DAMAO, DIU (DELETED)</entity>
+       <entity arrlId="43" valid="1979-03-01 00:00:00" zonemap="11:08">DESECHEO ISLAND</entity>
+       <entity arrlId="44" valid="1945-11-15 00:00:00" invalid="1976-06-29 00:00:00" zonemap="53:39">DESROCHES (DELETED)</entity>
+       <entity arrlId="45" valid="1945-11-15 00:00:00" zonemap="28:20">DODECANESE</entity>
+       <entity arrlId="46" valid="1963-09-16 00:00:00" zonemap="54:28">EAST MALAYSIA</entity>
+       <entity arrlId="47" valid="1945-11-15 00:00:00" zonemap="63:12,78:12">EASTER ISLAND</entity>
+       <entity arrlId="48" valid="1945-11-15 00:00:00" zonemap="61:131,63:131">EASTERN KIRIBATI</entity>
+       <entity arrlId="49" valid="1945-11-15 00:00:00" zonemap="47:36">EQUATORIAL GUINEA</entity>
+       <entity arrlId="50" valid="1945-11-15 00:00:00" zonemap="10:06">MEXICO</entity>
+       <entity arrlId="51" valid="1991-05-24 00:00:00" zonemap="48:37">ERITREA</entity>
+       <entity arrlId="52" valid="1945-11-15 00:00:00" zonemap="29:15">ESTONIA</entity>
+       <entity arrlId="53" valid="1945-11-15 00:00:00" zonemap="48:37">ETHIOPIA</entity>
+       <entity arrlId="54" valid="1945-11-15 00:00:00" zonemap="19:16,19:17,20:16,20:17,29:16,29:17,30:16,30:17">EUROPEAN RUSSIA</entity>
+       <entity arrlId="55" valid="1945-11-15 00:00:00" invalid="1976-06-29 00:00:00" zonemap="53:39">FARQUHAR (DELETED)</entity>
+       <entity arrlId="56" valid="1945-11-15 00:00:00" zonemap="13:11">FERNANDO DE NORONHA</entity>
+       <entity arrlId="57" valid="1945-11-15 00:00:00" invalid="1960-08-17 00:00:00" zonemap="47:36,52:36">FRENCH EQUATORIAL AFRICA (DELETED)</entity>
+       <entity arrlId="58" valid="1945-11-15 00:00:00" invalid="1950-12-21 00:00:00" zonemap="49:26">FRENCH INDO-CHINA (DELETED)</entity>
+       <entity arrlId="59" valid="1945-11-15 00:00:00" invalid="1960-08-07 00:00:00" zonemap="46:35">FRENCH WEST AFRICA (DELETED)</entity>
+       <entity arrlId="60" valid="1945-11-15 00:00:00" zonemap="11:08">BAHAMAS</entity>
+       <entity arrlId="61" valid="1945-11-15 00:00:00" zonemap="20:40,75:40">FRANZ JOSEF LAND</entity>
+       <entity arrlId="62" valid="1945-11-15 00:00:00" zonemap="11:08">BARBADOS</entity>
+       <entity arrlId="63" valid="1945-11-15 00:00:00" zonemap="12:09">FRENCH GUIANA</entity>
+       <entity arrlId="64" valid="1945-11-15 00:00:00" zonemap="11:05">BERMUDA</entity>
+       <entity arrlId="65" valid="1945-11-15 00:00:00" zonemap="11:08">BRITISH VIRGIN ISLANDS</entity>
+       <entity arrlId="66" valid="1945-11-15 00:00:00" zonemap="11:07">BELIZE</entity>
+       <entity arrlId="67" valid="1945-11-15 00:00:00" invalid="1954-11-01 00:00:00" zonemap="41:22">FRENCH INDIA (DELETED)</entity>
+       <entity arrlId="68" valid="1945-11-15 00:00:00" invalid="1969-12-15 00:00:00" zonemap="39:21">KUWAIT/SAUDI ARABIA NEUTRAL ZONE (DELETED)</entity>
+       <entity arrlId="69" valid="1945-11-15 00:00:00" zonemap="11:08">CAYMAN ISLANDS</entity>
+       <entity arrlId="70" valid="1945-11-15 00:00:00" zonemap="11:08">CUBA</entity>
+       <entity arrlId="71" valid="1945-11-15 00:00:00" zonemap="12:10">GALAPAGOS ISLANDS</entity>
+       <entity arrlId="72" valid="1945-11-15 00:00:00" zonemap="11:08">DOMINICAN REPUBLIC</entity>
+       <entity arrlId="74" valid="1945-11-15 00:00:00" zonemap="11:07">EL SALVADOR</entity>
+       <entity arrlId="75" valid="1945-11-15 00:00:00" zonemap="29:21">GEORGIA</entity>
+       <entity arrlId="76" valid="1945-11-15 00:00:00" zonemap="11:07">GUATEMALA</entity>
+       <entity arrlId="77" valid="1945-11-15 00:00:00" zonemap="11:08">GRENADA</entity>
+       <entity arrlId="78" valid="1945-11-15 00:00:00" zonemap="11:08">HAITI</entity>
+       <entity arrlId="79" valid="1945-11-15 00:00:00" zonemap="11:08">GUADELOUPE</entity>
+       <entity arrlId="80" valid="1945-11-15 00:00:00" zonemap="11:07">HONDURAS</entity>
+       <entity arrlId="81" valid="1945-11-15 00:00:00" invalid="1973-09-17 00:00:00" zonemap="28:14">GERMANY (DELETED)</entity>
+       <entity arrlId="82" valid="1945-11-15 00:00:00" zonemap="11:08">JAMAICA</entity>
+       <entity arrlId="84" valid="1945-11-15 00:00:00" zonemap="11:08">MARTINIQUE</entity>
+       <entity arrlId="85" valid="1945-11-15 00:00:00" invalid="2010-10-10 04:00:00" zonemap="11:09">BONAIRE,CURACAO (NETH ANTILLES) (DELETED)</entity>
+       <entity arrlId="86" valid="1945-11-15 00:00:00" zonemap="11:07">NICARAGUA</entity>
+       <entity arrlId="88" valid="1945-11-15 00:00:00" zonemap="11:07">PANAMA</entity>
+       <entity arrlId="89" valid="1945-11-15 00:00:00" zonemap="11:08">TURKS &amp; CAICOS ISLANDS</entity>
+       <entity arrlId="90" valid="1945-11-15 00:00:00" zonemap="11:09">TRINIDAD &amp; TOBAGO</entity>
+       <entity arrlId="91" valid="1986-01-01 00:00:00" zonemap="11:09">ARUBA</entity>
+       <entity arrlId="93" valid="1967-05-05 00:00:00" invalid="1978-03-01 00:00:00" zonemap="53:39">GEYSER REEF (DELETED)</entity>
+       <entity arrlId="94" valid="1945-11-15 00:00:00" zonemap="11:08">ANTIGUA &amp; BARBUDA</entity>
+       <entity arrlId="95" valid="1945-11-15 00:00:00" zonemap="11:08">DOMINICA</entity>
+       <entity arrlId="96" valid="1945-11-15 00:00:00" zonemap="11:08">MONTSERRAT</entity>
+       <entity arrlId="97" valid="1945-11-15 00:00:00" zonemap="11:08">SAINT LUCIA</entity>
+       <entity arrlId="98" valid="1945-11-15 00:00:00" zonemap="11:08">SAINT VINCENT</entity>
+       <entity arrlId="99" valid="1960-06-25 00:00:00" zonemap="53:39">GLORIOSO ISLAND</entity>
+       <entity arrlId="100" valid="1945-11-15 00:00:00" zonemap="14:13,16:13">ARGENTINA</entity>
+       <entity arrlId="101" valid="1945-11-15 00:00:00" invalid="1962-01-01 00:00:00" zonemap="41:22">GOA (DELETED)</entity>
+       <entity arrlId="102" valid="1945-11-15 00:00:00" invalid="1957-03-06 00:00:00" zonemap="46:35">GOLD COAST TOGOLAND (DELETED)</entity>
+       <entity arrlId="103" valid="1945-11-15 00:00:00" zonemap="64:27">GUAM</entity>
+       <entity arrlId="104" valid="1945-11-15 00:00:00" zonemap="12:10,14:10">BOLIVIA</entity>
+       <entity arrlId="105" valid="1945-11-15 00:00:00" zonemap="11:08">GUANTANAMO BAY</entity>
+       <entity arrlId="106" valid="1945-11-15 00:00:00" zonemap="27:14">GUERNSEY</entity>
+       <entity arrlId="107" valid="1945-11-15 00:00:00" zonemap="46:35">GUINEA</entity>
+       <entity arrlId="108" valid="1945-11-15 00:00:00" zonemap="12:11,13:11,15:11">BRAZIL</entity>
+       <entity arrlId="109" valid="1945-11-15 00:00:00" zonemap="46:35">GUINEA-BISSAU</entity>
+       <entity arrlId="110" valid="1945-11-15 00:00:00" zonemap="61:31">HAWAII</entity>
+       <entity arrlId="111" valid="1945-11-15 00:00:00" zonemap="68:39">HEARD ISLAND</entity>
+       <entity arrlId="112" valid="1945-11-15 00:00:00" zonemap="14:12,16:12">CHILE</entity>
+       <entity arrlId="113" valid="1945-11-15 00:00:00" invalid="1969-05-14 00:00:00" zonemap="37:33">IFNI (DELETED)</entity>
+       <entity arrlId="114" valid="1945-11-15 00:00:00" zonemap="27:14">ISLE OF MAN</entity>
+       <entity arrlId="115" valid="1945-11-15 00:00:00" invalid="1960-07-01 00:00:00" zonemap="48:37">ITALIAN SOMALILAND (DELETED)</entity>
+       <entity arrlId="116" valid="1945-11-15 00:00:00" zonemap="12:09">COLOMBIA</entity>
+       <entity arrlId="117" valid="1945-11-15 00:00:00" zonemap="28:14">ITU HQ</entity>
+       <entity arrlId="118" valid="1945-11-15 00:00:00" zonemap="18:40">JAN MAYEN</entity>
+       <entity arrlId="119" valid="1945-11-15 00:00:00" invalid="1963-05-01 00:00:00" zonemap="54:28">JAVA (DELETED)</entity>
+       <entity arrlId="120" valid="1945-11-15 00:00:00" zonemap="12:10">ECUADOR</entity>
+       <entity arrlId="122" valid="1945-11-15 00:00:00" zonemap="27:14">JERSEY</entity>
+       <entity arrlId="123" valid="1945-11-15 00:00:00" zonemap="61:31">JOHNSTON ISLAND</entity>
+       <entity arrlId="124" valid="1960-06-25 00:00:00" zonemap="53:39">JUAN DE NOVA, EUROPA</entity>
+       <entity arrlId="125" valid="1945-11-15 00:00:00" zonemap="14:12">JUAN FERNANDEZ ISLAND</entity>
+       <entity arrlId="126" valid="1945-11-15 00:00:00" zonemap="29:15">KALININGRAD</entity>
+       <entity arrlId="127" valid="1945-11-15 00:00:00" invalid="1982-03-11 00:00:00" zonemap="39:21">KAMARAN ISLANDS (DELETED)</entity>
+       <entity arrlId="128" valid="1945-11-15 00:00:00" invalid="1960-07-01 00:00:00" zonemap="19:16">KARELO-FINNISH REP (DELETED)</entity>
+       <entity arrlId="129" valid="1945-11-15 00:00:00" zonemap="12:09">GUYANA</entity>
+       <entity arrlId="130" valid="1945-11-15 00:00:00" zonemap="29:17,30:17,31:17">KAZAKHSTAN</entity>
+       <entity arrlId="131" valid="1945-11-15 00:00:00" zonemap="68:39">KERGUELEN ISLAND</entity>
+       <entity arrlId="132" valid="1945-11-15 00:00:00" zonemap="14:11">PARAGUAY</entity>
+       <entity arrlId="133" valid="1945-11-15 00:00:00" zonemap="60:32">KERMADEC ISLAND</entity>
+       <entity arrlId="134" valid="1945-11-15 00:00:00" invalid="2016-03-29 00:00:00" zonemap="61:31">KINGMAN REEF (DELETED)</entity>
+       <entity arrlId="135" valid="1945-11-15 00:00:00" zonemap="30:17,31:17">KYRGYZSTAN</entity>
+       <entity arrlId="136" valid="1945-11-15 00:00:00" zonemap="12:10">PERU</entity>
+       <entity arrlId="137" valid="1945-11-15 00:00:00" zonemap="44:25">REPUBLIC OF KOREA</entity>
+       <entity arrlId="138" valid="1945-11-15 00:00:00" zonemap="61:31">KURE ISLAND</entity>
+       <entity arrlId="139" valid="1945-11-15 00:00:00" invalid="1967-11-30 00:00:00" zonemap="39:21">KURIA MURIA ISLAND (DELETED)</entity>
+       <entity arrlId="140" valid="1945-11-15 00:00:00" zonemap="12:09">SURINAME</entity>
+       <entity arrlId="141" valid="1945-11-15 00:00:00" zonemap="16:13">FALKLAND ISLANDS</entity>
+       <entity arrlId="142" valid="1945-11-15 00:00:00" zonemap="41:22">LAKSHADWEEP ISLANDS</entity>
+       <entity arrlId="143" valid="1945-11-15 00:00:00" zonemap="49:26">LAOS</entity>
+       <entity arrlId="144" valid="1945-11-15 00:00:00" zonemap="14:13">URUGUAY</entity>
+       <entity arrlId="145" valid="1945-11-15 00:00:00" zonemap="29:15">LATVIA</entity>
+       <entity arrlId="146" valid="1945-11-15 00:00:00" zonemap="29:15">LITHUANIA</entity>
+       <entity arrlId="147" valid="1945-11-15 00:00:00" zonemap="60:30">LORD HOWE ISLAND</entity>
+       <entity arrlId="148" valid="1945-11-15 00:00:00" zonemap="12:09">VENEZUELA</entity>
+       <entity arrlId="149" valid="1945-11-15 00:00:00" zonemap="36:14">AZORES</entity>
+       <entity arrlId="150" valid="1945-11-15 00:00:00" zonemap="55:29,55:30,58:29,58:30,59:29,59:30">AUSTRALIA</entity>
+       <entity arrlId="151" valid="1945-11-15 00:00:00" invalid="2012-02-17 00:00:00" zonemap="29:16">MALYJ VYSOTSKIJ ISLAND (DELETED)</entity>
+       <entity arrlId="152" valid="1945-11-15 00:00:00" zonemap="44:24">MACAO</entity>
+       <entity arrlId="153" valid="1945-11-15 00:00:00" zonemap="60:30">MACQUARIE ISLAND</entity>
+       <entity arrlId="154" valid="1945-11-15 00:00:00" invalid="1990-05-22 00:00:00" zonemap="39:21">YEMEN ARAB REPUBLIC (DELETED)</entity>
+       <entity arrlId="155" valid="1945-11-15 00:00:00" invalid="1963-09-16 00:00:00" zonemap="54:28">MALAYA (DELETED)</entity>
+       <entity arrlId="157" valid="1945-11-15 00:00:00" zonemap="65:31">NAURU</entity>
+       <entity arrlId="158" valid="1945-11-15 00:00:00" zonemap="56:32">VANUATU</entity>
+       <entity arrlId="159" valid="1945-11-15 00:00:00" zonemap="41:22">MALDIVES</entity>
+       <entity arrlId="160" valid="1945-11-15 00:00:00" zonemap="62:32">TONGA</entity>
+       <entity arrlId="161" valid="1945-11-15 00:00:00" zonemap="12:09">MALPELO ISLAND</entity>
+       <entity arrlId="162" valid="1945-11-15 00:00:00" zonemap="56:32">NEW CALEDONIA</entity>
+       <entity arrlId="163" valid="1975-09-16 00:00:00" zonemap="51:28">PAPUA NEW GUINEA</entity>
+       <entity arrlId="164" valid="1945-11-15 00:00:00" invalid="1963-09-16 00:00:00" zonemap="33:24">MANCHURIA (DELETED)</entity>
+       <entity arrlId="165" valid="1945-11-15 00:00:00" zonemap="53:39">MAURITIUS ISLAND</entity>
+       <entity arrlId="166" valid="1945-11-15 00:00:00" zonemap="64:27">MARIANA ISLANDS</entity>
+       <entity arrlId="167" valid="1945-11-15 00:00:00" zonemap="18:15">MARKET REEF</entity>
+       <entity arrlId="168" valid="1945-11-15 00:00:00" zonemap="65:31">MARSHALL ISLANDS</entity>
+       <entity arrlId="169" valid="1945-11-15 00:00:00" zonemap="53:39">MAYOTTE ISLAND</entity>
+       <entity arrlId="170" valid="1945-11-15 00:00:00" zonemap="60:32">NEW ZEALAND</entity>
+       <entity arrlId="171" valid="1945-11-15 00:00:00" zonemap="56:30">MELLISH REEF</entity>
+       <entity arrlId="172" valid="1945-11-15 00:00:00" zonemap="63:32">PITCAIRN ISLAND</entity>
+       <entity arrlId="173" valid="1981-01-01 00:00:00" zonemap="64:27,65:27">MICRONESIA</entity>
+       <entity arrlId="174" valid="1945-11-15 00:00:00" zonemap="61:31">MIDWAY ISLAND</entity>
+       <entity arrlId="175" valid="1945-11-15 00:00:00" zonemap="63:32">FRENCH POLYNESIA</entity>
+       <entity arrlId="176" valid="1945-11-15 00:00:00" zonemap="56:32">FIJI ISLANDS</entity>
+       <entity arrlId="177" valid="1945-11-15 00:00:00" zonemap="90:27">MINAMI TORISHIMA</entity>
+       <entity arrlId="178" valid="1945-11-15 00:00:00" invalid="1972-07-16 00:00:00" zonemap="62:32">MINERVA REEF (DELETED)</entity>
+       <entity arrlId="179" valid="1945-11-15 00:00:00" zonemap="29:16">MOLDOVA</entity>
+       <entity arrlId="180" valid="1945-11-15 00:00:00" zonemap="28:20">MOUNT ATHOS</entity>
+       <entity arrlId="181" valid="1945-11-15 00:00:00" zonemap="53:37">MOZAMBIQUE</entity>
+       <entity arrlId="182" valid="1945-11-15 00:00:00" zonemap="11:08">NAVASSA ISLAND</entity>
+       <entity arrlId="183" valid="1945-11-15 00:00:00" invalid="1963-05-01 00:00:00" zonemap="54:28">NETHERLANDS BORNEO (DELETED)</entity>
+       <entity arrlId="184" valid="1945-11-15 00:00:00" invalid="1963-05-01 00:00:00" zonemap="51:28">NETHERLANDS N GUINEA (DELETED)</entity>
+       <entity arrlId="185" valid="1945-11-15 00:00:00" zonemap="51:28">SOLOMON ISLANDS</entity>
+       <entity arrlId="186" valid="1945-11-15 00:00:00" invalid="1949-04-01 00:00:00" zonemap="09:02,09:05">NEWFOUNDLAND LABRADOR (DELETED)</entity>
+       <entity arrlId="187" valid="1960-08-03 00:00:00" zonemap="46:35">NIGER</entity>
+       <entity arrlId="188" valid="1945-11-15 00:00:00" zonemap="62:32">NIUE</entity>
+       <entity arrlId="189" valid="1945-11-15 00:00:00" zonemap="60:32">NORFOLK ISLAND</entity>
+       <entity arrlId="190" valid="1945-11-15 00:00:00" zonemap="62:32">SAMOA</entity>
+       <entity arrlId="191" valid="1945-11-15 00:00:00" zonemap="62:32,63:32">NORTH COOK ISLANDS</entity>
+       <entity arrlId="192" valid="1945-11-15 00:00:00" zonemap="45:27">OGASAWARA</entity>
+       <entity arrlId="193" valid="1945-11-15 00:00:00" invalid="1972-05-15 00:00:00" zonemap="45:25">OKINAWA (DELETED)</entity>
+       <entity arrlId="194" valid="1976-05-30 00:00:00" invalid="1980-12-01 00:00:00" zonemap="45:27">OKINO TORI-SHIMA (DELETED)</entity>
+       <entity arrlId="195" valid="1945-11-15 00:00:00" zonemap="52:36">ANNOBON</entity>
+       <entity arrlId="196" valid="1945-11-15 00:00:00" invalid="1968-07-01 00:00:00" zonemap="39:20">PALESTINE (DELETED)</entity>
+       <entity arrlId="197" valid="1945-11-15 00:00:00" zonemap="61:31,62:31">PALMYRA &amp; JARVIS ISLANDS</entity>
+       <entity arrlId="198" valid="1945-11-15 00:00:00" invalid="1975-09-16 00:00:00" zonemap="51:28">PAPUA TERRITORY (DELETED)</entity>
+       <entity arrlId="199" valid="1945-11-15 00:00:00" zonemap="72:12">PETER 1 ISLAND</entity>
+       <entity arrlId="200" valid="1945-11-15 00:00:00" invalid="1976-09-15 00:00:00" zonemap="54:28">PORTUGUESE TIMOR (DELETED)</entity>
+       <entity arrlId="201" valid="1945-11-15 00:00:00" zonemap="57:38">PRINCE EDWARD &amp; MARION ISLANDS</entity>
+       <entity arrlId="202" valid="1945-11-15 00:00:00" zonemap="11:08">PUERTO RICO</entity>
+       <entity arrlId="203" valid="1945-11-15 00:00:00" zonemap="27:14">ANDORRA</entity>
+       <entity arrlId="204" valid="1945-11-15 00:00:00" zonemap="10:06">REVILLAGIGEDO</entity>
+       <entity arrlId="205" valid="1945-11-15 00:00:00" zonemap="66:36">ASCENSION ISLAND</entity>
+       <entity arrlId="206" valid="1945-11-15 00:00:00" zonemap="28:15">AUSTRIA</entity>
+       <entity arrlId="207" valid="1945-11-15 00:00:00" zonemap="53:39">RODRIGUEZ ISLAND</entity>
+       <entity arrlId="208" valid="1960-07-01 00:00:00" invalid="1962-07-01 00:00:00" zonemap="52:36">RUANDA-URUNDI (DELETED)</entity>
+       <entity arrlId="209" valid="1945-11-15 00:00:00" zonemap="27:14">BELGIUM</entity>
+       <entity arrlId="210" valid="1945-11-15 00:00:00" invalid="1957-04-01 00:00:00" zonemap="28:14">SAAR (DELETED)</entity>
+       <entity arrlId="211" valid="1945-11-15 00:00:00" zonemap="09:05">SABLE ISLAND</entity>
+       <entity arrlId="212" valid="1945-11-15 00:00:00" zonemap="28:20">BULGARIA</entity>
+       <entity arrlId="213" valid="1945-11-15 00:00:00" zonemap="11:08">SAINT MARTIN</entity>
+       <entity arrlId="214" valid="1945-11-15 00:00:00" zonemap="28:15">CORSICA</entity>
+       <entity arrlId="215" valid="1945-11-15 00:00:00" zonemap="39:20">CYPRUS</entity>
+       <entity arrlId="216" valid="1945-11-15 00:00:00" zonemap="11:07">SAN ANDRES ISLAND</entity>
+       <entity arrlId="217" valid="1945-11-15 00:00:00" zonemap="14:12">SAN FELIX ISLAND</entity>
+       <entity arrlId="218" valid="1945-11-15 00:00:00" invalid="1993-01-01 00:00:00" zonemap="28:15">CZECHOSLOVAKIA (DELETED)</entity>
+       <entity arrlId="219" valid="1945-11-15 00:00:00" zonemap="47:36">SAO TOME &amp; PRINCIPE</entity>
+       <entity arrlId="220" valid="1945-11-15 00:00:00" invalid="1963-09-16 00:00:00" zonemap="54:28">SARAWAK (DELETED)</entity>
+       <entity arrlId="221" valid="1945-11-15 00:00:00" zonemap="18:14">DENMARK</entity>
+       <entity arrlId="222" valid="1945-11-15 00:00:00" zonemap="18:14">FAROE ISLANDS</entity>
+       <entity arrlId="223" valid="1945-11-15 00:00:00" zonemap="27:14">ENGLAND</entity>
+       <entity arrlId="224" valid="1945-11-15 00:00:00" zonemap="18:15">FINLAND</entity>
+       <entity arrlId="225" valid="1945-11-15 00:00:00" zonemap="28:15">SARDINIA</entity>
+       <entity arrlId="226" valid="1945-11-15 00:00:00" invalid="1981-12-26 00:00:00" zonemap="39:21">SAUDI ARABIA/IRAQ NEUTRAL ZONE (DELETED)</entity>
+       <entity arrlId="227" valid="1945-11-15 00:00:00" zonemap="27:14">FRANCE</entity>
+       <entity arrlId="228" valid="1945-11-15 00:00:00" invalid="1981-09-17 00:00:00" zonemap="11:07">SERRANA BANK &amp; RONCADOR CAY (DELETED)</entity>
+       <entity arrlId="229" valid="1945-11-15 00:00:00" invalid="1990-10-03 00:00:00" zonemap="28:14">GERMAN DEMOCRATIC REPUBLIC (DELETED)</entity>
+       <entity arrlId="230" valid="1973-09-17 00:00:00" zonemap="28:14">FEDERAL REPUBLIC OF GERMANY</entity>
+       <entity arrlId="231" valid="1945-11-15 00:00:00" invalid="1975-05-01 00:00:00" zonemap="41:22">SIKKIM (DELETED)</entity>
+       <entity arrlId="232" valid="1945-11-15 00:00:00" zonemap="48:37">SOMALIA</entity>
+       <entity arrlId="233" valid="1945-11-15 00:00:00" zonemap="37:14">GIBRALTAR</entity>
+       <entity arrlId="234" valid="1945-11-15 00:00:00" zonemap="62:32,63:32">SOUTH COOK ISLANDS</entity>
+       <entity arrlId="235" valid="1945-11-15 00:00:00" zonemap="73:13">SOUTH GEORGIA ISLAND</entity>
+       <entity arrlId="236" valid="1945-11-15 00:00:00" zonemap="28:20">GREECE</entity>
+       <entity arrlId="237" valid="1945-11-15 00:00:00" zonemap="5:40,75:40">GREENLAND</entity>
+       <entity arrlId="238" valid="1945-11-15 00:00:00" zonemap="73:13">SOUTH ORKNEY ISLANDS</entity>
+       <entity arrlId="239" valid="1945-11-15 00:00:00" zonemap="28:15">HUNGARY</entity>
+       <entity arrlId="240" valid="1945-11-15 00:00:00" zonemap="73:13">SOUTH SANDWICH ISLANDS</entity>
+       <entity arrlId="241" valid="1945-11-15 00:00:00" zonemap="73:13">SOUTH SHETLAND ISLANDS</entity>
+       <entity arrlId="242" valid="1945-11-15 00:00:00" zonemap="17:40">ICELAND</entity>
+       <entity arrlId="243" valid="1945-11-15 00:00:00" invalid="1990-05-23 00:00:00" zonemap="39:21">PEOPLE'S DEM REP OF YEMEN (DELETED)</entity>
+       <entity arrlId="244" valid="1972-05-05 00:00:00" invalid="1995-01-01 00:00:00" zonemap="47:34,48:34">SOUTHERN SUDAN (DELETED)</entity>
+       <entity arrlId="245" valid="1945-11-15 00:00:00" zonemap="27:14">IRELAND</entity>
+       <entity arrlId="246" valid="1945-11-15 00:00:00" zonemap="28:15">SOVEREIGN MILITARY ORDER OF MALTA</entity>
+       <entity arrlId="247" valid="1945-11-15 00:00:00" zonemap="50:26">SPRATLY ISLANDS</entity>
+       <entity arrlId="248" valid="1945-11-15 00:00:00" zonemap="28:15,37:33">ITALY</entity>
+       <entity arrlId="249" valid="1958-05-31 00:00:00" zonemap="11:08">SAINT KITTS &amp; NEVIS</entity>
+       <entity arrlId="250" valid="1945-11-15 00:00:00" zonemap="66:36">SAINT HELENA</entity>
+       <entity arrlId="251" valid="1945-11-15 00:00:00" zonemap="28:14">LIECHTENSTEIN</entity>
+       <entity arrlId="252" valid="1945-11-15 00:00:00" zonemap="09:05">SAINT PAUL ISLAND</entity>
+       <entity arrlId="253" valid="1945-11-15 00:00:00" zonemap="13:11">SAINT PETER AND PAUL ROCKS</entity>
+       <entity arrlId="254" valid="1945-11-15 00:00:00" zonemap="27:14">LUXEMBOURG</entity>
+       <entity arrlId="255" valid="1945-11-15 00:00:00" invalid="2010-10-10 04:00:00" zonemap="11:08">SINT MAARTEN, SABA, SAINT EUSTATIUS (DELETED)</entity>
+       <entity arrlId="256" valid="1945-11-15 00:00:00" zonemap="36:33">MADEIRA ISLANDS</entity>
+       <entity arrlId="257" valid="1945-11-15 00:00:00" zonemap="28:15">MALTA</entity>
+       <entity arrlId="258" valid="1945-11-15 00:00:00" invalid="1963-05-01 00:00:00" zonemap="54:28">SUMATRA (DELETED)</entity>
+       <entity arrlId="259" valid="1945-11-15 00:00:00" zonemap="18:40">SVALBARD</entity>
+       <entity arrlId="260" valid="1945-11-15 00:00:00" zonemap="27:14">MONACO</entity>
+       <entity arrlId="261" valid="1945-11-15 00:00:00" invalid="1972-09-01 00:00:00" zonemap="11:07">SWAN ISLAND (DELETED)</entity>
+       <entity arrlId="262" valid="1945-11-15 00:00:00" zonemap="30:17">TAJIKISTAN</entity>
+       <entity arrlId="263" valid="1945-11-15 00:00:00" zonemap="27:14">NETHERLANDS</entity>
+       <entity arrlId="264" valid="1945-11-15 00:00:00" invalid="1960-07-01 00:00:00" zonemap="37:33">TANGIER (DELETED)</entity>
+       <entity arrlId="265" valid="1945-11-15 00:00:00" zonemap="27:14">NORTHERN IRELAND</entity>
+       <entity arrlId="266" valid="1945-11-15 00:00:00" zonemap="18:14">NORWAY</entity>
+       <entity arrlId="267" valid="1945-11-15 00:00:00" invalid="1975-09-16 00:00:00" zonemap="51:28">TERRITORY OF NEW GUINEA (DELETED)</entity>
+       <entity arrlId="268" valid="1945-11-15 00:00:00" invalid="1974-05-31 00:00:00" zonemap="41:23">TIBET (DELETED)</entity>
+       <entity arrlId="269" valid="1945-11-15 00:00:00" zonemap="28:15">POLAND</entity>
+       <entity arrlId="270" valid="1945-11-15 00:00:00" zonemap="62:31">TOKELAU ISLANDS</entity>
+       <entity arrlId="271" valid="1945-11-15 00:00:00" invalid="1957-04-01 00:00:00" zonemap="28:15">TRIESTE (DELETED)</entity>
+       <entity arrlId="272" valid="1945-11-15 00:00:00" zonemap="37:14">PORTUGAL</entity>
+       <entity arrlId="273" valid="1945-11-15 00:00:00" zonemap="15:11">TRINDADE &amp; MARTIM VAZ ISLANDS</entity>
+       <entity arrlId="274" valid="1945-11-15 00:00:00" zonemap="66:38">TRISTAN DA CUNHA &amp; GOUGH ISLANDS</entity>
+       <entity arrlId="275" valid="1945-11-15 00:00:00" zonemap="28:20">ROMANIA</entity>
+       <entity arrlId="276" valid="1945-11-15 00:00:00" zonemap="53:39">TROMELIN ISLAND</entity>
+       <entity arrlId="277" valid="1945-11-15 00:00:00" zonemap="09:05">SAINT PIERRE &amp; MIQUELON</entity>
+       <entity arrlId="278" valid="1945-11-15 00:00:00" zonemap="28:15">SAN MARINO</entity>
+       <entity arrlId="279" valid="1945-11-15 00:00:00" zonemap="27:14">SCOTLAND</entity>
+       <entity arrlId="280" valid="1945-11-15 00:00:00" zonemap="30:17">TURKMENISTAN</entity>
+       <entity arrlId="281" valid="1945-11-15 00:00:00" zonemap="37:14">SPAIN</entity>
+       <entity arrlId="282" valid="1976-01-01 00:00:00" zonemap="65:31">TUVALU</entity>
+       <entity arrlId="283" valid="1960-08-16 00:00:00" zonemap="39:20">U K BASES ON CYPRUS</entity>
+       <entity arrlId="284" valid="1945-11-15 00:00:00" zonemap="18:14">SWEDEN</entity>
+       <entity arrlId="285" valid="1945-11-15 00:00:00" zonemap="11:08">US VIRGIN ISLANDS</entity>
+       <entity arrlId="286" valid="1945-11-15 00:00:00" zonemap="48:37">UGANDA</entity>
+       <entity arrlId="287" valid="1945-11-15 00:00:00" zonemap="28:14">SWITZERLAND</entity>
+       <entity arrlId="288" valid="1945-11-15 00:00:00" zonemap="29:16">UKRAINE</entity>
+       <entity arrlId="289" valid="1945-11-15 00:00:00" zonemap="08:05">UNITED NATIONS HQ</entity>
+       <entity arrlId="291" valid="1945-11-15 00:00:00" zonemap="08:05,08:04,07:04,07:03,06:04,06:03">UNITED STATES OF AMERICA</entity>
+       <entity arrlId="292" valid="1945-11-15 00:00:00" zonemap="30:17">UZBEKISTAN</entity>
+       <entity arrlId="293" valid="1945-11-15 00:00:00" zonemap="49:26">VIET NAM</entity>
+       <entity arrlId="294" valid="1945-11-15 00:00:00" zonemap="27:14">WALES</entity>
+       <entity arrlId="295" valid="1945-11-15 00:00:00" zonemap="28:15">VATICAN CITY</entity>
+       <entity arrlId="296" valid="1945-11-15 00:00:00" zonemap="28:15">SERBIA</entity>
+       <entity arrlId="297" valid="1945-11-15 00:00:00" zonemap="65:31">WAKE ISLAND</entity>
+       <entity arrlId="298" valid="1945-11-15 00:00:00" zonemap="62:32">WALLIS &amp; FUTUNA ISLANDS</entity>
+       <entity arrlId="299" valid="1963-09-16 00:00:00" zonemap="54:28">WEST MALAYSIA</entity>
+       <entity arrlId="301" valid="1945-11-15 00:00:00" zonemap="65:31">WESTERN KIRIBATI</entity>
+       <entity arrlId="302" valid="1945-11-15 00:00:00" zonemap="46:33">WESTERN SAHARA</entity>
+       <entity arrlId="303" valid="1945-11-15 00:00:00" zonemap="55:30">WILLIS ISLAND</entity>
+       <entity arrlId="304" valid="1945-11-15 00:00:00" zonemap="39:21">BAHRAIN</entity>
+       <entity arrlId="305" valid="1945-11-15 00:00:00" zonemap="41:22">BANGLADESH</entity>
+       <entity arrlId="306" valid="1945-11-15 00:00:00" zonemap="41:22">BHUTAN</entity>
+       <entity arrlId="307" valid="1945-11-15 00:00:00" invalid="1974-06-01 00:00:00" zonemap="53:37">ZANZIBAR (DELETED)</entity>
+       <entity arrlId="308" valid="1945-11-15 00:00:00" zonemap="11:07">COSTA RICA</entity>
+       <entity arrlId="309" valid="1945-11-15 00:00:00" zonemap="49:26">MYANMAR</entity>
+       <entity arrlId="312" valid="1945-11-15 00:00:00" zonemap="49:26">CAMBODIA</entity>
+       <entity arrlId="315" valid="1945-11-15 00:00:00" zonemap="41:22">SRI LANKA</entity>
+       <entity arrlId="318" valid="1945-11-15 00:00:00" zonemap="33:23,33:24,42:23,43:23,43:24,44:23,44:24">CHINA</entity>
+       <entity arrlId="321" valid="1945-11-15 00:00:00" zonemap="44:24">HONG KONG</entity>
+       <entity arrlId="324" valid="1945-11-15 00:00:00" zonemap="41:22">INDIA</entity>
+       <entity arrlId="327" valid="1945-11-15 00:00:00" zonemap="51:28,54:28">INDONESIA</entity>
+       <entity arrlId="330" valid="1945-11-15 00:00:00" zonemap="40:21">IRAN</entity>
+       <entity arrlId="333" valid="1945-11-15 00:00:00" zonemap="39:21">IRAQ</entity>
+       <entity arrlId="336" valid="1945-11-15 00:00:00" zonemap="39:20">ISRAEL</entity>
+       <entity arrlId="339" valid="1945-11-15 00:00:00" zonemap="45:25">JAPAN</entity>
+       <entity arrlId="342" valid="1945-11-15 00:00:00" zonemap="39:20">JORDAN</entity>
+       <entity arrlId="344" valid="1995-05-14 00:00:00" zonemap="44:25">DPRK (NORTH KOREA)</entity>
+       <entity arrlId="345" valid="1945-11-15 00:00:00" zonemap="54:28">BRUNEI</entity>
+       <entity arrlId="348" valid="1945-11-15 00:00:00" zonemap="39:21">KUWAIT</entity>
+       <entity arrlId="354" valid="1945-11-15 00:00:00" zonemap="39:20">LEBANON</entity>
+       <entity arrlId="363" valid="1945-11-15 00:00:00" zonemap="32:23,33:23">MONGOLIA</entity>
+       <entity arrlId="369" valid="1945-11-15 00:00:00" zonemap="42:22">NEPAL</entity>
+       <entity arrlId="370" valid="1945-11-15 00:00:00" zonemap="39:21">OMAN</entity>
+       <entity arrlId="372" valid="1945-11-15 00:00:00" zonemap="41:21">PAKISTAN</entity>
+       <entity arrlId="375" valid="1945-11-15 00:00:00" zonemap="50:27">PHILIPPINES</entity>
+       <entity arrlId="376" valid="1945-11-15 00:00:00" zonemap="39:21">QATAR</entity>
+       <entity arrlId="378" valid="1945-11-15 00:00:00" zonemap="39:21">SAUDI ARABIA</entity>
+       <entity arrlId="379" valid="1945-11-15 00:00:00" zonemap="53:39">SEYCHELLES ISLANDS</entity>
+       <entity arrlId="381" valid="1965-08-09 00:00:00" zonemap="54:28">SINGAPORE</entity>
+       <entity arrlId="382" valid="1945-11-15 00:00:00" zonemap="48:37">DJIBOUTI</entity>
+       <entity arrlId="384" valid="1945-11-15 00:00:00" zonemap="39:20">SYRIA</entity>
+       <entity arrlId="386" valid="1945-11-15 00:00:00" zonemap="44:24">TAIWAN</entity>
+       <entity arrlId="387" valid="1945-11-15 00:00:00" zonemap="49:26">THAILAND</entity>
+       <entity arrlId="390" valid="1945-11-15 00:00:00" zonemap="39:20">TURKEY</entity>
+       <entity arrlId="391" valid="1945-11-15 00:00:00" zonemap="39:21">UNITED ARAB EMIRATES</entity>
+       <entity arrlId="400" valid="1945-11-15 00:00:00" zonemap="37:33">ALGERIA</entity>
+       <entity arrlId="401" valid="1945-11-15 00:00:00" zonemap="52:36">ANGOLA</entity>
+       <entity arrlId="402" valid="1945-11-15 00:00:00" zonemap="57:38">BOTSWANA</entity>
+       <entity arrlId="404" valid="1962-07-01 00:00:00" zonemap="52:36">BURUNDI</entity>
+       <entity arrlId="406" valid="1945-11-15 00:00:00" zonemap="47:36">CAMEROON</entity>
+       <entity arrlId="408" valid="1960-08-13 00:00:00" zonemap="47:36">CENTRAL AFRICAN REPUBLIC</entity>
+       <entity arrlId="409" valid="1945-11-15 00:00:00" zonemap="46:35">CAPE VERDE</entity>
+       <entity arrlId="410" valid="1960-08-11 00:00:00" zonemap="47:36">CHAD</entity>
+       <entity arrlId="411" valid="1975-06-06 00:00:00" zonemap="53:39">COMOROS</entity>
+       <entity arrlId="412" valid="1960-08-15 00:00:00" zonemap="52:36">REPUBLIC OF THE CONGO</entity>
+       <entity arrlId="414" valid="1945-11-15 00:00:00" zonemap="52:36">DEMOCRATIC REPUBLIC OF THE CONGO</entity>
+       <entity arrlId="416" valid="1960-08-01 00:00:00" zonemap="46:35">BENIN</entity>
+       <entity arrlId="420" valid="1960-08-17 00:00:00" zonemap="52:36">GABON</entity>
+       <entity arrlId="422" valid="1945-11-15 00:00:00" zonemap="46:35">THE GAMBIA</entity>
+       <entity arrlId="424" valid="1957-03-05 00:00:00" zonemap="46:35">GHANA</entity>
+       <entity arrlId="428" valid="1960-08-07 00:00:00" zonemap="46:35">COTE D'IVOIRE</entity>
+       <entity arrlId="430" valid="1945-11-15 00:00:00" zonemap="48:37">KENYA</entity>
+       <entity arrlId="432" valid="1945-11-15 00:00:00" zonemap="57:38">LESOTHO</entity>
+       <entity arrlId="434" valid="1945-11-15 00:00:00" zonemap="46:35">LIBERIA</entity>
+       <entity arrlId="436" valid="1945-11-15 00:00:00" zonemap="38:34">LIBYA</entity>
+       <entity arrlId="438" valid="1945-11-15 00:00:00" zonemap="53:39">MADAGASCAR</entity>
+       <entity arrlId="440" valid="1945-11-15 00:00:00" zonemap="53:37">MALAWI</entity>
+       <entity arrlId="442" valid="1960-06-20 00:00:00" zonemap="46:35">MALI</entity>
+       <entity arrlId="444" valid="1960-06-20 00:00:00" zonemap="46:35">MAURITANIA</entity>
+       <entity arrlId="446" valid="1945-11-15 00:00:00" zonemap="37:33">MOROCCO</entity>
+       <entity arrlId="450" valid="1945-11-15 00:00:00" zonemap="46:35">NIGERIA</entity>
+       <entity arrlId="452" valid="1945-11-15 00:00:00" zonemap="53:38">ZIMBABWE</entity>
+       <entity arrlId="453" valid="1945-11-15 00:00:00" zonemap="53:39">REUNION ISLAND</entity>
+       <entity arrlId="454" valid="1962-07-01 00:00:00" zonemap="52:36">RWANDA</entity>
+       <entity arrlId="456" valid="1960-06-20 00:00:00" zonemap="46:35">SENEGAL</entity>
+       <entity arrlId="458" valid="1945-11-15 00:00:00" zonemap="46:35">SIERRA LEONE</entity>
+       <entity arrlId="460" valid="1945-11-15 00:00:00" zonemap="56:32">ROTUMA</entity>
+       <entity arrlId="462" valid="1945-11-15 00:00:00" zonemap="57:38">REPUBLIC OF SOUTH AFRICA</entity>
+       <entity arrlId="464" valid="1945-11-15 00:00:00" zonemap="57:38">NAMIBIA</entity>
+       <entity arrlId="466" valid="1945-11-15 00:00:00" zonemap="47:34,48:34">SUDAN</entity>
+       <entity arrlId="468" valid="1945-11-15 00:00:00" zonemap="57:38">SWAZILAND</entity>
+       <entity arrlId="470" valid="1945-11-15 00:00:00" zonemap="53:37">TANZANIA</entity>
+       <entity arrlId="474" valid="1945-11-15 00:00:00" zonemap="37:33">TUNISIA</entity>
+       <entity arrlId="478" valid="1945-11-15 00:00:00" zonemap="38:34">EGYPT</entity>
+       <entity arrlId="480" valid="1960-08-16 00:00:00" zonemap="46:35">BURKINA FASO</entity>
+       <entity arrlId="482" valid="1945-11-15 00:00:00" zonemap="53:36">ZAMBIA</entity>
+       <entity arrlId="483" valid="1945-11-15 00:00:00" zonemap="46:35">TOGO</entity>
+       <entity arrlId="488" valid="1977-09-01 00:00:00" invalid="1994-03-01 00:00:00" zonemap="57:38">WALVIS BAY (DELETED)</entity>
+       <entity arrlId="489" valid="1945-11-15 00:00:00" zonemap="56:32">CONWAY REEF</entity>
+       <entity arrlId="490" valid="1945-11-15 00:00:00" zonemap="65:31">BANABA ISLAND</entity>
+       <entity arrlId="492" valid="1990-05-22 00:00:00" zonemap="39:21,48:37">YEMEN</entity>
+       <entity arrlId="493" valid="1945-11-15 00:00:00" invalid="1994-03-01 00:00:00" zonemap="57:38">PENGUIN ISLANDS (DELETED)</entity>
+       <entity arrlId="497" valid="1991-06-26 00:00:00" zonemap="28:15">CROATIA</entity>
+       <entity arrlId="499" valid="1945-11-15 00:00:00" zonemap="28:15">SLOVENIA</entity>
+       <entity arrlId="501" valid="1945-11-15 00:00:00" zonemap="28:15">BOSNIA-HERZEGOVINA</entity>
+       <entity arrlId="502" valid="1991-09-08 00:00:00" zonemap="28:15">MACEDONIA</entity>
+       <entity arrlId="503" valid="1993-01-01 00:00:00" zonemap="28:15">CZECH REPUBLIC</entity>
+       <entity arrlId="504" valid="1993-01-01 00:00:00" zonemap="28:15">SLOVAK REPUBLIC</entity>
+       <entity arrlId="505" valid="1994-01-01 00:00:00" zonemap="44:24">PRATAS ISLAND</entity>
+       <entity arrlId="506" valid="1995-01-01 00:00:00" zonemap="50:27">SCARBOROUGH REEF</entity>
+       <entity arrlId="507" valid="1998-04-01 00:00:00" zonemap="51:32">TEMOTU PROVINCE</entity>
+       <entity arrlId="508" valid="1998-04-01 00:00:00" zonemap="63:32">AUSTRAL ISLANDS</entity>
+       <entity arrlId="509" valid="1945-11-15 00:00:00" zonemap="63:31">MARQUESAS ISLANDS</entity>
+       <entity arrlId="510" valid="1999-02-01 00:00:00" zonemap="39:20">PALESTINE</entity>
+       <entity arrlId="511" valid="1945-11-15 00:00:00" zonemap="54:28">TIMOR - LESTE</entity>
+       <entity arrlId="512" valid="1945-11-15 00:00:00" zonemap="56:30">CHESTERFIELD ISLANDS</entity>
+       <entity arrlId="513" valid="1945-11-15 00:00:00" zonemap="63:32">DUCIE ISLAND</entity>
+       <entity arrlId="514" valid="2006-06-28 00:00:00" zonemap="28:15">MONTENEGRO</entity>
+       <entity arrlId="515" valid="2006-07-22 00:00:00" zonemap="62:32">SWAINS ISLAND</entity>
+       <entity arrlId="516" valid="2007-12-14 00:00:00" zonemap="11:08">SAINT BARTHELEMY</entity>
+       <entity arrlId="517" valid="2010-10-10 04:00:00" zonemap="11:09">CURACAO</entity>
+       <entity arrlId="518" valid="2010-10-10 04:00:00" zonemap="11:08">SINT MAARTEN</entity>
+       <entity arrlId="519" valid="2010-10-10 04:00:00" zonemap="11:08">SABA &amp; SAINT EUSTATIUS</entity>
+       <entity arrlId="520" valid="2010-10-10 04:00:00" zonemap="11:09">BONAIRE</entity>
+       <entity arrlId="521" valid="2010-07-14 00:00:00" zonemap="48:34">REPUBLIC OF SOUTH SUDAN</entity>
+     </dxcc>
+     <bands>
+       <band spectrum="UHF" low="24000" high="24250">1.25CM</band>
+       <band spectrum="VHF" low="220" high="225">1.25M</band>
+       <band spectrum="HF" low="28000" high="29700">10M</band>
+       <band spectrum="HF" low="24890" high="24990">12M</band>
+       <band spectrum="UHF" low="2300" high="2450">13CM</band>
+       <band spectrum="HF" low="21000" high="21450">15M</band>
+       <band spectrum="HF" low="1800" high="2000">160M</band>
+       <band spectrum="HF" low="18068" high="18168">17M</band>
+       <band spectrum="UHF" low="241000" high="250000">1MM</band>
+       <band spectrum="UHF" low="119980" high="120020">2.5MM</band>
+       <band spectrum="HF" low="14000" high="14350">20M</band>
+       <band spectrum="HF" low="136" high="137">2190M</band>
+       <band spectrum="UHF" low="1240" high="1300">23CM</band>
+       <band spectrum="VHF" low="144" high="148">2M</band>
+       <band spectrum="UHF" low="142000" high="149000">2MM</band>
+       <band spectrum="HF" low="10100" high="10150">30M</band>
+       <band spectrum="UHF" low="902" high="928">33CM</band>
+       <band spectrum="UHF" low="10000" high="10500">3CM</band>
+       <band spectrum="HF" low="7000" high="7300">40M</band>
+       <band spectrum="VHF" low="70" high="71">4M</band>
+       <band spectrum="UHF" low="75500" high="81000">4MM</band>
+       <band spectrum="HF" low="5250" high="5450">60M</band>
+       <band spectrum="HF" low="472" high="479">630M</band>
+       <band spectrum="UHF" low="5650" high="5925">6CM</band>
+       <band spectrum="VHF" low="50" high="54">6M</band>
+       <band spectrum="UHF" low="47000" high="47200">6MM</band>
+       <band spectrum="UHF" low="420" high="450">70CM</band>
+       <band spectrum="HF" low="3500" high="4000">80M</band>
+       <band spectrum="UHF" low="3300" high="3500">9CM</band>
+       <band spectrum="UHF" low="300000" high="2000000000">SUBMM</band>
+     </bands>
+     <modes>
+       <mode group="PHONE">AM</mode>
+       <mode group="DATA">AMTOR</mode>
+       <mode group="IMAGE">ATV</mode>
+       <mode group="DATA">CHIP</mode>
+       <mode group="DATA">CLOVER</mode>
+       <mode group="DATA">CONTESTI</mode>
+       <mode group="CW">CW</mode>
+       <mode group="DATA">DATA</mode>
+       <mode group="DATA">DOMINO</mode>
+       <mode group="IMAGE">FAX</mode>
+       <mode group="PHONE">FM</mode>
+       <mode group="DATA">FSK31</mode>
+       <mode group="DATA">FSK441</mode>
+       <mode group="DATA">GTOR</mode>
+       <mode group="DATA">HELL</mode>
+       <mode group="DATA">HFSK</mode>
+       <mode group="IMAGE">IMAGE</mode>
+       <mode group="DATA">ISCAT</mode>
+       <mode group="DATA">JT4</mode>
+       <mode group="DATA">JT65</mode>
+       <mode group="DATA">JT6M</mode>
+       <mode group="DATA">JT9</mode>
+       <mode group="DATA">MFSK16</mode>
+       <mode group="DATA">MFSK8</mode>
+       <mode group="DATA">MINIRTTY</mode>
+       <mode group="DATA">MT63</mode>
+       <mode group="DATA">OLIVIA</mode>
+       <mode group="DATA">OPERA</mode>
+       <mode group="DATA">PACKET</mode>
+       <mode group="DATA">PACTOR</mode>
+       <mode group="DATA">PAX</mode>
+       <mode group="PHONE">PHONE</mode>
+       <mode group="DATA">PSK10</mode>
+       <mode group="DATA">PSK125</mode>
+       <mode group="DATA">PSK2K</mode>
+       <mode group="DATA">PSK31</mode>
+       <mode group="DATA">PSK63</mode>
+       <mode group="DATA">PSK63F</mode>
+       <mode group="DATA">PSKAM</mode>
+       <mode group="DATA">PSKFEC31</mode>
+       <mode group="DATA">Q15</mode>
+       <mode group="DATA">ROS</mode>
+       <mode group="DATA">RTTY</mode>
+       <mode group="DATA">RTTYM</mode>
+       <mode group="PHONE">SSB</mode>
+       <mode group="IMAGE">SSTV</mode>
+       <mode group="DATA">THOR</mode>
+       <mode group="DATA">THROB</mode>
+       <mode group="DATA">VOI</mode>
+       <mode group="DATA">WINMOR</mode>
+       <mode group="DATA">WSPR</mode>
+     </modes>
      <adifmap>
        <adifmode adif-mode="AM" mode="AM">AM</adifmode>
        <adifmode adif-mode="ATV" mode="ATV">ATV</adifmode>
@@ -121,38 +645,6 @@
        <adifmode adif-mode="WINMOR" mode="WINMOR">WINMOR</adifmode>
        <adifmode adif-mode="WSPR" mode="WSPR">WSPR</adifmode>
      </adifmap>
-     <bands>
-       <band high="24250" low="24000" spectrum="UHF">1.25CM</band>
-       <band high="225" low="220" spectrum="VHF">1.25M</band>
-       <band high="29700" low="28000" spectrum="HF">10M</band>
-       <band high="24990" low="24890" spectrum="HF">12M</band>
-       <band high="2450" low="2300" spectrum="UHF">13CM</band>
-       <band high="21450" low="21000" spectrum="HF">15M</band>
-       <band high="2000" low="1800" spectrum="HF">160M</band>
-       <band high="18168" low="18068" spectrum="HF">17M</band>
-       <band high="250000" low="241000" spectrum="UHF">1MM</band>
-       <band high="120020" low="119980" spectrum="UHF">2.5MM</band>
-       <band high="14350" low="14000" spectrum="HF">20M</band>
-       <band high="137" low="136" spectrum="HF">2190M</band>
-       <band high="1300" low="1240" spectrum="UHF">23CM</band>
-       <band high="148" low="144" spectrum="VHF">2M</band>
-       <band high="149000" low="142000" spectrum="UHF">2MM</band>
-       <band high="10150" low="10100" spectrum="HF">30M</band>
-       <band high="928" low="902" spectrum="UHF">33CM</band>
-       <band high="10500" low="10000" spectrum="UHF">3CM</band>
-       <band high="7300" low="7000" spectrum="HF">40M</band>
-       <band high="71" low="70" spectrum="VHF">4M</band>
-       <band high="81000" low="75500" spectrum="UHF">4MM</band>
-       <band high="5450" low="5250" spectrum="HF">60M</band>
-       <band high="479" low="472" spectrum="HF">630M</band>
-       <band high="5925" low="5650" spectrum="UHF">6CM</band>
-       <band high="54" low="50" spectrum="VHF">6M</band>
-       <band high="47200" low="47000" spectrum="UHF">6MM</band>
-       <band high="450" low="420" spectrum="UHF">70CM</band>
-       <band high="4000" low="3500" spectrum="HF">80M</band>
-       <band high="3500" low="3300" spectrum="UHF">9CM</band>
-       <band high="2000000000" low="300000" spectrum="UHF">SUBMM</band>
-     </bands>
      <cabrillomap>
        <cabrillocontest field="8" type="HF">7QP</cabrillocontest>
        <cabrillocontest field="8" type="HF">AADX-CW</cabrillocontest>
@@ -260,412 +752,162 @@
        <cabrillocontest field="8" type="HF">Wisconsin QSO Party</cabrillocontest>
        <cabrillocontest field="8" type="HF">XE-RTTY</cabrillocontest>
      </cabrillomap>
-     <dxcc>
-       <entity arrlId="0">-NONE-</entity>
-       <entity arrlId="1" zonemap="02:01,02:02,02:03,02:04,03:01,03:02,03:04,04:01,04:02,04:04,04:05,09:01,09:02,09:05,75:01">CANADA</entity>
-       <entity arrlId="2" zonemap="39:21">ABU AIL ISLANDS (DELETED)</entity>
-       <entity arrlId="3" zonemap="40:21">AFGHANISTAN</entity>
-       <entity arrlId="4" zonemap="53:39">AGALEGA &amp; SAINT BRANDON ISLANDS</entity>
-       <entity arrlId="5" zonemap="18:15">ALAND ISLANDS</entity>
-       <entity arrlId="6" zonemap="1:1,2:1">ALASKA</entity>
-       <entity arrlId="7" zonemap="28:15">ALBANIA</entity>
-       <entity arrlId="8" zonemap="53:39">ALDABRA (DELETED)</entity>
-       <entity arrlId="9" zonemap="62:32">AMERICAN SAMOA</entity>
-       <entity arrlId="10" zonemap="68:39">AMSTERDAM &amp; SAINT PAUL ISLANDS</entity>
-       <entity arrlId="11" zonemap="49:26">ANDAMAN &amp; NICOBAR ISLANDS</entity>
-       <entity arrlId="12" zonemap="11:08">ANGUILLA</entity>
-       <entity arrlId="13" zonemap="67:38,67:39,69:29,69:39,70:29,70:30,71:30,71:32,72:12,72:32,73:12,73:13,73:38,74:12,74:13,74:29,74:30,74:32,74:38,74:39">ANTARCTICA</entity>
-       <entity arrlId="14" zonemap="29:21">ARMENIA</entity>
-       <entity arrlId="15" zonemap="20:17,21:17,21:18,22:18,22:19,23:18,23:19,24:19,25:19,26:19,30:16,30:17,31:17,31:18,31:23,32:18,32:19,32:23,33:18,33:19,34:19,35:19,75:18">ASIATIC RUSSIA</entity>
-       <entity arrlId="16" zonemap="60:32"> NEW ZEALAND SUBANTARCTIC ISLANDS</entity>
-       <entity arrlId="17" zonemap="11:08">AVES ISLAND</entity>
-       <entity arrlId="18" zonemap="29:21">AZERBAIJAN</entity>
-       <entity arrlId="19" zonemap="11:08">BAJO NUEVO (DELETED)</entity>
-       <entity arrlId="20" zonemap="61:31">BAKER &amp; HOWLAND ISLANDS</entity>
-       <entity arrlId="21" zonemap="37:14">BALEARIC ISLANDS</entity>
-       <entity arrlId="22" zonemap="64:27">PALAU</entity>
-       <entity arrlId="23" zonemap="41:39">BLENHEIM REEF (DELETED)</entity>
-       <entity arrlId="24" zonemap="67:38">BOUVET ISLAND</entity>
-       <entity arrlId="25" zonemap="54:28">BRITISH NORTH BORNEO (DELETED)</entity>
-       <entity arrlId="26" zonemap="48:37">BRITISH SOMALILAND (DELETED)</entity>
-       <entity arrlId="27" zonemap="29:16">BELARUS</entity>
-       <entity arrlId="28" zonemap="11:07">CANAL ZONE (DELETED)</entity>
-       <entity arrlId="29" zonemap="36:33">CANARY ISLANDS</entity>
-       <entity arrlId="30" zonemap="54:28">CELEBES &amp; MOLUCCA ISLANDS (DELETED)</entity>
-       <entity arrlId="31" zonemap="62:31">CENTRAL KIRIBATI</entity>
-       <entity arrlId="32" zonemap="37:33">CEUTA &amp; MELILLA</entity>
-       <entity arrlId="33" zonemap="41:39">CHAGOS ISLANDS</entity>
-       <entity arrlId="34" zonemap="60:32">CHATHAM ISLAND</entity>
-       <entity arrlId="35" zonemap="54:29">CHRISTMAS ISLAND</entity>
-       <entity arrlId="36" zonemap="10:07">CLIPPERTON ISLAND</entity>
-       <entity arrlId="37" zonemap="12:07">COCOS ISLAND</entity>
-       <entity arrlId="38" zonemap="54:29">COCOS (KEELING) ISLANDS</entity>
-       <entity arrlId="39" zonemap="53:39">COMORO ISLANDS (DELETED)</entity>
-       <entity arrlId="40" zonemap="28:20">CRETE</entity>
-       <entity arrlId="41" zonemap="68:39">CROZET ISLAND</entity>
-       <entity arrlId="42" zonemap="41:22">DAMAO, DIU (DELETED)</entity>
-       <entity arrlId="43" zonemap="11:08">DESECHEO ISLAND</entity>
-       <entity arrlId="44" zonemap="53:39">DESROCHES (DELETED)</entity>
-       <entity arrlId="45" zonemap="28:20">DODECANESE</entity>
-       <entity arrlId="46" zonemap="54:28">EAST MALAYSIA</entity>
-       <entity arrlId="47" zonemap="63:12,78:12">EASTER ISLAND</entity>
-       <entity arrlId="48" zonemap="61:131,63:131">EASTERN KIRIBATI</entity>
-       <entity arrlId="49" zonemap="47:36">EQUATORIAL GUINEA</entity>
-       <entity arrlId="50" zonemap="10:06">MEXICO</entity>
-       <entity arrlId="51" zonemap="48:37">ERITREA</entity>
-       <entity arrlId="52" zonemap="29:15">ESTONIA</entity>
-       <entity arrlId="53" zonemap="48:37">ETHIOPIA</entity>
-       <entity arrlId="54" zonemap="19:16,19:17,20:16,20:17,29:16,29:17,30:16,30:17">EUROPEAN RUSSIA</entity>
-       <entity arrlId="55" zonemap="53:39">FARQUHAR (DELETED)</entity>
-       <entity arrlId="56" zonemap="13:11">FERNANDO DE NORONHA</entity>
-       <entity arrlId="57" zonemap="47:36,52:36">FRENCH EQUATORIAL AFRICA (DELETED)</entity>
-       <entity arrlId="58" zonemap="49:26">FRENCH INDO-CHINA (DELETED)</entity>
-       <entity arrlId="59" zonemap="46:35">FRENCH WEST AFRICA (DELETED)</entity>
-       <entity arrlId="60" zonemap="11:08">BAHAMAS</entity>
-       <entity arrlId="61" zonemap="20:40,75:40">FRANZ JOSEF LAND</entity>
-       <entity arrlId="62" zonemap="11:08">BARBADOS</entity>
-       <entity arrlId="63" zonemap="12:09">FRENCH GUIANA</entity>
-       <entity arrlId="64" zonemap="11:05">BERMUDA</entity>
-       <entity arrlId="65" zonemap="11:08">BRITISH VIRGIN ISLANDS</entity>
-       <entity arrlId="66" zonemap="11:07">BELIZE</entity>
-       <entity arrlId="67" zonemap="41:22">FRENCH INDIA (DELETED)</entity>
-       <entity arrlId="68" zonemap="39:21">KUWAIT/SAUDI ARABIA NEUTRAL ZONE (DELETED)</entity>
-       <entity arrlId="69" zonemap="11:08">CAYMAN ISLANDS</entity>
-       <entity arrlId="70" zonemap="11:08">CUBA</entity>
-       <entity arrlId="71" zonemap="12:10">GALAPAGOS ISLANDS</entity>
-       <entity arrlId="72" zonemap="11:08">DOMINICAN REPUBLIC</entity>
-       <entity arrlId="74" zonemap="11:07">EL SALVADOR</entity>
-       <entity arrlId="75" zonemap="29:21">GEORGIA</entity>
-       <entity arrlId="76" zonemap="11:07">GUATEMALA</entity>
-       <entity arrlId="77" zonemap="11:08">GRENADA</entity>
-       <entity arrlId="78" zonemap="11:08">HAITI</entity>
-       <entity arrlId="79" zonemap="11:08">GUADELOUPE</entity>
-       <entity arrlId="80" zonemap="11:07">HONDURAS</entity>
-       <entity arrlId="81" zonemap="28:14">GERMANY (DELETED)</entity>
-       <entity arrlId="82" zonemap="11:08">JAMAICA</entity>
-       <entity arrlId="84" zonemap="11:08">MARTINIQUE</entity>
-       <entity arrlId="85" zonemap="11:09">BONAIRE,CURACAO (NETH ANTILLES) (DELETED)</entity>
-       <entity arrlId="86" zonemap="11:07">NICARAGUA</entity>
-       <entity arrlId="88" zonemap="11:07">PANAMA</entity>
-       <entity arrlId="89" zonemap="11:08">TURKS &amp; CAICOS ISLANDS</entity>
-       <entity arrlId="90" zonemap="11:09">TRINIDAD &amp; TOBAGO</entity>
-       <entity arrlId="91" zonemap="11:09">ARUBA</entity>
-       <entity arrlId="93" zonemap="53:39">GEYSER REEF (DELETED)</entity>
-       <entity arrlId="94" zonemap="11:08">ANTIGUA &amp; BARBUDA</entity>
-       <entity arrlId="95" zonemap="11:08">DOMINICA</entity>
-       <entity arrlId="96" zonemap="11:08">MONTSERRAT</entity>
-       <entity arrlId="97" zonemap="11:08">SAINT LUCIA</entity>
-       <entity arrlId="98" zonemap="11:08">SAINT VINCENT</entity>
-       <entity arrlId="99" zonemap="53:39">GLORIOSO ISLAND</entity>
-       <entity arrlId="100" zonemap="14:13,16:13">ARGENTINA</entity>
-       <entity arrlId="101" zonemap="41:22">GOA (DELETED)</entity>
-       <entity arrlId="102" zonemap="46:35">GOLD COAST TOGOLAND (DELETED)</entity>
-       <entity arrlId="103" zonemap="64:27">GUAM</entity>
-       <entity arrlId="104" zonemap="12:10,14:10">BOLIVIA</entity>
-       <entity arrlId="105" zonemap="11:08">GUANTANAMO BAY</entity>
-       <entity arrlId="106" zonemap="27:14">GUERNSEY</entity>
-       <entity arrlId="107" zonemap="46:35">GUINEA</entity>
-       <entity arrlId="108" zonemap="12:11,13:11,15:11">BRAZIL</entity>
-       <entity arrlId="109" zonemap="46:35">GUINEA-BISSAU</entity>
-       <entity arrlId="110" zonemap="61:31">HAWAII</entity>
-       <entity arrlId="111" zonemap="68:39">HEARD ISLAND</entity>
-       <entity arrlId="112" zonemap="14:12,16:12">CHILE</entity>
-       <entity arrlId="113" zonemap="37:33">IFNI (DELETED)</entity>
-       <entity arrlId="114" zonemap="27:14">ISLE OF MAN</entity>
-       <entity arrlId="115" zonemap="48:37">ITALIAN SOMALILAND (DELETED)</entity>
-       <entity arrlId="116" zonemap="12:09">COLOMBIA</entity>
-       <entity arrlId="117" zonemap="28:14">ITU HQ</entity>
-       <entity arrlId="118" zonemap="18:40">JAN MAYEN</entity>
-       <entity arrlId="119" zonemap="54:28">JAVA (DELETED)</entity>
-       <entity arrlId="120" zonemap="12:10">ECUADOR</entity>
-       <entity arrlId="122" zonemap="27:14">JERSEY</entity>
-       <entity arrlId="123" zonemap="61:31">JOHNSTON ISLAND</entity>
-       <entity arrlId="124" zonemap="53:39">JUAN DE NOVA, EUROPA</entity>
-       <entity arrlId="125" zonemap="14:12">JUAN FERNANDEZ ISLAND</entity>
-       <entity arrlId="126" zonemap="29:15">KALININGRAD</entity>
-       <entity arrlId="127" zonemap="39:21">KAMARAN ISLANDS (DELETED)</entity>
-       <entity arrlId="128" zonemap="19:16">KARELO-FINNISH REP (DELETED)</entity>
-       <entity arrlId="129" zonemap="12:09">GUYANA</entity>
-       <entity arrlId="130" zonemap="29:17,30:17,31:17">KAZAKHSTAN</entity>
-       <entity arrlId="131" zonemap="68:39">KERGUELEN ISLAND</entity>
-       <entity arrlId="132" zonemap="14:11">PARAGUAY</entity>
-       <entity arrlId="133" zonemap="60:32">KERMADEC ISLAND</entity>
-       <entity arrlId="134" zonemap="61:31">KINGMAN REEF (DELETED)</entity>
-       <entity arrlId="135" zonemap="30:17,31:17">KYRGYZSTAN</entity>
-       <entity arrlId="136" zonemap="12:10">PERU</entity>
-       <entity arrlId="137" zonemap="44:25">REPUBLIC OF KOREA</entity>
-       <entity arrlId="138" zonemap="61:31">KURE ISLAND</entity>
-       <entity arrlId="139" zonemap="39:21">KURIA MURIA ISLAND (DELETED)</entity>
-       <entity arrlId="140" zonemap="12:09">SURINAME</entity>
-       <entity arrlId="141" zonemap="16:13">FALKLAND ISLANDS</entity>
-       <entity arrlId="142" zonemap="41:22">LAKSHADWEEP ISLANDS</entity>
-       <entity arrlId="143" zonemap="49:26">LAOS</entity>
-       <entity arrlId="144" zonemap="14:13">URUGUAY</entity>
-       <entity arrlId="145" zonemap="29:15">LATVIA</entity>
-       <entity arrlId="146" zonemap="29:15">LITHUANIA</entity>
-       <entity arrlId="147" zonemap="60:30">LORD HOWE ISLAND</entity>
-       <entity arrlId="148" zonemap="12:09">VENEZUELA</entity>
-       <entity arrlId="149" zonemap="36:14">AZORES</entity>
-       <entity arrlId="150" zonemap="55:29,55:30,58:29,58:30,59:29,59:30">AUSTRALIA</entity>
-       <entity arrlId="151" zonemap="29:16">MALYJ VYSOTSKIJ ISLAND (DELETED)</entity>
-       <entity arrlId="152" zonemap="44:24">MACAO</entity>
-       <entity arrlId="153" zonemap="60:30">MACQUARIE ISLAND</entity>
-       <entity arrlId="154" zonemap="39:21">YEMEN ARAB REPUBLIC (DELETED)</entity>
-       <entity arrlId="155" zonemap="54:28">MALAYA (DELETED)</entity>
-       <entity arrlId="157" zonemap="65:31">NAURU</entity>
-       <entity arrlId="158" zonemap="56:32">VANUATU</entity>
-       <entity arrlId="159" zonemap="41:22">MALDIVES</entity>
-       <entity arrlId="160" zonemap="62:32">TONGA</entity>
-       <entity arrlId="161" zonemap="12:09">MALPELO ISLAND</entity>
-       <entity arrlId="162" zonemap="56:32">NEW CALEDONIA</entity>
-       <entity arrlId="163" zonemap="51:28">PAPUA NEW GUINEA</entity>
-       <entity arrlId="164" zonemap="33:24">MANCHURIA (DELETED)</entity>
-       <entity arrlId="165" zonemap="53:39">MAURITIUS ISLAND</entity>
-       <entity arrlId="166" zonemap="64:27">MARIANA ISLANDS</entity>
-       <entity arrlId="167" zonemap="18:15">MARKET REEF</entity>
-       <entity arrlId="168" zonemap="65:31">MARSHALL ISLANDS</entity>
-       <entity arrlId="169" zonemap="53:39">MAYOTTE ISLAND</entity>
-       <entity arrlId="170" zonemap="60:32">NEW ZEALAND</entity>
-       <entity arrlId="171" zonemap="56:30">MELLISH REEF</entity>
-       <entity arrlId="172" zonemap="63:32">PITCAIRN ISLAND</entity>
-       <entity arrlId="173" zonemap="64:27,65:27">MICRONESIA</entity>
-       <entity arrlId="174" zonemap="61:31">MIDWAY ISLAND</entity>
-       <entity arrlId="175" zonemap="63:32">FRENCH POLYNESIA</entity>
-       <entity arrlId="176" zonemap="56:32">FIJI ISLANDS</entity>
-       <entity arrlId="177" zonemap="90:27">MINAMI TORISHIMA</entity>
-       <entity arrlId="178" zonemap="62:32">MINERVA REEF (DELETED)</entity>
-       <entity arrlId="179" zonemap="29:16">MOLDOVA</entity>
-       <entity arrlId="180" zonemap="28:20">MOUNT ATHOS</entity>
-       <entity arrlId="181" zonemap="53:37">MOZAMBIQUE</entity>
-       <entity arrlId="182" zonemap="11:08">NAVASSA ISLAND</entity>
-       <entity arrlId="183" zonemap="54:28">NETHERLANDS BORNEO (DELETED)</entity>
-       <entity arrlId="184" zonemap="51:28">NETHERLANDS N GUINEA (DELETED)</entity>
-       <entity arrlId="185" zonemap="51:28">SOLOMON ISLANDS</entity>
-       <entity arrlId="186" zonemap="09:02,09:05">NEWFOUNDLAND LABRADOR (DELETED)</entity>
-       <entity arrlId="187" zonemap="46:35">NIGER</entity>
-       <entity arrlId="188" zonemap="62:32">NIUE</entity>
-       <entity arrlId="189" zonemap="60:32">NORFOLK ISLAND</entity>
-       <entity arrlId="190" zonemap="62:32">SAMOA</entity>
-       <entity arrlId="191" zonemap="62:32,63:32">NORTH COOK ISLANDS</entity>
-       <entity arrlId="192" zonemap="45:27">OGASAWARA</entity>
-       <entity arrlId="193" zonemap="45:25">OKINAWA (DELETED)</entity>
-       <entity arrlId="194" zonemap="45:27">OKINO TORI-SHIMA (DELETED)</entity>
-       <entity arrlId="195" zonemap="52:36">ANNOBON</entity>
-       <entity arrlId="196" zonemap="39:20">PALESTINE (DELETED)</entity>
-       <entity arrlId="197" zonemap="61:31,62:31">PALMYRA &amp; JARVIS ISLANDS</entity>
-       <entity arrlId="198" zonemap="51:28">PAPUA TERRITORY (DELETED)</entity>
-       <entity arrlId="199" zonemap="72:12">PETER 1 ISLAND</entity>
-       <entity arrlId="200" zonemap="54:28">PORTUGUESE TIMOR (DELETED)</entity>
-       <entity arrlId="201" zonemap="57:38">PRINCE EDWARD &amp; MARION ISLANDS</entity>
-       <entity arrlId="202" zonemap="11:08">PUERTO RICO</entity>
-       <entity arrlId="203" zonemap="27:14">ANDORRA</entity>
-       <entity arrlId="204" zonemap="10:06">REVILLAGIGEDO</entity>
-       <entity arrlId="205" zonemap="66:36">ASCENSION ISLAND</entity>
-       <entity arrlId="206" zonemap="28:15">AUSTRIA</entity>
-       <entity arrlId="207" zonemap="53:39">RODRIGUEZ ISLAND</entity>
-       <entity arrlId="208" zonemap="52:36">RUANDA-URUNDI (DELETED)</entity>
-       <entity arrlId="209" zonemap="27:14">BELGIUM</entity>
-       <entity arrlId="210" zonemap="28:14">SAAR (DELETED)</entity>
-       <entity arrlId="211" zonemap="09:05">SABLE ISLAND</entity>
-       <entity arrlId="212" zonemap="28:20">BULGARIA</entity>
-       <entity arrlId="213" zonemap="11:08">SAINT MARTIN</entity>
-       <entity arrlId="214" zonemap="28:15">CORSICA</entity>
-       <entity arrlId="215" zonemap="39:20">CYPRUS</entity>
-       <entity arrlId="216" zonemap="11:07">SAN ANDRES ISLAND</entity>
-       <entity arrlId="217" zonemap="14:12">SAN FELIX ISLAND</entity>
-       <entity arrlId="218" zonemap="28:15">CZECHOSLOVAKIA (DELETED)</entity>
-       <entity arrlId="219" zonemap="47:36">SAO TOME &amp; PRINCIPE</entity>
-       <entity arrlId="220" zonemap="54:28">SARAWAK (DELETED)</entity>
-       <entity arrlId="221" zonemap="18:14">DENMARK</entity>
-       <entity arrlId="222" zonemap="18:14">FAROE ISLANDS</entity>
-       <entity arrlId="223" zonemap="27:14">ENGLAND</entity>
-       <entity arrlId="224" zonemap="18:15">FINLAND</entity>
-       <entity arrlId="225" zonemap="28:15">SARDINIA</entity>
-       <entity arrlId="226" zonemap="39:21">SAUDI ARABIA/IRAQ NEUTRAL ZONE (DELETED)</entity>
-       <entity arrlId="227" zonemap="27:14">FRANCE</entity>
-       <entity arrlId="228" zonemap="11:07">SERRANA BANK &amp; RONCADOR CAY (DELETED)</entity>
-       <entity arrlId="229" zonemap="28:14">GERMAN DEMOCRATIC REPUBLIC (DELETED)</entity>
-       <entity arrlId="230" zonemap="28:14">FEDERAL REPUBLIC OF GERMANY</entity>
-       <entity arrlId="231" zonemap="41:22">SIKKIM (DELETED)</entity>
-       <entity arrlId="232" zonemap="48:37">SOMALIA</entity>
-       <entity arrlId="233" zonemap="37:14">GIBRALTAR</entity>
-       <entity arrlId="234" zonemap="62:32,63:32">SOUTH COOK ISLANDS</entity>
-       <entity arrlId="235" zonemap="73:13">SOUTH GEORGIA ISLAND</entity>
-       <entity arrlId="236" zonemap="28:20">GREECE</entity>
-       <entity arrlId="237" zonemap="5:40,75:40">GREENLAND</entity>
-       <entity arrlId="238" zonemap="73:13">SOUTH ORKNEY ISLANDS</entity>
-       <entity arrlId="239" zonemap="28:15">HUNGARY</entity>
-       <entity arrlId="240" zonemap="73:13">SOUTH SANDWICH ISLANDS</entity>
-       <entity arrlId="241" zonemap="73:13">SOUTH SHETLAND ISLANDS</entity>
-       <entity arrlId="242" zonemap="17:40">ICELAND</entity>
-       <entity arrlId="243" zonemap="39:21">PEOPLE&apos;S DEM REP OF YEMEN (DELETED)</entity>
-       <entity arrlId="244" zonemap="47:34,48:34">SOUTHERN SUDAN (DELETED)</entity>
-       <entity arrlId="245" zonemap="27:14">IRELAND</entity>
-       <entity arrlId="246" zonemap="28:15">SOVEREIGN MILITARY ORDER OF MALTA</entity>
-       <entity arrlId="247" zonemap="50:26">SPRATLY ISLANDS</entity>
-       <entity arrlId="248" zonemap="28:15,37:33">ITALY</entity>
-       <entity arrlId="249" zonemap="11:08">SAINT KITTS &amp; NEVIS</entity>
-       <entity arrlId="250" zonemap="66:36">SAINT HELENA</entity>
-       <entity arrlId="251" zonemap="28:14">LIECHTENSTEIN</entity>
-       <entity arrlId="252" zonemap="09:05">SAINT PAUL ISLAND</entity>
-       <entity arrlId="253" zonemap="13:11">SAINT PETER AND PAUL ROCKS</entity>
-       <entity arrlId="254" zonemap="27:14">LUXEMBOURG</entity>
-       <entity arrlId="255" zonemap="11:08">SINT MAARTEN, SABA, SAINT EUSTATIUS (DELETED)</entity>
-       <entity arrlId="256" zonemap="36:33">MADEIRA ISLANDS</entity>
-       <entity arrlId="257" zonemap="28:15">MALTA</entity>
-       <entity arrlId="258" zonemap="54:28">SUMATRA (DELETED)</entity>
-       <entity arrlId="259" zonemap="18:40">SVALBARD</entity>
-       <entity arrlId="260" zonemap="27:14">MONACO</entity>
-       <entity arrlId="261" zonemap="11:07">SWAN ISLAND (DELETED)</entity>
-       <entity arrlId="262" zonemap="30:17">TAJIKISTAN</entity>
-       <entity arrlId="263" zonemap="27:14">NETHERLANDS</entity>
-       <entity arrlId="264" zonemap="37:33">TANGIER (DELETED)</entity>
-       <entity arrlId="265" zonemap="27:14">NORTHERN IRELAND</entity>
-       <entity arrlId="266" zonemap="18:14">NORWAY</entity>
-       <entity arrlId="267" zonemap="51:28">TERRITORY OF NEW GUINEA (DELETED)</entity>
-       <entity arrlId="268" zonemap="41:23">TIBET (DELETED)</entity>
-       <entity arrlId="269" zonemap="28:15">POLAND</entity>
-       <entity arrlId="270" zonemap="62:31">TOKELAU ISLANDS</entity>
-       <entity arrlId="271" zonemap="28:15">TRIESTE (DELETED)</entity>
-       <entity arrlId="272" zonemap="37:14">PORTUGAL</entity>
-       <entity arrlId="273" zonemap="15:11">TRINDADE &amp; MARTIM VAZ ISLANDS</entity>
-       <entity arrlId="274" zonemap="66:38">TRISTAN DA CUNHA &amp; GOUGH ISLANDS</entity>
-       <entity arrlId="275" zonemap="28:20">ROMANIA</entity>
-       <entity arrlId="276" zonemap="53:39">TROMELIN ISLAND</entity>
-       <entity arrlId="277" zonemap="09:05">SAINT PIERRE &amp; MIQUELON</entity>
-       <entity arrlId="278" zonemap="28:15">SAN MARINO</entity>
-       <entity arrlId="279" zonemap="27:14">SCOTLAND</entity>
-       <entity arrlId="280" zonemap="30:17">TURKMENISTAN</entity>
-       <entity arrlId="281" zonemap="37:14">SPAIN</entity>
-       <entity arrlId="282" zonemap="65:31">TUVALU</entity>
-       <entity arrlId="283" zonemap="39:20">U K BASES ON CYPRUS</entity>
-       <entity arrlId="284" zonemap="18:14">SWEDEN</entity>
-       <entity arrlId="285" zonemap="11:08">US VIRGIN ISLANDS</entity>
-       <entity arrlId="286" zonemap="48:37">UGANDA</entity>
-       <entity arrlId="287" zonemap="28:14">SWITZERLAND</entity>
-       <entity arrlId="288" zonemap="29:16">UKRAINE</entity>
-       <entity arrlId="289" zonemap="08:05">UNITED NATIONS HQ</entity>
-       <entity arrlId="291" zonemap="08:05,08:04,07:04,07:03,06:04,06:03">UNITED STATES OF AMERICA</entity>
-       <entity arrlId="292" zonemap="30:17">UZBEKISTAN</entity>
-       <entity arrlId="293" zonemap="49:26">VIET NAM</entity>
-       <entity arrlId="294" zonemap="27:14">WALES</entity>
-       <entity arrlId="295" zonemap="28:15">VATICAN CITY</entity>
-       <entity arrlId="296" zonemap="28:15">SERBIA</entity>
-       <entity arrlId="297" zonemap="65:31">WAKE ISLAND</entity>
-       <entity arrlId="298" zonemap="62:32">WALLIS &amp; FUTUNA ISLANDS</entity>
-       <entity arrlId="299" zonemap="54:28">WEST MALAYSIA</entity>
-       <entity arrlId="301" zonemap="65:31">WESTERN KIRIBATI</entity>
-       <entity arrlId="302" zonemap="46:33">WESTERN SAHARA</entity>
-       <entity arrlId="303" zonemap="55:30">WILLIS ISLAND</entity>
-       <entity arrlId="304" zonemap="39:21">BAHRAIN</entity>
-       <entity arrlId="305" zonemap="41:22">BANGLADESH</entity>
-       <entity arrlId="306" zonemap="41:22">BHUTAN</entity>
-       <entity arrlId="307" zonemap="53:37">ZANZIBAR (DELETED)</entity>
-       <entity arrlId="308" zonemap="11:07">COSTA RICA</entity>
-       <entity arrlId="309" zonemap="49:26">MYANMAR</entity>
-       <entity arrlId="312" zonemap="49:26">CAMBODIA</entity>
-       <entity arrlId="315" zonemap="41:22">SRI LANKA</entity>
-       <entity arrlId="318" zonemap="33:23,33:24,42:23,43:23,43:24,44:23,44:24">CHINA</entity>
-       <entity arrlId="321" zonemap="44:24">HONG KONG</entity>
-       <entity arrlId="324" zonemap="41:22">INDIA</entity>
-       <entity arrlId="327" zonemap="51:28,54:28">INDONESIA</entity>
-       <entity arrlId="330" zonemap="40:21">IRAN</entity>
-       <entity arrlId="333" zonemap="39:21">IRAQ</entity>
-       <entity arrlId="336" zonemap="39:20">ISRAEL</entity>
-       <entity arrlId="339" zonemap="45:25">JAPAN</entity>
-       <entity arrlId="342" zonemap="39:20">JORDAN</entity>
-       <entity arrlId="344" zonemap="44:25">DPRK (NORTH KOREA)</entity>
-       <entity arrlId="345" zonemap="54:28">BRUNEI</entity>
-       <entity arrlId="348" zonemap="39:21">KUWAIT</entity>
-       <entity arrlId="354" zonemap="39:20">LEBANON</entity>
-       <entity arrlId="363" zonemap="32:23,33:23">MONGOLIA</entity>
-       <entity arrlId="369" zonemap="42:22">NEPAL</entity>
-       <entity arrlId="370" zonemap="39:21">OMAN</entity>
-       <entity arrlId="372" zonemap="41:21">PAKISTAN</entity>
-       <entity arrlId="375" zonemap="50:27">PHILIPPINES</entity>
-       <entity arrlId="376" zonemap="39:21">QATAR</entity>
-       <entity arrlId="378" zonemap="39:21">SAUDI ARABIA</entity>
-       <entity arrlId="379" zonemap="53:39">SEYCHELLES ISLANDS</entity>
-       <entity arrlId="381" zonemap="54:28">SINGAPORE</entity>
-       <entity arrlId="382" zonemap="48:37">DJIBOUTI</entity>
-       <entity arrlId="384" zonemap="39:20">SYRIA</entity>
-       <entity arrlId="386" zonemap="44:24">TAIWAN</entity>
-       <entity arrlId="387" zonemap="49:26">THAILAND</entity>
-       <entity arrlId="390" zonemap="39:20">TURKEY</entity>
-       <entity arrlId="391" zonemap="39:21">UNITED ARAB EMIRATES</entity>
-       <entity arrlId="400" zonemap="37:33">ALGERIA</entity>
-       <entity arrlId="401" zonemap="52:36">ANGOLA</entity>
-       <entity arrlId="402" zonemap="57:38">BOTSWANA</entity>
-       <entity arrlId="404" zonemap="52:36">BURUNDI</entity>
-       <entity arrlId="406" zonemap="47:36">CAMEROON</entity>
-       <entity arrlId="408" zonemap="47:36">CENTRAL AFRICAN REPUBLIC</entity>
-       <entity arrlId="409" zonemap="46:35">CAPE VERDE</entity>
-       <entity arrlId="410" zonemap="47:36">CHAD</entity>
-       <entity arrlId="411" zonemap="53:39">COMOROS</entity>
-       <entity arrlId="412" zonemap="52:36">REPUBLIC OF THE CONGO</entity>
-       <entity arrlId="414" zonemap="52:36">DEMOCRATIC REPUBLIC OF THE CONGO</entity>
-       <entity arrlId="416" zonemap="46:35">BENIN</entity>
-       <entity arrlId="420" zonemap="52:36">GABON</entity>
-       <entity arrlId="422" zonemap="46:35">THE GAMBIA</entity>
-       <entity arrlId="424" zonemap="46:35">GHANA</entity>
-       <entity arrlId="428" zonemap="46:35">COTE D&apos;IVOIRE</entity>
-       <entity arrlId="430" zonemap="48:37">KENYA</entity>
-       <entity arrlId="432" zonemap="57:38">LESOTHO</entity>
-       <entity arrlId="434" zonemap="46:35">LIBERIA</entity>
-       <entity arrlId="436" zonemap="38:34">LIBYA</entity>
-       <entity arrlId="438" zonemap="53:39">MADAGASCAR</entity>
-       <entity arrlId="440" zonemap="53:37">MALAWI</entity>
-       <entity arrlId="442" zonemap="46:35">MALI</entity>
-       <entity arrlId="444" zonemap="46:35">MAURITANIA</entity>
-       <entity arrlId="446" zonemap="37:33">MOROCCO</entity>
-       <entity arrlId="450" zonemap="46:35">NIGERIA</entity>
-       <entity arrlId="452" zonemap="53:38">ZIMBABWE</entity>
-       <entity arrlId="453" zonemap="53:39">REUNION ISLAND</entity>
-       <entity arrlId="454" zonemap="52:36">RWANDA</entity>
-       <entity arrlId="456" zonemap="46:35">SENEGAL</entity>
-       <entity arrlId="458" zonemap="46:35">SIERRA LEONE</entity>
-       <entity arrlId="460" zonemap="56:32">ROTUMA</entity>
-       <entity arrlId="462" zonemap="57:38">REPUBLIC OF SOUTH AFRICA</entity>
-       <entity arrlId="464" zonemap="57:38">NAMIBIA</entity>
-       <entity arrlId="466" zonemap="47:34,48:34">SUDAN</entity>
-       <entity arrlId="468" zonemap="57:38">SWAZILAND</entity>
-       <entity arrlId="470" zonemap="53:37">TANZANIA</entity>
-       <entity arrlId="474" zonemap="37:33">TUNISIA</entity>
-       <entity arrlId="478" zonemap="38:34">EGYPT</entity>
-       <entity arrlId="480" zonemap="46:35">BURKINA FASO</entity>
-       <entity arrlId="482" zonemap="53:36">ZAMBIA</entity>
-       <entity arrlId="483" zonemap="46:35">TOGO</entity>
-       <entity arrlId="488" zonemap="57:38">WALVIS BAY (DELETED)</entity>
-       <entity arrlId="489" zonemap="56:32">CONWAY REEF</entity>
-       <entity arrlId="490" zonemap="65:31">BANABA ISLAND</entity>
-       <entity arrlId="492" zonemap="39:21,48:37">YEMEN</entity>
-       <entity arrlId="493" zonemap="57:38">PENGUIN ISLANDS (DELETED)</entity>
-       <entity arrlId="497" zonemap="28:15">CROATIA</entity>
-       <entity arrlId="499" zonemap="28:15">SLOVENIA</entity>
-       <entity arrlId="501" zonemap="28:15">BOSNIA-HERZEGOVINA</entity>
-       <entity arrlId="502" zonemap="28:15">MACEDONIA</entity>
-       <entity arrlId="503" zonemap="28:15">CZECH REPUBLIC</entity>
-       <entity arrlId="504" zonemap="28:15">SLOVAK REPUBLIC</entity>
-       <entity arrlId="505" zonemap="44:24">PRATAS ISLAND</entity>
-       <entity arrlId="506" zonemap="50:27">SCARBOROUGH REEF</entity>
-       <entity arrlId="507" zonemap="51:32">TEMOTU PROVINCE</entity>
-       <entity arrlId="508" zonemap="63:32">AUSTRAL ISLANDS</entity>
-       <entity arrlId="509" zonemap="63:31">MARQUESAS ISLANDS</entity>
-       <entity arrlId="510" zonemap="39:20">PALESTINE</entity>
-       <entity arrlId="511" zonemap="54:28">TIMOR - LESTE</entity>
-       <entity arrlId="512" zonemap="56:30">CHESTERFIELD ISLANDS</entity>
-       <entity arrlId="513" zonemap="63:32">DUCIE ISLAND</entity>
-       <entity arrlId="514" zonemap="28:15">MONTENEGRO</entity>
-       <entity arrlId="515" zonemap="62:32">SWAINS ISLAND</entity>
-       <entity arrlId="516" zonemap="11:08">SAINT BARTHELEMY</entity>
-       <entity arrlId="517" zonemap="11:09">CURACAO</entity>
-       <entity arrlId="518" zonemap="11:08">SINT MAARTEN</entity>
-       <entity arrlId="519" zonemap="11:08">SABA &amp; SAINT EUSTATIUS</entity>
-       <entity arrlId="520" zonemap="11:09">BONAIRE</entity>
-       <entity arrlId="521" zonemap="48:34">REPUBLIC OF SOUTH SUDAN</entity>
-     </dxcc>
+     <propmodes>
+       <propmode name="AUE">Aurora-E</propmode>
+       <propmode name="AUR">Aurora</propmode>
+       <propmode name="BS">Back scatter</propmode>
+       <propmode name="ECH">EchoLink</propmode>
+       <propmode name="EME">Earth-Moon-Earth</propmode>
+       <propmode name="ES">Sporadic E</propmode>
+       <propmode name="F2">F2 Reflection</propmode>
+       <propmode name="FAI">Field Aligned Irregularities</propmode>
+       <propmode name="ION">Ionoscatter</propmode>
+       <propmode name="IRL">IRLP</propmode>
+       <propmode name="MS">Meteor scatter</propmode>
+       <propmode name="RS">Rain scatter</propmode>
+       <propmode name="SAT">Satellite</propmode>
+       <propmode name="TEP">Trans-equatorial</propmode>
+       <propmode name="TR">Tropospheric ducting</propmode>
+     </propmodes>
+     <satellites>
+       <satellite name="AO-10" startDate="1983-06-16">AMSAT-OSCAR 10</satellite>
+       <satellite name="AO-13" startDate="1988-06-15" endDate="1996-12-07">AMSAT-OSCAR 13</satellite>
+       <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
+       <satellite name="AO-21" startDate="1991-01-29" endDate="1994-09-16">OSCAR 21/RS-14</satellite>
+       <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
+       <satellite name="AO-3" startDate="1965-03-18" endDate="1965-03-27">AMSAT-OSCAR 3</satellite>
+       <satellite name="AO-4" startDate="1965-12-21" endDate="1966-03-16">AMSAT-OSCAR 4</satellite>
+       <satellite name="AO-40" startDate="2000-11-16" endDate="2004-01-25">AMSAT-OSCAR 40</satellite>
+       <satellite name="AO-51" startDate="2004-06-29" endDate="2011-11-29">AMSAT-OSCAR 51</satellite>
+       <satellite name="AO-6" startDate="1972-10-15" endDate="1977-06-21">AMSAT-OSCAR 6</satellite>
+       <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
+       <satellite name="AO-73" startDate="2013-11-21">AMSAT-OSCAR 73</satellite>
+       <satellite name="AO-8" startDate="1978-03-15" endDate="1983-06-24">AMSAT-OSCAR 8</satellite>
+       <satellite name="AO-85">AMSAT-OSCAR 85 (Fox-1A)</satellite>
+       <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
+       <satellite name="Arsene" startDate="1993-05-13" endDate="1993-09-10">OSCAR 24</satellite>
+       <satellite name="CAS-3H" startDate="2015-09-18">LilacSat 2</satellite>
+       <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
+       <satellite name="EO-79" startDate="2014-06-19">FUNcube-3</satellite>
+       <satellite name="FO-12" startDate="1986-08-12" endDate="1989-11-05">Fuji-OSCAR 12</satellite>
+       <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
+       <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
+       <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
+       <satellite name="KEDR" startDate="2011-08-03" endDate="2012-01-04">ARISSat-1</satellite>
+       <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
+       <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
+       <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
+       <satellite name="NO-83" startDate="2015-05-20">BRICsat</satellite>
+       <satellite name="NO-84" startDate="2015-05-20">PSAT</satellite>
+       <satellite name="RS-1" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 1</satellite>
+       <satellite name="RS-10" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 10</satellite>
+       <satellite name="RS-11" startDate="1987-06-23" endDate="2000-11-01">Radio Sputnik 11</satellite>
+       <satellite name="RS-12" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 12</satellite>
+       <satellite name="RS-13" startDate="1991-02-05" endDate="2002-02-15">Radio Sputnik 13</satellite>
+       <satellite name="RS-15" startDate="1994-12-16">Radio Sputnik 15</satellite>
+       <satellite name="RS-2" startDate="1978-10-26" endDate="1979-02-01">Radio Sputnik 2</satellite>
+       <satellite name="RS-5" startDate="1981-12-17" endDate="1987-05-10">Radio Sputnik 5</satellite>
+       <satellite name="RS-6" startDate="1981-12-17" endDate="1984-12-09">Radio Sputnik 6</satellite>
+       <satellite name="RS-7" startDate="1981-12-18" endDate="1987-06-01">Radio Sputnik 7</satellite>
+       <satellite name="RS-8" startDate="1981-12-17" endDate="1985-12-16">Radio Sputnik 8</satellite>
+       <satellite name="SO-35" startDate="1999-02-23" endDate="2001-06-10">Sunsat-OSCAR 35</satellite>
+       <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
+       <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
+       <satellite name="SO-67" startDate="2009-09-17">Sumbandila Oscar 67</satellite>
+       <satellite name="UKUBE1" startDate="2016-06-01">UKube-1</satellite>
+       <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
+       <satellite name="VO-52" startDate="2005-05-05">VUsat-OSCAR 52</satellite>
+       <satellite name="XW-2A" startDate="2015-09-18">Hope 2A</satellite>
+       <satellite name="XW-2B" startDate="2015-09-18">Hope 2B</satellite>
+       <satellite name="XW-2C" startDate="2015-09-18">Hope 2C</satellite>
+       <satellite name="XW-2D" startDate="2015-09-18">Hope 2D</satellite>
+       <satellite name="XW-2E" startDate="2015-09-18">Hope 2E</satellite>
+       <satellite name="XW-2F" startDate="2015-09-18">Hope 2F</satellite>
+     </satellites>
+     <locpages>
+       <page Id="1" follows="0">
+         <pageField>CALL</pageField>
+         <pageField>DXCC</pageField>
+         <pageField>GRIDSQUARE</pageField>
+         <pageField>ITUZ</pageField>
+         <pageField>CQZ</pageField>
+         <pageField>IOTA</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="2" follows="1" dependsOn="DXCC" dependency="291">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="3" follows="1" dependsOn="DXCC" dependency="6">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="4" follows="1" dependsOn="DXCC" dependency="1">
+         <pageField>CA_PROVINCE</pageField>
+         <pageField>CA_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="5" follows="1" dependsOn="DXCC" dependency="15">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="6" follows="1" dependsOn="DXCC" dependency="54">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="7" follows="1" dependsOn="DXCC" dependency="110">
+         <pageField>US_STATE</pageField>
+         <pageField>US_COUNTY</pageField>
+         <pageField>US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="8" follows="1" dependsOn="DXCC" dependency="61">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="9" follows="1" dependsOn="DXCC" dependency="125">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="10" follows="1" dependsOn="DXCC" dependency="151">
+         <pageField>RU_OBLAST</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="11" follows="1" dependsOn="DXCC" dependency="318">
+         <pageField>CN_PROVINCE</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="12" follows="1" dependsOn="DXCC" dependency="150">
+         <pageField>AU_STATE</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="13" follows="1" dependsOn="DXCC" dependency="9">
+         <pageField>DX_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="14" follows="1" dependsOn="DXCC" dependency="166">
+         <pageField>DX_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="15" follows="1" dependsOn="DXCC" dependency="202">
+         <pageField>DX_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="16" follows="1" dependsOn="DXCC" dependency="285">
+         <pageField>DX_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+       <page Id="17" follows="1" dependsOn="DXCC" dependency="103">
+         <pageField>DX_US_PARK</pageField>
+         <pageField>ZERR</pageField>
+       </page>
+     </locpages>
      <locfields>
-       <field Id="AU_STATE" flags="0" intype="2" label="State" len="3" type="C">
+       <field Id="AU_STATE" type="C" len="3" label="State" intype="2" flags="0">
          <enums>
            <enum value="ACT" zonemap="59:30">Australian Capital Territory</enum>
            <enum value="NSW" zonemap="59:30">New South Wales</enum>
@@ -677,14 +919,14 @@
            <enum value="NT" zonemap="55:29">Northern Territory</enum>
          </enums>
        </field>
-       <field Id="CALL" flags="0" intype="2" label="Call Sign" len="13" type="C" />
-       <field Id="CA_PROVINCE" flags="4" intype="2" label="Province" len="2" type="C">
+       <field Id="CALL" type="C" len="13" label="Call Sign" intype="2" flags="0" />
+       <field Id="CA_PROVINCE" type="C" len="2" label="Province" intype="2" flags="4">
          <enums>
            <enum value="AB" zonemap="02:04">Alberta</enum>
            <enum value="BC" zonemap="02:03">British Columbia</enum>
            <enum value="MB" zonemap="03:04,04:04">Manitoba</enum>
            <enum value="NB" zonemap="09:05">New Brunswick</enum>
-           <enum value="NF" zonemap="09:05">Newfoundland and Labrador</enum>
+           <enum value="NF" zonemap="09:02,09:05">Newfoundland and Labrador</enum>
            <enum value="NT" zonemap="03:01,04:01,75:01">Northwest Territories</enum>
            <enum value="NS" zonemap="09:05">Nova Scotia</enum>
            <enum value="NU" zonemap="02:01,03:01,03:02,04:02,09:02">Nunavut</enum>
@@ -695,7 +937,7 @@
            <enum value="YT" zonemap="02:01">Yukon Territory</enum>
          </enums>
        </field>
-       <field Id="CA_US_PARK" dependsOn="CA_PROVINCE" flags="0" intype="2" label="Park" len="40" type="C">
+       <field Id="CA_US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="CA_PROVINCE">
          <enums dependency="MB">
            <enum value="AA12">International Peace Garden</enum>
          </enums>
@@ -703,7 +945,7 @@
            <enum value="AA21">Roosevelt Campobello International Park</enum>
          </enums>
        </field>
-       <field Id="CN_PROVINCE" flags="0" intype="2" label="Province" len="2" type="C">
+       <field Id="CN_PROVINCE" type="C" len="2" label="Province" intype="2" flags="0">
          <enums>
            <enum value="AH" zonemap="43:24">Anhui</enum>
            <enum value="BJ" zonemap="44:24">Beijing</enum>
@@ -738,7 +980,7 @@
            <enum value="ZJ" zonemap="44:24">Zhejiang</enum>
          </enums>
        </field>
-       <field Id="CONT" flags="0" intype="2" label="Continent" len="2" type="C">
+       <field Id="CONT" type="C" len="2" label="Continent" intype="2" flags="0">
          <enums>
            <enum value="AF">Africa</enum>
            <enum value="AS">Asia</enum>
@@ -749,9 +991,9 @@
            <enum value="SA">South America</enum>
          </enums>
        </field>
-       <field Id="CQZ" flags="0" intype="2" label="CQ Zone" len="10" lower="1" type="I" upper="40" />
-       <field Id="DXCC" flags="0" intype="2" label="DXCC Entity" len="10" type="I" />
-       <field Id="DX_US_PARK" dependsOn="DXCC" flags="0" intype="2" label="Park" len="40" type="C">
+       <field Id="CQZ" type="I" len="10" lower="1" upper="40" label="CQ Zone" intype="2" flags="0" />
+       <field Id="DXCC" type="I" len="10" label="DXCC Entity" intype="2" flags="0" />
+       <field Id="DX_US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="DXCC">
          <enums dependency="103">
            <enum value="HP47">War in the Pacific National Historical Park</enum>
          </enums>
@@ -772,10 +1014,10 @@
            <enum value="NP42">National Park of American Samoa</enum>
          </enums>
        </field>
-       <field Id="GRIDSQUARE" flags="0" intype="1" label="Grid Square" len="27" type="C" />
-       <field Id="IOTA" flags="1" intype="1" label="IOTA ID" len="10" type="C" />
-       <field Id="ITUZ" flags="0" intype="2" label="ITU Zone" len="10" lower="1" type="I" upper="75" />
-       <field Id="RU_OBLAST" dependsOn="DXCC" flags="0" intype="2" label="Oblast" len="2" type="C">
+       <field Id="GRIDSQUARE" type="C" len="27" label="Grid Square" intype="1" flags="0" />
+       <field Id="IOTA" type="C" len="10" label="IOTA ID" intype="1" flags="1" />
+       <field Id="ITUZ" type="I" len="10" lower="1" upper="75" label="ITU Zone" intype="2" flags="0" />
+       <field Id="RU_OBLAST" type="C" len="2" label="Oblast" intype="2" flags="0" dependsOn="DXCC">
          <enums dependency="126">
            <enum value="KA" zonemap="29:15">Kaliningrad</enum>
          </enums>
@@ -868,7 +1110,7 @@
            <enum value="TL" zonemap="29:16">Tula</enum>
            <enum value="TV" zonemap="29:16">Tver</enum>
            <enum value="UD" zonemap="30:16">Republic of Udmurtia</enum>
-           <enum value="UL" zonemap="29:16,30:16">Ul&apos;anovsk</enum>
+           <enum value="UL" zonemap="29:16,30:16">Ul'anovsk</enum>
            <enum value="VG" zonemap="29:16">Volgograd</enum>
            <enum value="VL" zonemap="29:16">Vladimir</enum>
            <enum value="VO" zonemap="19:16,29:16">Vologda</enum>
@@ -878,7 +1120,7 @@
            <enum value="AR" zonemap="75:40">Arkhangelsk</enum>
          </enums>
        </field>
-       <field Id="US_COUNTY" dependsOn="US_STATE" flags="0" intype="2" label="County" len="30" type="C">
+       <field Id="US_COUNTY" type="C" len="30" label="County" intype="2" flags="0" dependsOn="US_STATE">
          <enums dependency="AK">
            <enum value="Aleutians East" />
            <enum value="Aleutians West" />
@@ -4122,14 +4364,14 @@
            <enum value="Weston" />
          </enums>
        </field>
-       <field Id="US_PARK" dependsOn="US_STATE" flags="0" intype="2" label="Park" len="40" type="C">
+       <field Id="US_PARK" type="C" len="40" label="Park" intype="2" flags="0" dependsOn="US_STATE">
          <enums dependency="AK">
            <enum value="WR01">Alagnak National Wild and Scenic River</enum>
            <enum value="NP33,WR01">Alagnak River + Katmai National Park</enum>
            <enum value="WR11">Alatna National Wild and Scenic River</enum>
            <enum value="AA01">Aleutian World War II National Historic Area</enum>
            <enum value="WR12">Aniachak National Wild and Scenic River</enum>
-           <enum value="MN04,PV01">Aniakchak Nat&apos;l Preserve and Monument</enum>
+           <enum value="MN04,PV01">Aniakchak Nat'l Preserve and Monument</enum>
            <enum value="MN04">Aniakchak National Monument</enum>
            <enum value="PV01">Aniakchak National Preserve</enum>
            <enum value="WR12,MN04">Aniakchak River + Aniakchak National Monument</enum>
@@ -4249,7 +4491,7 @@
            <enum value="NP11">Channel Islands National Park</enum>
            <enum value="NP15">Death Valley National Park</enum>
            <enum value="MN22">Devils Postpile National Monument</enum>
-           <enum value="NS15">Eugene O&apos;Neill National Historic Site</enum>
+           <enum value="NS15">Eugene O'Neill National Historic Site</enum>
            <enum value="NS22">Fort Point National Historic Site</enum>
            <enum value="RC11">Golden Gate National Recreation Area</enum>
            <enum value="RC11,NS22">Golden Gate Rec Area + Fort Point NHS</enum>
@@ -4295,7 +4537,7 @@
            <enum value="NP58">Yosemite National Park</enum>
          </enums>
          <enums dependency="CO">
-           <enum value="NS04">Bent&apos;s Old Fort National Historic Site</enum>
+           <enum value="NS04">Bent's Old Fort National Historic Site</enum>
            <enum value="NP06">Black Canyon of the Gunnison National Park</enum>
            <enum value="TR14">California National Historic Trail</enum>
            <enum value="MN20">Colorado National Monument</enum>
@@ -4316,7 +4558,7 @@
            <enum value="NP48">Rocky Mountain National Park</enum>
            <enum value="NS64">Sand Creek Massacre National Historic Site</enum>
            <enum value="TR11">Santa Fe National Historic Trail</enum>
-           <enum value="TR11,NS04">Santa Fe NHT + Bent&apos;s Old Fort NHS</enum>
+           <enum value="TR11,NS04">Santa Fe NHT + Bent's Old Fort NHS</enum>
            <enum value="MN77">Yucca House National Monument</enum>
          </enums>
          <enums dependency="CT">
@@ -4333,7 +4575,7 @@
            <enum value="NS08">Carter G. Woodson Home National Historic Site</enum>
            <enum value="HP08">Chesapeake and Ohio Canal National Historical Park</enum>
            <enum value="DZ02,DZ06">Constitution Gardens</enum>
-           <enum value="NS17">Ford&apos;s Theatre National Historic Site</enum>
+           <enum value="NS17">Ford's Theatre National Historic Site</enum>
            <enum value="NM09,DZ06">Franklin Delano Roosevelt Memorial National Memorial</enum>
            <enum value="NS28">Frederick Douglass National Historic Site</enum>
            <enum value="PK02">George Washington Memorial Parkway</enum>
@@ -4399,14 +4641,14 @@
            <enum value="TR18">Ala Kahakai National Historic Trail</enum>
            <enum value="TR18,NP29">Ala Kahakai NHT + Hawaii Volcanoes NP</enum>
            <enum value="TR18,HP19">Ala Kahakai NHT + Kaloko-Honokohau NHP</enum>
-           <enum value="TR18,HP36">Ala Kahakai NHT + Pu&apos;uhonua o Honaunau NHP</enum>
+           <enum value="TR18,HP36">Ala Kahakai NHT + Pu'uhonua o Honaunau NHP</enum>
            <enum value="TR18,NS58">Ala Kahakai NHT + Puukohola Heiau NHS</enum>
            <enum value="NP28">Haleakala National Park</enum>
            <enum value="NP29">Hawaii Volcanoes National Park</enum>
            <enum value="MN79">Honouliuli National Monument</enum>
            <enum value="HP18">Kalaupapa National Historical Park</enum>
            <enum value="HP19">Kaloko-Honokohau National Historical Park</enum>
-           <enum value="HP36">Pu&apos;uhonua o Honaunau National Historical Park</enum>
+           <enum value="HP36">Pu'uhonua o Honaunau National Historical Park</enum>
            <enum value="NS58">Puukohola Heiau National Historic Site</enum>
            <enum value="MN75">World War II Valor in the Pacific National Monument</enum>
          </enums>
@@ -4491,7 +4733,7 @@
            <enum value="SS03">Cape Cod National Seashore</enum>
            <enum value="NS29">Frederick Law Olmsted National Historic Site</enum>
            <enum value="NS41">John Fitzgerald Kennedy National Historic Site</enum>
-           <enum value="NS46">Longfellow House - Washington&apos;s Headquarters National Historic Site</enum>
+           <enum value="NS46">Longfellow House - Washington's Headquarters National Historic Site</enum>
            <enum value="HP24">Lowell National Historical Park</enum>
            <enum value="HP27">Minute Man National Historical Park</enum>
            <enum value="HP30">New Bedford Whaling National Historical Park</enum>
@@ -4514,6 +4756,7 @@
            <enum value="TR21,MN31">Captain John Smith Chesapeake NHT + Fort McHenry NM and Shrine</enum>
            <enum value="TR21,DZ07">Captain John Smith Chesapeake NHT + Piscataway Park</enum>
            <enum value="TR21,TR22">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT</enum>
+           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="DZ01">Catoctin Mountain Park</enum>
            <enum value="HP08">Chesapeake and Ohio Canal National Historical Park</enum>
            <enum value="NS11">Clara Barton National Historic Site</enum>
@@ -4576,7 +4819,7 @@
            <enum value="TR11,TR14">Santa Fe NHT + California NHT</enum>
            <enum value="TR12">Trail of Tears National Historic Trail</enum>
            <enum value="NS73">Ulysses S. Grant National Historic Site</enum>
-           <enum value="BF11">Wilson&apos;s Creek National Battlefield</enum>
+           <enum value="BF11">Wilson's Creek National Battlefield</enum>
          </enums>
          <enums dependency="MS">
            <enum value="BS01">Brices Cross Roads National Battlefield Site</enum>
@@ -4742,7 +4985,7 @@
            <enum value="TR04">North Country National Scenic Trail</enum>
            <enum value="TR04,MN34">North Country NST + Fort Stanwix NM</enum>
            <enum value="NS59">Sagamore Hill National Historic Site</enum>
-           <enum value="NS61">Saint Paul&apos;s Church National Historic Site</enum>
+           <enum value="NS61">Saint Paul's Church National Historic Site</enum>
            <enum value="HP42">Saratoga National Historical Park</enum>
            <enum value="MN67">Statue of Liberty National Monument</enum>
            <enum value="MN83">Stonewall National Monument</enum>
@@ -4752,7 +4995,7 @@
            <enum value="WR10">Upper Delaware Scenic and Recreation River</enum>
            <enum value="NS74">Vanderbilt Mansion National Historic Site</enum>
            <enum value="TR23">Washington-Rochambeau Revolutionary Route National Historic Trail</enum>
-           <enum value="HP48">Women&apos;s Rights National Historical Park</enum>
+           <enum value="HP48">Women's Rights National Historical Park</enum>
          </enums>
          <enums dependency="OH">
            <enum value="MN18">Charles Young Buffalo Soldiers National Monument</enum>
@@ -4764,7 +5007,7 @@
            <enum value="NS39">James A. Garfield National Historic Site</enum>
            <enum value="TR04">North Country National Scenic Trail</enum>
            <enum value="TR04,HP11">North Country NST + Dayton Aviation Heritage NHP</enum>
-           <enum value="NM20">Perry&apos;s Victory and International Peace Memorial National Memorial</enum>
+           <enum value="NM20">Perry's Victory and International Peace Memorial National Memorial</enum>
            <enum value="NS78">William Howard Taft National Historic Site</enum>
          </enums>
          <enums dependency="OK">
@@ -4800,11 +5043,12 @@
            <enum value="RC07">Delaware Water Gap National Recreation Area</enum>
            <enum value="NS12">Edgar Allan Poe National Historic Site</enum>
            <enum value="NS13">Eisenhower National Historic Site</enum>
+           <enum value="HP12">First State National Historical Park</enum>
            <enum value="NM07">Flight 93 National Memorial</enum>
            <enum value="BF05">Fort Necessity National Battlefield</enum>
            <enum value="NS30">Friendship Hill National Historic Site</enum>
            <enum value="MP03">Gettysburg National Military Park</enum>
-           <enum value="AA08">Gloria Dei (Old Swedes&apos;) Church National Historic Site</enum>
+           <enum value="AA08">Gloria Dei (Old Swedes') Church National Historic Site</enum>
            <enum value="NS37">Hopewell Furnace National Historic Site</enum>
            <enum value="HP16">Independence National Historical Park</enum>
            <enum value="NM14">Johnstown Flood National Memorial</enum>
@@ -4928,7 +5172,6 @@
            <enum value="TR21,HP09">Captain John Smith Chesapeake NHT + Colonial NHP</enum>
            <enum value="TR21,MN38">Captain John Smith Chesapeake NHT + George Washington Birthplace</enum>
            <enum value="TR21,BP03">Captain John Smith Chesapeake NHT + Richmond NBP</enum>
-           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="HP06">Cedar Creek and Belle Grove National Historical Park</enum>
            <enum value="HP09">Colonial National Historical Park</enum>
            <enum value="HP10">Cumberland Gap National Historical Park</enum>
@@ -4961,7 +5204,7 @@
            <enum value="WR26">Missisquoi and Trout National Wild and Scenic River</enum>
          </enums>
          <enums dependency="WA">
-           <enum value="RS02">Ebey&apos;s Landing National Historical Reserve</enum>
+           <enum value="RS02">Ebey's Landing National Historical Reserve</enum>
            <enum value="NS27">Fort Vancouver National Historic Site</enum>
            <enum value="HP22">Klondike Gold Rush - Seattle Unit National Historical Park</enum>
            <enum value="RC12">Lake Chelan National Recreation Area</enum>
@@ -5028,7 +5271,7 @@
            <enum value="NP57">Yellowstone National Park</enum>
          </enums>
        </field>
-       <field Id="US_STATE" dependsOn="DXCC" flags="4" intype="2" label="State" len="2" type="C">
+       <field Id="US_STATE" type="C" len="2" label="State" intype="2" flags="4" dependsOn="DXCC">
          <enums dependency="110">
            <enum value="HI" zonemap="61:31">Hawaii</enum>
          </enums>
@@ -5087,248 +5330,7 @@
            <enum value="AK" zonemap="01:01,02:01">Alaska</enum>
          </enums>
        </field>
-       <field Id="WPX" flags="1" intype="1" label="WPX Prefix" len="10" type="C" />
-       <field Id="ZERR" flags="0" intype="4" len="80" type="C" />
+       <field Id="WPX" type="C" len="10" label="WPX Prefix" intype="1" flags="1" />
+       <field Id="ZERR" type="C" len="80" intype="4" flags="0" />
      </locfields>
-     <locpages>
-       <page Id="1" follows="0">
-         <pageField>CALL</pageField>
-         <pageField>DXCC</pageField>
-         <pageField>GRIDSQUARE</pageField>
-         <pageField>ITUZ</pageField>
-         <pageField>CQZ</pageField>
-         <pageField>IOTA</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="2" dependency="291" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="3" dependency="6" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="4" dependency="1" dependsOn="DXCC" follows="1">
-         <pageField>CA_PROVINCE</pageField>
-         <pageField>CA_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="5" dependency="15" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="6" dependency="54" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="7" dependency="110" dependsOn="DXCC" follows="1">
-         <pageField>US_STATE</pageField>
-         <pageField>US_COUNTY</pageField>
-         <pageField>US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="8" dependency="61" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="9" dependency="125" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="10" dependency="151" dependsOn="DXCC" follows="1">
-         <pageField>RU_OBLAST</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="11" dependency="318" dependsOn="DXCC" follows="1">
-         <pageField>CN_PROVINCE</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="12" dependency="150" dependsOn="DXCC" follows="1">
-         <pageField>AU_STATE</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="13" dependency="9" dependsOn="DXCC" follows="1">
-         <pageField>DX_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="14" dependency="166" dependsOn="DXCC" follows="1">
-         <pageField>DX_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="15" dependency="202" dependsOn="DXCC" follows="1">
-         <pageField>DX_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="16" dependency="285" dependsOn="DXCC" follows="1">
-         <pageField>DX_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-       <page Id="17" dependency="103" dependsOn="DXCC" follows="1">
-         <pageField>DX_US_PARK</pageField>
-         <pageField>ZERR</pageField>
-       </page>
-     </locpages>
-     <modes>
-       <mode group="PHONE">AM</mode>
-       <mode group="DATA">AMTOR</mode>
-       <mode group="IMAGE">ATV</mode>
-       <mode group="DATA">CHIP</mode>
-       <mode group="DATA">CLOVER</mode>
-       <mode group="DATA">CONTESTI</mode>
-       <mode group="CW">CW</mode>
-       <mode group="DATA">DATA</mode>
-       <mode group="DATA">DOMINO</mode>
-       <mode group="IMAGE">FAX</mode>
-       <mode group="PHONE">FM</mode>
-       <mode group="DATA">FSK31</mode>
-       <mode group="DATA">FSK441</mode>
-       <mode group="DATA">GTOR</mode>
-       <mode group="DATA">HELL</mode>
-       <mode group="DATA">HFSK</mode>
-       <mode group="IMAGE">IMAGE</mode>
-       <mode group="DATA">ISCAT</mode>
-       <mode group="DATA">JT4</mode>
-       <mode group="DATA">JT65</mode>
-       <mode group="DATA">JT6M</mode>
-       <mode group="DATA">JT9</mode>
-       <mode group="DATA">MFSK16</mode>
-       <mode group="DATA">MFSK8</mode>
-       <mode group="DATA">MINIRTTY</mode>
-       <mode group="DATA">MT63</mode>
-       <mode group="DATA">OLIVIA</mode>
-       <mode group="DATA">OPERA</mode>
-       <mode group="DATA">PACKET</mode>
-       <mode group="DATA">PACTOR</mode>
-       <mode group="DATA">PAX</mode>
-       <mode group="PHONE">PHONE</mode>
-       <mode group="DATA">PSK10</mode>
-       <mode group="DATA">PSK125</mode>
-       <mode group="DATA">PSK2K</mode>
-       <mode group="DATA">PSK31</mode>
-       <mode group="DATA">PSK63</mode>
-       <mode group="DATA">PSK63F</mode>
-       <mode group="DATA">PSKAM</mode>
-       <mode group="DATA">PSKFEC31</mode>
-       <mode group="DATA">Q15</mode>
-       <mode group="DATA">ROS</mode>
-       <mode group="DATA">RTTY</mode>
-       <mode group="DATA">RTTYM</mode>
-       <mode group="PHONE">SSB</mode>
-       <mode group="IMAGE">SSTV</mode>
-       <mode group="DATA">THOR</mode>
-       <mode group="DATA">THROB</mode>
-       <mode group="DATA">VOI</mode>
-       <mode group="DATA">WINMOR</mode>
-       <mode group="DATA">WSPR</mode>
-     </modes>
-     <propmodes>
-       <propmode name="AUE">Aurora-E</propmode>
-       <propmode name="AUR">Aurora</propmode>
-       <propmode name="BS">Back scatter</propmode>
-       <propmode name="ECH">EchoLink</propmode>
-       <propmode name="EME">Earth-Moon-Earth</propmode>
-       <propmode name="ES">Sporadic E</propmode>
-       <propmode name="F2">F2 Reflection</propmode>
-       <propmode name="FAI">Field Aligned Irregularities</propmode>
-       <propmode name="ION">Ionoscatter</propmode>
-       <propmode name="IRL">IRLP</propmode>
-       <propmode name="MS">Meteor scatter</propmode>
-       <propmode name="RS">Rain scatter</propmode>
-       <propmode name="SAT">Satellite</propmode>
-       <propmode name="TEP">Trans-equatorial</propmode>
-       <propmode name="TR">Tropospheric ducting</propmode>
-     </propmodes>
-     <providers>
-       <provider organizationName="American Radio Relay League">
-         <emailAddress>lotw-help@arrl.org</emailAddress>
-         <organizationalUnitName>Logbook of the World</organizationalUnitName>
-         <url>https://www.arrl.org/lotw/</url>
-       </provider>
-     </providers>
-     <satellites>
-       <satellite name="AO-10" startDate="1983-06-16">AMSAT-OSCAR 10</satellite>
-       <satellite endDate="1996-12-07" name="AO-13" startDate="1988-06-15">AMSAT-OSCAR 13</satellite>
-       <satellite name="AO-16" startDate="1990-01-22">AMSAT-OSCAR 16</satellite>
-       <satellite endDate="1994-09-16" name="AO-21" startDate="1991-01-29">OSCAR 21/RS-14</satellite>
-       <satellite name="AO-27" startDate="1993-09-26">AMRAD-OSCAR 27</satellite>
-       <satellite endDate="1965-03-27" name="AO-3" startDate="1965-03-18">AMSAT-OSCAR 3</satellite>
-       <satellite endDate="1966-03-16" name="AO-4" startDate="1965-12-21">AMSAT-OSCAR 4</satellite>
-       <satellite endDate="2004-01-25" name="AO-40" startDate="2000-11-16">AMSAT-OSCAR 40</satellite>
-       <satellite endDate="2011-11-29" name="AO-51" startDate="2004-06-29">AMSAT-OSCAR 51</satellite>
-       <satellite endDate="1977-06-21" name="AO-6" startDate="1972-10-15">AMSAT-OSCAR 6</satellite>
-       <satellite name="AO-7" startDate="1974-11-15">AMSAT-OSCAR 7</satellite>
-       <satellite name="AO-73" startDate="2013-11-21">AMSAT-OSCAR 73</satellite>
-       <satellite endDate="1983-06-24" name="AO-8" startDate="1978-03-15">AMSAT-OSCAR 8</satellite>
-       <satellite name="AO-85">AMSAT-OSCAR 85 (Fox-1A)</satellite>
-       <satellite name="ARISS" startDate="1998-11-20">ARISS</satellite>
-       <satellite endDate="1993-09-10" name="Arsene" startDate="1993-05-13">OSCAR 24</satellite>
-       <satellite name="CAS-3H" startDate="2015-09-18">LilacSat 2</satellite>
-       <satellite name="DO-64" startDate="2008-04-28">Delfi OSCAR-64</satellite>
-       <satellite name="EO-79" startDate="2014-06-19">FUNcube-3</satellite>
-       <satellite endDate="1989-11-05" name="FO-12" startDate="1986-08-12">Fuji-OSCAR 12</satellite>
-       <satellite name="FO-20" startDate="1990-02-07">Fuji-OSCAR 20</satellite>
-       <satellite name="FO-29" startDate="1996-07-17">Fuji-OSCAR 29</satellite>
-       <satellite name="HO-68" startDate="2009-12-15">Hope Oscar 68</satellite>
-       <satellite endDate="2012-01-04" name="KEDR" startDate="2011-08-03">ARISSat-1</satellite>
-       <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
-       <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
-       <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
-       <satellite name="NO-83" startDate="2015-05-20">BRICsat</satellite>
-       <satellite name="NO-84" startDate="2015-05-20">PSAT</satellite>
-       <satellite endDate="1979-02-01" name="RS-1" startDate="1978-10-26">Radio Sputnik 1</satellite>
-       <satellite endDate="2000-11-01" name="RS-10" startDate="1987-06-23">Radio Sputnik 10</satellite>
-       <satellite endDate="2000-11-01" name="RS-11" startDate="1987-06-23">Radio Sputnik 11</satellite>
-       <satellite endDate="2002-02-15" name="RS-12" startDate="1991-02-05">Radio Sputnik 12</satellite>
-       <satellite endDate="2002-02-15" name="RS-13" startDate="1991-02-05">Radio Sputnik 13</satellite>
-       <satellite name="RS-15" startDate="1994-12-16">Radio Sputnik 15</satellite>
-       <satellite endDate="1979-02-01" name="RS-2" startDate="1978-10-26">Radio Sputnik 2</satellite>
-       <satellite endDate="1987-05-10" name="RS-5" startDate="1981-12-17">Radio Sputnik 5</satellite>
-       <satellite endDate="1984-12-09" name="RS-6" startDate="1981-12-17">Radio Sputnik 6</satellite>
-       <satellite endDate="1987-06-01" name="RS-7" startDate="1981-12-18">Radio Sputnik 7</satellite>
-       <satellite endDate="1985-12-16" name="RS-8" startDate="1981-12-17">Radio Sputnik 8</satellite>
-       <satellite endDate="2001-06-10" name="SO-35" startDate="1999-02-23">Sunsat-OSCAR 35</satellite>
-       <satellite name="SO-41" startDate="2000-09-26">Saudi-OSCAR 41</satellite>
-       <satellite name="SO-50" startDate="2002-12-20">Saudi-OSCAR 50</satellite>
-       <satellite name="SO-67" startDate="2009-09-17">Sumbandila Oscar 67</satellite>
-       <satellite name="UO-14" startDate="1990-01-22">UOSAT-OSCAR 14</satellite>
-       <satellite name="VO-52" startDate="2005-05-05">VUsat-OSCAR 52</satellite>
-       <satellite name="XW-2A" startDate="2015-09-18">Hope 2A</satellite>
-       <satellite name="XW-2B" startDate="2015-09-18">Hope 2B</satellite>
-       <satellite name="XW-2C" startDate="2015-09-18">Hope 2C</satellite>
-       <satellite name="XW-2D" startDate="2015-09-18">Hope 2D</satellite>
-       <satellite name="XW-2E" startDate="2015-09-18">Hope 2E</satellite>
-       <satellite name="XW-2F" startDate="2015-09-18">Hope 2F</satellite>
-     </satellites>
-     <sigspecs>
-       <sigspec name="LOTW" version="1.0">
-         <tCONTACT>
-           <BAND required="1" />
-   	<BAND_RX />
-           <CALL required="1" />
-           <FREQ />
-   	<FREQ_RX />
-           <MODE required="1" />
-   	<PROP_MODE />
-           <QSO_DATE required="1" />
-           <QSO_TIME required="1" />
-   	<SAT_NAME />
-         </tCONTACT>
-         <tSTATION>
-           <CA_PROVINCE />
-           <CA_US_PARK />
-           <CQZ method="int" />
-           <DX_US_PARK />
-           <GRIDSQUARE />
-           <IOTA />
-           <ITUZ method="int" />
-           <US_COUNTY />
-           <US_PARK />
-           <US_STATE />
-         </tSTATION>
-       </sigspec>
-     </sigspecs>
    </tqslconfig>
