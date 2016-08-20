@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: V2.3\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-08-12 11:20-0400\n"
+"POT-Creation-Date: 2016-08-20 18:22-0400\n"
 "PO-Revision-Date: 2016-02-13 19:00-0500\n"
 "Last-Translator: Akihiro KODA <jl3oxr@gmail.com>\n"
 "Language-Team: TQSL Developers\n"
@@ -102,9 +102,9 @@ msgid "Certificate Issuer:"
 msgstr "証明書発行者："
 
 #: crqwiz.cpp:132 crqwiz.cpp:945 crqwiz.cpp:1040 crqwiz.cpp:1094
-#: crqwiz.cpp:1129 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2710
-#: tqsl.cpp:3142 tqsl.cpp:3157 tqsl.cpp:3212 tqsl.cpp:3227 tqsl.cpp:4731
-#: tqsl.cpp:6236 tqsl.cpp:6436 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
+#: crqwiz.cpp:1129 loadcertwiz.cpp:255 loadcertwiz.cpp:350 tqsl.cpp:2715
+#: tqsl.cpp:3147 tqsl.cpp:3162 tqsl.cpp:3217 tqsl.cpp:3232 tqsl.cpp:4736
+#: tqsl.cpp:6241 tqsl.cpp:6441 tqsl_prefs.cpp:914 tqsl_prefs.cpp:921
 #: tqslwiz.cpp:459 tqslwiz.cpp:549
 msgid "Error"
 msgstr "エラー"
@@ -121,7 +121,7 @@ msgstr "URL: "
 msgid "DXCC entity:"
 msgstr "DXCC エンティティ:"
 
-#: crqwiz.cpp:209 tqsl.cpp:1876 tqsl.cpp:3895
+#: crqwiz.cpp:209 tqsl.cpp:1876 tqsl.cpp:3900
 msgid "Call sign:"
 msgstr "コールサイン："
 
@@ -396,8 +396,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "この「QSO 終了日」を本当に保存しますか？"
 
-#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5113
-#: tqsl.cpp:5859 tqsl.cpp:5986 tqsl_prefs.cpp:431
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118
+#: tqsl.cpp:5864 tqsl.cpp:5991 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "警告"
 
@@ -512,7 +512,7 @@ msgstr ""
 "ログに署名したり、キーを保存するときなど、コールサイン証明書を使用するたびに"
 "このパスワードを入力する必要があります。"
 
-#: loadcertwiz.cpp:156 tqsl.cpp:5801
+#: loadcertwiz.cpp:156 tqsl.cpp:5806
 msgid ""
 "Leave the password blank and click 'OK' unless you want to use a password."
 msgstr ""
@@ -553,7 +553,7 @@ msgstr ""
 "コールサイン証明書のコンテナファイル (*.p12)|*.p12|証明書のリクエストに対する"
 "応答ファイル (*.tq6)|*.tq6"
 
-#: loadcertwiz.cpp:235 tqsl.cpp:3853
+#: loadcertwiz.cpp:235 tqsl.cpp:3858
 msgid "|All files (*.*)|*.*"
 msgstr "|すべてのファイル (*.*)|*.*"
 
@@ -577,7 +577,7 @@ msgstr ".p12 ファイルのロックを解除するためのパスワードを�
 msgid "Password error"
 msgstr "パスワード エラー"
 
-#: loctree.cpp:86 tqsl.cpp:1345 tqsl.cpp:6016
+#: loctree.cpp:86 tqsl.cpp:1345 tqsl.cpp:6021
 msgid "Station Locations"
 msgstr "局の所在地"
 
@@ -722,7 +722,16 @@ msgstr "ADIFファイル (*.adi;*.ADIF)|*.adi;*.ADIF|すべてのファイル (*
 msgid "Wrote %d QSO records to %s"
 msgstr "%d 件の　QSO　レコードを　%s　に書き込み"
 
-#: stationdial.cpp:56 tqsl.cpp:5368
+#: qsodatadialog.cpp:806
+msgid "One QSO Record"
+msgstr ""
+
+#: qsodatadialog.cpp:808
+#, c-format
+msgid "%d QSO Records"
+msgstr ""
+
+#: stationdial.cpp:56 tqsl.cpp:5373
 msgid "&Properties"
 msgstr "プロパティ (&P)"
 
@@ -895,7 +904,7 @@ msgstr ""
 "（これは、コールサインの証明書をインストールしたときに設定したパスワードで"
 "す。）"
 
-#: tqsl.cpp:235 tqsl.cpp:6418 getpassword.h:32 getpassword.h:33
+#: tqsl.cpp:235 tqsl.cpp:6423 getpassword.h:32 getpassword.h:33
 msgid "Enter password"
 msgstr "パスワードの入力"
 
@@ -1188,7 +1197,7 @@ msgstr "環境設定(&P)..."
 msgid "Display or Modify &Preferences..."
 msgstr "表示または環境設定を変更(&P)..."
 
-#: tqsl.cpp:1095 tqsl.cpp:6077
+#: tqsl.cpp:1095 tqsl.cpp:6082
 msgid "Language"
 msgstr "言語"
 
@@ -1280,19 +1289,19 @@ msgstr "処理する局の所在地を選択"
 msgid "Create a new Station Location"
 msgstr "新しい局の所在地を作成"
 
-#: tqsl.cpp:1308 tqsl.cpp:5930 tqsl.cpp:5931
+#: tqsl.cpp:1308 tqsl.cpp:5935 tqsl.cpp:5936
 msgid "Edit a Station Location"
 msgstr "局の所在地を編集"
 
-#: tqsl.cpp:1324 tqsl.cpp:5932 tqsl.cpp:5933
+#: tqsl.cpp:1324 tqsl.cpp:5937 tqsl.cpp:5938
 msgid "Delete a Station Location"
 msgstr "局の所在地を削除"
 
-#: tqsl.cpp:1340 tqsl.cpp:5934 tqsl.cpp:5935
+#: tqsl.cpp:1340 tqsl.cpp:5939 tqsl.cpp:5940
 msgid "Display Station Location Properties"
 msgstr "局の所在地のプロパティを表示"
 
-#: tqsl.cpp:1366 tqsl.cpp:5698
+#: tqsl.cpp:1366 tqsl.cpp:5703
 msgid "Select a Callsign Certificate to process"
 msgstr "処理するコールサイン証明書を選択"
 
@@ -1300,12 +1309,12 @@ msgstr "処理するコールサイン証明書を選択"
 msgid "Load a Callsign Certificate"
 msgstr "コールサイン証明書を読込み"
 
-#: tqsl.cpp:1409 tqsl.cpp:5690 tqsl.cpp:5691
+#: tqsl.cpp:1409 tqsl.cpp:5695 tqsl.cpp:5696
 msgid "Save a Callsign Certificate"
 msgstr "コールサイン証明書を保存"
 
-#: tqsl.cpp:1425 tqsl.cpp:5504 tqsl.cpp:5692 tqsl.cpp:5693 tqsl.cpp:5748
-#: tqsl.cpp:5749
+#: tqsl.cpp:1425 tqsl.cpp:5509 tqsl.cpp:5697 tqsl.cpp:5698 tqsl.cpp:5753
+#: tqsl.cpp:5754
 msgid "Renew a Callsign Certificate"
 msgstr "コールサイン証明書を更新"
 
@@ -1313,7 +1322,7 @@ msgstr "コールサイン証明書を更新"
 msgid "Display a Callsign Certificate's Properties"
 msgstr "コールサイン証明書のプロパティを表示します。"
 
-#: tqsl.cpp:1446 tqsl.cpp:5908
+#: tqsl.cpp:1446 tqsl.cpp:5913
 msgid "Callsign Certificates"
 msgstr "コールサイン証明書"
 
@@ -1343,7 +1352,7 @@ msgid "Log File Error"
 msgstr "ログファイルのエラー"
 
 #. TRANSLATORS: uncommon error - error in a station location, followed by the ignore message that follows.
-#: tqsl.cpp:1623 tqsl.cpp:2855 tqsl.cpp:6048
+#: tqsl.cpp:1623 tqsl.cpp:2860 tqsl.cpp:6053
 msgid "The invalid data was ignored."
 msgstr "無効なデータは無視されました。"
 
@@ -1351,16 +1360,16 @@ msgstr "無効なデータは無視されました。"
 msgid "Location data error"
 msgstr "所在地データのエラー"
 
-#: tqsl.cpp:1628 tqsl.cpp:1654 tqsl.cpp:2860 tqsl.cpp:6053
+#: tqsl.cpp:1628 tqsl.cpp:1654 tqsl.cpp:2865 tqsl.cpp:6058
 #, c-format
 msgid "Edit Station Location : %hs - %s"
 msgstr "局の所在地の編集： %hs- %s"
 
-#: tqsl.cpp:1662 tqsl.cpp:5016
+#: tqsl.cpp:1662 tqsl.cpp:5021
 msgid "Edit Station Location"
 msgstr "局の所在地の編集"
 
-#: tqsl.cpp:1662 tqsl.cpp:6280 tqsl.cpp:6386 tqsl_prefs.cpp:85
+#: tqsl.cpp:1662 tqsl.cpp:6285 tqsl.cpp:6391 tqsl_prefs.cpp:85
 msgid "Close"
 msgstr "閉じる"
 
@@ -1368,7 +1377,7 @@ msgstr "閉じる"
 msgid "Open File"
 msgstr "ファイルをオープン"
 
-#: tqsl.cpp:1771 tqsl.cpp:5113
+#: tqsl.cpp:1771 tqsl.cpp:5118
 msgid ""
 "Warning: The TQSL ADIF editor only processes a limited number of ADIF "
 "fields.\n"
@@ -1389,24 +1398,24 @@ msgid "Select Callsign"
 msgstr "コールサインを選択"
 
 #. TRANSLATORS: filename being signed, station location and callsign added later.
-#: tqsl.cpp:1872 tqsl.cpp:3891
+#: tqsl.cpp:1872 tqsl.cpp:3896
 #, c-format
 msgid "The file (%s) will be signed using:"
 msgstr "ファイル　(%s) は以下の情報により署名されます:"
 
-#: tqsl.cpp:1874 tqsl.cpp:3893
+#: tqsl.cpp:1874 tqsl.cpp:3898
 msgid "Station Location:"
 msgstr "局の所在地："
 
-#: tqsl.cpp:1878 tqsl.cpp:3897
+#: tqsl.cpp:1878 tqsl.cpp:3902
 msgid "DXCC:"
 msgstr "DXCC："
 
-#: tqsl.cpp:1880 tqsl.cpp:3899
+#: tqsl.cpp:1880 tqsl.cpp:3904
 msgid "Is this correct?"
 msgstr "正しいですか？"
 
-#: tqsl.cpp:1886 tqsl.cpp:3901
+#: tqsl.cpp:1886 tqsl.cpp:3906
 msgid "TQSL - Confirm signing"
 msgstr "TQSL  - 署名の確認"
 
@@ -1583,29 +1592,33 @@ msgid "Error: Could not upload file (CURL Init error)"
 msgstr ""
 "エラー：　ファイルをアップロードできませんでした　（CURL　初期化エラー）"
 
-#: tqsl.cpp:2649
-#, c-format
-msgid "Attempting to upload %d QSO%hs"
-msgstr "これより　%d 件のQSO　%hs　をアップロード"
+#: tqsl.cpp:2650
+msgid "Attempting to upload one QSO"
+msgstr ""
 
-#: tqsl.cpp:2651
+#: tqsl.cpp:2652
+#, c-format
+msgid "Attempting to upload %d QSOs"
+msgstr ""
+
+#: tqsl.cpp:2655
 #, c-format
 msgid "Attempting to upload %s"
 msgstr "これより　%s のアップロード"
 
-#: tqsl.cpp:2657
+#: tqsl.cpp:2662
 msgid "Uploading Callsign Certificate"
 msgstr "コールサイン証明書のアップロード中"
 
-#: tqsl.cpp:2657
+#: tqsl.cpp:2662
 msgid "Uploading Callsign Certificate Request..."
 msgstr "コールサイン証明書のリクエストのアップロード中..."
 
-#: tqsl.cpp:2666
+#: tqsl.cpp:2671
 msgid "Could not spawn upload thread!"
 msgstr "アップロードスレッドを作成できない！"
 
-#: tqsl.cpp:2698
+#: tqsl.cpp:2703
 #, c-format
 msgid ""
 "%s: Log uploaded successfully with result:\n"
@@ -1616,11 +1629,11 @@ msgstr ""
 "\n"
 "%s"
 
-#: tqsl.cpp:2700 tqsl.cpp:2721
+#: tqsl.cpp:2705 tqsl.cpp:2726
 msgid "After reading this message, you may close this program."
 msgstr "このメッセージを確認したら、このプログラムを終了してもかまいません。"
 
-#: tqsl.cpp:2708 tqsl.cpp:2713
+#: tqsl.cpp:2713 tqsl.cpp:2718
 #, c-format
 msgid ""
 "%s uploaded with result:\n"
@@ -1631,7 +1644,7 @@ msgstr ""
 "\n"
 "%s"
 
-#: tqsl.cpp:2710
+#: tqsl.cpp:2715
 #, c-format
 msgid ""
 "%s Uploaded with result:\n"
@@ -1642,32 +1655,32 @@ msgstr ""
 "\n"
 "%s"
 
-#: tqsl.cpp:2720
+#: tqsl.cpp:2725
 #, c-format
 msgid "%s: Log uploaded successfully"
 msgstr "%s: ログを正常にアップロード"
 
-#: tqsl.cpp:2723
+#: tqsl.cpp:2728
 #, c-format
 msgid "%s uploaded successfully"
 msgstr "%s 正常にアップロード"
 
-#: tqsl.cpp:2730
+#: tqsl.cpp:2735
 #, c-format
 msgid "%s: %s upload was rejected with result \"%s\""
 msgstr "%s： %s　のアップロードは結果\"%s\"のため拒否された"
 
-#: tqsl.cpp:2734
+#: tqsl.cpp:2739
 #, c-format
 msgid "%s: %s upload was rejected"
 msgstr "%s: %s のアップロードは拒否された"
 
-#: tqsl.cpp:2740
+#: tqsl.cpp:2745
 #, c-format
 msgid "%s: Got an unexpected response on %s upload! Maybe the site is down?"
 msgstr "%s：　%s のアップロードで予期しない応答あり！　多分サイトのダウン？"
 
-#: tqsl.cpp:2752
+#: tqsl.cpp:2757
 #, c-format
 msgid ""
 "%s: Unable to upload - either your Internet connection is down or LoTW is "
@@ -1676,43 +1689,43 @@ msgstr ""
 "%s：　アップロードできません - あなたのインターネット接続がダウンしているか、"
 "LoTW　に到達できない状態です。"
 
-#: tqsl.cpp:2753 tqsl.cpp:2757 tqsl.cpp:2761
+#: tqsl.cpp:2758 tqsl.cpp:2762 tqsl.cpp:2766
 #, c-format
 msgid "Please try uploading the %s later."
 msgstr "%s　のアップロードを後でもう一度お試しください。"
 
-#: tqsl.cpp:2756
+#: tqsl.cpp:2761
 #, c-format
 msgid "%s: Unable to upload. The nework is down or the LoTW site is too busy."
 msgstr ""
 "%s：　アップロードできません。 ネットワークがダウンしているか、LoTW　サイトが"
 "ビジー状態です。"
 
-#: tqsl.cpp:2760
+#: tqsl.cpp:2765
 #, c-format
 msgid "%s: Unable to connect to the upload site."
 msgstr "%s：　アップロードサイトに接続することができません。"
 
-#: tqsl.cpp:2764
+#: tqsl.cpp:2769
 #, c-format
 msgid "%s: Upload cancelled"
 msgstr "%s：　アップロードはキャンセル"
 
-#: tqsl.cpp:2769
+#: tqsl.cpp:2774
 #, c-format
 msgid "%s: Couldn't upload the file: CURL returned \"%hs\" (%hs)"
 msgstr ""
 "%s：　ファイルをアップロードできませんでした：　CURL　の結果 \"%hs\"　（%hs）"
 
-#: tqsl.cpp:2782
+#: tqsl.cpp:2787
 msgid "Your upload appears to have failed. Should TQSL try again?"
 msgstr "アップロードが失敗したと思われます。 再試行しますか？"
 
-#: tqsl.cpp:2782
+#: tqsl.cpp:2787
 msgid "Retry?"
 msgstr "再試行？"
 
-#: tqsl.cpp:2811
+#: tqsl.cpp:2816
 #, c-format
 msgid ""
 "There are no callsign certificates for callsign %hs. This station location "
@@ -1721,11 +1734,11 @@ msgstr ""
 "コールサイン %hs のコールサイン証明書がありません。この局の所在地を編集するこ"
 "とはできません。"
 
-#: tqsl.cpp:2811 tqsl.cpp:2813
+#: tqsl.cpp:2816 tqsl.cpp:2818
 msgid "No Certificate"
 msgstr "証明書がありません"
 
-#: tqsl.cpp:2813
+#: tqsl.cpp:2818
 #, c-format
 msgid ""
 "There are no current callsign certificates for callsign %hs. This station "
@@ -1734,24 +1747,24 @@ msgstr ""
 "コールサイン %hs のコールサイン証明書がありません。この局の所在地をログファイ"
 "ルの署名に使用することはできません。"
 
-#: tqsl.cpp:2856 tqsl.cpp:2876 tqsl.cpp:6049
+#: tqsl.cpp:2861 tqsl.cpp:2881 tqsl.cpp:6054
 msgid "Station Location data error"
 msgstr "局の所在地データエラー"
 
-#: tqsl.cpp:2875
+#: tqsl.cpp:2880
 msgid "This should be corrected before signing a log file."
 msgstr "ログファイルに署名する前にこれを修正する必要があります。"
 
-#: tqsl.cpp:3046
+#: tqsl.cpp:3051
 msgid "TQSL Update Available"
 msgstr "利用可能な　TQSL　アップデート"
 
-#: tqsl.cpp:3058
+#: tqsl.cpp:3063
 #, c-format
 msgid "A new TQSL release (V%s) is available!"
 msgstr "新しい　TQSL　リリース (V%s) が利用可能です！"
 
-#: tqsl.cpp:3060
+#: tqsl.cpp:3065
 #, c-format
 msgid ""
 "An updated TrustedQSL configuration file (V%s) is available!\n"
@@ -1760,46 +1773,46 @@ msgstr ""
 "更新された　TrustedQSL　設定ファイル　(V%s) が利用可能です！\n"
 "設定ファイルはエンティティ、モード等の定義をインストールします。"
 
-#: tqsl.cpp:3068
+#: tqsl.cpp:3073
 msgid "Download from:"
 msgstr "次のURLからダウンロード:"
 
-#: tqsl.cpp:3077
+#: tqsl.cpp:3082
 msgid "More details at:"
 msgstr "より詳細な情報："
 
-#: tqsl.cpp:3085
+#: tqsl.cpp:3090
 msgid "Click 'OK' to install the new version of TQSL, or Cancel to ignore it."
 msgstr ""
 "新しい設定ファイルをインストールするには「OK」をクリックしてください。、無視"
 "するには「キャンセル」をクリックしてください。"
 
-#: tqsl.cpp:3090
+#: tqsl.cpp:3095
 msgid ""
 "Click 'OK' to install the new configuration file, or Cancel to ignore it."
 msgstr ""
 "新しい設定ファイルをインストールするには「OK」をクリックしてください。、無視"
 "するには「キャンセル」をクリックしてください。"
 
-#: tqsl.cpp:3142
+#: tqsl.cpp:3147
 #, c-format
 msgid "Can't open new configuration file %s: %hs"
 msgstr "新しい設定ファイル　%s　を開くことができません：　%hs"
 
-#: tqsl.cpp:3157 tqsl.cpp:3227
+#: tqsl.cpp:3162 tqsl.cpp:3232
 #, c-format
 msgid "Error writing new configuration file %s: %hs"
 msgstr "新しい設定ファイル　%s　の書き込みエラー：　%hs"
 
-#: tqsl.cpp:3165
+#: tqsl.cpp:3170
 msgid "Configuration file successfully updated"
 msgstr "設定ファイルは正常に更新"
 
-#: tqsl.cpp:3165
+#: tqsl.cpp:3170
 msgid "Update Completed"
 msgstr "アップデート完了"
 
-#: tqsl.cpp:3178 tqsl.cpp:3243
+#: tqsl.cpp:3183 tqsl.cpp:3248
 msgid ""
 "Unable to update - either your Internet connection is down or LoTW is "
 "unreachable."
@@ -1807,93 +1820,93 @@ msgstr ""
 "更新できません - あなたのインターネット接続がダウンしているか、LoTW　に到達で"
 "きない状態です。"
 
-#: tqsl.cpp:3179 tqsl.cpp:3182 tqsl.cpp:3185 tqsl.cpp:3244 tqsl.cpp:3247
-#: tqsl.cpp:3250 tqsl.cpp:3681 tqsl.cpp:3688 tqsl.cpp:3694 tqsl.cpp:3717
-#: tqsl.cpp:3723 tqsl.cpp:3729
+#: tqsl.cpp:3184 tqsl.cpp:3187 tqsl.cpp:3190 tqsl.cpp:3249 tqsl.cpp:3252
+#: tqsl.cpp:3255 tqsl.cpp:3686 tqsl.cpp:3693 tqsl.cpp:3699 tqsl.cpp:3722
+#: tqsl.cpp:3728 tqsl.cpp:3734
 msgid "Please try again later."
 msgstr "後でもう一度お試しください。"
 
-#: tqsl.cpp:3181 tqsl.cpp:3246
+#: tqsl.cpp:3186 tqsl.cpp:3251
 msgid "Unable to update. The nework is down or the LoTW site is too busy."
 msgstr ""
 "更新できません。 ネットワークがダウンしているか、LoTW　サイトがビジー状態で"
 "す。"
 
-#: tqsl.cpp:3184 tqsl.cpp:3249 tqsl.cpp:3692 tqsl.cpp:3727
+#: tqsl.cpp:3189 tqsl.cpp:3254 tqsl.cpp:3697 tqsl.cpp:3732
 msgid "Unable to connect to the update site."
 msgstr "更新サイトに接続できません。"
 
-#: tqsl.cpp:3187
+#: tqsl.cpp:3192
 msgid "Error downloading new configuration file:"
 msgstr "新しい設定ファイルのダウンロードエラー："
 
-#: tqsl.cpp:3189 tqsl.cpp:3254 tqsl.cpp:3503
+#: tqsl.cpp:3194 tqsl.cpp:3259 tqsl.cpp:3508
 msgid "Update"
 msgstr "更新"
 
-#: tqsl.cpp:3212
+#: tqsl.cpp:3217
 #, c-format
 msgid "Can't open TQSL update file %s: %hs"
 msgstr "新しい設定ファイル　%s　を開くことができません：　%hs"
 
-#: tqsl.cpp:3252
+#: tqsl.cpp:3257
 msgid "Error downloading new file:"
 msgstr "新しい設定ファイルのダウンロードエラー："
 
-#: tqsl.cpp:3466
+#: tqsl.cpp:3471
 msgid "Error checking for expired callsign certificates:"
 msgstr "期限切れのコールサイン証明書の確認でエラー："
 
-#: tqsl.cpp:3467
+#: tqsl.cpp:3472
 msgid "Check Error"
 msgstr "確認のエラー"
 
-#: tqsl.cpp:3470
+#: tqsl.cpp:3475
 #, c-format
 msgid "The certificate for %hs expires in %d days."
 msgstr "%hs　の証明書は、%d　日で期限が切れます。"
 
-#: tqsl.cpp:3473
+#: tqsl.cpp:3478
 #, c-format
 msgid "The certificate for %hs expires in %d days"
 msgstr "%hs　の証明書は、%d　日で期限切れ"
 
-#: tqsl.cpp:3475
+#: tqsl.cpp:3480
 msgid "Do you want to renew it now?"
 msgstr "今、更新しますか？"
 
-#: tqsl.cpp:3477
+#: tqsl.cpp:3482
 msgid "Certificate Expiring"
 msgstr "証明書の期限切れ"
 
-#: tqsl.cpp:3510
+#: tqsl.cpp:3515
 #, c-format
 msgid "A new TQSL release (V%s) is available."
 msgstr "新しい　TQSL　リリース (V%s) が利用可能です。"
 
-#: tqsl.cpp:3527
+#: tqsl.cpp:3532
 #, c-format
 msgid "A new TrustedQSL configuration file (V%s) is available."
 msgstr "新しい　TrustedQSL　設定ファイル　(V%s) が利用可能です。"
 
-#: tqsl.cpp:3540
+#: tqsl.cpp:3545
 msgid "Your system is up to date"
 msgstr "お使いのシステムは最新の状態です"
 
-#: tqsl.cpp:3542
+#: tqsl.cpp:3547
 #, c-format
 msgid "TQSL Version %hs and Configuration Data Version %s"
 msgstr "TQSL バージョン %hs 、設定データのバージョン %s"
 
-#: tqsl.cpp:3544
+#: tqsl.cpp:3549
 msgid "are the newest available"
 msgstr "は利用可能な最新バージョンです"
 
-#: tqsl.cpp:3545
+#: tqsl.cpp:3550
 msgid "No Updates"
 msgstr "アップデートなし"
 
-#: tqsl.cpp:3679 tqsl.cpp:3715
+#: tqsl.cpp:3684 tqsl.cpp:3720
 msgid ""
 "Unable to check for updates - either your Internet connection is down or "
 "LoTW is unreachable."
@@ -1901,274 +1914,274 @@ msgstr ""
 "アップデートを確認できません - あなたのインターネット接続がダウンしているか、"
 "LoTW　に到達できない状態です。"
 
-#: tqsl.cpp:3686 tqsl.cpp:3721
+#: tqsl.cpp:3691 tqsl.cpp:3726
 msgid ""
 "Unable to check for updates. The nework is down or the LoTW site is too busy."
 msgstr ""
 "アップデートを確認できません。 ネットワークがダウンしているか、LoTW　サイトが"
 "ビジー状態です。"
 
-#: tqsl.cpp:3697
+#: tqsl.cpp:3702
 msgid "Error downloading new version information:"
 msgstr "新しいバージョン情報のダウンロードでエラー："
 
-#: tqsl.cpp:3732
+#: tqsl.cpp:3737
 msgid "Error downloading update version information:"
 msgstr "アップデートバージョン情報のダウンロードでエラー："
 
-#: tqsl.cpp:3790
+#: tqsl.cpp:3795
 msgid "You have no callsign certificates to use to sign a log file."
 msgstr "ログファイルに署名するコールサイン証明書がありません。"
 
-#: tqsl.cpp:3792
+#: tqsl.cpp:3797
 msgid "Please install a callsign certificate then try again."
 msgstr "コールサイン証明書をインストールしてから、もう一度お試しください。"
 
-#: tqsl.cpp:3793
+#: tqsl.cpp:3798
 msgid "No Callsign Certificates"
 msgstr "コールサイン証明書がない"
 
-#: tqsl.cpp:3818
+#: tqsl.cpp:3823
 msgid "|ADIF files ("
 msgstr "|ADIFファイル　("
 
-#: tqsl.cpp:3830
+#: tqsl.cpp:3835
 msgid "|Cabrillo files ("
 msgstr "|Cabrillo ファイル ("
 
-#: tqsl.cpp:3833
+#: tqsl.cpp:3838
 msgid "Select file to Sign"
 msgstr "署名するファイルの選択"
 
-#: tqsl.cpp:3849
+#: tqsl.cpp:3854
 msgid "TQSL compressed data files (*.tq8)|*.tq8"
 msgstr "TQSL　圧縮データファイル　(*.tq8)|*.tq8"
 
-#: tqsl.cpp:3850
+#: tqsl.cpp:3855
 msgid "TQSL data files (*.tq7)|*.tq7"
 msgstr "TQSL データファイル (*.tq7)|*.tq7"
 
-#: tqsl.cpp:3852
+#: tqsl.cpp:3857
 msgid "Select file to write to"
 msgstr "書き込むファイルの選択"
 
-#: tqsl.cpp:3867 tqsl.cpp:5131
+#: tqsl.cpp:3872 tqsl.cpp:5136
 msgid "Select Station Location for Signing"
 msgstr "署名する局の所在地を選択"
 
-#: tqsl.cpp:3908
+#: tqsl.cpp:3913
 msgid "Signing abandoned"
 msgstr "署名を中断"
 
-#: tqsl.cpp:4095
+#: tqsl.cpp:4100
 msgid ""
 "TQSL must wait for other running copies of TQSL to exit before backing up..."
 msgstr ""
 "TQSL　はバックアップする前に他の実行中の　TQSL　が終了するのを待つ必要があり"
 "ます..."
 
-#: tqsl.cpp:4110 tqsl.cpp:4639
+#: tqsl.cpp:4115 tqsl.cpp:4644
 #, c-format
 msgid "Error opening save file %s: %hs"
 msgstr "保存ファイル　%s　のオープンでエラー：　%hs"
 
-#: tqsl.cpp:4125
+#: tqsl.cpp:4130
 msgid "Saving callsign certificates"
 msgstr "コールサイン証明書を保存"
 
-#: tqsl.cpp:4169
+#: tqsl.cpp:4174
 #, c-format
 msgid "Saving callsign certificate for %hs"
 msgstr "%hs のコールサイン証明書を保存"
 
-#: tqsl.cpp:4202
+#: tqsl.cpp:4207
 msgid "Saving Station Locations"
 msgstr "局の所在地を保存"
 
-#: tqsl.cpp:4217
+#: tqsl.cpp:4222
 msgid "Saving TQSL Preferences"
 msgstr "TQSL　環境設定を保存"
 
-#: tqsl.cpp:4268
+#: tqsl.cpp:4273
 msgid "Save operation complete."
 msgstr "保存操作は完了しました。"
 
-#: tqsl.cpp:4276
+#: tqsl.cpp:4281
 #, c-format
 msgid "Error performing automatic backup: %hs"
 msgstr "自動バックアップの実行でエラー：　%hs"
 
-#: tqsl.cpp:4277
+#: tqsl.cpp:4282
 msgid "Backup Error"
 msgstr "バックアップエラー"
 
-#: tqsl.cpp:4279 tqsl.cpp:4298
+#: tqsl.cpp:4284 tqsl.cpp:4303
 #, c-format
 msgid "Backup operation failed: %hs"
 msgstr "バックアップ操作は失敗：　%hs"
 
-#: tqsl.cpp:4289
+#: tqsl.cpp:4294
 msgid "Enter file to save to"
 msgstr "保存するファイル名の入力"
 
-#: tqsl.cpp:4290
+#: tqsl.cpp:4295
 msgid "Configuration files (*.tbk)|*.tbk|All files (*.*)|*.*"
 msgstr "設定ファイル　(*.tbk)|*.tbk|すべてのファイル (*.*)|*.*"
 
-#: tqsl.cpp:4329
+#: tqsl.cpp:4334
 #, c-format
 msgid "Restoring callsign certificate for %hs"
 msgstr "%hs のコールサインを証明書の復元"
 
-#: tqsl.cpp:4375
+#: tqsl.cpp:4380
 msgid "Restoring Preferences"
 msgstr "環境設定の復元"
 
-#: tqsl.cpp:4434
+#: tqsl.cpp:4439
 msgid "Restoring Station Locations"
 msgstr "局の所在地を復元"
 
-#: tqsl.cpp:4455
+#: tqsl.cpp:4460
 msgid "Restoring QSO records"
 msgstr "QSO　レコードの復元"
 
-#: tqsl.cpp:4505
+#: tqsl.cpp:4510
 #, c-format
 msgid "Error importing station locations: %hs"
 msgstr "局の所在のインポートでエラー: %hs"
 
-#: tqsl.cpp:4571
+#: tqsl.cpp:4576
 msgid "Restoring Callsign Certificates"
 msgstr "コールサイン証明書の復元"
 
-#: tqsl.cpp:4578 tqsl.cpp:4586 tqsl.cpp:4591
+#: tqsl.cpp:4583 tqsl.cpp:4591 tqsl.cpp:4596
 #, c-format
 msgid "Error parsing saved configuration file: %hs"
 msgstr "保存された設定ファイルの解析でエラー: %hs"
 
-#: tqsl.cpp:4595
+#: tqsl.cpp:4600
 msgid "Restore Complete."
 msgstr "復元が完了しました。"
 
-#: tqsl.cpp:4609
+#: tqsl.cpp:4614
 #, c-format
 msgid "Error parsing station location file: %hs"
 msgstr "局の所在地ファイルの解析でエラー：　%hs"
 
-#: tqsl.cpp:4621
+#: tqsl.cpp:4626
 msgid "Select saved configuration file"
 msgstr "保存された設定ファイルの選択"
 
-#: tqsl.cpp:4622
+#: tqsl.cpp:4627
 msgid "Saved configuration files (*.tbk)|*.tbk"
 msgstr "保存された設定ファイル (*.tbk)|*.tbk"
 
-#: tqsl.cpp:4652
+#: tqsl.cpp:4657
 #, c-format
 msgid "Restore operation failed: %hs"
 msgstr "復元操作は失敗: %hs"
 
-#: tqsl.cpp:4809
+#: tqsl.cpp:4814
 msgid "Specify dialog action - abort, all, compliant or ask"
 msgstr "ダイアログの反応を指定 - 中止、すべて、準拠、質問"
 
-#: tqsl.cpp:4810
+#: tqsl.cpp:4815
 msgid "Specify start date for QSOs to sign"
 msgstr "署名する QSO の開始日を指定"
 
-#: tqsl.cpp:4811
+#: tqsl.cpp:4816
 msgid "Specify default callsign for log signing"
 msgstr "ログに署名するデフォルトのコールサインを指定"
 
-#: tqsl.cpp:4812
+#: tqsl.cpp:4817
 msgid "Specify end date for QSOs to sign"
 msgstr "署名する QSO の終了日を指定"
 
-#: tqsl.cpp:4813
+#: tqsl.cpp:4818
 msgid "Suppress date range dialog"
 msgstr "日付範囲のダイアログボックスを非表示"
 
-#: tqsl.cpp:4814
+#: tqsl.cpp:4819
 msgid "Import a certificate file (.p12 or .tq6)"
 msgstr "証明書ファイル　(.p12　または　.tq6) をインポート"
 
-#: tqsl.cpp:4815
+#: tqsl.cpp:4820
 msgid "Selects Station Location"
 msgstr "局の所在地を選択"
 
-#: tqsl.cpp:4816
+#: tqsl.cpp:4821
 msgid "Edit (if used with -l) or create Station Location"
 msgstr "局の所在地を編集（-l　オプションの場合）または作成"
 
-#: tqsl.cpp:4817
+#: tqsl.cpp:4822
 msgid "Output file name (defaults to input name minus extension plus .tq8"
 msgstr ""
 "出力ファイル名（デフォルトは入力ファイル名の拡張子を　.tq8　としたもの）"
 
-#: tqsl.cpp:4818
+#: tqsl.cpp:4823
 msgid "Upload after signing instead of saving"
 msgstr "署名後、保存する代わりにアップロード"
 
-#: tqsl.cpp:4819
+#: tqsl.cpp:4824
 msgid "Exit after processing log (otherwise start normally)"
 msgstr "ログの処理後に終了（そうでなければ通常起動）"
 
-#: tqsl.cpp:4820
+#: tqsl.cpp:4825
 msgid "Password for the signing key"
 msgstr "署名鍵のパスワード"
 
-#: tqsl.cpp:4821
+#: tqsl.cpp:4826
 msgid "Quiet Mode - same behavior as -x"
 msgstr "Quiet　モード - -x　オプションと同じ動作"
 
-#: tqsl.cpp:4822
+#: tqsl.cpp:4827
 msgid "File name for diagnostic tracking log"
 msgstr "診断追跡ログのファイル名"
 
-#: tqsl.cpp:4823
+#: tqsl.cpp:4828
 msgid "Display the version information and exit"
 msgstr "バージョン情報を表示して終了"
 
-#: tqsl.cpp:4824
+#: tqsl.cpp:4829
 msgid "Check for updates to tqsl and the configuration file"
 msgstr "tqsl　と設定ファイルのアップデートを確認"
 
-#: tqsl.cpp:4825
+#: tqsl.cpp:4830
 msgid "Display command line help"
 msgstr "コマンドラインヘルプを表示"
 
-#: tqsl.cpp:4826
+#: tqsl.cpp:4831
 msgid "Input ADIF or Cabrillo log file to sign"
 msgstr "署名する　ADIF　または Cabrillo ログファイルを入力"
 
-#: tqsl.cpp:4960 tqsl.cpp:4963
+#: tqsl.cpp:4965 tqsl.cpp:4968
 #, c-format
 msgid "Start date of %s is invalid"
 msgstr "開始日　%s　は無効"
 
-#: tqsl.cpp:4974 tqsl.cpp:4977
+#: tqsl.cpp:4979 tqsl.cpp:4982
 #, c-format
 msgid "End date of %s is invalid"
 msgstr "終了日　%s　は無効"
 
-#: tqsl.cpp:4999
+#: tqsl.cpp:5004
 #, c-format
 msgid "The -a parameter %hs is not recognized"
 msgstr "-a　パラメーター　%hs　が不明"
 
-#: tqsl.cpp:5098
+#: tqsl.cpp:5103
 msgid "No logfile to sign!"
 msgstr "署名するログファイルがない！"
 
-#: tqsl.cpp:5213
+#: tqsl.cpp:5218
 msgid "Please review the introductory documentation before using this program."
 msgstr "このプログラムを使用する前に、説明文書に目を通してください。"
 
-#: tqsl.cpp:5214
+#: tqsl.cpp:5219
 msgid "Notice"
 msgstr "通知"
 
-#: tqsl.cpp:5219
+#: tqsl.cpp:5224
 msgid ""
 "You have no callsign certificate installed on this computer with which to "
 "sign log submissions."
@@ -2176,157 +2189,157 @@ msgstr ""
 "このコンピューターには、ログ提出のときに署名するためのコールサイン証明書がイ"
 "ンストールされていません。"
 
-#: tqsl.cpp:5221
+#: tqsl.cpp:5226
 msgid "Would you like to request a callsign certificate now?"
 msgstr "コールサイン証明書を今、リクエストしますか？"
 
-#: tqsl.cpp:5222
+#: tqsl.cpp:5227
 msgid "Alert"
 msgstr "警告"
 
-#: tqsl.cpp:5338
+#: tqsl.cpp:5343
 msgid "Display Callsign Certificate &Properties"
 msgstr "コールサイン証明書のプロパティを表示 (&P)"
 
-#: tqsl.cpp:5341
+#: tqsl.cpp:5346
 msgid "&Load Callsign Certificate from File"
 msgstr "ファイルからコールサイン証明書をロード (&L)"
 
-#: tqsl.cpp:5342
+#: tqsl.cpp:5347
 msgid "&Save Callsign Certificate to File..."
 msgstr "ファイルにコールサイン証明書を保存 (&S)..."
 
-#: tqsl.cpp:5346
+#: tqsl.cpp:5351
 msgid "Request &New Callsign Certificate..."
 msgstr "新しいコールサイン証明書をリクエスト (&N)..."
 
-#: tqsl.cpp:5347
+#: tqsl.cpp:5352
 msgid "&Renew Callsign Certificate"
 msgstr "コールサイン証明書を更新 (&R)"
 
-#: tqsl.cpp:5352
+#: tqsl.cpp:5357
 msgid "&Delete Callsign Certificate"
 msgstr "コールサイン証明書を削除 (&D)"
 
-#: tqsl.cpp:5358
+#: tqsl.cpp:5363
 msgid "Restore Deleted Callsign Certificate"
 msgstr "削除したコールサイン証明書を復元"
 
-#: tqsl.cpp:5371
+#: tqsl.cpp:5376
 msgid "&Edit"
 msgstr "編集 (&E)"
 
-#: tqsl.cpp:5373
+#: tqsl.cpp:5378
 msgid "&Delete"
 msgstr "削除 (&D)"
 
-#: tqsl.cpp:5382
+#: tqsl.cpp:5387
 msgid "Load Certificate File"
 msgstr "証明書ファイルをロード"
 
-#: tqsl.cpp:5504 crqwiz.h:49
+#: tqsl.cpp:5509 crqwiz.h:49
 msgid "Request a new Callsign Certificate"
 msgstr "新しいコールサイン証明書をリクエスト"
 
-#: tqsl.cpp:5537
+#: tqsl.cpp:5542
 msgid "Do you want to upload this certificate request to LoTW now?"
 msgstr "この証明書リクエストを　LoTW　に今、アップロードしますか？"
 
-#: tqsl.cpp:5540
+#: tqsl.cpp:5545
 msgid "You do not need an account on LoTW to do this."
 msgstr "これを実行するために　LoTW　上のアカウントは必要ありません。"
 
-#: tqsl.cpp:5542
+#: tqsl.cpp:5547
 msgid "Upload"
 msgstr "アップロード"
 
-#: tqsl.cpp:5552
+#: tqsl.cpp:5557
 msgid "tQSL Cert Request files (*."
 msgstr "tQSL　証明書リクエストファイル (*."
 
-#: tqsl.cpp:5554
+#: tqsl.cpp:5559
 msgid "|All files ("
 msgstr "|すべてのファイル ("
 
-#: tqsl.cpp:5555
+#: tqsl.cpp:5560
 msgid "Save request"
 msgstr "リクエストを保存"
 
-#: tqsl.cpp:5558
+#: tqsl.cpp:5563
 msgid "Request cancelled"
 msgstr "リクエストは中止"
 
-#: tqsl.cpp:5619
+#: tqsl.cpp:5624
 #, c-format
 msgid "Error creating callsign certificate request: %hs"
 msgstr "コールサイン証明書リクエストの作成でエラー：　%hs"
 
-#: tqsl.cpp:5619
+#: tqsl.cpp:5624
 msgid "Error creating Callsign Certificate Request"
 msgstr "コールサイン証明書リクエストの作成でエラー"
 
-#: tqsl.cpp:5632
+#: tqsl.cpp:5637
 #, c-format
 msgid "Error opening certificate request file %s: %hs"
 msgstr "証明書リクエストファイル　%s　のオープンでエラー：　%hs"
 
-#: tqsl.cpp:5642
+#: tqsl.cpp:5647
 msgid "Certificate Request"
 msgstr "証明書リクエスト"
 
-#: tqsl.cpp:5646
+#: tqsl.cpp:5651
 msgid "Your certificate request did not upload properly"
 msgstr "証明書リクエストが正常にアップロードできませんでした"
 
-#: tqsl.cpp:5647
+#: tqsl.cpp:5652
 msgid "Please try again."
 msgstr "もう一度お試しください。"
 
-#: tqsl.cpp:5652
+#: tqsl.cpp:5657
 msgid "You may now send your new certificate request ("
 msgstr "あなたの新しい証明書リクエストを送信可能です　("
 
-#: tqsl.cpp:5657
+#: tqsl.cpp:5662
 msgid "to:"
 msgstr "送信先:"
 
-#: tqsl.cpp:5664
+#: tqsl.cpp:5669
 msgid "or "
 msgstr "または"
 
-#: tqsl.cpp:5665
+#: tqsl.cpp:5670
 msgid "see:"
 msgstr "以下を参照してください:"
 
-#: tqsl.cpp:5694 tqsl.cpp:5695
+#: tqsl.cpp:5699 tqsl.cpp:5700
 msgid "Display a Callsign Certificate"
 msgstr "コールサイン証明書を表示"
 
-#: tqsl.cpp:5737 tqsl.cpp:5739
+#: tqsl.cpp:5742 tqsl.cpp:5744
 msgid "Save the Callsign Certificate for"
 msgstr "次のコールサインのコールサイン証明書を保存"
 
-#: tqsl.cpp:5740 tqsl.cpp:5742
+#: tqsl.cpp:5745 tqsl.cpp:5747
 msgid "Display the Callsign Certificate properties for"
 msgstr "次のコールサインのコールサイン証明書のプロパティを表示"
 
-#: tqsl.cpp:5744 tqsl.cpp:5746
+#: tqsl.cpp:5749 tqsl.cpp:5751
 msgid "Renew the Callsign Certificate for"
 msgstr "次のコールサインのコールサイン証明書を更新"
 
-#: tqsl.cpp:5785
+#: tqsl.cpp:5790
 msgid "Enter the name for the new Certificate Container file"
 msgstr "新しい証明書コンテナのファイル名を入力"
 
-#: tqsl.cpp:5786
+#: tqsl.cpp:5791
 msgid "Certificate Container files (*.p12)|*.p12|All files (*.*)|*.*"
 msgstr "証明書コンテナファイル (*.p12)|*.p12|すべてのファイル (*.*)|*.*"
 
-#: tqsl.cpp:5791
+#: tqsl.cpp:5796
 msgid "Enter the password for the certificate container file."
 msgstr "証明書コンテナファイルのパスワードを入力してください。"
 
-#: tqsl.cpp:5793
+#: tqsl.cpp:5798
 msgid ""
 "If you are using a computer system that is shared with others, you should "
 "specify a password to protect this certificate. However, if you are using a "
@@ -2336,7 +2349,7 @@ msgstr ""
 "るため、パスワードを指定するべきです。あなたの個人宅でコンピュータを使用して"
 "いる場合などは、パスワードを指定する必要はありません。"
 
-#: tqsl.cpp:5798
+#: tqsl.cpp:5803
 msgid ""
 "You will have to enter the password any time you load the file into "
 "TrustedQSL."
@@ -2344,208 +2357,208 @@ msgstr ""
 "あなたが　TrustedQSL　にファイルをロードする際に、パスワードを入力する必要が"
 "あります。"
 
-#: tqsl.cpp:5804
+#: tqsl.cpp:5809
 msgid "Certificate Container Password"
 msgstr "証明書コンテナのパスワード"
 
-#: tqsl.cpp:5835
+#: tqsl.cpp:5840
 #, c-format
 msgid "Export to %s failed: %hs"
 msgstr "%s　へのエクスポートに失敗：　%hs"
 
-#: tqsl.cpp:5837
+#: tqsl.cpp:5842
 #, c-format
 msgid "Certificate saved in file %s"
 msgstr "証明書はファイル　%s　に保存"
 
-#: tqsl.cpp:5848
+#: tqsl.cpp:5853
 msgid "This will remove the selected callsign certificate from your system."
 msgstr "選択したコールサイン証明書はあなたのシステムから削除されます。"
 
-#: tqsl.cpp:5850
+#: tqsl.cpp:5855
 msgid "You will NOT be able to recover it by loading a .TQ6 file."
 msgstr ""
 ".TQ6ファイルをロードすることにより、それを復元することは **できません**。"
 
-#: tqsl.cpp:5852
+#: tqsl.cpp:5857
 msgid "You WILL be able to recover it from a container (.p12) file,"
 msgstr "コンテナファイル (.p12) からなら復元することが **できます**。"
 
-#: tqsl.cpp:5854
+#: tqsl.cpp:5859
 msgid "if you have created one via the Callsign Certificate menu's"
 msgstr ""
 "ただし、これはあなたがメニューの「コールサイン証明書を保存」というコマンドを"
 "用いて"
 
-#: tqsl.cpp:5856
+#: tqsl.cpp:5861
 msgid "'Save Callsign Certificate' command."
 msgstr "コンテナファイルを作成した場合は、です。"
 
-#: tqsl.cpp:5858
+#: tqsl.cpp:5863
 msgid "Are you sure you want to delete the certificate?"
 msgstr "本当に証明書を削除してもよろしいですか？"
 
-#: tqsl.cpp:5896
+#: tqsl.cpp:5901
 msgid "There are no deleted Callsign Certificates to restore"
 msgstr "復元する削除されたコールサイン証明書がない"
 
-#: tqsl.cpp:5896 tqsl.cpp:6004
+#: tqsl.cpp:5901 tqsl.cpp:6009
 msgid "Undelete Error"
 msgstr "削除復元のエラー"
 
-#: tqsl.cpp:5907
+#: tqsl.cpp:5912
 msgid "Choose a Callsign Certificate to restore"
 msgstr "復元するコールサイン証明書の選択"
 
-#: tqsl.cpp:5936
+#: tqsl.cpp:5941
 msgid "Select a Station Location to process"
 msgstr "処理する局の所在地を選択"
 
-#: tqsl.cpp:5955 tqsl.cpp:5957
+#: tqsl.cpp:5960 tqsl.cpp:5962
 msgid "Edit Station Location "
 msgstr "局の所在地を編集"
 
-#: tqsl.cpp:5958 tqsl.cpp:5960
+#: tqsl.cpp:5963 tqsl.cpp:5965
 msgid "Delete Station Location "
 msgstr "局の所在地を削除"
 
-#: tqsl.cpp:5961 tqsl.cpp:5963
+#: tqsl.cpp:5966 tqsl.cpp:5968
 msgid "Display Station Location Properties for "
 msgstr "次のコールサインの局の所在地のプロパティを表示"
 
-#: tqsl.cpp:5983
+#: tqsl.cpp:5988
 msgid "This will remove this station location from your system."
 msgstr "この局の所在地はあなたのシステムから削除されます。"
 
-#: tqsl.cpp:5985
+#: tqsl.cpp:5990
 msgid "Are you sure you want to delete this station location?"
 msgstr "本当にこの局の所在地を削除してもよろしいですか？"
 
-#: tqsl.cpp:6004
+#: tqsl.cpp:6009
 msgid "There are no deleted Station Locations to restore"
 msgstr "復元する削除済みの局の所在地がない"
 
-#: tqsl.cpp:6015
+#: tqsl.cpp:6020
 msgid "Choose a Station Location to restore"
 msgstr "復元する局の所在地を選択"
 
-#: tqsl.cpp:6076
+#: tqsl.cpp:6081
 msgid "Please choose language:"
 msgstr "言語を選択してください："
 
-#: tqsl.cpp:6128
+#: tqsl.cpp:6133
 msgid "Certificate Properties"
 msgstr "証明書のプロパティ"
 
-#: tqsl.cpp:6131
+#: tqsl.cpp:6136
 msgid "Begins: "
 msgstr "開始：　"
 
-#: tqsl.cpp:6132
+#: tqsl.cpp:6137
 msgid "Expires: "
 msgstr "有効期限：　"
 
-#: tqsl.cpp:6133
+#: tqsl.cpp:6138
 msgid "Organization: "
 msgstr "組織：　"
 
-#: tqsl.cpp:6135
+#: tqsl.cpp:6140
 msgid "Serial: "
 msgstr "シリアル番号：　"
 
-#: tqsl.cpp:6136
+#: tqsl.cpp:6141
 msgid "Operator: "
 msgstr "オペレーター：　"
 
-#: tqsl.cpp:6137 tqsl.cpp:6315
+#: tqsl.cpp:6142 tqsl.cpp:6320
 msgid "Call sign: "
 msgstr "コールサイン：　"
 
-#: tqsl.cpp:6138 tqsl.cpp:6316
+#: tqsl.cpp:6143 tqsl.cpp:6321
 msgid "DXCC Entity: "
 msgstr "DXCC　エンティティ: "
 
-#: tqsl.cpp:6139
+#: tqsl.cpp:6144
 msgid "QSO Start Date: "
 msgstr "QSO　開始日：　"
 
-#: tqsl.cpp:6140
+#: tqsl.cpp:6145
 msgid "QSO End Date: "
 msgstr "QSO　終了日：　"
 
-#: tqsl.cpp:6141
+#: tqsl.cpp:6146
 msgid "Password: "
 msgstr "パスワード：　"
 
-#: tqsl.cpp:6237
+#: tqsl.cpp:6242
 msgid "<ERROR>"
 msgstr "<エラー>"
 
-#: tqsl.cpp:6240 tqsl.cpp:6243
+#: tqsl.cpp:6245 tqsl.cpp:6248
 msgid "None"
 msgstr "None"
 
-#: tqsl.cpp:6246
+#: tqsl.cpp:6251
 msgid "Password protected"
 msgstr "パスワード保護"
 
-#: tqsl.cpp:6252
+#: tqsl.cpp:6257
 msgid "Certificate Request:"
 msgstr "証明書リクエスト:"
 
-#: tqsl.cpp:6254
+#: tqsl.cpp:6259
 msgid "Awaiting response from ARRL"
 msgstr "ARRL　からの返答待ち"
 
-#: tqsl.cpp:6269
+#: tqsl.cpp:6274
 msgid "Replaced"
 msgstr "置き換え"
 
-#: tqsl.cpp:6274
+#: tqsl.cpp:6279
 msgid "Expired"
 msgstr "期限切れ"
 
-#: tqsl.cpp:6312
+#: tqsl.cpp:6317
 msgid "Station Location Properties"
 msgstr "局の所在地のプロパティ"
 
-#: tqsl.cpp:6317
+#: tqsl.cpp:6322
 msgid "Grid Square: "
 msgstr "グリッドスクエア：　"
 
-#: tqsl.cpp:6318
+#: tqsl.cpp:6323
 msgid "ITU Zone: "
 msgstr "ITU　ゾーン：　"
 
-#: tqsl.cpp:6319
+#: tqsl.cpp:6324
 msgid "CQ Zone: "
 msgstr "CQ　ゾーン：　"
 
-#: tqsl.cpp:6320
+#: tqsl.cpp:6325
 msgid "IOTA Locator: "
 msgstr "IOTA　ロケータ：　"
 
-#: tqsl.cpp:6321 tqsl.cpp:6328
+#: tqsl.cpp:6326 tqsl.cpp:6333
 msgid "State: "
 msgstr "状態：　"
 
-#: tqsl.cpp:6322
+#: tqsl.cpp:6327
 msgid "County: "
 msgstr "County：　"
 
-#: tqsl.cpp:6323 tqsl.cpp:6325 tqsl.cpp:6329
+#: tqsl.cpp:6328 tqsl.cpp:6330 tqsl.cpp:6334
 msgid "Park: "
 msgstr "Park: "
 
-#: tqsl.cpp:6324 tqsl.cpp:6327
+#: tqsl.cpp:6329 tqsl.cpp:6332
 msgid "Province: "
 msgstr "Province: "
 
-#: tqsl.cpp:6326
+#: tqsl.cpp:6331
 msgid "Oblast: "
 msgstr "Oblast：　"
 
-#: tqsl.cpp:6408
+#: tqsl.cpp:6413
 msgid "Enter the password to unlock the callsign certificate"
 msgstr "コールサイン証明書のロックを解除するためのパスワード入力"
 

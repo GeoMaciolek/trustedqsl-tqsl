@@ -802,7 +802,10 @@ QSODataDialog::UpdateControls() {
 	_recup_ctrl->Enable(_recno < static_cast<int>(_reclist->size()));
 	_rectop_ctrl->Enable(_recno < static_cast<int>(_reclist->size()));
 	_recno_ctrl->SetValue(wxString::Format(wxT("%d"), _recno));
-	_recno_label_ctrl->SetLabel(wxString::Format(wxT("%d QSO Record%hs"), static_cast<int>(_reclist->size()),
-		(_reclist->size() == 1) ? "" : "s"));
+	if (_reclist->size() == 1) {
+		_recno_label_ctrl->SetLabel(_("One QSO Record"));
+	} else {
+		_recno_label_ctrl->SetLabel(wxString::Format(_("%d QSO Records"), static_cast<int>(_reclist->size())));
+	}
 	_recadd_ctrl->Enable(_newrec < 0);
 }

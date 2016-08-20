@@ -2645,10 +2645,15 @@ int MyFrame::UploadFile(const wxString& infile, const char* filename, int numrec
 
 	UploadDialog* upload = NULL;
 
-	if (numrecs > 0)
-		wxLogMessage(_("Attempting to upload %d QSO%hs"), numrecs, numrecs == 1 ? "" : "s");
-	else
+	if (numrecs > 0) {
+		if (numrecs == 1) {
+			wxLogMessage(_("Attempting to upload one QSO"));
+		} else {
+			wxLogMessage(_("Attempting to upload %d QSOs"), numrecs);
+		}
+	} else {
 		wxLogMessage(_("Attempting to upload %s"), fileType.c_str());
+	}
 
 	if(this && !quiet) {
 		if (fileType == wxT("Log")) {
