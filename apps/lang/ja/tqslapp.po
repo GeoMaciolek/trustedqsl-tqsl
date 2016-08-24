@@ -127,13 +127,15 @@ msgstr "コールサイン："
 
 #: crqwiz.cpp:266
 msgid "Date of the first QSO you made or will make using this callsign:"
-msgstr ""
+msgstr "このコールサインを使用した (またはこれから使用する) 最初の QSO の日付:"
 
 #: crqwiz.cpp:314
 msgid ""
 "Date of the last QSO you made or will make using this callsign:\n"
 "(Leave this date blank if this is still your valid callsign.)"
 msgstr ""
+"このコールサインを使用した (またはこれから使用する) 最後の QSO の日付:\n"
+"(このコールサインが今後も有効なものであれば空欄のままにしてください)"
 
 #: crqwiz.cpp:378
 msgid "Zip/Postal"
@@ -267,6 +269,7 @@ msgid ""
 "The date of your first QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"あなたの QSO　の最初の日付が、選択された DXCC エンティティ　%2$hs の有効である最初の日付 (%1$hs)より前です"
 
 #: crqwiz.cpp:867
 #, c-format
@@ -274,6 +277,7 @@ msgid ""
 "The date of your first QSO is after the last valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"あなたの QSO　の最初の日付が、選択された DXCC エンティティ　%2$hs の有効である最後の日付 (%1$hs)より後です"
 
 #: crqwiz.cpp:871
 #, c-format
@@ -281,6 +285,7 @@ msgid ""
 "The date of your last QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"あなたの QSO　の最後の日付が、選択された DXCC エンティティ　%2$hs の有効である最初の日付 (%1$hs)より前です"
 
 #: crqwiz.cpp:875
 #, c-format
@@ -288,6 +293,7 @@ msgid ""
 "The date of your last QSO is after the last valid date (%hs) of the selected "
 "DXCC Entity %hs"
 msgstr ""
+"あなたの QSO　の最後の日付が、選択された DXCC エンティティ　%2$hs の有効である最後の日付 (%1$hs)より後です"
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:910
@@ -724,12 +730,12 @@ msgstr "%d 件の　QSO　レコードを　%s　に書き込み"
 
 #: qsodatadialog.cpp:806
 msgid "One QSO Record"
-msgstr ""
+msgstr "1 件の QSO レコード"
 
 #: qsodatadialog.cpp:808
 #, c-format
 msgid "%d QSO Records"
-msgstr ""
+msgstr "%d 件の QSO レコード"
 
 #: stationdial.cpp:56 tqsl.cpp:5373
 msgid "&Properties"
@@ -1594,17 +1600,17 @@ msgstr ""
 
 #: tqsl.cpp:2650
 msgid "Attempting to upload one QSO"
-msgstr ""
+msgstr "これより 1 件のQSOをアップロード"
 
 #: tqsl.cpp:2652
 #, c-format
 msgid "Attempting to upload %d QSOs"
-msgstr ""
+msgstr "これより %d 件のQSOをアップロード"
 
 #: tqsl.cpp:2655
 #, c-format
 msgid "Attempting to upload %s"
-msgstr "これより　%s のアップロード"
+msgstr "これより　%s をアップロード"
 
 #: tqsl.cpp:2662
 msgid "Uploading Callsign Certificate"

@@ -2,13 +2,13 @@
 # Copyright (C) 2015-2016 The American Radio Relay League
 # This file is distributed under the same license as the tqsl package.
 # Rick Murphy/K1MU.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-20 18:22-0400\n"
-"PO-Revision-Date: 2016-07-18 12:00+0200\n"
+"PO-Revision-Date: 2016-08-22 14:24+0200\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: TQSL Developers\n"
 "Language: de\n"
@@ -131,12 +131,15 @@ msgstr "Rufzeichen:"
 #: crqwiz.cpp:266
 msgid "Date of the first QSO you made or will make using this callsign:"
 msgstr ""
+"Datum des ersten QSOs oder geplanten ersten QSOs mit diesem Rufzeichen:"
 
 #: crqwiz.cpp:314
 msgid ""
 "Date of the last QSO you made or will make using this callsign:\n"
 "(Leave this date blank if this is still your valid callsign.)"
 msgstr ""
+"Datum des letzten oder geplanten letzten QSOs mit diesem Rufzeichen:\n"
+"(Bitte frei lassen, wenn dies ihr aktuelles Rufzeichen ist.)"
 
 #: crqwiz.cpp:378
 msgid "Zip/Postal"
@@ -276,6 +279,8 @@ msgid ""
 "The date of your first QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"Das Datum Ihres ersten QSOs liegt vor dem ersten Gültigkeitstages (%hs) des "
+"ausgewählten DXCC-Landes %hs"
 
 #: crqwiz.cpp:867
 #, c-format
@@ -283,6 +288,8 @@ msgid ""
 "The date of your first QSO is after the last valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"Das Datum Ihres ersten QSOs liegt nach dem letzten Gültigkeitstag (%hs) des "
+"ausgewählten DXCC-Landes %hs"
 
 #: crqwiz.cpp:871
 #, c-format
@@ -290,6 +297,8 @@ msgid ""
 "The date of your last QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"Das Datum Ihres letzten QSOs liegt vor dem ersten Gültigkeitstages (%hs) des "
+"ausgewählten DXCC-Landes %hs"
 
 #: crqwiz.cpp:875
 #, c-format
@@ -297,6 +306,8 @@ msgid ""
 "The date of your last QSO is after the last valid date (%hs) of the selected "
 "DXCC Entity %hs"
 msgstr ""
+"Das Datum Ihres letzten QSOs liegt nach dem letzten Gültigkeitstag (%hs) des "
+"ausgewählten DXCC-Landes %hs"
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:910
@@ -406,8 +417,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Möchten Sie wirklich dieses QSO-Enddatum setzen?"
 
-#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118
-#: tqsl.cpp:5864 tqsl.cpp:5991 tqsl_prefs.cpp:431
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118 tqsl.cpp:5864
+#: tqsl.cpp:5991 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Warnung"
 
@@ -478,7 +489,7 @@ msgstr "Kennworteingaben stimmen nicht überein."
 
 #: getpassword.cpp:157
 msgid "Password confirmed"
-msgstr "74 - Kennwort nicht bestätigt"
+msgstr "Kennwort bestätigt"
 
 #: loadcertwiz.cpp:40
 msgid "Import completed successfully"
@@ -733,16 +744,16 @@ msgstr "ADIF-Dateien (*.adi;*.adif)|*.adi;*.adif|Alle Dateien (*.*)|*.*."
 #: qsodatadialog.cpp:656
 #, c-format
 msgid "Wrote %d QSO records to %s"
-msgstr "%d QSO-Aufzeichnungen in %s geschrieben"
+msgstr "%d QSO-Einträge in %s geschrieben"
 
 #: qsodatadialog.cpp:806
 msgid "One QSO Record"
-msgstr ""
+msgstr "Ein QSO Eintrag"
 
 #: qsodatadialog.cpp:808
 #, c-format
 msgid "%d QSO Records"
-msgstr ""
+msgstr "%d QSO Einträge"
 
 #: stationdial.cpp:56 tqsl.cpp:5373
 msgid "&Properties"
@@ -1604,12 +1615,12 @@ msgstr "Fehler: Datei konnte nicht hochgeladen werden (CURL Init-Fehler)"
 
 #: tqsl.cpp:2650
 msgid "Attempting to upload one QSO"
-msgstr ""
+msgstr "Versuche ein QSO hochzuladen"
 
 #: tqsl.cpp:2652
 #, c-format
 msgid "Attempting to upload %d QSOs"
-msgstr ""
+msgstr "Versuche %d QSOs hochzuladen"
 
 #: tqsl.cpp:2655
 #, c-format
@@ -2167,7 +2178,7 @@ msgstr "Befehlszeilen-Hilfe anzeigen"
 
 #: tqsl.cpp:4831
 msgid "Input ADIF or Cabrillo log file to sign"
-msgstr "ADIF- oder Cabrillo-Log-Datei zum signieren laden"
+msgstr "ADIF- oder Cabrillo-Log-Datei zum Signieren laden"
 
 #: tqsl.cpp:4965 tqsl.cpp:4968
 #, c-format
@@ -2186,7 +2197,7 @@ msgstr "Der Parameter -a '%hs' wird nicht erkannt"
 
 #: tqsl.cpp:5103
 msgid "No logfile to sign!"
-msgstr "Keine Logdatei zum signieren!"
+msgstr "Keine Logdatei zum Signieren!"
 
 #: tqsl.cpp:5218
 msgid "Please review the introductory documentation before using this program."
@@ -2827,11 +2838,11 @@ msgstr "Standort-Dateneingabe abgeschlossen"
 
 #: tqslwiz.cpp:496
 msgid "Select or enter name of this station location"
-msgstr "Wählen Sie aus oder geben Sie den Namen dieses Standorts ein"
+msgstr "Wählen Sie aus oder geben Sie den Namen dieses Standortes ein"
 
 #: tqslwiz.cpp:519
 msgid "Station Location Name"
-msgstr "Name des Standorts"
+msgstr "Name des Standortes"
 
 #: tqslwiz.cpp:561
 msgid "Station name must be provided"

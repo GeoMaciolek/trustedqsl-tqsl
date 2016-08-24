@@ -2,13 +2,13 @@
 # Copyright (C) 2015-2016 The American Radio Relay League
 # This file is distributed under the same license as the tqsl package.
 # Rick Murphy/K1MU.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: V2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-20 18:22-0400\n"
-"PO-Revision-Date: 2016-07-22 17:58+0200\n"
+"PO-Revision-Date: 2016-08-22 11:16+0200\n"
 "Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: I4FYV Salvatore Besso <salvatore.besso@alice.it>\n"
 "Language: it\n"
@@ -132,13 +132,15 @@ msgstr "Nominativo:"
 
 #: crqwiz.cpp:266
 msgid "Date of the first QSO you made or will make using this callsign:"
-msgstr ""
+msgstr "Data del primo QSO che hai fatto o che farai usando questo nominativo:"
 
 #: crqwiz.cpp:314
 msgid ""
 "Date of the last QSO you made or will make using this callsign:\n"
 "(Leave this date blank if this is still your valid callsign.)"
 msgstr ""
+"Data dell'ultimo QSO che hai fatto o che farai usando questo nominativo:\n"
+"(Lascia vuota questa data se questo è ancora il tuo nominativo valido.)"
 
 #: crqwiz.cpp:378
 msgid "Zip/Postal"
@@ -277,6 +279,8 @@ msgid ""
 "The date of your first QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"La data del tuo primo QSO è anteriore alla prima data valida (%hs) "
+"dell'entità DXCC selezionata %hs"
 
 #: crqwiz.cpp:867
 #, c-format
@@ -284,6 +288,8 @@ msgid ""
 "The date of your first QSO is after the last valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"La data del tuo primo QSO è posteriore all'ultima data valida (%hs) "
+"dell'entità DXCC selezionata %hs"
 
 #: crqwiz.cpp:871
 #, c-format
@@ -291,6 +297,8 @@ msgid ""
 "The date of your last QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"La data del tuo ultimo QSO è anteriore alla prima data valida (%hs) "
+"dell'entità DXCC selezionata %hs"
 
 #: crqwiz.cpp:875
 #, c-format
@@ -298,6 +306,8 @@ msgid ""
 "The date of your last QSO is after the last valid date (%hs) of the selected "
 "DXCC Entity %hs"
 msgstr ""
+"La data del tuo ultimo QSO è posteriore all'ultima data valida (%hs) "
+"dell'entità DXCC selezionata %hs"
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:910
@@ -408,8 +418,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Sei sicuro di voler mantenere questa 'data fine dei QSO'?"
 
-#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118
-#: tqsl.cpp:5864 tqsl.cpp:5991 tqsl_prefs.cpp:431
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118 tqsl.cpp:5864
+#: tqsl.cpp:5991 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Attenzione"
 
@@ -740,12 +750,12 @@ msgstr "Ha scritto %d registrazioni di QSO su %s"
 
 #: qsodatadialog.cpp:806
 msgid "One QSO Record"
-msgstr ""
+msgstr "Una registrazione di QSO"
 
 #: qsodatadialog.cpp:808
 #, c-format
 msgid "%d QSO Records"
-msgstr ""
+msgstr "%d registrazioni di QSO"
 
 #: stationdial.cpp:56 tqsl.cpp:5373
 msgid "&Properties"
@@ -1610,12 +1620,12 @@ msgstr "Errore: Impossibile caricare il file (errore inizializzazione CURL)"
 
 #: tqsl.cpp:2650
 msgid "Attempting to upload one QSO"
-msgstr ""
+msgstr "Tentativo di caricare un QSO"
 
 #: tqsl.cpp:2652
 #, c-format
 msgid "Attempting to upload %d QSOs"
-msgstr ""
+msgstr "Tentativo di caricare %d QSO"
 
 #: tqsl.cpp:2655
 #, c-format

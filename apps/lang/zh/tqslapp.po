@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: V2.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-20 18:22-0400\n"
-"PO-Revision-Date: 2016-07-21 13:38+0800\n"
+"PO-Revision-Date: 2016-08-22 16:42+0800\n"
 "Last-Translator: Caros Hsu <bh4txn@gmail.com>\n"
 "Language-Team: TQSL Developers\n"
 "Language: zh\n"
@@ -117,13 +117,15 @@ msgstr "呼号："
 
 #: crqwiz.cpp:266
 msgid "Date of the first QSO you made or will make using this callsign:"
-msgstr ""
+msgstr "该呼号第一个QSO的日期："
 
 #: crqwiz.cpp:314
 msgid ""
 "Date of the last QSO you made or will make using this callsign:\n"
 "(Leave this date blank if this is still your valid callsign.)"
 msgstr ""
+"该呼号最后一个QSO的日期：\n"
+"(该日期留空如果这呼号仍然是你的有效呼号)"
 
 #: crqwiz.cpp:378
 msgid "Zip/Postal"
@@ -242,6 +244,7 @@ msgid ""
 "The date of your first QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"你的第一个QSO日期在你的第一个有效日期 (%hs) （在选定的DXCC分区 %hs ）之前"
 
 #: crqwiz.cpp:867
 #, c-format
@@ -249,6 +252,7 @@ msgid ""
 "The date of your first QSO is after the last valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"你的第一个QSO日期在你的最后有效日期 (%hs) （在选定的DXCC分区 %hs ）之后"
 
 #: crqwiz.cpp:871
 #, c-format
@@ -256,6 +260,7 @@ msgid ""
 "The date of your last QSO is before the first valid date (%hs) of the "
 "selected DXCC Entity %hs"
 msgstr ""
+"你的最后一个QSO日期在你的第一个有效日期 (%hs) （在选定的DXCC分区 %hs ）之前"
 
 #: crqwiz.cpp:875
 #, c-format
@@ -263,6 +268,7 @@ msgid ""
 "The date of your last QSO is after the last valid date (%hs) of the selected "
 "DXCC Entity %hs"
 msgstr ""
+"你的最后一个QSO日期在你的最后有效日期 (%hs) （在选定的DXCC分区 %hs ）之后"
 
 #. TRANSLATORS: first argument is callsign (%s), second is the related DXCC entity name (%hs)
 #: crqwiz.cpp:910
@@ -359,8 +365,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "你确定要保留“QSO到期日期”吗？"
 
-#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118
-#: tqsl.cpp:5864 tqsl.cpp:5991 tqsl_prefs.cpp:431
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118 tqsl.cpp:5864
+#: tqsl.cpp:5991 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "警告"
 
@@ -672,16 +678,16 @@ msgstr "ADIF 文件 (*.adi;*.adif)|*.adi;*.adif|所有文件 (*.*)|*.*."
 #: qsodatadialog.cpp:656
 #, c-format
 msgid "Wrote %d QSO records to %s"
-msgstr "写入 %s 共 %d 个QSO 记录"
+msgstr "共写入 %d 个QSO记录到 %s 中"
 
 #: qsodatadialog.cpp:806
 msgid "One QSO Record"
-msgstr ""
+msgstr "一个QSO记录"
 
 #: qsodatadialog.cpp:808
 #, c-format
 msgid "%d QSO Records"
-msgstr ""
+msgstr "%d 个QSO记录"
 
 #: stationdial.cpp:56 tqsl.cpp:5373
 msgid "&Properties"
@@ -1059,7 +1065,7 @@ msgstr "忽略"
 msgid ""
 "Your custom mode map %s conflicts with the standard mode definition for %hs "
 "and was deleted."
-msgstr "你的自定义模式对应与标准的模式定义相冲突已被删除。"
+msgstr "你的自定义模式 %s 对应与标准的 %hs 模式定义相冲突，已被删除。"
 
 #: tqsl.cpp:874
 #, c-format
@@ -1489,12 +1495,12 @@ msgstr "错误：不能上传文件 （CURL 初始化错误）"
 
 #: tqsl.cpp:2650
 msgid "Attempting to upload one QSO"
-msgstr ""
+msgstr "尝试上传一个QSO"
 
 #: tqsl.cpp:2652
 #, c-format
 msgid "Attempting to upload %d QSOs"
-msgstr ""
+msgstr "尝试上传 %d 个QSO"
 
 #: tqsl.cpp:2655
 #, c-format
