@@ -3,6 +3,9 @@ TQSLLIB changes
 
 2.5
 ---
+Fix "OpenSSL error - bad end line" by ensuring that there's always a 
+newline starting a new certificate.
+
 Add the ability to pull DXCC Entity valid date ranges to the TQSL
 configuration file.
 

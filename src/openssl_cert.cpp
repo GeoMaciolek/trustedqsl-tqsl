@@ -4462,8 +4462,9 @@ tqsl_store_cert(const char *pem, X509 *cert, const char *certfile, int type, boo
 #ifdef _WIN32
 	free(wpath);
 #endif
+	// Make sure there's always a newline between certs
 	size_t pemlen = strlen(pem);
-	if (fwrite(pem, 1, pemlen, out) != pemlen) {
+	if (fwrite("\n", 1, 1, out) != 1 || fwrite(pem, 1, pemlen, out) != pemlen) {
 		strncpy(tQSL_ErrorFile, certfile, sizeof tQSL_ErrorFile);
 		tQSL_Error = TQSL_SYSTEM_ERROR;
 		tQSL_Errno = errno;
