@@ -5,3 +5,4 @@ msgfmt fr/tqslapp.po -o fr/tqslapp.mo
 msgfmt es/tqslapp.po -o es/tqslapp.mo
 msgfmt de/tqslapp.po -o de/tqslapp.mo
 msgfmt zh/tqslapp.po -o zh/tqslapp.mo
+msgfmt ru/tqslapp.po -o ru/tqslapp.mo

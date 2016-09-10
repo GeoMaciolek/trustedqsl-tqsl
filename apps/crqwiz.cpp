@@ -773,7 +773,7 @@ CRQ_IntroPage::validate() {
 
 	long old_dxcc;
 	old_dxcc = Parent()->dxcc;
-	
+
 	tQSL_Date oldStartDate;
 	tQSL_Date oldEndDate;
 	tQSL_Date startDate;
@@ -791,7 +791,7 @@ CRQ_IntroPage::validate() {
 		valMsg = _("You must select a DXCC entity.");
 		goto notok;
 	}
-	
+
 	if (Parent()->dxcc != old_dxcc) {
 		if (tqsl_isDateValid(&startDate) && !tqsl_isDateNull(&startDate) &&
 		    tqsl_compareDates(&Parent()->qsonotbefore, &oldStartDate) == 0) {
@@ -836,7 +836,7 @@ CRQ_IntroPage::validate() {
 	if (tqsl_getDXCCEntityName(Parent()->dxcc, &dxccname))
 		dxccname = "UNKNOWN";
 	if (!tqsl_isDateValid(&startDate)) {
-		startDate.year = 1945; startDate.month=11; startDate.day = 1;
+		startDate.year = 1945; startDate.month = 11; startDate.day = 1;
 	}
 	tqsl_convertDateToText(&startDate, startStr, sizeof startStr);
 
