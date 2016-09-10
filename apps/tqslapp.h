@@ -197,28 +197,30 @@ class MyFrame : public wxFrame {
 // language data
 static const wxLanguage langIds[] = {
     wxLANGUAGE_DEFAULT,
-    wxLANGUAGE_FRENCH,
-    wxLANGUAGE_ITALIAN,
-    wxLANGUAGE_GERMAN,
-    wxLANGUAGE_PORTUGUESE,
-    wxLANGUAGE_SPANISH,
     wxLANGUAGE_CHINESE,
+    wxLANGUAGE_ENGLISH,
+    wxLANGUAGE_FRENCH,
+    wxLANGUAGE_GERMAN,
+    wxLANGUAGE_ITALIAN,
     wxLANGUAGE_JAPANESE,
-    wxLANGUAGE_ENGLISH
+    wxLANGUAGE_PORTUGUESE,
+    wxLANGUAGE_RUSSIAN,
+    wxLANGUAGE_SPANISH,
 };
 
 // note that it makes no sense to translate these strings, they are
 // shown before we set the locale anyhow
 const wxString langNames[] = {
     wxT("System default"),
-    wxT("French"),
-    wxT("Italian"),
-    wxT("German"),
-    wxT("Portuguese"),
-    wxT("Spanish"),
     wxT("Chinese"),
+    wxT("English"),
+    wxT("French"),
+    wxT("German"),
+    wxT("Italian"),
     wxT("Japanese"),
-    wxT("English")
+    wxT("Portuguese"),
+    wxT("Russian"),
+    wxT("Spanish"),
 };
 
 // the arrays must be in sync

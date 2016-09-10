@@ -1506,25 +1506,33 @@ MyFrame::OnHelpContents(wxCommandEvent& WXUNUSED(event)) {
 // Return the "About" string
 //
 static wxString getAbout() {
-	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2016 American Radio Relay League\r\n\r\n");
+	wxString msg = wxT("TQSL V") wxT(VERSION) wxT(" build ") wxT(BUILD) wxT("\n(c) 2001-2016 American Radio Relay League\n\n");
 	int major, minor;
 	if (tqsl_getVersion(&major, &minor))
 		wxLogError(getLocalizedErrorString());
 	else
-		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\r\n"), major, minor);
+		msg += wxString::Format(wxT("TrustedQSL library V%d.%d\n"), major, minor);
 	if (tqsl_getConfigVersion(&major, &minor))
 		wxLogError(getLocalizedErrorString());
 	else
-		msg += wxString::Format(wxT("\r\nConfiguration data V%d.%d\r\n\r\n"), major, minor);
+		msg += wxString::Format(wxT("\nConfiguration data V%d.%d\n\n"), major, minor);
 	msg += wxVERSION_STRING;
 #ifdef wxUSE_UNICODE
 	if (wxUSE_UNICODE)
 		msg += wxT(" (Unicode)");
 #endif
-	msg+=wxString::Format(wxT("\r\nlibcurl V%hs\r\n"), LIBCURL_VERSION);
-	msg+=wxString::Format(wxT("%hs\r\n"), OPENSSL_VERSION_TEXT);
-	msg+=wxString::Format(wxT("zlib V%hs\r\n"), ZLIB_VERSION);
+	msg+=wxString::Format(wxT("\nlibcurl V%hs\n"), LIBCURL_VERSION);
+	msg+=wxString::Format(wxT("%hs\n"), OPENSSL_VERSION_TEXT);
+	msg+=wxString::Format(wxT("zlib V%hs\n"), ZLIB_VERSION);
 	msg+=wxString::Format(wxT("%hs"), DB_VERSION_STRING);
+	msg+=wxT("\n\n\nTranslators:\n"
+		"German: Andreas Rehberg, DF4WC\n"
+		"Spanish: Jordi Quintero, EA3GCV\n"
+		"Italian: Salvatore Besso, I4FYV\n"
+		"Japanese: Akihiro KODA, JL3OXR\n"
+		"Portugese: Nuno Lopes, CT2IRY\n"
+		"Russian: Vic Goncharsky, US5WE\n"
+		"Chinese: Caros, BH4TXN\n");
 	return msg;
 }
 
@@ -1557,6 +1565,9 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	}
 	file_menu->Check(tm_f_diag, true);
 	wxString about = getAbout();
+#ifdef _WIN32
+	about.replace(wxT("\\n"), wxT("\\r\\n"));
+#endif
 	tqslTrace(NULL, "TQSL Diagnostics\r\n%s\r\n\r\n", (const char *)about.ToUTF8());
 	tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());
 	tqslTrace(NULL, "Working Directory:%s\r\n", tQSL_BaseDir);
