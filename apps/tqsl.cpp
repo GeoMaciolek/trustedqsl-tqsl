@@ -1566,7 +1566,7 @@ MyFrame::OnHelpDiagnose(wxCommandEvent& event) {
 	file_menu->Check(tm_f_diag, true);
 	wxString about = getAbout();
 #ifdef _WIN32
-	about.replace(wxT("\\n"), wxT("\\r\\n"));
+	about.Replace(wxT("\\n"), wxT("\\r\\n"));
 #endif
 	tqslTrace(NULL, "TQSL Diagnostics\r\n%s\r\n\r\n", (const char *)about.ToUTF8());
 	tqslTrace(NULL, "Command Line: %s\r\n", (const char *)origCommandLine.ToUTF8());

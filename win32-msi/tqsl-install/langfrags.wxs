@@ -88,10 +88,10 @@
         <File Id="filCB05CB5FC91346648832BEB9FD720083" KeyPath="yes" Source="$(var.langSrc)\zh\wxstd.mo" />
       </Component>
       <Component Id="cmpE50C1FDDB0557814727BFBC71334B3B1" Directory="dirC332EE54B19E15D0A758A1C5E6D52056" Guid="*">
-        <File Id="filED6C3ABA1D28500F713D96C0D844D9CB" KeyPath="yes" Source="$(var.langSrc)\tqslapp.mo" />
+        <File Id="filED6C3ABA1D28500F713D96C0D844D9CB" KeyPath="yes" Source="$(var.langSrc)\ru\tqslapp.mo" />
       </Component>
       <Component Id="cmp956327FA375C38F32F3A37AD6A178952" Directory="dirC332EE54B19E15D0A758A1C5E6D52056" Guid="*">
-        <File Id="fil936DBB25DF52CB70D9E6330A7134B221" KeyPath="yes" Source="$(var.langSrc)\wxstd.mo" />
+        <File Id="fil936DBB25DF52CB70D9E6330A7134B221" KeyPath="yes" Source="$(var.langSrc)\ru\wxstd.mo" />
       </Component>
     </ComponentGroup>
   </Fragment>
