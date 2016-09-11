@@ -39,6 +39,11 @@
     </DirectoryRef>
   </Fragment>
   <Fragment>
+    <DirectoryRef Id="APPLICATIONFOLDER">
+      <Directory Id="dirC332EE54B19E15D0A758A1C5E6D52056" Name="ru" />
+    </DirectoryRef>
+  </Fragment>
+  <Fragment>
     <ComponentGroup Id="LangDirs">
       <Component Id="cmp701E9CE13EE2E668BBA72B1CA4F191D7" Directory="dirDA8577371C3B761FBCA66742F426ABDC" Guid="*">
         <File Id="fil7BCEEBA899FBBC10FDAF76776D0AD6DA" KeyPath="yes" Source="$(var.langSrc)\de\tqslapp.mo" />
@@ -81,6 +86,12 @@
       </Component>
       <Component Id="cmp5A418E0524D443FC8FC0571246632E30" Directory="dir0EB912D8DF5C474CBA0F35A3474D3F75" Guid="*">
         <File Id="filCB05CB5FC91346648832BEB9FD720083" KeyPath="yes" Source="$(var.langSrc)\zh\wxstd.mo" />
+      </Component>
+      <Component Id="cmpE50C1FDDB0557814727BFBC71334B3B1" Directory="dirC332EE54B19E15D0A758A1C5E6D52056" Guid="*">
+        <File Id="filED6C3ABA1D28500F713D96C0D844D9CB" KeyPath="yes" Source="$(var.langSrc)\tqslapp.mo" />
+      </Component>
+      <Component Id="cmp956327FA375C38F32F3A37AD6A178952" Directory="dirC332EE54B19E15D0A758A1C5E6D52056" Guid="*">
+        <File Id="fil936DBB25DF52CB70D9E6330A7134B221" KeyPath="yes" Source="$(var.langSrc)\wxstd.mo" />
       </Component>
     </ComponentGroup>
   </Fragment>
