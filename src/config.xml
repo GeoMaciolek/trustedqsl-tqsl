@@ -1,4 +1,4 @@
-<tqslconfig majorversion="10" minorversion="0">
+<tqslconfig majorversion="10" minorversion="1">
      <providers>
        <provider organizationName="American Radio Relay League">
          <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -4779,6 +4779,7 @@
          <enums dependency="ME">
            <enum value="NP01">Acadia National Park</enum>
            <enum value="TR01">Appalachian National Scenic Trail</enum>
+           <enum value="MN84">Katahdin Woods and Waters National Monument</enum>
            <enum value="HS01">Saint Croix Island International Historic Site</enum>
          </enums>
          <enums dependency="MI">
@@ -5333,4 +5334,4 @@
        <field Id="WPX" type="C" len="10" label="WPX Prefix" intype="1" flags="1" />
        <field Id="ZERR" type="C" len="80" intype="4" flags="0" />
      </locfields>
-   </tqslconfig>
+</tqslconfig>
