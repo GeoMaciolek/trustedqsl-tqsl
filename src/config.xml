@@ -1,4 +1,4 @@
-<tqslconfig majorversion="10" minorversion="1">
+<tqslconfig majorversion="10" minorversion="2">
      <providers>
        <provider organizationName="American Radio Relay League">
          <organizationalUnitName>Logbook of the World</organizationalUnitName>
@@ -258,7 +258,7 @@
        <entity arrlId="226" valid="1945-11-15 00:00:00" invalid="1981-12-26 00:00:00" zonemap="39:21">SAUDI ARABIA/IRAQ NEUTRAL ZONE (DELETED)</entity>
        <entity arrlId="227" valid="1945-11-15 00:00:00" zonemap="27:14">FRANCE</entity>
        <entity arrlId="228" valid="1945-11-15 00:00:00" invalid="1981-09-17 00:00:00" zonemap="11:07">SERRANA BANK &amp; RONCADOR CAY (DELETED)</entity>
-       <entity arrlId="229" valid="1945-11-15 00:00:00" invalid="1990-10-03 00:00:00" zonemap="28:14">GERMAN DEMOCRATIC REPUBLIC (DELETED)</entity>
+       <entity arrlId="229" valid="1973-09-17 00:00:00" invalid="1990-10-03 00:00:00" zonemap="28:14">GERMAN DEMOCRATIC REPUBLIC (DELETED)</entity>
        <entity arrlId="230" valid="1973-09-17 00:00:00" zonemap="28:14">FEDERAL REPUBLIC OF GERMANY</entity>
        <entity arrlId="231" valid="1945-11-15 00:00:00" invalid="1975-05-01 00:00:00" zonemap="41:22">SIKKIM (DELETED)</entity>
        <entity arrlId="232" valid="1945-11-15 00:00:00" zonemap="48:37">SOMALIA</entity>
@@ -796,6 +796,7 @@
        <satellite name="KEDR" startDate="2011-08-03" endDate="2012-01-04">ARISSat-1</satellite>
        <satellite name="LO-19" startDate="1990-01-22">Lusat-OSCAR 19</satellite>
        <satellite name="LO-78" startDate="2014-04-22">LituanicaSAT-1</satellite>
+       <satellite name="LO-87" startDate="2016-05-30">LUSEX-OSCAR 87</satellite>
        <satellite name="NO-44" startDate="2001-09-30">Navy-OSCAR 44</satellite>
        <satellite name="NO-83" startDate="2015-05-20">BRICsat</satellite>
        <satellite name="NO-84" startDate="2015-05-20">PSAT</satellite>
@@ -4756,7 +4757,6 @@
            <enum value="TR21,MN31">Captain John Smith Chesapeake NHT + Fort McHenry NM and Shrine</enum>
            <enum value="TR21,DZ07">Captain John Smith Chesapeake NHT + Piscataway Park</enum>
            <enum value="TR21,TR22">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT</enum>
-           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="DZ01">Catoctin Mountain Park</enum>
            <enum value="HP08">Chesapeake and Ohio Canal National Historical Park</enum>
            <enum value="NS11">Clara Barton National Historic Site</enum>
@@ -5173,6 +5173,7 @@
            <enum value="TR21,HP09">Captain John Smith Chesapeake NHT + Colonial NHP</enum>
            <enum value="TR21,MN38">Captain John Smith Chesapeake NHT + George Washington Birthplace</enum>
            <enum value="TR21,BP03">Captain John Smith Chesapeake NHT + Richmond NBP</enum>
+           <enum value="TR21,TR22,PK02">Captain John Smith Chesapeake NHT + Star-Spangled Banner NHT + George Washington Memorial Parkway</enum>
            <enum value="HP06">Cedar Creek and Belle Grove National Historical Park</enum>
            <enum value="HP09">Colonial National Historical Park</enum>
            <enum value="HP10">Cumberland Gap National Historical Park</enum>
@@ -5186,6 +5187,7 @@
            <enum value="AA14">Jamestown National Historic Site</enum>
            <enum value="NS47">Maggie L. Walker National Historic Site</enum>
            <enum value="BP02">Manassas National Battlefield Park</enum>
+           <enum value="AA26">Natural Bridge</enum>
            <enum value="TR10">Overmountain Victory National Historic Trail</enum>
            <enum value="BF08">Petersburg National Battlefield</enum>
            <enum value="TR03">Potomac Heritage National Scenic Trail</enum>
@@ -5259,6 +5261,7 @@
            <enum value="MN37">Fossil Butte National Monument</enum>
            <enum value="NP23">Grand Teton National Park</enum>
            <enum value="PK03,NP23">John D. Rockefeller Parkway + Grand Teton NP</enum>
+           <enum value="PK03,NP57">John D. Rockefeller Parkway + Yellowstone NP</enum>
            <enum value="PK03">John D. Rockefeller, Jr. Memorial Parkway</enum>
            <enum value="TR08">Mormon Pioneer National Historic Trail</enum>
            <enum value="TR08,TR14,TR15">Mormon Pioneer NHT  + California NHT + Pony Express NHT</enum>
