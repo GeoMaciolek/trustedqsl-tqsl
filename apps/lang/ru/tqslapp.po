@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: TQSL v2.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-08-20 18:22-0400\n"
-"PO-Revision-Date: 2016-10-07 18:25-0400\n"
+"PO-Revision-Date: 2016-10-21 16:12-0400\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: \n"
+"Last-Translator: Rick Murphy <k1mu@arrl.net>\n"
 "Language-Team: \n"
-"X-Generator: Poedit 1.8.9\n"
+"X-Generator: Poedit 1.8.2\n"
 "Language: ru\n"
 
 #: certtree.cpp:104
@@ -408,8 +408,8 @@ msgstr ""
 msgid "Do you really want to keep this 'QSO end date'?"
 msgstr "Вы действительно хотите оставить эту 'Дату последнего QSO'?"
 
-#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118 tqsl.cpp:5864
-#: tqsl.cpp:5991 tqsl_prefs.cpp:431
+#: crqwiz.cpp:980 loadcertwiz.cpp:199 tqsl.cpp:1771 tqsl.cpp:5118
+#: tqsl.cpp:5864 tqsl.cpp:5991 tqsl_prefs.cpp:431
 msgid "Warning"
 msgstr "Предупреждение"
 
@@ -550,7 +550,7 @@ msgid ""
 "Callsign Certificate container files (*.p12;*.P12)|*.p12;*.P12|Certificate "
 "Request response files (*.tq6;*.TQ6)|*.tq6;*.TQ6"
 msgstr ""
-"Файлы - контейнеры сертификатов позывных (*.p12;*.P12)|*.p12;*.P12|Файлы "
+"Файлы- контейнеры сертификатов позывных (*.p12;*.P12)|*.p12;*.P12|Файлы "
 "ответа на запрос Сертификата (*.tq6;*.TQ6)|*.tq6;*.TQ6"
 
 #: loadcertwiz.cpp:233
@@ -558,8 +558,8 @@ msgid ""
 "Callsign Certificate container files (*.p12)|*.p12|Certificate Request "
 "response files (*.tq6)|*.tq6"
 msgstr ""
-"Файлы - контейнеры Сертификата позывного (*.p12)|*.p12|Файлы ответа на "
-"запрос Сертификата (*.tq6)|*.tq6"
+"Файлы-контейнеры Сертификата позывного (*.p12)|*.p12|Файлы ответа на запрос "
+"Сертификата (*.tq6)|*.tq6"
 
 #: loadcertwiz.cpp:235 tqsl.cpp:3858
 msgid "|All files (*.*)|*.*"
@@ -756,19 +756,19 @@ msgstr "Значение"
 
 #: stationdial.cpp:171
 msgid "Select Station Data"
-msgstr "Выбрать данные о станции"
+msgstr "Выберите данные о станции"
 
 #: stationdial.cpp:182
 msgid "Save Station Data"
-msgstr "Сохранить данные о станции"
+msgstr "Сохраните данные о станции"
 
 #: stationdial.cpp:190
 msgid "Enter a name for this Station Location"
-msgstr "Выбрать имя для Местоположения станции"
+msgstr "Выберите имя для Местоположения станции"
 
 #: stationdial.cpp:190
 msgid "Selected Station Location"
-msgstr "Выбрать Местоположение станции"
+msgstr "Выберите Местоположение станции"
 
 #: stationdial.cpp:200
 msgid "New..."
@@ -1172,29 +1172,29 @@ msgstr "Идет поиск обновлений TQSL... "
 
 #: tqsl.cpp:1080
 msgid "Sign and &upload ADIF or Cabrillo File..."
-msgstr "Подписать и &загрузить файл ADIF или  Cabrillo..."
+msgstr "Подпишите и &загрузите файл ADIF или  Cabrillo..."
 
 #: tqsl.cpp:1081
 msgid "&Sign and save ADIF or Cabrillo file..."
-msgstr "&Подписать и сохранить файл ADIF или  Cabrillo..."
+msgstr "&Подпишите и сохраните файл ADIF или  Cabrillo..."
 
 #: tqsl.cpp:1083
 msgid "&Backup Station Locations, Certificates, and Preferences..."
 msgstr ""
-"&Сделать резервную копию Местоположения станции, Сертификатов и "
+"&Сделайте резервную копию Местоположения станции, Сертификатов и "
 "Предпочтений... "
 
 #: tqsl.cpp:1084
 msgid "&Restore Station Locations, Certificates, and Preferences..."
-msgstr "&Восстановить Местоположения станций, Сертификаты и Предпочтения..."
+msgstr "&Восстановите Местоположения станций, Сертификаты и Предпочтения..."
 
 #: tqsl.cpp:1086
 msgid "Create &New ADIF file..."
-msgstr "Создать &Новый файл ADIF..."
+msgstr "Создайте &Новый файл ADIF..."
 
 #: tqsl.cpp:1087
 msgid "&Edit existing ADIF file..."
-msgstr "&Редактировать существующий файл ADIF..."
+msgstr "&Редактируйте существующий файл ADIF..."
 
 #: tqsl.cpp:1090
 msgid "&Preferences..."
@@ -1258,7 +1258,7 @@ msgstr "&Местоположение станции"
 
 #: tqsl.cpp:1143
 msgid "Callsign &Certificate"
-msgstr "&Сертификат Позывного"
+msgstr "Позывной &Сертификат"
 
 #: tqsl.cpp:1144
 msgid "&Help"
@@ -1274,15 +1274,15 @@ msgstr "Журнал состояний "
 
 #: tqsl.cpp:1187 tqsl.cpp:1192
 msgid "Sign a log and upload it automatically to LoTW"
-msgstr "Подписать лог и загрузить его в LoTW автоматически"
+msgstr "Подпишите лог и загрузите его в LoTW автоматически"
 
 #: tqsl.cpp:1201 tqsl.cpp:1205
 msgid "Sign a log and save it for uploading later"
-msgstr "Подписать лог и сохранить его для последующей загрузки"
+msgstr "Подпишите лог и сохраните его для последующей загрузки"
 
 #: tqsl.cpp:1215 tqsl.cpp:1219
 msgid "Create an ADIF file for signing and uploading"
-msgstr "Создать файл ADIF для подписи и загрузки"
+msgstr "Создайте файл ADIF для подписи и загрузки"
 
 #: tqsl.cpp:1228 tqsl.cpp:1232
 msgid "Log in to the Logbook of the World Site"
@@ -1290,19 +1290,19 @@ msgstr "Вход на сайт Logbook of The World "
 
 #: tqsl.cpp:1262
 msgid "Select a Station Location to process      "
-msgstr "Выбрать Местоположение станции для обработки "
+msgstr "Выберите Местоположение станции для обработки "
 
 #: tqsl.cpp:1293
 msgid "Create a new Station Location"
-msgstr "Создать Местоположение станции"
+msgstr "Создайте Местоположение станции"
 
 #: tqsl.cpp:1308 tqsl.cpp:5935 tqsl.cpp:5936
 msgid "Edit a Station Location"
-msgstr "Редактировать Местоположения станции"
+msgstr "Редактирование Местоположения станции"
 
 #: tqsl.cpp:1324 tqsl.cpp:5937 tqsl.cpp:5938
 msgid "Delete a Station Location"
-msgstr "Удалить Местоположение станции"
+msgstr "Удалите Местоположение станции"
 
 #: tqsl.cpp:1340 tqsl.cpp:5939 tqsl.cpp:5940
 msgid "Display Station Location Properties"
@@ -1310,7 +1310,7 @@ msgstr "Показать свойства Местоположения стан�
 
 #: tqsl.cpp:1366 tqsl.cpp:5703
 msgid "Select a Callsign Certificate to process"
-msgstr "Выбрать Сертификат позывного для обработки"
+msgstr "Выберите Сертификат позывного для обработки"
 
 #: tqsl.cpp:1392
 msgid "Load a Callsign Certificate"
@@ -1370,11 +1370,11 @@ msgstr "Ошибка в Местоположении станции"
 #: tqsl.cpp:1628 tqsl.cpp:1654 tqsl.cpp:2865 tqsl.cpp:6058
 #, c-format
 msgid "Edit Station Location : %hs - %s"
-msgstr "Редактировать Местоположения станции : %hs - %s"
+msgstr "Редактирование Местоположения станции : %hs - %s"
 
 #: tqsl.cpp:1662 tqsl.cpp:5021
 msgid "Edit Station Location"
-msgstr "Редактировать Местоположения станции"
+msgstr "Редактирование Местоположения станции"
 
 #: tqsl.cpp:1662 tqsl.cpp:6285 tqsl.cpp:6391 tqsl_prefs.cpp:85
 msgid "Close"
@@ -1853,7 +1853,7 @@ msgstr "Невозможно открыть файл обновления TQSL %
 
 #: tqsl.cpp:3257
 msgid "Error downloading new file:"
-msgstr "Ошибка скачивания нового файла:"
+msgstr "Ошибка загрузки нового файла:"
 
 #: tqsl.cpp:3471
 msgid "Error checking for expired callsign certificates:"
@@ -1953,7 +1953,7 @@ msgstr "|Файлы Cabrillo ("
 
 #: tqsl.cpp:3838
 msgid "Select file to Sign"
-msgstr "Выбрать файл для подписи"
+msgstr "Выберите файл для подписи"
 
 #: tqsl.cpp:3854
 msgid "TQSL compressed data files (*.tq8)|*.tq8"
@@ -1965,11 +1965,11 @@ msgstr "Файлы данных TQSL (*.tq7)|*.tq7"
 
 #: tqsl.cpp:3857
 msgid "Select file to write to"
-msgstr "Выбрать файл для записи"
+msgstr "Выберите файл для записи"
 
 #: tqsl.cpp:3872 tqsl.cpp:5136
 msgid "Select Station Location for Signing"
-msgstr "Выбрать Местоположение станции для подписания"
+msgstr "Выбкрите Местоположение станции для подписания"
 
 #: tqsl.cpp:3913
 msgid "Signing abandoned"
@@ -2072,7 +2072,7 @@ msgstr "Ошибка обработки файла Местоположения 
 
 #: tqsl.cpp:4626
 msgid "Select saved configuration file"
-msgstr "Выбрать сохраненный файл конфигурации"
+msgstr "Выберите сохраненный файл конфигурации"
 
 #: tqsl.cpp:4627
 msgid "Saved configuration files (*.tbk)|*.tbk"
@@ -2205,7 +2205,7 @@ msgstr "Тревога"
 
 #: tqsl.cpp:5343
 msgid "Display Callsign Certificate &Properties"
-msgstr "Показать &Свойства Сертификата позывного"
+msgstr "Показать $Свойства Сертификата позывного"
 
 #: tqsl.cpp:5346
 msgid "&Load Callsign Certificate from File"
@@ -2221,7 +2221,7 @@ msgstr "Запрос &Нового Сертификата позывного..."
 
 #: tqsl.cpp:5352
 msgid "&Renew Callsign Certificate"
-msgstr "&Обновить Сертификат позывного"
+msgstr "&Восстановить Сертификат"
 
 #: tqsl.cpp:5357
 msgid "&Delete Callsign Certificate"
@@ -2245,7 +2245,7 @@ msgstr "Загрузить файл Сертификата"
 
 #: tqsl.cpp:5509 crqwiz.h:49
 msgid "Request a new Callsign Certificate"
-msgstr "Запросить новый Сертификат позывного "
+msgstr "Запрос нового Сертификата позывного"
 
 #: tqsl.cpp:5542
 msgid "Do you want to upload this certificate request to LoTW now?"
@@ -2939,7 +2939,7 @@ msgstr "Файл не может быть обработан из-за сист�
 
 #: wxutil.cpp:158
 msgid "The format of this file is incorrect."
-msgstr "Неправильный формат файла."
+msgstr "Неправильный формат файла"
 
 #: wxutil.cpp:167
 msgid "NO ERROR"
@@ -2947,7 +2947,7 @@ msgstr "НЕТ ОШИБКИ"
 
 #: wxutil.cpp:170
 msgid "Unknown custom error"
-msgstr "Неизвестная нестандартная ошибка "
+msgstr "Неизвестная искусственно созданная ошибка"
 
 #: wxutil.cpp:176
 #, c-format
