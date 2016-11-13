@@ -3,6 +3,17 @@ TQSLLIB changes
 
 2.5
 ---
+Allow TQSL to build against OpenSSL 1.1.0.
+
+Fix formatting of the messages that appear when QSOs change values in the
+station location for duplicate QSOs.
+
+Correct improperly formatted frequencies from ADIF files (values like
+'7.010.20') to remove the extra periods.
+
+Revert the change that stripped spaces in the TQSL configuration file as that
+caused newlines to be removed in places like the station_data file.
+
 Fix "OpenSSL error - bad end line" by ensuring that there's always a 
 newline starting a new certificate.
 

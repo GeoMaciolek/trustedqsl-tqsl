@@ -3,6 +3,13 @@ TQSL changes
 
 2.3
 ----------
+Correct the invocation of the Windows Installer when an update is available.
+
+Add a missing error message.
+
+Correct the counts reported when duplicate QSOs are found along with QSOs
+with other errors.
+
 Add Russian translation provided by Vic, US5WE.
 
 Add Spanish translation provided by Jordi, EA3GCV.
