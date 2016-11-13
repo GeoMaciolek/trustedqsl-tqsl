@@ -2084,7 +2084,7 @@ int MyFrame::ConvertLogToString(tQSL_Location loc, const wxString& infile, wxStr
 			bool has_error = (tQSL_Error != TQSL_NO_ERROR);
 			if (has_error) {
 				processed++;
-				if (dupe_error) {
+				if (!dupe_error) {
 					errors++;
 				}
 				try {

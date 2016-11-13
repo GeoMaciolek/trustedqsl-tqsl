@@ -1220,8 +1220,8 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				// with an error by the caller
 				char *olddup = reinterpret_cast<char *> (malloc(dbdata.size + 2));
 				memcpy(olddup, dbdata.data, dbdata.size);
-				olddup[dbdata.size-1] = '\0';
-				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "%s|%s", reinterpret_cast<char *>(dbdata.data), stnloc);
+				olddup[dbdata.size] = '\0';
+				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "%s|%s", olddup, stnloc);
 				free(olddup);
 				return 0;
 			} else if (dbget_err != DB_NOTFOUND) {
