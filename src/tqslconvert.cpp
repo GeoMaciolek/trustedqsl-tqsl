@@ -167,6 +167,25 @@ inline void TQSL_CONVERTER::clearRec() {
 
 using tqsllib::TQSL_CONVERTER;
 
+static char * fix_freq(const char *in) {
+    static char out[128];
+    const char *p = in;
+    bool decimal = false;
+    char *o = out;
+    while (*p) {
+	if (*p == '.') {
+		if (decimal) {
+			p++;
+			continue;
+		}
+		decimal = true;
+	}
+	*o++ = *p++;
+    }
+    *o = '\0';
+    return out;
+}
+
 static char *
 tqsl_strtoupper(char *str) {
 	for (char *cp = str; *cp != '\0'; cp++)
@@ -870,11 +889,11 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 					strncpy(conv->rec.submode, reinterpret_cast<char *>(result.data), sizeof conv->rec.submode);
 				} else if (!strcasecmp(result.name, "FREQ") && result.data) {
 					conv->rec.band_set = true;
-					strncpy(conv->rec.freq, reinterpret_cast<char *>(result.data), sizeof conv->rec.freq);
+					strncpy(conv->rec.freq, fix_freq(reinterpret_cast<char *>(result.data)), sizeof conv->rec.freq);
 					if (atof(conv->rec.freq) == 0.0)
 						conv->rec.freq[0] = '\0';
 				} else if (!strcasecmp(result.name, "FREQ_RX") && result.data) {
-					strncpy(conv->rec.rxfreq, reinterpret_cast<char *>(result.data), sizeof conv->rec.rxfreq);
+					strncpy(conv->rec.rxfreq, fix_freq(reinterpret_cast<char *>(result.data)), sizeof conv->rec.rxfreq);
 					if (atof(conv->rec.rxfreq) == 0.0)
 						conv->rec.rxfreq[0] = '\0';
 				} else if (!strcasecmp(result.name, "BAND_RX") && result.data) {
