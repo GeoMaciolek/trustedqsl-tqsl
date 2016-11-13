@@ -132,7 +132,7 @@ CLIENT_STATIC int tqsl_cert_get_subject_date(X509 *cert, const char *obj_name, t
 #endif
 
 /// Convert an ASN date
-CLIENT_STATIC int tqsl_get_asn1_date(ASN1_TIME *tm, tQSL_Date *date);
+CLIENT_STATIC int tqsl_get_asn1_date(const ASN1_TIME *tm, tQSL_Date *date);
 
 /// Filter a list (stack) of certs based on (optional) call sign, qso date and issuer criteria
 /** Returns a (possibly empty) stack of certificates that match the criteria. Returns NULL

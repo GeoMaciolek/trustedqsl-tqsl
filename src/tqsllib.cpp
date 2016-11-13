@@ -63,21 +63,21 @@ DLLEXPORTDATA FILE* tQSL_DiagFile = 0;
 #define TQSL_OID_CRQ_COUNTRY TQSL_OID_BASE "14"
 
 static const char *custom_objects[][3] = {
-	{ TQSL_OID_CALLSIGN, "AROcallsign", NULL },
-	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", NULL },
-	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", NULL },
-	{ TQSL_OID_DXCC_ENTITY, "dxccEntity", NULL },
-	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", NULL },
-	{ TQSL_OID_CRQ_ISSUER_ORGANIZATION, "tqslCRQIssuerOrganization", NULL },
+	{ TQSL_OID_CALLSIGN, "AROcallsign", "AROcallsign" },
+	{ TQSL_OID_QSO_NOT_BEFORE, "QSONotBeforeDate", "QSONotBeforeDate" },
+	{ TQSL_OID_QSO_NOT_AFTER, "QSONotAfterDate", "QSONotAfterDate" },
+	{ TQSL_OID_DXCC_ENTITY, "dxccEntity", "dxccEntity" },
+	{ TQSL_OID_SUPERCEDED_CERT, "supercededCertificate", "supercededCertificate" },
+	{ TQSL_OID_CRQ_ISSUER_ORGANIZATION, "tqslCRQIssuerOrganization", "tqslCRQIssuerOrganization" },
 	{ TQSL_OID_CRQ_ISSUER_ORGANIZATIONAL_UNIT,
-			"tqslCRQIssuerOrganizationalUnit", NULL },
-	{ TQSL_OID_CRQ_EMAIL, "tqslCRQEmail", NULL },
-	{ TQSL_OID_CRQ_ADDRESS1, "tqslCRQAddress1", NULL },
-	{ TQSL_OID_CRQ_ADDRESS2, "tqslCRQAddress2", NULL },
-	{ TQSL_OID_CRQ_CITY, "tqslCRQCity", NULL },
-	{ TQSL_OID_CRQ_STATE, "tqslCRQState", NULL },
-	{ TQSL_OID_CRQ_POSTAL, "tqslCRQPostal", NULL },
-	{ TQSL_OID_CRQ_COUNTRY, "tqslCRQCountry", NULL },
+			"tqslCRQIssuerOrganizationalUnit", "tqslCRQIssuerOrganizationalUnit" },
+	{ TQSL_OID_CRQ_EMAIL, "tqslCRQEmail", "tqslCRQEmail" },
+	{ TQSL_OID_CRQ_ADDRESS1, "tqslCRQAddress1", "tqslCRQAddress1" },
+	{ TQSL_OID_CRQ_ADDRESS2, "tqslCRQAddress2", "tqslCRQAddress2" },
+	{ TQSL_OID_CRQ_CITY, "tqslCRQCity", "tqslCRQCity" },
+	{ TQSL_OID_CRQ_STATE, "tqslCRQState", "tqslCRQState" },
+	{ TQSL_OID_CRQ_POSTAL, "tqslCRQPostal", "tqslCRQPostal" },
+	{ TQSL_OID_CRQ_COUNTRY, "tqslCRQCountry", "tqslCRQCountry" },
 };
 
 static const char *error_strings[] = {
@@ -200,7 +200,11 @@ tqsl_init() {
 
 	/* OpenSSL API tends to change between minor version numbers, so make sure
 	 * we're using the right version */
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+	unsigned long SSLver = OpenSSL_version_num();
+#else
 	long SSLver = SSLeay();
+#endif
 	int SSLmajor = (SSLver >> 28) & 0xff;
 	int SSLminor = (SSLver >> 20) & 0xff;
 	int TQSLmajor = (OPENSSL_VERSION_NUMBER >> 28) & 0xff;
@@ -217,8 +221,10 @@ tqsl_init() {
 	tqsl_getErrorString();	/* Clear the error status */
 	if (semaphore)
 		return 0;
+#if OPENSSL_VERSION_NUMBER < 0x10100000L
 	ERR_load_crypto_strings();
 	OpenSSL_add_all_algorithms();
+#endif
 	for (i = 0; i < (sizeof custom_objects / sizeof custom_objects[0]); i++) {
 		if (OBJ_create(custom_objects[i][0], custom_objects[i][1], custom_objects[i][2]) == 0) {
 			tqslTrace("tqsl_init", "Error making custom objects: %s", tqsl_openssl_error());
@@ -369,11 +375,16 @@ tqsl_getErrorString_v(int err) {
 		return buf;
 	}
 	if (err == TQSL_OPENSSL_VERSION_ERROR) {
+#if OPENSSL_VERSION_NUMBER >= 0x10100000L
+		unsigned long SSLver = OpenSSL_version_num();
+#else
+		long SSLver = SSLeay();
+#endif
 		snprintf(buf, sizeof buf,
 			"Incompatible OpenSSL Library version %d.%d.%d; expected %d.%d.%d",
-			static_cast<int>(SSLeay() >> 28) & 0xff,
-			static_cast<int>(SSLeay() >> 20) & 0xff,
-			static_cast<int>(SSLeay() >> 12) & 0xff,
+			static_cast<int>(SSLver >> 28) & 0xff,
+			static_cast<int>(SSLver >> 20) & 0xff,
+			static_cast<int>(SSLver >> 12) & 0xff,
 			static_cast<int>(OPENSSL_VERSION_NUMBER >> 28) & 0xff,
 			static_cast<int>(OPENSSL_VERSION_NUMBER >> 20) & 0xff,
 			static_cast<int>(OPENSSL_VERSION_NUMBER >> 12) & 0xff);
