@@ -205,6 +205,8 @@ unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
 # define PKCS12_x5092certbag PKCS12_SAFEBAG_create_cert
 # define PKCS12_x509crl2certbag PKCS12_SAFEBAG_create_crl
 # define X509_STORE_CTX_trusted_stack X509_STORE_CTX_set0_trusted_stack
+#else
+# define ASN1_STRING_get0_data ASN1_STRING_data
 #endif
 #include <map>
 #include <vector>
@@ -2179,7 +2181,7 @@ tqsl_add_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, const string& v
 #endif
 #if OPENSSL_VERSION_NUMBER >= 0x10100000L
 					STACK_OF(X509_ATTRIBUTE) *sk;
-					sk = PKCS12_SAFEBAG_get0_attrs(bag);
+					sk = (STACK_OF(X509_ATTRIBUTE)*)PKCS12_SAFEBAG_get0_attrs(bag);
 					if (sk) {
 						sk_X509_ATTRIBUTE_push(sk, attrib);
 #else
@@ -2557,7 +2559,7 @@ struct tqsl_imported_cert {
 
 static int
 tqsl_get_bag_attribute(PKCS12_SAFEBAG *bag, const char *oidname, string& str) {
-	ASN1_TYPE *attr;
+	const ASN1_TYPE *attr;
 
 	str = "";
 	if ((attr = PKCS12_get_attr(bag, OBJ_txt2nid(const_cast<char *>(oidname)))) != 0) {
@@ -2587,7 +2589,7 @@ tqsl_importPKCS12(bool importB64, const char *filename, const char *base64, cons
 	X509 *x;
 	BASIC_CONSTRAINTS *bs = 0;
 	ASN1_OBJECT *callobj = 0, *obj = 0;
-	ASN1_TYPE *attr = 0;
+	const ASN1_TYPE *attr = 0;
 	const EVP_CIPHER *cipher;
 	unsigned char *cp;
 	int i, j, bagnid, len;
@@ -3857,7 +3859,7 @@ tqsl_get_name_stuff(X509_NAME_ENTRY *entry, TQSL_X509_NAME_ITEM *name_item) {
 	}
 	if (name_item->value_buf != NULL) {
 		value = X509_NAME_ENTRY_get_data(entry);
-		val = (const char *)ASN1_STRING_data(value);
+		val = (const char *)ASN1_STRING_get0_data(value);
 		strncpy(name_item->value_buf, val, name_item->value_buf_size);
 		name_item->value_buf[name_item->value_buf_size-1] = '\0';
 		if (strlen(val) > strlen(name_item->value_buf)) {
@@ -5072,7 +5074,7 @@ tqsl_get_cert_ext(X509 *cert, const char *ext, unsigned char *userbuf, int *bufl
 			}
 			*buflen = datasiz;
 			if (datasiz)
-				memcpy(userbuf, ASN1_STRING_data(data), datasiz);
+				memcpy(userbuf, ASN1_STRING_get0_data(data), datasiz);
 			userbuf[datasiz] = '\0';
 		}
 		if (crit != NULL)
