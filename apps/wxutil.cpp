@@ -156,6 +156,7 @@ static const char *error_strings[] = {
 	__("The TQSL configuration file cannot be parsed"),	/* TQSL_CONFIG_SYNTAX_ERROR */
 	__("This file can not be processed due to a system error"),	/* TQSL_FILE_SYSTEM_ERROR */
 	__("The format of this file is incorrect."),		/* TQSL_FILE_SYNTAX_ERROR */
+	__("Callsign certificate could not be installed"),	/* TQSL_CERT_ERROR */
 };
 
 static wxString
