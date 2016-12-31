@@ -552,10 +552,13 @@ bool
 QSODataDialog::TransferDataToWindow() {
 	tqslTrace("QSODataDialog::TransferDataToWindow", NULL);
 	valid_list::iterator it;
-	if ((it = find(valid_modes.begin(), valid_modes.end(), rec._mode.Upper())) != valid_modes.end())
+	wxString mode = rec._mode.Upper();
+	if ((it = find(valid_modes.begin(), valid_modes.end(), mode))  != valid_modes.end()) {
 		_mode = distance(valid_modes.begin(), it);
-	else
-		wxLogWarning(_("QSO Data: Invalid Mode ignored - %s"), (const char*) rec._mode.Upper().ToUTF8());
+	} else {
+		wxLogWarning(_("QSO Data: Invalid Mode ignored - %s"), mode.c_str());
+		_mode = 0;
+	}
 	if ((it = find(valid_bands.begin(), valid_bands.end(), rec._band.Upper())) != valid_bands.end()) {
 		_band = distance(valid_bands.begin(), it);
 		_band_ctrl->SetSelection(_band);
