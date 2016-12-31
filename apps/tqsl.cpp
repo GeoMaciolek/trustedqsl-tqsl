@@ -6424,7 +6424,7 @@ getPassword(char *buf, int bufsiz, void *callsign) {
 	wxString prompt(_("Enter the password to unlock the callsign certificate"));
 
 	if (callsign)
-		prompt = wxString::Format(_T("Enter the password for your active %hs Callsign Certificate"), callsign);
+		prompt = wxString::Format(_T("Enter the password for your active %hs Callsign Certificate"),  reinterpret_cast<char *>(callsign));
 
 	tqslTrace("getPassword", "Probing for top window");
 	wxWindow* top = wxGetApp().GetTopWindow();
