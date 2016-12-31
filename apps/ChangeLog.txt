@@ -3,6 +3,14 @@ TQSL changes
 
 2.3
 ----------
+When renewing a callsign certificate and backing up to earlier pages in
+the wizard, don't display a spurious certificate type selection page.
+
+When editing an ADIF file that has an invalid mode setting, notify the
+user that it is being ignored.
+
+Fix password prompt on systems with debug assertions enabled in wxWidgets.
+
 Correct the invocation of the Windows Installer when an update is available.
 
 Add a missing error message.

@@ -210,7 +210,7 @@ unsigned char *ASN1_seq_pack(void *safes, i2d_of_void *i2d,
 # define X509_get_notAfter X509_get0_notAfter
 # define X509_get_notBefore X509_get0_notBefore
 # define PKCS12_MAKE_SHKEYBAG PKCS12_SAFEBAG_create_pkcs8_encrypt
-# define X509_V_FLAG_CB_ISSUER_CHECK 0x0  
+# define X509_V_FLAG_CB_ISSUER_CHECK 0x0
 #else
 # define ASN1_STRING_get0_data ASN1_STRING_data
 #endif
