@@ -486,7 +486,8 @@ CRQ_Page *
 CRQ_NamePage::GetPrev() const {
 	tqslTrace("CRQ_NamePage::GetPrev", NULL);
 
-	if (_parent->ncerts > 0 && _parent->dxcc != 0)
+	// If no certificates to sign with and dxcc nonzero and not a renewal
+	if (_parent->ncerts > 0 && _parent->dxcc != 0 && !_parent->cert)
 		return _parent->typePage;
 	else
 		return _parent->introPage;
