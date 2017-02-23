@@ -1,7 +1,7 @@
 TQSL changes
 ============
 
-2.3
+2.3.1
 ----------
 When renewing a callsign certificate and backing up to earlier pages in
 the wizard, don't display a spurious certificate type selection page.
@@ -18,6 +18,8 @@ Add a missing error message.
 Correct the counts reported when duplicate QSOs are found along with QSOs
 with other errors.
 
+2.3
+----------
 Add Russian translation provided by Vic, US5WE.
 
 Add Spanish translation provided by Jordi, EA3GCV.
@@ -27,7 +29,7 @@ the valid range for the associated DXCC entity. Detect out of range dates and
 report these errors to the user for correction.
 
 Correct defect that could cause a spurious "this language is not supported"
-error message on Linux systems without the English localization files not
+error message on Linux systems without the English localization files
 installed.
 
 Fix build error using gcc-5/gcc-6.
