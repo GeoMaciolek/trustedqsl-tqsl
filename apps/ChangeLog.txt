@@ -3,6 +3,13 @@ TQSL changes
 
 2.3.1
 ----------
+Add the ADIF satellite name to the pulldown menu in the ADIF editor to allow
+satellites to be more easily looked up.
+
+Add 'Saving QSOs' to the messages to be translated.
+
+Add Finnish translation from Juhani, OH8MXL.
+
 When renewing a callsign certificate and backing up to earlier pages in
 the wizard, don't display a spurious certificate type selection page.
 

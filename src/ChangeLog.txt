@@ -3,6 +3,11 @@ TQSLLIB changes
 
 2.5
 ---
+Allow 'LIGHT' in a Cabrillo file to represent 300G and higher.
+
+When there are multiple signature specifications in the configuration file,
+choose the one with the highest version number.
+
 Allow TQSL to build against OpenSSL 1.1.0.
 
 Fix formatting of the messages that appear when QSOs change values in the
