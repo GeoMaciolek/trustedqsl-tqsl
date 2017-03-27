@@ -532,6 +532,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 		return 1;
 	}
 	XMLElement sigspec;
+	XMLElement ss;
 	if (!sigspecs.getFirstElement("sigspec", sigspec)) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		strncpy(tQSL_CustomError, "TQSL Configuration file invalid - it does not have a sigspec section",
@@ -539,6 +540,21 @@ make_sign_data(TQSL_LOCATION *loc) {
 		tqslTrace("make_sign_data", "Error %s", tQSL_CustomError);
 		return 1;
 	}
+	ss = sigspec;
+	bool ok;
+	do {
+		if (sigspec.getAttribute("status").first == "deprecated") {
+			ok = sigspecs.getNextElement(sigspec);
+			continue;
+		}
+		float ssver = atof(ss.getAttribute("version").first.c_str());
+		float newver = atof(sigspec.getAttribute("version").first.c_str());
+		if (newver > ssver)
+			ss = sigspec;
+		ok = sigspecs.getNextElement(sigspec);
+	} while (ok);
+	sigspec = ss;
+
 	loc->sigspec = "SIGN_";
 	loc->sigspec += sigspec.getAttribute("name").first;
 	loc->sigspec += "_V";
@@ -568,7 +584,7 @@ make_sign_data(TQSL_LOCATION *loc) {
 		return 1;
 	}
 	XMLElement specfield;
-	bool ok;
+
 	if (!(ok = tSTATION.getFirstElement(specfield))) {
 		tQSL_Error = TQSL_CUSTOM_ERROR;
 		strncpy(tQSL_CustomError, "TQSL Configuration file invalid - missing tSTATION.specfield",
