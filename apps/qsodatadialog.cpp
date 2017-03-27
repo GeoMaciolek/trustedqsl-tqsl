@@ -135,6 +135,10 @@ valid_list::GetChoices() const {
 		*sit++ = (*it).display;
 	return ary;
 }
+static bool
+sat_cmp(const choice& p1, const choice& p2) {
+        return p1.value < p2.value;
+}
 
 static valid_list valid_modes;
 static valid_list valid_bands;
@@ -205,8 +209,9 @@ init_valid_lists() {
 	for (int i = 0; i < count; i++) {
 		if (tqsl_getSatellite(i, &cp, &cp1, 0, 0))
 			return 1;
-		valid_satellites.push_back(choice(wxString::FromUTF8(cp), wxString::FromUTF8(cp1)));
+		valid_satellites.push_back(choice(wxString::FromUTF8(cp), wxString::Format(wxT("[%hs] %hs"), cp, cp1)));
 	}
+	sort(valid_satellites.begin(), valid_satellites.end(), sat_cmp);
 	return 0;
 }
 
