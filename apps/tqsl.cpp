@@ -1530,7 +1530,7 @@ static wxString getAbout() {
 		"Spanish: Jordi Quintero, EA3GCV\n"
 		"Italian: Salvatore Besso, I4FYV\n"
 		"Japanese: Akihiro KODA, JL3OXR\n"
-		"Finish: Juhani Tapaninen, OH8MXL\n"
+		"Finnish: Juhani Tapaninen, OH8MXL\n"
 		"Portuguese: Nuno Lopes, CT2IRY\n"
 		"Russian: Vic Goncharsky, US5WE\n"
 		"Chinese: Caros, BH4TXN\n");
@@ -4244,7 +4244,7 @@ MyFrame::BackupConfig(const wxString& filename, bool quiet) {
 			throw TQSLException(gzerror(out, &err));
 
 		if (!quiet) {
-			wxLogMessage(wxT("Saving QSOs"));
+			wxLogMessage(_("Saving QSOs"));
 		} else {
 			tqslTrace("MyFrame::BackupConfig", "Saving QSOs");
 		}
