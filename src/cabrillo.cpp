@@ -235,7 +235,7 @@ freq_to_band(TQSL_CABRILLO *cab, tqsl_cabrilloField *fp) {
 	else if (!strcasecmp(fp->value, "241G")  || !strcasecmp(fp->value, "241")||
 		 !strcasecmp(fp->value, "242G") || !strcasecmp(fp->value, "242"))
 		band = "1MM";
-	else if (!strcasecmp(fp->value, "300G") || !strcasecmp(fp->value, "300"))
+	else if (!strcasecmp(fp->value, "300G") || !strcasecmp(fp->value, "300") || !strcasecmp(fp->value, "LIGHT"))
 		band = "SUBMM";
 
 	if (band && cab->contest->type ==  TQSL_CABRILLO_UNKNOWN) {
