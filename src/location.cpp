@@ -547,8 +547,8 @@ make_sign_data(TQSL_LOCATION *loc) {
 			ok = sigspecs.getNextElement(sigspec);
 			continue;
 		}
-		float ssver = atof(ss.getAttribute("version").first.c_str());
-		float newver = atof(sigspec.getAttribute("version").first.c_str());
+		double ssver = atof(ss.getAttribute("version").first.c_str());
+		double newver = atof(sigspec.getAttribute("version").first.c_str());
 		if (newver > ssver)
 			ss = sigspec;
 		ok = sigspecs.getNextElement(sigspec);
