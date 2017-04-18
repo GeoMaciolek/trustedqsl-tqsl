@@ -2,7 +2,7 @@
                                   tqsl.cpp
                              -------------------
     begin                : Mon Nov 4 2002
-    copyright            : (C) 2002-2016 by ARRL and the TrustedQSL Developers
+    copyright            : (C) 2002-2017 by ARRL and the TrustedQSL Developers
     author               : Jon Bloom
     email                : jbloom@arrl.org
  ***************************************************************************/
@@ -4849,11 +4849,14 @@ QSLApp::OnInit() {
 	for (int i = 1; i < argc; i++) {
 		origCommandLine += wxT(" ");
 		origCommandLine += argv[i];
-		// Overly complex to keep clang quiet.
+		//  The following causes an false positive "null pointer
+		//  dereference" from the clang static analyzer. Hide it.
+#ifndef __clang_analyzer__
 		if ((const wxChar *)argv[i])
 			if (argv[i][0] == wxT('-') || argv[i][0] == wxT('/'))
 				if (wxIsalpha(argv[i][1]) && wxIsupper(argv[i][1]))
 					argv[i][1] = wxTolower(argv[i][1]);
+#endif
 	}
 
 	parser.SetCmdLine(argc, argv);

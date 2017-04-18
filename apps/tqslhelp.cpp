@@ -1,7 +1,7 @@
 /***************************************************************************
                           tqslhelp.cpp  -  description
                              -------------------
-          copyright (C) 2013-2016 by ARRL and the TrustedQSL Developers
+          copyright (C) 2013-2017 by ARRL and the TrustedQSL Developers
  ***************************************************************************/
 
 //Derived from wxWidgets fs_inet.cpp

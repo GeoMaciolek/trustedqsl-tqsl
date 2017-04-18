@@ -17,7 +17,7 @@ BEGIN
       VALUE "FileDescription", "TrustedQSL Library\000"
       VALUE "FileVersion", "@TQSLLIB_VERSION@\000"
       VALUE "InternalName", "TQSLLIB\000"
-      VALUE "LegalCopyright", "Copyright  2016 American Radio Relay League.\000"
+      VALUE "LegalCopyright", "Copyright  2017 American Radio Relay League.\000"
       VALUE "OriginalFilename", "tqsllib@DLLVER@.dll\000"
       VALUE "ProductName", "TQSLLIB\000"
       VALUE "ProductVersion", "@TQSLLIB_VERSION@\000"
