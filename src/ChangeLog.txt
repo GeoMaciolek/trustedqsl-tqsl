@@ -3,6 +3,8 @@ TQSLLIB changes
 
 2.5
 ---
+Fix CMake config to use the right lib64 string on Linux.
+
 Allow 'LIGHT' in a Cabrillo file to represent 300G and higher.
 
 When there are multiple signature specifications in the configuration file,
