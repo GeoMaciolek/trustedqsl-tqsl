@@ -144,6 +144,12 @@ add_executable(tqsl WIN32 MACOSX_BUNDLE ${TQSL_SRC} ${TQSL_HDR} ${TQSL_XPM} ${TQ
 target_link_libraries(tqsl ${TQSLLIB_NAME}
   ${wxWidgets_LIBRARIES} ${ZLIB_LIBRARIES} ${CURL_LIBRARIES} ${CARBON_LIBRARY} ${EXPAT_LIBRARIES})
 
+if(WIN32)
+	set(UPDATER_SRC tqslupdater.cpp)
+	add_executable(tqslupdater WIN32 ${UPDATER_SRC} ${TQSL_HDR})
+	target_link_libraries(tqslupdater ${wxWidgets_LIBRARIES} ${CURL_LIBRARIES})
+endif()
+
 if(NOT APPLE AND NOT WIN32)
 	add_definitions("-DCONFDIR=\"${CMAKE_INSTALL_PREFIX}/share/TrustedQSL/\"")
 	install(TARGETS tqsl DESTINATION bin)
