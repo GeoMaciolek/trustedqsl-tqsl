@@ -3244,7 +3244,7 @@ void MyFrame::UpdateTQSL(wxString& url) {
 			wxMessageBox(wxString::Format(_("Error writing new configuration file %s: %hs"), filename.c_str(), strerror(errno)), _("Error"), wxOK | wxICON_ERROR, this);
 			return;
 		}
-		wxExecute(wxT("msiexec ") + filename, wxEXEC_ASYNC);
+		wxExecute(wxT("msiexec /i ") + filename, wxEXEC_ASYNC);
 		wxExit();
 	} else {
 		tqslTrace("MyFrame::UpdateTQSL", "cURL Error during file download: %s (%s)\n", curl_easy_strerror((CURLcode)retval), errorbuf);
@@ -3696,7 +3696,6 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 				ri->errorText = wxString(_("Unable to check for updates - either your Internet connection is down or LoTW is unreachable."));
 				ri->errorText += wxT("\n");
 				ri->errorText += _("Please try again later.");
-				ri->errorText = wxString::FromUTF8("Unable to check for updates - either your Internet connection is down or LoTW is unreachable.\nPlease try again later.");
 			} else if (retval == CURLE_WRITE_ERROR || retval == CURLE_SEND_ERROR || retval == CURLE_RECV_ERROR) {
 				networkError = true;
 				ri->error = true;
