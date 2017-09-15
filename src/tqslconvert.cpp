@@ -23,7 +23,12 @@
 #include <string>
 #include <ctype.h>
 #include <set>
+#ifdef USE_LMDB
+#include <lmdb.h>
+#define db_strerror mdb_strerror
+#else
 #include <db.h>
+#endif
 
 #include <locale.h>
 //#include <iostream>
@@ -70,11 +75,19 @@ class TQSL_CONVERTER {
 	set <string> satellites;
 	string rec_text;
 	tQSL_Date start, end;
+	bool db_open;
+#ifdef USE_LMDB
+	MDB_dbi seendb;
+	MDB_env* dbenv;
+	MDB_txn* txn;
+	MDB_cursor* cursor;
+#else
 	DB *seendb;
-	char *dbpath;
 	DB_ENV* dbenv;
 	DB_TXN* txn;
 	DBC* cursor;
+#endif
+	char *dbpath;
 	FILE* errfile;
 	char serial[512];
 	char callsign[64];
@@ -97,7 +110,10 @@ inline TQSL_CONVERTER::TQSL_CONVERTER()  : sentinel(0x4445) {
 	memset(&rec, 0, sizeof rec);
 	memset(&start, 0, sizeof start);
 	memset(&end, 0, sizeof end);
+	db_open = false;
+#ifndef USE_LMDB
 	seendb = NULL;
+#endif
 	dbpath = NULL;
 	dbenv = NULL;
 	txn = NULL;
@@ -303,16 +319,29 @@ tqsl_endConverter(tQSL_Converter *convp) {
 	TQSL_CONVERTER* conv;
 
 	if ((conv = check_conv(*convp))) {
+#ifdef USE_LMDB
+		if (conv->txn) mdb_txn_abort(conv->txn);
+#else
 		if (conv->txn) conv->txn->abort(conv->txn);
-		if (conv->seendb) {
+#endif
+		if (conv->db_open) {
+#ifdef USE_LMDB
+			mdb_dbi_close(conv->dbenv, conv->seendb);
+#else
 			conv->seendb->compact(conv->seendb, NULL, NULL, NULL, NULL, 0, NULL);
 			conv->seendb->close(conv->seendb, 0);
+#endif
 		}
+		conv->db_open = false;
 		if (conv->dbenv) {
+#ifdef USE_LMDB
+			mdb_env_close(conv->dbenv);
+#else
 			char **unused;
 			conv->dbenv->txn_checkpoint(conv->dbenv, 0, 0, 0);
 			conv->dbenv->log_archive(conv->dbenv, &unused, DB_ARCH_REMOVE);
 			conv->dbenv->close(conv->dbenv, 0);
+#endif
 		}
 		// close files and clean up converters, if any
 		if (conv->adif) tqsl_endADIF(&conv->adif);
@@ -420,6 +449,19 @@ remove_db(const char *path)  {
 	DIR *dir = opendir(path);
 #endif
 	if (dir != NULL) {
+#ifdef USE_LMDB
+#ifdef _WIN32
+		struct _wdirent *ent = NULL;
+		while ((ent = _wreaddir(dir)) != NULL) {
+			if (!wcscmp(ent->d_name, L"data.mdb") ||
+			!wcscmp(ent->d_name, L"lock.mdb")) {
+#else
+		struct dirent *ent = NULL;
+		while ((ent = readdir(dir)) != NULL) {
+			if (!strcmp(ent->d_name, "data.mdb") ||
+			!strcmp(ent->d_name, "lock.mdb")) {
+#endif
+#else // USE_LMDB
 #ifdef _WIN32
 		struct _wdirent *ent = NULL;
 		while ((ent = _wreaddir(dir)) != NULL) {
@@ -433,6 +475,7 @@ remove_db(const char *path)  {
 			!strncmp(ent->d_name, "log.", 4) ||
 			!strncmp(ent->d_name, "__db.", 5)) {
 #endif
+#endif // USE_LMDB
 				string fname = path;
 				int rstat;
 #ifdef _WIN32
@@ -461,7 +504,7 @@ remove_db(const char *path)  {
 	}
 	return;
 }
-#ifndef _WIN32
+#if !defined(_WIN32) && !defined(USE_LMDB)
 // Callback method for the dbenv->failchk() call
 // Used to determine if the given pid/tid is
 // alive.
@@ -481,6 +524,176 @@ static int isalive(DB_ENV *env, pid_t pid, db_threadid_t tid, uint32_t flags) {
 
 // Open the duplicates database
 
+#ifdef USE_LMDB
+static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
+	bool dbinit_cleanup = false;
+	int dbret;
+	bool triedRemove = false;
+	bool triedDelete = false;
+	string fixedpath = tQSL_BaseDir; //must be first because of gotos
+	size_t found = fixedpath.find('\\');
+
+	tqslTrace("open_db", "path=%s", fixedpath.c_str());
+	//bdb complains about \\s in path on windows...
+
+	while (found != string::npos) {
+		fixedpath.replace(found, 1, "/");
+		found = fixedpath.find('\\');
+	}
+
+	conv->dbpath = strdup(fixedpath.c_str());
+
+#ifndef _WIN32
+	// Clean up junk in that directory
+	DIR *dir = opendir(fixedpath.c_str());
+	if (dir != NULL) {
+		struct dirent *ent;
+		while ((ent = readdir(dir)) != NULL) {
+			if (ent->d_name[0] == '.')
+				continue;
+			struct stat s;
+			// If it's a symlink pointing to itself, remove it.
+			string fname = fixedpath + "/" + ent->d_name;
+			if (stat(fname.c_str(), &s)) {
+				if (errno == ELOOP) {
+#ifdef _WIN32
+					_wunlink(ConvertFromUtf8ToUtf16(fname.c_str()));
+#else
+					unlink(fname.c_str());
+#endif
+				}
+			}
+		}
+		closedir(dir);
+	}
+#endif
+	string logpath = fixedpath + "/dberr.log";
+#ifdef _WIN32
+	wchar_t* wlogpath = utf8_to_wchar(logpath.c_str());
+	conv->errfile = _wfopen(wlogpath, L"wb");
+	free_wchar(wlogpath);
+#else
+	conv->errfile = fopen(logpath.c_str(), "wb");
+#endif
+
+ reopen:
+
+	// Try to open the database
+	while (true) {
+		if (!conv->dbenv) {
+			// Create the database environment handle
+			if ((dbret = mdb_env_create(&conv->dbenv))) {
+				// can't make env handle
+				tqslTrace("open_db", "mdb_env_create error %s", mdb_strerror(dbret));
+				if (conv->errfile)
+					fprintf(conv->errfile, "mdb_env_create error %s\n", mdb_strerror(dbret));
+				dbinit_cleanup = true;
+				goto dbinit_end;
+			}
+			tqslTrace("open_db", "dbenv=0x%lx", conv->dbenv);
+		}
+		mdb_env_set_maxdbs(conv->dbenv, 2);
+		mdb_env_set_maxreaders(conv->dbenv, 2);
+		mdb_env_set_mapsize(conv->dbenv, 1024 * 1024 * 1024);
+		// Now open the database
+		tqslTrace("open_db", "Opening the database at %s", conv->dbpath);
+		if ((dbret = mdb_env_open(conv->dbenv, conv->dbpath, 0, 0600))) {
+			tqslTrace("open_db", "dbenv->open %s error %s", conv->dbpath, mdb_strerror(dbret));
+			if (conv->errfile)
+				fprintf(conv->errfile, "opening DB %s returns status %s\n", conv->dbpath, mdb_strerror(dbret));
+			// can't open environment - try to delete it and try again.
+			tqslTrace("open_db", "Environment open fail, triedRemove=%d", triedRemove);
+			if (!triedRemove) {
+				// Remove the dross
+				tqslTrace("open_db", "Removing environment");
+				conv->dbenv = NULL;
+				triedRemove = true;
+				if (conv->errfile)
+					fprintf(conv->errfile, "About to retry after removing the environment\n");
+				tqslTrace("open_db", "About to retry after removing the environment");
+				continue;
+			}
+			tqslTrace("open_db", "Retry attempt after removing the environment failed");
+			if (conv->errfile) {
+				fprintf(conv->errfile, "Retry attempt after removing the environment failed.\n");
+			}
+			// can't open environment and cleanup efforts failed.
+			mdb_env_close(conv->dbenv);
+			conv->dbenv = NULL;	// this can't be recovered
+			dbinit_cleanup = true;
+			tqslTrace("open_db", "can't fix. abandoning.");
+			remove_db(fixedpath.c_str());
+			goto dbinit_end;
+		}
+		break;		// Opened OK.
+	}
+
+	tqslTrace("open_db", "starting transaction, readonly=%d", readonly);
+	if ((dbret = mdb_txn_begin(conv->dbenv, NULL, readonly ? MDB_RDONLY : 0, &conv->txn))) {
+		// can't start a txn
+		tqslTrace("open_db", "can't create txn %s", mdb_strerror(dbret));
+		if (conv->errfile)
+			fprintf(conv->errfile, "Can't create transaction: %s\n", mdb_strerror(dbret));
+		dbinit_cleanup = true;
+		goto dbinit_end;
+	}
+
+	tqslTrace("open_db", "opening database now");
+	if ((dbret = mdb_dbi_open(conv->txn, NULL, 0, &conv->seendb))) {
+		if (dbret == MDB_NOTFOUND) {
+			tqslTrace("open_db", "DB not found, making a new one");
+			dbret = mdb_dbi_open(conv->txn, NULL, MDB_CREATE, &conv->seendb);
+		}
+		if (dbret) {
+			// can't open the db
+			tqslTrace("open_db", "create failed with %s errno %d", mdb_strerror(dbret), errno);
+			if (conv->errfile)
+				fprintf(conv->errfile, "create failed with %s errno %d", mdb_strerror(dbret), errno);
+			dbinit_cleanup = true;
+			goto dbinit_end;
+		}
+	}
+
+ dbinit_end:
+	if (dbinit_cleanup) {
+		tqslTrace("open_db", "DB open failed, triedDelete=%d", triedDelete);
+		tQSL_Error = TQSL_DB_ERROR;
+		tQSL_Errno = errno;
+		strncpy(tQSL_CustomError, mdb_strerror(dbret), sizeof tQSL_CustomError);
+		tqslTrace("open_db", "Error opening db: %s", tQSL_CustomError);
+		if (conv->txn) mdb_txn_abort(conv->txn);
+		conv->txn = NULL;
+		if (conv->db_open) {
+			mdb_dbi_close(conv->dbenv, conv->seendb);
+			conv->db_open = false;
+		}
+		if (conv->dbenv) {
+			if (conv->dbpath) {
+				free(conv->dbpath);
+				conv->dbpath = NULL;
+			}
+			mdb_drop(conv->txn, conv->seendb, 1);
+			mdb_env_close(conv->dbenv);
+		}
+		if (conv->cursor) mdb_cursor_close(conv->cursor);
+		if (conv->errfile) fclose(conv->errfile);
+		conv->dbenv = NULL;
+		conv->cursor = NULL;
+		conv->errfile = NULL;
+		// Handle case where the database is just broken
+		if (dbret == EINVAL && !triedDelete) {
+			tqslTrace("open_db", "EINVAL. Removing db");
+			remove_db(fixedpath.c_str());
+			triedDelete = true;
+			goto reopen;
+		}
+		conv->db_open = false;
+		return false;
+	}
+	conv->db_open = true;
+	return true;
+}
+#else // USE_LMDB
 static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 	bool dbinit_cleanup = false;
 	int dbret;
@@ -719,6 +932,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		conv->cursor->close(conv->cursor);
 		if (conv->txn) conv->txn->commit(conv->txn, 0);
 		conv->seendb->close(conv->seendb, 0);
+		conv->db_open = false;
 		conv->dbenv->remove(conv->dbenv, conv->dbpath, DB_FORCE);
 		conv->dbenv->close(conv->dbenv, 0);
 		conv->cursor = NULL;
@@ -793,6 +1007,7 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		tqslTrace("open_db", "Error opening db: %s", tQSL_CustomError);
 		if (conv->txn) conv->txn->abort(conv->txn);
 		if (conv->seendb) conv->seendb->close(conv->seendb, 0);
+		conv->db_open = false;
 		if (conv->dbenv) {
 			if (conv->dbpath) {
 				conv->dbenv->remove(conv->dbenv,  conv->dbpath, DB_FORCE);
@@ -817,8 +1032,10 @@ static bool open_db(TQSL_CONVERTER *conv, bool readonly) {
 		}
 		return false;
 	}
+	conv->db_open = true;
 	return true;
 }
+#endif // USE_LMDB
 
 DLLEXPORT const char* CALLCONVENTION
 tqsl_getConverterGABBI(tQSL_Converter convp) {
@@ -853,7 +1070,7 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 		tqsl_getCertificateCallSign(conv->certs[conv->cert_idx], conv->callsign, sizeof conv->callsign);
 		return tStation;
 	}
-	if (!conv->allow_dupes && !conv->seendb) {
+	if (!conv->allow_dupes && !conv->db_open) {
 		if (!open_db(conv, false)) {	// If can't open dupes DB
 			return 0;
 		}
@@ -1167,23 +1384,44 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				qso[0] = '\0';
 			}
 			// Old-style Lookup uses signdata and cert serial number
+#ifdef USE_LMDB
+			MDB_val dbkey, dbdata;
+#else
 			DBT dbkey, dbdata;
 			memset(&dbkey, 0, sizeof dbkey);
 			memset(&dbdata, 0, sizeof dbdata);
+#endif
 			// append signing key serial
 			strncat(signdata, conv->serial, sizeof(signdata) - strlen(signdata)-1);
 			// Updated dupe database entry. Key is formed from
 			// local callsign concatenated with the QSO details
 			char dupekey[128];
 			snprintf(dupekey, sizeof dupekey, "%s%s", conv->callsign, qso);
+#ifdef USE_LMDB
+			dbkey.mv_size = strlen(signdata);
+			dbkey.mv_data = signdata;
+			int dbget_err = mdb_get(conv->txn, conv->seendb, &dbkey, &dbdata);
+#else
 			dbkey.size = strlen(signdata);
 			dbkey.data = signdata;
 			int dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+#endif
 			if (0 == dbget_err) {
 				//lookup was successful; thus this is a duplicate.
 				tQSL_Error = TQSL_DUPLICATE_QSO;
 				tQSL_CustomError[0] = '\0';
 				// delete the old record
+
+				int dbput_err;
+#ifdef USE_LMDB
+				mdb_del(conv->txn, conv->seendb, &dbkey, &dbdata);
+				// Update this to the current format
+				dbkey.mv_size = strlen(dupekey);
+				dbkey.mv_data = dupekey;
+				dbdata.mv_data = stnloc;
+				dbdata.mv_size = strlen(stnloc);
+				dbput_err = mdb_put(conv->txn, conv->seendb, &dbkey, &dbdata, 0);
+#else
 				conv->seendb->del(conv->seendb, conv->txn, &dbkey, 0);
 				// Update this to the current format
 				memset(&dbkey, 0, sizeof dbkey);
@@ -1192,39 +1430,59 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				memset(&dbdata, 0, sizeof dbdata);
 				dbdata.data = stnloc;
 				dbdata.size = strlen(stnloc);
-				int dbput_err;
 				dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+#endif
 				if (0 != dbput_err) {
 					strncpy(tQSL_CustomError, db_strerror(dbput_err), sizeof tQSL_CustomError);
 					tQSL_Error = TQSL_DB_ERROR;
 					return 0;
 				}
 				return 0;
+#ifdef USE_LMDB
+			} else if (dbget_err != MDB_NOTFOUND) {
+#else
 			} else if (dbget_err != DB_NOTFOUND) {
+#endif
 				//non-zero return, but not "not found" - thus error
 				strncpy(tQSL_CustomError, db_strerror(dbget_err), sizeof tQSL_CustomError);
 				tQSL_Error = TQSL_DB_ERROR;
 				return 0;
 				// could be more specific but there's very little the user can do at this point anyway
 			}
+#ifdef USE_LMDB
+			dbkey.mv_size = strlen(dupekey);
+			dbkey.mv_data = dupekey;
+			dbget_err = mdb_get(conv->txn, conv->seendb, &dbkey, &dbdata);
+#else
 			memset(&dbkey, 0, sizeof dbkey);
 			memset(&dbdata, 0, sizeof dbdata);
 
 			dbkey.size = strlen(dupekey);
 			dbkey.data = dupekey;
 			dbget_err = conv->seendb->get(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+#endif
 			if (0 == dbget_err) {
 				//lookup was successful; thus this is a duplicate.
 				tQSL_Error = TQSL_DUPLICATE_QSO;
 				// Save the original and new station location details so those can be provided
 				// with an error by the caller
+#ifdef USE_LMDB
+				char *olddup = reinterpret_cast<char *> (malloc(dbdata.mv_size + 2));
+				memcpy(olddup, dbdata.mv_data, dbdata.mv_size);
+				olddup[dbdata.mv_size] = '\0';
+#else
 				char *olddup = reinterpret_cast<char *> (malloc(dbdata.size + 2));
 				memcpy(olddup, dbdata.data, dbdata.size);
 				olddup[dbdata.size] = '\0';
+#endif
 				snprintf(tQSL_CustomError, sizeof tQSL_CustomError, "%s|%s", olddup, stnloc);
 				free(olddup);
 				return 0;
+#ifdef USE_LMDB
+			} else if (dbget_err != MDB_NOTFOUND) {
+#else
 			} else if (dbget_err != DB_NOTFOUND) {
+#endif
 				//non-zero return, but not "not found" - thus error
 				strncpy(tQSL_CustomError, db_strerror(dbget_err), sizeof tQSL_CustomError);
 				tQSL_Error = TQSL_DB_ERROR;
@@ -1232,11 +1490,17 @@ tqsl_getConverterGABBI(tQSL_Converter convp) {
 				// could be more specific but there's very little the user can do at this point anyway
 			}
 
+			int dbput_err;
+#ifdef USE_LMDB
+			dbdata.mv_data = stnloc;
+			dbdata.mv_size = strlen(stnloc);
+			dbput_err = mdb_put(conv->txn, conv->seendb, &dbkey, &dbdata, 0);
+#else
 			memset(&dbdata, 0, sizeof dbdata);
 			dbdata.data = stnloc;
 			dbdata.size = strlen(stnloc);
-			int dbput_err;
 			dbput_err = conv->seendb->put(conv->seendb, conv->txn, &dbkey, &dbdata, 0);
+#endif
 			if (0 != dbput_err) {
 				strncpy(tQSL_CustomError, db_strerror(dbput_err), sizeof tQSL_CustomError);
 				tQSL_Error = TQSL_DB_ERROR;
@@ -1323,10 +1587,14 @@ tqsl_converterRollBack(tQSL_Converter convp) {
 	tqslTrace("tqsl_converterRollBack", NULL);
 	if (!(conv = check_conv(convp)))
 		return 1;
-	if (!conv->seendb)
+	if (!conv->db_open)
 		return 0;
 	if (conv->txn)
+#ifdef USE_LMDB
+		mdb_txn_abort(conv->txn);
+#else
 		conv->txn->abort(conv->txn);
+#endif
 	conv->txn = NULL;
 	return 0;
 }
@@ -1338,10 +1606,14 @@ tqsl_converterCommit(tQSL_Converter convp) {
 	tqslTrace("tqsl_converterCommit", NULL);
 	if (!(conv = check_conv(convp)))
 		return 1;
-	if (!conv->seendb)
+	if (!conv->db_open)
 		return 0;
 	if (conv->txn)
+#ifdef USE_LMDB
+		mdb_txn_commit(conv->txn);
+#else
 		conv->txn->commit(conv->txn, 0);
+#endif
 	conv->txn = NULL;
 	return 0;
 }
@@ -1353,16 +1625,17 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 	if (!(conv = check_conv(convp)))
 		return 1;
 
-	if (!conv->seendb) {
+	if (!conv->db_open) {
 		if (!open_db(conv, true)) {	// If can't open dupes DB
 			return 1;
 		}
 	}
-#ifndef DB_CURSOR_BULK
-#define DB_CURSOR_BULK 0
-#endif
 	if (!conv->cursor) {
+#ifdef USE_LMDB
+		int err = mdb_cursor_open(conv->txn, conv->seendb, &conv->cursor);
+#else
 		int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
+#endif
 		if (err) {
 			strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
 			tQSL_Error = TQSL_DB_ERROR;
@@ -1371,11 +1644,17 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 		}
 	}
 
+#ifdef USE_LMDB
+	MDB_val dbkey, dbdata;
+	int status = mdb_cursor_get(conv->cursor, &dbkey, &dbdata, MDB_NEXT);
+	if (MDB_NOTFOUND == status) {
+#else
 	DBT dbkey, dbdata;
 	memset(&dbkey, 0, sizeof dbkey);
 	memset(&dbdata, 0, sizeof dbdata);
 	int status = conv->cursor->c_get(conv->cursor, &dbkey, &dbdata, DB_NEXT);
 	if (DB_NOTFOUND == status) {
+#endif
 		return -1;	// No more records
 	}
 	if (status != 0) {
@@ -1384,12 +1663,21 @@ tqsl_getDuplicateRecords(tQSL_Converter convp, char *key, char *data, int keylen
 		tQSL_Errno = errno;
 		return 1;
 	}
+#ifdef USE_LMDB
+	memcpy(key, dbkey.mv_data, dbkey.mv_size);
+	key[dbkey.mv_size] = '\0';
+
+	if (dbdata.mv_size > 9) dbdata.mv_size = 9;
+	memcpy(data, dbdata.mv_data, dbdata.mv_size);
+	data[dbdata.mv_size] = '\0';
+#else
 	memcpy(key, dbkey.data, dbkey.size);
 	key[dbkey.size] = '\0';
 
 	if (dbdata.size > 9) dbdata.size = 9;
 	memcpy(data, dbdata.data, dbdata.size);
 	data[dbdata.size] = '\0';
+#endif
 	return 0;
 }
 
@@ -1400,16 +1688,17 @@ tqsl_getDuplicateRecordsV2(tQSL_Converter convp, char *key, char *data, int keyl
 	if (!(conv = check_conv(convp)))
 		return 1;
 
-	if (!conv->seendb) {
+	if (!conv->db_open) {
 		if (!open_db(conv, true)) {	// If can't open dupes DB
 			return 1;
 		}
 	}
-#ifndef DB_CURSOR_BULK
-#define DB_CURSOR_BULK 0
-#endif
 	if (!conv->cursor) {
+#ifdef USE_LMDB
+		int err = mdb_cursor_open(conv->txn, conv->seendb, &conv->cursor);
+#else
 		int err = conv->seendb->cursor(conv->seendb, conv->txn, &conv->cursor, DB_CURSOR_BULK);
+#endif
 		if (err) {
 			strncpy(tQSL_CustomError, db_strerror(err), sizeof tQSL_CustomError);
 			tQSL_Error = TQSL_DB_ERROR;
@@ -1418,11 +1707,17 @@ tqsl_getDuplicateRecordsV2(tQSL_Converter convp, char *key, char *data, int keyl
 		}
 	}
 
+#ifdef USE_LMDB
+	MDB_val dbkey, dbdata;
+	int status = mdb_cursor_get(conv->cursor, &dbkey, &dbdata, MDB_NEXT);
+	if (MDB_NOTFOUND == status) {
+#else
 	DBT dbkey, dbdata;
 	memset(&dbkey, 0, sizeof dbkey);
 	memset(&dbdata, 0, sizeof dbdata);
 	int status = conv->cursor->c_get(conv->cursor, &dbkey, &dbdata, DB_NEXT);
 	if (DB_NOTFOUND == status) {
+#endif
 		return -1;	// No more records
 	}
 	if (status != 0) {
@@ -1431,11 +1726,19 @@ tqsl_getDuplicateRecordsV2(tQSL_Converter convp, char *key, char *data, int keyl
 		tQSL_Errno = errno;
 		return 1;
 	}
+#ifdef USE_LMDB
+	memcpy(key, dbkey.mv_data, dbkey.mv_size);
+	key[dbkey.mv_size] = '\0';
+	if (dbdata.mv_size > 255) dbdata.mv_size = 255;
+	memcpy(data, dbdata.mv_data, dbdata.mv_size);
+	data[dbdata.mv_size] = '\0';
+#else
 	memcpy(key, dbkey.data, dbkey.size);
 	key[dbkey.size] = '\0';
 	if (dbdata.size > 255) dbdata.size = 255;
 	memcpy(data, dbdata.data, dbdata.size);
 	data[dbdata.size] = '\0';
+#endif
 	return 0;
 }
 
@@ -1446,11 +1749,26 @@ tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data,
 	if (!(conv = check_conv(convp)))
 		return 0;
 
-	if (!conv->seendb) {
+	if (!conv->db_open) {
 		if (!open_db(conv, false)) {	// If can't open dupes DB
 			return 0;
 		}
 	}
+#ifdef USE_LMDB
+	MDB_val dbkey, dbdata;
+	dbkey.mv_size = keylen;
+	dbkey.mv_data = const_cast<char *>(key);
+
+	dbdata.mv_size = strlen(data);
+	dbdata.mv_data = const_cast<char *>(data);
+
+	int status = mdb_put(conv->txn, conv->seendb, &dbkey, &dbdata, 0);
+
+	if (MDB_KEYEXIST == status) {
+		return -1;	// OK, but already there
+	}
+
+#else
 	DBT dbkey, dbdata;
 	memset(&dbkey, 0, sizeof dbkey);
 	memset(&dbdata, 0, sizeof dbdata);
@@ -1465,6 +1783,7 @@ tqsl_putDuplicateRecord(tQSL_Converter convp, const char *key, const char *data,
 	if (DB_KEYEXIST == status) {
 		return -1;	// OK, but already there
 	}
+#endif
 
 	if (status != 0) {
 		strncpy(tQSL_CustomError, db_strerror(status), sizeof tQSL_CustomError);
