@@ -1,6 +1,15 @@
 TQSL changes
 ============
 
+2.4
+----------
+Retain all certificate private keys. Mark as deleted and allow them to be
+recovered. This allows the .TQ6 file downloaded from LoTW to always be used
+to recover a user's callsign certificate.
+
+Allow LMDB to be used with TQSL to work around Berkely DB licensing issues.
+
+
 2.3.1
 ----------
 Update copyright messages to 2017.

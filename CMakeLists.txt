@@ -6,6 +6,24 @@ if ( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
   ADD_COMPILE_OPTIONS("-fPIC")
 endif( CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64" )
 
+# Make sure that there's a value for LIB_SUFFIX
+IF (NOT LIB_SUFFIX) 
+  IF (NOT APPLE)
+  # check 64 bit
+    IF (CMAKE_SIZEOF_VOID_P EQUAL 4)
+      SET (LIB_SUFFIX "")
+    ELSE (CMAKE_SIZEOF_VOID_P EQUAL 4)
+      SET (LIB_SUFFIX "64")
+    ENDIF (CMAKE_SIZEOF_VOID_P EQUAL 4)
+  ELSE (NOT APPLE)
+    SET (LIB_SUFFIX "")
+  ENDIF (NOT APPLE)
+  # BSD does not use lib64 for 64bit libs
+  IF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD" OR ${CMAKE_SYSTEM_NAME} MATCHES "OpenBSD")
+    SET (LIB_SUFFIX "")
+  ENDIF()
+ENDIF (NOT LIB_SUFFIX)
+
 if(WIN32)
   set(CMAKE_FIND_LIBRARY_SUFFIXES .lib .a ${CMAKE_FIND_LIBRARY_SUFFIXES})
   # just windows for now... unix knows how to find libraries better

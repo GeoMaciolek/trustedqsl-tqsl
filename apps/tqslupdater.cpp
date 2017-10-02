@@ -114,14 +114,14 @@ MyFrame::MyFrame(const wxString& title, int x, int y, int w, int h, bool checkUp
 	wxPanel* topPanel = new wxPanel(this);
 	wxBoxSizer* topSizer = new wxBoxSizer(wxVERTICAL);
 	topPanel->SetSizer(topSizer);
-
 }
 
 static CURL*
 tqsl_curl_init(const char *logTitle, const char *url, bool newFile) {
 	CURL* curlReq = curl_easy_init();
-	if (!curlReq)
+	if (!curlReq) {
 		return NULL;
+	}
         DocPaths docpaths(wxT("tqslapp"));
 
 	wxString filename;
@@ -243,7 +243,6 @@ class FileUploadHandler {
 
 void
 MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
-
 	wxString updateURL = DEFAULT_UPD_URL;
 	wxString ourPlatURL; //empty by default (we check against this later)
 
@@ -274,7 +273,7 @@ MyFrame::DoCheckForUpdates(bool silent, bool noGUI) {
 		while(urls.HasMoreTokens()) {
 			wxString header = urls.GetNextToken().Trim();
 			if (header.StartsWith(wxT("TQSLVERSION;"), &onlinever)) {
-				continue;	
+				continue;
 			} else if (header.IsEmpty()) {
 				continue; //blank line
 			} else if (header[0] == '#') {
